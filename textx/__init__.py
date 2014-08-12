@@ -26,11 +26,14 @@ def rule():                 return [metaclass, enum]
 def enum():                 return enum_kwd, ident, ':', enum_literal,\
                                     ZeroOrMore("|", enum_literal), ';'
 def enum_literal():         return ident, '=', str_match
-def metaclass():            return metaclass_name, ":", [alternative, sequence], ';'
+def metaclass():            return metaclass_name, ":", [alternative_inher,
+                                                alternative_match, sequence], ';'
 def metaclass_name():       return ident
 
-def alternative():          return alt_rule_match, OneOrMore("|", alt_rule_match)
-def alt_rule_match():       return ident
+def alternative_inher():    return rule_match_alt, OneOrMore("|", rule_match_alt)
+def alternative_match():    return [terminal_match, rule_match_alt], OneOrMore("|",
+                                    [terminal_match, rule_match_alt])
+def rule_match_alt():       return ident
 def choice():               return sequence, ZeroOrMore("|", sequence)
 def sequence():             return OneOrMore([assignment, expr])
 
@@ -72,6 +75,8 @@ BOOL    = _(r'true|false|0|1', rule_name='BOOL', root=True)
 INT     = _(r'[-+]?[0-9]+', rule_name='INT', root=True)
 FLOAT   = _(r'[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?', 'FLOAT', root=True)
 STRING  = _(r'("[^"]*")|(\'[^\']*\')', 'STRING', root=True)
+PRIMITIVE_TYPES = [ID, BOOL, INT, FLOAT, STRING]
+PRIMITIVE_TYPE_NAMES = [x.rule_name for x in PRIMITIVE_TYPES]
 
 def convert(value, _type):
     return {
@@ -230,7 +235,7 @@ class TextXModelSA(SemanticAction):
                         raise TextXSemanticError('Unexisting rule "{}" at position {}.'\
                                 .format(rule.rule_name, parser.pos_to_linecol(rule.position)))
 
-                assert isinstance(rule, ParsingExpression), type(rule)
+                assert isinstance(rule, ParsingExpression), "{}:{}".format(type(rule), str(rule))
                 # Recurse
                 for idx, child in enumerate(rule.nodes):
                     if not child in resolved_set:
@@ -333,16 +338,13 @@ def metaclass_name_SA(parser, node, children):
     return metacls_name
 metaclass_name.sem = metaclass_name_SA
 
-def alternative_SA(parser, node, children):
-    # Current metaclass is inherited by all
-    # children metaclasses
-    # Crossref resolving will be done in the second pass.
-    for metacls_name in children:
-        parser._current_metacls_info.inh_by.append(\
-                RuleMatchCrossRef(rule_name=metacls_name, \
-                position=node.position))
+def alternative_match_SA(parser, node, children):
     return OrderedChoice(nodes=children[:])
-alternative.sem = alternative_SA
+alternative_match.sem = alternative_match_SA
+
+def alternative_inher_SA(parser, node, children):
+    return OrderedChoice(nodes=children[:])
+alternative_inher.sem = alternative_inher_SA
 
 def sequence_SA(parser, node, children):
     return Sequence(nodes=children[:])
@@ -381,6 +383,9 @@ def assignment_SA(parser, node, children):
         print("Processing assignment {}{}...".format(attr_name, op))
 
     def ref_cont_store_info(ref_type, rule_crossref):
+        if type(rule_crossref) is not RuleMatchCrossRef or \
+                rule_crossref.rule_name in PRIMITIVE_TYPE_NAMES:
+            return
         rule_name = rule_crossref.rule_name
         minfo_list = mclass_info.cont if ref_type == "cont" else mclass_info.refs
         minfo_list.append(\
@@ -389,8 +394,8 @@ def assignment_SA(parser, node, children):
 
     # Keep track of metaclass references and containments
     if type(rhs) is tuple and rhs[0] in ["link", "cont"]:
-        ref_cont_store_info(*rhs[0])
-        # Override rhs by its match for further processing
+        ref_cont_store_info(*rhs)
+        # Override rhs by its PEG rule for further processing
         rhs = rhs[1]
 
     # Special case. List as rhs
@@ -483,12 +488,18 @@ def re_match_SA(parser, node, children):
     return regex
 re_match.sem = re_match_SA
 
-def alt_rule_match_SA(parser, node, children):
+def rule_match_alt_SA(parser, node, children):
     rule_name = str(node)
+    # This rule is used in alternative (inheritance)
+    # Crossref resolving will be done in the second pass.
+    parser._current_metacls_info.inh_by.append(\
+            MetaClassCrossRef(metacls_name=rule_name, \
+            attr_name=None,
+            position=node.position))
     # Here a name of the metaclass (rule) is expected but to support
     # forward referencing we are postponing resolving to second_pass.
     return RuleMatchCrossRef(rule_name, node.position)
-alt_rule_match.sem = alt_rule_match_SA
+rule_match_alt.sem = rule_match_alt_SA
 
 def rule_match_SA(parser, node, children):
     rule_name = str(node)
@@ -633,7 +644,18 @@ def parser_from_str(language_def, ignore_case=True, debug=False):
             ignore_case=ignore_case, reduce_tree=True, debug=debug)
 
     # This is used during parser construction phase.
-    parser._metacls_info = {}
+    parser._metacls_info = {
+            'ID': MetaClassInfo(metacls=type('ID'), attrib_types={}, refs=[],
+                                cont=[], inh_by=[]),
+            'BOOL': MetaClassInfo(metacls=type('BOOL'), attrib_types={}, refs=[],
+                                cont=[], inh_by=[]),
+            'INT': MetaClassInfo(metacls=type('INT'), attrib_types={}, refs=[],
+                                cont=[], inh_by=[]),
+            'FLOAT': MetaClassInfo(metacls=type('FLOAT'), attrib_types={}, refs=[],
+                                cont=[], inh_by=[]),
+            'STRING': MetaClassInfo(metacls=type('STRING'), attrib_types={}, refs=[],
+                                cont=[], inh_by=[]),
+            }
 
     # Builtin rules representing primitive types
     parser._peg_rules = {
