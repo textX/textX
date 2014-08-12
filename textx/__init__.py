@@ -13,7 +13,7 @@
 from collections import namedtuple
 
 from arpeggio import StrMatch, Optional, ZeroOrMore, OneOrMore, Sequence,\
-    OrderedChoice, RegExMatch, NoMatch, EOF,\
+    OrderedChoice, RegExMatch, Match, NoMatch, EOF,\
     SemanticAction,ParserPython, Combine, Parser, SemanticActionSingleChild,\
     SemanticActionBodyWithBraces, Terminal, ParsingExpression
 from arpeggio.export import PMDOTExporter, PTDOTExporter
@@ -77,12 +77,21 @@ FLOAT   = _(r'[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?', 'FLOAT', root=True)
 STRING  = _(r'("[^"]*")|(\'[^\']*\')', 'STRING', root=True)
 PRIMITIVE_TYPES = [ID, BOOL, INT, FLOAT, STRING]
 PRIMITIVE_TYPE_NAMES = [x.rule_name for x in PRIMITIVE_TYPES]
+CONSTRUCTORS = {
+        'ID': str,
+        'BOOL': bool,
+        'INT' : int,
+        'FLOAT': float,
+        'STRING': str,
+        'LIST': list,
+        }
 
 def convert(value, _type):
     return {
             'BOOL'  : lambda x: x=='1' or x.lower()=='true',
             'INT'   : lambda x: int(x),
-            'FLOAT' : lambda x: float(x)
+            'FLOAT' : lambda x: float(x),
+            'STRING': lambda x: x.strip('"\''),
             }.get(_type, lambda x: x)(value)
 
 # Str formatting functions
@@ -206,6 +215,9 @@ class TextXModelSA(SemanticAction):
                 # Transform parse tree to model. Skip root node which
                 # represents the whole file ending in EOF.
                 return parse_tree_to_objgraph(self, self.parse_tree[0])
+
+            def get_metamodel(self):
+                return self._metacls_info
 
 
         textx_parser = TextXLanguageParser()
@@ -418,7 +430,7 @@ def assignment_SA(parser, node, children):
                 assignment_rule = Sequence(nodes=[list_el_rule,
                         ZeroOrMore(nodes=Sequence(nodes=[separator, list_el_rule]))],
                         rule_name='__asgn_list', root=True)
-            mclass_info.attrib_types[attr_name] = list
+            mclass_info.attrib_types[attr_name] = 'LIST'
 
     else:
         # Base rule name will be used to determine primitive types
@@ -431,27 +443,23 @@ def assignment_SA(parser, node, children):
         if op == '+=':
             assignment_rule = OneOrMore(nodes=[rhs],
                     rule_name='__asgn_oneormore', root=True)
-            mclass_info.attrib_types[attr_name] = list
+            mclass_info.attrib_types[attr_name] = 'LIST'
         elif op == '*=':
             assignment_rule = ZeroOrMore(nodes=[rhs],
                     rule_name='__asgn_zeroormore', root=True)
-            mclass_info.attrib_types[attr_name] = list
+            mclass_info.attrib_types[attr_name] = 'LIST'
         elif op == '?=':
             assignment_rule = Optional(nodes=[rhs],
                     rule_name='__asgn_optional', root=True)
-            mclass_info.attrib_types[attr_name] = bool
+            mclass_info.attrib_types[attr_name] = 'BOOL'
         else:
             assignment_rule = Sequence(nodes=[rhs],
                     rule_name='__asgn_plain', root=True)
             # Determine type for proper initialization
-            if rhs.rule_name == 'INT':
-                mclass_info.attrib_types[attr_name] = int
-            elif rhs.rule_name == 'FLOAT':
-                mclass_info.attrib_types[attr_name] = float
-            elif rhs.rule_name == 'BOOL':
-                mclass_info.attrib_types[attr_name] = bool
-            elif rhs.rule_name == 'STRING':
-                mclass_info.attrib_types[attr_name] = str
+            if rhs.rule_name in PRIMITIVE_TYPE_NAMES:
+                mclass_info.attrib_types[attr_name] = rhs.rule_name
+            elif type(rhs) is not RuleMatchCrossRef and isinstance(rhs, Match):
+                mclass_info.attrib_types[attr_name] = 'STRING'
             else:
                 mclass_info.attrib_types[attr_name] = None
 
@@ -560,7 +568,7 @@ def parse_tree_to_objgraph(parser, parse_tree):
             inst = mclass()
             # Initialize attributes
             for attr_name, constructor in metacls_info.attrib_types.items():
-                init_value = constructor() if constructor else None
+                init_value = CONSTRUCTORS[constructor]() if constructor else None
                 setattr(inst, attr_name, init_value)
 
             parser._inst_stack.append(inst)
@@ -645,15 +653,15 @@ def parser_from_str(language_def, ignore_case=True, debug=False):
 
     # This is used during parser construction phase.
     parser._metacls_info = {
-            'ID': MetaClassInfo(metacls=type('ID'), attrib_types={}, refs=[],
+            'ID': MetaClassInfo(metacls=type('ID', (), {}), attrib_types={}, refs=[],
                                 cont=[], inh_by=[]),
-            'BOOL': MetaClassInfo(metacls=type('BOOL'), attrib_types={}, refs=[],
+            'BOOL': MetaClassInfo(metacls=type('BOOL', (), {}), attrib_types={}, refs=[],
                                 cont=[], inh_by=[]),
-            'INT': MetaClassInfo(metacls=type('INT'), attrib_types={}, refs=[],
+            'INT': MetaClassInfo(metacls=type('INT', (), {}), attrib_types={}, refs=[],
                                 cont=[], inh_by=[]),
-            'FLOAT': MetaClassInfo(metacls=type('FLOAT'), attrib_types={}, refs=[],
+            'FLOAT': MetaClassInfo(metacls=type('FLOAT', (), {}), attrib_types={}, refs=[],
                                 cont=[], inh_by=[]),
-            'STRING': MetaClassInfo(metacls=type('STRING'), attrib_types={}, refs=[],
+            'STRING': MetaClassInfo(metacls=type('STRING', (), {}), attrib_types={}, refs=[],
                                 cont=[], inh_by=[]),
             }
 
