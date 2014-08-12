@@ -29,12 +29,12 @@ def enum_literal():         return ident, '=', str_match
 def metaclass():            return metaclass_name, ":", [alternative, sequence], ';'
 def metaclass_name():       return ident
 
-def alternative():          return rule_match, OneOrMore("|", rule_ref)
+def alternative():          return alt_rule_match, OneOrMore("|", alt_rule_match)
+def alt_rule_match():       return ident
 def choice():               return sequence, ZeroOrMore("|", sequence)
 def sequence():             return OneOrMore([assignment, expr])
 
-def expr():                 return [terminal_match, rule_match,
-                                    bracketed_choice],\
+def expr():                 return [terminal_match, bracketed_choice],\
                                     Optional(repeat_operator)
 def bracketed_choice():     return '(', choice, ')'
 def repeat_operator():      return ['*', '?', '+']
@@ -43,17 +43,13 @@ def repeat_operator():      return ['*', '?', '+']
 def assignment():           return attribute, assignment_op, assignment_rhs
 def attribute():            return ident
 def assignment_op():        return ["=", "*=", "+=", "?="]
-def assignment_rhs():       return match
-# Match
-def match():                return [terminal_match, list_match, rule_ref]
+def assignment_rhs():       return [terminal_match, list_match, rule_ref]
 def terminal_match():       return [str_match, re_match]
 def str_match():            return [("'", _(r"((\\')|[^'])*"),"'"),\
                                     ('"', _(r'((\\")|[^"])*'),'"')]
 def re_match():             return "/", _(r"((\\/)|[^/])*"), "/"
-
 def list_match():           return "{", rule_ref, Optional(list_separator), '}'
 def list_separator():       return terminal_match
-
 # Rule reference
 def rule_ref():             return [rule_match, rule_link]
 def rule_match():           return ident
@@ -268,16 +264,16 @@ class TextXModelSA(SemanticAction):
             # References
             ref_list = metacls_info.refs
             for idx, ref in enumerate(ref_list):
-                ref_list[idx] = (ref.attr_name,
-                        xtext_parser._metacls_info[ref.metacls_name].metacls,
-                        '*') # For now
+                ref_list[idx] = (ref[0],
+                        xtext_parser._metacls_info[ref[1].metacls_name].metacls,
+                        ref[2])
 
             # Containment
             ref_list = metacls_info.cont
             for idx, ref in enumerate(ref_list):
-                ref_list[idx] = (ref.attr_name,
-                        xtext_parser._metacls_info[ref.metacls_name].metacls,
-                        '*') # For now
+                ref_list[idx] = (ref[0],
+                        xtext_parser._metacls_info[ref[1].metacls_name].metacls,
+                        ref[2])
 
     def second_pass(self, parser, textx_parser):
         """Cross reference resolving for parser model."""
@@ -384,22 +380,30 @@ def assignment_SA(parser, node, children):
     if parser.debug:
         print("Processing assignment {}{}...".format(attr_name, op))
 
+    def ref_cont_store_info(ref_type, rule_crossref):
+        rule_name = rule_crossref.rule_name
+        minfo_list = mclass_info.cont if ref_type == "cont" else mclass_info.refs
+        minfo_list.append(\
+                (attr_name, MetaClassCrossRef(rule_name, attr_name, \
+                                rule_crossref.position), '*'))
+
     # Keep track of metaclass references and containments
     if type(rhs) is tuple and rhs[0] in ["link", "cont"]:
-        rule_crossref = rhs[1]
-        rule_name = rule_crossref.rule_name
-        minfo_list = mclass_info.cont if rhs[0] == "cont" else mclass_info.refs
-        minfo_list.append(\
-                (attr_name, MetaClassCrossRef(metacls_name=rule_name, \
-                                position=rule_crossref.position), '*'))
+        ref_cont_store_info(*rhs[0])
         # Override rhs by its match for further processing
-        rhs = rule_crossref
+        rhs = rhs[1]
 
     # Special case. List as rhs
     # If operation is += there must be at least one element in the list
     if type(rhs) is tuple:
         if rhs[0] == "list":
             _, list_el_rule, separator = rhs
+
+            # List rule may be a ref-cont
+            if type(list_el_rule) is tuple and list_el_rule[0] in ["link", "cont"]:
+                ref_cont_store_info(*list_el_rule)
+                list_el_rule = list_el_rule[1]
+
             base_rule_name = list_el_rule.rule_name
             if op == '+=':
                 assignment_rule = Sequence(nodes=[list_el_rule,
@@ -479,11 +483,18 @@ def re_match_SA(parser, node, children):
     return regex
 re_match.sem = re_match_SA
 
-def rule_match_SA(parser, node, children):
+def alt_rule_match_SA(parser, node, children):
     rule_name = str(node)
     # Here a name of the metaclass (rule) is expected but to support
     # forward referencing we are postponing resolving to second_pass.
     return RuleMatchCrossRef(rule_name, node.position)
+alt_rule_match.sem = alt_rule_match_SA
+
+def rule_match_SA(parser, node, children):
+    rule_name = str(node)
+    # Here a name of the metaclass (rule) is expected but to support
+    # forward referencing we are postponing resolving to second_pass.
+    return ("cont", RuleMatchCrossRef(rule_name, node.position))
 rule_match.sem = rule_match_SA
 
 def rule_link_SA(parser, node, children):
