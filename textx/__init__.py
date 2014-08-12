@@ -42,8 +42,7 @@ def repeat_operator():      return ['*', '?', '+']
 def assignment():           return attribute, assignment_op, assignment_rhs
 def attribute():            return ident
 def assignment_op():        return ["=", "*=", "+=", "?="]
-def assignment_rhs():       return [rule_ref, list_match, terminal_match, bracketed_choice], \
-                                    Optional(repeat_operator)
+def assignment_rhs():       return match
 # Match
 def match():                return [terminal_match, list_match, rule_ref]
 def terminal_match():       return [str_match, re_match]
@@ -79,27 +78,27 @@ STRING  = _(r'("[^"]*")|(\'[^\']*\')', 'STRING', root=True)
 
 def convert(value, _type):
     return {
-            'BOOL'  : lambda x: bool(x),
+            'BOOL'  : lambda x: x=='1' or x.lower()=='true',
             'INT'   : lambda x: int(x),
             'FLOAT' : lambda x: float(x)
             }.get(_type, lambda x: x)(value)
 
 # Str formatting functions
 def str_indent(obj, indent=0):
+    """Used for metaclass instances pretty-printing."""
     if type(obj) in [str, bool, float, int]:
         s = str(obj)
     elif type(obj) is list:
         s = "[\n"
         for list_value in obj:
-            s += get_indented(indent+1, list_value)
+            s += str_indent(list_value, indent+1)
         s += get_indented(indent, "]")
     else:
         if hasattr(obj, 'name'):
             meta_name = '{}:{}'.format(obj.name, obj.__class__.__name__)
         else:
             meta_name = obj.__class__.__name__
-        s = meta_name
-        s += '\n'
+        s = get_indented(indent, meta_name)
 
         for attr in obj.__dict__:
             if not attr.startswith('_'):
@@ -315,35 +314,54 @@ def assignment_SA(parser, node, children):
         print("Processing assignment {}{}...".format(attr_name, op))
 
     mclass = parser._current_metaclass
-    if attr_name in mclass.__attrib:
-        raise TextXSemanticError('Multiple assignment to the same attribute "{}" at {}'\
-                .format(attr_name, parser.pos_to_linecol(node.position)))
-    if op == '+=':
-        assignment_rule = OneOrMore(nodes=[rhs],
-                rule_name='__asgn_oneormore', root=True)
-        mclass.__attrib[attr_name] = list
-    elif op == '*=':
-        assignment_rule = ZeroOrMore(nodes=[rhs],
-                rule_name='__asgn_zeroormore', root=True)
-        mclass.__attrib[attr_name] = list
-    elif op == '?=':
-        assignment_rule = Optional(nodes=[rhs],
-                rule_name='__asgn_optional', root=True)
-        mclass.__attrib[attr_name] = bool
-    else:
-        assignment_rule = Sequence(nodes=[rhs],
-                rule_name='__asgn_plain', root=True)
-        # Determine type for proper initialization
-        if rhs.rule_name == 'INT':
-            mclass.__attrib[attr_name] = int
-        elif rhs.rule_name == 'FLOAT':
-            mclass.__attrib[attr_name] = float
-        elif rhs.rule_name == 'BOOL':
-            mclass.__attrib[attr_name] = bool
-        elif rhs.rule_name == 'STRING':
-            mclass.__attrib[attr_name] = str
+    # Special case. List as rhs
+    # If operation is += there must be at least one element in the list
+    if type(rhs) is tuple:
+        list_el_rule, separator = rhs
+        base_rule_name = list_el_rule.rule_name
+        if op == '+=':
+            assignment_rule = Sequence(nodes=[list_el_rule,
+                    OneOrMore(nodes=Sequence(nodes=[separator, list_el_rule]))],
+                    rule_name='__asgn_list', root=True)
         else:
-            mclass.__attrib[attr_name] = None
+            assignment_rule = Sequence(nodes=[list_el_rule,
+                    ZeroOrMore(nodes=Sequence(nodes=[separator, list_el_rule]))],
+                    rule_name='__asgn_list', root=True)
+        mclass.__attrib[attr_name] = list
+    else:
+        # Base rule name will be used to determine primitive types
+        base_rule_name = rhs.rule_name
+
+        if attr_name in mclass.__attrib:
+            # TODO: This constraint should be relaxed.
+            raise TextXSemanticError('Multiple assignment to the same attribute "{}" at {}'\
+                    .format(attr_name, parser.pos_to_linecol(node.position)))
+        if op == '+=':
+            assignment_rule = OneOrMore(nodes=[rhs],
+                    rule_name='__asgn_oneormore', root=True)
+            mclass.__attrib[attr_name] = list
+        elif op == '*=':
+            assignment_rule = ZeroOrMore(nodes=[rhs],
+                    rule_name='__asgn_zeroormore', root=True)
+            mclass.__attrib[attr_name] = list
+        elif op == '?=':
+            assignment_rule = Optional(nodes=[rhs],
+                    rule_name='__asgn_optional', root=True)
+            mclass.__attrib[attr_name] = bool
+        else:
+            assignment_rule = Sequence(nodes=[rhs],
+                    rule_name='__asgn_plain', root=True)
+            # Determine type for proper initialization
+            if rhs.rule_name == 'INT':
+                mclass.__attrib[attr_name] = int
+            elif rhs.rule_name == 'FLOAT':
+                mclass.__attrib[attr_name] = float
+            elif rhs.rule_name == 'BOOL':
+                mclass.__attrib[attr_name] = bool
+            elif rhs.rule_name == 'STRING':
+                mclass.__attrib[attr_name] = str
+            else:
+                mclass.__attrib[attr_name] = None
 
     assignment_rule._attr_name = attr_name
     assignment_rule._exp_str = attr_name    # For nice error reporting
@@ -379,12 +397,13 @@ def re_match_SA(parser, node, children):
 re_match.sem = re_match_SA
 
 def rule_match_SA(parser, node, children):
+    # Here a name of the metaclass (rule) is expected but to support
+    # forward referencing we are postponing resolving to second_pass.
     return RuleMatchCrossRef(str(node), node.position)
 rule_match.sem = rule_match_SA
 
 def rule_link_SA(parser, node, children):
-    # TODO: In analisys during model parsing this will be a link to some other object
-    # identified by target metaclass ID
+    # A link to some other metaclass will be the value of its name attribute.
     return ID
 rule_link.sem = rule_link_SA
 
@@ -395,9 +414,9 @@ def list_match_SA(parser, node, children):
         match = children[0]
         separator = children[1]
         separator.rule_name = 'sep'
-        return Sequence(nodes=[children[0],
-                ZeroOrMore(nodes=Sequence(nodes=[separator, match]))],\
-                        rule_name='list_match')
+        # At this level we do not know the type of assignment (=, +=, *=)
+        # so postpone rule construction to assignment_sa
+        return (match, separator)
 list_match.sem = list_match_SA
 
 # Default actions
@@ -471,7 +490,7 @@ def parse_tree_to_objgraph(parser, parse_tree):
                 else:
                     setattr(i, attr_name, value)
 
-            elif op in ['oneormore', 'zeroormore']:
+            elif op in ['list', 'oneormore', 'zeroormore']:
                 for n in node:
                     # If the node is separator skip
                     if n.rule_name != 'sep':

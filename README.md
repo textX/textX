@@ -12,7 +12,7 @@ Quick start
 
   ```
   HelloWorldModel:
-    'hello'  to_greet={Who ','}
+    'hello'  to_greet+={Who ','}
   ;
 
   Who:
