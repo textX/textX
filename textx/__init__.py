@@ -257,6 +257,11 @@ metaclass.sem = metaclass_SA
 
 def metaclass_name_SA(parser, node, children):
 
+    # refs = [ (attrname, metacls, mult='*'|'1'|'0..1'),... ]
+    # cont = [ (attrname, metacls, mult='1'|'0..1'),... ]
+    # inh = [ metcls, metacls, ...]
+    MetaClassInfo = namedtuple('MetaClassInfo', ['metacls', 'refs', 'cont', 'inh'])
+
     class Meta(TextXMetaClass):
         """
         Dynamic metaclass. Each textX rule will result in creating
@@ -269,10 +274,14 @@ def metaclass_name_SA(parser, node, children):
     name = str(node)
     cls = Meta
     cls.__name__ = name
-    cls.__attrib = {}
-    # TODO: Attributes and inheritance
-    parser._metaclasses[name] = cls
-    parser._current_metaclass = cls
+
+    # dict { 'attrname': type }
+    cls.__attrib_types = {}
+
+    metacls_info = MetaClassInfo(metacls=cls, refs=[], cont=[], inh=[])
+
+    parser._metaclasses[name] = metacls_info
+    parser._current_metaclass = metacls_info
 
     if parser.debug:
         print("Creating metaclass: {}".format(name))
@@ -445,7 +454,7 @@ def parse_tree_to_objgraph(parser, parse_tree):
         if not node.rule_name.startswith('__asgn'):
             # If not assignment
             # Create metaclass instance
-            mclass = parser._metaclasses[node.rule_name]
+            mclass = parser._metaclasses[node.rule_name].metacls
 
             # If there is no attributes collected it is an abstract rule
             # Skip it.
