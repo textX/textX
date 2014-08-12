@@ -26,7 +26,7 @@ setup(
     packages = ["textx"],
     keywords = "parser meta-language language",
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
         'Intended Audience :: Information Technology',
         'Intended Audience :: Science/Research',
