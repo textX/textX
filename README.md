@@ -3,40 +3,47 @@ textX
 
 Meta-language in Arpeggio inspired by Xtext
 
-textX follows closely the syntax and semantics of `Xtext`_ but differs in some places and is implemented 100%
-in Python using Arpeggio parser. It is fully dynamic - no code generation at all!
-
-_Xtext:: http://www.eclipse.org/Xtext/
+textX follows closely the syntax and semantics of [Xtext](http://www.eclipse.org/Xtext/) but differs in some places and is implemented 100% in Python using Arpeggio parser. It is fully dynamic - no code generation at all!
 
 Quick start
 -----------
 
-1. Write a language description in textX (file 'hello.tx')::
+1. Write a language description in textX (file `hello.tx`):
 
-  HelloWorldModel:
-    'hello'  to_greet={Who ','}
-  ;
+```
+HelloWorldModel:
+  'hello'  to_greet={Who ','}
+;
 
-  Who:
-    name = ID
-  ;
+Who:
+  name = ID
+;
+```
 
-2. Create some test content in your new language (file 'example.hello')::
-  
-  hello World, Solar System, Universe
+2. Create some test content in your new language (`example.hello`):
 
-3. Construct parser from language description::
+```
+hello World, Solar System, Universe
+```
 
-  from textx import parser_from_file
-  parser = parser_from_file('hello.tx')
+3. Construct parser from language description:
 
-4. Create model (python object graph based on your language description)::
+```python
+from textx import parser_from_file
+parser = parser_from_file('hello.tx')
+```
 
-  model = parser.get_model('example.hello')
+4. Create model (python object graph based on your language description):
 
-5. Use your model: interpret it or generate code::
+```
+model = parser.get_model('example.hello')
+```
 
-  print(model)
+5. Use your model: interpret it or generate code:
+
+```
+print(model)
+```
 
 
 
