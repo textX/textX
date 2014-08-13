@@ -26,25 +26,24 @@ Quick start
   hello World, Solar System, Universe
   ```
 
-3. Construct parser from language description:
-
-  ```python
-  from textx import parser_from_file
-  parser = parser_from_file('hello.tx')
-  ```
-
-4. Create model (python object graph based on your language description):
+3. Create model (python object graph based on your language description):
 
   ```
   model = parser.get_model('example.hello')
   ```
 
-5. Use your model: interpret it or generate code:
+4. Use your model: interpret it or generate code.
+
+5. Optionally export meta-model to dot (visualize your language abstract syntax):
 
   ```
-  print(model)
+  model_export(hello_model, 'example.dot')
+  ``` 
+
+6. Optionally export your model to dot:
+
   ```
-
-
+  model_export(hello_model, 'example.dot')
+  ```
 
 
