@@ -28,7 +28,7 @@ Quick start
 
 3. Create model (python object graph based on your language description):
 
-  ```
+  ```python
   model = parser.get_model('example.hello')
   ```
 
@@ -36,14 +36,14 @@ Quick start
 
 5. Optionally export meta-model to dot (visualize your language abstract syntax):
 
-  ```
+  ```python
   hello_metamodel = parser.get_metamodel()
   metamodel_export(hello_metamodel, 'example_meta.dot')
   ``` 
 
 6. Optionally export your model to dot:
 
-  ```
+  ```python
   model_export(hello_model, 'example.dot')
   ```
 
