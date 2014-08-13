@@ -37,7 +37,8 @@ Quick start
 5. Optionally export meta-model to dot (visualize your language abstract syntax):
 
   ```
-  model_export(hello_model, 'example.dot')
+  hello_metamodel = parser.get_metamodel()
+  metamodel_export(hello_metamodel, 'example_meta.dot')
   ``` 
 
 6. Optionally export your model to dot:
