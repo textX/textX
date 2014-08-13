@@ -26,13 +26,15 @@ Quick start
   hello World, Solar System, Universe
   ```
 
-3. Create model (python object graph based on your language description):
+3. Create parser and model (python object graph based on your language description):
 
   ```python
   from textx import parser_from_file
   parser = parser_from_file('hello.tx')
-  model = get_model('example.hello')
+  hello_model = parser.get_model('example.hello')
   ```
+
+  Same parser may be used multiple times.
 
 4. Use your model: interpret it or generate code.
 
