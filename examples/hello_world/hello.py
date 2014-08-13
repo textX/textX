@@ -1,14 +1,19 @@
 from textx import parser_from_file
-from textx.export import metamodel_export
+from textx.export import metamodel_export, model_export
 
 # Construct parser
 parser = parser_from_file('hello.tx')
 
 # Get model
 hello_model = parser.get_model('example.hello')
-# Get metamodel
+
+# Export model to dot
+model_export(hello_model, 'example.dot')
+
+# Get meta-model
 hello_metamodel = parser.get_metamodel()
-# Export metamodel to dot
+
+# Export meta-model to dot
 metamodel_export(hello_metamodel, 'example_meta.dot')
 
 
