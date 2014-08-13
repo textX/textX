@@ -11,13 +11,16 @@
 #######################################################################
 
 from collections import namedtuple
+from itertools import chain
 
 from arpeggio import StrMatch, Optional, ZeroOrMore, OneOrMore, Sequence,\
     OrderedChoice, RegExMatch, Match, NoMatch, EOF,\
-    SemanticAction,ParserPython, Combine, Parser, SemanticActionSingleChild,\
+    SemanticAction,ParserPython, Combine, SemanticActionSingleChild,\
     SemanticActionBodyWithBraces, Terminal, ParsingExpression
 from arpeggio.export import PMDOTExporter, PTDOTExporter
 from arpeggio import RegExMatch as _
+
+from textx.parser import get_language_parser
 
 
 # textX grammar
@@ -56,9 +59,10 @@ def list_separator():       return terminal_match
 # Rule reference
 def rule_ref():             return [rule_match, rule_link]
 def rule_match():           return ident
-def rule_link():            return '[', rule_name, ']'
+def rule_link():            return '[', rule_name, Optional('|', rule_rule), ']'
 #def rule_choice():          return rule_name, ZeroOrMore('|', rule_name)
 def rule_name():            return ident
+def rule_rule():            return ident
 
 def ident():                return _(r'\w+')
 def enum_kwd():             return 'enum'
@@ -77,22 +81,7 @@ FLOAT   = _(r'[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?', 'FLOAT', root=True)
 STRING  = _(r'("[^"]*")|(\'[^\']*\')', 'STRING', root=True)
 PRIMITIVE_TYPES = [ID, BOOL, INT, FLOAT, STRING]
 PRIMITIVE_TYPE_NAMES = [x.rule_name for x in PRIMITIVE_TYPES]
-CONSTRUCTORS = {
-        'ID': str,
-        'BOOL': bool,
-        'INT' : int,
-        'FLOAT': float,
-        'STRING': str,
-        'LIST': list,
-        }
 
-def convert(value, _type):
-    return {
-            'BOOL'  : lambda x: x=='1' or x.lower()=='true',
-            'INT'   : lambda x: int(x),
-            'FLOAT' : lambda x: float(x),
-            'STRING': lambda x: x.strip('"\''),
-            }.get(_type, lambda x: x)(value)
 
 # Str formatting functions
 def str_indent(obj, indent=0, doind=False):
@@ -119,7 +108,8 @@ def str_indent(obj, indent=0, doind=False):
                 if not attr.startswith('_'):
                     # Name for each attribute
                     s += get_indented(indent + 1, "{} = {}"\
-                            .format(attr, str_indent(getattr(obj, attr), indent+1, False)))
+                            .format(attr, str_indent(getattr(obj, attr),
+                                    indent+1, False)))
         s += '\n'
     return s
 
@@ -128,27 +118,43 @@ def get_indented(indent, _str, newline=True):
     return '{}{}{}'.format(indent, str(_str), '\n' if newline else '')
 
 
-class RuleMatchCrossRef(object):
-    """Helper class used for cross reference resolving."""
-    def __init__(self, rule_name, position):
+class RuleCrossRef(object):
+    """
+    Used for cross reference resolving.
+
+    Attributes:
+        rule_name(str): A name of the PEG rule that should be used to match this cross-ref.
+        metaclass(str or MetaClassCrossRef): Target meta-class which is matched by
+            rule_name or which name is matched by rule_name.
+        position(int): A position in the input string of this cross-ref.
+    """
+    def __init__(self, rule_name, metaclass, position):
         self.rule_name = rule_name
+        self.metaclass = metaclass
         self.position = position
 
 
 class MetaClassCrossRef(object):
-    """Helper class used for metaclass reference resolving."""
+    """
+    Helper class used for meta-class reference resolving on the meta-model level.
+
+    Attributes:
+        metacls_name(str): A name of the target metaclass.
+        attr_name(str): The name of the attribute used for cross-referencing.
+        position(int): The position in the input string of this cross-ref.
+    """
     def __init__(self, metacls_name, attr_name, position):
         self.metacls_name= metacls_name
         self.attr_name = attr_name
         self.position = position
 
 
-
 # attrib_types = {"attr_name": python type}
 # refs = [ (attrname, metacls, mult='*'|'1'|'0..1'),... ]
 # cont = [ (attrname, metacls, mult='1'|'0..1'),... ]
 # inh_by = [ metacls, metacls, ...]
-MetaClassInfo = namedtuple('MetaClassInfo', ['metacls', 'attrib_types', 'refs', 'cont', 'inh_by'])
+MetaClassInfo = namedtuple('MetaClassInfo', ['metacls', 'attrib_types',
+                            'refs', 'cont', 'inh_by'])
 
 
 class TextXMetaClass(object):
@@ -156,71 +162,12 @@ class TextXMetaClass(object):
     pass
 
 
-# TextX Exceptions
-class TextXError(Exception):
-    pass
-
-
-class TextXSemanticError(TextXError):
-    pass
-
-
-class TextXSyntaxError(TextXError):
-    pass
-
-
 # TextX semantic actions
 class TextXModelSA(SemanticAction):
     def first_pass(self, parser, node, children):
-
-        class TextXLanguageParser(Parser):
-            """
-            Parser created from textual textX language description.
-            Semantic actions for this parser will construct object
-            graph representing model on the given language.
-            """
-            def __init__(self, *args, **kwargs):
-                super(TextXLanguageParser, self).__init__(*args, **kwargs)
-
-                # By default first rule is starting rule
-                # and must be followed by the EOF
-                self.parser_model = Sequence(nodes=[children[0], EOF()],\
-                        rule_name='ModelFile', root=True)
-                self.comments_model = parser._peg_rules.get('__comment', None)
-
-                # Stack for metaclass instances
-                self._inst_stack = []
-                # Dict for cross-ref resolving
-                self._instances = {}
-
-                self.debug = parser.debug
-
-            def _parse(self):
-                try:
-                    return self.parser_model.parse(self)
-                except NoMatch as e:
-                    raise TextXSyntaxError(str(e))
-
-            def get_model(self, file_name=None):
-                """
-                Creates model from the parse tree from the previous parse call.
-                If file_name is given file will be parsed before model construction.
-                """
-                if self.debug:
-                    print("*** MODEL ***")
-
-                if file_name:
-                    self.parse_file(file_name)
-
-                # Transform parse tree to model. Skip root node which
-                # represents the whole file ending in EOF.
-                return parse_tree_to_objgraph(self, self.parse_tree[0])
-
-            def get_metamodel(self):
-                return self._metacls_info
-
-
-        textx_parser = TextXLanguageParser()
+        comments_model = parser._peg_rules.get('__comment', None)
+        textx_parser = get_language_parser(children[0], comments_model,
+                parser.debug)
 
         textx_parser._metacls_info = parser._metacls_info
         textx_parser._peg_rules = parser._peg_rules
@@ -239,15 +186,17 @@ class TextXModelSA(SemanticAction):
                 if parser.debug:
                     print("Resolving rule: {}".format(rule))
 
-                if type(rule) == RuleMatchCrossRef:
+                if type(rule) == RuleCrossRef:
                     rule_name = rule.rule_name
                     if rule_name in textx_parser._peg_rules:
                         rule = textx_parser._peg_rules[rule_name]
                     else:
                         raise TextXSemanticError('Unexisting rule "{}" at position {}.'\
-                                .format(rule.rule_name, parser.pos_to_linecol(rule.position)))
+                                .format(rule.rule_name,
+                                    parser.pos_to_linecol(rule.position)))
 
-                assert isinstance(rule, ParsingExpression), "{}:{}".format(type(rule), str(rule))
+                assert isinstance(rule, ParsingExpression),\
+                            "{}:{}".format(type(rule), str(rule))
                 # Recurse
                 for idx, child in enumerate(rule.nodes):
                     if not child in resolved_set:
@@ -302,7 +251,6 @@ class TextXModelSA(SemanticAction):
         self._resolve_metacls_refs(parser, textx_parser)
 
         return textx_parser
-
 textx_model.sem = TextXModelSA()
 
 
@@ -336,7 +284,8 @@ def metaclass_name_SA(parser, node, children):
     metacls = Meta
     metacls.__name__ = metacls_name
     metacls_info = parser._metacls_info.setdefault(metacls_name,\
-            MetaClassInfo(metacls=metacls, attrib_types = {}, refs=[], cont=[], inh_by=[]))
+            MetaClassInfo(metacls=metacls, attrib_types = {},
+                refs=[], cont=[], inh_by=[]))
 
     parser._current_metacls_info = metacls_info
 
@@ -395,13 +344,14 @@ def assignment_SA(parser, node, children):
         print("Processing assignment {}{}...".format(attr_name, op))
 
     def ref_cont_store_info(ref_type, rule_crossref):
-        if type(rule_crossref) is not RuleMatchCrossRef or \
-                rule_crossref.rule_name in PRIMITIVE_TYPE_NAMES:
+        if type(rule_crossref) is not RuleCrossRef or \
+                rule_crossref.metaclass in PRIMITIVE_TYPE_NAMES:
             return
         rule_name = rule_crossref.rule_name
+        target_metaclass = rule_crossref.metaclass
         minfo_list = mclass_info.cont if ref_type == "cont" else mclass_info.refs
         minfo_list.append(\
-                (attr_name, MetaClassCrossRef(rule_name, attr_name, \
+                (attr_name, MetaClassCrossRef(target_metaclass, attr_name, \
                                 rule_crossref.position), '*'))
 
     # Keep track of metaclass references and containments
@@ -410,10 +360,9 @@ def assignment_SA(parser, node, children):
         # Override rhs by its PEG rule for further processing
         rhs = rhs[1]
 
-    # Special case. List as rhs
-    # If operation is += there must be at least one element in the list
     if type(rhs) is tuple:
         if rhs[0] == "list":
+            # Special case. List as rhs
             _, list_el_rule, separator = rhs
 
             # List rule may be a ref-cont
@@ -423,6 +372,7 @@ def assignment_SA(parser, node, children):
 
             base_rule_name = list_el_rule.rule_name
             if op == '+=':
+                # If operation is += there must be at least one element in the list
                 assignment_rule = Sequence(nodes=[list_el_rule,
                         OneOrMore(nodes=Sequence(nodes=[separator, list_el_rule]))],
                         rule_name='__asgn_list', root=True)
@@ -458,10 +408,10 @@ def assignment_SA(parser, node, children):
             # Determine type for proper initialization
             if rhs.rule_name in PRIMITIVE_TYPE_NAMES:
                 mclass_info.attrib_types[attr_name] = rhs.rule_name
-            elif type(rhs) is not RuleMatchCrossRef and isinstance(rhs, Match):
+            elif type(rhs) is not RuleCrossRef and isinstance(rhs, Match):
                 mclass_info.attrib_types[attr_name] = 'STRING'
             else:
-                mclass_info.attrib_types[attr_name] = None
+                mclass_info.attrib_types[attr_name] = rhs.rule_name
 
     assignment_rule._attr_name = attr_name
     assignment_rule._exp_str = attr_name    # For nice error reporting
@@ -506,19 +456,31 @@ def rule_match_alt_SA(parser, node, children):
             position=node.position))
     # Here a name of the metaclass (rule) is expected but to support
     # forward referencing we are postponing resolving to second_pass.
-    return RuleMatchCrossRef(rule_name, node.position)
+    return RuleCrossRef(rule_name, rule_name, node.position)
 rule_match_alt.sem = rule_match_alt_SA
 
 def rule_match_SA(parser, node, children):
     rule_name = str(node)
     # Here a name of the metaclass (rule) is expected but to support
     # forward referencing we are postponing resolving to second_pass.
-    return ("cont", RuleMatchCrossRef(rule_name, node.position))
+    # For containments a PEG rule name and target meta-class name are
+    # the same.
+    return ("cont", RuleCrossRef(rule_name, rule_name, node.position))
 rule_match.sem = rule_match_SA
 
 def rule_link_SA(parser, node, children):
     # A link to some other metaclass will be the value of its name attribute.
-    return ("link", ID)
+    print("RULELINK", str(node))
+    metaclass_name = children[0]
+    if metaclass_name in PRIMITIVE_TYPE_NAMES:
+        raise TextXSemanticError('Primitive types can not be referenced at {}.'\
+                .format(node.position))
+    if len(children)>1:
+        rule_name = children[1]
+    else:
+        # Default rule for matching obj cross-refs
+        rule_name = 'ID'
+    return ("link", RuleCrossRef(rule_name, metaclass_name, node.position))
 rule_link.sem = rule_link_SA
 
 def list_match_SA(parser, node, children):
@@ -537,111 +499,6 @@ list_match.sem = list_match_SA
 bracketed_choice.sem = SemanticActionSingleChild()
 
 
-def parse_tree_to_objgraph(parser, parse_tree):
-    """
-    Transforms parse_tree to object graph representing model in a
-    new language.
-    """
-
-    def process_node(node):
-        if isinstance(node, Terminal):
-            return convert(node.value, node.rule_name)
-
-        assert node.rule.root, "Not a root node: {}".format(node.rule.rule_name)
-        # If this node is created by some root rule
-        # create metaclass instance.
-        inst = None
-        if not node.rule_name.startswith('__asgn'):
-            # If not assignment
-            # Create metaclass instance
-            metacls_info = parser._metacls_info[node.rule_name]
-            mclass = metacls_info.metacls
-
-            # If there is no attributes collected it is an abstract rule
-            # Skip it.
-            if not metacls_info.attrib_types:
-                return process_node(node[0])
-
-            if parser.debug:
-                print("CREATING INSTANCE {}".format(node.rule_name))
-
-            inst = mclass()
-            # Initialize attributes
-            for attr_name, constructor in metacls_info.attrib_types.items():
-                init_value = CONSTRUCTORS[constructor]() if constructor else None
-                setattr(inst, attr_name, init_value)
-
-            parser._inst_stack.append(inst)
-
-            for n in node:
-                if parser.debug:
-                    print("Recursing into {} = '{}'".format(type(n).__name__, str(n)))
-                process_node(n)
-
-            old = parser._inst_stack.pop()
-
-            # Special case for 'name' attrib. It is used for cross-referencing
-            if hasattr(inst, 'name') and inst.name:
-                inst.__name__ = inst.name
-                parser._instances[inst.name] = inst
-
-            if parser.debug:
-                old_str = "{}(name={})".format(type(old).__name__, old.name)  \
-                        if hasattr(old, 'name') else type(old).__name__
-                print("LEAVING INSTANCE {}".format(old_str))
-
-        else:
-            # Handle assignments
-            attr_name = node.rule._attr_name
-            op = node.rule_name.split('_')[-1]
-            i = parser._inst_stack[-1]
-
-            if parser.debug:
-                print('Handling assignment: {} {}...'.format(op, attr_name))
-
-            if op == 'optional':
-                setattr(i, attr_name, True)
-
-            elif op == 'plain':
-                attr = getattr(i, attr_name)
-                if attr and type(attr) is not list:
-                    raise TextXSemanticError("Multiple assignments to meta-attribute {} at {}"\
-                            .format(attr_name, parser.pos_to_linecol(node.position)))
-
-                # Recurse and convert value to proper type
-                value = convert(process_node(node[0]), node[0].rule_name)
-                if parser.debug:
-                    print("{} = {}".format(attr_name, value))
-                if type(attr) is list:
-                    attr.append(value)
-                else:
-                    setattr(i, attr_name, value)
-
-            elif op in ['list', 'oneormore', 'zeroormore']:
-                for n in node:
-                    # If the node is separator skip
-                    if n.rule_name != 'sep':
-                        # Convert node to proper type
-                        # Rule links will be resolved later
-                        value = convert(process_node(n), n.rule_name)
-                        if parser.debug:
-                            print("{}:{}[] = {}".format(type(i).__name__, 
-                                attr_name, value))
-
-                        if not hasattr(i, attr_name):
-                            setattr(i, attr_name, [])
-                        getattr(i, attr_name).append(value)
-            else:
-                # This shouldn't happen
-                assert False
-
-        return inst
-
-    model = process_node(parse_tree)
-    assert not parser._inst_stack
-
-    return model
-
 def parser_from_str(language_def, ignore_case=True, debug=False):
 
     if debug:
@@ -653,16 +510,16 @@ def parser_from_str(language_def, ignore_case=True, debug=False):
 
     # This is used during parser construction phase.
     parser._metacls_info = {
-            'ID': MetaClassInfo(metacls=type('ID', (), {}), attrib_types={}, refs=[],
-                                cont=[], inh_by=[]),
-            'BOOL': MetaClassInfo(metacls=type('BOOL', (), {}), attrib_types={}, refs=[],
-                                cont=[], inh_by=[]),
-            'INT': MetaClassInfo(metacls=type('INT', (), {}), attrib_types={}, refs=[],
-                                cont=[], inh_by=[]),
-            'FLOAT': MetaClassInfo(metacls=type('FLOAT', (), {}), attrib_types={}, refs=[],
-                                cont=[], inh_by=[]),
-            'STRING': MetaClassInfo(metacls=type('STRING', (), {}), attrib_types={}, refs=[],
-                                cont=[], inh_by=[]),
+            'ID': MetaClassInfo(metacls=type('ID', (), {}), attrib_types={},
+                                refs=[], cont=[], inh_by=[]),
+            'BOOL': MetaClassInfo(metacls=type('BOOL', (), {}), attrib_types={},
+                                refs=[], cont=[], inh_by=[]),
+            'INT': MetaClassInfo(metacls=type('INT', (), {}), attrib_types={},
+                                refs=[], cont=[], inh_by=[]),
+            'FLOAT': MetaClassInfo(metacls=type('FLOAT', (), {}), attrib_types={},
+                                refs=[], cont=[], inh_by=[]),
+            'STRING': MetaClassInfo(metacls=type('STRING', (), {}), attrib_types={},
+                                refs=[], cont=[], inh_by=[]),
             }
 
     # Builtin rules representing primitive types
