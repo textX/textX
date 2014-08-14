@@ -9,10 +9,10 @@ hello_meta = metamodel_from_file('hello.tx')
 metamodel_export(hello_meta, 'hello_meta.dot')
 
 # Instantiate model
-hello_model = hello_meta.model_from_file('example.hello')
+example_hello_model = hello_meta.model_from_file('example.hello')
 
 # Optionally export model to dot
-model_export(hello_model, 'example.dot')
+model_export(example_hello_model, 'example.dot')
 
 
 

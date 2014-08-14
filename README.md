@@ -39,22 +39,22 @@ Quick start
   metamodel_export(hello_meta, 'hello_meta.dot')
   ```
 
-  ![](https://raw.githubusercontent.com/igordejanovic/textX/master/examples/hello_world/hello_metamodel.png)
+  ![hello_meta.dot](https://raw.githubusercontent.com/igordejanovic/textX/master/examples/hello_world/hello_metamodel.png)
 
 5. Use meta-model to create models from textual description:
 
   ```python
-  hello_model = hello_meta.model_from_file('example.hello')
+  example_hello_model = hello_meta.model_from_file('example.hello')
   ```
 
 6. Optionally export model to dot:
 
   ```python
   from textx.export import model_export
-  model_export(hello_model, 'example.dot')
+  model_export(example_hello_model, 'example.dot')
   ``` 
 
-  ![](https://raw.githubusercontent.com/igordejanovic/textX/master/examples/hello_world/hello_model.png)
+  ![example.dot](https://raw.githubusercontent.com/igordejanovic/textX/master/examples/hello_world/hello_model.png)
 
 7. Use your model: interpret it, generate code ...
 
