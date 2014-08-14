@@ -1,0 +1,81 @@
+/*
+  This is a textX specification of pyFlies DSL for Reaction Time test
+  experiments definition.
+  Author: Igor R. Dejanovic <igor DOT dejanovic AT gmail DOT com>
+  Copyright: (c) 2014 Igor R. Dejanovic <igor DOT dejanovic AT gmail DOT com>
+  License: MIT License
+*/
+
+PyFliesModel:
+  elements+=ModelElement
+;
+
+ModelElement:
+  TestDef|Experiment
+;
+
+TestDef:
+  "test" name=ID (":" test_type=ID)? ( "<" inherits*={[TestDef] ","} )? "{"
+    params*=TestParam
+  "}"
+;
+
+TestParam:
+  name=ID value=BASETYPE
+;
+
+Block:
+  Intro|Test|Sequence|Randomize|Subject
+;
+
+Experiment:
+  'experiment' '{'
+    blocks*=Block
+  '}'
+;
+
+Sequence:
+  'sequence' '{'
+    blocks*=Block
+  '}'
+;
+
+Randomize:
+  'randomize' '{'
+    blocks*=Block
+  '}'
+;
+
+Test:
+  'test' type=[TestDef] practice?="practice"
+;
+
+Intro:
+  /====*/
+  content=/([^=][^=]?[^=]?)*/
+  /====*/
+;
+
+Subject:
+  'subject' '{'
+    attribute+=SubjectAttribute
+  '}'
+;
+
+SubjectAttribute:
+  name=ID type=SubjectAttributeType (label=STRING)?
+;
+
+SubjectAttributeType:
+  "int"|"string"|"float"|Enum
+;
+
+Enum:
+  '[' values+={ID ','} ']'
+;
+
+// Special rule for comments
+Comment:
+  /#.*$/
+;
+
