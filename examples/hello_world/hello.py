@@ -14,7 +14,7 @@ model_export(hello_model, 'example.dot')
 hello_metamodel = parser.get_metamodel()
 
 # Export meta-model to dot
-metamodel_export(hello_metamodel, 'example_meta.dot')
+metamodel_export(hello_metamodel, 'hello_meta.dot')
 
 
 

@@ -43,7 +43,7 @@ Quick start
   ```python
   from textx.export import metamodel_export 
   hello_metamodel = parser.get_metamodel()
-  metamodel_export(hello_metamodel, 'example_meta.dot')
+  metamodel_export(hello_metamodel, 'hello_meta.dot')
   ``` 
 
 6. Optionally export your model to dot:
