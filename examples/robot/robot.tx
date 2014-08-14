@@ -1,0 +1,41 @@
+/*
+This example is inspired by an example from LISA tool (http://labraj.uni-mb.si/lisa/)
+presented during the lecture given by prof. Marjan Mernik (http://lpm.uni-mb.si/mernik/)
+at the University of Novi Sad in June, 2011.
+
+An example of the robot program:
+   begin
+       up 4
+       left 9
+       down
+       right 1
+   end
+
+*/
+
+// This is a normal rule. For each rule a class with the same name will be
+// created.
+Program:
+  'begin'
+    command*=Command    // *= operator means zero or more matches. commmand will be
+                        // a list of Command objects
+  'end'
+;
+
+Command:
+  dir=Direction (steps=INT)?
+;
+
+// This is an example of a Match Rule
+// Match rules has either string match, regex match or other match rule as
+// its alternatives (e.g. INT, STRING... or some user match rule)
+// Match rule is treated as a contained match. No class will get created.
+Direction:
+  "up"|"down"|"left"|"right"
+;
+
+
+// Special rule for comments. In robot programs comments start with //
+Comment:
+  /\/\/.*$/
+;

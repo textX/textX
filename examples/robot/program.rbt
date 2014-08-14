@@ -1,0 +1,6 @@
+begin
+  up 4   //go up 4 steps
+  right // step is optional
+  up 3
+  left 7
+end
