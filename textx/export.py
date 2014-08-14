@@ -6,8 +6,9 @@
 # Copyright: (c) 2014 Igor R. Dejanovic <igor DOT dejanovic AT gmail DOT com>
 # License: MIT License
 #######################################################################
-from itertools import chain
-from textx import PRIMITIVE_TYPE_NAMES, TextXMetaClass
+from const import MULT_ZEROORMORE, MULT_ONEORMORE, MULT_ONE
+from textx import BASE_TYPE_NAMES
+from metamodel import TextXClass
 
 PRIMITIVE_PYTHON_TYPES = [int, float, str, bool]
 
@@ -25,55 +26,35 @@ HEADER = '''
 
 '''
 
-def metamodel_export(meta_model, file_name):
+def metamodel_export(metamodel, file_name):
     processed_set = set()
 
 
     with open(file_name, 'w') as f:
         f.write(HEADER)
 
-        for name, m in meta_model.items():
+        for name, cls in metamodel.items():
             attrs = ""
-            for attr_name, attr_type in m.attrib_types.items():
-                # Check if reference
-                reference = False
-                for ref in m.refs:
-                    if ref[0] == attr_name:
-                        reference = True
-                        break
-                for cont in m.cont:
-                    if cont[0] == attr_name:
-                        reference = True
-                        break
-                if not reference:
-                    if attr_type is not None:
-                        attrs += "+{}:{}\\l".format(attr_name, attr_type)
-                    else:
-                        attrs += "+{}\\l".format(attr_name)
+            for attr in cls._attrs.values():
+                arrowtail = "arrowtail=diamond, " if attr.cont else ""
+                mult_list = attr.mult in [MULT_ZEROORMORE, MULT_ONEORMORE]
+                attr_type = "list[{}]".format(attr.cls.__name__) \
+                        if mult_list else attr.cls.__name__
+                if attr.cls.__name__ in BASE_TYPE_NAMES:
+                    attrs += "+{}:{}\\l".format(attr.name, attr_type)
+                else:
+                    mult = attr.mult if not attr.mult == MULT_ONE else ""
+                    f.write('{} -> {}[{}dir=both, headlabel="{} {}"]\n'\
+                        .format(id(cls), id(attr.cls), arrowtail, attr.name, mult))
+            f.write('{}[ label="{{{}|{}}}"]\n'.format(\
+                    id(cls), name, attrs))
 
             inheritance = ""
-            for inherited_by in m.inh_by:
-                inheritance += '{} -> {} [dir=back]\n'.format(name, inherited_by.__name__)
+            for inherited_by in cls._inh_by:
+                f.write('{} -> {} [dir=back]\n'\
+                        .format(id(cls), id(metamodel[inherited_by.__name__])))
 
-            containments = ""
-            for cont in m.cont:
-                attr_name, metacls, mult = cont
-                containments += '{} -> {}[arrowtail=diamond, dir=both, headlabel="{} {}"]\n'\
-                        .format(name, metacls.__name__, attr_name, '')
-
-            references = ""
-            for ref in m.refs:
-                attr_name, metacls, mult = ref
-                references += '{} -> {}[arrowhead=normal, headlabel="{} {}"]\n'\
-                        .format(name, metacls.__name__, attr_name, mult)
-
-            f.write('{}[ label="{{{}|{}}}"]\n'.format(\
-                    name, name, attrs))
-            f.write(inheritance)
-            f.write(containments)
-            f.write(references)
             f.write("\n")
-
 
         f.write("\n}\n")
 
@@ -85,55 +66,51 @@ def model_export(model, file_name):
     with open(file_name, 'w') as f:
         f.write(HEADER)
 
-        def _export(m):
+        def _export(obj):
 
-            if m in processed_set or type(m) in PRIMITIVE_PYTHON_TYPES:
+            if obj in processed_set or type(obj) in PRIMITIVE_PYTHON_TYPES:
                 return
 
-            processed_set.add(m)
+            processed_set.add(obj)
 
             attrs = ""
-            obj_cls_name = m.__class__.__name__
-            metaclass_info = model._metacls_info[obj_cls_name]
-            refs_cont_names = [ref[0] \
-                    for ref in chain(metaclass_info.refs, metaclass_info.cont)]
-            ref_names = [ref[0] for ref in metaclass_info.refs]
-            cont_names = [ref[0] for ref in metaclass_info.cont]
+            obj_cls = obj.__class__
             name = ""
-            for attr_name, attr_type in metaclass_info.attrib_types.items():
+            for attr_name, attr in obj_cls._attrs.items():
 
-                value = getattr(m, attr_name)
-                endmark = 'arrowtail=diamond dir=both' if attr_name in cont_names else ""
+                attr_value = getattr(obj, attr_name)
+
+                endmark = 'arrowtail=diamond dir=both' if attr.cont else ""
 
                 # Plain attributes
-                if type(value) in PRIMITIVE_PYTHON_TYPES:
+                if attr.cls.__name__ in BASE_TYPE_NAMES:
                     if attr_name == 'name':
-                        name = value
+                        name = attr_value
                     else:
-                        attrs += "{}:{}={}\\l".format(attr_name, type(value).__name__, value)
+                        attrs += "{}:{}={}\\l".format(attr_name, type(attr_value)\
+                                .__name__, attr_value)
 
                 # Object references
-                elif isinstance(value, TextXMetaClass):
-                    f.write('{} -> {} [label="{}" {}]\n'.format(id(m), id(value),
+                elif isinstance(attr_value, TextXClass):
+                    f.write('{} -> {} [label="{}" {}]\n'.format(id(obj), id(attr_value),
                         attr_name, endmark))
-                    _export(value)
+                    _export(attr_value)
 
                 # List of references or primitive values
-                elif type(value) is list:
-                    if attr_name in refs_cont_names:
-                        for idx, obj in enumerate(value):
-                            f.write('{} -> {} [label="{}:{}" {}]\n'\
-                                    .format(id(m), id(obj), attr_name, idx, endmark))
-                            _export(obj)
-                    else:
+                elif type(attr_value) is list:
+                    if attr.cls.__name__ in BASE_TYPE_NAMES:
                         attrs += "{}:list=[".format(attr_name)
-                        attrs += ",".join(value)
+                        attrs += ",".join(attr_value)
                         attrs += "]\\l"
+                    else:
+                        for idx, list_obj in enumerate(attr_value):
+                            f.write('{} -> {} [label="{}:{}" {}]\n'\
+                                    .format(id(obj), id(list_obj), attr_name, idx, endmark))
+                            _export(list_obj)
 
+            name = "{}:{}".format(name,obj_cls.__name__)
 
-            name = "{}:{}".format(name,obj_cls_name)
-
-            f.write('{}[label="{{{}|{}}}"]\n'.format(id(m), name, attrs))
+            f.write('{}[label="{{{}|{}}}"]\n'.format(id(obj), name, attrs))
 
         _export(model)
 

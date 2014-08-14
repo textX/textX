@@ -1,15 +1,10 @@
 from arpeggio import Parser, Sequence, NoMatch, EOF, Terminal
-from textx.exceptions import TextXSyntaxError
+from exceptions import TextXSyntaxError
 
-CONSTRUCTORS = {
-        'ID': str,
-        'BOOL': bool,
-        'INT' : int,
-        'FLOAT': float,
-        'STRING': str,
-        'LIST': list,
-        }
 def convert(value, _type):
+    """
+    Convert instances of textx types to python types.
+    """
     return {
             'BOOL'  : lambda x: x=='1' or x.lower()=='true',
             'INT'   : lambda x: int(x),
@@ -17,15 +12,19 @@ def convert(value, _type):
             'STRING': lambda x: x.strip('"\''),
             }.get(_type, lambda x: x)(value)
 
-def get_language_parser(top_rule, comments_model, debug=False):
-    class TextXLanguageParser(Parser):
+def get_model_parser(top_rule, comments_model, debug=False):
+    """
+    Creates model parser for the given language.
+    """
+
+    class TextXModelParser(Parser):
         """
         Parser created from textual textX language description.
         Semantic actions for this parser will construct object
         graph representing model on the given language.
         """
         def __init__(self, *args, **kwargs):
-            super(TextXLanguageParser, self).__init__(*args, **kwargs)
+            super(TextXModelParser, self).__init__(*args, **kwargs)
 
             # By default first rule is starting rule
             # and must be followed by the EOF
@@ -46,27 +45,29 @@ def get_language_parser(top_rule, comments_model, debug=False):
             except NoMatch as e:
                 raise TextXSyntaxError(str(e))
 
-        def get_model(self, file_name=None):
+        def get_model_from_file(self, file_name):
             """
             Creates model from the parse tree from the previous parse call.
             If file_name is given file will be parsed before model construction.
             """
+            with open(file_name, 'r') as f:
+                model_str = f.read()
+
+            return self.get_model_from_str(model_str)
+
+        def get_model_from_str(self, model_str):
+            """
+            Parses given string and creates model object graph.
+            """
             if self.debug:
                 print("*** MODEL ***")
-
-            if file_name:
-                self.parse_file(file_name)
-
+            self.parse(model_str)
             # Transform parse tree to model. Skip root node which
             # represents the whole file ending in EOF.
             model = parse_tree_to_objgraph(self, self.parse_tree[0])
-            model._metacls_info = self._metacls_info
             return model
 
-        def get_metamodel(self):
-            return self._metacls_info
-
-    return TextXLanguageParser()
+    return TextXModelParser()
 
 
 def parse_tree_to_objgraph(parser, parse_tree):
@@ -85,25 +86,18 @@ def parse_tree_to_objgraph(parser, parse_tree):
         inst = None
         if not node.rule_name.startswith('__asgn'):
             # If not assignment
-            # Create metaclass instance
-            metacls_info = parser._metacls_info[node.rule_name]
-            mclass = metacls_info.metacls
+            # Get class
+            mclass = parser.metamodel[node.rule_name]
 
             # If there is no attributes collected it is an abstract rule
             # Skip it.
-            if not metacls_info.attrib_types:
+            if not mclass._attrs:
                 return process_node(node[0])
 
             if parser.debug:
                 print("CREATING INSTANCE {}".format(node.rule_name))
 
             inst = mclass()
-            # Initialize attributes
-            for attr_name, constructor in metacls_info.attrib_types.items():
-                init_value = CONSTRUCTORS[constructor]()\
-                        if constructor in CONSTRUCTORS else None
-                setattr(inst, attr_name, init_value)
-
             parser._inst_stack.append(inst)
 
             for n in node:
@@ -111,7 +105,7 @@ def parse_tree_to_objgraph(parser, parse_tree):
                     print("Recursing into {} = '{}'".format(type(n).__name__, str(n)))
                 process_node(n)
 
-            old = parser._inst_stack.pop()
+            parser._inst_stack.pop()
 
             # Special case for 'name' attrib. It is used for cross-referencing
             if hasattr(inst, 'name') and inst.name:
@@ -119,9 +113,9 @@ def parse_tree_to_objgraph(parser, parse_tree):
                 parser._instances[inst.name] = inst
 
             if parser.debug:
-                old_str = "{}(name={})".format(type(old).__name__, old.name)  \
-                        if hasattr(old, 'name') else type(old).__name__
-                print("LEAVING INSTANCE {}".format(old_str))
+                old_str = "{}(name={})".format(type(inst).__name__, inst.name)  \
+                        if hasattr(inst, 'name') else type(inst).__name__
+                print("LEAVING INSTANCE {}".format(str))
 
         else:
             # Handle assignments
@@ -138,7 +132,7 @@ def parse_tree_to_objgraph(parser, parse_tree):
             elif op == 'plain':
                 attr = getattr(i, attr_name)
                 if attr and type(attr) is not list:
-                    raise TextXSemanticError("Multiple assignments to meta-attribute {} at {}"\
+                    raise TextXSemanticError("Multiple assignments to attribute {} at {}"\
                             .format(attr_name, parser.pos_to_linecol(node.position)))
 
                 # Recurse and convert value to proper type
@@ -157,9 +151,6 @@ def parse_tree_to_objgraph(parser, parse_tree):
                         # Convert node to proper type
                         # Rule links will be resolved later
                         value = convert(process_node(n), n.rule_name)
-                        if parser.debug:
-                            print("{}:{}[] = {}".format(type(i).__name__, 
-                                attr_name, value))
 
                         if not hasattr(i, attr_name) or getattr(i, attr_name) is None:
                             setattr(i, attr_name, [])

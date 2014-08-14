@@ -1,20 +1,19 @@
-from textx import parser_from_file
+#!/usr/bin/env python
+from textx.metamodel import metamodel_from_file
 from textx.export import metamodel_export, model_export
 
-# Construct parser
-parser = parser_from_file('hello.tx')
+# Get meta-model from language description
+hello_meta = metamodel_from_file('hello.tx')
 
-# Get model
-hello_model = parser.get_model('example.hello')
+# Optionally export meta-model to dot
+metamodel_export(hello_meta, 'hello_meta.dot')
 
-# Export model to dot
+# Instantiate model
+hello_model = hello_meta.model_from_file('example.hello')
+
+# Optionally export model to dot
 model_export(hello_model, 'example.dot')
 
-# Get meta-model
-hello_metamodel = parser.get_metamodel()
-
-# Export meta-model to dot
-metamodel_export(hello_metamodel, 'hello_meta.dot')
 
 
 
