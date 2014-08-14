@@ -20,37 +20,43 @@ Quick start
   ;
   ```
 
-2. Create some test content in your new language (`example.hello`):
+2. Create some content (i.e. model) in your new language (`example.hello`):
 
   ```
   hello World, Solar System, Universe
   ```
 
-3. Create parser and model (python object graph based on your language description):
+3. Create meta-model from textX language description:
 
   ```python
-  from textx import parser_from_file
-  parser = parser_from_file('hello.tx')
-  hello_model = parser.get_model('example.hello')
+  from textx.metamodel import metamodel_from_file
+  hello_meta = metamodel_from_file('hello.tx')
+  ```
+4. Optionally export meta-model to dot (visualize your language abstract syntax):
+
+  ```python
+  from textx.export import metamodel_export
+  metamodel_export(hello_meta, 'hello_meta.dot')
   ```
 
-  Same parser may be used multiple times.
+  ![](https://raw.githubusercontent.com/igordejanovic/textX/master/examples/hello_world/hello_metamodel.png)
 
-4. Use your model: interpret it or generate code.
-
-5. Optionally export meta-model to dot (visualize your language abstract syntax):
+5. Use meta-model to create models from textual description:
 
   ```python
-  from textx.export import metamodel_export 
-  hello_metamodel = parser.get_metamodel()
-  metamodel_export(hello_metamodel, 'hello_meta.dot')
-  ``` 
+  hello_model = hello_meta.model_from_file('example.hello')
+  ```
 
-6. Optionally export your model to dot:
+6. Optionally export model to dot:
 
   ```python
   from textx.export import model_export
   model_export(hello_model, 'example.dot')
-  ```
+  ``` 
+
+  ![](https://raw.githubusercontent.com/igordejanovic/textX/master/examples/hello_world/hello_model.png)
+
+7. Use your model: interpret it, generate code ...
+
 
 
