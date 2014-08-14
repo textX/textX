@@ -314,6 +314,9 @@ class_name.sem = class_name_SA
 def alternative_match_SA(parser, node, children):
     # This is a match rule
     parser._current_cls._type = RULE_MATCH
+    # String representation of match alternatives.
+    parser._current_cls._match_str = "|".join([str(match) \
+            for match in children])
     return OrderedChoice(nodes=children[:])
 alternative_match.sem = alternative_match_SA
 

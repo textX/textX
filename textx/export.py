@@ -6,7 +6,7 @@
 # Copyright: (c) 2014 Igor R. Dejanovic <igor DOT dejanovic AT gmail DOT com>
 # License: MIT License
 #######################################################################
-from const import MULT_ZEROORMORE, MULT_ONEORMORE, MULT_ONE
+from const import MULT_ZEROORMORE, MULT_ONEORMORE, MULT_ONE, RULE_MATCH
 from textx import BASE_TYPE_NAMES
 from metamodel import TextXClass
 
@@ -35,19 +35,23 @@ def metamodel_export(metamodel, file_name):
 
         for name, cls in metamodel.items():
             attrs = ""
-            for attr in cls._attrs.values():
-                arrowtail = "arrowtail=diamond, " if attr.cont else ""
-                mult_list = attr.mult in [MULT_ZEROORMORE, MULT_ONEORMORE]
-                attr_type = "list[{}]".format(attr.cls.__name__) \
-                        if mult_list else attr.cls.__name__
-                if attr.ref:
-                    # If attribute is a reference
-                    mult = attr.mult if not attr.mult == MULT_ONE else ""
-                    f.write('{} -> {}[{}dir=both, headlabel="{} {}"]\n'\
-                        .format(id(cls), id(attr.cls), arrowtail, attr.name, mult))
-                else:
-                    # If it is plain type
-                    attrs += "+{}:{}\\l".format(attr.name, attr_type)
+            if cls._type == RULE_MATCH:
+                attrs = cls._match_str.replace("|", "\\|")
+            else:
+                for attr in cls._attrs.values():
+                    arrowtail = "arrowtail=diamond, " if attr.cont else ""
+                    mult_list = attr.mult in [MULT_ZEROORMORE, MULT_ONEORMORE]
+                    attr_type = "list[{}]".format(attr.cls.__name__) \
+                            if mult_list else attr.cls.__name__
+                    if attr.ref:
+                        # If attribute is a reference
+                        mult = attr.mult if not attr.mult == MULT_ONE else ""
+                        f.write('{} -> {}[{}dir=both, headlabel="{} {}"]\n'\
+                            .format(id(cls), id(attr.cls), arrowtail, attr.name, mult))
+                    else:
+                        # If it is plain type
+                        attrs += "+{}:{}\\l".format(attr.name, attr_type)
+
             f.write('{}[ label="{{{}|{}}}"]\n'.format(\
                     id(cls), name, attrs))
 
