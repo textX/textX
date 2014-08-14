@@ -115,7 +115,7 @@ def parse_tree_to_objgraph(parser, parse_tree):
             if parser.debug:
                 old_str = "{}(name={})".format(type(inst).__name__, inst.name)  \
                         if hasattr(inst, 'name') else type(inst).__name__
-                print("LEAVING INSTANCE {}".format(str))
+                print("LEAVING INSTANCE {}".format(node.rule_name))
 
         else:
             # Handle assignments

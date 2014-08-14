@@ -1,7 +1,7 @@
 from collections import namedtuple
 
 from textx import language_from_str, python_type, BASE_TYPE_NAMES
-from const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE
+from const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, RULE_NORMAL
 
 
 class MetaAttr(object):
@@ -13,13 +13,16 @@ class MetaAttr(object):
         cls(str, TextXClass or base python type): The type of the attribute.
         mult(str): Multiplicity
         cont(bool): Is this attribute contained inside object.
+        ref(bool): Is this attribute a reference. If it is not a reference it must
+            be containment.
         position(int): A position in the input string where attribute is defined.
     """
-    def __init__(self, name, cls=None, mult=MULT_ONE, cont=True, position=0):
+    def __init__(self, name, cls=None, mult=MULT_ONE, cont=True, ref=False, position=0):
         self.name = name
         self.cls = cls
         self.mult = mult
         self.cont = cont
+        self.ref = ref
         self.position = position
 
 
@@ -62,7 +65,9 @@ class TextXMetaModel(dict):
 
             # Inheriting classes
             _inh_by = inherits if inherits else []
+
             _position = position
+            _type = RULE_NORMAL
 
             def __init__(self):
                 """
@@ -81,9 +86,9 @@ class TextXMetaModel(dict):
 
             @classmethod
             def new_attr(clazz, name, cls=None, mult=MULT_ONE, cont=True,
-                    position=0):
+                    ref=False, position=0):
                 """Creates new meta attribute of this class."""
-                attr = MetaAttr(name, cls, mult, cont, position)
+                attr = MetaAttr(name, cls, mult, cont, ref, position)
                 clazz._attrs[name] = attr
                 return attr
 

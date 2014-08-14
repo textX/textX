@@ -40,12 +40,14 @@ def metamodel_export(metamodel, file_name):
                 mult_list = attr.mult in [MULT_ZEROORMORE, MULT_ONEORMORE]
                 attr_type = "list[{}]".format(attr.cls.__name__) \
                         if mult_list else attr.cls.__name__
-                if attr.cls.__name__ in BASE_TYPE_NAMES:
-                    attrs += "+{}:{}\\l".format(attr.name, attr_type)
-                else:
+                if attr.ref:
+                    # If attribute is a reference
                     mult = attr.mult if not attr.mult == MULT_ONE else ""
                     f.write('{} -> {}[{}dir=both, headlabel="{} {}"]\n'\
                         .format(id(cls), id(attr.cls), arrowtail, attr.name, mult))
+                else:
+                    # If it is plain type
+                    attrs += "+{}:{}\\l".format(attr.name, attr_type)
             f.write('{}[ label="{{{}|{}}}"]\n'.format(\
                     id(cls), name, attrs))
 
@@ -83,7 +85,7 @@ def model_export(model, file_name):
                 endmark = 'arrowtail=diamond dir=both' if attr.cont else ""
 
                 # Plain attributes
-                if attr.cls.__name__ in BASE_TYPE_NAMES:
+                if not attr.ref:
                     if attr_name == 'name':
                         name = attr_value
                     else:
@@ -98,7 +100,7 @@ def model_export(model, file_name):
 
                 # List of references or primitive values
                 elif type(attr_value) is list:
-                    if attr.cls.__name__ in BASE_TYPE_NAMES:
+                    if not attr.ref:
                         attrs += "{}:list=[".format(attr_name)
                         attrs += ",".join(attr_value)
                         attrs += "]\\l"

@@ -19,7 +19,7 @@ from arpeggio import RegExMatch as _
 
 from exceptions import TextXSyntaxError, TextXSemanticError
 from const import MULT_ZEROORMORE, MULT_ONEORMORE, MULT_ONE, \
-        MULT_OPTIONAL
+        MULT_OPTIONAL, RULE_MATCH, RULE_ABSTRACT
 
 
 # textX grammar
@@ -251,6 +251,20 @@ class TextXModelSA(SemanticAction):
             for attr in cls._attrs.values():
                 attr.cls = _resolve_cls(attr.cls)
 
+                # If target cls is of a base type or match rule
+                # then attr can not be a reference.
+                if attr.cls.__name__ in BASE_TYPE_NAMES \
+                        or attr.cls._type == "match":
+                    attr.ref = False
+                    attr.cont = True
+                else:
+                    attr.ref = True
+
+                if parser.debug:
+                    print("Resolved attribute {}:{}[cls={}, cont={}, ref={}, mult={}, pos={}]"\
+                            .format(cls.__name__, attr.name, attr.cls.__name__, \
+                                attr.cont, attr.ref, attr.mult, attr.position))
+
     def second_pass(self, parser, textx_parser):
         """Cross reference resolving for parser model."""
 
@@ -298,11 +312,15 @@ class_name.sem = class_name_SA
 
 
 def alternative_match_SA(parser, node, children):
+    # This is a match rule
+    parser._current_cls._type = RULE_MATCH
     return OrderedChoice(nodes=children[:])
 alternative_match.sem = alternative_match_SA
 
 
 def alternative_inher_SA(parser, node, children):
+    # This is an abstract rule
+    parser._current_cls._type = RULE_ABSTRACT
     return OrderedChoice(nodes=children[:])
 alternative_inher.sem = alternative_inher_SA
 
@@ -356,6 +374,7 @@ def assignment_SA(parser, node, children):
     # Keep track of metaclass references and containments
     if type(rhs) is tuple and rhs[0] == "link":
         cls_attr.cont = False
+        cls_attr.ref = True
         # Override rhs by its PEG rule for further processing
         rhs = rhs[1]
 
@@ -368,6 +387,7 @@ def assignment_SA(parser, node, children):
             # List rule may be a ref-cont
             if type(list_el_rule) is tuple and list_el_rule[0] == "link":
                 cls_attr.cont = False
+                cls_attr.ref = True
                 list_el_rule = list_el_rule[1]
 
             base_rule_name = list_el_rule.rule_name
@@ -408,9 +428,9 @@ def assignment_SA(parser, node, children):
     cls_attr.cls = ClassCrossRef(cls_name=attr_type, position=node.position)
 
     if parser.debug:
-        print("Created attribute {}:{}[cls={}, cont={}, mult={}, pos={}]"\
+        print("Created attribute {}:{}[cls={}, cont={}, ref={}, mult={}, pos={}]"\
                 .format(cls.__name__, attr_name, cls_attr.cls.cls_name, \
-                    cls_attr.cont, cls_attr.mult, cls_attr.position))
+                    cls_attr.cont, cls_attr.ref, cls_attr.mult, cls_attr.position))
 
     assignment_rule._attr_name = attr_name
     assignment_rule._exp_str = attr_name    # For nice error reporting
