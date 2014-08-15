@@ -39,7 +39,7 @@ Quick start
   metamodel_export(hello_meta, 'hello_meta.dot')
   ```
 
-  ![hello_meta.dot](https://raw.githubusercontent.com/igordejanovic/textX/master/examples/hello_world/hello_metamodel.png)
+  ![hello_meta.dot](https://raw.githubusercontent.com/igordejanovic/textX/master/examples/hello_world/hello_meta.dot.png)
 
 5. Use meta-model to create models from textual description:
 
@@ -54,7 +54,7 @@ Quick start
   model_export(example_hello_model, 'example.dot')
   ``` 
 
-  ![example.dot](https://raw.githubusercontent.com/igordejanovic/textX/master/examples/hello_world/hello_model.png)
+  ![example.dot](https://raw.githubusercontent.com/igordejanovic/textX/master/examples/hello_world/example.dot.png)
 
 7. Use your model: interpret it, generate code ...
 
