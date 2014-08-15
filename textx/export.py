@@ -88,22 +88,8 @@ def model_export(model, file_name):
 
                 endmark = 'arrowtail=diamond dir=both' if attr.cont else ""
 
-                # Plain attributes
-                if not attr.ref:
-                    if attr_name == 'name':
-                        name = attr_value
-                    else:
-                        attrs += "{}:{}={}\\l".format(attr_name, type(attr_value)\
-                                .__name__, attr_value)
 
-                # Object references
-                elif isinstance(attr_value, TextXClass):
-                    f.write('{} -> {} [label="{}" {}]\n'.format(id(obj), id(attr_value),
-                        attr_name, endmark))
-                    _export(attr_value)
-
-                # List of references or primitive values
-                elif type(attr_value) is list:
+                if attr.mult in [MULT_ONEORMORE, MULT_ZEROORMORE]:
                     if not attr.ref:
                         attrs += "{}:list=[".format(attr_name)
                         attrs += ",".join(attr_value)
@@ -113,6 +99,25 @@ def model_export(model, file_name):
                             f.write('{} -> {} [label="{}:{}" {}]\n'\
                                     .format(id(obj), id(list_obj), attr_name, idx, endmark))
                             _export(list_obj)
+                else:
+                    # Plain attributes
+                    if not attr.ref:
+                        if attr_name == 'name':
+                            name = attr_value
+                        else:
+                            if attr.cls.__name__ in BASE_TYPE_NAMES \
+                                    or attr.cls._type == RULE_MATCH:
+                                attrs += "{}:{}={}\\l".format(attr_name, type(attr_value)\
+                                        .__name__, attr_value)
+                            else:
+                                attrs += "{}:{}\\l".format(attr_name, type(attr_value)\
+                                        .__name__)
+                    else:
+                        # Object references
+                        f.write('{} -> {} [label="{}" {}]\n'.format(id(obj), id(attr_value),
+                            attr_name, endmark))
+                        _export(attr_value)
+
 
             name = "{}:{}".format(name,obj_cls.__name__)
 

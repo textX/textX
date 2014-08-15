@@ -92,8 +92,8 @@ class TextXMetaModel(dict):
                 clazz._attrs[name] = attr
                 return attr
 
-            def __str__(self):
-                return str_indent(self)
+            # def __str__(self):
+            #     return str_indent(self)
 
         cls = Meta
         cls.__name__ = name
