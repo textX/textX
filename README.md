@@ -16,7 +16,7 @@ Quick start
   ;
 
   Who:
-    name = ID
+    name = /[^,]*/
   ;
   ```
 
