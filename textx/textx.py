@@ -406,8 +406,8 @@ def assignment_SA(parser, node, children):
                         rule_name='__asgn_list', root=True)
                 cls_attr.mult = MULT_ONEORMORE
             else:
-                assignment_rule = Optional(nodes=[list_el_rule,
-                        ZeroOrMore(nodes=Sequence(nodes=[separator, list_el_rule]))],
+                assignment_rule = Optional(nodes=[Sequence(nodes=[list_el_rule,
+                        ZeroOrMore(nodes=Sequence(nodes=[separator, list_el_rule]))])],
                         rule_name='__asgn_list', root=True)
                 cls_attr.mult = MULT_ZEROORMORE
             rhs = list_el_rule
