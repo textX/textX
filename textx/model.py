@@ -202,7 +202,9 @@ def parse_tree_to_objgraph(parser, parse_tree):
         metamodel = parser.metamodel
 
         def _resolve_ref(obj_ref):
-            assert type(obj_ref) is ObjCrossRef
+            if obj_ref is None:
+                return
+            assert type(obj_ref) is ObjCrossRef, type(obj_ref)
             if parser.debug:
                 print("Resolving obj crossref: {}:{}"\
                         .format(obj_ref.cls, obj_ref.obj_name))
