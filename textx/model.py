@@ -1,5 +1,6 @@
 from arpeggio import Parser, Sequence, NoMatch, EOF, Terminal
-from exceptions import TextXSyntaxError
+from exceptions import TextXSyntaxError, TextXSemanticError
+from const import MULT_ONEORMORE, MULT_ZEROORMORE
 
 def convert(value, _type):
     """
@@ -11,6 +12,22 @@ def convert(value, _type):
             'FLOAT' : lambda x: float(x),
             'STRING': lambda x: x.strip('"\''),
             }.get(_type, lambda x: x)(value)
+
+
+class ObjCrossRef(object):
+    """
+    Used for object cross reference resolving.
+
+    Attributes:
+        obj_name(str): A name of the target object.
+        cls(TextXClass): The target object class.
+        position(int): A position in the input stirng of this cross-ref.
+    """
+    def __init__(self, obj_name, cls, position):
+        self.obj_name = obj_name
+        self.cls = cls
+        self.position = position
+
 
 def get_model_parser(top_rule, comments_model, debug=False):
     """
@@ -76,6 +93,8 @@ def parse_tree_to_objgraph(parser, parse_tree):
     new language.
     """
 
+    metamodel = parser.metamodel
+
     def process_node(node):
         if isinstance(node, Terminal):
             return convert(node.value, node.rule_name)
@@ -87,7 +106,7 @@ def parse_tree_to_objgraph(parser, parse_tree):
         if not node.rule_name.startswith('__asgn'):
             # If not assignment
             # Get class
-            mclass = parser.metamodel[node.rule_name]
+            mclass = metamodel[node.rule_name]
 
             # If there is no attributes collected it is an abstract rule
             # Skip it.
@@ -110,7 +129,10 @@ def parse_tree_to_objgraph(parser, parse_tree):
             # Special case for 'name' attrib. It is used for cross-referencing
             if hasattr(inst, 'name') and inst.name:
                 inst.__name__ = inst.name
-                parser._instances[inst.name] = inst
+                # Objects of each class are in its own namespace
+                if not id(inst.__class__) in parser._instances:
+                    parser._instances[id(inst.__class__)] = {}
+                parser._instances[id(inst.__class__)][inst.name] = inst
 
             if parser.debug:
                 old_str = "{}(name={})".format(type(inst).__name__, inst.name)  \
@@ -122,6 +144,8 @@ def parse_tree_to_objgraph(parser, parse_tree):
             attr_name = node.rule._attr_name
             op = node.rule_name.split('_')[-1]
             i = parser._inst_stack[-1]
+            cls = i.__class__
+            metaattr = cls._attrs[attr_name]
 
             if parser.debug:
                 print('Handling assignment: {} {}...'.format(op, attr_name))
@@ -130,17 +154,21 @@ def parse_tree_to_objgraph(parser, parse_tree):
                 setattr(i, attr_name, True)
 
             elif op == 'plain':
-                attr = getattr(i, attr_name)
-                if attr and type(attr) is not list:
+                attr_value = getattr(i, attr_name)
+                if attr_value and type(attr_value) is not list:
                     raise TextXSemanticError("Multiple assignments to attribute {} at {}"\
                             .format(attr_name, parser.pos_to_linecol(node.position)))
 
                 # Recurse and convert value to proper type
                 value = convert(process_node(node[0]), node[0].rule_name)
-                if parser.debug:
-                    print("{} = {}".format(attr_name, value))
-                if type(attr) is list:
-                    attr.append(value)
+
+                if metaattr.ref and not metaattr.cont:
+                    # If this is non-containing reference create ObjCrossRef
+                    value = ObjCrossRef(obj_name=value, cls=metaattr.cls, \
+                            position=node[0].position)
+
+                if type(attr_value) is list:
+                    attr_value.append(value)
                 else:
                     setattr(i, attr_name, value)
 
@@ -151,6 +179,11 @@ def parse_tree_to_objgraph(parser, parse_tree):
                         # Convert node to proper type
                         # Rule links will be resolved later
                         value = convert(process_node(n), n.rule_name)
+
+                        if metaattr.ref and not metaattr.cont:
+                            # If this is non-containing reference create ObjCrossRef
+                            value = ObjCrossRef(obj_name=value, cls=metaattr.cls,\
+                                    position=node[0].position)
 
                         if not hasattr(i, attr_name) or getattr(i, attr_name) is None:
                             setattr(i, attr_name, [])
@@ -166,45 +199,51 @@ def parse_tree_to_objgraph(parser, parse_tree):
         Resolves obj cross refs.
         """
         resolved_set = set()
-        metaclass_info = parser._metacls_info
+        metamodel = parser.metamodel
+
+        def _resolve_ref(obj_ref):
+            assert type(obj_ref) is ObjCrossRef
+            if parser.debug:
+                print("Resolving obj crossref: {}:{}"\
+                        .format(obj_ref.cls, obj_ref.obj_name))
+            if id(obj_ref.cls) in parser._instances:
+                objs = parser._instances[id(obj_ref.cls)]
+                if obj_ref.obj_name in objs:
+                    return objs[obj_ref.obj_name]
+            raise TextXSemanticError('Unknown object "{}" of class "{}" at {}'\
+                    .format(obj_ref.obj_name, obj_ref.cls.__name__, parser.pos_to_linecol(obj_ref.position)))
 
         def _resolve(o):
+            if parser.debug:
+                print("RESOLVING CLASS: {}".format(o.__class__.__name__))
             if o in resolved_set:
                 return
             resolved_set.add(o)
 
-            if not type(o).__name__ in metaclass_info:
-                return
-
-            metacls = metaclass_info[type(o).__name__]
-
-            refs_cont_names = [ref[0] \
-                        for ref in chain(metacls.refs, metacls.cont)]
-
-            for ref_name in refs_cont_names:
-                value = getattr(o, ref_name)
-                attr_type = metacls.attrib_types[ref_name]
-                if attr_type == 'LIST':
-                    for idx, ref_val in enumerate(value):
-                        if type(ref_val) is str:
-                            target_obj = parser._instances[ref_val]
-                            value[idx] = target_obj
-                            _resolve(target_obj)
-                        else:
-                            _resolve(ref_val)
+            for attr in o.__class__._attrs.values():
+                if parser.debug:
+                    print("RESOLVING ATTR: {}".format(attr.name))
+                    print("mult={}, ref={}, con={}".format(attr.mult, attr.ref, attr.cont))
+                attr_value = getattr(o, attr.name)
+                if attr.mult in [MULT_ONEORMORE, MULT_ZEROORMORE]:
+                    for idx, list_attr_value in enumerate(attr_value):
+                        if attr.ref:
+                            if attr.cont:
+                                _resolve(list_attr_value)
+                            else:
+                                attr_value[idx] = _resolve_ref(list_attr_value)
                 else:
-                    if type(value) is str:
-                        target_obj = parser._instances[value]
-                        setattr(o, ref_name, target_obj)
-                        _resolve(target_obj)
-                    else:
-                        _resolve(value)
+                    if attr.ref:
+                        if attr.cont:
+                            _resolve(attr_value)
+                        else:
+                            setattr(o, attr.name, _resolve_ref(attr_value))
 
         _resolve(model)
 
 
     model = process_node(parse_tree)
-    # model = resolve_refs(model)
+    resolve_refs(model)
     assert not parser._inst_stack
 
     return model

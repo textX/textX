@@ -361,6 +361,7 @@ def assignment_SA(parser, node, children):
     op = children[1]
     rhs = children[2]
     cls = parser._current_cls
+    target_cls = None
 
     if parser.debug:
         print("Processing assignment {}{}...".format(attr_name, op))
@@ -380,6 +381,8 @@ def assignment_SA(parser, node, children):
         cls_attr.ref = True
         # Override rhs by its PEG rule for further processing
         rhs = rhs[1]
+        # Target class is not the same as target rule
+        target_cls = rhs.cls
 
 
     if type(rhs) is tuple:
@@ -392,6 +395,8 @@ def assignment_SA(parser, node, children):
                 cls_attr.cont = False
                 cls_attr.ref = True
                 list_el_rule = list_el_rule[1]
+                # Target class is not the same as target rule
+                target_cls = list_el_rule.cls
 
             base_rule_name = list_el_rule.rule_name
             if op == '+=':
@@ -408,6 +413,7 @@ def assignment_SA(parser, node, children):
             rhs = list_el_rule
             base_rule_name = rhs.rule_name
     else:
+        base_rule_name = rhs.rule_name
         if op == '+=':
             assignment_rule = OneOrMore(nodes=[rhs],
                     rule_name='__asgn_oneormore', root=True)
@@ -424,10 +430,12 @@ def assignment_SA(parser, node, children):
         else:
             assignment_rule = Sequence(nodes=[rhs],
                     rule_name='__asgn_plain', root=True)
-        base_rule_name = rhs.rule_name
 
-    # Use STRING as default attr class
-    attr_type = base_rule_name if base_rule_name else 'STRING'
+    if target_cls:
+        attr_type = target_cls
+    else:
+        # Use STRING as default attr class
+        attr_type = base_rule_name if base_rule_name else 'STRING'
     cls_attr.cls = ClassCrossRef(cls_name=attr_type, position=node.position)
 
     if parser.debug:
