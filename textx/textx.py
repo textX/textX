@@ -402,11 +402,11 @@ def assignment_SA(parser, node, children):
             if op == '+=':
                 # If operation is += there must be at least one element in the list
                 assignment_rule = Sequence(nodes=[list_el_rule,
-                        OneOrMore(nodes=Sequence(nodes=[separator, list_el_rule]))],
+                        ZeroOrMore(nodes=Sequence(nodes=[separator, list_el_rule]))],
                         rule_name='__asgn_list', root=True)
                 cls_attr.mult = MULT_ONEORMORE
             else:
-                assignment_rule = Sequence(nodes=[list_el_rule,
+                assignment_rule = Optional(nodes=[list_el_rule,
                         ZeroOrMore(nodes=Sequence(nodes=[separator, list_el_rule]))],
                         rule_name='__asgn_list', root=True)
                 cls_attr.mult = MULT_ZEROORMORE
