@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 __author__ = "Igor R. Dejanović <igor DOT dejanovic AT gmail DOT com>"
-__version__ = "0.1"
+__version__ = "0.1.1"
 
 from setuptools import setup
 
@@ -12,7 +12,7 @@ AUTHOR = 'Igor R. Dejanovic'
 AUTHOR_EMAIL = 'igor DOT dejanovic AT gmail DOT com'
 LICENSE = 'MIT'
 URL = 'https://github.com/igordejanovic/textX'
-DOWNLOAD_URL = 'https://github.com/igordejanovic/textX/archive/v0.1.tar.gz'
+DOWNLOAD_URL = 'https://github.com/igordejanovic/textX/archive/v%s.tar.gz' % VERSION
 
 setup(
     name = NAME,
