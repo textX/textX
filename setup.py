@@ -1,16 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 __author__ = "Igor R. Dejanović <igor DOT dejanovic AT gmail DOT com>"
-__version__ = "0.1.2"
-
-from setuptools import setup
-try:
-   import pypandoc
-   description = pypandoc.convert('README.md', 'rst')
-except (IOError, ImportError):
-   description = open('README.md').read()
+__version__ = "0.1.3"
 
 NAME = 'textX'
+DESC = 'Meta-language in Arpeggio inspired by Xtext'
 VERSION = __version__
 AUTHOR = 'Igor R. Dejanovic'
 AUTHOR_EMAIL = 'igor DOT dejanovic AT gmail DOT com'
@@ -21,7 +15,7 @@ DOWNLOAD_URL = 'https://github.com/igordejanovic/textX/archive/v%s.tar.gz' % VER
 setup(
     name = NAME,
     version = VERSION,
-    description = description,
+    description = DESC,
     author = AUTHOR,
     author_email = AUTHOR_EMAIL,
     maintainer = AUTHOR,
