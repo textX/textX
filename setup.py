@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import os
+from setuptools import setup
+
 __author__ = "Igor R. Dejanović <igor DOT dejanovic AT gmail DOT com>"
-__version__ = "0.1.3"
+__version__ = "0.1"
 
 NAME = 'textX'
 DESC = 'Meta-language in Arpeggio inspired by Xtext'
@@ -13,7 +16,6 @@ URL = 'https://github.com/igordejanovic/textX'
 DOWNLOAD_URL = 'https://github.com/igordejanovic/textX/archive/v%s.tar.gz' % VERSION
 README = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 
-from setuptools import setup
 setup(
     name = NAME,
     version = VERSION,
