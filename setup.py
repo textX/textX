@@ -26,8 +26,8 @@ setup(
     url = URL,
     download_url = DOWNLOAD_URL,
     packages = ["textx"],
-    requires = ["Arpeggio"],
-    keywords = "parser meta-language language",
+    install_requires = ["Arpeggio"],
+    keywords = "parser meta-language meta-model language DSL",
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
