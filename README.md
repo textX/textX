@@ -48,7 +48,7 @@ There is no docs at the moment but here is a quick introduction what can be done
 
   ![hello_meta.dot](https://raw.githubusercontent.com/igordejanovic/textX/master/examples/hello_world/hello_meta.dot.png)
 
-  You can see that for each rule from language description an appropriate Python class has been created.
+  You can see that for each rule from language description an appropriate Python class has been created. A BASETYPE hierarchy is builtin. Each meta-model has it.
 
 2. Create some content (i.e. model) in your new language (`example.hello`):
 
@@ -56,7 +56,7 @@ There is no docs at the moment but here is a quick introduction what can be done
   hello World, Solar System, Universe
   ```
 
-  Your language syntax is also described by the language rule from step 1.
+  Your language syntax is also described by language rules from step 1.
 
 5. Use meta-model to create models from textual description:
 
@@ -64,7 +64,7 @@ There is no docs at the moment but here is a quick introduction what can be done
   example_hello_model = hello_meta.model_from_file('example.hello')
   ```
 
-  You get plain Python object graph. Object classes are those defined by the meta-model.
+  Textual model 'example.hello' will be parsed and transformed to a plain Python object graph. Object classes are those defined by the meta-model.
 
 6. Optionally export model to dot to visualize it:
 
@@ -75,9 +75,9 @@ There is no docs at the moment but here is a quick introduction what can be done
 
   ![example.dot](https://raw.githubusercontent.com/igordejanovic/textX/master/examples/hello_world/example.dot.png)
 
-  This is an object graph.
+  This is an object graph automatically constructed from 'example.hello' file.
 
-7. Use your model: interpret it, generate code ... It is a plain Python graph of objects with plain attributes.
+7. Use your model: interpret it, generate code ... It is a plain Python graph of objects with plain attributes!
 
 
 
