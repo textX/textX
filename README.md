@@ -5,6 +5,13 @@ Meta-language in [Arpeggio](https://github.com/igordejanovic/Arpeggio) inspired 
 
 textX follows closely the syntax and semantics of Xtext but differs in some places and is implemented 100% in Python using Arpeggio parser. It is fully dynamic - no code generation at all!
 
+Installation
+------------
+
+```
+pip install textX
+```
+
 Quick start
 -----------
 
