@@ -29,6 +29,9 @@ There is no docs at the moment but here is a quick introduction what can be done
   ;
   ```
 
+  Description consists of a set of parsing rules which at the same time describe Python classes that
+  will be used to instantiate object of your model.
+
 2. Create meta-model from textX language description:
 
   ```python
@@ -45,11 +48,15 @@ There is no docs at the moment but here is a quick introduction what can be done
 
   ![hello_meta.dot](https://raw.githubusercontent.com/igordejanovic/textX/master/examples/hello_world/hello_meta.dot.png)
 
+  You can see that for each rule from language description an appropriate Python class has been created.
+
 2. Create some content (i.e. model) in your new language (`example.hello`):
 
   ```
   hello World, Solar System, Universe
   ```
+
+  Your language syntax is also described by the language rule from step 1.
 
 5. Use meta-model to create models from textual description:
 
@@ -57,7 +64,9 @@ There is no docs at the moment but here is a quick introduction what can be done
   example_hello_model = hello_meta.model_from_file('example.hello')
   ```
 
-6. Optionally export model to dot:
+  You get plain Python object graph. Object classes are those defined by the meta-model.
+
+6. Optionally export model to dot to visualize it:
 
   ```python
   from textx.export import model_export
@@ -66,7 +75,9 @@ There is no docs at the moment but here is a quick introduction what can be done
 
   ![example.dot](https://raw.githubusercontent.com/igordejanovic/textX/master/examples/hello_world/example.dot.png)
 
-7. Use your model: interpret it, generate code ... 
+  This is an object graph.
+
+7. Use your model: interpret it, generate code ... It is a plain Python graph of objects with plain attributes.
 
 
 
