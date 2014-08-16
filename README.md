@@ -1,9 +1,9 @@
 textX
 =====
 
-Meta-language in Arpeggio inspired by Xtext
+Meta-language in [Arpeggio](https://github.com/igordejanovic/Arpeggio) inspired by [Xtext](http://www.eclipse.org/Xtext/)
 
-textX follows closely the syntax and semantics of [Xtext](http://www.eclipse.org/Xtext/) but differs in some places and is implemented 100% in Python using Arpeggio parser. It is fully dynamic - no code generation at all!
+textX follows closely the syntax and semantics of Xtext but differs in some places and is implemented 100% in Python using Arpeggio parser. It is fully dynamic - no code generation at all!
 
 Quick start
 -----------
