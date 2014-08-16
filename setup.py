@@ -12,6 +12,7 @@ LICENSE = 'MIT'
 URL = 'https://github.com/igordejanovic/textX'
 DOWNLOAD_URL = 'https://github.com/igordejanovic/textX/archive/v%s.tar.gz' % VERSION
 
+from setuptools import setup
 setup(
     name = NAME,
     version = VERSION,
