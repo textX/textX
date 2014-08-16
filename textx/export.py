@@ -19,7 +19,7 @@ HEADER = '''
     node[
         shape=record,
         style=filled,
-        fillcolor=gold
+        fillcolor=aliceblue
     ]
     edge[dir=black,arrowtail=empty]
 

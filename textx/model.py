@@ -1,3 +1,11 @@
+#######################################################################
+# Name: model.py
+# Purpose: Model construction.
+# Author: Igor R. Dejanovic <igor DOT dejanovic AT gmail DOT com>
+# Copyright: (c) 2014 Igor R. Dejanovic <igor DOT dejanovic AT gmail DOT com>
+# License: MIT License
+#######################################################################
+
 from arpeggio import Parser, Sequence, NoMatch, EOF, Terminal
 from exceptions import TextXSyntaxError, TextXSemanticError
 from const import MULT_ONEORMORE, MULT_ZEROORMORE

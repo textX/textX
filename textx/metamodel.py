@@ -1,3 +1,10 @@
+#######################################################################
+# Name: metamodel.py
+# Purpose: Meta-model construction.
+# Author: Igor R. Dejanovic <igor DOT dejanovic AT gmail DOT com>
+# Copyright: (c) 2014 Igor R. Dejanovic <igor DOT dejanovic AT gmail DOT com>
+# License: MIT License
+#######################################################################
 from collections import namedtuple
 
 from textx import language_from_str, python_type, BASE_TYPE_NAMES
