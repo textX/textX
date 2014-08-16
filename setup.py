@@ -11,12 +11,14 @@ AUTHOR_EMAIL = 'igor DOT dejanovic AT gmail DOT com'
 LICENSE = 'MIT'
 URL = 'https://github.com/igordejanovic/textX'
 DOWNLOAD_URL = 'https://github.com/igordejanovic/textX/archive/v%s.tar.gz' % VERSION
+README = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 
 from setuptools import setup
 setup(
     name = NAME,
     version = VERSION,
     description = DESC,
+    long_description = README,
     author = AUTHOR,
     author_email = AUTHOR_EMAIL,
     maintainer = AUTHOR,
