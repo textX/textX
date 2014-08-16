@@ -4,7 +4,7 @@ import os
 from setuptools import setup
 
 __author__ = "Igor R. Dejanović <igor DOT dejanovic AT gmail DOT com>"
-__version__ = "0.1"
+__version__ = "0.2-dev"
 
 NAME = 'textX'
 DESC = 'Meta-language in Arpeggio inspired by Xtext'
