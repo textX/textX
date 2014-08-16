@@ -12,7 +12,7 @@ AUTHOR = 'Igor R. Dejanovic'
 AUTHOR_EMAIL = 'igor DOT dejanovic AT gmail DOT com'
 LICENSE = 'MIT'
 URL = 'https://github.com/igordejanovic/textX'
-DOWNLOAD_URL = 'https://github.com/igordejanovic/textX/archive/v0.1.tar.gz'
+DOWNLOAD_URL = 'https://github.com/igordejanovic/textX/archive/v%s.tar.gz' % VERSION
 
 setup(
     name = NAME,
@@ -26,8 +26,8 @@ setup(
     url = URL,
     download_url = DOWNLOAD_URL,
     packages = ["textx"],
-    requires = ["Arpeggio"],
-    keywords = "parser meta-language language",
+    install_requires = ["Arpeggio"],
+    keywords = "parser meta-language meta-model language DSL",
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
