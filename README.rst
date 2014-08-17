@@ -22,67 +22,67 @@ be done. For more see examples.
 
 1. Write a language description in textX (file ``hello.tx``):
 
-::
+  ::
 
-  HelloWorldModel:
-    'hello' to_greet+={Who ','}
-  ;
+    HelloWorldModel:
+      'hello' to_greet+={Who ','}
+    ;
 
-  Who:
-    name = /[^,]\*/
-  ;
+    Who:
+      name = /[^,]\*/
+    ;
 
-Description consists of a set of parsing rules which at the same time
-describe Python classes that will be used to instantiate object of your model.
+  Description consists of a set of parsing rules which at the same time
+  describe Python classes that will be used to instantiate object of your model.
 
 2. Create meta-model from textX language description:
 
-.. code:: python
+  .. code:: python
 
-  from textx.metamodel import metamodel_from_file
-  hello_meta = metamodel_from_file('hello.tx')
+    from textx.metamodel import metamodel_from_file
+    hello_meta = metamodel_from_file('hello.tx')
 
 3. Optionally export meta-model to dot (visualize your language abstract syntax):
 
-.. code:: python
+  .. code:: python
 
-  from textx.export import metamodel_export
-  metamodel_export(hello_meta, 'hello_meta.dot')
+    from textx.export import metamodel_export
+    metamodel_export(hello_meta, 'hello_meta.dot')
 
-|hello_meta.dot|
+  |hello_meta.dot|
 
-You can see that for each rule from language description an appropriate
-Python class has been created. A BASETYPE hierarchy is builtin. Each
-meta-model has it.
+  You can see that for each rule from language description an appropriate
+  Python class has been created. A BASETYPE hierarchy is builtin. Each
+  meta-model has it.
 
 4. Create some content (i.e. model) in your new language (``example.hello``):
 
-::
+  ::
 
-  hello World, Solar System, Universe
+    hello World, Solar System, Universe
 
-Your language syntax is also described by language rules from step 1.
+  Your language syntax is also described by language rules from step 1.
 
 5. Use meta-model to create models from textual description:
 
-.. code:: python
+  .. code:: python
 
-  example_hello_model = hello_meta.model_from_file('example.hello')
+    example_hello_model = hello_meta.model_from_file('example.hello')
 
-Textual model ‘example.hello’ will be parsed and transformed to a plain
-Python object graph. Object classes are those defined by the meta-model.
+  Textual model ‘example.hello’ will be parsed and transformed to a plain
+  Python object graph. Object classes are those defined by the meta-model.
 
 6. Optionally export model to dot to visualize it:
 
-.. code:: python
+  .. code:: python
 
-  from textx.export import model_export
-  model_export(example_hello_model, 'example.dot')
+    from textx.export import model_export
+    model_export(example_hello_model, 'example.dot')
 
-|example.dot|
+  |example.dot|
 
-This is an object graph automatically constructed from ‘example.hello’
-file.
+  This is an object graph automatically constructed from ‘example.hello’
+  file.
 
 7. Use your model: interpret it, generate code … It is a plain Python
    graph of objects with plain attributes!
