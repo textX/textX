@@ -41,6 +41,7 @@ def metamodel_export(metamodel, file_name):
                 for attr in cls._attrs.values():
                     arrowtail = "arrowtail=diamond, dir=both, " if attr.cont else ""
                     mult_list = attr.mult in [MULT_ZEROORMORE, MULT_ONEORMORE]
+                    required = "+" if attr.mult in [MULT_ONE, MULT_ONEORMORE] else ""
                     attr_type = "list[{}]".format(attr.cls.__name__) \
                             if mult_list else attr.cls.__name__
                     if attr.ref:
@@ -50,7 +51,7 @@ def metamodel_export(metamodel, file_name):
                             .format(id(cls), id(attr.cls), arrowtail, attr.name, mult))
                     else:
                         # If it is plain type
-                        attrs += "+{}:{}\\l".format(attr.name, attr_type)
+                        attrs += "{}{}:{}\\l".format(required, attr.name, attr_type)
 
             f.write('{}[ label="{{{}|{}}}"]\n'.format(\
                     id(cls), name, attrs))
@@ -87,11 +88,12 @@ def model_export(model, file_name):
                 attr_value = getattr(obj, attr_name)
 
                 endmark = 'arrowtail=diamond dir=both' if attr.cont else ""
+                required = "+" if attr.mult in [MULT_ONE, MULT_ONEORMORE] else ""
 
 
                 if attr.mult in [MULT_ONEORMORE, MULT_ZEROORMORE]:
                     if not attr.ref:
-                        attrs += "{}:list=[".format(attr_name)
+                        attrs += "{}{}:list=[".format(required, attr_name)
                         attrs += ",".join(attr_value)
                         attrs += "]\\l"
                     else:
@@ -108,10 +110,10 @@ def model_export(model, file_name):
                         else:
                             if attr.cls.__name__ in BASE_TYPE_NAMES \
                                     or attr.cls._type == RULE_MATCH:
-                                attrs += "{}:{}={}\\l".format(attr_name, type(attr_value)\
+                                attrs += "{}{}:{}={}\\l".format(required, attr_name, type(attr_value)\
                                         .__name__, attr_value)
                             else:
-                                attrs += "{}:{}\\l".format(attr_name, type(attr_value)\
+                                attrs += "{}{}:{}\\l".format(required, attr_name, type(attr_value)\
                                         .__name__)
                     else:
                         # Object references
