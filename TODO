@@ -1,0 +1,21 @@
+textX TODO
+----------
+
+  - tests
+  - docs
+  - More flexible match rules.
+    Match rules should consists of alternative choice of sequences of str
+    matches, regex matches and other match rules.
+  - Support for custom classes.
+    Currently, classes are created by the textX based on the rule names.
+    User should be able to supply a dict of classes that should be used instead.
+  - Better error reporting.
+    For example, if match fails at attribute assignment the name of the attribute
+    should be reported not the name of the rule.
+  - Match classes (to support syntax highlighting in editors)
+  - Match span beside position (e.g. to support navigation from visual
+    representation to textual).
+  - Checking of assignments inside repetitions (*, +).
+    If a plain assignment is inside repetition check that assignment is called
+    at most one. Better detection of multiplicities.
+
