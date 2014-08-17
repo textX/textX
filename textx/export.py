@@ -6,9 +6,9 @@
 # Copyright: (c) 2014 Igor R. Dejanovic <igor DOT dejanovic AT gmail DOT com>
 # License: MIT License
 #######################################################################
-from const import MULT_ZEROORMORE, MULT_ONEORMORE, MULT_ONE, RULE_MATCH
-from textx import BASE_TYPE_NAMES
-from metamodel import TextXClass
+from .const import MULT_ZEROORMORE, MULT_ONEORMORE, MULT_ONE, RULE_MATCH
+from .textx import BASE_TYPE_NAMES
+from .metamodel import TextXClass
 
 PRIMITIVE_PYTHON_TYPES = [int, float, str, bool]
 

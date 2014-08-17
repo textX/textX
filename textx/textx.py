@@ -17,8 +17,8 @@ from arpeggio import StrMatch, Optional, ZeroOrMore, OneOrMore, Sequence,\
 from arpeggio.export import PMDOTExporter, PTDOTExporter
 from arpeggio import RegExMatch as _
 
-from exceptions import TextXSyntaxError, TextXSemanticError
-from const import MULT_ZEROORMORE, MULT_ONEORMORE, MULT_ONE, \
+from .exceptions import TextXSyntaxError, TextXSemanticError
+from .const import MULT_ZEROORMORE, MULT_ONEORMORE, MULT_ONE, \
         MULT_OPTIONAL, RULE_MATCH, RULE_ABSTRACT
 
 
@@ -174,7 +174,7 @@ class TextXModelSA(SemanticAction):
     def first_pass(self, parser, node, children):
         comments_model = parser.peg_rules.get('__comment', None)
 
-        from model import get_model_parser
+        from .model import get_model_parser
         textx_parser = get_model_parser(children[0], comments_model,
                 parser.debug)
 
@@ -223,7 +223,7 @@ class TextXModelSA(SemanticAction):
         resolve(textx_parser.parser_model)
 
     def _resolve_cls_refs(self, parser, xtext_parser):
-        from metamodel import TextXClass
+        from .metamodel import TextXClass
 
         def _resolve_cls(cls_crossref):
             if isinstance(cls_crossref, ClassCrossRef):

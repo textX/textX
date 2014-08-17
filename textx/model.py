@@ -7,8 +7,8 @@
 #######################################################################
 
 from arpeggio import Parser, Sequence, NoMatch, EOF, Terminal
-from exceptions import TextXSyntaxError, TextXSemanticError
-from const import MULT_ONEORMORE, MULT_ZEROORMORE
+from .exceptions import TextXSyntaxError, TextXSemanticError
+from .const import MULT_ONEORMORE, MULT_ZEROORMORE
 
 def convert(value, _type):
     """

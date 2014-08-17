@@ -7,8 +7,8 @@
 #######################################################################
 from collections import namedtuple
 
-from textx import language_from_str, python_type, BASE_TYPE_NAMES
-from const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, RULE_NORMAL
+from .textx import language_from_str, python_type, BASE_TYPE_NAMES
+from .const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, RULE_NORMAL
 
 
 class MetaAttr(object):
