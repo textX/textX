@@ -168,7 +168,7 @@ def parse_tree_to_objgraph(parser, parse_tree):
                             .format(attr_name, parser.pos_to_linecol(node.position)))
 
                 # Recurse and convert value to proper type
-                value = convert(process_node(node[0]), node[0].rule_name)
+                value = process_node(node[0])
 
                 if metaattr.ref and not metaattr.cont:
                     # If this is non-containing reference create ObjCrossRef
@@ -186,7 +186,7 @@ def parse_tree_to_objgraph(parser, parse_tree):
                     if n.rule_name != 'sep':
                         # Convert node to proper type
                         # Rule links will be resolved later
-                        value = convert(process_node(n), n.rule_name)
+                        value = process_node(n)
 
                         if metaattr.ref and not metaattr.cont:
                             # If this is non-containing reference create ObjCrossRef
