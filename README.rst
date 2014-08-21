@@ -1,11 +1,11 @@
 textX
 =====
 
-Meta-language in `Arpeggio`_ inspired by `Xtext`_
+textX is a meta-language for building Domain-Specific Languages (DSLs) inspired by `Xtext`_.
 
-textX follows closely the syntax and semantics of Xtext but differs in
-some places and is implemented 100% in Python using Arpeggio parser. It
-is fully dynamic - no code generation at all!
+textX follows the syntax and semantics of Xtext but differs in some places and is
+implemented 100% in Python using `Arpeggio`_ parser.
+It is fully dynamic - no code generation at all!
 
 Installation
 ------------
