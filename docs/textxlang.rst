@@ -5,12 +5,13 @@ textX is inspired by the Xtext framework for domain-specific language engineerin
 the credits for the idea goes to the Xtext team.
 If you have Xtext background than you will find yourself at home with textX.
 
-Basic language concepts
------------------------
-
 The domain of textX language is language design. If resembles in a way a EBNF but
 besides the language grammar definition defines a language meta-model
 (i.e. its abstract syntax) at the same time.
+
+
+Rules
+-----
 
 The basic building blocks of the textX language are rules. Rule is written in the following form::
 
@@ -35,9 +36,11 @@ an object of this class will get created and the attribute `who` will be set to 
 
 There are three kind of rules in textX:
 
-- Normal rules (or just rules)
+- Common rules (or just rules)
 - Abstract rules
 - Match rules
+
+Abstract and match rules are explained in the separate sections.
 
 Matches
 -------
