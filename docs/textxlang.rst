@@ -35,9 +35,9 @@ an object of this class will get created and the attribute `who` will be set to 
 
 There are three kind of rules in textX:
 
-  * Normal rules (or just rules)
-  * Abstract rules
-  * Match rules
+- Normal rules (or just rules)
+- Abstract rules
+- Match rules
 
 Matches
 -------
@@ -46,8 +46,8 @@ In the parsing lingo *match* will result in creating a terminal during parsing.
 
 textX has a two kind of match elements:
 
-  * string match
-  * regular expression match
+- string match
+- regular expression match
 
 String match are given in the form of the string and results in instruction to the parser to match
 that string exacly as is given in the string match.
