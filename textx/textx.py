@@ -102,40 +102,6 @@ def python_type(textx_type_name):
             }.get(textx_type_name, textx_type_name)
 
 
-# Str formatting functions
-def str_indent(obj, indent=0, doind=False):
-    """Used for class instances pretty-printing."""
-    if type(obj) in [str, bool, float, int]:
-        if doind:
-            s = get_indented(indent, str(obj))
-        else:
-            s = str(obj)
-    elif type(obj) is list:
-        s = "[\n"
-        for list_value in obj:
-            s += str_indent(list_value, indent+1, True)
-        s += get_indented(indent, "]", newline=False)
-    else:
-        if hasattr(obj, 'name'):
-            meta_name = '{}:{}'.format(obj.name, obj.__class__.__name__)
-        else:
-            meta_name = obj.__class__.__name__
-        s = get_indented(indent, meta_name)
-
-        if obj is not None:
-            for attr in obj.__dict__:
-                if not attr.startswith('_'):
-                    # Name for each attribute
-                    s += get_indented(indent + 1, "{} = {}"\
-                            .format(attr, str_indent(getattr(obj, attr),
-                                    indent+1, False)))
-        s += '\n'
-    return s
-
-def get_indented(indent, _str, newline=True):
-    indent = '\t' * indent
-    return '{}{}{}'.format(indent, str(_str), '\n' if newline else '')
-
 
 class RuleCrossRef(object):
     """
