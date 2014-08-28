@@ -94,7 +94,7 @@ def model_export(model, file_name):
                 if attr.mult in [MULT_ONEORMORE, MULT_ZEROORMORE]:
                     if not attr.ref:
                         attrs += "{}{}:list=[".format(required, attr_name)
-                        attrs += ",".join(attr_value)
+                        attrs += ",".join([str(x) for x in attr_value])
                         attrs += "]\\l"
                     else:
                         for idx, list_obj in enumerate(attr_value):
