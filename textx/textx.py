@@ -11,15 +11,14 @@
 #######################################################################
 
 from arpeggio import StrMatch, Optional, ZeroOrMore, OneOrMore, Sequence,\
-    OrderedChoice, RegExMatch, Match, NoMatch, EOF,\
-    SemanticAction, ParserPython, Combine, SemanticActionSingleChild,\
-    SemanticActionBodyWithBraces, Terminal, ParsingExpression
-from arpeggio.export import PMDOTExporter, PTDOTExporter
+    OrderedChoice, RegExMatch, NoMatch, EOF, ParsingExpression,\
+    SemanticAction, ParserPython, SemanticActionSingleChild
+from arpeggio.export import PMDOTExporter
 from arpeggio import RegExMatch as _
 
 from .exceptions import TextXSyntaxError, TextXSemanticError
-from .const import MULT_ZEROORMORE, MULT_ONEORMORE, MULT_ONE, \
-        MULT_OPTIONAL, RULE_MATCH, RULE_ABSTRACT
+from .const import MULT_ZEROORMORE, MULT_ONEORMORE, \
+    MULT_OPTIONAL, RULE_MATCH, RULE_ABSTRACT
 
 
 # textX grammar
@@ -82,25 +81,26 @@ NUMBER      = OrderedChoice(nodes=[FLOAT, INT], rule_name='NUMBER', root=True)
 BASETYPE    = OrderedChoice(nodes=[ID, STRING, BOOL, NUMBER], \
                     rule_name='BASETYPE', root=True)
 
-BASE_TYPE_RULES = {rule.rule_name:rule \
-        for rule in [ID, BOOL, INT, FLOAT, STRING, NUMBER, BASETYPE]}
+BASE_TYPE_RULES = {rule.rule_name: rule
+                   for rule in [ID, BOOL, INT, FLOAT,
+                                STRING, NUMBER, BASETYPE]}
 BASE_TYPE_NAMES = BASE_TYPE_RULES.keys()
 
 for regex in [ID, BOOL, INT, FLOAT, STRING]:
     regex.compile()
 
+
 def python_type(textx_type_name):
     """Return Python type from the name of base textx type."""
     return {
-            'ID': str,
-            'BOOL': bool,
-            'INT': int,
-            'FLOAT': float,
-            'STRING': str,
-            'NUMBER': float,
-            'BASETYPE': str,
-            }.get(textx_type_name, textx_type_name)
-
+        'ID': str,
+        'BOOL': bool,
+        'INT': int,
+        'FLOAT': float,
+        'STRING': str,
+        'NUMBER': float,
+        'BASETYPE': str,
+    }.get(textx_type_name, textx_type_name)
 
 
 class RuleCrossRef(object):
@@ -110,8 +110,8 @@ class RuleCrossRef(object):
     Attributes:
         rule_name(str): A name of the PEG rule that should be used to match
             this cross-ref.
-        cls(str or ClassCrossRef): Target class which is matched by the rule_name
-            or which name is matched by the rule_name.
+        cls(str or ClassCrossRef): Target class which is matched by the
+            rule_name or which name is matched by the rule_name.
         position(int): A position in the input string of this cross-ref.
     """
     def __init__(self, rule_name, cls, position):
@@ -142,7 +142,7 @@ class TextXModelSA(SemanticAction):
 
         from .model import get_model_parser
         textx_parser = get_model_parser(children[0], comments_model,
-                parser.debug)
+                                        parser.debug)
 
         textx_parser.metamodel = parser.metamodel
         textx_parser.peg_rules = parser.peg_rules
@@ -166,15 +166,16 @@ class TextXModelSA(SemanticAction):
                     if rule_name in textx_parser.peg_rules:
                         rule = textx_parser.peg_rules[rule_name]
                     else:
-                        raise TextXSemanticError('Unexisting rule "{}" at position {}.'\
-                                .format(rule.rule_name,
+                        raise TextXSemanticError(
+                            'Unexisting rule "{}" at position {}.'
+                            .format(rule.rule_name,
                                     parser.pos_to_linecol(rule.position)))
 
                 assert isinstance(rule, ParsingExpression),\
-                            "{}:{}".format(type(rule), str(rule))
+                    "{}:{}".format(type(rule), str(rule))
                 # Recurse
                 for idx, child in enumerate(rule.nodes):
-                    if not child in resolved_set:
+                    if child not in resolved_set:
                         resolved_set.add(rule)
                         rule.nodes[idx] = _inner_resolve(child)
 
@@ -193,16 +194,16 @@ class TextXModelSA(SemanticAction):
 
         def _resolve_cls(cls_crossref):
             if isinstance(cls_crossref, ClassCrossRef):
-                if not cls_crossref.cls_name in xtext_parser.metamodel:
-                    raise TextXSemanticError('Unknown class/rule "{}" at {}.'\
-                            .format(cls_crossref.cls_name, \
+                if cls_crossref.cls_name not in xtext_parser.metamodel:
+                    raise TextXSemanticError(
+                        'Unknown class/rule "{}" at {}.'
+                        .format(cls_crossref.cls_name,
                                 parser.pos_to_linecol(cls_crossref.position)))
                 return xtext_parser.metamodel[cls_crossref.cls_name]
 
             elif issubclass(cls_crossref, TextXClass):
                 # If already resolved
                 return cls_crossref
-
 
         if parser.debug:
             print("RESOLVING METACLASS REFS")
@@ -227,9 +228,9 @@ class TextXModelSA(SemanticAction):
                     attr.ref = True
 
                 if parser.debug:
-                    print("Resolved attribute {}:{}[cls={}, cont={}, ref={}, mult={}, pos={}]"\
-                            .format(cls.__name__, attr.name, attr.cls.__name__, \
-                                attr.cont, attr.ref, attr.mult, attr.position))
+                    print("Resolved attribute {}:{}[cls={}, cont={}, ref={}, mult={}, pos={}]"
+                          .format(cls.__name__, attr.name, attr.cls.__name__,
+                                  attr.cont, attr.ref, attr.mult, attr.position))
 
     def second_pass(self, parser, textx_parser):
         """Cross reference resolving for parser model."""
@@ -247,7 +248,7 @@ textx_model.sem = TextXModelSA()
 def class_rule_SA(parser, node, children):
     rule_name, rule = children
     rule = Sequence(nodes=[rule], rule_name=rule_name,
-             root=True)
+                    root=True)
 
     # Do some name mangling for comment rule
     # to prevent refererencing from other rules
@@ -281,8 +282,8 @@ def alternative_match_SA(parser, node, children):
     # This is a match rule
     parser._current_cls._type = RULE_MATCH
     # String representation of match alternatives.
-    parser._current_cls._match_str = "|".join([str(match) \
-            for match in children])
+    parser._current_cls._match_str = "|".join([str(match)
+                                              for match in children])
     return OrderedChoice(nodes=children[:])
 alternative_match.sem = alternative_match_SA
 
@@ -306,7 +307,7 @@ choice.sem = choice_SA
 
 def assignment_rhs_SA(parser, node, children):
     rule = children[0]
-    if len(children)==1:
+    if len(children) == 1:
         return rule
 
     rep_op = children[1]
@@ -317,6 +318,7 @@ def assignment_rhs_SA(parser, node, children):
     else:
         return OneOrMore(nodes=[rule])
 assignment_rhs.sem = assignment_rhs_SA
+
 
 def assignment_SA(parser, node, children):
     """
@@ -336,8 +338,9 @@ def assignment_SA(parser, node, children):
         print("Creating attribute {}:{}".format(cls.__name__, attr_name))
     if attr_name in cls._attrs:
         # TODO: This constraint should be relaxed.
-        raise TextXSemanticError('Multiple assignment to the same attribute "{}" at {}'\
-                .format(attr_name, parser.pos_to_linecol(node.position)))
+        raise TextXSemanticError(
+            'Multiple assignment to the same attribute "{}" at {}'
+            .format(attr_name, parser.pos_to_linecol(node.position)))
 
     cls_attr = cls.new_attr(name=attr_name, position=node.position)
 
@@ -349,7 +352,6 @@ def assignment_SA(parser, node, children):
         rhs = rhs[1]
         # Target class is not the same as target rule
         target_cls = rhs.cls
-
 
     if type(rhs) is tuple:
         if rhs[0] == "list":
@@ -366,36 +368,47 @@ def assignment_SA(parser, node, children):
 
             base_rule_name = list_el_rule.rule_name
             if op == '+=':
-                # If operation is += there must be at least one element in the list
-                assignment_rule = Sequence(nodes=[list_el_rule,
-                        ZeroOrMore(nodes=Sequence(nodes=[separator, list_el_rule]))],
-                        rule_name='__asgn_list', root=True)
+                # If operation is += there must be at least one element
+                # in the list
+                assignment_rule = Sequence(
+                    nodes=[list_el_rule,
+                           ZeroOrMore(nodes=Sequence(nodes=[separator,
+                                                            list_el_rule]))],
+                    rule_name='__asgn_list', root=True)
+
                 cls_attr.mult = MULT_ONEORMORE
             else:
-                assignment_rule = Optional(nodes=[Sequence(nodes=[list_el_rule,
-                        ZeroOrMore(nodes=Sequence(nodes=[separator, list_el_rule]))])],
-                        rule_name='__asgn_list', root=True)
+                assignment_rule = Optional(
+                    nodes=[Sequence(nodes=[list_el_rule,
+                           ZeroOrMore(nodes=Sequence(nodes=[separator,
+                                                            list_el_rule]))])],
+                    rule_name='__asgn_list', root=True)
+
                 cls_attr.mult = MULT_ZEROORMORE
             rhs = list_el_rule
             base_rule_name = rhs.rule_name
     else:
         base_rule_name = rhs.rule_name
         if op == '+=':
-            assignment_rule = OneOrMore(nodes=[rhs],
-                    rule_name='__asgn_oneormore', root=True)
+            assignment_rule = OneOrMore(
+                nodes=[rhs],
+                rule_name='__asgn_oneormore', root=True)
             cls_attr.mult = MULT_ONEORMORE
         elif op == '*=':
-            assignment_rule = ZeroOrMore(nodes=[rhs],
-                    rule_name='__asgn_zeroormore', root=True)
+            assignment_rule = ZeroOrMore(
+                nodes=[rhs],
+                rule_name='__asgn_zeroormore', root=True)
             cls_attr.mult = MULT_ZEROORMORE
         elif op == '?=':
-            assignment_rule = Optional(nodes=[rhs],
-                    rule_name='__asgn_optional', root=True)
+            assignment_rule = Optional(
+                nodes=[rhs],
+                rule_name='__asgn_optional', root=True)
             cls_attr.mult = MULT_OPTIONAL
             base_rule_name = 'BOOL'
         else:
-            assignment_rule = Sequence(nodes=[rhs],
-                    rule_name='__asgn_plain', root=True)
+            assignment_rule = Sequence(
+                nodes=[rhs],
+                rule_name='__asgn_plain', root=True)
 
     if target_cls:
         attr_type = target_cls
@@ -405,17 +418,18 @@ def assignment_SA(parser, node, children):
     cls_attr.cls = ClassCrossRef(cls_name=attr_type, position=node.position)
 
     if parser.debug:
-        print("Created attribute {}:{}[cls={}, cont={}, ref={}, mult={}, pos={}]"\
-                .format(cls.__name__, attr_name, cls_attr.cls.cls_name, \
-                    cls_attr.cont, cls_attr.ref, cls_attr.mult, cls_attr.position))
+        print("Created attribute {}:{}[cls={}, cont={}, ref={}, mult={}, pos={}]"
+              .format(cls.__name__, attr_name, cls_attr.cls.cls_name,
+                      cls_attr.cont, cls_attr.ref, cls_attr.mult, cls_attr.position))
 
     assignment_rule._attr_name = attr_name
     assignment_rule._exp_str = attr_name    # For nice error reporting
     return assignment_rule
 assignment.sem = assignment_SA
 
+
 def expr_SA(parser, node, children):
-    if len(children)>1:
+    if len(children) > 1:
         if children[1] == '?':
             return Optional(nodes=[children[0]])
         elif children[1] == '*':
@@ -423,13 +437,17 @@ def expr_SA(parser, node, children):
         elif children[1] == '+':
             return OneOrMore(nodes=[children[0]])
         else:
-            TextXSemanticError('Unknown repetition operand "{}" at {}'\
-                    .format(children[1], str(parser.pos_to_linecol(node[1].position))))
+            TextXSemanticError(
+                'Unknown repetition operand "{}" at {}'
+                .format(children[1],
+                        str(parser.pos_to_linecol(node[1].position))))
 expr.sem = expr_SA
+
 
 def str_match_SA(parser, node, children):
     return StrMatch(children[0], ignore_case=parser.ignore_case)
 str_match.sem = str_match_SA
+
 
 def re_match_SA(parser, node, children):
     to_match = children[0]
@@ -437,23 +455,26 @@ def re_match_SA(parser, node, children):
     try:
         regex.compile()
     except Exception as e:
-        raise TextXSyntaxError("{} at {}".format(str(e),\
-            str(parser.pos_to_linecol(node[1].position))))
+        raise TextXSyntaxError(
+            "{} at {}"
+            .format(str(e), str(parser.pos_to_linecol(node[1].position))))
     return regex
 re_match.sem = re_match_SA
+
 
 def rule_match_alt_SA(parser, node, children):
     rule_name = str(node)
     # This rule is used in alternative (inheritance)
     # Crossref resolving will be done in the second pass.
-    parser._current_cls._inh_by.append(\
-            ClassCrossRef(cls_name=rule_name, \
-            attr_name=None,
-            position=node.position))
+    parser._current_cls._inh_by.append(
+        ClassCrossRef(cls_name=rule_name,
+                      attr_name=None,
+                      position=node.position))
     # Here a name of the class (rule) is expected but to support
     # forward referencing we are postponing resolving to second_pass.
     return RuleCrossRef(rule_name, rule_name, node.position)
 rule_match_alt.sem = rule_match_alt_SA
+
 
 def rule_match_SA(parser, node, children):
     rule_name = str(node)
@@ -462,13 +483,15 @@ def rule_match_SA(parser, node, children):
     return RuleCrossRef(rule_name, rule_name, node.position)
 rule_match.sem = rule_match_SA
 
+
 def rule_link_SA(parser, node, children):
     # A link to some other class will be the value of its name attribute.
     class_name = children[0]
     if class_name in BASE_TYPE_NAMES:
-        raise TextXSemanticError('Primitive types can not be referenced at {}.'\
-                .format(node.position))
-    if len(children)>1:
+        raise TextXSemanticError(
+            'Primitive types can not be referenced at {}.'
+            .format(node.position))
+    if len(children) > 1:
         rule_name = children[1]
     else:
         # Default rule for matching obj cross-refs
@@ -476,9 +499,10 @@ def rule_link_SA(parser, node, children):
     return ("link", RuleCrossRef(rule_name, class_name, node.position))
 rule_link.sem = rule_link_SA
 
+
 def list_match_SA(parser, node, children):
     match = children[0]
-    if len(children)==1:
+    if len(children) == 1:
         return ("list", match)
     else:
         separator = children[1]
@@ -509,8 +533,9 @@ def language_from_str(language_def, metamodel, ignore_case=True, debug=False):
         print("*** TEXTX PARSER ***")
 
     # First create parser for TextX descriptions
-    parser = ParserPython(textx_model, comment_def=comment,\
-            ignore_case=ignore_case, reduce_tree=True, debug=debug)
+    parser = ParserPython(textx_model, comment_def=comment,
+                          ignore_case=ignore_case,
+                          reduce_tree=True, debug=debug)
 
     # This is used during parser construction phase.
     parser.metamodel = metamodel
@@ -521,7 +546,7 @@ def language_from_str(language_def, metamodel, ignore_case=True, debug=False):
 
     # Parse language description with textX parser
     try:
-        parse_tree = parser.parse(language_def)
+        parser.parse(language_def)
     except NoMatch as e:
         raise TextXSyntaxError(str(e))
 
@@ -535,8 +560,9 @@ def language_from_str(language_def, metamodel, ignore_case=True, debug=False):
 
     if debug:
         # Create dot file for debuging purposes
-        PMDOTExporter().exportFile(lang_parser.parser_model,\
-                "{}_parser_model.dot".format(metamodel.rootcls.__name__))
+        PMDOTExporter().exportFile(
+            lang_parser.parser_model,
+            "{}_parser_model.dot".format(metamodel.rootcls.__name__))
 
     return lang_parser
 
