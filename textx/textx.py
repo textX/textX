@@ -67,7 +67,7 @@ def enum_kwd():             return 'enum'
 
 # Comments
 def comment():              return [comment_line, comment_block]
-def comment_line():         return _(r'//.*$')
+def comment_line():         return _(r'//.*?$')
 def comment_block():        return _(r'/\*(.|\n)*?\*/')
 
 
