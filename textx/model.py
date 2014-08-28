@@ -68,7 +68,8 @@ def get_model_parser(top_rule, comments_model, debug=False):
             try:
                 return self.parser_model.parse(self)
             except NoMatch as e:
-                raise TextXSyntaxError(str(e))
+                line, col = e.parser.pos_to_linecol(e.position)
+                raise TextXSyntaxError(str(e), line, col)
 
         def get_model_from_file(self, file_name):
             """
