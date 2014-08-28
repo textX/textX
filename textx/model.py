@@ -221,6 +221,11 @@ def parse_tree_to_objgraph(parser, parse_tree):
                 objs = parser._instances[id(obj_ref.cls)]
                 if obj_ref.obj_name in objs:
                     return objs[obj_ref.obj_name]
+
+                # Search builtins
+                if obj_ref.obj_name in metamodel.builtins:
+                    return metamodel.builtins[obj_ref.obj_name]
+
             raise TextXSemanticError('Unknown object "{}" of class "{}" at {}'\
                     .format(obj_ref.obj_name, obj_ref.cls.__name__, parser.pos_to_linecol(obj_ref.position)))
 

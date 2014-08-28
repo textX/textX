@@ -40,17 +40,25 @@ class TextXClass(object):
 
 class TextXMetaModel(dict):
     """
-    Metamodel contains all information about language abstract syntax.
+    Meta-model contains all information about language abstract syntax.
     Furthermore, this class is in charge for model instantiation and new
     language class creation.
-    This class inherites dictionary as is used for language class lookup.
+    This class inherits dictionary as is used for language class lookup.
 
     Attributes:
         rootcls(TextXClass): A language class that is a root of the metamodel.
+        builtins(dict): A dict of named object used in linking phase.
+            References to named object not defined in the model will be
+            searched here.
     """
 
-    def __init__(self):
+    def __init__(self, classes, builtins):
         self.rootcls = None
+        self.builtins = builtins
+
+        if classes:
+            for cname, c in classes.items():
+                self[cname] = c
 
     def new_class(self, name, position, inherits=None, root=False):
         """
@@ -125,11 +133,20 @@ class TextXMetaModel(dict):
         return self.parser.get_model_from_file(file_name)
 
 
-def metamodel_from_str(lang_desc, debug=False):
+def metamodel_from_str(lang_desc, classes=None, builtins=None, debug=False):
     """
     Creates a new metamodel from the textX description given as a string.
+
+    Args:
+        lang_desc(str): A textX language description.
+        classes(dict): An optional dict of classes used instead of
+            generic ones.
+        builtins(dict): An optional dict of named object used in linking phase.
+            References to named object not defined in the model will be
+            searched here.
+        debug(bool): Print debugging informations.
     """
-    metamodel = TextXMetaModel()
+    metamodel = TextXMetaModel(classes=classes, builtins=builtins)
 
     # Base types hierarchy
     ID = metamodel.new_class('ID', 0)
@@ -145,14 +162,18 @@ def metamodel_from_str(lang_desc, debug=False):
     return metamodel
 
 
-def metamodel_from_file(file_name, debug=False):
+def metamodel_from_file(file_name, classes=None, builtins=None, debug=False):
     """
     Creates new metamodel from the given file.
+
+    Args:
+        file_name(str): The name of the file with textX language description.
+        classes, builtins, debug: See metamodel_from_str.
     """
     with open(file_name, 'r') as f:
         lang_desc = f.read()
 
-    metamodel = metamodel_from_str(lang_desc, debug)
+    metamodel = metamodel_from_str(lang_desc, classes, builtins, debug)
 
     return metamodel
 
