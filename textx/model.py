@@ -237,24 +237,28 @@ def parse_tree_to_objgraph(parser, parse_tree):
                 return
             resolved_set.add(o)
 
-            for attr in o.__class__._attrs.values():
-                if parser.debug:
-                    print("RESOLVING ATTR: {}".format(attr.name))
-                    print("mult={}, ref={}, con={}".format(attr.mult, attr.ref, attr.cont))
-                attr_value = getattr(o, attr.name)
-                if attr.mult in [MULT_ONEORMORE, MULT_ZEROORMORE]:
-                    for idx, list_attr_value in enumerate(attr_value):
+            # If this object has attributes (created using a normal rule)
+            if hasattr(o.__class__, "_attrs"):
+                for attr in o.__class__._attrs.values():
+                    if parser.debug:
+                        print("RESOLVING ATTR: {}".format(attr.name))
+                        print("mult={}, ref={}, con={}".format(
+                            attr.mult,
+                            attr.ref, attr.cont))
+                    attr_value = getattr(o, attr.name)
+                    if attr.mult in [MULT_ONEORMORE, MULT_ZEROORMORE]:
+                        for idx, list_attr_value in enumerate(attr_value):
+                            if attr.ref:
+                                if attr.cont:
+                                    _resolve(list_attr_value)
+                                else:
+                                    attr_value[idx] = _resolve_ref(list_attr_value)
+                    else:
                         if attr.ref:
                             if attr.cont:
-                                _resolve(list_attr_value)
+                                _resolve(attr_value)
                             else:
-                                attr_value[idx] = _resolve_ref(list_attr_value)
-                else:
-                    if attr.ref:
-                        if attr.cont:
-                            _resolve(attr_value)
-                        else:
-                            setattr(o, attr.name, _resolve_ref(attr_value))
+                                setattr(o, attr.name, _resolve_ref(attr_value))
 
         _resolve(model)
 
