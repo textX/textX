@@ -10,12 +10,13 @@ from arpeggio import Parser, Sequence, NoMatch, EOF, Terminal
 from .exceptions import TextXSyntaxError, TextXSemanticError
 from .const import MULT_ONEORMORE, MULT_ZEROORMORE
 
+
 def convert(value, _type):
     """
     Convert instances of textx types to python types.
     """
     return {
-            'BOOL'  : lambda x: x=='1' or x.lower()=='true',
+            'BOOL'  : lambda x: x == '1' or x.lower() == 'true',
             'INT'   : lambda x: int(x),
             'FLOAT' : lambda x: float(x),
             'STRING': lambda x: x.strip('"\''),
@@ -29,7 +30,7 @@ class ObjCrossRef(object):
     Attributes:
         obj_name(str): A name of the target object.
         cls(TextXClass): The target object class.
-        position(int): A position in the input stirng of this cross-ref.
+        position(int): A position in the input string of this cross-ref.
     """
     def __init__(self, obj_name, cls, position):
         self.obj_name = obj_name
@@ -53,13 +54,15 @@ def get_model_parser(top_rule, comments_model, debug=False):
 
             # By default first rule is starting rule
             # and must be followed by the EOF
-            self.parser_model = Sequence(nodes=[top_rule, EOF()],\
-                    rule_name='ModelFile', root=True)
+            self.parser_model = Sequence(
+                nodes=[top_rule, EOF()], rule_name='ModelFile', root=True)
             self.comments_model = comments_model
 
             # Stack for metaclass instances
             self._inst_stack = []
+
             # Dict for cross-ref resolving
+            # { id(class): { obj.name: obj}}
             self._instances = {}
 
             self.debug = debug
@@ -74,7 +77,8 @@ def get_model_parser(top_rule, comments_model, debug=False):
         def get_model_from_file(self, file_name):
             """
             Creates model from the parse tree from the previous parse call.
-            If file_name is given file will be parsed before model construction.
+            If file_name is given file will be parsed before model
+            construction.
             """
             with open(file_name, 'r') as f:
                 model_str = f.read()
@@ -108,7 +112,8 @@ def parse_tree_to_objgraph(parser, parse_tree):
         if isinstance(node, Terminal):
             return convert(node.value, node.rule_name)
 
-        assert node.rule.root, "Not a root node: {}".format(node.rule.rule_name)
+        assert node.rule.root,\
+            "Not a root node: {}".format(node.rule.rule_name)
         # If this node is created by some root rule
         # create metaclass instance.
         inst = None
@@ -130,7 +135,8 @@ def parse_tree_to_objgraph(parser, parse_tree):
 
             for n in node:
                 if parser.debug:
-                    print("Recursing into {} = '{}'".format(type(n).__name__, str(n)))
+                    print("Recursing into {} = '{}'"
+                          .format(type(n).__name__, str(n)))
                 process_node(n)
 
             parser._inst_stack.pop()
@@ -144,8 +150,6 @@ def parse_tree_to_objgraph(parser, parse_tree):
                 parser._instances[id(inst.__class__)][inst.name] = inst
 
             if parser.debug:
-                old_str = "{}(name={})".format(type(inst).__name__, inst.name)  \
-                        if hasattr(inst, 'name') else type(inst).__name__
                 print("LEAVING INSTANCE {}".format(node.rule_name))
 
         else:
@@ -165,16 +169,18 @@ def parse_tree_to_objgraph(parser, parse_tree):
             elif op == 'plain':
                 attr_value = getattr(i, attr_name)
                 if attr_value and type(attr_value) is not list:
-                    raise TextXSemanticError("Multiple assignments to attribute {} at {}"\
-                            .format(attr_name, parser.pos_to_linecol(node.position)))
+                    raise TextXSemanticError(
+                        "Multiple assignments to attribute {} at {}"
+                        .format(attr_name,
+                                parser.pos_to_linecol(node.position)))
 
                 # Recurse and convert value to proper type
                 value = process_node(node[0])
 
                 if metaattr.ref and not metaattr.cont:
                     # If this is non-containing reference create ObjCrossRef
-                    value = ObjCrossRef(obj_name=value, cls=metaattr.cls, \
-                            position=node[0].position)
+                    value = ObjCrossRef(obj_name=value, cls=metaattr.cls,
+                                        position=node[0].position)
 
                 if type(attr_value) is list:
                     attr_value.append(value)
@@ -190,11 +196,14 @@ def parse_tree_to_objgraph(parser, parse_tree):
                         value = process_node(n)
 
                         if metaattr.ref and not metaattr.cont:
-                            # If this is non-containing reference create ObjCrossRef
-                            value = ObjCrossRef(obj_name=value, cls=metaattr.cls,\
-                                    position=node[0].position)
+                            # If this is non-containing reference
+                            # create ObjCrossRef
+                            value = ObjCrossRef(obj_name=value,
+                                                cls=metaattr.cls,
+                                                position=node[0].position)
 
-                        if not hasattr(i, attr_name) or getattr(i, attr_name) is None:
+                        if not hasattr(i, attr_name) or \
+                                getattr(i, attr_name) is None:
                             setattr(i, attr_name, [])
                         getattr(i, attr_name).append(value)
             else:
@@ -227,8 +236,10 @@ def parse_tree_to_objgraph(parser, parse_tree):
                     if obj_ref.obj_name in metamodel.builtins:
                         return metamodel.builtins[obj_ref.obj_name]
 
-            raise TextXSemanticError('Unknown object "{}" of class "{}" at {}'\
-                    .format(obj_ref.obj_name, obj_ref.cls.__name__, parser.pos_to_linecol(obj_ref.position)))
+            raise TextXSemanticError(
+                'Unknown object "{}" of class "{}" at {}'
+                .format(obj_ref.obj_name, obj_ref.cls.__name__,
+                        parser.pos_to_linecol(obj_ref.position)))
 
         def _resolve(o):
             if parser.debug:
@@ -252,7 +263,8 @@ def parse_tree_to_objgraph(parser, parse_tree):
                                 if attr.cont:
                                     _resolve(list_attr_value)
                                 else:
-                                    attr_value[idx] = _resolve_ref(list_attr_value)
+                                    attr_value[idx] = \
+                                        _resolve_ref(list_attr_value)
                     else:
                         if attr.ref:
                             if attr.cont:
@@ -261,7 +273,6 @@ def parse_tree_to_objgraph(parser, parse_tree):
                                 setattr(o, attr.name, _resolve_ref(attr_value))
 
         _resolve(model)
-
 
     model = process_node(parse_tree)
     resolve_refs(model)
