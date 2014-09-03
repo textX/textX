@@ -79,20 +79,22 @@ def test_abstract_rule():
     rule = """
     Model: 'start' attr=Rule;
     Rule: Rule1|Rule2|Rule3;
-    Rule1: a=INT;
+    Rule1: RuleA|RuleB;
+    RuleA: a=INT;
+    RuleB: a=STRING;
     Rule2: b=STRING;
     Rule3: c=ID;
     """
     meta = metamodel_from_str(rule)
     assert meta
-    assert set(meta.keys()) == set(['Model', 'Rule', 'Rule1', 'Rule2', 'Rule3'])\
+    assert set(meta.keys()) == set(['Model', 'Rule', 'RuleA', 'RuleB', 'Rule1', 'Rule2', 'Rule3'])\
         .union(set(BASE_TYPE_NAMES))
 
     model = meta.model_from_str('start 34')
     assert model
     assert model.attr
     assert model.attr.a == 34
-    assert model.attr.__class__.__name__ == 'Rule1'
+    assert model.attr.__class__.__name__ == 'RuleA'
 
 
 def test_list_zeroormore():
@@ -213,5 +215,26 @@ def test_bool_match():
     assert model.rule is False
     assert model.rule2 is False
 
+
+def test_rule_reference():
+    rule = """
+    Model: 'start' rules*=RuleA 'ref' ref=[RuleA];
+    RuleA: 'rule' name=ID;
+    """
+    meta = metamodel_from_str(rule)
+    assert meta
+    assert set(meta.keys()) == set(['Model', 'RuleA'])\
+        .union(set(BASE_TYPE_NAMES))
+
+    model = meta.model_from_str('start rule rule1 rule rule2 ref rule1')
+    assert model
+    assert hasattr(model, 'rules')
+    assert hasattr(model, 'ref')
+    assert model.rules
+    assert model.ref
+
+    # Reference to first rule
+    assert model.ref is model.rules[0]
+    assert model.ref.__class__.__name__ == "RuleA"
 
 # def test_repetition_zeroormore()
