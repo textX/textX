@@ -5,8 +5,6 @@
 # Copyright: (c) 2014 Igor R. Dejanovic <igor DOT dejanovic AT gmail DOT com>
 # License: MIT License
 #######################################################################
-from collections import namedtuple
-
 from .textx import language_from_str, python_type, BASE_TYPE_NAMES
 from .const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, RULE_NORMAL
 
@@ -20,11 +18,13 @@ class MetaAttr(object):
         cls(str, TextXClass or base python type): The type of the attribute.
         mult(str): Multiplicity
         cont(bool): Is this attribute contained inside object.
-        ref(bool): Is this attribute a reference. If it is not a reference it must
-            be containment.
-        position(int): A position in the input string where attribute is defined.
+        ref(bool): Is this attribute a reference. If it is not a reference
+            it must be containment.
+        position(int): A position in the input string where attribute is
+            defined.
     """
-    def __init__(self, name, cls=None, mult=MULT_ONE, cont=True, ref=False, position=0):
+    def __init__(self, name, cls=None, mult=MULT_ONE, cont=True, ref=False,
+                 position=0):
         self.name = name
         self.cls = cls
         self.mult = mult
@@ -48,17 +48,23 @@ class TextXMetaModel(dict):
     Attributes:
         rootcls(TextXClass): A language class that is a root of the metamodel.
         builtins(dict): A dict of named object used in linking phase.
-            References to named object not defined in the model will be
+            References to named objects not defined in the model will be
             searched here.
     """
 
     def __init__(self, classes, builtins):
+        """
+        Args:
+            classes(dict of python classes): Custom meta-classes used
+                instead of generic ones.
+            builtins(dict of named objects): Named objects used in linking
+                phase. This objects are part of each model.
+        """
         self.rootcls = None
         self.builtins = builtins
 
         if classes:
-            for cname, c in classes.items():
-                self[cname] = c
+            self.update(classes)
 
     def new_class(self, name, position, inherits=None, root=False):
         """
@@ -75,13 +81,16 @@ class TextXMetaModel(dict):
             one Meta class with the type name of the rule.
             Model is a graph of python instances of this metaclasses.
             """
-            # Attribute information (MetaAttr instances)
+            # Attribute information (MetaAttr instances) keyed by name.
             _attrs = {}
 
-            # Inheriting classes
+            # A list of inheriting classes
             _inh_by = inherits if inherits else []
 
             _position = position
+
+            # The type of the rule this meta-class results from.
+            # There are three rule types: normal, abstract and match
             _type = RULE_NORMAL
 
             def __init__(self):
@@ -94,21 +103,19 @@ class TextXMetaModel(dict):
                         setattr(self, attr.name, [])
                     elif attr.cls.__name__ in BASE_TYPE_NAMES:
                         # Instantiate base python type
-                        setattr(self, attr.name, python_type(attr.cls.__name__)())
+                        setattr(self, attr.name,
+                                python_type(attr.cls.__name__)())
                     else:
                         # Reference to other obj
                         setattr(self, attr.name, None)
 
             @classmethod
             def new_attr(clazz, name, cls=None, mult=MULT_ONE, cont=True,
-                    ref=False, position=0):
+                         ref=False, position=0):
                 """Creates new meta attribute of this class."""
                 attr = MetaAttr(name, cls, mult, cont, ref, position)
                 clazz._attrs[name] = attr
                 return attr
-
-            # def __str__(self):
-            #     return str_indent(self)
 
         cls = Meta
         cls.__name__ = name
