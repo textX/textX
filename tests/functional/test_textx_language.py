@@ -237,4 +237,29 @@ def test_rule_reference():
     assert model.ref is model.rules[0]
     assert model.ref.__class__.__name__ == "RuleA"
 
+
+def test_abstract_rule_reference():
+    rule = """
+    Model: 'start' rules*=RuleA 'ref' ref=[RuleA];
+    RuleA: Rule1|Rule2;
+    Rule1: RuleI|RuleE;
+    Rule2: 'r2' name=ID;
+    RuleI: 'rI' name=ID;
+    RuleE: 'rE' name=ID;
+    """
+    meta = metamodel_from_str(rule)
+    assert meta
+    assert set(meta.keys()) == set(['Model', 'RuleA', 'Rule1', 'Rule2', 'RuleI', 'RuleE'])\
+        .union(set(BASE_TYPE_NAMES))
+
+    model = meta.model_from_str('start r2 rule1 rE rule2 ref rule2')
+    assert model
+    assert hasattr(model, 'rules')
+    assert hasattr(model, 'ref')
+    assert model.rules
+    assert model.ref
+
+    # Reference to first rule
+    assert model.ref is model.rules[1]
+    assert model.ref.__class__.__name__ == "RuleE"
 # def test_repetition_zeroormore()

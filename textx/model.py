@@ -8,7 +8,8 @@
 
 from arpeggio import Parser, Sequence, NoMatch, EOF, Terminal
 from .exceptions import TextXSyntaxError, TextXSemanticError
-from .const import MULT_ONEORMORE, MULT_ZEROORMORE
+from .const import MULT_ONEORMORE, MULT_ZEROORMORE, RULE_NORMAL,\
+    RULE_ABSTRACT
 
 
 def convert(value, _type):
@@ -216,6 +217,8 @@ def parse_tree_to_objgraph(parser, parse_tree):
         """
         Resolves obj cross refs.
         """
+        # TODO: Scoping and name-space rules.
+
         resolved_set = set()
         metamodel = parser.metamodel
 
@@ -224,17 +227,46 @@ def parse_tree_to_objgraph(parser, parse_tree):
                 return
             assert type(obj_ref) is ObjCrossRef, type(obj_ref)
             if parser.debug:
-                print("Resolving obj crossref: {}:{}"\
-                        .format(obj_ref.cls, obj_ref.obj_name))
-            if id(obj_ref.cls) in parser._instances:
-                objs = parser._instances[id(obj_ref.cls)]
-                if obj_ref.obj_name in objs:
-                    return objs[obj_ref.obj_name]
+                print("Resolving obj crossref: {}:{}"
+                      .format(obj_ref.cls, obj_ref.obj_name))
 
-                # Search builtins if given
-                if metamodel.builtins:
-                    if obj_ref.obj_name in metamodel.builtins:
-                        return metamodel.builtins[obj_ref.obj_name]
+            def _resolve_ref_abstract(obj_cls):
+                """
+                Depth-first resolving of abstract rules.
+                """
+                for inherited in obj_cls._inh_by:
+                    if inherited._type == RULE_ABSTRACT:
+                        return _resolve_ref_abstract(inherited)
+                    elif inherited._type == RULE_NORMAL:
+                        if id(inherited) in parser._instances:
+                            objs = parser._instances[id(inherited)]
+                            if obj_ref.obj_name in objs:
+                                return objs[obj_ref.obj_name]
+
+            if obj_ref.cls._type == RULE_NORMAL:
+                if id(obj_ref.cls) in parser._instances:
+                    objs = parser._instances[id(obj_ref.cls)]
+                    if obj_ref.obj_name in objs:
+                        return objs[obj_ref.obj_name]
+            elif obj_ref.cls._type == RULE_ABSTRACT:
+                # For abstract rule ref do a depth first search on
+                # the inheritance tree to find normal rules
+                # and return a first instance of that meta-class instance with
+                # the referred name.
+                obj = _resolve_ref_abstract(obj_ref.cls)
+                if obj:
+                    return obj
+            else:
+                pass
+                # TODO: Match rules cannot be referred. This is
+                #       an error in language description.
+
+
+            # As a fall-back search builtins if given
+            if metamodel.builtins:
+                if obj_ref.obj_name in metamodel.builtins:
+                    # TODO: Classes must match
+                    return metamodel.builtins[obj_ref.obj_name]
 
             raise TextXSemanticError(
                 'Unknown object "{}" of class "{}" at {}'
