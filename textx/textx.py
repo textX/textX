@@ -167,10 +167,11 @@ class TextXModelSA(SemanticAction):
                     if rule_name in textx_parser.peg_rules:
                         rule = textx_parser.peg_rules[rule_name]
                     else:
+                        line, col = parser.pos_to_linecol(rule.position)
                         raise TextXSemanticError(
                             'Unexisting rule "{}" at position {}.'
                             .format(rule.rule_name,
-                                    parser.pos_to_linecol(rule.position)))
+                                    (line, col)), line, col)
 
                 assert isinstance(rule, ParsingExpression),\
                     "{}:{}".format(type(rule), str(rule))
@@ -196,10 +197,10 @@ class TextXModelSA(SemanticAction):
         def _resolve_cls(cls_crossref):
             if isinstance(cls_crossref, ClassCrossRef):
                 if cls_crossref.cls_name not in xtext_parser.metamodel:
+                    line, col = parser.pos_to_linecol(cls_crossref.position)
                     raise TextXSemanticError(
                         'Unknown class/rule "{}" at {}.'
-                        .format(cls_crossref.cls_name,
-                                parser.pos_to_linecol(cls_crossref.position)))
+                        .format(cls_crossref.cls_name, (line, col)), line, col)
                 return xtext_parser.metamodel[cls_crossref.cls_name]
 
             elif issubclass(cls_crossref, TextXClass):
@@ -339,9 +340,10 @@ def assignment_SA(parser, node, children):
         print("Creating attribute {}:{}".format(cls.__name__, attr_name))
     if attr_name in cls._attrs:
         # TODO: This constraint should be relaxed.
+        line, col = parser.pos_to_linecol(node.position)
         raise TextXSemanticError(
             'Multiple assignment to the same attribute "{}" at {}'
-            .format(attr_name, parser.pos_to_linecol(node.position)))
+            .format(attr_name, (line, col)), line, col)
 
     cls_attr = cls.new_attr(name=attr_name, position=node.position)
 
@@ -438,10 +440,11 @@ def expr_SA(parser, node, children):
         elif children[1] == '+':
             return OneOrMore(nodes=[children[0]])
         else:
+            line, col = parser.pos_to_linecol(node[1].position)
             TextXSemanticError(
                 'Unknown repetition operand "{}" at {}'
                 .format(children[1],
-                        str(parser.pos_to_linecol(node[1].position))))
+                        str((line, col))), line, col)
 expr.sem = expr_SA
 
 
@@ -468,9 +471,10 @@ def re_match_SA(parser, node, children):
     try:
         regex.compile()
     except Exception as e:
+        line, col = parser.pos_to_linecol(node[1].position)
         raise TextXSyntaxError(
             "{} at {}"
-            .format(str(e), str(parser.pos_to_linecol(node[1].position))))
+            .format(str(e), str((line, col))), line, col)
     return regex
 re_match.sem = re_match_SA
 
@@ -498,12 +502,13 @@ rule_match.sem = rule_match_SA
 
 
 def rule_link_SA(parser, node, children):
-    # A link to some other class will be the value of its name attribute.
+    # A link to some other class will be the value of its "name" attribute.
     class_name = children[0]
     if class_name in BASE_TYPE_NAMES:
+        line, col = parser.pos_to_linecol(node.position)
         raise TextXSemanticError(
             'Primitive types can not be referenced at {}.'
-            .format(node.position))
+            .format((line, col)), line, col)
     if len(children) > 1:
         rule_name = children[1]
     else:
@@ -568,7 +573,8 @@ def language_from_str(language_def, metamodel, ignore_case=True, debug=False):
     try:
         parser.parse(language_def)
     except NoMatch as e:
-        raise TextXSyntaxError(str(e))
+        line, col = parser.pos_to_linecol(e.position)
+        raise TextXSyntaxError(str(e), line, col)
 
     # Construct new parser based on the given language description.
     lang_parser = parser.getASG()
