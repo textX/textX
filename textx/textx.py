@@ -10,6 +10,7 @@
 # To make things clear I have named this language textX ;)
 #######################################################################
 
+import re
 from arpeggio import StrMatch, Optional, ZeroOrMore, OneOrMore, Sequence,\
     OrderedChoice, RegExMatch, NoMatch, EOF, ParsingExpression,\
     SemanticAction, ParserPython, SemanticActionSingleChild
@@ -445,7 +446,19 @@ expr.sem = expr_SA
 
 
 def str_match_SA(parser, node, children):
-    return StrMatch(children[0], ignore_case=parser.ignore_case)
+    to_match = children[0]
+    # Special case. If to_match is a keyword-like string
+    # matching should be done with word boundaries on.
+    # If this is not done we can run into problems described
+    # in the test test_match_whole_word
+    match = parser.keyword_regex.match(to_match)
+    if match and match.span() == (0, len(to_match)):
+        regex_match = RegExMatch(r'{}\b'.format(to_match),
+                                 ignore_case=parser.ignore_case)
+        regex_match.compile()
+        return regex_match
+    else:
+        return StrMatch(to_match, ignore_case=parser.ignore_case)
 str_match.sem = str_match_SA
 
 
@@ -536,6 +549,13 @@ def language_from_str(language_def, metamodel, ignore_case=True, debug=False):
     parser = ParserPython(textx_model, comment_def=comment,
                           ignore_case=ignore_case,
                           reduce_tree=True, debug=debug)
+
+    # Prepare regex used in keyword-like strmatch detection.
+    # See str_match_SA
+    flags = 0
+    if ignore_case:
+        flags = re.IGNORECASE
+    parser.keyword_regex = re.compile(r'[^\d\W]\w*', flags)
 
     # This is used during parser construction phase.
     parser.metamodel = metamodel
