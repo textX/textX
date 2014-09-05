@@ -24,52 +24,63 @@ from .const import MULT_ZEROORMORE, MULT_ONEORMORE, \
 
 # textX grammar
 def textx_model():          return ZeroOrMore(rule), EOF
-def rule():                 return [class_rule, enum]
-def enum():                 return enum_kwd, ident, ':', enum_literal,\
-                                    ZeroOrMore("|", enum_literal), ';'
-def enum_literal():         return ident, '=', str_match
-def class_rule():           return class_name, ":", [alternative_inher,
-                                                alternative_match, sequence], ';'
-def class_name():           return ident
+def rule():                 return [abstract_rule, match_rule, common_rule,
+                                    mixin_rule, expression_rule]
 
-def alternative_inher():    return rule_match_alt, OneOrMore("|", rule_match_alt)
-def alternative_match():    return [terminal_match, rule_match_alt], OneOrMore("|",
-                                    [terminal_match, rule_match_alt])
-def rule_match_alt():       return ident
-def choice():               return sequence, ZeroOrMore("|", sequence)
-def sequence():             return OneOrMore([assignment, expr])
+# Rules
+def match_rule():           return class_name, ":", match_rule_body, ";"
+def abstract_rule():        return class_name, ":", abstract_rule_body, ";"
+def mixin_rule():           return class_name, "mixin", ":", common_rule_body, ";"
+def expression_rule():      return class_name, "expression", ":", ";" # TODO
+def common_rule():          return class_name, ":", common_rule_body, ";"
 
-def expr():                 return [terminal_match, bracketed_choice],\
-                                    Optional(repeat_operator)
-def bracketed_choice():     return '(', choice, ')'
+def match_rule_body():      return [simple_match, rule_match], OneOrMore("|",
+                                    [simple_match, rule_match])
+def abstract_rule_body():   return rule_match, OneOrMore("|", rule_match)
+def common_rule_body():     return expression
+
+def sequence():             return OneOrMore([match, assignment])
+def match():                return [simple_match, mixin_rule_match]
+def simple_match():         return [str_match, re_match]
+def mixin_rule_match():     return rule_name
+
+def expression():           return [bracketed_expression, choice],\
+                                    Optional(repeat_operator, Optional(repeat_params))
+def choice():               return sequence, ZeroOrMore("|", expression)
+def bracketed_expression(): return '(', expression, ')'
 def repeat_operator():      return ['*', '?', '+']
+def repeat_params():        return '[', OneOrMore([simple_match,
+                                                   'eolterm',
+                                                   'onlyonce',
+                                                   'onceeach']), ']'
 
 # Assignment
 def assignment():           return attribute, assignment_op, assignment_rhs
 def attribute():            return ident
 def assignment_op():        return ["=", "*=", "+=", "?="]
-def assignment_rhs():       return [terminal_match, list_match, rule_ref]
-def terminal_match():       return [str_match, re_match]
+def assignment_rhs():       return [simple_match, rule_ref], Optional(repeat_params)
+
+
 def str_match():            return [("'", _(r"((\\')|[^'])*"),"'"),\
                                     ('"', _(r'((\\")|[^"])*'),'"')]
 def re_match():             return "/", _(r"((\\/)|[^/])*"), "/"
-def list_match():           return "{", rule_ref, Optional(list_separator), '}'
-def list_separator():       return terminal_match
+
 # Rule reference
 def rule_ref():             return [rule_match, rule_link]
 def rule_match():           return ident
 def rule_link():            return '[', rule_name, Optional('|', rule_rule), ']'
-#def rule_choice():          return rule_name, ZeroOrMore('|', rule_name)
+def function_name():        return ident
 def rule_name():            return ident
 def rule_rule():            return ident
+def class_name():           return ident
 
 def ident():                return _(r'\w+')
-def enum_kwd():             return 'enum'
 
 # Comments
 def comment():              return [comment_line, comment_block]
 def comment_line():         return _(r'//.*?$')
 def comment_block():        return _(r'/\*(.|\n)*?\*/')
+
 
 
 # Special rules - primitive types
@@ -247,7 +258,7 @@ class TextXModelSA(SemanticAction):
 textx_model.sem = TextXModelSA()
 
 
-def class_rule_SA(parser, node, children):
+def rule_SA(parser, node, children):
     rule_name, rule = children
     rule = Sequence(nodes=[rule], rule_name=rule_name,
                     root=True)
@@ -259,7 +270,7 @@ def class_rule_SA(parser, node, children):
 
     parser.peg_rules[rule_name] = rule
     return rule
-class_rule.sem = class_rule_SA
+rule.sem = rule_SA
 
 
 def class_name_SA(parser, node, children):
@@ -280,21 +291,22 @@ def class_name_SA(parser, node, children):
 class_name.sem = class_name_SA
 
 
-def alternative_match_SA(parser, node, children):
+def match_rule_body_SA(parser, node, children):
     # This is a match rule
     parser._current_cls._type = RULE_MATCH
     # String representation of match alternatives.
+    # Used in visualizations and debugging
     parser._current_cls._match_str = "|".join([str(match)
                                               for match in children])
     return OrderedChoice(nodes=children[:])
-alternative_match.sem = alternative_match_SA
+match_rule_body.sem = match_rule_body_SA
 
 
-def alternative_inher_SA(parser, node, children):
+def abstract_rule_body_SA(parser, node, children):
     # This is an abstract rule
     parser._current_cls._type = RULE_ABSTRACT
     return OrderedChoice(nodes=children[:])
-alternative_inher.sem = alternative_inher_SA
+abstract_rule_body.sem = abstract_rule_body_SA
 
 
 def sequence_SA(parser, node, children):
