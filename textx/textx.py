@@ -23,21 +23,22 @@ from .const import MULT_ZEROORMORE, MULT_ONEORMORE, \
 
 
 # textX grammar
-def textx_model():          return ZeroOrMore(rule), EOF
-def rule():                 return [abstract_rule, match_rule, common_rule,
-                                    mixin_rule, expression_rule]
+def textx_model():          return ZeroOrMore(textx_rule), EOF
+# def textx_rule():           return [abstract_rule, match_rule, common_rule,
+#                                     mixin_rule, expression_rule]
 
+def textx_rule():           return [abstract_rule, match_rule, common_rule]
 # Rules
+def common_rule():          return rule_name, ":", common_rule_body, ";"
 def match_rule():           return rule_name, ":", match_rule_body, ";"
 def abstract_rule():        return rule_name, ":", abstract_rule_body, ";"
 def mixin_rule():           return rule_name, "mixin", ":", common_rule_body, ";" #TODO
 def expression_rule():      return rule_name, "expression", ":", ";" # TODO
-def common_rule():          return rule_name, ":", common_rule_body, ";"
 
+def common_rule_body():     return choice
 def match_rule_body():      return [simple_match, rule_ref], OneOrMore("|",
                                     [simple_match, rule_ref])
 def abstract_rule_body():   return abstract_rule_ref, OneOrMore("|", abstract_rule_ref)
-def common_rule_body():     return choice
 
 def sequence():             return OneOrMore([repeatable_expr, assignment])
 def repeatable_expr():      return [bracketed_choice, simple_match],\
@@ -260,19 +261,19 @@ class TextXModelSA(SemanticAction):
 textx_model.sem = TextXModelSA()
 
 
-def rule_SA(parser, node, children):
-    rule_name, rule = children
+def textx_rule_SA(parser, node, children):
+    rule_name, rule = children[0]
     rule = Sequence(nodes=[rule], rule_name=rule_name,
                     root=True)
 
     # Do some name mangling for comment rule
-    # to prevent refererencing from other rules
+    # to prevent referencing from other rules
     if rule_name.lower() == "comment":
         rule_name = "__comment"
 
     parser.peg_rules[rule_name] = rule
     return rule
-rule.sem = rule_SA
+textx_rule.sem = textx_rule_SA
 
 
 def rule_name_SA(parser, node, children):
@@ -291,6 +292,13 @@ def rule_name_SA(parser, node, children):
 
     return cls_name
 rule_name.sem = rule_name_SA
+
+
+def rules(parser, node, children):
+    return (children[0], children[1])
+common_rule.sem = rules
+abstract_rule.sem = rules
+match_rule.sem = rules
 
 
 def match_rule_body_SA(parser, node, children):
@@ -356,6 +364,7 @@ def repeat_modifiers_SA(parser, node, children):
     for modifier in children:
         if isinstance(modifier, Match):
             # Separator
+            modifier.rule_name = 'sep'
             modifiers['sep'] = modifier
         elif type(modifier) == tuple:
             modifiers['multiplicity'] = modifier
@@ -412,43 +421,7 @@ def assignment_SA(parser, node, children):
         # Target class is not the same as target rule
         target_cls = rhs_rule.cls
 
-    # if type(rhs_rule) is tuple:
-    #     if rhs_rule[0] == "list":
-    #         # Special case. List as rhs
-    #         _, list_el_rule, separator = rhs
-    #
-    #         # List rule may be a ref-cont
-    #         if type(list_el_rule) is tuple and list_el_rule[0] == "obj_ref":
-    #             cls_attr.cont = False
-    #             cls_attr.ref = True
-    #             list_el_rule = list_el_rule[1]
-    #             # Target class is not the same as target rule
-    #             target_cls = list_el_rule.cls
-    #
-    #         base_rule_name = list_el_rule.rule_name
-    #         if op == '+=':
-    #             # If operation is += there must be at least one element
-    #             # in the list
-    #             assignment_rule = Sequence(
-    #                 nodes=[list_el_rule,
-    #                        ZeroOrMore(nodes=Sequence(nodes=[separator,
-    #                                                         list_el_rule]))],
-    #                 rule_name='__asgn_list', root=True)
-    #
-    #             cls_attr.mult = MULT_ONEORMORE
-    #         else:
-    #             assignment_rule = Optional(
-    #                 nodes=[Sequence(nodes=[list_el_rule,
-    #                        ZeroOrMore(nodes=Sequence(nodes=[separator,
-    #                                                         list_el_rule]))])],
-    #                 rule_name='__asgn_list', root=True)
-    #
-    #             cls_attr.mult = MULT_ZEROORMORE
-    #         rhs = list_el_rule
-    #         base_rule_name = rhs.rule_name
-    # else:
     base_rule_name = rhs_rule.rule_name
-    print("FFFFRule", rhs_rule.rule_name)
     if op == '+=':
         assignment_rule = OneOrMore(
             nodes=[rhs_rule],
@@ -469,6 +442,31 @@ def assignment_SA(parser, node, children):
         assignment_rule = Sequence(
             nodes=[rhs_rule],
             rule_name='__asgn_plain', root=True)
+
+    # Modifiers
+    if modifiers:
+        modifiers, position = modifiers
+        # Sanity check. Modifiers do not make
+        # sense for ?= operator at the moment.
+        if op == '?=':
+            line, col = parser.pos_to_linecol(position)
+            raise TextXSyntaxError(
+                'Modifiers are not allowed for "?=" operator at {}'
+                .format(str((line, col))), line, col)
+        # Separator modifier
+        if 'sep' in modifiers:
+            sep = modifiers['sep']
+            assignment_rule = Sequence(
+                nodes=[rhs_rule,
+                       ZeroOrMore(nodes=[Sequence(nodes=[sep, rhs_rule])])],
+                rule_name='__asgn_list', root=True)
+            if op == "*=":
+                assignment_rule = Optional(nodes=[rhs_rule])
+                assignment_rule = Optional(nodes=[Sequence(
+                    nodes=[rhs_rule,
+                           ZeroOrMore(nodes=[
+                               Sequence(nodes=[sep, rhs_rule])])])],
+                    rule_name='__asgn_list', root=True)
 
     if target_cls:
         attr_type = target_cls
@@ -603,7 +601,7 @@ def language_from_str(language_def, metamodel, ignore_case=True, debug=False):
     # the textX grammar specified in this module
     parser = ParserPython(textx_model, comment_def=comment,
                           ignore_case=ignore_case,
-                          reduce_tree=True, debug=debug)
+                          reduce_tree=False, debug=debug)
 
     # Prepare regex used in keyword-like strmatch detection.
     # See str_match_SA
@@ -629,7 +627,7 @@ def language_from_str(language_def, metamodel, ignore_case=True, debug=False):
     # Construct new parser based on the given language description.
     lang_parser = parser.getASG()
 
-    # Metamodel is constructed. Here we connect metamodel and language
+    # Meta-model is constructed. Here we connect meta-model and language
     # parser for convenience.
     lang_parser.metamodel = parser.metamodel
     metamodel.parser = lang_parser
@@ -641,6 +639,4 @@ def language_from_str(language_def, metamodel, ignore_case=True, debug=False):
             "{}_parser_model.dot".format(metamodel.rootcls.__name__))
 
     return lang_parser
-
-
 

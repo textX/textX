@@ -159,8 +159,8 @@ def test_list_separator():
     """
 
     rule = """
-    Model: 'start' attr+={Rule /,|;/};   // Here a regex match is used to
-                                        // define , or ; as list separator
+    Model: 'start' attr+=Rule[/,|;/];   // Here a regex match is used to
+                                        // define , or ; as a separator
     Rule: Rule1|Rule2|Rule3;
     Rule1: a=INT;
     Rule2: b=STRING;
