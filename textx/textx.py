@@ -486,12 +486,6 @@ def assignment_SA(parser, node, children):
 assignment.sem = assignment_SA
 
 
-def repeat_operator_SA(parser, node, children):
-    # To prevent default action from suppressing operator
-    return children
-repeat_operator.sem = repeat_operator_SA
-
-
 def repeatable_expr_SA(parser, node, children):
     expr = children[0]
     rule = expr
