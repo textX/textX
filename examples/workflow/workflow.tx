@@ -15,7 +15,7 @@ Task:
   'task' name=ID '{'
     (('entry' entry=[Action])|
     ('leave' leave=[Action])|
-    ('next' next+={[Task] ','}))*
+    ('next' next+=[Task][',']))*
   '}'
 ;
 

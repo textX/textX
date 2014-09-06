@@ -15,7 +15,7 @@ ModelElement:
 ;
 
 TestDef:
-  "test" name=ID (":" test_type=ID)? ( "<" inherits*={[TestDef] ","} )? "{"
+  "test" name=ID (":" test_type=ID)? ( "<" inherits*=[TestDef][","] )? "{"
     params*=TestParam
   "}"
 ;
@@ -71,7 +71,7 @@ SubjectAttributeType:
 ;
 
 Enum:
-  '[' values+={ID ','} ']'
+  '[' values+=ID[','] ']'
 ;
 
 // Special rule for comments
