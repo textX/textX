@@ -153,7 +153,7 @@ def test_list_oneoormore():
     assert model
 
 
-def test_list_separator():
+def test_repetition_separator_modifier():
     """
     Match list with regex separator.
     """
