@@ -25,7 +25,7 @@ be done. For more see examples.
 ::
 
   HelloWorldModel:
-    'hello' to_greet+={Who ','}
+    'hello' to_greet+=Who[',']
   ;
 
   Who:
