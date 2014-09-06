@@ -12,7 +12,7 @@
 
 import re
 from arpeggio import StrMatch, Optional, ZeroOrMore, OneOrMore, Sequence,\
-    OrderedChoice, RegExMatch, NoMatch, EOF, ParsingExpression,\
+    OrderedChoice, RegExMatch, Match, NoMatch, EOF, ParsingExpression,\
     SemanticAction, ParserPython, SemanticActionSingleChild
 from arpeggio.export import PMDOTExporter
 from arpeggio import RegExMatch as _
@@ -28,53 +28,52 @@ def rule():                 return [abstract_rule, match_rule, common_rule,
                                     mixin_rule, expression_rule]
 
 # Rules
-def match_rule():           return class_name, ":", match_rule_body, ";"
-def abstract_rule():        return class_name, ":", abstract_rule_body, ";"
-def mixin_rule():           return class_name, "mixin", ":", common_rule_body, ";"
-def expression_rule():      return class_name, "expression", ":", ";" # TODO
-def common_rule():          return class_name, ":", common_rule_body, ";"
+def match_rule():           return rule_name, ":", match_rule_body, ";"
+def abstract_rule():        return rule_name, ":", abstract_rule_body, ";"
+def mixin_rule():           return rule_name, "mixin", ":", common_rule_body, ";" #TODO
+def expression_rule():      return rule_name, "expression", ":", ";" # TODO
+def common_rule():          return rule_name, ":", common_rule_body, ";"
 
-def match_rule_body():      return [simple_match, rule_match], OneOrMore("|",
-                                    [simple_match, rule_match])
-def abstract_rule_body():   return rule_match, OneOrMore("|", rule_match)
-def common_rule_body():     return expression
+def match_rule_body():      return [simple_match, rule_ref], OneOrMore("|",
+                                    [simple_match, rule_ref])
+def abstract_rule_body():   return abstract_rule_ref, OneOrMore("|", abstract_rule_ref)
+def common_rule_body():     return choice
 
-def sequence():             return OneOrMore([match, assignment])
-def match():                return [simple_match, mixin_rule_match]
+def sequence():             return OneOrMore([repeatable_expr, assignment])
+def repeatable_expr():      return [bracketed_choice, simple_match],\
+                                    Optional(repeat_operator)
+# def match():                return [simple_match , mixin_rule_match] TODO
 def simple_match():         return [str_match, re_match]
-def mixin_rule_match():     return rule_name
 
-def expression():           return [bracketed_expression, choice],\
-                                    Optional(repeat_operator, Optional(repeat_params))
-def choice():               return sequence, ZeroOrMore("|", expression)
-def bracketed_expression(): return '(', expression, ')'
-def repeat_operator():      return ['*', '?', '+']
-def repeat_params():        return '[', OneOrMore([simple_match,
-                                                   'eolterm',
-                                                   'onlyonce',
-                                                   'onceeach']), ']'
+def choice():               return sequence, ZeroOrMore("|", sequence)
+def bracketed_choice():     return '(', choice, ')'
+def repeat_operator():      return ['*', '?', '+'], Optional(repeat_modifiers)
+def repeat_modifiers():     return '[', OneOrMore([simple_match,
+                                                   multiplicity,
+                                                   'eolterm']), ']'
+def multiplicity():         return integer, Optional('..', integer)
 
 # Assignment
 def assignment():           return attribute, assignment_op, assignment_rhs
 def attribute():            return ident
 def assignment_op():        return ["=", "*=", "+=", "?="]
-def assignment_rhs():       return [simple_match, rule_ref], Optional(repeat_params)
+def assignment_rhs():       return [simple_match, reference], Optional(repeat_modifiers)
 
+# References
+def reference():            return [rule_ref, obj_ref]
+def rule_ref():             return ident
+def abstract_rule_ref():    return ident
+def obj_ref():              return '[', class_name, Optional('|', obj_ref_rule), ']'
+
+def rule_name():            return ident
+def obj_ref_rule():         return ident
+def class_name():           return ident
 
 def str_match():            return [("'", _(r"((\\')|[^'])*"),"'"),\
                                     ('"', _(r'((\\")|[^"])*'),'"')]
 def re_match():             return "/", _(r"((\\/)|[^/])*"), "/"
-
-# Rule reference
-def rule_ref():             return [rule_match, rule_link]
-def rule_match():           return ident
-def rule_link():            return '[', rule_name, Optional('|', rule_rule), ']'
-def function_name():        return ident
-def rule_name():            return ident
-def rule_rule():            return ident
-def class_name():           return ident
-
 def ident():                return _(r'\w+')
+def integer():              return _(r'[-+]?[0-9]+')
 
 # Comments
 def comment():              return [comment_line, comment_block]
@@ -117,13 +116,16 @@ def python_type(textx_type_name):
 
 class RuleCrossRef(object):
     """
-    Used for cross reference resolving.
+    Used during meta-model parser construction for cross reference resolving
+    of PEG rules, to support forward references.
 
     Attributes:
         rule_name(str): A name of the PEG rule that should be used to match
             this cross-ref.
         cls(str or ClassCrossRef): Target class which is matched by the
             rule_name or which name is matched by the rule_name.
+            Used for rule references in the RHS of the assignments to
+            determine attribute type.
         position(int): A position in the input string of this cross-ref.
     """
     def __init__(self, rule_name, cls, position):
@@ -135,15 +137,15 @@ class RuleCrossRef(object):
 class ClassCrossRef(object):
     """
     Used for class reference resolving on the meta-model level.
+    References will be resolved after semantic analysis of the meta-model
+    parse tree. After resolving phase the meta-model will be fully linked.
 
     Attributes:
-        cls_name(str): A name of the target class.
-        attr_name(str): The name of the attribute used for cross-referencing.
+        cls_name(str): A name of the target meta-model class.
         position(int): The position in the input string of this cross-ref.
     """
-    def __init__(self, cls_name, attr_name='', position=0):
+    def __init__(self, cls_name, position=0):
         self.cls_name = cls_name
-        self.attr_name = attr_name
         self.position = position
 
 
@@ -273,7 +275,7 @@ def rule_SA(parser, node, children):
 rule.sem = rule_SA
 
 
-def class_name_SA(parser, node, children):
+def rule_name_SA(parser, node, children):
 
     cls_name = str(node)
     if parser.debug:
@@ -288,7 +290,7 @@ def class_name_SA(parser, node, children):
         parser.metamodel.rootcls = cls
 
     return cls_name
-class_name.sem = class_name_SA
+rule_name.sem = rule_name_SA
 
 
 def match_rule_body_SA(parser, node, children):
@@ -302,11 +304,33 @@ def match_rule_body_SA(parser, node, children):
 match_rule_body.sem = match_rule_body_SA
 
 
+def rule_ref_SA(parser, node, children):
+    rule_name = str(node)
+    # Here a name of the meta-class (rule) is expected but to support
+    # forward referencing we are postponing resolving to second_pass.
+    return RuleCrossRef(rule_name, rule_name, node.position)
+rule_ref.sem = rule_ref_SA
+
+
 def abstract_rule_body_SA(parser, node, children):
-    # This is an abstract rule
+    # This is a body of an abstract rule so set
+    # the proper type
     parser._current_cls._type = RULE_ABSTRACT
     return OrderedChoice(nodes=children[:])
 abstract_rule_body.sem = abstract_rule_body_SA
+
+
+def abstract_rule_ref_SA(parser, node, children):
+    rule_name = str(node)
+    # This rule is used in alternative (inheritance)
+    # Crossref resolving will be done in the second pass.
+    parser._current_cls._inh_by.append(
+        ClassCrossRef(cls_name=rule_name,
+                      position=node.position))
+    # Here a name of the class (rule) is expected but to support
+    # forward referencing we are postponing resolving to second_pass.
+    return RuleCrossRef(rule_name, rule_name, node.position)
+abstract_rule_ref.sem = abstract_rule_ref_SA
 
 
 def sequence_SA(parser, node, children):
@@ -319,18 +343,38 @@ def choice_SA(parser, node, children):
 choice.sem = choice_SA
 
 
+def multiplicity_SA(parser, node, children):
+    if len(children) == 2:
+        return (int(children[0]), int(children[1]))
+    else:
+        return (int(children[0]), int(children[0]))
+multiplicity.sem = multiplicity_SA
+
+
+def repeat_modifiers_SA(parser, node, children):
+    modifiers = {}
+    for modifier in children:
+        if isinstance(modifier, Match):
+            # Separator
+            modifiers['sep'] = modifier
+        elif type(modifier) == tuple:
+            modifiers['multiplicity'] = modifier
+        else:
+            modifiers['eolterm'] = True
+    return (modifiers, node.position)
+repeat_modifiers.sem = repeat_modifiers_SA
+
+
 def assignment_rhs_SA(parser, node, children):
     rule = children[0]
-    if len(children) == 1:
-        return rule
+    modifiers = None
+    if len(children) > 1:
+        modifiers = children[1]
 
-    rep_op = children[1]
-    if rep_op == '?':
-        return Optional(nodes=[rule])
-    elif rep_op == '*':
-        return ZeroOrMore(nodes=[rule])
-    else:
-        return OneOrMore(nodes=[rule])
+    # At this level we do not know the type of assignment (=, +=, *=)
+    # and we do not have access to the PEG rule so postpone
+    # rule modification for assignment semantic action.
+    return (rule, modifiers)
 assignment_rhs.sem = assignment_rhs_SA
 
 
@@ -341,7 +385,7 @@ def assignment_SA(parser, node, children):
     """
     attr_name = children[0]
     op = children[1]
-    rhs = children[2]
+    rhs_rule, modifiers = children[2]
     cls = parser._current_cls
     target_cls = None
 
@@ -360,70 +404,71 @@ def assignment_SA(parser, node, children):
     cls_attr = cls.new_attr(name=attr_name, position=node.position)
 
     # Keep track of metaclass references and containments
-    if type(rhs) is tuple and rhs[0] == "link":
+    if type(rhs_rule) is tuple and rhs_rule[0] == "obj_ref":
         cls_attr.cont = False
         cls_attr.ref = True
         # Override rhs by its PEG rule for further processing
-        rhs = rhs[1]
+        rhs_rule = rhs_rule[1]
         # Target class is not the same as target rule
-        target_cls = rhs.cls
+        target_cls = rhs_rule.cls
 
-    if type(rhs) is tuple:
-        if rhs[0] == "list":
-            # Special case. List as rhs
-            _, list_el_rule, separator = rhs
-
-            # List rule may be a ref-cont
-            if type(list_el_rule) is tuple and list_el_rule[0] == "link":
-                cls_attr.cont = False
-                cls_attr.ref = True
-                list_el_rule = list_el_rule[1]
-                # Target class is not the same as target rule
-                target_cls = list_el_rule.cls
-
-            base_rule_name = list_el_rule.rule_name
-            if op == '+=':
-                # If operation is += there must be at least one element
-                # in the list
-                assignment_rule = Sequence(
-                    nodes=[list_el_rule,
-                           ZeroOrMore(nodes=Sequence(nodes=[separator,
-                                                            list_el_rule]))],
-                    rule_name='__asgn_list', root=True)
-
-                cls_attr.mult = MULT_ONEORMORE
-            else:
-                assignment_rule = Optional(
-                    nodes=[Sequence(nodes=[list_el_rule,
-                           ZeroOrMore(nodes=Sequence(nodes=[separator,
-                                                            list_el_rule]))])],
-                    rule_name='__asgn_list', root=True)
-
-                cls_attr.mult = MULT_ZEROORMORE
-            rhs = list_el_rule
-            base_rule_name = rhs.rule_name
+    # if type(rhs_rule) is tuple:
+    #     if rhs_rule[0] == "list":
+    #         # Special case. List as rhs
+    #         _, list_el_rule, separator = rhs
+    #
+    #         # List rule may be a ref-cont
+    #         if type(list_el_rule) is tuple and list_el_rule[0] == "obj_ref":
+    #             cls_attr.cont = False
+    #             cls_attr.ref = True
+    #             list_el_rule = list_el_rule[1]
+    #             # Target class is not the same as target rule
+    #             target_cls = list_el_rule.cls
+    #
+    #         base_rule_name = list_el_rule.rule_name
+    #         if op == '+=':
+    #             # If operation is += there must be at least one element
+    #             # in the list
+    #             assignment_rule = Sequence(
+    #                 nodes=[list_el_rule,
+    #                        ZeroOrMore(nodes=Sequence(nodes=[separator,
+    #                                                         list_el_rule]))],
+    #                 rule_name='__asgn_list', root=True)
+    #
+    #             cls_attr.mult = MULT_ONEORMORE
+    #         else:
+    #             assignment_rule = Optional(
+    #                 nodes=[Sequence(nodes=[list_el_rule,
+    #                        ZeroOrMore(nodes=Sequence(nodes=[separator,
+    #                                                         list_el_rule]))])],
+    #                 rule_name='__asgn_list', root=True)
+    #
+    #             cls_attr.mult = MULT_ZEROORMORE
+    #         rhs = list_el_rule
+    #         base_rule_name = rhs.rule_name
+    # else:
+    base_rule_name = rhs_rule.rule_name
+    print("FFFFRule", rhs_rule.rule_name)
+    if op == '+=':
+        assignment_rule = OneOrMore(
+            nodes=[rhs_rule],
+            rule_name='__asgn_oneormore', root=True)
+        cls_attr.mult = MULT_ONEORMORE
+    elif op == '*=':
+        assignment_rule = ZeroOrMore(
+            nodes=[rhs_rule],
+            rule_name='__asgn_zeroormore', root=True)
+        cls_attr.mult = MULT_ZEROORMORE
+    elif op == '?=':
+        assignment_rule = Optional(
+            nodes=[rhs_rule],
+            rule_name='__asgn_optional', root=True)
+        cls_attr.mult = MULT_OPTIONAL
+        base_rule_name = 'BOOL'
     else:
-        base_rule_name = rhs.rule_name
-        if op == '+=':
-            assignment_rule = OneOrMore(
-                nodes=[rhs],
-                rule_name='__asgn_oneormore', root=True)
-            cls_attr.mult = MULT_ONEORMORE
-        elif op == '*=':
-            assignment_rule = ZeroOrMore(
-                nodes=[rhs],
-                rule_name='__asgn_zeroormore', root=True)
-            cls_attr.mult = MULT_ZEROORMORE
-        elif op == '?=':
-            assignment_rule = Optional(
-                nodes=[rhs],
-                rule_name='__asgn_optional', root=True)
-            cls_attr.mult = MULT_OPTIONAL
-            base_rule_name = 'BOOL'
-        else:
-            assignment_rule = Sequence(
-                nodes=[rhs],
-                rule_name='__asgn_plain', root=True)
+        assignment_rule = Sequence(
+            nodes=[rhs_rule],
+            rule_name='__asgn_plain', root=True)
 
     if target_cls:
         attr_type = target_cls
@@ -443,21 +488,46 @@ def assignment_SA(parser, node, children):
 assignment.sem = assignment_SA
 
 
-def expr_SA(parser, node, children):
+def repeat_operator_SA(parser, node, children):
+    # To prevent default action from suppressing operator
+    return children
+repeat_operator.sem = repeat_operator_SA
+
+
+def repeatable_expr_SA(parser, node, children):
+    expr = children[0]
+    rule = expr
     if len(children) > 1:
-        if children[1] == '?':
-            return Optional(nodes=[children[0]])
-        elif children[1] == '*':
-            return ZeroOrMore(nodes=[children[0]])
-        elif children[1] == '+':
-            return OneOrMore(nodes=[children[0]])
+        repeat_op = children[1]
+        if len(repeat_op) > 1:
+            repeat_op, modifiers = repeat_op
         else:
-            line, col = parser.pos_to_linecol(node[1].position)
-            TextXSemanticError(
-                'Unknown repetition operand "{}" at {}'
-                .format(children[1],
-                        str((line, col))), line, col)
-expr.sem = expr_SA
+            modifiers = None
+
+        if repeat_op == '?':
+            rule = Optional(nodes=[expr])
+        elif repeat_op == '*':
+            rule = ZeroOrMore(nodes=[expr])
+        else:
+            rule = OneOrMore(nodes=[expr])
+
+        if modifiers:
+            modifiers, position = modifiers
+            # Sanity check. Modifiers do not make
+            # sense for ? operator at the moment.
+            if repeat_op == '?':
+                line, col = parser.pos_to_linecol(position)
+                raise TextXSyntaxError('Modifiers are not allowed for "?" operator at {}'\
+                        .format(str((line, col))), line, col)
+            # Separator modifier
+            if 'sep' in modifiers:
+                sep = modifiers['sep']
+                rule = Sequence(nodes=[expr,
+                                ZeroOrMore(nodes=[Sequence(nodes=[sep, expr])])])
+                if repeat_op == "*":
+                    rule = Optional(nodes=[rule])
+    return rule
+repeatable_expr.sem = repeatable_expr_SA
 
 
 def str_match_SA(parser, node, children):
@@ -491,56 +561,23 @@ def re_match_SA(parser, node, children):
 re_match.sem = re_match_SA
 
 
-def rule_match_alt_SA(parser, node, children):
-    rule_name = str(node)
-    # This rule is used in alternative (inheritance)
-    # Crossref resolving will be done in the second pass.
-    parser._current_cls._inh_by.append(
-        ClassCrossRef(cls_name=rule_name,
-                      attr_name=None,
-                      position=node.position))
-    # Here a name of the class (rule) is expected but to support
-    # forward referencing we are postponing resolving to second_pass.
-    return RuleCrossRef(rule_name, rule_name, node.position)
-rule_match_alt.sem = rule_match_alt_SA
-
-
-def rule_match_SA(parser, node, children):
-    rule_name = str(node)
-    # Here a name of the metaclass (rule) is expected but to support
-    # forward referencing we are postponing resolving to second_pass.
-    return RuleCrossRef(rule_name, rule_name, node.position)
-rule_match.sem = rule_match_SA
-
-
-def rule_link_SA(parser, node, children):
-    # A link to some other class will be the value of its "name" attribute.
+def obj_ref_SA(parser, node, children):
+    # A reference to some other class instance will be the value of
+    # its "name" attribute.
     class_name = children[0]
     if class_name in BASE_TYPE_NAMES:
         line, col = parser.pos_to_linecol(node.position)
         raise TextXSemanticError(
-            'Primitive types can not be referenced at {}.'
+            'Primitive type instances can not be referenced at {}.'
             .format((line, col)), line, col)
     if len(children) > 1:
         rule_name = children[1]
     else:
         # Default rule for matching obj cross-refs
         rule_name = 'ID'
-    return ("link", RuleCrossRef(rule_name, class_name, node.position))
-rule_link.sem = rule_link_SA
+    return ("obj_ref", RuleCrossRef(rule_name, class_name, node.position))
+obj_ref.sem = obj_ref_SA
 
-
-def list_match_SA(parser, node, children):
-    match = children[0]
-    if len(children) == 1:
-        return ("list", match)
-    else:
-        separator = children[1]
-        separator.rule_name = 'sep'
-        # At this level we do not know the type of assignment (=, +=, *=)
-        # so postpone rule construction to assignment_sa
-        return ("list", match, separator)
-list_match.sem = list_match_SA
 
 # Default actions
 bracketed_choice.sem = SemanticActionSingleChild()
@@ -562,7 +599,8 @@ def language_from_str(language_def, metamodel, ignore_case=True, debug=False):
     if debug:
         print("*** TEXTX PARSER ***")
 
-    # First create parser for TextX descriptions
+    # First create parser for TextX descriptions from
+    # the textX grammar specified in this module
     parser = ParserPython(textx_model, comment_def=comment,
                           ignore_case=ignore_case,
                           reduce_tree=True, debug=debug)
