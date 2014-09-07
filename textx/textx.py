@@ -374,6 +374,11 @@ def repeat_modifiers_SA(parser, node, children):
 repeat_modifiers.sem = repeat_modifiers_SA
 
 
+def repeat_operator_SA(parser, node, children):
+    return children
+repeat_operator.sem = repeat_operator_SA
+
+
 def repeatable_expr_SA(parser, node, children):
     expr = children[0]
     rule = expr
@@ -494,6 +499,7 @@ def assignment_SA(parser, node, children):
             raise TextXSyntaxError(
                 'Modifiers are not allowed for "?=" operator at {}'
                 .format(str((line, col))), line, col)
+
         # Separator modifier
         if 'sep' in modifiers:
             sep = modifiers['sep']
