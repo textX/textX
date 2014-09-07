@@ -40,8 +40,8 @@ def match_rule_body():      return [simple_match, rule_ref], OneOrMore("|",
                                     [simple_match, rule_ref])
 def abstract_rule_body():   return abstract_rule_ref, OneOrMore("|", abstract_rule_ref)
 
-def sequence():             return OneOrMore([repeatable_expr, assignment])
-def repeatable_expr():      return [bracketed_choice, simple_match],\
+def sequence():             return OneOrMore([assignment, repeatable_expr])
+def repeatable_expr():      return [bracketed_choice, simple_match, rule_ref],\
                                     Optional(repeat_operator)
 # def match():                return [simple_match , mixin_rule_match] TODO
 def simple_match():         return [str_match, re_match]
