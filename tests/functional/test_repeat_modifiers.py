@@ -83,3 +83,17 @@ def test_assignment_modifier_separator_optional():
     with pytest.raises(TextXSyntaxError):
         metamodel_from_str(model)
 
+
+def test_modifier_eolterm_zeroormore():
+    model = """
+    Rule:
+        ID+[eolterm] 'nextline';
+    """
+    metamodel = metamodel_from_str(model)
+
+    model = metamodel.model_from_str("""first second third
+    nextline
+    """)
+    assert model
+
+

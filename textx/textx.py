@@ -374,6 +374,47 @@ def repeat_modifiers_SA(parser, node, children):
 repeat_modifiers.sem = repeat_modifiers_SA
 
 
+def repeatable_expr_SA(parser, node, children):
+    expr = children[0]
+    rule = expr
+    if len(children) > 1:
+        repeat_op = children[1]
+        if len(repeat_op) > 1:
+            repeat_op, modifiers = repeat_op
+        else:
+            modifiers = None
+
+        if repeat_op == '?':
+            rule = Optional(nodes=[expr])
+        elif repeat_op == '*':
+            rule = ZeroOrMore(nodes=[expr])
+        else:
+            rule = OneOrMore(nodes=[expr])
+
+        if modifiers:
+            modifiers, position = modifiers
+            # Sanity check. Modifiers do not make
+            # sense for ? operator at the moment.
+            if repeat_op == '?':
+                line, col = parser.pos_to_linecol(position)
+                raise TextXSyntaxError('Modifiers are not allowed for "?" operator at {}'\
+                        .format(str((line, col))), line, col)
+            # Separator modifier
+            if 'sep' in modifiers:
+                sep = modifiers['sep']
+                rule = Sequence(nodes=[expr,
+                                ZeroOrMore(nodes=[Sequence(nodes=[sep, expr])])])
+                if repeat_op == "*":
+                    rule = Optional(nodes=[rule])
+
+            # End of line termination modifier
+            if 'eolterm' in modifiers:
+                rule.eolterm = True
+
+    return rule
+repeatable_expr.sem = repeatable_expr_SA
+
+
 def assignment_rhs_SA(parser, node, children):
     rule = children[0]
     modifiers = None
@@ -468,6 +509,10 @@ def assignment_SA(parser, node, children):
                                Sequence(nodes=[sep, rhs_rule])])])],
                     rule_name='__asgn_list', root=True)
 
+        # End of line termination modifier
+        if 'eolterm' in modifiers:
+            assignment_rule.eolterm = True
+
     if target_cls:
         attr_type = target_cls
     else:
@@ -484,42 +529,6 @@ def assignment_SA(parser, node, children):
     assignment_rule._exp_str = attr_name    # For nice error reporting
     return assignment_rule
 assignment.sem = assignment_SA
-
-
-def repeatable_expr_SA(parser, node, children):
-    expr = children[0]
-    rule = expr
-    if len(children) > 1:
-        repeat_op = children[1]
-        if len(repeat_op) > 1:
-            repeat_op, modifiers = repeat_op
-        else:
-            modifiers = None
-
-        if repeat_op == '?':
-            rule = Optional(nodes=[expr])
-        elif repeat_op == '*':
-            rule = ZeroOrMore(nodes=[expr])
-        else:
-            rule = OneOrMore(nodes=[expr])
-
-        if modifiers:
-            modifiers, position = modifiers
-            # Sanity check. Modifiers do not make
-            # sense for ? operator at the moment.
-            if repeat_op == '?':
-                line, col = parser.pos_to_linecol(position)
-                raise TextXSyntaxError('Modifiers are not allowed for "?" operator at {}'\
-                        .format(str((line, col))), line, col)
-            # Separator modifier
-            if 'sep' in modifiers:
-                sep = modifiers['sep']
-                rule = Sequence(nodes=[expr,
-                                ZeroOrMore(nodes=[Sequence(nodes=[sep, expr])])])
-                if repeat_op == "*":
-                    rule = Optional(nodes=[rule])
-    return rule
-repeatable_expr.sem = repeatable_expr_SA
 
 
 def str_match_SA(parser, node, children):
