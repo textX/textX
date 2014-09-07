@@ -97,7 +97,7 @@ def test_abstract_rule():
     assert model.attr.__class__.__name__ == 'RuleA'
 
 
-def test_list_zeroormore():
+def test_assignment_zeroormore():
 
     rule = """
     Model: 'start' attr*=Rule;     // There should be zero or more Rule-s after
@@ -124,7 +124,7 @@ def test_list_zeroormore():
     assert model
 
 
-def test_list_oneoormore():
+def test_assignment_oneoormore():
 
     rule = """
     Model: 'start' attr+=Rule;    // There should be at least one Rule
@@ -216,7 +216,7 @@ def test_bool_match():
     assert model.rule2 is False
 
 
-def test_rule_reference():
+def test_object_and_rule_reference():
     rule = """
     Model: 'start' rules*=RuleA 'ref' ref=[RuleA];
     RuleA: 'rule' name=ID;
@@ -238,7 +238,7 @@ def test_rule_reference():
     assert model.ref.__class__.__name__ == "RuleA"
 
 
-def test_abstract_rule_reference():
+def test_abstract_rule_and_object_reference():
     rule = """
     Model: 'start' rules*=RuleA 'ref' ref=[RuleA];
     RuleA: Rule1|Rule2;
@@ -262,4 +262,34 @@ def test_abstract_rule_reference():
     # Reference to first rule
     assert model.ref is model.rules[1]
     assert model.ref.__class__.__name__ == "RuleE"
-# def test_repetition_zeroormore()
+
+
+def test_repeat_rule_ref():
+    model = """
+    Rule: ID*;
+    """
+    metamodel = metamodel_from_str(model)
+
+    model = metamodel.model_from_str("""first second third""")
+    assert model
+
+
+def test_repeat_strmatch():
+    model = """
+    Rule: "first"*;
+    """
+    metamodel = metamodel_from_str(model)
+
+    model = metamodel.model_from_str("""first first""")
+    assert model
+
+
+def test_repeat_strmatch_with_separator():
+    model = """
+    Rule: "first"*[','];
+    """
+    metamodel = metamodel_from_str(model)
+
+    model = metamodel.model_from_str("""first, first""")
+    assert model
+
