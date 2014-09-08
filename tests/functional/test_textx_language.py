@@ -153,6 +153,34 @@ def test_assignment_oneoormore():
     assert model
 
 
+def test_assignment_optional():
+    rule = """
+    Model: 'start' (attr=Rule)?;    // There should be at most one Rule
+                                 // after 'start'
+    Rule: Rule1|Rule2|Rule3;
+    Rule1: a=INT;
+    Rule2: b=STRING;
+    Rule3: c=ID;
+    """
+    meta = metamodel_from_str(rule)
+    assert meta
+    assert set(meta.keys()) == set(['Model', 'Rule', 'Rule1', 'Rule2', 'Rule3'])\
+        .union(set(BASE_TYPE_NAMES))
+
+    model = meta.model_from_str('start')
+    assert model
+    model = meta.model_from_str('start 34')
+    assert model
+    assert model.attr
+    assert model.attr.a == 34
+    assert model.attr.__class__.__name__ == 'Rule1'
+
+    # There must be at most one Rule matched after 'start'
+    with pytest.raises(TextXSyntaxError):
+        model = meta.model_from_str('start 34 "foo"')
+    assert model
+
+
 def test_repetition_separator_modifier():
     """
     Match list with regex separator.
