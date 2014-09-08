@@ -66,6 +66,9 @@ class TextXMetaModel(dict):
         if classes:
             self.update(classes)
 
+        # Registered model processors
+        self._model_processors = []
+
     def new_class(self, name, position, inherits=None, root=False):
         """
         Creates a new class with the given name.
@@ -131,13 +134,27 @@ class TextXMetaModel(dict):
         """
         Instantiates model from the given string.
         """
-        return self.parser.get_model_from_str(model_str)
+        model = self.parser.get_model_from_str(model_str)
+        for p in self._model_processors:
+            p(model, self)
+        return model
 
     def model_from_file(self, file_name):
         """
         Instantiates model from the given file.
         """
-        return self.parser.get_model_from_file(file_name)
+        model = self.parser.get_model_from_file(file_name)
+        for p in self._model_processors:
+            p(model, self)
+        return model
+
+    def register_model_processor(self, model_processor):
+        """
+        Model processor is callable that will be called after
+        each successful model parse.
+        This callable receives model and metamodel as its parameters.
+        """
+        self._model_processors.append(model_processor)
 
 
 def metamodel_from_str(lang_desc, classes=None, builtins=None, debug=False):
