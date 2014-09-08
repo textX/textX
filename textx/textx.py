@@ -90,8 +90,8 @@ INT         = _(r'[-+]?[0-9]+', rule_name='INT', root=True)
 FLOAT       = _(r'[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?', 'FLOAT', root=True)
 STRING      = _(r'("[^"]*")|(\'[^\']*\')', 'STRING', root=True)
 NUMBER      = OrderedChoice(nodes=[FLOAT, INT], rule_name='NUMBER', root=True)
-BASETYPE    = OrderedChoice(nodes=[ID, STRING, BOOL, NUMBER], \
-                    rule_name='BASETYPE', root=True)
+BASETYPE    = OrderedChoice(nodes=[ID, STRING, BOOL, NUMBER],
+                            rule_name='BASETYPE', root=True)
 
 BASE_TYPE_RULES = {rule.rule_name: rule
                    for rule in [ID, BOOL, INT, FLOAT,
@@ -246,7 +246,8 @@ class TextXModelSA(SemanticAction):
                 if parser.debug:
                     print("Resolved attribute {}:{}[cls={}, cont={}, ref={}, mult={}, pos={}]"
                           .format(cls.__name__, attr.name, attr.cls.__name__,
-                                  attr.cont, attr.ref, attr.mult, attr.position))
+                                  attr.cont, attr.ref, attr.mult,
+                                  attr.position))
 
     def second_pass(self, parser, textx_parser):
         """Cross reference resolving for parser model."""
@@ -403,14 +404,16 @@ def repeatable_expr_SA(parser, node, children):
             # sense for ? operator at the moment.
             if repeat_op == '?':
                 line, col = parser.pos_to_linecol(position)
-                raise TextXSyntaxError('Modifiers are not allowed for "?" operator at {}'\
-                        .format(str((line, col))), line, col)
+                raise TextXSyntaxError(
+                    'Modifiers are not allowed for "?" operator at {}'
+                    .format(str((line, col))), line, col)
             # Separator modifier
             if 'sep' in modifiers:
                 sep = modifiers['sep']
                 rule = Sequence(nodes=[expr,
-                                ZeroOrMore(nodes=[Sequence(nodes=[sep, expr])])])
-                if repeat_op == "*":
+                                ZeroOrMore(nodes=[
+                                           Sequence(nodes=[sep, expr])])])
+                if repeat_op == '*':
                     rule = Optional(nodes=[rule])
 
             # End of line termination modifier
