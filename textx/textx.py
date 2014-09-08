@@ -453,14 +453,25 @@ def assignment_SA(parser, node, children):
 
     if parser.debug:
         print("Creating attribute {}:{}".format(cls.__name__, attr_name))
-    if attr_name in cls._attrs:
-        # TODO: This constraint should be relaxed.
-        line, col = parser.pos_to_linecol(node.position)
-        raise TextXSemanticError(
-            'Multiple assignment to the same attribute "{}" at {}'
-            .format(attr_name, (line, col)), line, col)
 
-    cls_attr = cls.new_attr(name=attr_name, position=node.position)
+    if attr_name in cls._attrs:
+        # If attribute already exists in the metamodel it is
+        # multiple assignment to the same attribute.
+
+        # Cannot use operator ?= on multiple assignments
+        if op == '?=':
+            line, col = parser.pos_to_linecol(node.position)
+            raise TextXSemanticError(
+                'Cannot use "?=" operator on multiple assignments for attribute "{}" at {}'
+                .format(attr_name, (line, col)), line, col)
+
+        cls_attr = cls._attrs[attr_name]
+        # Must be a many multiplicity.
+        # OneOrMore is "stronger" constraint.
+        if cls_attr.mult is not MULT_ONEORMORE:
+            cls_attr.mult = MULT_ZEROORMORE
+    else:
+        cls_attr = cls.new_attr(name=attr_name, position=node.position)
 
     # Keep track of metaclass references and containments
     if type(rhs_rule) is tuple and rhs_rule[0] == "obj_ref":
@@ -481,7 +492,8 @@ def assignment_SA(parser, node, children):
         assignment_rule = ZeroOrMore(
             nodes=[rhs_rule],
             rule_name='__asgn_zeroormore', root=True)
-        cls_attr.mult = MULT_ZEROORMORE
+        if cls_attr.mult is not MULT_ONEORMORE:
+            cls_attr.mult = MULT_ZEROORMORE
     elif op == '?=':
         assignment_rule = Optional(
             nodes=[rhs_rule],
