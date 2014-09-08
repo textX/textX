@@ -387,6 +387,7 @@ def repeatable_expr_SA(parser, node, children):
         if len(repeat_op) > 1:
             repeat_op, modifiers = repeat_op
         else:
+            repeat_op = repeat_op[0]
             modifiers = None
 
         if repeat_op == '?':
