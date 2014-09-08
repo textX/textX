@@ -268,10 +268,11 @@ def parse_tree_to_objgraph(parser, parse_tree):
                     # TODO: Classes must match
                     return metamodel.builtins[obj_ref.obj_name]
 
+            line, col = parser.pos_to_linecol(obj_ref.position)
             raise TextXSemanticError(
                 'Unknown object "{}" of class "{}" at {}'
-                .format(obj_ref.obj_name, obj_ref.cls.__name__,
-                        parser.pos_to_linecol(obj_ref.position)))
+                .format(obj_ref.obj_name, obj_ref.cls.__name__, (line, col)),
+                line=line, col=col)
 
         def _resolve(o):
             if parser.debug:
