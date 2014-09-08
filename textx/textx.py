@@ -550,7 +550,8 @@ def str_match_SA(parser, node, children):
     match = parser.keyword_regex.match(to_match)
     if match and match.span() == (0, len(to_match)):
         regex_match = RegExMatch(r'{}\b'.format(to_match),
-                                 ignore_case=parser.ignore_case)
+                                 ignore_case=parser.ignore_case,
+                                 str_repr=to_match)
         regex_match.compile()
         return regex_match
     else:
