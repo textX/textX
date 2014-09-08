@@ -533,7 +533,8 @@ def assignment_SA(parser, node, children):
     if parser.debug:
         print("Created attribute {}:{}[cls={}, cont={}, ref={}, mult={}, pos={}]"
               .format(cls.__name__, attr_name, cls_attr.cls.cls_name,
-                      cls_attr.cont, cls_attr.ref, cls_attr.mult, cls_attr.position))
+                      cls_attr.cont, cls_attr.ref, cls_attr.mult,
+                      cls_attr.position))
 
     assignment_rule._attr_name = attr_name
     assignment_rule._exp_str = attr_name    # For nice error reporting
