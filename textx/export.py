@@ -98,7 +98,7 @@ def model_export(model, file_name):
                         attrs += "]\\l"
                     else:
                         for idx, list_obj in enumerate(attr_value):
-                            if attr_value is not None:
+                            if list_obj is not None:
                                 f.write('{} -> {} [label="{}:{}" {}]\n'\
                                         .format(id(obj), id(list_obj), attr_name, idx, endmark))
                                 _export(list_obj)
