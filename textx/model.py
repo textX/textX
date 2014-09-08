@@ -132,6 +132,7 @@ def parse_tree_to_objgraph(parser, parse_tree):
                 print("CREATING INSTANCE {}".format(node.rule_name))
 
             inst = mclass()
+            inst._position = node.position
             parser._inst_stack.append(inst)
 
             for n in node:
