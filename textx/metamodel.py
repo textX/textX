@@ -120,6 +120,13 @@ class TextXMetaModel(dict):
                 clazz._attrs[name] = attr
                 return attr
 
+            @property
+            def _typename(self):
+                """
+                Returns the name of this class.
+                """
+                return self.__class__.__name__
+
         cls = Meta
         cls.__name__ = name
 
