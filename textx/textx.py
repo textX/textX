@@ -36,7 +36,7 @@ def mixin_rule():           return rule_name, "mixin", ":", common_rule_body, ";
 def expression_rule():      return rule_name, "expression", ":", ";" # TODO
 
 def common_rule_body():     return choice
-def match_rule_body():      return [simple_match, rule_ref], OneOrMore("|",
+def match_rule_body():      return [simple_match, rule_ref], ZeroOrMore("|",
                                     [simple_match, rule_ref])
 def abstract_rule_body():   return abstract_rule_ref, OneOrMore("|", abstract_rule_ref)
 
@@ -237,7 +237,7 @@ class TextXModelSA(SemanticAction):
                 # If target cls is of a base type or match rule
                 # then attr can not be a reference.
                 if attr.cls.__name__ in BASE_TYPE_NAMES \
-                        or attr.cls._type == "match":
+                        or attr.cls._type == RULE_MATCH:
                     attr.ref = False
                     attr.cont = True
                 else:
