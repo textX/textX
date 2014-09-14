@@ -84,7 +84,15 @@ def get_model_parser(top_rule, comments_model, debug=False):
             with open(file_name, 'r') as f:
                 model_str = f.read()
 
-            return self.get_model_from_str(model_str)
+            model = self.get_model_from_str(model_str)
+
+            # Register filename of the model for later use.
+            try:
+                model._filename = file_name
+            except AttributeError:
+                # model is some primitive python type (e.g. str)
+                pass
+            return model
 
         def get_model_from_str(self, model_str):
             """
@@ -96,6 +104,11 @@ def get_model_parser(top_rule, comments_model, debug=False):
             # Transform parse tree to model. Skip root node which
             # represents the whole file ending in EOF.
             model = parse_tree_to_objgraph(self, self.parse_tree[0])
+            try:
+                model._filename = None
+            except AttributeError:
+                # model is some primitive python type (e.g. str)
+                pass
             return model
 
     return TextXModelParser()
