@@ -110,6 +110,8 @@ def model_export(model, file_name):
                         else:
                             if attr.cls.__name__ in BASE_TYPE_NAMES \
                                     or attr.cls._type == RULE_MATCH:
+                                if type(attr_value) is str:
+                                    attr_value = attr_value.replace('\n', r'\n')
                                 attrs += "{}{}:{}={}\\l".format(required, attr_name, type(attr_value)\
                                         .__name__, attr_value)
                             else:
