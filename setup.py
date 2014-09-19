@@ -4,10 +4,10 @@ import os
 from setuptools import setup
 
 __author__ = "Igor R. Dejanović <igor DOT dejanovic AT gmail DOT com>"
-__version__ = "0.2"
+__version__ = "0.3-dev"
 
 NAME = 'textX'
-DESC = 'Meta-language in Arpeggio inspired by Xtext'
+DESC = 'Meta-language for DSL implementation inspired by Xtext'
 VERSION = __version__
 AUTHOR = 'Igor R. Dejanovic'
 AUTHOR_EMAIL = 'igor DOT dejanovic AT gmail DOT com'
