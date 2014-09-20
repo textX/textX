@@ -29,7 +29,7 @@ be done. For more see examples.
   ;
 
   Who:
-    name = /[^,]\*/
+    name = /[^,]*/
   ;
 
 Description consists of a set of parsing rules which at the same time
