@@ -6,6 +6,7 @@
 # License: MIT License
 #######################################################################
 
+import codecs
 from arpeggio import Parser, Sequence, NoMatch, EOF, Terminal
 from .exceptions import TextXSyntaxError, TextXSemanticError
 from .const import MULT_ONEORMORE, MULT_ZEROORMORE, RULE_NORMAL,\
@@ -81,7 +82,7 @@ def get_model_parser(top_rule, comments_model, debug=False):
             If file_name is given file will be parsed before model
             construction.
             """
-            with open(file_name, 'r') as f:
+            with codecs.open(file_name, 'r', 'utf-8') as f:
                 model_str = f.read()
 
             model = self.get_model_from_str(model_str)
