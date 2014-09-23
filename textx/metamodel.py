@@ -5,6 +5,8 @@
 # Copyright: (c) 2014 Igor R. Dejanovic <igor DOT dejanovic AT gmail DOT com>
 # License: MIT License
 #######################################################################
+
+import codecs
 from .textx import language_from_str, python_type, BASE_TYPE_NAMES
 from .const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, RULE_NORMAL
 
@@ -201,7 +203,7 @@ def metamodel_from_file(file_name, classes=None, builtins=None, debug=False):
         file_name(str): The name of the file with textX language description.
         classes, builtins, debug: See metamodel_from_str.
     """
-    with open(file_name, 'r') as f:
+    with codecs.open(file_name, 'r', 'utf-8') as f:
         lang_desc = f.read()
 
     metamodel = metamodel_from_str(lang_desc, classes, builtins, debug)
