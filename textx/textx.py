@@ -23,9 +23,13 @@ from .const import MULT_ZEROORMORE, MULT_ONEORMORE, \
 
 
 # textX grammar
-def textx_model():          return ZeroOrMore(textx_rule), EOF
+def textx_model():          return ZeroOrMore(import_stm), ZeroOrMore(textx_rule), EOF
 # def textx_rule():           return [abstract_rule, match_rule, common_rule,
 #                                     mixin_rule, expression_rule]
+
+def import_stm():           return 'import', grammar_file_name
+def grammar_file_name():    return [("'", _(r"((\\')|[^'])*"),"'"),\
+                                    ('"', _(r'((\\")|[^"])*'),'"')]
 
 def textx_rule():           return [abstract_rule, match_rule, common_rule]
 # Rules
@@ -156,7 +160,7 @@ class TextXModelSA(SemanticAction):
         comments_model = parser.peg_rules.get('__comment', None)
 
         from .model import get_model_parser
-        textx_parser = get_model_parser(children[0], comments_model,
+        textx_parser = get_model_parser(children[1], comments_model,
                                         parser.debug)
 
         textx_parser.metamodel = parser.metamodel
@@ -260,6 +264,19 @@ class TextXModelSA(SemanticAction):
 
         return textx_parser
 textx_model.sem = TextXModelSA()
+
+
+def import_stm_SA(parser, node, children):
+    # For each import create metamodel
+    from .metamodel import metamodel_from_file
+    import_mm = metamodel_from_file(children[0])
+    return import_mm
+import_stm.sem = import_stm_SA
+
+
+def grammar_file_name_SA(parser, node, children):
+    return children[0]
+grammar_file_name.sem = grammar_file_name_SA
 
 
 def textx_rule_SA(parser, node, children):
@@ -611,7 +628,7 @@ bracketed_choice.sem = SemanticActionSingleChild()
 def language_from_str(language_def, metamodel, ignore_case=True, debug=False):
     """
     Constructs parser and initializes metamodel from language description
-    given in textX file.
+    given in textX language.
 
     Args:
         language_def (str): A language description in textX.
@@ -638,6 +655,7 @@ def language_from_str(language_def, metamodel, ignore_case=True, debug=False):
     parser.keyword_regex = re.compile(r'[^\d\W]\w*', flags)
 
     # This is used during parser construction phase.
+    # Metamodel is filled in. Classes are created based on grammar rules.
     parser.metamodel = metamodel
 
     # Builtin rules representing primitive types
