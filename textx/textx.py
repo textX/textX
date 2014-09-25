@@ -11,6 +11,7 @@
 #######################################################################
 
 import re
+import os
 from arpeggio import StrMatch, Optional, ZeroOrMore, OneOrMore, Sequence,\
     OrderedChoice, RegExMatch, Match, NoMatch, EOF, ParsingExpression,\
     SemanticAction, ParserPython, SemanticActionSingleChild
@@ -159,8 +160,35 @@ class TextXModelSA(SemanticAction):
     def first_pass(self, parser, node, children):
         comments_model = parser.peg_rules.get('__comment', None)
 
+        # Child nodes are either an import or a rule
+        for c in children:
+            from .metamodel import TextXMetaModel
+            if isinstance(c, TextXMetaModel):
+                # Each import returns meta-model for the imported grammar
+                imported_mm = c
+                for cls in set(imported_mm.values()):
+                    if cls.__name__ not in BASE_TYPE_NAMES:
+                        parser.metamodel.add_class(cls._fqtn, cls)
+                        rule = imported_mm.parser.peg_rules[cls.__name__]
+                        rule.rule_name = cls._fqtn
+                        parser.peg_rules[cls._fqtn] = rule
+                    # If there is no rule by the current rule name in
+                    # this meta-model make the class available by its
+                    # base name also.
+                    # Furthermore, imported base types should always override
+                    # current base types.
+                    if cls.__name__ not in parser.metamodel:
+                        parser.metamodel.add_class(cls.__name__, cls)
+                        parser.peg_rules[cls.__name__] = \
+                            imported_mm.parser.peg_rules[cls.__name__]
+
+            else:
+                # Must be a rule
+                root_rule = c
+                break
+
         from .model import get_model_parser
-        textx_parser = get_model_parser(children[1], comments_model,
+        textx_parser = get_model_parser(root_rule, comments_model,
                                         parser.debug)
 
         textx_parser.metamodel = parser.metamodel
@@ -267,9 +295,20 @@ textx_model.sem = TextXModelSA()
 
 
 def import_stm_SA(parser, node, children):
+
     # For each import create metamodel
     from .metamodel import metamodel_from_file
-    import_mm = metamodel_from_file(children[0])
+    # Import file is given relative to the current root_dir
+    relative_import_file = children[0]
+    if parser.metamodel.root_dir:
+        import_file_name = os.path.join(parser.metamodel.root_dir,
+                                        relative_import_file)
+    else:
+        # If root_dir is not set try to load
+        # relative to the current directory
+        import_file_name = relative_import_file
+
+    import_mm = metamodel_from_file(import_file_name)
     return import_mm
 import_stm.sem = import_stm_SA
 

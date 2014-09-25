@@ -7,7 +7,8 @@
 #######################################################################
 
 import codecs
-from os.path import dirname, abspath
+import os
+from os.path import dirname, abspath, relpath, splitext
 from .textx import language_from_str, python_type, BASE_TYPE_NAMES
 from .const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, RULE_NORMAL
 
@@ -54,6 +55,8 @@ class TextXMetaModel(dict):
             or None otherwise.
         root_dir(str): Absolute directory used as a root for relative
             grammar imports. If not given file_name dir is used if given.
+        namespace(str): The namespace of this metamodel calculated from
+            file_name and root_dir.
         builtins(dict): A dict of named object used in linking phase.
             References to named objects not defined in the model will be
             searched here.
@@ -78,6 +81,13 @@ class TextXMetaModel(dict):
         if not root_dir and file_name:
             self.root_dir = dirname(abspath(file_name))
         self.rootcls = None
+
+        self.namespace = None
+        if self.file_name and self.root_dir:
+            self.namespace, _ = splitext(
+                relpath(self.file_name, self.root_dir))
+            self.namespace = self.namespace.replace(os.path.sep, '.')
+
         self.builtins = builtins
 
         if classes:
@@ -100,6 +110,17 @@ class TextXMetaModel(dict):
             Dynamic metaclass. Each textX rule will result in creating
             one Meta class with the type name of the rule.
             Model is a graph of python instances of this metaclasses.
+            Attributes:
+                _attrs(dict): A dict of meta-attributes keyed by name.
+                _inh_by(list): Classes that inherits this one.
+                _position(int): A position in the input string where this
+                    class is defined.
+                _type(int): The type of the textX rule this class is created
+                    for. See textx.const
+                _metamodel(TextXMetaModel): A metamodel this class belongs to.
+                _fqtn(str): A fully qualified type name.
+                    A property calculated using namespace of containing
+                    meta-model.
             """
             # Attribute information (MetaAttr instances) keyed by name.
             _attrs = {}
@@ -137,15 +158,17 @@ class TextXMetaModel(dict):
                 clazz._attrs[name] = attr
                 return attr
 
-            @property
-            def _typename(self):
-                """
-                Returns the name of this class.
-                """
-                return self.__class__.__name__
-
         cls = Meta
         cls.__name__ = name
+        cls._metamodel = self
+
+        cls._typename = cls.__name__
+
+        if self.namespace:
+            cls._fqtn = "%s.%s" % (self.namespace,
+                                   cls._typename)
+        else:
+            cls._fqtn = cls._typename
 
         self[name] = cls
 
@@ -176,9 +199,56 @@ class TextXMetaModel(dict):
         """
         Model processor is callable that will be called after
         each successful model parse.
-        This callable receives model and metamodel as its parameters.
+        This callable receives model and meta-model as its parameters.
         """
         self._model_processors.append(model_processor)
+
+    def add_class(self, name, cls):
+        """
+        Adds a class under some name.
+        If given name is fully qualified and the base name is of base type
+        registers new name for the existing base type in this meta-model.
+        For each class attribute relink types to the base types from this
+        meta-model.
+        """
+        base_name = name.split('.')[-1]
+        if base_name in BASE_TYPE_NAMES:
+            self[name] = self[base_name]
+        else:
+            self[name] = cls
+
+        # Relink attributes base types
+        for attr in cls._attrs.values():
+            if attr.cls.__name__ in BASE_TYPE_NAMES:
+                attr.cls = self[attr.cls.__name__]
+
+        # Relink inheritance base types
+        for idx, inh in enumerate(cls._inh_by):
+            if inh.__name__ in BASE_TYPE_NAMES:
+                cls._inh_by[idx] = self[inh.__name__]
+
+    def cls_to_names(self):
+        """
+        Returns a dict from meta-model classes to the list of all names
+        used (e.g. different name-spaces for the same class).
+        The list is ordered so that the base name comes first.
+        """
+        clsnames = {}
+        for name, cls in self.items():
+            if cls not in clsnames:
+                clsnames[cls] = [name]
+            else:
+                clsnames[cls].append(name)
+
+        # Find the base name if exist and put it at the first position
+        for names in clsnames.values():
+            for idx, name in enumerate(names):
+                if "." not in name:
+                    # Base name
+                    names[idx] = names[0]
+                    names[0] = name
+
+        return clsnames
 
 
 def metamodel_from_str(lang_desc, classes=None, builtins=None, file_name=None,
@@ -214,20 +284,21 @@ def metamodel_from_str(lang_desc, classes=None, builtins=None, file_name=None,
     return metamodel
 
 
-def metamodel_from_file(file_name, classes=None, builtins=None, debug=False):
+def metamodel_from_file(file_name, classes=None, builtins=None, root_dir=None,
+                        debug=False):
     """
     Creates new metamodel from the given file.
 
     Args:
         file_name(str): The name of the file with textX language description.
-        classes, builtins, debug: See metamodel_from_str.
+        classes, builtins, root_dir, debug: See metamodel_from_str.
     """
     with codecs.open(file_name, 'r', 'utf-8') as f:
         lang_desc = f.read()
 
     metamodel = metamodel_from_str(lang_desc=lang_desc, classes=classes,
                                    builtins=builtins, file_name=file_name,
-                                   debug=debug)
+                                   root_dir=root_dir, debug=debug)
 
     return metamodel
 

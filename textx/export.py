@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 #######################################################################
 # Name: export.py
 # Purpose: Export of textX based models and metamodels to dot file
@@ -8,7 +8,6 @@
 #######################################################################
 from .const import MULT_ZEROORMORE, MULT_ONEORMORE, MULT_ONE, RULE_MATCH
 from .textx import BASE_TYPE_NAMES
-from .metamodel import TextXClass
 
 PRIMITIVE_PYTHON_TYPES = [int, float, str, bool]
 
@@ -26,39 +25,42 @@ HEADER = '''
 
 '''
 
-def metamodel_export(metamodel, file_name):
-    processed_set = set()
 
+def metamodel_export(metamodel, file_name):
 
     with open(file_name, 'w') as f:
         f.write(HEADER)
 
-        for name, cls in metamodel.items():
+        for cls, names in metamodel.cls_to_names().items():
+            name = names[0]
             attrs = ""
             if cls._type == RULE_MATCH:
                 attrs = cls._match_str.replace("|", "\\|")
             else:
                 for attr in cls._attrs.values():
-                    arrowtail = "arrowtail=diamond, dir=both, " if attr.cont else ""
+                    arrowtail = "arrowtail=diamond, dir=both, " \
+                        if attr.cont else ""
                     mult_list = attr.mult in [MULT_ZEROORMORE, MULT_ONEORMORE]
-                    required = "+" if attr.mult in [MULT_ONE, MULT_ONEORMORE] else ""
+                    required = "+" if attr.mult in \
+                        [MULT_ONE, MULT_ONEORMORE] else ""
                     attr_type = "list[{}]".format(attr.cls.__name__) \
-                            if mult_list else attr.cls.__name__
+                        if mult_list else attr.cls.__name__
                     if attr.ref:
                         # If attribute is a reference
                         mult = attr.mult if not attr.mult == MULT_ONE else ""
-                        f.write('{} -> {}[{}headlabel="{} {}"]\n'\
-                            .format(id(cls), id(attr.cls), arrowtail, attr.name, mult))
+                        f.write('{} -> {}[{}headlabel="{} {}"]\n'
+                                .format(id(cls), id(attr.cls), arrowtail,
+                                        attr.name, mult))
                     else:
                         # If it is plain type
-                        attrs += "{}{}:{}\\l".format(required, attr.name, attr_type)
+                        attrs += "{}{}:{}\\l".format(required,
+                                                     attr.name, attr_type)
 
-            f.write('{}[ label="{{{}|{}}}"]\n'.format(\
+            f.write('{}[ label="{{{}|{}}}"]\n'.format(
                     id(cls), name, attrs))
 
-            inheritance = ""
             for inherited_by in cls._inh_by:
-                f.write('{} -> {} [dir=back]\n'\
+                f.write('{} -> {} [dir=back]\n'
                         .format(id(cls), id(metamodel[inherited_by.__name__])))
 
             f.write("\n")
@@ -75,7 +77,8 @@ def model_export(model, file_name):
 
         def _export(obj):
 
-            if obj is None or obj in processed_set or type(obj) in PRIMITIVE_PYTHON_TYPES:
+            if obj is None or obj in processed_set or type(obj) \
+                    in PRIMITIVE_PYTHON_TYPES:
                 return
 
             processed_set.add(obj)
@@ -88,8 +91,8 @@ def model_export(model, file_name):
                 attr_value = getattr(obj, attr_name)
 
                 endmark = 'arrowtail=diamond dir=both' if attr.cont else ""
-                required = "+" if attr.mult in [MULT_ONE, MULT_ONEORMORE] else ""
-
+                required = "+" if attr.mult in \
+                    [MULT_ONE, MULT_ONEORMORE] else ""
 
                 if attr.mult in [MULT_ONEORMORE, MULT_ZEROORMORE]:
                     if not attr.ref:
@@ -99,8 +102,9 @@ def model_export(model, file_name):
                     else:
                         for idx, list_obj in enumerate(attr_value):
                             if list_obj is not None:
-                                f.write('{} -> {} [label="{}:{}" {}]\n'\
-                                        .format(id(obj), id(list_obj), attr_name, idx, endmark))
+                                f.write('{} -> {} [label="{}:{}" {}]\n'
+                                        .format(id(obj), id(list_obj),
+                                                attr_name, idx, endmark))
                                 _export(list_obj)
                 else:
                     # Plain attributes
@@ -111,21 +115,24 @@ def model_export(model, file_name):
                             if attr.cls.__name__ in BASE_TYPE_NAMES \
                                     or attr.cls._type == RULE_MATCH:
                                 if type(attr_value) is str:
-                                    attr_value = attr_value.replace('\n', r'\n')
-                                attrs += "{}{}:{}={}\\l".format(required, attr_name, type(attr_value)\
-                                        .__name__, attr_value)
+                                    attr_value = \
+                                        attr_value.replace('\n', r'\n')
+                                attrs += "{}{}:{}={}\\l".format(
+                                    required, attr_name, type(attr_value)
+                                    .__name__, attr_value)
                             else:
-                                attrs += "{}{}:{}\\l".format(required, attr_name, type(attr_value)\
-                                        .__name__)
+                                attrs += "{}{}:{}\\l".format(
+                                    required, attr_name, type(attr_value)
+                                    .__name__)
                     else:
                         # Object references
                         if attr_value is not None:
-                            f.write('{} -> {} [label="{}" {}]\n'.format(id(obj), id(attr_value),
+                            f.write('{} -> {} [label="{}" {}]\n'.format(
+                                id(obj), id(attr_value),
                                 attr_name, endmark))
                             _export(attr_value)
 
-
-            name = "{}:{}".format(name,obj_cls.__name__)
+            name = "{}:{}".format(name, obj_cls.__name__)
 
             f.write('{}[label="{{{}|{}}}"]\n'.format(id(obj), name, attrs))
 
