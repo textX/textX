@@ -7,6 +7,7 @@
 #######################################################################
 
 import codecs
+from os.path import dirname, abspath
 from .textx import language_from_str, python_type, BASE_TYPE_NAMES
 from .const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, RULE_NORMAL
 
@@ -49,19 +50,33 @@ class TextXMetaModel(dict):
 
     Attributes:
         rootcls(TextXClass): A language class that is a root of the metamodel.
+        file_name(str): A file name if meta-model was constructed from file
+            or None otherwise.
+        root_dir(str): Absolute directory used as a root for relative
+            grammar imports. If not given file_name dir is used if given.
         builtins(dict): A dict of named object used in linking phase.
             References to named objects not defined in the model will be
             searched here.
     """
 
-    def __init__(self, classes, builtins):
+    def __init__(self, file_name=None, root_dir=None, classes=None,
+                 builtins=None):
         """
         Args:
+            file_name(str): A file name if meta-model is going to be
+                constructed from file or None otherwise.
+            root_dir(str): Absolute directory used as a root for relative
+                grammar imports. If not given file_name dir is used if given.
             classes(dict of python classes): Custom meta-classes used
                 instead of generic ones.
             builtins(dict of named objects): Named objects used in linking
                 phase. This objects are part of each model.
         """
+
+        self.file_name = file_name
+        self.root_dir = root_dir
+        if not root_dir and file_name:
+            self.root_dir = dirname(abspath(file_name))
         self.rootcls = None
         self.builtins = builtins
 
@@ -166,7 +181,8 @@ class TextXMetaModel(dict):
         self._model_processors.append(model_processor)
 
 
-def metamodel_from_str(lang_desc, classes=None, builtins=None, debug=False):
+def metamodel_from_str(lang_desc, classes=None, builtins=None, file_name=None,
+                       root_dir=None, debug=False):
     """
     Creates a new metamodel from the textX description given as a string.
 
@@ -177,9 +193,12 @@ def metamodel_from_str(lang_desc, classes=None, builtins=None, debug=False):
         builtins(dict): An optional dict of named object used in linking phase.
             References to named object not defined in the model will be
             searched here.
+        file_name(str): A file name if meta-model was loaded from file.
+        root_dir(str): A root directory for relative imports.
         debug(bool): Print debugging informations.
     """
-    metamodel = TextXMetaModel(classes=classes, builtins=builtins)
+    metamodel = TextXMetaModel(file_name=file_name, root_dir=root_dir,
+                               classes=classes, builtins=builtins)
 
     # Base types hierarchy
     ID = metamodel.new_class('ID', 0)
@@ -206,7 +225,9 @@ def metamodel_from_file(file_name, classes=None, builtins=None, debug=False):
     with codecs.open(file_name, 'r', 'utf-8') as f:
         lang_desc = f.read()
 
-    metamodel = metamodel_from_str(lang_desc, classes, builtins, debug)
+    metamodel = metamodel_from_str(lang_desc=lang_desc, classes=classes,
+                                   builtins=builtins, file_name=file_name,
+                                   debug=debug)
 
     return metamodel
 
