@@ -664,6 +664,10 @@ obj_ref.sem = obj_ref_SA
 bracketed_choice.sem = SemanticActionSingleChild()
 
 
+# parser object cache. To speed up parser initialization (e.g. during imports)
+textX_parsers = {}
+
+
 def language_from_str(language_def, metamodel, ignore_case=True, debug=False):
     """
     Constructs parser and initializes metamodel from language description
@@ -680,18 +684,25 @@ def language_from_str(language_def, metamodel, ignore_case=True, debug=False):
     if debug:
         print("*** TEXTX PARSER ***")
 
-    # First create parser for TextX descriptions from
-    # the textX grammar specified in this module
-    parser = ParserPython(textx_model, comment_def=comment,
-                          ignore_case=ignore_case,
-                          reduce_tree=False, debug=debug)
+    # Check the cache for already conctructed textX parser
+    if debug in textX_parsers:
+        parser = textX_parsers[debug]
+    else:
+        # Create parser for TextX descriptions from
+        # the textX grammar specified in this module
+        parser = ParserPython(textx_model, comment_def=comment,
+                              ignore_case=False,
+                              reduce_tree=False, debug=debug)
 
-    # Prepare regex used in keyword-like strmatch detection.
-    # See str_match_SA
-    flags = 0
-    if ignore_case:
-        flags = re.IGNORECASE
-    parser.keyword_regex = re.compile(r'[^\d\W]\w*', flags)
+        # Prepare regex used in keyword-like strmatch detection.
+        # See str_match_SA
+        flags = 0
+        if ignore_case:
+            flags = re.IGNORECASE
+        parser.keyword_regex = re.compile(r'[^\d\W]\w*', flags)
+
+        # Cache it for subsequent calls
+        textX_parsers[debug] = parser
 
     # This is used during parser construction phase.
     # Metamodel is filled in. Classes are created based on grammar rules.
