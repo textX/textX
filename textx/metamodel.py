@@ -51,8 +51,8 @@ class TextXMetaModel(dict):
 
     Attributes:
         rootcls(TextXClass): A language class that is a root of the metamodel.
-        file_name(str): A file name if meta-model was constructed from file
-            or None otherwise.
+        file_name(str): A absolute file name if meta-model was constructed
+            from file or None otherwise.
         root_dir(str): Absolute directory used as a root for relative
             grammar imports. If not given file_name dir is used if given.
         namespace(str): The namespace of this metamodel calculated from
@@ -270,7 +270,7 @@ def metamodel_from_str(lang_desc, classes=None, builtins=None, file_name=None,
     metamodel = TextXMetaModel(file_name=file_name, root_dir=root_dir,
                                classes=classes, builtins=builtins)
 
-    # Base types hierarchy
+    # Base types hierarchy should exist in each meta-model
     ID = metamodel.new_class('ID', 0)
     STRING = metamodel.new_class('STRING', 0)
     BOOL = metamodel.new_class('BOOL', 0)
