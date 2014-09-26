@@ -1,0 +1,11 @@
+import 'second.tx'
+import 'relative/third.tx'
+
+First:
+  'first' first+=Second
+  'third' third+=Third
+;
+
+Third:
+  t=STRING
+;
