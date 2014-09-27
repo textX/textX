@@ -1,119 +1,68 @@
-# This is a reference example file that demonstrates all
-# features of pyflies language
+experiment "Posner Cueing"
+"
+A neuropsychological test often used to assess attention.
 
-# base abstract test
-# Used to specify timings for each test in the
-# experiment
-test base {
-  tmin 3000
-  tmax 5000
-  twait 3000
+See also:
+http://en.wikipedia.org/wiki/Posner_cueing_task
+"
+
+test Posner {
+	conditions {
+		cue     position 	congruency		response
+
+		left	left      	congruent		left
+		left	right     	incongruent		right
+		right	left      	incongruent		left
+		right	right     	congruent		right
+	}
+	
+	stimuli{
+		all:  		shape(rectangle, keep, position cue, linewidth 5)
+		      		shape(cross, position position)
+		      		
+		fixation: 	shape(cross, duration 1, keep)
+              		shape(rectangle, duration 1, position left, keep)
+              		shape(rectangle, duration 1, position right, keep)
+
+		duration 1000 1500		
+	}
 }
 
-# test definition for simple visual
-# this test is non-abstract (defines visual simple test type)
-# but will not be used directly in experiment definition.
-# It will be used as a base for all visual simple tests
-# in this experiment.
-test mytest:visual_simple {
-  shape square
-  size large
-  color white
+screen Practice {
+  Posner Cueing
+  -------------
+	
+  You will be presented with the two empty squares positioned left and right
+  from the center of the screen. You should concentrate on the center of the screen
+  and wait for the cue. The cue will be presented as a square highlight.
+  After some time a cross shaped object will be presented in some of the squares.
+  React as fast as you can by pressing button when you detect a cross shaped object.
+	
+  Press SPACE for practice block.
 }
 
-# Inheritance.
-# This test definition is non-abstract.
-# It inherits definition from base and mytest
-# therefore it does not need to specify test type or
-# timing settings.
-test mytest_3 < base, mytest {
-  trials 3
+screen Real {
+  Posner Cueing
+  -------------
+	
+  Now a REAL testing will be performed.
+
+  Press SPACE to start the test.
+	
 }
 
-# This test is same as previous but defines
-# a 30 trials to run.
-test mytest_30< base, mytest {
-  trials 30
+structure {
+	screen Practice
+	test Posner 1 practice randomize
+	screen Real
+	test Posner 1 randomize
 }
 
-# Experiment consist of a sequence of blocks
-# (tests, introductions, sequences and randomize).
-experiment {
-
-  # subject block will collect data about
-  # the subject under experiment.
-  # A user will be presented with the GUI form to
-  # fill it. Experimenter may fill this on behalf of the subject.
-  # The form of the each subject line is:
-  # Variable_name, type, optional label
-  # Type can be: str, int, float or enumerated list
-  subject {
-    full_name string "First and last name"
-    age int
-    gender [Male, Female] "Gender"
+target Expyriment {
+  output = "/home/igor/tmp/Simon/"
+  responses {
+  	// see expyriment/misc/constants.py
+    left = K_LEFT
+    right = K_RIGHT
   }
-
-  # This is here just to show that test may be
-  # put under experiment directly.
-  # If the tests run in sequence (without randomization)
-  # this is an easiest way to define it.
-  test mytest_3
-
-  randomize {
-    # Following two sequences will 
-    # be randomized.
-
-    # Sequence block will be performed in
-    # the order of definition.
-    sequence {
-      # This is an introduction to the following test.
-      # Introduction is text between ======== separators.
-      # Separator consist of at least 3 '=' characters.
-      ================
-      Welcome
-      -------
-      In the following test you will be presented with a blank screen
-      where a white square will appear after a few seconds.
-      You should react by pressing the space bar as fast as you can when
-      the square appears.
-
-      This is a practice test with 3 trials.
-      Afterwards the real test will run with 30 trials.
-
-      Press space bar
-      ================
-
-      # This test will run in practice mode.
-      # This mode tells experiment runner
-      # not to collect any sample data.
-      test mytest_3 practice
-
-      ================
-      Real test with 30 trials
-      ------------------------
-      Press space bar
-      ================
-      # This is the real test run. Samples will be collected.
-      Test mytest_30
-
-    }
-
-    # This is here just to show that randomize block should contain
-    # more than 1 block. Those block runs will be randomized.
-    sequence {
-
-      test mytest_3 practice
-
-      =======
-      This is heading
-      ---------------
-      This is just to show another introduction screen.
-      =======
-
-      test mytest_30
-    }
-
-  }
-
-
 }
