@@ -46,7 +46,7 @@ def test_regex_match_rule():
     """
     meta = metamodel_from_str(rule)
     assert meta
-    assert set(meta.keys()) == set(['Rule'])\
+    assert set([x[0].__name__ for x in meta]) == set(['Rule'])\
         .union(set(BASE_TYPE_NAMES))
 
     model = meta.model_from_str('bar7')
@@ -64,7 +64,7 @@ def test_rule_call_forward_backward_reference():
     """
     meta = metamodel_from_str(rule)
     assert meta
-    assert set(meta.keys()) == set(['Model', 'Rule1', 'Rule2'])\
+    assert set([x[0].__name__ for x in meta]) == set(['Model', 'Rule1', 'Rule2'])\
         .union(set(BASE_TYPE_NAMES))
 
     model = meta.model_from_str('start rule2 three')
@@ -87,7 +87,8 @@ def test_abstract_rule():
     """
     meta = metamodel_from_str(rule)
     assert meta
-    assert set(meta.keys()) == set(['Model', 'Rule', 'RuleA', 'RuleB', 'Rule1', 'Rule2', 'Rule3'])\
+    assert set([x[0].__name__ for x in meta]) == \
+        set(['Model', 'Rule', 'RuleA', 'RuleB', 'Rule1', 'Rule2', 'Rule3'])\
         .union(set(BASE_TYPE_NAMES))
 
     model = meta.model_from_str('start 34')
@@ -109,7 +110,8 @@ def test_assignment_zeroormore():
     """
     meta = metamodel_from_str(rule)
     assert meta
-    assert set(meta.keys()) == set(['Model', 'Rule', 'Rule1', 'Rule2', 'Rule3'])\
+    assert set([x[0].__name__ for x in meta]) == \
+        set(['Model', 'Rule', 'Rule1', 'Rule2', 'Rule3'])\
         .union(set(BASE_TYPE_NAMES))
 
     model = meta.model_from_str('start 34 "foo"')
@@ -136,7 +138,8 @@ def test_assignment_oneoormore():
     """
     meta = metamodel_from_str(rule)
     assert meta
-    assert set(meta.keys()) == set(['Model', 'Rule', 'Rule1', 'Rule2', 'Rule3'])\
+    assert set([x[0].__name__ for x in meta]) == \
+        set(['Model', 'Rule', 'Rule1', 'Rule2', 'Rule3'])\
         .union(set(BASE_TYPE_NAMES))
 
     model = meta.model_from_str('start 34 "foo"')
@@ -164,7 +167,8 @@ def test_assignment_optional():
     """
     meta = metamodel_from_str(rule)
     assert meta
-    assert set(meta.keys()) == set(['Model', 'Rule', 'Rule1', 'Rule2', 'Rule3'])\
+    assert set([x[0].__name__ for x in meta]) == \
+        set(['Model', 'Rule', 'Rule1', 'Rule2', 'Rule3'])\
         .union(set(BASE_TYPE_NAMES))
 
     model = meta.model_from_str('start')
@@ -196,7 +200,7 @@ def test_repetition_separator_modifier():
     """
     meta = metamodel_from_str(rule)
     assert meta
-    assert set(meta.keys()) == set(['Model', 'Rule', 'Rule1', 'Rule2', 'Rule3'])\
+    assert set([x[0].__name__ for x in meta]) == set(['Model', 'Rule', 'Rule1', 'Rule2', 'Rule3'])\
         .union(set(BASE_TYPE_NAMES))
 
     model = meta.model_from_str('start 34, "foo"; ident')
@@ -225,7 +229,8 @@ def test_bool_match():
     """
     meta = metamodel_from_str(rule)
     assert meta
-    assert set(meta.keys()) == set(['Model', 'Rule', 'Rule1', 'Rule2', 'Rule3'])\
+    assert set([x[0].__name__ for x in meta]) == \
+        set(['Model', 'Rule', 'Rule1', 'Rule2', 'Rule3'])\
         .union(set(BASE_TYPE_NAMES))
 
     model = meta.model_from_str('start rule 34')
@@ -251,7 +256,8 @@ def test_object_and_rule_reference():
     """
     meta = metamodel_from_str(rule)
     assert meta
-    assert set(meta.keys()) == set(['Model', 'RuleA'])\
+    assert set([x[0].__name__ for x in meta]) == \
+        set(['Model', 'RuleA'])\
         .union(set(BASE_TYPE_NAMES))
 
     model = meta.model_from_str('start rule rule1 rule rule2 ref rule1')
@@ -277,7 +283,8 @@ def test_abstract_rule_and_object_reference():
     """
     meta = metamodel_from_str(rule)
     assert meta
-    assert set(meta.keys()) == set(['Model', 'RuleA', 'Rule1', 'Rule2', 'RuleI', 'RuleE'])\
+    assert set([x[0].__name__ for x in meta]) == \
+        set(['Model', 'RuleA', 'Rule1', 'Rule2', 'RuleI', 'RuleE'])\
         .union(set(BASE_TYPE_NAMES))
 
     model = meta.model_from_str('start r2 rule1 rE rule2 ref rule2')

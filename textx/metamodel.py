@@ -100,7 +100,7 @@ class TextXMetaModel(object):
         self.imported_namespaces = {}
 
         # Create new namespace for BASETYPE classes
-        self.enter_namespace('base')
+        self._enter_namespace('base')
 
         # Base types hierarchy should exist in each meta-model
         base_id = self.new_class('ID', ID, 0)
@@ -119,9 +119,9 @@ class TextXMetaModel(object):
 
         # Enter namespace for given file or None if metamodel is
         # constructed from string.
-        self.enter_namespace(file_name)
+        self._enter_namespace(file_name)
 
-    def enter_namespace(self, namespace_name):
+    def _enter_namespace(self, namespace_name):
         """
         A namespace is usually an absolute file name of the grammar.
         A special namespace 'base' is used for BASETYPE namespace.
@@ -135,11 +135,36 @@ class TextXMetaModel(object):
 
         self.namespace_stack.append(namespace_name)
 
-    def leave_namespace(self):
+    def _leave_namespace(self):
         """
         Leaves current namespace (i.e. grammar file).
         """
         self.namespace_stack.pop()
+
+    def _fqn_to_namespace(self, fqn):
+        """
+        Based on current namespace and given fqn returns the absolute
+        filename of the fqn cls grammar file.
+        Args:
+            fqn(str): A fully qualified name of the class.
+        Returns:
+            An absolute file name of the grammar fqn rule/class came from.
+        """
+
+        current_namespace = self.namespace_stack[-1]
+        current_dir = ''
+        if current_namespace and current_namespace != 'base':
+            current_dir = os.path.dirname(current_namespace)
+        namespace = "%s.tx" % os.path.join(current_dir,
+                                           *(fqn.split("."))[:-1])
+
+        return namespace
+
+    def set_rule(self, name, rule):
+        """
+        For the given rule/class name sets PEG rule.
+        """
+        self[name][1] = rule
 
     def new_import(self, import_name):
         """
@@ -159,9 +184,9 @@ class TextXMetaModel(object):
                                                   *import_name.split("."))
 
         if import_file_name not in self.namespaces:
-            self.enter_namespace(import_file_name)
+            self._enter_namespace(import_file_name)
             metamodel_from_file(import_file_name, metamodel=self)
-            self.leave_namespace()
+            self._leave_namespace()
 
         # Add the import to the imported_namespaces for current namespace
         # so that resolving of current grammar searches imported grammars
@@ -241,7 +266,7 @@ class TextXMetaModel(object):
 
         # Push this class and PEG rule in the current namespace
         current_namespace = self.namespaces[self.namespace_stack[-1]]
-        current_namespace[name] = (cls, peg_rule)
+        current_namespace[name] = [cls, peg_rule]
 
         if root:
             self.rootcls = cls
@@ -305,25 +330,6 @@ class TextXMetaModel(object):
     @property
     def current_namespace(self):
         return self.namespaces[self.namespace_stack[-1]]
-
-    def _fqn_to_namespace(self, fqn):
-        """
-        Based on current namespace and given fqn returns the absolute
-        filename of the fqn cls grammar file.
-        Args:
-            fqn(str): A fully qualified name of the class.
-        Returns:
-            An absolute file name of the grammar fqn rule/class came from.
-        """
-
-        current_namespace = self.namespace_stack[-1]
-        current_dir = ''
-        if current_namespace and current_namespace != 'base':
-            current_dir = os.path.dirname(current_namespace)
-        namespace = "%s.tx" % os.path.join(current_dir,
-                                           *(fqn.split("."))[:-1])
-
-        return namespace
 
     def model_from_str(self, model_str):
         """

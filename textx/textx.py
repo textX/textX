@@ -157,43 +157,19 @@ class ClassCrossRef(object):
 # TextX semantic actions
 class TextXModelSA(SemanticAction):
     def first_pass(self, parser, node, children):
-        comments_model = parser.peg_rules.get('__comment', None)
+
+        if 'Comment' in parser.metamodel:
+            _, comments_model = parser.metamodel['Comment']
+        else:
+            comments_model = None
 
         root_rule = children[0]
-
-        # # Child nodes are either an import or a rule
-        # for c in children:
-        #     from .metamodel import TextXMetaModel
-        #     if isinstance(c, TextXMetaModel):
-        #         # Each import returns meta-model for the imported grammar
-        #         imported_mm = c
-        #         for cls in set(imported_mm.values()):
-        #             if cls.__name__ not in BASE_TYPE_NAMES:
-        #                 parser.metamodel.add_class(cls._fqtn, cls)
-        #                 rule = imported_mm.parser.peg_rules[cls.__name__]
-        #                 rule.rule_name = cls._fqtn
-        #                 parser.peg_rules[cls._fqtn] = rule
-        #             # If there is no rule by the current rule name in
-        #             # this meta-model make the class available by its
-        #             # base name also.
-        #             # Furthermore, imported base types should always override
-        #             # current base types.
-        #             if cls.__name__ not in parser.metamodel:
-        #                 parser.metamodel.add_class(cls.__name__, cls)
-        #                 parser.peg_rules[cls.__name__] = \
-        #                     imported_mm.parser.peg_rules[cls.__name__]
-        #
-        #     else:
-        #         # Must be a rule
-        #         root_rule = c
-        #         break
 
         from .model import get_model_parser
         textx_parser = get_model_parser(root_rule, comments_model,
                                         parser.debug)
 
         textx_parser.metamodel = parser.metamodel
-        textx_parser.peg_rules = parser.peg_rules
 
         return textx_parser
 
@@ -211,8 +187,8 @@ class TextXModelSA(SemanticAction):
 
                 if type(rule) == RuleCrossRef:
                     rule_name = rule.rule_name
-                    if rule_name in textx_parser.peg_rules:
-                        rule = textx_parser.peg_rules[rule_name]
+                    if rule_name in textx_parser.metamodel:
+                        rule = textx_parser.metamodel[rule_name][1]
                     else:
                         line, col = parser.pos_to_linecol(rule.position)
                         raise TextXSemanticError(
@@ -311,12 +287,9 @@ def textx_rule_SA(parser, node, children):
     rule = Sequence(nodes=[rule], rule_name=rule_name,
                     root=True)
 
-    # Do some name mangling for comment rule
-    # to prevent referencing from other rules
-    if rule_name.lower() == "comment":
-        rule_name = "__comment"
+    # Add PEG rule to the meta-class
+    parser.metamodel.set_rule(rule_name, rule)
 
-    parser.peg_rules[rule_name] = rule
     return rule
 textx_rule.sem = textx_rule_SA
 
@@ -699,7 +672,6 @@ def language_from_str(language_def, metamodel, ignore_case=True, debug=False):
     parser.metamodel = metamodel
 
     # Builtin rules representing primitive types
-    parser.peg_rules = dict(BASE_TYPE_RULES)
     parser.root_rule_name = None
 
     # Parse language description with textX parser

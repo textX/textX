@@ -40,14 +40,13 @@ def test_multiple_imports():
     print(mm['First'][0]._attrs['first'].cls._attrs['second'].cls.__name__)
     print(mm['Third'])
     print(type(mm['First'][0]._attrs['first']))
-    assert mm['First'][0]._attrs['first'].cls._attrs['second'].cls is mm['relative.third.Third'][0]
+    assert mm['First'][0]._attrs['first'].cls._attrs['second'].cls \
+        is mm['relative.third.Third'][0]
     metamodel_export(mm, 'multipleimport_test_mm.dot')
 
     model = """
-    first
-        second "1" "2"
-        third true false true 12 false
-    endfirst
+        first 1 2
+        third "one" "two"
     """
 
     model = mm.model_from_str(model)

@@ -135,7 +135,7 @@ def parse_tree_to_objgraph(parser, parse_tree):
         if not node.rule_name.startswith('__asgn'):
             # If not assignment
             # Get class
-            mclass = metamodel[node.rule_name]
+            mclass = metamodel[node.rule_name][0]
 
             # If there is no attributes collected it is an abstract rule
             # Skip it.
