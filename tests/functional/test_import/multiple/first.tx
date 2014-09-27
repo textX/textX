@@ -1,5 +1,5 @@
-import 'second.tx'
-import 'relative/third.tx'
+import second
+import relative.third
 
 First:
   'first' first+=Second

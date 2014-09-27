@@ -8,8 +8,8 @@
 
 import codecs
 import os
-from os.path import dirname, abspath, relpath, splitext
-from .textx import language_from_str, python_type, BASE_TYPE_NAMES
+from .textx import language_from_str, python_type, BASE_TYPE_NAMES, ID, BOOL,\
+    INT, FLOAT, STRING, NUMBER, BASETYPE
 from .const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, RULE_NORMAL
 
 
@@ -42,7 +42,7 @@ class TextXClass(object):
     pass
 
 
-class TextXMetaModel(dict):
+class TextXMetaModel(object):
     """
     Meta-model contains all information about language abstract syntax.
     Furthermore, this class is in charge for model instantiation and new
@@ -51,19 +51,23 @@ class TextXMetaModel(dict):
 
     Attributes:
         rootcls(TextXClass): A language class that is a root of the metamodel.
-        file_name(str): A absolute file name if meta-model was constructed
-            from file or None otherwise.
-        root_dir(str): Absolute directory used as a root for relative
-            grammar imports. If not given file_name dir is used if given.
-        namespace(str): The namespace of this metamodel calculated from
-            file_name and root_dir.
+        namespaces(dict): A dict from abs. file name to the dict in the form
+            {clsname: (cls, rule), clsname:(cls, rule)} that holds meta-classes
+            and peg rules imported from the given grammar file.
+            Special key 'base' is used for BASETYPE classes. None key is used
+            for all classes imported from the grammar given as a string.
+        namespace_stack(list): A stack of namespace names (usually absolute
+            filenames). Used to keep track of the current namespace.
+        imported_namespaces(dict): A dict from namespace name to the list of
+            references to imported namespaces. Used in searches for the
+            unqualified rules.
         builtins(dict): A dict of named object used in linking phase.
             References to named objects not defined in the model will be
             searched here.
     """
 
-    def __init__(self, file_name=None, root_dir=None, classes=None,
-                 builtins=None):
+    def __init__(self, file_name=None, classes=None, builtins=None,
+                 debug=False):
         """
         Args:
             file_name(str): A file name if meta-model is going to be
@@ -74,19 +78,11 @@ class TextXMetaModel(dict):
                 instead of generic ones.
             builtins(dict of named objects): Named objects used in linking
                 phase. This objects are part of each model.
+            debug(bool): Should debug messages be printed.
         """
 
         self.file_name = file_name
-        self.root_dir = root_dir
-        if not root_dir and file_name:
-            self.root_dir = dirname(abspath(file_name))
         self.rootcls = None
-
-        self.namespace = None
-        if self.file_name and self.root_dir:
-            self.namespace, _ = splitext(
-                relpath(self.file_name, self.root_dir))
-            self.namespace = self.namespace.replace(os.path.sep, '.')
 
         self.builtins = builtins
 
@@ -96,11 +92,90 @@ class TextXMetaModel(dict):
         # Registered model processors
         self._model_processors = []
 
-    def new_class(self, name, position, inherits=None, root=False):
+        # Namespaces
+        self.namespaces = {}
+        self.namespace_stack = []
+
+        # Imported namespaces
+        self.imported_namespaces = {}
+
+        # Create new namespace for BASETYPE classes
+        self.enter_namespace('base')
+
+        # Base types hierarchy should exist in each meta-model
+        base_id = self.new_class('ID', ID, 0)
+        base_string = self.new_class('STRING', STRING, 0)
+        base_bool = self.new_class('BOOL', BOOL, 0)
+        base_int = self.new_class('INT', INT, 0)
+        base_float = self.new_class('FLOAT', FLOAT, 0)
+        base_number = self.new_class('NUMBER', NUMBER, 0,
+                                     [base_int, base_float])
+        self.new_class('BASETYPE', BASETYPE, 0,
+                       [base_number, base_id, base_string, base_bool])
+
+        # If file_name is given its absolute path will be a namespace
+        if file_name:
+            file_name = os.path.abspath(file_name)
+
+        # Enter namespace for given file or None if metamodel is
+        # constructed from string.
+        self.enter_namespace(file_name)
+
+    def enter_namespace(self, namespace_name):
         """
-        Creates a new class with the given name.
+        A namespace is usually an absolute file name of the grammar.
+        A special namespace 'base' is used for BASETYPE namespace.
+        """
+        if namespace_name not in self.namespaces:
+            self.namespaces[namespace_name] = {}
+
+            # BASETYPE namespace is imported in each namespace
+            self.imported_namespaces[namespace_name] = \
+                [self.namespaces['base']]
+
+        self.namespace_stack.append(namespace_name)
+
+    def leave_namespace(self):
+        """
+        Leaves current namespace (i.e. grammar file).
+        """
+        self.namespace_stack.pop()
+
+    def new_import(self, import_name):
+        """
+        Starts a new import.
+        Args:
+            import_name(str): A relative import in the dot syntax
+                (e.g. "first.second.expressions")
+        """
+
+        # Find the absolute file name of the import based on the relative
+        # import_name and current grammar file (namespace)
+        current_namespace = self.namespace_stack[-1]
+        current_dir = ''
+        if current_namespace and current_namespace != 'base':
+            current_dir = os.path.dirname(current_namespace)
+        import_file_name = "%s.tx" % os.path.join(current_dir,
+                                                  *import_name.split("."))
+
+        if import_file_name not in self.namespaces:
+            self.enter_namespace(import_file_name)
+            metamodel_from_file(import_file_name, metamodel=self)
+            self.leave_namespace()
+
+        # Add the import to the imported_namespaces for current namespace
+        # so that resolving of current grammar searches imported grammars
+        # in the order of import
+        self.imported_namespaces[current_namespace].append(
+            self.namespaces[import_file_name])
+
+    def new_class(self, name, peg_rule, position, inherits=None, root=False):
+        """
+        Creates a new class with the given name in the current namespace.
         Args:
             name(str): The name of the class.
+            peg_rule(ParserExpression): An arpeggio peg rule used to match
+                this class.
             positon(int): A position in the input where class is defined.
             root(bool): Is this class a root class of the metamodel.
         """
@@ -164,18 +239,91 @@ class TextXMetaModel(dict):
 
         cls._typename = cls.__name__
 
-        if self.namespace:
-            cls._fqtn = "%s.%s" % (self.namespace,
-                                   cls._typename)
-        else:
-            cls._fqtn = cls._typename
-
-        self[name] = cls
+        # Push this class and PEG rule in the current namespace
+        current_namespace = self.namespaces[self.namespace_stack[-1]]
+        current_namespace[name] = (cls, peg_rule)
 
         if root:
             self.rootcls = cls
 
         return cls
+
+    def __getitem__(self, name):
+        """
+        Search for and return class and peg_rule with the given name.
+        Returns:
+            TextXClass, ParsingExpression
+        """
+        if "." in name:
+            # Name is fully qualified
+            # Find the absolute file from the current namespace and
+            # the fully qualified name.
+            namespace = self._fqn_to_namespace(name)
+            name = name.split(".")[-1]
+            return self.namespaces[namespace][name]
+        else:
+            # If not fully qualified search in the current namespace
+            # and after that in the imported_namespaces
+            if name in self.current_namespace:
+                return self.current_namespace[name]
+
+            for namespace in \
+                    self.imported_namespaces[self.namespace_stack[-1]]:
+                if name in namespace:
+                    return namespace[name]
+
+            raise KeyError
+
+    def __iter__(self):
+        """
+        Iterate over all classes in the current namespace and imported
+        namespaces.
+        """
+
+        # Current namespace
+        for name in self.current_namespace:
+            yield self.current_namespace[name]
+
+        # Imported namespaces
+        for namespace in \
+                self.imported_namespaces[self.namespace_stack[-1]]:
+            for name in namespace:
+                # yield class, rule pair
+                yield namespace[name]
+
+    def __contains__(self, name):
+        """
+        Check if given name is contained in the current namespace.
+        The name can be fully qualified.
+        """
+        try:
+            self[name]
+            return True
+        except KeyError:
+            return False
+
+    @property
+    def current_namespace(self):
+        return self.namespaces[self.namespace_stack[-1]]
+
+    def _fqn_to_namespace(self, fqn):
+        """
+        Based on current namespace and given fqn returns the absolute
+        filename of the fqn cls grammar file.
+        Args:
+            fqn(str): A fully qualified name of the class.
+        Returns:
+            An absolute file name of the grammar fqn rule/class came from.
+        """
+
+        current_namespace = self.namespace_stack[-1]
+        current_dir = ''
+        if current_namespace and current_namespace != 'base':
+            current_dir = os.path.dirname(current_namespace)
+        namespace = "%s.tx" % os.path.join(current_dir,
+                                           *(fqn.split("."))[:-1])
+
+        return namespace
 
     def model_from_str(self, model_str):
         """
@@ -203,56 +351,9 @@ class TextXMetaModel(dict):
         """
         self._model_processors.append(model_processor)
 
-    def add_class(self, name, cls):
-        """
-        Adds a class under some name.
-        If given name is fully qualified and the base name is of base type
-        registers new name for the existing base type in this meta-model.
-        For each class attribute relink types to the base types from this
-        meta-model.
-        """
-        base_name = name.split('.')[-1]
-        if base_name in BASE_TYPE_NAMES:
-            self[name] = self[base_name]
-        else:
-            self[name] = cls
-
-        # Relink attributes base types
-        for attr in cls._attrs.values():
-            if attr.cls.__name__ in BASE_TYPE_NAMES:
-                attr.cls = self[attr.cls.__name__]
-
-        # Relink inheritance base types
-        for idx, inh in enumerate(cls._inh_by):
-            if inh.__name__ in BASE_TYPE_NAMES:
-                cls._inh_by[idx] = self[inh.__name__]
-
-    def cls_to_names(self):
-        """
-        Returns a dict from meta-model classes to the list of all names
-        used (e.g. different name-spaces for the same class).
-        The list is ordered so that the base name comes first.
-        """
-        clsnames = {}
-        for name, cls in self.items():
-            if cls not in clsnames:
-                clsnames[cls] = [name]
-            else:
-                clsnames[cls].append(name)
-
-        # Find the base name if exist and put it at the first position
-        for names in clsnames.values():
-            for idx, name in enumerate(names):
-                if "." not in name:
-                    # Base name
-                    names[idx] = names[0]
-                    names[0] = name
-
-        return clsnames
-
 
 def metamodel_from_str(lang_desc, classes=None, builtins=None, file_name=None,
-                       root_dir=None, debug=False):
+                       root_dir=None, metamodel=None, debug=False):
     """
     Creates a new metamodel from the textX description given as a string.
 
@@ -264,42 +365,32 @@ def metamodel_from_str(lang_desc, classes=None, builtins=None, file_name=None,
             References to named object not defined in the model will be
             searched here.
         file_name(str): A file name if meta-model was loaded from file.
-        root_dir(str): A root directory for relative imports.
+        metamodel(TextXMetaModel): A metamodel that should be used.
         debug(bool): Print debugging informations.
     """
-    metamodel = TextXMetaModel(file_name=file_name, root_dir=root_dir,
-                               classes=classes, builtins=builtins)
-
-    # Base types hierarchy should exist in each meta-model
-    ID = metamodel.new_class('ID', 0)
-    STRING = metamodel.new_class('STRING', 0)
-    BOOL = metamodel.new_class('BOOL', 0)
-    INT = metamodel.new_class('INT', 0)
-    FLOAT = metamodel.new_class('FLOAT', 0)
-    Number = metamodel.new_class('NUMBER', 0, [INT, FLOAT])
-    metamodel.new_class('BASETYPE', 0, [Number, ID, STRING, BOOL])
+    if not metamodel:
+        metamodel = TextXMetaModel(file_name=file_name, classes=classes,
+                                   builtins=builtins, debug=debug)
 
     language_from_str(lang_desc, metamodel, debug=debug)
 
     return metamodel
 
 
-def metamodel_from_file(file_name, classes=None, builtins=None, root_dir=None,
+def metamodel_from_file(file_name, classes=None, builtins=None, metamodel=None,
                         debug=False):
     """
     Creates new metamodel from the given file.
 
     Args:
         file_name(str): The name of the file with textX language description.
-        classes, builtins, root_dir, debug: See metamodel_from_str.
+        classes, builtins, metamodel, debug: See metamodel_from_str.
     """
     with codecs.open(file_name, 'r', 'utf-8') as f:
         lang_desc = f.read()
 
     metamodel = metamodel_from_str(lang_desc=lang_desc, classes=classes,
                                    builtins=builtins, file_name=file_name,
-                                   root_dir=root_dir, debug=debug)
+                                   metamodel=metamodel, debug=debug)
 
     return metamodel
-
-

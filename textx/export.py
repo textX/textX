@@ -31,8 +31,8 @@ def metamodel_export(metamodel, file_name):
     with open(file_name, 'w') as f:
         f.write(HEADER)
 
-        for cls, names in metamodel.cls_to_names().items():
-            name = names[0]
+        for cls, rule in metamodel:
+            name = cls.__name__
             attrs = ""
             if cls._type == RULE_MATCH:
                 attrs = cls._match_str.replace("|", "\\|")
@@ -61,7 +61,7 @@ def metamodel_export(metamodel, file_name):
 
             for inherited_by in cls._inh_by:
                 f.write('{} -> {} [dir=back]\n'
-                        .format(id(cls), id(metamodel[inherited_by.__name__])))
+                        .format(id(cls), id(inherited_by)))
 
             f.write("\n")
 

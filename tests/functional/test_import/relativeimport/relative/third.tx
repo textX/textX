@@ -1,4 +1,4 @@
-import 'fourth.tx'    // Testing shadowing
+import fourth
 
 Third:
   third+=Second       // Second rule should be that one defined in fourth.tx

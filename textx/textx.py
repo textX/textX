@@ -28,9 +28,8 @@ def textx_model():          return ZeroOrMore(import_stm), ZeroOrMore(textx_rule
 # def textx_rule():           return [abstract_rule, match_rule, common_rule,
 #                                     mixin_rule, expression_rule]
 
-def import_stm():           return 'import', grammar_file_name
-def grammar_file_name():    return [("'", _(r"((\\')|[^'])*"),"'"),\
-                                    ('"', _(r'((\\")|[^"])*'),'"')]
+def import_stm():           return 'import', grammar_to_import
+def grammar_to_import():    return _(r'(\w|\.)+')
 
 def textx_rule():           return [abstract_rule, match_rule, common_rule]
 # Rules
@@ -160,32 +159,34 @@ class TextXModelSA(SemanticAction):
     def first_pass(self, parser, node, children):
         comments_model = parser.peg_rules.get('__comment', None)
 
-        # Child nodes are either an import or a rule
-        for c in children:
-            from .metamodel import TextXMetaModel
-            if isinstance(c, TextXMetaModel):
-                # Each import returns meta-model for the imported grammar
-                imported_mm = c
-                for cls in set(imported_mm.values()):
-                    if cls.__name__ not in BASE_TYPE_NAMES:
-                        parser.metamodel.add_class(cls._fqtn, cls)
-                        rule = imported_mm.parser.peg_rules[cls.__name__]
-                        rule.rule_name = cls._fqtn
-                        parser.peg_rules[cls._fqtn] = rule
-                    # If there is no rule by the current rule name in
-                    # this meta-model make the class available by its
-                    # base name also.
-                    # Furthermore, imported base types should always override
-                    # current base types.
-                    if cls.__name__ not in parser.metamodel:
-                        parser.metamodel.add_class(cls.__name__, cls)
-                        parser.peg_rules[cls.__name__] = \
-                            imported_mm.parser.peg_rules[cls.__name__]
+        root_rule = children[0]
 
-            else:
-                # Must be a rule
-                root_rule = c
-                break
+        # # Child nodes are either an import or a rule
+        # for c in children:
+        #     from .metamodel import TextXMetaModel
+        #     if isinstance(c, TextXMetaModel):
+        #         # Each import returns meta-model for the imported grammar
+        #         imported_mm = c
+        #         for cls in set(imported_mm.values()):
+        #             if cls.__name__ not in BASE_TYPE_NAMES:
+        #                 parser.metamodel.add_class(cls._fqtn, cls)
+        #                 rule = imported_mm.parser.peg_rules[cls.__name__]
+        #                 rule.rule_name = cls._fqtn
+        #                 parser.peg_rules[cls._fqtn] = rule
+        #             # If there is no rule by the current rule name in
+        #             # this meta-model make the class available by its
+        #             # base name also.
+        #             # Furthermore, imported base types should always override
+        #             # current base types.
+        #             if cls.__name__ not in parser.metamodel:
+        #                 parser.metamodel.add_class(cls.__name__, cls)
+        #                 parser.peg_rules[cls.__name__] = \
+        #                     imported_mm.parser.peg_rules[cls.__name__]
+        #
+        #     else:
+        #         # Must be a rule
+        #         root_rule = c
+        #         break
 
         from .model import get_model_parser
         textx_parser = get_model_parser(root_rule, comments_model,
@@ -247,7 +248,7 @@ class TextXModelSA(SemanticAction):
                     raise TextXSemanticError(
                         'Unknown class/rule "{}" at {}.'
                         .format(cls_crossref.cls_name, (line, col)), line, col)
-                return xtext_parser.metamodel[cls_crossref.cls_name]
+                return xtext_parser.metamodel[cls_crossref.cls_name][0]
 
             elif issubclass(cls_crossref, TextXClass):
                 # If already resolved
@@ -256,7 +257,7 @@ class TextXModelSA(SemanticAction):
         if parser.debug:
             print("RESOLVING METACLASS REFS")
 
-        for cls in xtext_parser.metamodel.values():
+        for cls, peg_rule in xtext_parser.metamodel:
 
             # Inheritance
             for idx, inh in enumerate(cls._inh_by):
@@ -295,27 +296,14 @@ textx_model.sem = TextXModelSA()
 
 
 def import_stm_SA(parser, node, children):
-
-    # For each import create metamodel
-    from .metamodel import metamodel_from_file
-    # Import file is given relative to the current root_dir
-    relative_import_file = children[0]
-    if parser.metamodel.root_dir:
-        import_file_name = os.path.join(parser.metamodel.root_dir,
-                                        relative_import_file)
-    else:
-        # If root_dir is not set try to load
-        # relative to the current directory
-        import_file_name = relative_import_file
-
-    import_mm = metamodel_from_file(import_file_name)
-    return import_mm
+    parser.metamodel.new_import(children[0])
 import_stm.sem = import_stm_SA
 
 
-def grammar_file_name_SA(parser, node, children):
-    return children[0]
-grammar_file_name.sem = grammar_file_name_SA
+def grammar_to_import_SA(parser, node, children):
+    print("IMPORT", str(node))
+    return str(node)
+grammar_to_import.sem = grammar_to_import_SA
 
 
 def textx_rule_SA(parser, node, children):
@@ -334,12 +322,14 @@ textx_rule.sem = textx_rule_SA
 
 
 def rule_name_SA(parser, node, children):
+    rule_name = str(node)
 
-    cls_name = str(node)
     if parser.debug:
-        print("Creating class: {}".format(cls_name))
+        print("Creating class: {}".format(rule_name))
 
-    cls = parser.metamodel.new_class(cls_name, node.position)
+    # Create class to collect attributes. At this time PEG rule
+    # is not known.
+    cls = parser.metamodel.new_class(rule_name, None, node.position)
 
     parser._current_cls = cls
 
@@ -347,7 +337,7 @@ def rule_name_SA(parser, node, children):
     if not parser.metamodel.rootcls:
         parser.metamodel.rootcls = cls
 
-    return cls_name
+    return rule_name
 rule_name.sem = rule_name_SA
 
 
