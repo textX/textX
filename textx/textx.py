@@ -277,7 +277,6 @@ import_stm.sem = import_stm_SA
 
 
 def grammar_to_import_SA(parser, node, children):
-    print("IMPORT", str(node))
     return str(node)
 grammar_to_import.sem = grammar_to_import_SA
 
