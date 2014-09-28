@@ -52,10 +52,10 @@ class TextXMetaModel(object):
     Attributes:
         rootcls(TextXClass): A language class that is a root of the metamodel.
         namespaces(dict): A dict from abs. file name to the dict in the form
-            {clsname: (cls, rule), clsname:(cls, rule)} that holds meta-classes
-            and peg rules imported from the given grammar file.
-            Special key 'base' is used for BASETYPE classes. None key is used
-            for all classes imported from the grammar given as a string.
+            {clsname: cls} that holds meta-classes imported from the given
+            grammar file. Special key 'base' is used for BASETYPE classes.
+            None key is used for all classes imported from the grammar
+            given as a string.
         namespace_stack(list): A stack of namespace names (usually absolute
             filenames). Used to keep track of the current namespace.
         imported_namespaces(dict): A dict from namespace name to the list of
@@ -164,7 +164,7 @@ class TextXMetaModel(object):
         """
         For the given rule/class name sets PEG rule.
         """
-        self[name][1] = rule
+        self[name]._peg_rule = rule
 
     def new_import(self, import_name):
         """
@@ -218,9 +218,8 @@ class TextXMetaModel(object):
                 _type(int): The type of the textX rule this class is created
                     for. See textx.const
                 _metamodel(TextXMetaModel): A metamodel this class belongs to.
-                _fqtn(str): A fully qualified type name.
-                    A property calculated using namespace of containing
-                    meta-model.
+                _peg_rule(ParsingExpression): An arpeggio PEG rule that matches
+                    this class.
             """
             # Attribute information (MetaAttr instances) keyed by name.
             _attrs = {}
@@ -233,6 +232,8 @@ class TextXMetaModel(object):
             # The type of the rule this meta-class results from.
             # There are three rule types: normal, abstract and match
             _type = RULE_NORMAL
+
+            _peg_rule = peg_rule
 
             def __init__(self):
                 """
@@ -266,7 +267,7 @@ class TextXMetaModel(object):
 
         # Push this class and PEG rule in the current namespace
         current_namespace = self.namespaces[self.namespace_stack[-1]]
-        current_namespace[name] = [cls, peg_rule]
+        current_namespace[name] = cls
 
         if root:
             self.rootcls = cls
@@ -313,7 +314,7 @@ class TextXMetaModel(object):
         for namespace in \
                 self.imported_namespaces[self.namespace_stack[-1]]:
             for name in namespace:
-                # yield class, rule pair
+                # yield class
                 yield namespace[name]
 
     def __contains__(self, name):

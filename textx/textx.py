@@ -159,7 +159,7 @@ class TextXModelSA(SemanticAction):
     def first_pass(self, parser, node, children):
 
         if 'Comment' in parser.metamodel:
-            _, comments_model = parser.metamodel['Comment']
+            comments_model = parser.metamodel['Comment']._peg_rule
         else:
             comments_model = None
 
@@ -188,7 +188,7 @@ class TextXModelSA(SemanticAction):
                 if type(rule) == RuleCrossRef:
                     rule_name = rule.rule_name
                     if rule_name in textx_parser.metamodel:
-                        rule = textx_parser.metamodel[rule_name][1]
+                        rule = textx_parser.metamodel[rule_name]._peg_rule
                     else:
                         line, col = parser.pos_to_linecol(rule.position)
                         raise TextXSemanticError(
@@ -224,7 +224,7 @@ class TextXModelSA(SemanticAction):
                     raise TextXSemanticError(
                         'Unknown class/rule "{}" at {}.'
                         .format(cls_crossref.cls_name, (line, col)), line, col)
-                return xtext_parser.metamodel[cls_crossref.cls_name][0]
+                return xtext_parser.metamodel[cls_crossref.cls_name]
 
             elif issubclass(cls_crossref, TextXClass):
                 # If already resolved
@@ -233,7 +233,7 @@ class TextXModelSA(SemanticAction):
         if parser.debug:
             print("RESOLVING METACLASS REFS")
 
-        for cls, peg_rule in xtext_parser.metamodel:
+        for cls in xtext_parser.metamodel:
 
             # Inheritance
             for idx, inh in enumerate(cls._inh_by):

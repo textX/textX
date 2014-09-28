@@ -31,7 +31,7 @@ def metamodel_export(metamodel, file_name):
     with open(file_name, 'w') as f:
         f.write(HEADER)
 
-        for cls, rule in metamodel:
+        for cls in metamodel:
             name = cls.__name__
             attrs = ""
             if cls._type == RULE_MATCH:
