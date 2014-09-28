@@ -1,6 +1,10 @@
 textX changelog
 ---------------
 
+* Development
+  - Grammar import.
+  - Meta-model redesigned.
+
 * Release 0.2
   - Tests.
   - Started documentation writing.
@@ -8,8 +12,8 @@ textX changelog
   - Grammar redesigned.
   - Introduced repetition operator modifiers (eolterm, separator).
   - Support for multiple attribute assignment in the same rule.
-  - Position is now store on model objects.
-  - Support for model processors.
+  - Position is now stored on model objects.
+  - Support for model processor callbacks.
   - Filename is now accessible on model if the model is created from file.
   - Various bugfixes.
 
