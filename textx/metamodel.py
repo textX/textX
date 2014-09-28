@@ -8,6 +8,7 @@
 
 import codecs
 import os
+from collections import OrderedDict
 from .textx import language_from_str, python_type, BASE_TYPE_NAMES, ID, BOOL,\
     INT, FLOAT, STRING, NUMBER, BASETYPE
 from .const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, RULE_NORMAL
@@ -222,7 +223,7 @@ class TextXMetaModel(object):
                     this class.
             """
             # Attribute information (MetaAttr instances) keyed by name.
-            _attrs = {}
+            _attrs = OrderedDict()
 
             # A list of inheriting classes
             _inh_by = inherits if inherits else []
