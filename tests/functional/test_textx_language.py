@@ -1,3 +1,10 @@
+from __future__ import unicode_literals
+import sys
+if sys.version < '3':
+    text = unicode
+else:
+    text = str
+
 import pytest
 
 from textx.metamodel import metamodel_from_str
@@ -32,7 +39,7 @@ def test_match_rule():
 
     model = meta.model_from_str('two')
     assert model
-    assert model.__class__ == str
+    assert model.__class__ == text
     assert model == "two"
 
 
@@ -51,7 +58,7 @@ def test_regex_match_rule():
 
     model = meta.model_from_str('bar7')
     assert model
-    assert model.__class__ == str
+    assert model.__class__ == text
     assert model == "bar7"
 
 

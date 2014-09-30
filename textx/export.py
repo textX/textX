@@ -6,6 +6,13 @@
 # Copyright: (c) 2014 Igor R. Dejanovic <igor DOT dejanovic AT gmail DOT com>
 # License: MIT License
 #######################################################################
+from __future__ import unicode_literals
+import sys
+if sys.version < '3':
+    text = unicode
+else:
+    text = str
+
 from .const import MULT_ZEROORMORE, MULT_ONEORMORE, MULT_ONE, RULE_MATCH
 from .textx import BASE_TYPE_NAMES
 
@@ -114,7 +121,7 @@ def model_export(model, file_name):
                         else:
                             if attr.cls.__name__ in BASE_TYPE_NAMES \
                                     or attr.cls._type == RULE_MATCH:
-                                if type(attr_value) in [str, unicode]:
+                                if type(attr_value) in [str, text]:
                                     attr_value = \
                                         attr_value.replace('\n', r'\n')
                                 attrs += "{}{}:{}={}\\l".format(

@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 import pytest
 from textx.metamodel import metamodel_from_str
 from textx.exceptions import TextXSyntaxError

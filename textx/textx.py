@@ -10,6 +10,13 @@
 # To make things clear I have named this language textX ;)
 #######################################################################
 
+from __future__ import unicode_literals
+import sys
+if sys.version < '3':
+    text = unicode
+else:
+    text = str
+
 import re
 import os
 from arpeggio import StrMatch, Optional, ZeroOrMore, OneOrMore, Sequence,\
@@ -109,13 +116,13 @@ for regex in [ID, BOOL, INT, FLOAT, STRING]:
 def python_type(textx_type_name):
     """Return Python type from the name of base textx type."""
     return {
-        'ID': str,
+        'ID': text,
         'BOOL': bool,
         'INT': int,
         'FLOAT': float,
-        'STRING': str,
+        'STRING': text,
         'NUMBER': float,
-        'BASETYPE': str,
+        'BASETYPE': text,
     }.get(textx_type_name, textx_type_name)
 
 
@@ -197,7 +204,7 @@ class TextXModelSA(SemanticAction):
                                     (line, col)), line, col)
 
                 assert isinstance(rule, ParsingExpression),\
-                    "{}:{}".format(type(rule), str(rule))
+                    "{}:{}".format(type(rule), text(rule))
                 # Recurse
                 for idx, child in enumerate(rule.nodes):
                     if child not in resolved_set:
@@ -277,7 +284,7 @@ import_stm.sem = import_stm_SA
 
 
 def grammar_to_import_SA(parser, node, children):
-    return str(node)
+    return text(node)
 grammar_to_import.sem = grammar_to_import_SA
 
 
@@ -325,14 +332,14 @@ def match_rule_body_SA(parser, node, children):
     parser._current_cls._type = RULE_MATCH
     # String representation of match alternatives.
     # Used in visualizations and debugging
-    parser._current_cls._match_str = "|".join([str(match)
+    parser._current_cls._match_str = "|".join([text(match)
                                               for match in children])
     return OrderedChoice(nodes=children[:])
 match_rule_body.sem = match_rule_body_SA
 
 
 def rule_ref_SA(parser, node, children):
-    rule_name = str(node)
+    rule_name = text(node)
     # Here a name of the meta-class (rule) is expected but to support
     # forward referencing we are postponing resolving to second_pass.
     return RuleCrossRef(rule_name, rule_name, node.position)
@@ -424,7 +431,7 @@ def repeatable_expr_SA(parser, node, children):
                 line, col = parser.pos_to_linecol(position)
                 raise TextXSyntaxError(
                     'Modifiers are not allowed for "?" operator at {}'
-                    .format(str((line, col))), line, col)
+                    .format(text((line, col))), line, col)
             # Separator modifier
             if 'sep' in modifiers:
                 sep = modifiers['sep']
@@ -532,7 +539,7 @@ def assignment_SA(parser, node, children):
             line, col = parser.pos_to_linecol(position)
             raise TextXSyntaxError(
                 'Modifiers are not allowed for "?=" operator at {}'
-                .format(str((line, col))), line, col)
+                .format(text((line, col))), line, col)
 
         # Separator modifier
         if 'sep' in modifiers:
@@ -599,7 +606,7 @@ def re_match_SA(parser, node, children):
         line, col = parser.pos_to_linecol(node[1].position)
         raise TextXSyntaxError(
             "{} at {}"
-            .format(str(e), str((line, col))), line, col)
+            .format(text(e), text((line, col))), line, col)
     return regex
 re_match.sem = re_match_SA
 
@@ -678,7 +685,7 @@ def language_from_str(language_def, metamodel, ignore_case=True, debug=False):
         parser.parse(language_def)
     except NoMatch as e:
         line, col = parser.pos_to_linecol(e.position)
-        raise TextXSyntaxError(str(e), line, col)
+        raise TextXSyntaxError(text(e), line, col)
 
     # Construct new parser based on the given language description.
     lang_parser = parser.getASG()
