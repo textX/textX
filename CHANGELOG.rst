@@ -4,6 +4,8 @@ textX changelog
 * Development
   - Grammar import.
   - Meta-model redesigned.
+  - Support for unicode grammars.
+  - Python 2/3 compatibility.
 
 * Release 0.2
   - Tests.
