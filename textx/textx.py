@@ -101,7 +101,7 @@ INT         = _(r'[-+]?[0-9]+\b', rule_name='INT', root=True)
 FLOAT       = _(r'[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\b', 'FLOAT', root=True)
 STRING      = _(r'("[^"]*")|(\'[^\']*\')\b', 'STRING', root=True)
 NUMBER      = OrderedChoice(nodes=[FLOAT, INT], rule_name='NUMBER', root=True)
-BASETYPE    = OrderedChoice(nodes=[ID, STRING, BOOL, NUMBER],
+BASETYPE    = OrderedChoice(nodes=[NUMBER, ID, STRING, BOOL],
                             rule_name='BASETYPE', root=True)
 
 BASE_TYPE_RULES = {rule.rule_name: rule
