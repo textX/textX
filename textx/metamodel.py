@@ -110,7 +110,7 @@ class TextXMetaModel(object):
         base_int = self.new_class('INT', INT, 0)
         base_float = self.new_class('FLOAT', FLOAT, 0)
         base_number = self.new_class('NUMBER', NUMBER, 0,
-                                     [base_int, base_float])
+                                     [base_float, base_int])
         self.new_class('BASETYPE', BASETYPE, 0,
                        [base_number, base_id, base_string, base_bool])
 
