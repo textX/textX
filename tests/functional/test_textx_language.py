@@ -10,6 +10,7 @@ import pytest
 from textx.metamodel import metamodel_from_str
 from textx.textx import BASE_TYPE_NAMES
 from textx.exceptions import TextXSyntaxError
+from textx.const import RULE_MATCH, RULE_ABSTRACT
 
 
 def test_normal_rule():
@@ -36,6 +37,7 @@ def test_match_rule():
     """
     meta = metamodel_from_str(rule)
     assert meta
+    assert meta['Rule']._type is RULE_MATCH
 
     model = meta.model_from_str('two')
     assert model
@@ -53,6 +55,7 @@ def test_regex_match_rule():
     """
     meta = metamodel_from_str(rule)
     assert meta
+    assert meta['Rule']._type is RULE_MATCH
     assert set([x.__name__ for x in meta]) == set(['Rule'])\
         .union(set(BASE_TYPE_NAMES))
 
@@ -60,6 +63,42 @@ def test_regex_match_rule():
     assert model
     assert model.__class__ == text
     assert model == "bar7"
+
+
+def test_basetype_match_rule():
+    """
+    Test that ordered choice of basetypes is an abstract rule.
+    """
+    rule = """
+    Rule: INT|ID;
+    """
+    meta = metamodel_from_str(rule)
+    assert meta
+    assert meta['Rule']._type is RULE_ABSTRACT
+
+    model = meta.model_from_str('34')
+    assert model
+    assert model.__class__ == int
+    assert model == 34
+
+
+def test_simple_match_basetype_match_rule():
+    """
+    Test that ordered choice of simple matches and base types
+    is a match rule.
+    """
+
+    rule = """
+    Rule: INT|'one'|ID;
+    """
+    meta = metamodel_from_str(rule)
+    assert meta
+    assert meta['Rule']._type is RULE_MATCH
+
+    model = meta.model_from_str('34')
+    assert model
+    assert model.__class__ == int
+    assert model == 34
 
 
 def test_rule_call_forward_backward_reference():
