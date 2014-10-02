@@ -145,6 +145,12 @@ class RuleCrossRef(object):
         self.cls = cls
         self.position = position
 
+    def __str__(self):
+        return self.rule_name
+
+    def __unicode__(self):
+        return self.__str__()
+
 
 class ClassCrossRef(object):
     """
@@ -332,8 +338,8 @@ def match_rule_body_SA(parser, node, children):
     parser._current_cls._type = RULE_MATCH
     # String representation of match alternatives.
     # Used in visualizations and debugging
-    parser._current_cls._match_str = "|".join([text(match)
-                                              for match in children])
+    parser._current_cls._match_str = \
+        "|".join([text(match) for match in children])
     return OrderedChoice(nodes=children[:])
 match_rule_body.sem = match_rule_body_SA
 

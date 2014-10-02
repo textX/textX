@@ -7,6 +7,7 @@
 # License: MIT License
 #######################################################################
 from __future__ import unicode_literals
+import codecs
 import sys
 if sys.version < '3':
     text = unicode
@@ -35,7 +36,7 @@ HEADER = '''
 
 def metamodel_export(metamodel, file_name):
 
-    with open(file_name, 'w') as f:
+    with codecs.open(file_name, 'w', encoding="utf-8") as f:
         f.write(HEADER)
 
         for cls in metamodel:
