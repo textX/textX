@@ -23,9 +23,3 @@ def test_unicode_grammar_from_string():
 
     metamodel = metamodel_from_str(grammar)
     assert metamodel
-
-
-def test_unicode_grammar_from_file():
-    """
-
-    """
