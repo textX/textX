@@ -80,7 +80,7 @@ def model_export(model, file_name):
 
     processed_set = set()
 
-    with open(file_name, 'w') as f:
+    with codecs.open(file_name, 'w', encoding="utf-8") as f:
         f.write(HEADER)
 
         def _export(obj):
