@@ -96,8 +96,9 @@ file.
 
 Questions, discussion etc.
 --------------------------
-Please use [discussion forum](https://groups.google.com/forum/?hl=en#!forum/textx-talk) for general discussions, suggestions etc.
-If you have some specific question on textX usage please use [stackoverflow](http://stackoverflow.com/).
+Please use `discussion forum`_ for general discussions, suggestions etc.
+
+If you have some specific question on textX usage please use `stackoverflow`_.
 Just make sure to tag your question with `textx`.
 
 Contributions
@@ -107,17 +108,20 @@ textX is open for contributions. You can contribute code, documentation, tests, 
 For bug reports please use github `issue tracker`_.
 
 For code/doc/test contributions do the following:
-1. If you plan to make a contribution it would be great if you first announce that on discussion forum.
-1. Fork the `project on github`_.
-1. Clone your fork.
-1. Make a branch for the new feature and switch to it.
-1. Make one or more commits.
-1. Push your branch to github.
-1. Make a pull request. I will look at the changes and if everything is ok I will pull it in.
+
+#. If you plan to make a contribution it would be great if you first announce that on discussion forum.
+#. Fork the `project on github`_.
+#. Clone your fork.
+#. Make a branch for the new feature and switch to it.
+#. Make one or more commits.
+#. Push your branch to github.
+#. Make a pull request. I will look at the changes and if everything is ok I will pull it in.
 
 Note: For code contributions please try to adhere to the `PEP-8 guidelines`_. Although I am not strict in that regard it is useful to have a common ground for coding style. To make things easier use tools for code checking (PyLint, PyFlakes, pep8 etc.).
 
 
+.. _discussion forum: https://groups.google.com/forum/?hl=en#!forum/textx-talk
+.. _stackoverflow: http://stackoverflow.com/
 .. _project on github: https://github.com/igordejanovic/textx/
 .. _PEP-8 guidelines: http://legacy.python.org/dev/peps/pep-0008/
 .. _issue tracker: https://github.com/igordejanovic/textx/issues/
