@@ -99,17 +99,17 @@ Questions, discussion etc.
 Please use `discussion forum`_ for general discussions, suggestions etc.
 
 If you have some specific question on textX usage please use `stackoverflow`_.
-Just make sure to tag your question with `textx`.
+Just make sure to tag your question with :code:`textx`.
 
 Contributions
 -------------
 textX is open for contributions. You can contribute code, documentation, tests, bug reports.
+If you plan to make a contribution it would be great if you first announce that on the discussion forum.
 
 For bug reports please use github `issue tracker`_.
 
 For code/doc/test contributions do the following:
 
-#. If you plan to make a contribution it would be great if you first announce that on discussion forum.
 #. Fork the `project on github`_.
 #. Clone your fork.
 #. Make a branch for the new feature and switch to it.
