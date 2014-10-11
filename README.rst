@@ -2,7 +2,7 @@ textX
 =====
 
 textX is a meta-language for building Domain-Specific Languages (DSLs) inspired by `Xtext`_.
-From a language grammar textX will build a parser and meta-model (a.k.a. abstract syntax) for the language.
+From a single language decription (grammar) textX will build a parser and a meta-model (a.k.a. abstract syntax) for the language.
 
 textX follows the syntax and semantics of Xtext but differs in some places and is
 implemented 100% in Python using `Arpeggio`_ parser.
