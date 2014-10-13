@@ -1,3 +1,6 @@
+.. image:: https://travis-ci.org/igordejanovic/textX.svg?branch=master
+    :target: https://travis-ci.org/igordejanovic/textX
+
 textX
 =====
 
