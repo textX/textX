@@ -5,8 +5,10 @@ python:
 before_install:
     # Installing Arpeggio as a dependency
     - pwd
+    - cd ..
     - git clone --depth=50 --branch=master git://github.com/igordejanovic/Arpeggio.git
     - cd Arpeggio && python setup.py install
+    - cd ../textX
 install:
     - pwd
     - python setup.py install
