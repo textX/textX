@@ -88,12 +88,25 @@ def test_assignment_modifier_separator_optional():
 def test_modifier_eolterm_zeroormore():
     model = """
     Rule:
-        ID+[eolterm] 'nextline';
+        'first'
+        INT+[eolterm] '123456';
     """
     metamodel = metamodel_from_str(model)
 
-    model = metamodel.model_from_str("""first second third
-    nextline
+    # After 'first' and before newline must
+    # be one or more integers
+    with pytest.raises(TextXSyntaxError):
+        model = metamodel.model_from_str("""
+            first
+            34 56 88 65
+            123456
+        """)
+
+    # When newline is found matching integers
+    # finishes and than a '123456' is matched
+    model = metamodel.model_from_str("""
+        first 34 56 88 65
+        123456
     """)
     assert model
 
