@@ -87,8 +87,7 @@ class TextXMetaModel(object):
 
         self.builtins = builtins
 
-        if classes:
-            self.update(classes)
+        self.classes = classes if classes else {}
 
         # Registered model processors
         self._model_processors = []
@@ -240,17 +239,29 @@ class TextXMetaModel(object):
                 """
                 Initializes attributes.
                 """
-                for attr in self._attrs.values():
+                # For generic meta-class instantiation
+                # call default attribute initializers.
+                self.init_attrs(self, self._attrs)
+
+            @staticmethod
+            def init_attrs(obj, attrs):
+                """
+                Initialize obj attributes.
+                Args:
+                    obj(object): A python object to set attributes to.
+                    attrs(dict): A dict of meta-attributes from meta-class.
+                """
+                for attr in attrs.values():
                     if attr.mult in [MULT_ZEROORMORE, MULT_ONEORMORE]:
                         # list
-                        setattr(self, attr.name, [])
+                        setattr(obj, attr.name, [])
                     elif attr.cls.__name__ in BASE_TYPE_NAMES:
                         # Instantiate base python type
-                        setattr(self, attr.name,
+                        setattr(obj, attr.name,
                                 python_type(attr.cls.__name__)())
                     else:
                         # Reference to other obj
-                        setattr(self, attr.name, None)
+                        setattr(obj, attr.name, None)
 
             @classmethod
             def new_attr(clazz, name, cls=None, mult=MULT_ONE, cont=True,

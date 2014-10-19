@@ -145,7 +145,19 @@ def parse_tree_to_objgraph(parser, parse_tree):
             if parser.debug:
                 print("CREATING INSTANCE {}".format(node.rule_name))
 
-            inst = mclass()
+            # If user class is given
+            # use it instead of generic one
+            if node.rule_name in metamodel.classes:
+                mclass = metamodel.classes[node.rule_name]
+                inst = mclass()
+                # Initialize attributes
+                mclass = metamodel[node.rule_name]
+                mclass.init_attrs(inst, mclass._attrs)
+            else:
+                # Generic class will call attributes init
+                # from the constructor
+                inst = mclass()
+
             inst._position = node.position
             parser._inst_stack.append(inst)
 
@@ -173,7 +185,7 @@ def parse_tree_to_objgraph(parser, parse_tree):
             attr_name = node.rule._attr_name
             op = node.rule_name.split('_')[-1]
             i = parser._inst_stack[-1]
-            cls = i.__class__
+            cls = metamodel[i.__class__.__name__]
             metaattr = cls._attrs[attr_name]
 
             if parser.debug:
