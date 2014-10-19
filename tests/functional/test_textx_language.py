@@ -15,10 +15,10 @@ from textx.const import RULE_MATCH, RULE_ABSTRACT
 
 def test_normal_rule():
 
-    rule = """
+    grammar = """
     Model: a = 'something';
     """
-    meta = metamodel_from_str(rule)
+    meta = metamodel_from_str(grammar)
     assert meta
 
     model = meta.model_from_str('something')
@@ -32,10 +32,10 @@ def test_match_rule():
     Match rule always returns string.
     """
 
-    rule = """
+    grammar = """
     Rule: 'one'|'two'|'three';
     """
-    meta = metamodel_from_str(rule)
+    meta = metamodel_from_str(grammar)
     assert meta
     assert meta['Rule']._type is RULE_MATCH
 
@@ -50,10 +50,10 @@ def test_regex_match_rule():
     Match rule always returns string.
     """
 
-    rule = """
+    grammar = """
     Rule: 'one'|/bar.?/|'three';
     """
-    meta = metamodel_from_str(rule)
+    meta = metamodel_from_str(grammar)
     assert meta
     assert meta['Rule']._type is RULE_MATCH
     assert set([x.__name__ for x in meta]) == set(['Rule'])\
@@ -69,10 +69,10 @@ def test_basetype_match_rule():
     """
     Test that ordered choice of basetypes is an abstract rule.
     """
-    rule = """
+    grammar = """
     Rule: INT|ID;
     """
-    meta = metamodel_from_str(rule)
+    meta = metamodel_from_str(grammar)
     assert meta
     assert meta['Rule']._type is RULE_ABSTRACT
 
@@ -88,10 +88,10 @@ def test_simple_match_basetype_match_rule():
     is a match rule.
     """
 
-    rule = """
+    grammar = """
     Rule: INT|'one'|ID;
     """
-    meta = metamodel_from_str(rule)
+    meta = metamodel_from_str(grammar)
     assert meta
     assert meta['Rule']._type is RULE_MATCH
 
@@ -103,12 +103,12 @@ def test_simple_match_basetype_match_rule():
 
 def test_rule_call_forward_backward_reference():
 
-    rule = """
+    grammar = """
     Model: 'start' attr=Rule2;
     Rule1: 'one'|'two'|'three';
     Rule2: 'rule2' attr=Rule1;
     """
-    meta = metamodel_from_str(rule)
+    meta = metamodel_from_str(grammar)
     assert meta
     assert set([x.__name__ for x in meta]) == set(['Model', 'Rule1', 'Rule2'])\
         .union(set(BASE_TYPE_NAMES))
@@ -122,7 +122,7 @@ def test_rule_call_forward_backward_reference():
 
 def test_abstract_rule():
 
-    rule = """
+    grammar = """
     Model: 'start' attr=Rule;
     Rule: Rule1|Rule2|Rule3;
     Rule1: RuleA|RuleB;
@@ -131,7 +131,7 @@ def test_abstract_rule():
     Rule2: b=STRING;
     Rule3: c=ID;
     """
-    meta = metamodel_from_str(rule)
+    meta = metamodel_from_str(grammar)
     assert meta
     assert set([x.__name__ for x in meta]) == \
         set(['Model', 'Rule', 'RuleA', 'RuleB', 'Rule1', 'Rule2', 'Rule3'])\
@@ -146,7 +146,7 @@ def test_abstract_rule():
 
 def test_assignment_zeroormore():
 
-    rule = """
+    grammar = """
     Model: 'start' attr*=Rule;     // There should be zero or more Rule-s after
                                     // 'start'
     Rule: Rule1|Rule2|Rule3;
@@ -154,7 +154,7 @@ def test_assignment_zeroormore():
     Rule2: b=STRING;
     Rule3: c=ID;
     """
-    meta = metamodel_from_str(rule)
+    meta = metamodel_from_str(grammar)
     assert meta
     assert set([x.__name__ for x in meta]) == \
         set(['Model', 'Rule', 'Rule1', 'Rule2', 'Rule3'])\
@@ -174,7 +174,7 @@ def test_assignment_zeroormore():
 
 def test_assignment_oneoormore():
 
-    rule = """
+    grammar = """
     Model: 'start' attr+=Rule;    // There should be at least one Rule
                                  // after 'start'
     Rule: Rule1|Rule2|Rule3;
@@ -182,7 +182,7 @@ def test_assignment_oneoormore():
     Rule2: b=STRING;
     Rule3: c=ID;
     """
-    meta = metamodel_from_str(rule)
+    meta = metamodel_from_str(grammar)
     assert meta
     assert set([x.__name__ for x in meta]) == \
         set(['Model', 'Rule', 'Rule1', 'Rule2', 'Rule3'])\
@@ -203,7 +203,7 @@ def test_assignment_oneoormore():
 
 
 def test_assignment_optional():
-    rule = """
+    grammar = """
     Model: 'start' (attr=Rule)?;    // There should be at most one Rule
                                  // after 'start'
     Rule: Rule1|Rule2|Rule3;
@@ -211,7 +211,7 @@ def test_assignment_optional():
     Rule2: b=STRING;
     Rule3: c=ID;
     """
-    meta = metamodel_from_str(rule)
+    meta = metamodel_from_str(grammar)
     assert meta
     assert set([x.__name__ for x in meta]) == \
         set(['Model', 'Rule', 'Rule1', 'Rule2', 'Rule3'])\
@@ -236,7 +236,7 @@ def test_repetition_separator_modifier():
     Match list with regex separator.
     """
 
-    rule = """
+    grammar = """
     Model: 'start' attr+=Rule[/,|;/];   // Here a regex match is used to
                                         // define , or ; as a separator
     Rule: Rule1|Rule2|Rule3;
@@ -244,7 +244,7 @@ def test_repetition_separator_modifier():
     Rule2: b=STRING;
     Rule3: c=ID;
     """
-    meta = metamodel_from_str(rule)
+    meta = metamodel_from_str(grammar)
     assert meta
     assert set([x.__name__ for x in meta]) == set(['Model', 'Rule', 'Rule1', 'Rule2', 'Rule3'])\
         .union(set(BASE_TYPE_NAMES))
@@ -266,14 +266,14 @@ def test_repetition_separator_modifier():
 
 
 def test_bool_match():
-    rule = """
+    grammar = """
     Model: 'start' rule?='rule' rule2?=Rule;   // rule and rule2 attr should be
     Rule: Rule1|Rule2|Rule3;                    // true where match succeeds
     Rule1: a=INT;
     Rule2: b=STRING;
     Rule3: c=ID;
     """
-    meta = metamodel_from_str(rule)
+    meta = metamodel_from_str(grammar)
     assert meta
     assert set([x.__name__ for x in meta]) == \
         set(['Model', 'Rule', 'Rule1', 'Rule2', 'Rule3'])\
@@ -296,11 +296,11 @@ def test_bool_match():
 
 
 def test_object_and_rule_reference():
-    rule = """
+    grammar = """
     Model: 'start' rules*=RuleA 'ref' ref=[RuleA];
     RuleA: 'rule' name=ID;
     """
-    meta = metamodel_from_str(rule)
+    meta = metamodel_from_str(grammar)
     assert meta
     assert set([x.__name__ for x in meta]) == \
         set(['Model', 'RuleA'])\
@@ -319,7 +319,7 @@ def test_object_and_rule_reference():
 
 
 def test_abstract_rule_and_object_reference():
-    rule = """
+    grammar = """
     Model: 'start' rules*=RuleA 'ref' ref=[RuleA];
     RuleA: Rule1|Rule2;
     Rule1: RuleI|RuleE;
@@ -327,7 +327,7 @@ def test_abstract_rule_and_object_reference():
     RuleI: 'rI' name=ID;
     RuleE: 'rE' name=ID;
     """
-    meta = metamodel_from_str(rule)
+    meta = metamodel_from_str(grammar)
     assert meta
     assert set([x.__name__ for x in meta]) == \
         set(['Model', 'RuleA', 'Rule1', 'Rule2', 'RuleI', 'RuleE'])\
@@ -346,31 +346,74 @@ def test_abstract_rule_and_object_reference():
 
 
 def test_repeat_rule_ref():
-    model = """
+    grammar = """
     Rule: ID*;
     """
-    metamodel = metamodel_from_str(model)
+    metamodel = metamodel_from_str(grammar)
 
     model = metamodel.model_from_str("""first second third""")
     assert model
 
 
 def test_repeat_strmatch():
-    model = """
+    grammar = """
     Rule: "first"*;
     """
-    metamodel = metamodel_from_str(model)
+    metamodel = metamodel_from_str(grammar)
 
     model = metamodel.model_from_str("""first first""")
     assert model
 
 
 def test_repeat_strmatch_with_separator():
-    model = """
+    grammar = """
     Rule: "first"*[','];
     """
-    metamodel = metamodel_from_str(model)
+    metamodel = metamodel_from_str(grammar)
 
     model = metamodel.model_from_str("""first, first""")
     assert model
+
+def test_default_attribute_values():
+    """
+    Test default values for unsupplied base type
+    attributes.
+    """
+    grammar = """
+    First:
+        'first' seconds+=Second
+        ('A' a=INT)?
+        ('B' b=BOOL)?
+        ('C' c=STRING)?
+        ('D' d=FLOAT)?
+        ('E' e+=INT)?
+        ('F' f*=INT)?
+        ('G' g?=INT)?
+    ;
+
+    Second:
+        INT|STRING
+    ;
+    """
+    metamodel = metamodel_from_str(grammar)
+
+    model = metamodel.model_from_str("""
+            first 45 "foo" 78
+    """)
+    assert type(model).__name__ == "First"
+    assert type(model.seconds) is list
+    assert type(model.a) is int
+    assert model.a == 0
+    assert type(model.b) is bool
+    assert model.b == False
+    assert type(model.c) is text
+    assert model.c == ""
+    assert type(model.d) is float
+    assert model.d == 0.0
+    assert type(model.e) is list
+    assert model.e == []
+    assert type(model.f) is list
+    assert model.f == []
+    assert type(model.g) is bool
+    assert model.g == False
 
