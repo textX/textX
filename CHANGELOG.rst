@@ -2,12 +2,14 @@ textX changelog
 ---------------
 
 * Development
+
   - Grammar import.
   - Meta-model redesigned.
   - Support for unicode grammars.
   - Python 2/3 compatibility.
 
 * Release 0.2
+
   - Tests.
   - Started documentation writing.
   - A keyword-like string matches will be matched with the respect of word boundaries.
@@ -20,12 +22,15 @@ textX changelog
   - Various bugfixes.
 
 * Release 0.1.2
+
   - Bugfix in conversion of basetypes to python.
 
 * Release 0.1.1
+
   - Bugfix release. Using relative imports.
 
 * Release 0.1
+
   - Initial release. Most planed stuff in place.
   - XText-like language fully functional. Rules, match rules, abstract rule, 
     list matches, string matches, regex matches...
