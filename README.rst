@@ -1,8 +1,11 @@
-.. image:: https://travis-ci.org/igordejanovic/textX.svg?branch=master
-    :target: https://travis-ci.org/igordejanovic/textX
+.. image:: https://raw.githubusercontent.com/igordejanovic/textX/master/art/textX-logo.png
 
 textX
 =====
+
+.. image:: https://travis-ci.org/igordejanovic/textX.svg?branch=master
+    :target: https://travis-ci.org/igordejanovic/textX
+
 
 textX is a meta-language for building Domain-Specific Languages (DSLs) inspired by `Xtext`_.
 From a single language decription (grammar) textX will build a parser and a meta-model (a.k.a. abstract syntax) for the language.
