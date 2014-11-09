@@ -3,10 +3,12 @@ textX changelog
 
 * Development
 
+  - Object processor callbacks.
   - Grammar import.
   - Meta-model redesigned.
   - Support for unicode grammars.
   - Python 2/3 compatibility.
+  - Documentation.
 
 * Release 0.2
 
