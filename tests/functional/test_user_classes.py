@@ -38,7 +38,7 @@ def test_user_class():
     assert type(model).__name__ == "First"
     assert type(model) is not First
 
-    mm = metamodel_from_str(grammar, classes= {'First': First})
+    mm = metamodel_from_str(grammar, classes=[First])
     model = mm.model_from_str(modelstr)
     # Test that user class is instantiated
     assert type(model).__name__ == "First"

@@ -65,6 +65,8 @@ class TextXMetaModel(object):
         builtins(dict): A dict of named object used in linking phase.
             References to named objects not defined in the model will be
             searched here.
+        classes(dict): A dict of user supplied classes to use instead of
+            generic ones.
     """
 
     def __init__(self, file_name=None, classes=None, builtins=None,
@@ -87,7 +89,11 @@ class TextXMetaModel(object):
 
         self.builtins = builtins
 
-        self.classes = classes if classes else {}
+        # Convert classes to dict for easier lookup
+        self.classes = {}
+        if classes:
+            for c in classes:
+                self.classes[c.__name__] = c
 
         # Registered model processors
         self._model_processors = []
@@ -378,7 +384,7 @@ def metamodel_from_str(lang_desc, classes=None, builtins=None, file_name=None,
 
     Args:
         lang_desc(str): A textX language description.
-        classes(dict): An optional dict of classes used instead of
+        classes(iterable): An optional iterable of classes used instead of
             generic ones.
         builtins(dict): An optional dict of named object used in linking phase.
             References to named object not defined in the model will be
