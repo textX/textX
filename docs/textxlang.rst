@@ -4,6 +4,8 @@ textX language
 textX is inspired by the Xtext framework for domain-specific language engineering so all
 the credits for the idea goes to the Xtext team.
 If you have Xtext background than you will find yourself at home with textX.
+There are some differences in the grammar and the way textX works. This will be noted in
+the this documentation.
 
 The domain of textX language is language design. If resembles in a way a EBNF but
 besides the language grammar definition defines a language meta-model
@@ -34,7 +36,7 @@ Rule `Hello` at the same time defines a Python class `Hello`. When the rule is r
 an object of this class will get created and the attribute `who` will be set to whatever the rule `ID` has matched
 (this is specified by the assigment `who=ID`).
 
-There are three kind of rules in textX:
+There are three kinds of rules in textX:
 
 - Common rules (or just rules)
 - Abstract rules
