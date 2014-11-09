@@ -167,7 +167,13 @@ def parse_tree_to_objgraph(parser, parse_tree):
                           .format(type(n).__name__, str(n)))
                 process_node(n)
 
-            parser._inst_stack.pop()
+            model_object = parser._inst_stack.pop()
+
+            # If object processor is registered call it
+            obj_processor = metamodel.obj_processors.get(
+                model_object.__class__.__name__, None)
+            if obj_processor:
+                obj_processor(model_object)
 
             # Special case for 'name' attrib. It is used for cross-referencing
             if hasattr(inst, 'name') and inst.name:

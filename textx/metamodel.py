@@ -67,6 +67,7 @@ class TextXMetaModel(object):
             searched here.
         classes(dict): A dict of user supplied classes to use instead of
             generic ones.
+        obj_processors(dict): A dict of user supplied object processors.
     """
 
     def __init__(self, file_name=None, classes=None, builtins=None,
@@ -97,6 +98,9 @@ class TextXMetaModel(object):
 
         # Registered model processors
         self._model_processors = []
+
+        # Registered object processors
+        self.obj_processors = {}
 
         # Namespaces
         self.namespaces = {}
@@ -375,6 +379,19 @@ class TextXMetaModel(object):
         This callable receives model and meta-model as its parameters.
         """
         self._model_processors.append(model_processor)
+
+    def register_obj_processors(self, obj_processors):
+        """
+        Object processors are callables that will be called after
+        each successful model object construction.
+        Those callables receive model object as its parameter.
+        Registration of new object processors will replace previous.
+
+        Args:
+            obj_processors(dict): A dictionary where key=class name,
+                value=callable
+        """
+        self.obj_processors = obj_processors
 
 
 def metamodel_from_str(lang_desc, classes=None, builtins=None, file_name=None,
