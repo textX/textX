@@ -149,7 +149,10 @@ def parse_tree_to_objgraph(parser, parse_tree):
             # use it instead of generic one
             if node.rule_name in metamodel.classes:
                 mclass = metamodel.classes[node.rule_name]
-                inst = mclass()
+                # Object initialization will be done afterwards
+                # At this point we need object to be allocated
+                # So that nested object get correct reference
+                inst = mclass.__new__(mclass)
                 # Initialize attributes
                 mclass = metamodel[node.rule_name]
                 mclass.init_attrs(inst, mclass._attrs)
@@ -168,6 +171,23 @@ def parse_tree_to_objgraph(parser, parse_tree):
                 process_node(n)
 
             model_object = parser._inst_stack.pop()
+
+            # If this object is nested add 'parent' reference
+            if parser._inst_stack:
+                model_object.parent =  parser._inst_stack[-1]
+
+            # If the class is user supplied we need to done
+            # proper initialization at this point.
+            if node.rule_name in metamodel.classes:
+                init_kwargs = dict(model_object.__dict__)
+
+                # Keep position and attach it directly to object
+                # after intialization
+                position = init_kwargs.pop("_position")
+
+                model_object.__dict__ = {}
+                model_object.__init__(**init_kwargs)
+                model_object._position = position
 
             # If object processor is registered call it
             obj_processor = metamodel.obj_processors.get(

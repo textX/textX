@@ -21,11 +21,15 @@ def test_user_class():
     """
     class First(object):
         "User class."
-        def __init__(self):
+        def __init__(self, seconds, a, b, c):
             "Constructor must be without parameters."
             # Testing that additional attributes
             # are preserved.
             self.some_attr = 1
+            self.seconds = seconds
+            self.a = a
+            self.b = b
+            self.c = c
 
 
     modelstr = """
