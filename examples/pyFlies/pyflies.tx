@@ -28,8 +28,14 @@ TestType:
 
 Conditions:
   'conditions' '{'
+    // Strip all whitespaces before next WORD
+    // becouse next rule is eolterm and
+    // terminates on newlines.
+    /\s*/
+
     // Parameter names are in the first line of condition specification
     varNames+=WORD[eolterm]    // match var names until end of line
+
     // The rest of the description are conditions, one per line
     // The order of condition values match the param name positions.
     conditions+=Condition
@@ -37,6 +43,7 @@ Conditions:
 ;
 
 Condition:
+  /\s*/
   varValues+=WORD[eolterm]  // match values until end of line
 ;
 
