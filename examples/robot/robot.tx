@@ -5,6 +5,7 @@ at the University of Novi Sad in June, 2011.
 
 An example of the robot program:
    begin
+       initial 3, 1
        up 4
        left 9
        down
@@ -17,13 +18,24 @@ An example of the robot program:
 // created.
 Program:
   'begin'
-    command*=Command    // *= operator means zero or more matches. commmand will be
-                        // a list of Command objects
+    commands*=Command    // *= operator means zero or more matches.
+                         // commands will be
+                         // a list of Command objects
   'end'
 ;
 
+// This is an example of abstract rule. Command class will never be instantiated
+// in the model.
 Command:
-  dir=Direction (steps=INT)?
+  InitialCommand | MoveCommand
+;
+
+InitialCommand:
+  'initial' x=INT ',' y=INT
+;
+
+MoveCommand:
+  direction=Direction (steps=INT)?
 ;
 
 // This is an example of a Match Rule
