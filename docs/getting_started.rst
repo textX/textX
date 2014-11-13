@@ -1,3 +1,6 @@
+Getting started
+###############
+
 Installation
 ------------
 

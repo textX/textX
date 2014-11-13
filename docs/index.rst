@@ -30,49 +30,20 @@ Each language consists of:
 The focus of textX is the definition of abstract and textual concrete syntax using
 single textual description. The semantic is out of scope for this tool but
 it is easy to do in a pragmatic way by writing an interpreter (see
-tutorial) or code generator using one of python's template engines.
+tutorials) or code generator using one of python's template engines.
 
 .. _textX: https://github.com/igordejanovic/textX/
 .. _Xtext: http://www.eclipse.org/xtext/
 .. _Eclipse: http://www.eclipse.org/
 
-
-Features
---------
-
 .. toctree::
    :maxdepth: 2
 
    features
-
-Getting started
----------------
-
-.. toctree::
-   :maxdepth: 2
-
    getting_started
-
-.. _reference-docs:
-
-Reference documentation
------------------------
-
-.. toctree::
-   :maxdepth: 2
-
    grammar
    metamodel
    model
-
-.. _tutorials-docs:
-
-Tutorials
----------
-
-.. toctree::
-   :maxdepth: 2
-
    tutorial_basic
    tutorial_advanced
 
