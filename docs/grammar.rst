@@ -81,7 +81,7 @@ The basic expressions are:
   - Zero or more (\*=)
   - One or more (+=)
 
-* Match
+* Matches
 
   - String match ('..')
   - Regex match (/../)
@@ -123,16 +123,52 @@ Example::
     "red" | "green" | "blue"
   ;
 
-Note that in most parsing technologies an unordered match (alternative) is used
-which may lead to unabi
+This will match either *red* or *green* or *blue* and the parser will try the
+match in that order.
 
-Underlaying parsing tehnology of textX is Arpeggio which is parser based on PEG
+.. note::
+
+   In most classic parsing technologies an unordered match (alternative) is used
+   which may lead to ambiguous grammar where multiple parse tree may exist for the
+   same input string.
+
+Underlaying parsing technology of textX is `Arpeggio`_ which is parser based on PEG
 grammars and thus the :code:`|` operator directly translates to Arpeggio's PEG
-ordered choice. Using ordered choice 
+ordered choice. Using ordered choice yield unambiguous parsing. If the text
+parses there is only one parse tree possible.
+
+.. _Arpeggio: https://github.com/igordejanovic/arpeggio
 
 
 Optional
 ^^^^^^^^
+
+Optional is an expression that will match contained expression if it can but
+will not failed otherwise. Thus, optional expression always succeeds.
+
+Example::
+
+  MoveUp:
+    'up' INT?
+  ;
+
+:code:`INT` match is optional in this example. This means that the :code:`up`
+keyword is required but afterwards and integer may be found but it doesn't have
+to.
+
+Following lines will match::
+
+  up 45
+  up 1
+  up
+
+Optional expression can be more complex. For example::
+
+  MoveUp:
+    'up' ( INT | FLOAT )?
+
+Now, an ordered choice in parentheses is optional.
+
 
 Repetitions
 ^^^^^^^^^^^
@@ -172,12 +208,12 @@ Repetitions
 Assignments
 ^^^^^^^^^^^
 
-Assignment is used for meta-model deduction. Each assignment will result in an
-attribute of the meta-class created by the rule.
+Assignment is used as a part of the meta-model deduction process. Each
+assignment will result in an attribute of the meta-class created by the rule.
 
 Each assignment consists of LHS (left-hand side) and RHS (right-hand side). The
 LHS is always a name of the meta-class attribute while the RHS can be a
-reference to other rule (either a match or link reference) or a direct match
+reference to other rule (either a match or link reference) or a simple match
 (string or regex match). For example::
 
   Person:
@@ -222,15 +258,207 @@ Following strings are matched by the :code:`Person` rule::
 
 There are four types of assignments:
 
-* **Plain** assignment will match its RHS once and assign what is matched to the
-  attribute given by LHS. The above example uses plain assignments.
+* **Plain assignment** (:code:`=`) will match its RHS once and assign what is
+  matched to the attribute given by LHS. The above example uses plain
+  assignments.
 
-* **Boolean** assignment will 
+  Examples::
+
+    a=INT
+    b=FLOAT
+    c=/[a-Z0-9]+/
+    dir=Direction
+
+* **Boolean assignment** (:code:`?=`) will set the attribute on :code:`True` if
+  the RHS match succeeds or :code:`False` otherwise.
+
+  Examples::
+
+    cold ?= 'cold'
+    number_given ?= INT
+
+* **Zero or more assignment** (:code:`*=`) - LHS attribute will be a
+  :code:`list`. This assignment will match RHS as long as match succeeds and
+  each matched object will append to the attribute. If no match succeeds
+  attribute will be an empty list.
+
+  Examples::
+
+    commands*=Command
+    numbers*=INT
+
+* **One or more assignment** (:code:`+=`) - same as previous but must match RHS
+  at least once. If no match succeeds this assignment does not succeeds.
+
+
+
+Matches
+^^^^^^^
+Match expression are, besides base type rules, the expression at the lowest
+level. They are the basic building blocks for more complex expressions. These
+expressions will consume input on success.
+
+There are two types of match expressions:
+
+* **String match** - is written as a single quoted string. It will match literal
+  string on the input.
+
+  Here are few examples of string matches::
+
+    'blue'
+    'zero'
+    'person'
+
+* **Regex match** - uses regular expression defined inside :code:`/ /` to match
+  input. Therefore, it defines a whole class of strings that can be matched.
+  Internally a python :code:`re` module is used.
+
+  Here are few example of regex matches::
+
+    /\s*/
+    /[-\w]*\b/
+    /[^}]*/
+
+References
+^^^^^^^^^^
+
+Other rules can be referenced from each rule. References are usually used as a
+RHS of the assignments. There are two types of rule references:
+
+* **Match rule reference** - will *call* other rule. When instance of the called
+  rule is created it will be assigned to the attribute on the LHS.
+
+  Example::
+
+    Structure:
+      'structure' '{'
+        elements*=StructureElement
+      '}'
+    ;
+
+  :code:`StructureElement` will be matched zero or more times. With each match a
+  new instance of :code:`StructureElement` will be created and appended to
+  elements :code:`list`.
+
+* **Link rule reference** - will match an identifier of some class object at the
+  given place and convert that identifier to python reference on target object. This
+  resolving to reference is done automatically by textX. By default a
+  :code:`name` attribute is used as an identifier of the object. Currently,
+  there is no automatic support for name spaces in textX. All objects of the
+  same class are in a single namespace.
+
+  Example::
+
+    ScreenType:
+      'screen' name=ID "{"
+      '}'
+    ;
+
+    ScreenInstance:
+      'screen' type=[ScreenType]
+    ;
+
+  The :code:`type` attribute is a link to :code:`ScreenType` object. This is a
+  valid usage::
+
+    // This is definition of ScreenType object
+    screen Introduction {
+
+    }
+
+    // And this is reference link to the above ScreenType object
+    // ScreenInstance instance
+    screen Introduction
+
+  :code:`Introduction` will be matched, the :code:`ScreenType` object with that
+  name will be found and :code:`type` attribute of :code:`ScreenInstance`
+  instance will be set to it.
+
+  :code:`ID` rule is used by default to match link identifier. If you want to
+  change that your can use following syntax::
+
+    ScreenInstance:
+      'screen' type=[ScreenType|WORD]
+    ;
+
+  Here, instead of :code:`ID` a :code:`WORD` rule is used to match object
+  identifier.
 
 
 
 Repetition modifiers
 ^^^^^^^^^^^^^^^^^^^^
+
+Is a modification of repetition expressions (:code:`*`, :code:`+`,
+:code:`*=`,:code:`+=`). They are specified in brackets :code:`[  ]`. If there
+are more modifiers they are separated by comma.
+
+Currently there are two modifiers defined:
+
+* **Separator modifier** - is used to define separator on multiple matches.
+  Separator is simple match (string match or regex match).
+
+  Example::
+
+    numbers*=INT[',']
+
+  Here a separator string match is defined (:code:`','`). This will match zero
+  or more integers separated by commas::
+
+    45, 47, 3, 78
+
+  A regex can be specified as a separator::
+
+    fields += ID[/;|,|:/]
+
+  This will match IDs separated by either :code:`;` or :code:`,` or :code:`:`::
+
+    first, second; third, fourth: fifth
+
+* **End-of-line terminate modifier** (*eolterm*) - used to terminate repetition
+  on end-of-line. By default repetition match will span lines. When this
+  modifier is specified repetition will work inside current line only.
+
+  Example::
+
+    STRING*[',', eolterm]
+
+  Here we have separator as well as :code:`eolterm` defined. This will match
+  zero or more strings separated by commas inside one line::
+
+    "first", "second", "third"
+    "fourth"
+
+  If we run example expression once on this string it will match first line only.
+  :code:`"fourth"` in the second line will not be matched.
+
+.. warning::
+
+   Be aware that when :code:`eolterm` modifier is used its effect starts from
+   previous match. For example::
+
+      Conditions:
+        'conditions' '{'
+          varNames+=WORD[eolterm]    // match var names until end of line
+        '}'
+
+   In this example :code:`varNames` must be matched in the same line with
+   :code:`conditions {` because :code:`eolterm` effect start immediately.
+   In this example we wanted to give user freedom to specify var names on
+   the next line, even to put some empty lines if he/she wish. In order to do
+   that we could modify example like this::
+
+      Conditions:
+        'conditions' '{'
+          /\s*/
+          varNames+=WORD[eolterm]    // match var names until end of line
+        '}'
+
+   Regex match :code:`/\s*/` will collect whitespaces (spaces and new-lines)
+   before :code:`WORD` match begins. Afterwards, repeated match will work inside
+   one line only.
+
+
 
 Rule types
 ~~~~~~~~~~
