@@ -469,10 +469,93 @@ There are three kinds of rules in textX:
 - Abstract rules
 - Match rules
 
-Abstract and match rules are explained in the separate sections.
+**Abstract rules** are rules given as a ordered choice of other rules. For
+example::
+
+  Command:
+    MoveCommand | InitialCommand
+  ;
+
+A meta-class of this rule will never be instantiated. The purpose of this rule
+is to generalize other rules and be used in match and link references.
+
+For example::
+
+  Program:
+    'begin'
+      commands*=Command
+    'end'
+  ;
+
+Python objects in :code:`commands` list will be either instances of
+:code:`MoveCommand` or :code:`InitialCommand`.
+
+
+**Match rule** is special kind of rule that is given as ordered choice of simple
+matches and base type rule references. It is usually used to specify some
+enumerated values.
+
+Examples::
+
+  Widget:
+    "edit"|"combo"|"checkbox"|"togglebutton"
+  ;
+
+  Name:
+    STRING|/(\w|\+|-)+/
+  ;
+
+These rules can be used in match references only and results in objects of base python
+types (str, int, bool, float).
 
 
 Grammar modularization
 ----------------------
 
+Grammars can be defined in multiple files and that imported. Rules used in
+references are first searched in current file and than in imported files in the
+order of import.
+
+Example::
+
+  import scheme
+
+
+  Library:
+    'library' name=Name '{'
+      attributes*=LibraryAttribute
+
+      scheme=Scheme
+
+    '}'
+  ;
+
+:code:`Scheme` rule is defined in :code:`scheme.tx` grammar file imported at the
+beginning.
+
+Grammar files may be located in folders. In that case dot notation is used.
+
+Example::
+
+  import component.types
+
+:code:`types.tx` grammar is located in :code:`component` folder relatively from
+current grammar file.
+
+If you want to override default search order you can specify fully qualified
+name of the rule using dot notation.
+
+Example::
+
+  import component.types
+
+  MyRule:
+    a = component.types.List
+  ;
+
+  List:
+    '[' values+=BASETYPE[','] ']'
+  ;
+
+:code:`List` from :code:`component.types` is used for :code:`a` attribute.
 
