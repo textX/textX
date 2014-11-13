@@ -7,6 +7,9 @@ pyFlies language overview.
 Grammar
 -------
 
+Grammar modularization
+----------------------
+
 Model processor
 ---------------
 

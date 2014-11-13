@@ -1,3 +1,5 @@
+.. _`basic tutorial`:
+
 Basic tutorial
 ==============
 
@@ -198,9 +200,77 @@ exercise to the reader to implement this constraint.
 Instantiating meta-model
 ------------------------
 
+In order to parse our models we first need to construct a meta-model. A
+textX meta-model is a Python object that contains all classes that can be
+instantiated in our model. For each grammar rule a class is created.
+Additionally, meta-model contains a parser that knows how to parse input
+strings. From parsed input (parse tree) meta-model will create a model.
+
+Meta-models are created from our grammar description, in this case
+:code:`robot.tx` file::
+
+  from textx.metamodel import metamodel_from_file
+  robot_mm = metamodel_from_file('robot.tx')
+
+Next step during language design is meta-model visualization. It is usually
+easier to comprehend our language if rendered graphically. To do so we use
+excellent `GraphViz`_ software package and its DSL for graph specification
+called *dot*. It is a textual language for visual graph definition.
+
+Lets export our meta-model to dot language::
+
+  from textx.export import metamodel_export
+  metamodel_export(robot_mm, 'robot_meta.dot')
+
+First parameter is our meta-model object while the second is an output dot
+filename.
+
+:code:`dot` file can be opened with dot viewer (there are many to choose
+from) or transformed with :code:`dot` tool to raster or vector graphics.
+
+For example::
+
+  dot -Tpng robot_meta.dot -O robot_meta.png
+
+This command will create :code:`png` image out of :code:`dot` file.
+
+|robot_meta.dot|
+
+
+.. _GraphViz:: http://www.graphviz.org/
+.. |robot_meta.dot| image:: https://raw.githubusercontent.com/igordejanovic/textX/master/examples/robot/robot_meta.dot.png
+
+.. note::
+
+This meta-model can be used to parse multiple models.
 
 Instantiating model
 -------------------
+
+Now, when we have our meta-model we can parse models from strings or external
+textual files::
+
+  robot_model = robot_mm.model_from_file('program.rbt')
+
+This command will parse file :code:`program.rbt` and constructs our robot model.
+In this file does not match our language a syntax error will be raised on the
+first error encountered.
+
+In the same manner as meta-model visualization we can visualize our model too::
+
+  from textx.export import model_export
+  model_export(robot_model, 'program.dot')
+
+This will create :code:`program.dot` file that can be visualized using proper
+viewer or transformed to image::
+
+  dot -Tpng program.dot -O program.png
+
+For the robot program above we should get an image like this:
+
+|program.dot|
+
+.. |program.dot| image:: https://raw.githubusercontent.com/igordejanovic/textX/master/examples/robot/program.dot.png
 
 Interpreting model
 ------------------
