@@ -242,7 +242,7 @@ This command will create :code:`png` image out of :code:`dot` file.
 
 .. note::
 
-This meta-model can be used to parse multiple models.
+   This meta-model can be used to parse multiple models.
 
 Instantiating model
 -------------------

@@ -43,7 +43,7 @@ describe Python classes that will be used to instantiate object of your model.
 |hello_meta.dot|
 
 You can see that for each rule from language description an appropriate
-Python class has been created. A BASETYPE hierarchy is builtin. Each
+Python class has been created. A BASETYPE hierarchy is built-in. Each
 meta-model has it.
 
 4. Create some content (i.e. model) in your new language (``example.hello``):

@@ -1,8 +1,8 @@
 Advanced tutorial
 =================
 
-pyFlies language overview.
-
+pyFlies language
+----------------
 
 Grammar
 -------
