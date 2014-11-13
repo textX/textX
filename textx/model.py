@@ -174,7 +174,7 @@ def parse_tree_to_objgraph(parser, parse_tree):
 
             # If this object is nested add 'parent' reference
             if parser._inst_stack:
-                model_object.parent =  parser._inst_stack[-1]
+                model_object.parent = parser._inst_stack[-1]
 
             # If the class is user supplied we need to done
             # proper initialization at this point.
@@ -186,7 +186,14 @@ def parse_tree_to_objgraph(parser, parse_tree):
                 position = init_kwargs.pop("_position")
 
                 model_object.__dict__ = {}
-                model_object.__init__(**init_kwargs)
+                try:
+                    model_object.__init__(**init_kwargs)
+                except TypeError as e:
+                    # Add class name information in case of
+                    # wrong constructor parameters
+                    e.args += ("for class %s" %
+                               model_object.__class__.__name__,)
+                    raise e
                 model_object._position = position
 
             # If object processor is registered call it
