@@ -11,9 +11,6 @@ Installation
 Quick start
 -----------
 
-There is no docs at the moment but here is a quick introduction what can
-be done. For more see examples.
-
 1. Write a language description in textX (file ``hello.tx``):
 
 ::
