@@ -3,9 +3,7 @@
 textX
 =====
 
-.. image:: https://travis-ci.org/igordejanovic/textX.svg?branch=master
-    :target: https://travis-ci.org/igordejanovic/textX
-
+|build-status| |docs|
 
 textX is a meta-language for building Domain-Specific Languages (DSLs) inspired by `Xtext`_.
 From a single language decription (grammar) textX will build a parser and a meta-model (a.k.a. abstract syntax) for the language.
@@ -132,5 +130,12 @@ Note: For code contributions please try to adhere to the `PEP-8 guidelines`_. Al
 .. _project on github: https://github.com/igordejanovic/textx/
 .. _PEP-8 guidelines: http://legacy.python.org/dev/peps/pep-0008/
 .. _issue tracker: https://github.com/igordejanovic/textx/issues/
+
+.. |build-status| image:: https://travis-ci.org/igordejanovic/textX.svg?branch=master
+   :target: https://travis-ci.org/igordejanovic/textX
+
+.. |docs| image:: https://readthedocs.org/projects/textx/badge/?version=latest
+   :target: https://readthedocs.org/projects/textx/?badge=latest
+   :alt: Documentation Status
 
 
