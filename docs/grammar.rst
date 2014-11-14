@@ -508,11 +508,12 @@ Examples::
 These rules can be used in match references only and results in objects of base python
 types (str, int, bool, float).
 
+.. _import:
 
 Grammar modularization
 ----------------------
 
-Grammars can be defined in multiple files and that imported. Rules used in
+Grammars can be defined in multiple files and than imported. Rules used in
 references are first searched in current file and than in imported files in the
 order of import.
 

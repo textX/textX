@@ -1,3 +1,5 @@
+.. _metamodel:
+
 textX meta-models
 =================
 

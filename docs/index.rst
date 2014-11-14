@@ -44,6 +44,7 @@ tutorial` ) or code generator using one of python's template engines.
    grammar
    metamodel
    model
+   visualization
    tutorial_basic
    tutorial_advanced
 
