@@ -64,10 +64,14 @@ def test_object_processors():
         second._second_called = True
         call_order.append(2)
 
+        # test that parent is fully initialised.
+        # b should be True
+        assert second.parent.b
+
     obj_processors = {
-            'First': first_obj_processor,
-            'Second': second_obj_processor,
-            }
+        'First': first_obj_processor,
+        'Second': second_obj_processor,
+        }
 
     metamodel = metamodel_from_str(grammar)
     metamodel.register_obj_processors(obj_processors)

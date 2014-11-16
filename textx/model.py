@@ -9,7 +9,7 @@
 import codecs
 from arpeggio import Parser, Sequence, NoMatch, EOF, Terminal
 from .exceptions import TextXSyntaxError, TextXSemanticError
-from .const import MULT_ONEORMORE, MULT_ZEROORMORE, RULE_NORMAL,\
+from .const import MULT_ONE, MULT_ONEORMORE, MULT_ZEROORMORE, RULE_NORMAL,\
     RULE_ABSTRACT
 
 
@@ -195,15 +195,8 @@ def parse_tree_to_objgraph(parser, parse_tree):
                                inst.__class__.__name__,)
                     raise e
 
-            # If object processor is registered call it
-            obj_processor = metamodel.obj_processors.get(
-                inst.__class__.__name__, None)
-            if obj_processor:
-                obj_processor(inst)
-
             # Special case for 'name' attrib. It is used for cross-referencing
             if hasattr(inst, 'name') and inst.name:
-                inst.__name__ = inst.name
                 # Objects of each class are in its own namespace
                 if not id(inst.__class__) in parser._instances:
                     parser._instances[id(inst.__class__)] = {}
@@ -365,9 +358,35 @@ def parse_tree_to_objgraph(parser, parse_tree):
 
         _resolve(model)
 
+    def call_obj_processors(model_obj):
+        """
+        Depth-first model object processing.
+        """
+        metaclass = metamodel[model_obj.__class__.__name__]
+
+        for metaattr in metaclass._attrs.values():
+            # If attribute is containment reference
+            # go down
+            if metaattr.ref and metaattr.cont:
+                attr = getattr(model_obj, metaattr.name)
+                if metaattr.mult != MULT_ONE:
+                    for obj in attr:
+                        call_obj_processors(obj)
+                else:
+                    call_obj_processors(attr)
+
+        obj_processor = metamodel.obj_processors.get(metaclass.__name__, None)
+        if obj_processor:
+            obj_processor(model_obj)
+
     model = process_node(parse_tree)
     resolve_refs(model)
     assert not parser._inst_stack
 
-    return model
+    # We have model loaded and all link resolved
+    # So we shall do a depth-first call of object
+    # processors if any processor is defined.
+    if metamodel.obj_processors:
+        call_obj_processors(model)
 
+    return model
