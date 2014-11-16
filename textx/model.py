@@ -148,21 +148,28 @@ def parse_tree_to_objgraph(parser, parse_tree):
             # If user class is given
             # use it instead of generic one
             if node.rule_name in metamodel.user_classes:
-                mclass = metamodel.user_classes[node.rule_name]
+                user_class = metamodel.user_classes[node.rule_name]
+
                 # Object initialization will be done afterwards
                 # At this point we need object to be allocated
                 # So that nested object get correct reference
-                inst = mclass.__new__(mclass)
-                # Initialize attributes
-                mclass = metamodel[node.rule_name]
-                mclass.init_attrs(inst, mclass._attrs)
+                inst = user_class.__new__(user_class)
+
+                # This will serve as a dummy object to collect attribute
+                # values used in constructor call.
+                obj_attrs = mclass()
             else:
                 # Generic class will call attributes init
                 # from the constructor
                 inst = mclass()
 
+                # Collect attributes directly on meta-class instance
+                obj_attrs = inst
+
             inst._position = node.position
-            parser._inst_stack.append(inst)
+
+            # Push real obj. and dummy attr obj on the instance stack
+            parser._inst_stack.append((inst, obj_attrs))
 
             for n in node:
                 if parser.debug:
@@ -170,37 +177,29 @@ def parse_tree_to_objgraph(parser, parse_tree):
                           .format(type(n).__name__, str(n)))
                 process_node(n)
 
-            model_object = parser._inst_stack.pop()
+            parser._inst_stack.pop()
 
             # If this object is nested add 'parent' reference
             if parser._inst_stack:
-                model_object.parent = parser._inst_stack[-1]
+                obj_attrs.parent = parser._inst_stack[-1][0]
 
             # If the class is user supplied we need to done
             # proper initialization at this point.
             if node.rule_name in metamodel.user_classes:
-                init_kwargs = dict(model_object.__dict__)
-
-                # Keep position and attach it directly to object
-                # after intialization
-                position = init_kwargs.pop("_position")
-
-                model_object.__dict__ = {}
                 try:
-                    model_object.__init__(**init_kwargs)
+                    inst.__init__(**obj_attrs.__dict__)
                 except TypeError as e:
                     # Add class name information in case of
                     # wrong constructor parameters
                     e.args += ("for class %s" %
-                               model_object.__class__.__name__,)
+                               inst.__class__.__name__,)
                     raise e
-                model_object._position = position
 
             # If object processor is registered call it
             obj_processor = metamodel.obj_processors.get(
-                model_object.__class__.__name__, None)
+                inst.__class__.__name__, None)
             if obj_processor:
-                obj_processor(model_object)
+                obj_processor(inst)
 
             # Special case for 'name' attrib. It is used for cross-referencing
             if hasattr(inst, 'name') and inst.name:
@@ -217,18 +216,18 @@ def parse_tree_to_objgraph(parser, parse_tree):
             # Handle assignments
             attr_name = node.rule._attr_name
             op = node.rule_name.split('_')[-1]
-            i = parser._inst_stack[-1]
-            cls = metamodel[i.__class__.__name__]
+            model_obj, obj_attr = parser._inst_stack[-1]
+            cls = metamodel[model_obj.__class__.__name__]
             metaattr = cls._attrs[attr_name]
 
             if parser.debug:
                 print('Handling assignment: {} {}...'.format(op, attr_name))
 
             if op == 'optional':
-                setattr(i, attr_name, True)
+                setattr(obj_attr, attr_name, True)
 
             elif op == 'plain':
-                attr_value = getattr(i, attr_name)
+                attr_value = getattr(obj_attr, attr_name)
                 if attr_value and type(attr_value) is not list:
                     raise TextXSemanticError(
                         "Multiple assignments to attribute {} at {}"
@@ -246,7 +245,7 @@ def parse_tree_to_objgraph(parser, parse_tree):
                 if type(attr_value) is list:
                     attr_value.append(value)
                 else:
-                    setattr(i, attr_name, value)
+                    setattr(obj_attr, attr_name, value)
 
             elif op in ['list', 'oneormore', 'zeroormore']:
                 for n in node:
@@ -263,10 +262,10 @@ def parse_tree_to_objgraph(parser, parse_tree):
                                                 cls=metaattr.cls,
                                                 position=node[0].position)
 
-                        if not hasattr(i, attr_name) or \
-                                getattr(i, attr_name) is None:
-                            setattr(i, attr_name, [])
-                        getattr(i, attr_name).append(value)
+                        if not hasattr(obj_attr, attr_name) or \
+                                getattr(obj_attr, attr_name) is None:
+                            setattr(obj_attr, attr_name, [])
+                        getattr(obj_attr, attr_name).append(value)
             else:
                 # This shouldn't happen
                 assert False
@@ -320,7 +319,6 @@ def parse_tree_to_objgraph(parser, parse_tree):
                 pass
                 # TODO: Match rules cannot be referred. This is
                 #       an error in language description.
-
 
             # As a fall-back search builtins if given
             if metamodel.builtins:
