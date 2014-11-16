@@ -369,11 +369,13 @@ def parse_tree_to_objgraph(parser, parse_tree):
             # go down
             if metaattr.ref and metaattr.cont:
                 attr = getattr(model_obj, metaattr.name)
-                if metaattr.mult != MULT_ONE:
-                    for obj in attr:
-                        call_obj_processors(obj)
-                else:
-                    call_obj_processors(attr)
+                if attr:
+                    if metaattr.mult != MULT_ONE:
+                        for obj in attr:
+                            if obj:
+                                call_obj_processors(obj)
+                    else:
+                        call_obj_processors(attr)
 
         obj_processor = metamodel.obj_processors.get(metaclass.__name__, None)
         if obj_processor:
@@ -387,6 +389,8 @@ def parse_tree_to_objgraph(parser, parse_tree):
     # So we shall do a depth-first call of object
     # processors if any processor is defined.
     if metamodel.obj_processors:
+        if parser.debug:
+            print("CALLING OBJECT PROCESSORS")
         call_obj_processors(model)
 
     return model
