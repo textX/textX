@@ -91,10 +91,10 @@ class TextXMetaModel(object):
         self.builtins = builtins
 
         # Convert classes to dict for easier lookup
-        self.classes = {}
+        self.user_classes = {}
         if classes:
             for c in classes:
-                self.classes[c.__name__] = c
+                self.user_classes[c.__name__] = c
 
         # Registered model processors
         self._model_processors = []

@@ -147,8 +147,8 @@ def parse_tree_to_objgraph(parser, parse_tree):
 
             # If user class is given
             # use it instead of generic one
-            if node.rule_name in metamodel.classes:
-                mclass = metamodel.classes[node.rule_name]
+            if node.rule_name in metamodel.user_classes:
+                mclass = metamodel.user_classes[node.rule_name]
                 # Object initialization will be done afterwards
                 # At this point we need object to be allocated
                 # So that nested object get correct reference
@@ -178,7 +178,7 @@ def parse_tree_to_objgraph(parser, parse_tree):
 
             # If the class is user supplied we need to done
             # proper initialization at this point.
-            if node.rule_name in metamodel.classes:
+            if node.rule_name in metamodel.user_classes:
                 init_kwargs = dict(model_object.__dict__)
 
                 # Keep position and attach it directly to object
