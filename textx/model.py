@@ -76,13 +76,13 @@ def get_model_parser(top_rule, comments_model, debug=False):
                 line, col = e.parser.pos_to_linecol(e.position)
                 raise TextXSyntaxError(str(e), line, col)
 
-        def get_model_from_file(self, file_name):
+        def get_model_from_file(self, file_name, encoding):
             """
             Creates model from the parse tree from the previous parse call.
             If file_name is given file will be parsed before model
             construction.
             """
-            with codecs.open(file_name, 'r', 'utf-8') as f:
+            with codecs.open(file_name, 'r', encoding) as f:
                 model_str = f.read()
 
             model = self.get_model_from_str(model_str)

@@ -363,11 +363,11 @@ class TextXMetaModel(object):
             p(model, self)
         return model
 
-    def model_from_file(self, file_name):
+    def model_from_file(self, file_name, encoding='utf-8'):
         """
         Instantiates model from the given file.
         """
-        model = self.parser.get_model_from_file(file_name)
+        model = self.parser.get_model_from_file(file_name, encoding)
         for p in self._model_processors:
             p(model, self)
         return model
