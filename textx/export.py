@@ -127,7 +127,7 @@ def model_export(model, file_name):
                                         attr_value.replace('\n', r'\n')
                                 attrs += "{}{}:{}={}\\l".format(
                                     required, attr_name, type(attr_value)
-                                    .__name__, attr_value)
+                                    .__name__, attr_value.replace('"', '\\"'))
                             else:
                                 attrs += "{}{}:{}\\l".format(
                                     required, attr_name, type(attr_value)
