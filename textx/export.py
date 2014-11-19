@@ -124,10 +124,11 @@ def model_export(model, file_name):
                                     or attr.cls._type == RULE_MATCH:
                                 if type(attr_value) in [str, text]:
                                     attr_value = \
-                                        attr_value.replace('\n', r'\n')
+                                        attr_value.replace('\n', r'\n')\
+                                        .replace('"', '\\"')
                                 attrs += "{}{}:{}={}\\l".format(
                                     required, attr_name, type(attr_value)
-                                    .__name__, attr_value.replace('"', '\\"'))
+                                    .__name__, attr_value)
                             else:
                                 attrs += "{}{}:{}\\l".format(
                                     required, attr_name, type(attr_value)
