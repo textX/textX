@@ -40,11 +40,13 @@ def grammar_to_import():    return _(r'(\w|\.)+')
 
 def textx_rule():           return [abstract_rule, match_rule, common_rule]
 # Rules
-def common_rule():          return rule_name, ":", common_rule_body, ";"
-def match_rule():           return rule_name, ":", match_rule_body, ";"
-def abstract_rule():        return rule_name, ":", abstract_rule_body, ";"
-def mixin_rule():           return rule_name, "mixin", ":", common_rule_body, ";" #TODO
-def expression_rule():      return rule_name, "expression", ":", ";" # TODO
+def common_rule():          return rule_name, Optional(rule_params), ":", common_rule_body, ";"
+def match_rule():           return rule_name, Optional(rule_params), ":", match_rule_body, ";"
+def abstract_rule():        return rule_name, Optional(rule_params), ":", abstract_rule_body, ";"
+def rule_params():          return '[', OneOrMore(rule_param), ']'
+def rule_param():           return param_name, Optional('=', param_value)
+def param_name():           return ident
+def param_value():          return [integer, ident, string_value]
 
 def common_rule_body():     return choice
 def match_rule_body():      return [simple_match, rule_ref], ZeroOrMore("|",
@@ -86,6 +88,8 @@ def str_match():            return [("'", _(r"((\\')|[^'])*"),"'"),\
 def re_match():             return "/", _(r"((\\/)|[^/])*"), "/"
 def ident():                return _(r'\w+')
 def integer():              return _(r'[-+]?[0-9]+')
+def string_value():         return [_(r"'((\\')|[^'])*'"),
+                                    _(r'"((\\")|[^"])*"')]
 
 # Comments
 def comment():              return [comment_line, comment_block]
@@ -295,7 +299,10 @@ grammar_to_import.sem = grammar_to_import_SA
 
 
 def textx_rule_SA(parser, node, children):
-    rule_name, rule = children[0]
+    if len(children[0]) > 2:
+        rule_name, rule_params, rule = children[0]
+    else:
+        rule_name, rule = children[0]
     rule = Sequence(nodes=[rule], rule_name=rule_name,
                     root=True)
 
@@ -326,11 +333,37 @@ def rule_name_SA(parser, node, children):
 rule_name.sem = rule_name_SA
 
 
-def rules(parser, node, children):
-    return (children[0], children[1])
-common_rule.sem = rules
-abstract_rule.sem = rules
-match_rule.sem = rules
+def rule_params_SA(parser, node, children):
+    params = {}
+    for param in children:
+        params.update(param)
+
+    return params
+rule_params.sem = rule_params_SA
+
+
+def rule_param_SA(parser, node, children):
+    if len(children) > 1:
+        param_name, param_value = children
+    else:
+        param_name = children[0]
+        param_value = True
+        if param_name.startswith('no'):
+            param_name = param_name[2:]
+            param_value = False
+
+    if parser.debug:
+        print("TextX rule param: ", param_name, param_value)
+
+    return {param_name: param_value}
+rule_param.sem = rule_param_SA
+
+
+def rules_SA(parser, node, children):
+    return children
+common_rule.sem = rules_SA
+abstract_rule.sem = rules_SA
+match_rule.sem = rules_SA
 
 
 def match_rule_body_SA(parser, node, children):
@@ -633,6 +666,16 @@ def obj_ref_SA(parser, node, children):
         rule_name = 'ID'
     return ("obj_ref", RuleCrossRef(rule_name, class_name, node.position))
 obj_ref.sem = obj_ref_SA
+
+
+def integer_SA(parser, node, children):
+    return int(node.value)
+integer.sem = integer_SA
+
+
+def string_value_SA(parser, node, children):
+    return node.value.strip("\"'")
+string_value.sem = string_value_SA
 
 
 # Default actions
