@@ -6,6 +6,11 @@
 # License: MIT License
 #######################################################################
 
+import sys
+if sys.version < '3':
+    text = unicode
+else:
+    text = str
 import codecs
 from arpeggio import Parser, Sequence, NoMatch, EOF, Terminal
 from .exceptions import TextXSyntaxError, TextXSemanticError
@@ -74,7 +79,7 @@ def get_model_parser(top_rule, comments_model, debug=False):
                 return self.parser_model.parse(self)
             except NoMatch as e:
                 line, col = e.parser.pos_to_linecol(e.position)
-                raise TextXSyntaxError(str(e), line, col)
+                raise TextXSyntaxError(text(e), line, col)
 
         def get_model_from_file(self, file_name, encoding):
             """
@@ -174,7 +179,7 @@ def parse_tree_to_objgraph(parser, parse_tree):
             for n in node:
                 if parser.debug:
                     print("Recursing into {} = '{}'"
-                          .format(type(n).__name__, str(n)))
+                          .format(type(n).__name__, text(n)))
                 process_node(n)
 
             parser._inst_stack.pop()
