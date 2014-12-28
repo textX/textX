@@ -12,6 +12,7 @@ if sys.version < '3':
 else:
     text = str
 import codecs
+import traceback
 from arpeggio import Parser, Sequence, NoMatch, EOF, Terminal
 from .exceptions import TextXSyntaxError, TextXSemanticError
 from .const import MULT_ONE, MULT_ONEORMORE, MULT_ZEROORMORE, RULE_NORMAL,\
@@ -196,8 +197,10 @@ def parse_tree_to_objgraph(parser, parse_tree):
                 except TypeError as e:
                     # Add class name information in case of
                     # wrong constructor parameters
+                    # print("Constructor params: {}".format(text(obj_attrs.__dict__)))
                     e.args += ("for class %s" %
                                inst.__class__.__name__,)
+                    print(traceback.print_exc())
                     raise e
 
             # Special case for 'name' attrib. It is used for cross-referencing
