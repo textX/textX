@@ -111,3 +111,31 @@ def test_modifier_eolterm_zeroormore():
     assert model
 
 
+def test_multiple_modifiers():
+    """
+    Multiple modifier may be specified separated with space.
+    """
+    model = """
+    Rule:
+        'first'
+        INT+[eolterm ','] '123456';
+    """
+    metamodel = metamodel_from_str(model)
+
+    # After 'first' and before newline must
+    # be one or more integers separated with comma
+    with pytest.raises(TextXSyntaxError):
+        model = metamodel.model_from_str("""
+            first
+            34 56 88 65
+            123456
+        """)
+
+    # When newline is found matching integers
+    # finishes and than a '123456' is matched
+    model = metamodel.model_from_str("""
+        first 34, 56, 88, 65
+        123456
+    """)
+    assert model
+
