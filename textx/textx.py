@@ -44,9 +44,8 @@ def common_rule():          return rule_name, Optional(rule_params), ":", common
 def match_rule():           return rule_name, Optional(rule_params), ":", match_rule_body, ";"
 def abstract_rule():        return rule_name, Optional(rule_params), ":", abstract_rule_body, ";"
 def rule_params():          return '[', OneOrMore(rule_param), ']'
-def rule_param():           return param_name, Optional('=', param_value)
+def rule_param():           return param_name, Optional('=', string_value)
 def param_name():           return ident
-def param_value():          return [integer, ident, string_value]
 
 def common_rule_body():     return choice
 def match_rule_body():      return [simple_match, rule_ref], ZeroOrMore("|",
@@ -309,8 +308,9 @@ def textx_rule_SA(parser, node, children):
         rule_name, rule_params, rule = children[0]
     else:
         rule_name, rule = children[0]
+        rule_params = {}
     rule = Sequence(nodes=[rule], rule_name=rule_name,
-                    root=True)
+                    root=True, **rule_params)
 
     # Add PEG rule to the meta-class
     parser.metamodel.set_rule(rule_name, rule)
@@ -341,8 +341,12 @@ rule_name.sem = rule_name_SA
 
 def rule_params_SA(parser, node, children):
     params = {}
-    for param in children:
-        params.update(param)
+    for name, value in children[0].items():
+        if name not in ['skipws', 'ws']:
+            raise TextXSyntaxError(
+                'Invalid rule param "{}" at {}.'
+                .format(name, parser.pos_to_linecol(node.position)))
+        params[name] = value
 
     return params
 rule_params.sem = rule_params_SA
