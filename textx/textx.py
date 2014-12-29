@@ -175,7 +175,9 @@ class ClassCrossRef(object):
 class TextXModelSA(SemanticAction):
     def first_pass(self, parser, node, children):
 
-        if 'Comment' in parser.metamodel:
+        metamodel = parser.metamodel
+
+        if 'Comment' in metamodel:
             comments_model = parser.metamodel['Comment']._peg_rule
         else:
             comments_model = None
@@ -184,9 +186,13 @@ class TextXModelSA(SemanticAction):
 
         from .model import get_model_parser
         textx_parser = get_model_parser(root_rule, comments_model,
-                                        parser.debug)
+                                        ignore_case=metamodel.ignore_case,
+                                        skipws=metamodel.skipws,
+                                        ws=metamodel.ws,
+                                        autokwd=metamodel.autokwd,
+                                        debug=metamodel.debug)
 
-        textx_parser.metamodel = parser.metamodel
+        textx_parser.metamodel = metamodel
 
         return textx_parser
 
@@ -620,19 +626,17 @@ assignment.sem = assignment_SA
 
 def str_match_SA(parser, node, children):
     to_match = children[0]
-    # Special case. If to_match is a keyword-like string
-    # matching should be done with word boundaries on.
-    # If this is not done we can run into problems described
-    # in the test test_match_whole_word
-    match = parser.keyword_regex.match(to_match)
-    if match and match.span() == (0, len(to_match)):
-        regex_match = RegExMatch(r'{}\b'.format(to_match),
-                                 ignore_case=parser.ignore_case,
-                                 str_repr=to_match)
-        regex_match.compile()
-        return regex_match
-    else:
-        return StrMatch(to_match, ignore_case=parser.ignore_case)
+
+    # Support for autokwd metamodel param.
+    if parser.metamodel.autokwd:
+        match = parser.keyword_regex.match(to_match)
+        if match and match.span() == (0, len(to_match)):
+            regex_match = RegExMatch(r'{}\b'.format(to_match),
+                                     ignore_case=parser.metamodel.ignore_case,
+                                     str_repr=to_match)
+            regex_match.compile()
+            return regex_match
+    return StrMatch(to_match, ignore_case=parser.metamodel.ignore_case)
 str_match.sem = str_match_SA
 
 
@@ -686,7 +690,7 @@ bracketed_choice.sem = SemanticActionSingleChild()
 textX_parsers = {}
 
 
-def language_from_str(language_def, metamodel, ignore_case=True, debug=False):
+def language_from_str(language_def, metamodel):
     """
     Constructs parser and initializes metamodel from language description
     given in textX language.
@@ -699,28 +703,28 @@ def language_from_str(language_def, metamodel, ignore_case=True, debug=False):
         Parser for the new language.
     """
 
-    if debug:
+    if metamodel.debug:
         print("*** TEXTX PARSER ***")
 
     # Check the cache for already conctructed textX parser
-    if debug in textX_parsers:
-        parser = textX_parsers[debug]
+    if metamodel.debug in textX_parsers:
+        parser = textX_parsers[metamodel.debug]
     else:
         # Create parser for TextX descriptions from
         # the textX grammar specified in this module
         parser = ParserPython(textx_model, comment_def=comment,
                               ignore_case=False,
-                              reduce_tree=False, debug=debug)
+                              reduce_tree=False, debug=metamodel.debug)
 
         # Prepare regex used in keyword-like strmatch detection.
         # See str_match_SA
         flags = 0
-        if ignore_case:
+        if metamodel.ignore_case:
             flags = re.IGNORECASE
         parser.keyword_regex = re.compile(r'[^\d\W]\w*', flags)
 
         # Cache it for subsequent calls
-        textX_parsers[debug] = parser
+        textX_parsers[metamodel.debug] = parser
 
     # This is used during parser construction phase.
     # Metamodel is filled in. Classes are created based on grammar rules.
@@ -744,7 +748,7 @@ def language_from_str(language_def, metamodel, ignore_case=True, debug=False):
     lang_parser.metamodel = parser.metamodel
     metamodel.parser = lang_parser
 
-    if debug:
+    if metamodel.debug:
         # Create dot file for debuging purposes
         PMDOTExporter().exportFile(
             lang_parser.parser_model,

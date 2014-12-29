@@ -71,17 +71,22 @@ class TextXMetaModel(object):
     """
 
     def __init__(self, file_name=None, classes=None, builtins=None,
-                 debug=False):
+                 ignore_case=False, skipws=True, ws=None,
+                 autokwd=False, debug=False):
         """
         Args:
             file_name(str): A file name if meta-model is going to be
                 constructed from file or None otherwise.
-            root_dir(str): Absolute directory used as a root for relative
-                grammar imports. If not given file_name dir is used if given.
             classes(dict of python classes): Custom meta-classes used
                 instead of generic ones.
             builtins(dict of named objects): Named objects used in linking
                 phase. This objects are part of each model.
+            ignore_case(bool): If case is ignored (default=False)
+            skipws (bool): Should the whitespace skipping be done.
+                Default is True.
+            ws (str): A string consisting of whitespace characters.
+            autokwd(bool): If keyword-like matches should be matched on word
+                boundaries. Default is False.
             debug(bool): Should debug messages be printed.
         """
 
@@ -95,6 +100,12 @@ class TextXMetaModel(object):
         if classes:
             for c in classes:
                 self.user_classes[c.__name__] = c
+
+        self.debug = debug
+        self.ignore_case = ignore_case
+        self.skipws = skipws
+        self.ws = ws
+        self.autokwd = autokwd
 
         # Registered model processors
         self._model_processors = []
@@ -394,45 +405,36 @@ class TextXMetaModel(object):
         self.obj_processors = obj_processors
 
 
-def metamodel_from_str(lang_desc, classes=None, builtins=None, file_name=None,
-                       root_dir=None, metamodel=None, debug=False):
+def metamodel_from_str(lang_desc, metamodel=None, **kwargs):
     """
     Creates a new metamodel from the textX description given as a string.
 
     Args:
         lang_desc(str): A textX language description.
-        classes(iterable): An optional iterable of classes used instead of
-            generic ones.
-        builtins(dict): An optional dict of named object used in linking phase.
-            References to named object not defined in the model will be
-            searched here.
-        file_name(str): A file name if meta-model was loaded from file.
         metamodel(TextXMetaModel): A metamodel that should be used.
-        debug(bool): Print debugging informations.
+        other params: See TextXMetaModel.
+
     """
     if not metamodel:
-        metamodel = TextXMetaModel(file_name=file_name, classes=classes,
-                                   builtins=builtins, debug=debug)
+        metamodel = TextXMetaModel(**kwargs)
 
-    language_from_str(lang_desc, metamodel, debug=debug)
+    language_from_str(lang_desc, metamodel)
 
     return metamodel
 
 
-def metamodel_from_file(file_name, classes=None, builtins=None, metamodel=None,
-                        debug=False):
+def metamodel_from_file(file_name, **kwargs):
     """
     Creates new metamodel from the given file.
 
     Args:
         file_name(str): The name of the file with textX language description.
-        classes, builtins, metamodel, debug: See metamodel_from_str.
+        other params: See metamodel_from_str.
     """
     with codecs.open(file_name, 'r', 'utf-8') as f:
         lang_desc = f.read()
 
-    metamodel = metamodel_from_str(lang_desc=lang_desc, classes=classes,
-                                   builtins=builtins, file_name=file_name,
-                                   metamodel=metamodel, debug=debug)
+    metamodel = metamodel_from_str(lang_desc=lang_desc,
+                                   file_name=file_name, **kwargs)
 
     return metamodel

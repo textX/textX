@@ -46,7 +46,7 @@ class ObjCrossRef(object):
         self.position = position
 
 
-def get_model_parser(top_rule, comments_model, debug=False):
+def get_model_parser(top_rule, comments_model, **kwargs):
     """
     Creates model parser for the given language.
     """
@@ -72,8 +72,6 @@ def get_model_parser(top_rule, comments_model, debug=False):
             # Dict for cross-ref resolving
             # { id(class): { obj.name: obj}}
             self._instances = {}
-
-            self.debug = debug
 
         def _parse(self):
             try:
@@ -118,7 +116,7 @@ def get_model_parser(top_rule, comments_model, debug=False):
                 pass
             return model
 
-    return TextXModelParser()
+    return TextXModelParser(**kwargs)
 
 
 def parse_tree_to_objgraph(parser, parse_tree):
