@@ -642,7 +642,7 @@ str_match.sem = str_match_SA
 
 def re_match_SA(parser, node, children):
     to_match = children[0]
-    regex = RegExMatch(to_match, ignore_case=parser.ignore_case)
+    regex = RegExMatch(to_match, ignore_case=parser.metamodel.ignore_case)
     try:
         regex.compile()
     except Exception as e:
