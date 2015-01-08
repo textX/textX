@@ -89,7 +89,7 @@ def get_model_parser(top_rule, comments_model, **kwargs):
             with codecs.open(file_name, 'r', encoding) as f:
                 model_str = f.read()
 
-            model = self.get_model_from_str(model_str)
+            model = self.get_model_from_str(model_str, file_name=file_name)
 
             # Register filename of the model for later use.
             try:
@@ -99,13 +99,13 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                 pass
             return model
 
-        def get_model_from_str(self, model_str):
+        def get_model_from_str(self, model_str, file_name=None):
             """
             Parses given string and creates model object graph.
             """
             if self.debug:
                 print("*** MODEL ***")
-            self.parse(model_str)
+            self.parse(model_str, file_name=file_name)
             # Transform parse tree to model. Skip root node which
             # represents the whole file ending in EOF.
             model = parse_tree_to_objgraph(self, self.parse_tree[0])
