@@ -389,9 +389,9 @@ RHS of the assignments. There are two types of rule references:
 Repetition modifiers
 ^^^^^^^^^^^^^^^^^^^^
 
-Is a modification of repetition expressions (:code:`*`, :code:`+`,
-:code:`*=`,:code:`+=`). They are specified in brackets :code:`[  ]`. If there
-are more modifiers they are separated by comma.
+Repetition modifiers are used for the modification of repetition expressions
+(:code:`*`, :code:`+`, :code:`*=`,:code:`+=`). They are specified in brackets
+:code:`[  ]`. If there are more modifiers they are separated by comma.
 
 Currently there are two modifiers defined:
 
@@ -455,8 +455,8 @@ Currently there are two modifiers defined:
         '}'
 
    Regex match :code:`/\s*/` will collect whitespaces (spaces and new-lines)
-   before :code:`WORD` match begins. Afterwards, repeated match will work inside
-   one line only.
+   before :code:`WORD` match begins. Afterwards, repeated matches will work
+   inside one line only.
 
 
 
@@ -507,6 +507,62 @@ Examples::
 
 These rules can be used in match references only and results in objects of base python
 types (str, int, bool, float).
+
+
+Rule modifiers
+~~~~~~~~~~~~~~
+
+Rule modifiers are used for  the modification of rules expression. They are
+specified in brackets (:code:`[  ]`) after the rule name. Currently, they are
+used to alter per rule parser global configuration for white-space handling.
+
+Currently, there are two modifiers defined:
+
+* **skipws, noskipws** - are used to enable/disable white-space skipping during
+  parsing. This will change global parser :code:`skipws` setting given during
+  meta-model instantiation.
+
+  Example::
+
+    Rule:
+        'entity' name=ID /\s*/ call=Rule2;
+    Rule2[noskipws]:
+        'first' 'second';
+
+  In this example code:`Rule` rule will use default parser behavior set during
+  meta-model instantiation while :code:`Rule2` rule will disable white-space
+  skipping. This will change :code:`Rule2` to match the word :code:`firstsecond`
+  but not words :code:`first second` with white-spaces in between.
+
+  .. note::
+
+     Remember that white-space handling modification will start immediately after
+     previous match. In the above example, and additional :code:`/\s*/` is given
+     before :code:`Rule2` call to consume all white-spaces before trying to match
+     :code:`Rule2`.
+
+* **ws** - used to redefine what are white-spaces per rule. textX has a default
+  white-space set to space, tab and new-line. This can be changed globally during
+  meta-model instantiation or per rule using this modifier.
+
+  Example::
+
+    Rule:
+        'entity' name=ID /\s*/ call=Rule2;
+    Rule2[ws='\n']:
+        'first' 'second';
+
+  In this example code:`Rule` will use default parser behavior but the
+  :code:`Rule2` will alter the white-space definition to be new-line only.
+  This means that the words :code:`code` and :code:`second` will get matched
+  only if they are on separate lines or in the same line but without other
+  characters in between (even tabs and spaces).
+
+  .. note::
+
+     As in previous example the modification will start immediately so if you want
+     to consume preceding spaces you must do that explicitely as given with
+     :code:`/\s*/` in the :code:`Rule`.
 
 .. _import:
 
