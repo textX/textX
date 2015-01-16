@@ -4,11 +4,14 @@ textX changelog
 * Development
 
   - Object processor callbacks.
+  - Support for user meta-classes.
+  - Rule modifiers.
   - Grammar import.
   - Meta-model redesigned.
   - Support for unicode grammars.
   - Python 2/3 compatibility.
   - Documentation.
+  - Travis integration.
 
 * Release 0.2
 
