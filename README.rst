@@ -97,6 +97,14 @@ file.
 .. |example.dot| image:: https://raw.githubusercontent.com/igordejanovic/textX/master/examples/hello_world/example.dot.png
 
 
+Learn more
+----------
+
+textX documentation is available `here <http://textx.readthedocs.org/en/latest/>`_.
+
+Also, check out `examples <https://github.com/igordejanovic/textx/tree/master/examples>`_.
+
+
 Discuss, ask questions
 ----------------------
 Please use `discussion forum`_ for general discussions, suggestions etc.
