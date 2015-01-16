@@ -4,9 +4,9 @@ from textx.metamodel import metamodel_from_str
 from textx.exceptions import TextXSyntaxError
 
 
-def test_skipws():
+def test_noskipws():
     """
-    Test 'skipws' and 'noskipws' rule params.
+    Test 'noskipws' rule modifier.
     """
     grammar = """
     Rule:
@@ -24,9 +24,32 @@ def test_skipws():
     metamodel.model_from_str("entity Person firstsecond")
 
 
+def test_skipws():
+    """
+    Test 'skipws' rule modifier.
+    """
+    grammar = """
+    Rule:
+        'entity' name=ID call=Rule2;
+    Rule2[skipws]:
+        'first' 'second';
+    """
+
+    # Change default behavior
+    metamodel = metamodel_from_str(grammar, skipws=False)
+
+    # Rule2 disables ws skipping but default rule is applied
+    # for rule Rule so this will not parse.
+    with pytest.raises(TextXSyntaxError):
+        metamodel.model_from_str("entity Person first second")
+
+    # This will parse.
+    metamodel.model_from_str("entityPerson first  second")
+
+
 def test_ws():
     """
-    Test 'ws' rule params.
+    Test 'ws' rule modifier.
     """
     grammar = """
     Rule:
