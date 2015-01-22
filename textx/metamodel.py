@@ -25,16 +25,19 @@ class MetaAttr(object):
         cont(bool): Is this attribute contained inside object.
         ref(bool): Is this attribute a reference. If it is not a reference
             it must be containment.
+        bool_assignment(bool): Is this attribute specified using bool
+            assignment '?='. Default is False.
         position(int): A position in the input string where attribute is
             defined.
     """
     def __init__(self, name, cls=None, mult=MULT_ONE, cont=True, ref=False,
-                 position=0):
+                 bool_assignment=False, position=0):
         self.name = name
         self.cls = cls
         self.mult = mult
         self.cont = cont
         self.ref = ref
+        self.bool_assignment = bool_assignment
         self.position = position
 
 
@@ -71,8 +74,8 @@ class TextXMetaModel(object):
     """
 
     def __init__(self, file_name=None, classes=None, builtins=None,
-                 ignore_case=False, skipws=True, ws=None,
-                 autokwd=False, debug=False):
+                 auto_init_attributes=True, ignore_case=False,
+                 skipws=True, ws=None, autokwd=False, debug=False):
         """
         Args:
             file_name(str): A file name if meta-model is going to be
@@ -81,6 +84,13 @@ class TextXMetaModel(object):
                 instead of generic ones.
             builtins(dict of named objects): Named objects used in linking
                 phase. This objects are part of each model.
+            auto_init_attributes(bool): If set than model attributes will be
+                automatically initialized to non-None values (e.g. for INT
+                attribute value will be 0, for BOOL it will be False). If this
+                parameter is False than all attributes will have a value
+                of None if not defined in the model. The only exception is
+                bool assignment ('?=') which always have a default of False.
+                Default is True.
             ignore_case(bool): If case is ignored (default=False)
             skipws (bool): Should the whitespace skipping be done.
                 Default is True.
@@ -102,6 +112,7 @@ class TextXMetaModel(object):
                 self.user_classes[c.__name__] = c
 
         self.debug = debug
+        self.auto_init_attributes = auto_init_attributes
         self.ignore_case = ignore_case
         self.skipws = skipws
         self.ws = ws
@@ -278,17 +289,31 @@ class TextXMetaModel(object):
                         setattr(obj, attr.name, [])
                     elif attr.cls.__name__ in BASE_TYPE_NAMES:
                         # Instantiate base python type
-                        setattr(obj, attr.name,
-                                python_type(attr.cls.__name__)())
+                        if self.auto_init_attributes:
+                            setattr(obj, attr.name,
+                                    python_type(attr.cls.__name__)())
+                        else:
+                            # See https://github.com/igordejanovic/textX/issues/11
+                            if attr.bool_assignment:
+                                # Only ?= assignments shall have default
+                                # value of False.
+                                setattr(obj, attr.name, False)
+                            else:
+                                # Set base type attribute to None initially
+                                # in order to be able to detect if an optional
+                                # values are given in the model. Default values
+                                # can be specified using object processors.
+                                setattr(obj, attr.name, None)
                     else:
                         # Reference to other obj
                         setattr(obj, attr.name, None)
 
             @classmethod
             def new_attr(clazz, name, cls=None, mult=MULT_ONE, cont=True,
-                         ref=False, position=0):
+                         ref=False, bool_assignment=False, position=0):
                 """Creates new meta attribute of this class."""
-                attr = MetaAttr(name, cls, mult, cont, ref, position)
+                attr = MetaAttr(name, cls, mult, cont, ref, bool_assignment,
+                                position)
                 clazz._attrs[name] = attr
                 return attr
 

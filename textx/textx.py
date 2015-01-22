@@ -536,7 +536,8 @@ def assignment_SA(parser, node, children):
         if op == '?=':
             line, col = parser.pos_to_linecol(node.position)
             raise TextXSemanticError(
-                'Cannot use "?=" operator on multiple assignments for attribute "{}" at {}'
+                'Cannot use "?=" operator on multiple'
+                ' assignments for attribute "{}" at {}'
                 .format(attr_name, (line, col)), line, col)
 
         cls_attr = cls._attrs[attr_name]
@@ -574,6 +575,11 @@ def assignment_SA(parser, node, children):
             rule_name='__asgn_optional', root=True)
         cls_attr.mult = MULT_OPTIONAL
         base_rule_name = 'BOOL'
+
+        # ?= assigment should have default value of False.
+        # so we shall mark it as such.
+        cls_attr.bool_assignment = True
+
     else:
         assignment_rule = Sequence(
             nodes=[rhs_rule],
