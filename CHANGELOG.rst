@@ -2,6 +2,14 @@ textX changelog
 ---------------
 
 * Development
+  - Introduced new parameters to meta-model constuction:
+
+    - ignore-case - for case sensitive/insensitive matching.
+    - autokwd - for matching on word boundaries for keyword-like matches.
+    - skipws - for enabling/disabling automatic whitespace skipping.
+    - ws - for redefinition of white-spaces.
+    - auto_init_attributes - for auto initializing of model attributes
+      based on its type.
 
   - Object processor callbacks.
   - Support for user meta-classes.
