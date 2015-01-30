@@ -2,6 +2,7 @@ textX changelog
 ---------------
 
 * Development
+  - Refactoring textX grammar. Support for ordered choice of sequences. Tests.
   - Introduced new parameters to meta-model constuction:
 
     - ignore-case - for case sensitive/insensitive matching.
@@ -9,7 +10,7 @@ textX changelog
     - skipws - for enabling/disabling automatic whitespace skipping.
     - ws - for redefinition of white-spaces.
     - auto_init_attributes - for auto initializing of model attributes
-      based on its type.
+      based on their types.
 
   - Object processor callbacks.
   - Support for user meta-classes.
@@ -45,7 +46,7 @@ textX changelog
 * Release 0.1
 
   - Initial release. Most planed stuff in place.
-  - XText-like language fully functional. Rules, match rules, abstract rule, 
+  - XText-like language fully functional. Rules, match rules, abstract rule,
     list matches, string matches, regex matches...
   - Metamodel and model construction.
   - Export to dot.
