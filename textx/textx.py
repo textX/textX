@@ -47,24 +47,19 @@ def rule_params():          return '[', OneOrMore(rule_param), ']'
 def rule_param():           return param_name, Optional('=', string_value)
 def param_name():           return ident
 
-def common_rule_body():     return choice
-def match_rule_body():      return [simple_match, rule_ref], ZeroOrMore("|",
-                                    [simple_match, rule_ref])
+def match_rule_body():      return [simple_match, rule_ref], ZeroOrMore("|", [simple_match, rule_ref])
 def abstract_rule_body():   return abstract_rule_ref, OneOrMore("|", abstract_rule_ref)
+def common_rule_body():     return sequence
 
-def sequence():             return OneOrMore([assignment, repeatable_expr])
-def repeatable_expr():      return [bracketed_choice, simple_match, rule_ref],\
-                                    Optional(repeat_operator)
-# def match():                return [simple_match , mixin_rule_match] TODO
-def simple_match():         return [str_match, re_match]
-
-def choice():               return sequence, ZeroOrMore("|", sequence)
-def bracketed_choice():     return '(', choice, ')'
+def sequence():             return OneOrMore(choice)
+def choice():               return repeatable_expr, ZeroOrMore("|", repeatable_expr)
+def repeatable_expr():      return expression, Optional(repeat_operator)
+def expression():           return [assignment, simple_match, rule_ref, bracketed_sequence]
+def bracketed_sequence():   return '(', sequence, ')'
 def repeat_operator():      return ['*', '?', '+'], Optional(repeat_modifiers)
 def repeat_modifiers():     return '[', OneOrMore([simple_match,
-                                                   multiplicity,
                                                    'eolterm']), ']'
-def multiplicity():         return integer, Optional('..', integer)
+def simple_match():         return [str_match, re_match]
 
 # Assignment
 def assignment():           return attribute, assignment_op, assignment_rhs
@@ -416,22 +411,24 @@ def abstract_rule_ref_SA(parser, node, children):
 abstract_rule_ref.sem = abstract_rule_ref_SA
 
 
+def common_rule_body_SA(parser, node, children):
+    return Sequence(nodes=children[:])
+common_rule_body.sem = common_rule_body_SA
+
+
 def sequence_SA(parser, node, children):
     return Sequence(nodes=children[:])
 sequence.sem = sequence_SA
 
 
 def choice_SA(parser, node, children):
-    return OrderedChoice(nodes=children[:])
-choice.sem = choice_SA
-
-
-def multiplicity_SA(parser, node, children):
-    if len(children) == 2:
-        return (int(children[0]), int(children[1]))
+    # If there is only one child reduce as
+    # this ordered choice is unnecessary
+    if len(children) > 1:
+        return OrderedChoice(nodes=children[:])
     else:
-        return (int(children[0]), int(children[0]))
-multiplicity.sem = multiplicity_SA
+        return children[0]
+choice.sem = choice_SA
 
 
 def repeat_modifiers_SA(parser, node, children):
@@ -527,6 +524,7 @@ def assignment_SA(parser, node, children):
 
     if parser.debug:
         print("Creating attribute {}:{}".format(cls.__name__, attr_name))
+        print("Assignment operation = {}".format(op))
 
     if attr_name in cls._attrs:
         # If attribute already exists in the metamodel it is
@@ -693,7 +691,8 @@ string_value.sem = string_value_SA
 
 
 # Default actions
-bracketed_choice.sem = SemanticActionSingleChild()
+bracketed_sequence.sem = SemanticActionSingleChild()
+expression.sem = SemanticActionSingleChild()
 
 
 # parser object cache. To speed up parser initialization (e.g. during imports)

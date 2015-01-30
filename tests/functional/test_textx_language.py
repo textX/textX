@@ -374,6 +374,7 @@ def test_repeat_strmatch_with_separator():
     model = metamodel.model_from_str("""first, first""")
     assert model
 
+
 def test_default_attribute_values():
     """
     Test default values for unsupplied base type
@@ -405,7 +406,7 @@ def test_default_attribute_values():
     assert type(model.a) is int
     assert model.a == 0
     assert type(model.b) is bool
-    assert model.b == False
+    assert model.b is False
     assert type(model.c) is text
     assert model.c == ""
     assert type(model.d) is float
@@ -415,5 +416,44 @@ def test_default_attribute_values():
     assert type(model.f) is list
     assert model.f == []
     assert type(model.g) is bool
-    assert model.g == False
+    assert model.g is False
+
+
+def test_sequence_ordered_choice():
+    """
+    Test ordered choice of sequences.
+    """
+
+    grammar = """
+    Model:
+        ('first' a=INT b?='a_is_here')|
+        ('second' c=INT d?='c_is_here')|
+        (e=RuleA)
+        'END'
+    ;
+    RuleA: 'rule' name=ID;
+    """
+    meta = metamodel_from_str(grammar, debug=True)
+    assert meta
+    assert set([x.__name__ for x in meta]) == \
+        set(['Model', 'RuleA'])\
+        .union(set(BASE_TYPE_NAMES))
+
+    model = meta.model_from_str('first 23 a_is_here END')
+    assert model.a == 23
+    assert model.c == 0
+    assert model.b is True
+    assert model.d is False
+    model = meta.model_from_str('second 32 END')
+    assert model.a == 0
+    assert model.c == 32
+    assert model.b is False
+    assert model.d is False
+    model = meta.model_from_str('rule A END')
+    assert model.a == 0
+    assert model.c == 0
+    assert model.b is False
+    assert model.d is False
+
+
 
