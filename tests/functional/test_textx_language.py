@@ -10,7 +10,7 @@ import pytest
 from textx.metamodel import metamodel_from_str
 from textx.textx import BASE_TYPE_NAMES
 from textx.exceptions import TextXSyntaxError
-from textx.const import RULE_MATCH, RULE_ABSTRACT
+from textx.const import RULE_MATCH, RULE_ABSTRACT, RULE_NORMAL
 
 
 def test_normal_rule():
@@ -65,7 +65,7 @@ def test_regex_match_rule():
     assert model == "bar7"
 
 
-def test_basetype_match_rule():
+def test_basetype_match_rule_is_abstract():
     """
     Test that ordered choice of basetypes is an abstract rule.
     """
@@ -82,7 +82,7 @@ def test_basetype_match_rule():
     assert model == 34
 
 
-def test_simple_match_basetype_match_rule():
+def test_simple_match_basetype_is_match_rule():
     """
     Test that ordered choice of simple matches and base types
     is a match rule.
@@ -99,6 +99,36 @@ def test_simple_match_basetype_match_rule():
     assert model
     assert model.__class__ == int
     assert model == 34
+
+
+def test_all_basetypes():
+    """
+    Test that base types are matched properly.
+    """
+    grammar = """
+        Rule:
+            a=FLOAT
+            b=INT
+            c1=BOOL
+            c2=BOOL
+            d1=STRING
+            d2=STRING
+            e=ID
+        ;
+    """
+    meta = metamodel_from_str(grammar)
+    assert meta
+    assert meta['Rule']._type is RULE_NORMAL
+
+    model = meta.model_from_str('3.4 5 true 0 "some string" '
+                                '\'some other string\' some_id')
+    assert model.a == 3.4
+    assert model.b == 5
+    assert model.c1 is True
+    assert model.c2 is False
+    assert model.d1 == "some string"
+    assert model.d2 == "some other string"
+    assert model.e == "some_id"
 
 
 def test_rule_call_forward_backward_reference():
