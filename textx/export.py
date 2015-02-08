@@ -43,7 +43,10 @@ def metamodel_export(metamodel, file_name):
             name = cls.__name__
             attrs = ""
             if cls._type == RULE_MATCH:
-                attrs = cls._match_str.replace("|", "\\|")
+                attrs = cls._match_str.replace("|", "\\|")\
+                                      .replace('"', '\\"')\
+                                      .replace('{', '\\{')\
+                                      .replace('}', '\\}')
             else:
                 for attr in cls._attrs.values():
                     arrowtail = "arrowtail=diamond, dir=both, " \
@@ -148,5 +151,3 @@ def model_export(model, file_name):
         _export(model)
 
         f.write('\n}\n')
-
-
