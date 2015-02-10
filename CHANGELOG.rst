@@ -1,7 +1,7 @@
 textX changelog
 ---------------
 
-* Release 0.3
+* 2015-02-10 Release 0.3
   - Refactoring textX grammar. Support for ordered choice of sequences. Tests.
   - Introduced new parameters to meta-model construction:
 
