@@ -131,6 +131,37 @@ def test_all_basetypes():
     assert model.e == "some_id"
 
 
+def test_float_int_number():
+    """
+    Test that numbers are recognized correctly.
+    """
+    grammar = """
+        Rule:
+            a=NUMBER
+            b=INT
+            c=FLOAT
+        ;
+    """
+    meta = metamodel_from_str(grammar)
+
+    # Float numbers must have a decimal point
+    with pytest.raises(TextXSyntaxError):
+        meta.model_from_str('3 5 2')
+
+    model = meta.model_from_str('3.4 5 .3')
+    assert model.a == 3.4
+    assert type(model.a) is float
+    assert model.b == 5
+    assert model.c == 0.3
+
+    model = meta.model_from_str('3 5 2.')
+    assert model.a == 3
+    assert type(model.a) is int
+    assert model.b == 5
+    assert model.c == 2
+    assert type(model.c) is float
+
+
 def test_rule_call_forward_backward_reference():
 
     grammar = """
