@@ -144,22 +144,42 @@ def test_float_int_number():
     """
     meta = metamodel_from_str(grammar)
 
-    # Float numbers must have a decimal point
-    with pytest.raises(TextXSyntaxError):
-        meta.model_from_str('3 5 2')
-
     model = meta.model_from_str('3.4 5 .3')
     assert model.a == 3.4
     assert type(model.a) is float
     assert model.b == 5
     assert model.c == 0.3
 
-    model = meta.model_from_str('3 5 2.')
+    model = meta.model_from_str('3 5 2.0')
     assert model.a == 3
-    assert type(model.a) is int
+
+    # NUMBER type always convert to python float
+    assert type(model.a) is float
+
     assert model.b == 5
     assert model.c == 2
     assert type(model.c) is float
+
+
+def test_float_variations():
+    """
+    Test different float formats.
+    """
+    grammar = """
+        Rule: a*=FLOAT[',']
+        ;
+    """
+    meta = metamodel_from_str(grammar)
+
+    model = meta.model_from_str('3.5, .4, 5.0')
+    assert len(model.a) == 3
+    assert type(model.a[0]) is float
+    assert type(model.a[1]) is float
+    assert type(model.a[2]) is float
+
+    # Check scientific notation
+    model = meta.model_from_str('1e-2')
+    assert model.a[0] == 0.01
 
 
 def test_rule_call_forward_backward_reference():
