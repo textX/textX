@@ -1,10 +1,6 @@
 textX changelog
 ---------------
 
-* Development
-  - Change in the FLOAT/INT/NUMBER recognition. Floats now must have a decimal
-    point.
-
 * 2015-02-10 Release 0.3
   - Refactoring textX grammar. Support for ordered choice of sequences. Tests.
   - Introduced new parameters to meta-model construction:
