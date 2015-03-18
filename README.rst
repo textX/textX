@@ -104,6 +104,17 @@ textX documentation is available `here <http://textx.readthedocs.org/en/latest/>
 
 Also, check out `examples <https://github.com/igordejanovic/textx/tree/master/examples>`_.
 
+Open-source project using textX
+-------------------------------
+
+- `applang` - Textual DSL for generating mobile applications
+- `pyTabs` - A Domain-Specific Language (DSL) for simplified music notation
+- `pyFlies` - DSL for cognitive experiments modeling
+
+.. _applang: https://github.com/kosanmil/applang
+.. _pyTabs: https://github.com/E2Music/pyTabs
+.. _pyFlies: https://github.com/igordejanovic/pyFlies
+
 
 Discuss, ask questions
 ----------------------
