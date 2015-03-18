@@ -104,8 +104,8 @@ textX documentation is available `here <http://textx.readthedocs.org/en/latest/>
 
 Also, check out `examples <https://github.com/igordejanovic/textx/tree/master/examples>`_.
 
-Open-source project using textX
--------------------------------
+Open-source projects using textX
+--------------------------------
 
 - `applang`_ - Textual DSL for generating mobile applications
 - `pyTabs`_ - A Domain-Specific Language (DSL) for simplified music notation
