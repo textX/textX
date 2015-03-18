@@ -107,9 +107,9 @@ Also, check out `examples <https://github.com/igordejanovic/textx/tree/master/ex
 Open-source project using textX
 -------------------------------
 
-- `applang` - Textual DSL for generating mobile applications
-- `pyTabs` - A Domain-Specific Language (DSL) for simplified music notation
-- `pyFlies` - DSL for cognitive experiments modeling
+- `applang`_ - Textual DSL for generating mobile applications
+- `pyTabs`_ - A Domain-Specific Language (DSL) for simplified music notation
+- `pyFlies`_ - DSL for cognitive experiments modeling
 
 .. _applang: https://github.com/kosanmil/applang
 .. _pyTabs: https://github.com/E2Music/pyTabs
