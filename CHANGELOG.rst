@@ -1,6 +1,10 @@
 textX changelog
 ---------------
 
+* 2015-04-04 Release 0.3.1
+  - Bugfix: Boolean type matching for BASETYPE defined attributes.
+  - More tests.
+
 * 2015-02-10 Release 0.3
   - Refactoring textX grammar. Support for ordered choice of sequences. Tests.
   - Introduced new parameters to meta-model construction:
