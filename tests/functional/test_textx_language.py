@@ -131,6 +131,39 @@ def test_all_basetypes():
     assert model.e == "some_id"
 
 
+def test_basetype():
+    """
+    Test that basetype will match each type properly.
+    """
+    grammar = """
+        Rule:
+            a1=BASETYPE
+            a2=BASETYPE
+            a3=BASETYPE
+            a4=BASETYPE
+            b=BASETYPE
+            c=BASETYPE
+            d=BASETYPE
+            e=BASETYPE
+        ;
+    """
+
+    meta = metamodel_from_str(grammar)
+    assert meta
+    assert meta['Rule']._type is RULE_NORMAL
+
+    model = meta.model_from_str('False false true True 0 4.5 "string" some_id')
+
+    assert model.a1 is False
+    assert model.a2 is False
+    assert model.a3 is True
+    assert model.a4 is True
+    assert model.b == 0.0
+    assert model.c == 4.5
+    assert model.d == "string"
+    assert model.e == "some_id"
+
+
 def test_float_int_number():
     """
     Test that numbers are recognized correctly.

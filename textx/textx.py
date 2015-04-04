@@ -94,12 +94,12 @@ def comment_block():        return _(r'/\*(.|\n)*?\*/')
 
 # Special rules - primitive types
 ID          = _(r'[^\d\W]\w*\b', rule_name='ID', root=True)
-BOOL        = _(r'(true|false|0|1)\b', rule_name='BOOL', root=True)
+BOOL        = _(r'(True|true|False|false|0|1)\b', rule_name='BOOL', root=True)
 INT         = _(r'[-+]?[0-9]+\b', rule_name='INT', root=True)
 FLOAT       = _(r'[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\b', 'FLOAT', root=True)
 STRING      = _(r'("[^"]*")|(\'[^\']*\')', 'STRING', root=True)
 NUMBER      = OrderedChoice(nodes=[FLOAT, INT], rule_name='NUMBER', root=True)
-BASETYPE    = OrderedChoice(nodes=[NUMBER, ID, STRING, BOOL],
+BASETYPE    = OrderedChoice(nodes=[NUMBER, BOOL, ID, STRING],
                             rule_name='BASETYPE', root=True)
 
 BASE_TYPE_RULES = {rule.rule_name: rule

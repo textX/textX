@@ -143,7 +143,7 @@ class TextXMetaModel(object):
         base_number = self.new_class('NUMBER', NUMBER, 0,
                                      [base_float, base_int])
         self.new_class('BASETYPE', BASETYPE, 0,
-                       [base_number, base_id, base_string, base_bool])
+                       [base_number, base_bool, base_id, base_string])
 
         # If file_name is given its absolute path will be a namespace
         if file_name:
