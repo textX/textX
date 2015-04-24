@@ -286,6 +286,26 @@ def test_assignment_zeroormore():
     assert model
 
 
+def test_assignment_multiple_simple():
+    """
+    Test that multiple assignments to the same attribute will result in the
+    list of values.
+    """
+
+    grammar = """
+    Model: 'start' a=INT a=INT a=INT;
+    """
+    meta = metamodel_from_str(grammar)
+
+    model = meta.model_from_str('start 34 23 45')
+
+    assert model
+    assert model.a
+    assert type(model.a) is list
+    assert len(model.a) == 3
+    assert model.a == [34, 23, 45]
+
+
 def test_assignment_oneoormore():
 
     grammar = """
