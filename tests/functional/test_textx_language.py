@@ -293,7 +293,7 @@ def test_assignment_multiple_simple():
     """
 
     grammar = """
-    Model: 'start' a=INT a=INT a=INT;
+    Model: 'start' a=INT a=INT (a=INT)?;
     """
     meta = metamodel_from_str(grammar)
 
@@ -304,6 +304,9 @@ def test_assignment_multiple_simple():
     assert type(model.a) is list
     assert len(model.a) == 3
     assert model.a == [34, 23, 45]
+
+    model = meta.model_from_str('start 34 23')
+    assert model.a == [34, 23]
 
 
 def test_assignment_oneoormore():
