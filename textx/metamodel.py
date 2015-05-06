@@ -80,7 +80,7 @@ class TextXMetaModel(object):
         Args:
             file_name(str): A file name if meta-model is going to be
                 constructed from file or None otherwise.
-            classes(dict of python classes): Custom meta-classes used
+            classes(list of python classes): Custom meta-classes used
                 instead of generic ones.
             builtins(dict of named objects): Named objects used in linking
                 phase. This objects are part of each model.
