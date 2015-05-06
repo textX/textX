@@ -83,6 +83,92 @@ textX gives automatic support for these relationships by providing
 Model and object processors
 ---------------------------
 
+To specify static semantics of the language textX uses a concept called
+**processors**. Processors are python callable that can modify model elements
+during model parsing/instantiation or do some additional checks that are not
+possible to do by the grammar alone.
+
+There are two types of processors:
+
+- model processors - are callable that are called at the end of the parsing
+  when the whole model is instantiated. These processors accepts meta-model and
+  model as parameters.
+- object processors - are registered for particular classes (grammar rules)
+  and are called when the objects of the given class is instantiated.
+
+Processors can modify model/objects or raise exception
+(code:`TextXSemanticError`) if some constraint is not met. User code that call
+model instantiation/parsing can catch those exception and report to the user.
+
+Model processors
+################
+
+To register model processor call :code:`register_model_processor` on the
+meta-model instance::
+
+  from textx.metamodel import metamodel_from_file
+
+  def check_some_semantics(metamodel, model):
+    ...
+    ... Do some check on the model and raise TextXSemanticError if semantics
+    ... rules are violated.
+
+  my_metamodel = metamodel_from_file('mygrammar.tx')
+  my_metamodel.register_model_processor(check_some_semantics)
+
+  # Parse model. check_some_semantics will be called automatically after
+  # successful parse to do further checks. If the rules are not met
+  # an instance of TextXSemanticError will be raised.
+  my_metamodel.model_from_file('some_model.ext')
+
+
+Object processors
+#################
+
+The purpose of object processors is the same as for model processors but they
+are called as soon as the particular object is recognized in the input string.
+They are registered per class/rule.
+
+Let's do some additional checks for the above Entity-Attribute example::
+
+  def entity_obj_processor(entity):
+    '''
+    Check that there should be at most 10 attributes in an entity.
+    '''
+
+    if len(entity.attributes) > 10:
+      raise TextXSemanticError('There is %d attributes for entity %s.'
+                               'Maximum is 10.' % (len(entity.attributes),
+                                                   entity.name))
+
+  def attribute_obj_processor(attribute):
+    '''
+    Check valid types.
+    '''
+
+    if attribute.type not in ['int', 'float', bool', 'string']:
+      raise TextXSemanticError('Invalid type %s for attribute %s of'
+                               ' entity %s.' % (attribute.type,
+                                                attribute.name,
+                                                attribute.parent.name))
+
+  obj_processors = {
+      'Entity': entity_obj_processor,
+      'Attribute': attribute_obj_processor,
+      }
+
+
+  entity_mm.register_obj_processors(obj_processors)
+
+  # Parse model. At each successful parse of Entity or Attribute the registered
+  # processor will be called and the semantics error will be raised if the
+  # check do not pass.
+  entity_mm.model_from_file('my_entity_model.ent')
+
+
+For an example usage of object processor that modify objects see object
+processor :code:`move_command_processor` in :ref:`robot example
+<move_command_processor>`
 
 
 .. _auto-initialization:

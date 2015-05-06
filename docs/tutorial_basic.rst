@@ -237,7 +237,7 @@ This command will create :code:`png` image out of :code:`dot` file.
 |robot_meta.dot|
 
 
-.. _GraphViz:: http://www.graphviz.org/
+.. _GraphViz: http://www.graphviz.org/
 .. |robot_meta.dot| image:: https://raw.githubusercontent.com/igordejanovic/textX/master/examples/robot/robot_meta.dot.png
 
 .. note::
@@ -357,6 +357,8 @@ Object processor is a callable that gets called whenever textX parses and
 instantiates an object of particular class. You can register object processors
 for the classes your wish to process in some way immediately after
 instantiation.
+
+.. _move_command_processor:
 
 Lets define our processor for :code:`MoveCommand`::
 
