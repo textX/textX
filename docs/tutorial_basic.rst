@@ -1,4 +1,4 @@
-.. _`basic tutorial`:
+.. _basic tutorial:
 
 Basic tutorial
 ==============
@@ -6,6 +6,7 @@ Basic tutorial
 In this tutorial we will build a simple robot language to demonstrate
 the basic workflow when working with textX.
 
+.. _robot-language:
 
 Robot language
 --------------

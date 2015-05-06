@@ -566,6 +566,32 @@ Currently, there are two modifiers defined:
      to consume preceding spaces you must do that explicitely as given with
      :code:`/\s*/` in the :code:`Rule`.
 
+
+Grammar comments
+~~~~~~~~~~~~~~~~
+
+Syntax for comments inside grammar is :code:`//` for line comments and
+:code:`/* ... */` for block comments.
+
+Language comments
+~~~~~~~~~~~~~~~~~
+
+To support comments in your DSL use a special grammar rule :code:`Comment`.
+textX will try to match this rule in between each other normal grammar match
+(similar to whitespace matching).
+If the match succeeds the matched content will be discarded.
+
+
+For example, in the :ref:`robot-language` comments are defined like this::
+
+  Comment:
+    /\/\/.*$/
+  ;
+
+Which states that everything starting with :code:`//` and continuing until the
+end of line is a comment.
+
+
 .. _import:
 
 Grammar modularization
