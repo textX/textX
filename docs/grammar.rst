@@ -56,7 +56,7 @@ given in the following figure:
   to python :code:`str` type.
 
 Built-in types are automatically converted to python types during object
-instantiation.
+instantiation. See :ref:`auto-initialization` for more information.
 
 Rule expressions
 ~~~~~~~~~~~~~~~~
@@ -508,6 +508,8 @@ Examples::
 These rules can be used in match references only and results in objects of base python
 types (str, int, bool, float).
 
+
+.. _rule-modifiers:
 
 Rule modifiers
 ~~~~~~~~~~~~~~
