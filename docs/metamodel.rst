@@ -20,6 +20,8 @@ Parsing input and creating model is done by :code:`model_from_file` and
   my_model = my_metamodel.model_from_file('some_input.md')
 
 
+.. _custom-classes:
+
 Custom classes
 --------------
 
@@ -79,6 +81,8 @@ textX gives automatic support for these relationships by providing
    Always provide parent parameter in user classes for each class that is a
    child in parent-child relationship.
 
+
+.. _processors:
 
 Model and object processors
 ---------------------------
