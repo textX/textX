@@ -37,7 +37,7 @@ def test_match_rule():
     """
     meta = metamodel_from_str(grammar)
     assert meta
-    assert meta['Rule']._type is RULE_MATCH
+    assert meta['Rule']._tx_type is RULE_MATCH
 
     model = meta.model_from_str('two')
     assert model
@@ -55,7 +55,7 @@ def test_regex_match_rule():
     """
     meta = metamodel_from_str(grammar)
     assert meta
-    assert meta['Rule']._type is RULE_MATCH
+    assert meta['Rule']._tx_type is RULE_MATCH
     assert set([x.__name__ for x in meta]) == set(['Rule'])\
         .union(set(BASE_TYPE_NAMES))
 
@@ -74,7 +74,7 @@ def test_basetype_match_rule_is_abstract():
     """
     meta = metamodel_from_str(grammar)
     assert meta
-    assert meta['Rule']._type is RULE_ABSTRACT
+    assert meta['Rule']._tx_type is RULE_ABSTRACT
 
     model = meta.model_from_str('34')
     assert model
@@ -93,7 +93,7 @@ def test_simple_match_basetype_is_match_rule():
     """
     meta = metamodel_from_str(grammar)
     assert meta
-    assert meta['Rule']._type is RULE_MATCH
+    assert meta['Rule']._tx_type is RULE_MATCH
 
     model = meta.model_from_str('34')
     assert model
@@ -118,7 +118,7 @@ def test_all_basetypes():
     """
     meta = metamodel_from_str(grammar)
     assert meta
-    assert meta['Rule']._type is RULE_NORMAL
+    assert meta['Rule']._tx_type is RULE_NORMAL
 
     model = meta.model_from_str('3.4 5 true 0 "some string" '
                                 '\'some other string\' some_id')
@@ -150,7 +150,7 @@ def test_basetype():
 
     meta = metamodel_from_str(grammar)
     assert meta
-    assert meta['Rule']._type is RULE_NORMAL
+    assert meta['Rule']._tx_type is RULE_NORMAL
 
     model = meta.model_from_str('False false true True 0 4.5 "string" some_id')
 

@@ -172,7 +172,7 @@ class TextXModelSA(SemanticAction):
         metamodel = parser.metamodel
 
         if 'Comment' in metamodel:
-            comments_model = parser.metamodel['Comment']._peg_rule
+            comments_model = parser.metamodel['Comment']._tx_peg_rule
         else:
             comments_model = None
 
@@ -205,7 +205,7 @@ class TextXModelSA(SemanticAction):
                 if type(rule) == RuleCrossRef:
                     rule_name = rule.rule_name
                     if rule_name in textx_parser.metamodel:
-                        rule = textx_parser.metamodel[rule_name]._peg_rule
+                        rule = textx_parser.metamodel[rule_name]._tx_peg_rule
                     else:
                         line, col = parser.pos_to_linecol(rule.position)
                         raise TextXSemanticError(
@@ -232,7 +232,6 @@ class TextXModelSA(SemanticAction):
         resolve(textx_parser.parser_model)
 
     def _resolve_cls_refs(self, parser, xtext_parser):
-        from .metamodel import TextXClass
 
         def _resolve_cls(cls_crossref):
             if isinstance(cls_crossref, ClassCrossRef):
@@ -243,8 +242,8 @@ class TextXModelSA(SemanticAction):
                         .format(cls_crossref.cls_name, (line, col)), line, col)
                 return xtext_parser.metamodel[cls_crossref.cls_name]
 
-            elif issubclass(cls_crossref, TextXClass):
-                # If already resolved
+            else:
+                # Already resolved
                 return cls_crossref
 
         if parser.debug:
@@ -253,17 +252,19 @@ class TextXModelSA(SemanticAction):
         for cls in xtext_parser.metamodel:
 
             # Inheritance
-            for idx, inh in enumerate(cls._inh_by):
-                cls._inh_by[idx] = _resolve_cls(inh)
+            for idx, inh in enumerate(cls._tx_inh_by):
+                cls._tx_inh_by[idx] = _resolve_cls(inh)
 
             # References
-            for attr in cls._attrs.values():
+            for attr in cls._tx_attrs.values():
                 attr.cls = _resolve_cls(attr.cls)
 
                 # If target cls is of a base type or match rule
                 # then attr can not be a reference.
+                if not attr.cls:
+                    print("Attribute: ", attr.name)
                 if attr.cls.__name__ in BASE_TYPE_NAMES \
-                        or attr.cls._type == RULE_MATCH:
+                        or attr.cls._tx_type == RULE_MATCH:
                     attr.ref = False
                     attr.cont = True
                 else:
@@ -325,10 +326,8 @@ def rule_name_SA(parser, node, children):
 
         cls = parser.metamodel.user_classes[rule_name]
 
-        # Initialize special attributes if not already done
-        if not hasattr(cls, '_attrs'):
-            parser.metamodel.init_class(cls, parser.metamodel, None,
-                                        node.position)
+        # Initialize special attributes
+        parser.metamodel.init_class(cls, None, node.position)
     else:
         # Create class to collect attributes. At this time PEG rule
         # is not known.
@@ -383,7 +382,7 @@ match_rule.sem = rules_SA
 
 def match_rule_body_SA(parser, node, children):
     # This is a match rule
-    parser._current_cls._type = RULE_MATCH
+    parser._current_cls._tx_type = RULE_MATCH
     # String representation of match alternatives.
     # Used in visualizations and debugging
     parser._current_cls._match_str = \
@@ -403,7 +402,7 @@ rule_ref.sem = rule_ref_SA
 def abstract_rule_body_SA(parser, node, children):
     # This is a body of an abstract rule so set
     # the proper type
-    parser._current_cls._type = RULE_ABSTRACT
+    parser._current_cls._tx_type = RULE_ABSTRACT
     return OrderedChoice(nodes=children[:])
 abstract_rule_body.sem = abstract_rule_body_SA
 
@@ -412,7 +411,7 @@ def abstract_rule_ref_SA(parser, node, children):
     rule_name = str(node)
     # This rule is used in alternative (inheritance)
     # Crossref resolving will be done in the second pass.
-    parser._current_cls._inh_by.append(
+    parser._current_cls._tx_inh_by.append(
         ClassCrossRef(cls_name=rule_name,
                       position=node.position))
     # Here a name of the class (rule) is expected but to support
@@ -536,7 +535,7 @@ def assignment_SA(parser, node, children):
         print("Creating attribute {}:{}".format(cls.__name__, attr_name))
         print("Assignment operation = {}".format(op))
 
-    if attr_name in cls._attrs:
+    if attr_name in cls._tx_attrs:
         # If attribute already exists in the metamodel it is
         # multiple assignment to the same attribute.
 
@@ -548,7 +547,7 @@ def assignment_SA(parser, node, children):
                 ' assignments for attribute "{}" at {}'
                 .format(attr_name, (line, col)), line, col)
 
-        cls_attr = cls._attrs[attr_name]
+        cls_attr = cls._tx_attrs[attr_name]
         # Must be a many multiplicity.
         # OneOrMore is "stronger" constraint.
         if cls_attr.mult is not MULT_ONEORMORE:

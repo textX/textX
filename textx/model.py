@@ -143,7 +143,7 @@ def parse_tree_to_objgraph(parser, parse_tree):
 
             # If there is no attributes collected it is an abstract rule
             # Skip it.
-            if not mclass._attrs:
+            if not mclass._tx_attrs:
                 return process_node(node[0])
 
             if parser.debug:
@@ -158,18 +158,21 @@ def parse_tree_to_objgraph(parser, parse_tree):
                 # At this point we need object to be allocated
                 # So that nested object get correct reference
                 inst = user_class.__new__(user_class)
+
+                # Initialize object attributes for user class
+                parser.metamodel.init_obj_attrs(inst, user=True)
             else:
                 # Generic class will call attributes init
                 # from the constructor
                 inst = mclass.__new__(mclass)
 
-            # Initialize object attributes
-            parser.metamodel.init_obj_attrs(inst)
+                # Initialize object attributes
+                parser.metamodel.init_obj_attrs(inst)
 
             # Collect attributes directly on meta-class instance
             obj_attrs = inst
 
-            inst._position = node.position
+            inst._tx_position = node.position
 
             # Push real obj. and dummy attr obj on the instance stack
             parser._inst_stack.append((inst, obj_attrs))
@@ -184,7 +187,10 @@ def parse_tree_to_objgraph(parser, parse_tree):
 
             # If this object is nested add 'parent' reference
             if parser._inst_stack:
-                obj_attrs.parent = parser._inst_stack[-1][0]
+                if node.rule_name in metamodel.user_classes:
+                    obj_attrs._txa_parent = parser._inst_stack[-1][0]
+                else:
+                    obj_attrs.parent = parser._inst_stack[-1][0]
 
             # If the class is user supplied we need to done
             # proper initialization at this point.
@@ -193,10 +199,12 @@ def parse_tree_to_objgraph(parser, parse_tree):
                     # Get only attributes defined by the grammar as well
                     # as `parent` if exists
                     attrs = {}
-                    if hasattr(obj_attrs, 'parent'):
-                        attrs['parent'] = obj_attrs.parent
-                    for a in obj_attrs.__class__._attrs:
-                        attrs[a] = getattr(obj_attrs, a)
+                    if hasattr(obj_attrs, '_txa_parent'):
+                        attrs['parent'] = obj_attrs._txa_parent
+                        del obj_attrs._txa_parent
+                    for a in obj_attrs.__class__._tx_attrs:
+                        attrs[a] = getattr(obj_attrs, "_txa_%s" % a)
+                        delattr(obj_attrs, "_txa_%s" % a)
                     inst.__init__(**attrs)
                 except TypeError as e:
                     # Add class name information in case of
@@ -223,16 +231,23 @@ def parse_tree_to_objgraph(parser, parse_tree):
             op = node.rule_name.split('_')[-1]
             model_obj, obj_attr = parser._inst_stack[-1]
             cls = metamodel[model_obj.__class__.__name__]
-            metaattr = cls._attrs[attr_name]
+            metaattr = cls._tx_attrs[attr_name]
+
+            # Mangle attribute name to prevent name clasing with property
+            # setters on user classes
+            if cls.__name__ in metamodel.user_classes:
+                txa_attr_name = "_txa_%s" % attr_name
+            else:
+                txa_attr_name = attr_name
 
             if parser.debug:
-                print('Handling assignment: {} {}...'.format(op, attr_name))
+                print('Handling assignment: {} {}...'.format(op, txa_attr_name))
 
             if op == 'optional':
-                setattr(obj_attr, attr_name, True)
+                setattr(obj_attr, txa_attr_name, True)
 
             elif op == 'plain':
-                attr_value = getattr(obj_attr, attr_name)
+                attr_value = getattr(obj_attr, txa_attr_name)
                 if attr_value and type(attr_value) is not list:
                     raise TextXSemanticError(
                         "Multiple assignments to attribute {} at {}"
@@ -250,7 +265,7 @@ def parse_tree_to_objgraph(parser, parse_tree):
                 if type(attr_value) is list:
                     attr_value.append(value)
                 else:
-                    setattr(obj_attr, attr_name, value)
+                    setattr(obj_attr, txa_attr_name, value)
 
             elif op in ['list', 'oneormore', 'zeroormore']:
                 for n in node:
@@ -267,10 +282,10 @@ def parse_tree_to_objgraph(parser, parse_tree):
                                                 cls=metaattr.cls,
                                                 position=node[0].position)
 
-                        if not hasattr(obj_attr, attr_name) or \
-                                getattr(obj_attr, attr_name) is None:
-                            setattr(obj_attr, attr_name, [])
-                        getattr(obj_attr, attr_name).append(value)
+                        if not hasattr(obj_attr, txa_attr_name) or \
+                                getattr(obj_attr, txa_attr_name) is None:
+                            setattr(obj_attr, txa_attr_name, [])
+                        getattr(obj_attr, txa_attr_name).append(value)
             else:
                 # This shouldn't happen
                 assert False
@@ -298,21 +313,21 @@ def parse_tree_to_objgraph(parser, parse_tree):
                 """
                 Depth-first resolving of abstract rules.
                 """
-                for inherited in obj_cls._inh_by:
-                    if inherited._type == RULE_ABSTRACT:
+                for inherited in obj_cls._tx_inh_by:
+                    if inherited._tx_type == RULE_ABSTRACT:
                         return _resolve_ref_abstract(inherited)
-                    elif inherited._type == RULE_NORMAL:
+                    elif inherited._tx_type == RULE_NORMAL:
                         if id(inherited) in parser._instances:
                             objs = parser._instances[id(inherited)]
                             if obj_ref.obj_name in objs:
                                 return objs[obj_ref.obj_name]
 
-            if obj_ref.cls._type == RULE_NORMAL:
+            if obj_ref.cls._tx_type == RULE_NORMAL:
                 if id(obj_ref.cls) in parser._instances:
                     objs = parser._instances[id(obj_ref.cls)]
                     if obj_ref.obj_name in objs:
                         return objs[obj_ref.obj_name]
-            elif obj_ref.cls._type == RULE_ABSTRACT:
+            elif obj_ref.cls._tx_type == RULE_ABSTRACT:
                 # For abstract rule ref do a depth first search on
                 # the inheritance tree to find normal rules
                 # and return a first instance of that meta-class instance with
@@ -345,8 +360,8 @@ def parse_tree_to_objgraph(parser, parse_tree):
             resolved_set.add(o)
 
             # If this object has attributes (created using a normal rule)
-            if hasattr(o.__class__, "_attrs"):
-                for attr in o.__class__._attrs.values():
+            if hasattr(o.__class__, "_tx_attrs"):
+                for attr in o.__class__._tx_attrs.values():
                     if parser.debug:
                         print("RESOLVING ATTR: {}".format(attr.name))
                         print("mult={}, ref={}, con={}".format(
@@ -376,7 +391,7 @@ def parse_tree_to_objgraph(parser, parse_tree):
         """
         metaclass = metamodel[model_obj.__class__.__name__]
 
-        for metaattr in metaclass._attrs.values():
+        for metaattr in metaclass._tx_attrs.values():
             # If attribute is containment reference
             # go down
             if metaattr.ref and metaattr.cont:

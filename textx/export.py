@@ -42,13 +42,13 @@ def metamodel_export(metamodel, file_name):
         for cls in metamodel:
             name = cls.__name__
             attrs = ""
-            if cls._type == RULE_MATCH:
+            if cls._tx_type == RULE_MATCH:
                 attrs = cls._match_str.replace("|", "\\|")\
                                       .replace('"', '\\"')\
                                       .replace('{', '\\{')\
                                       .replace('}', '\\}')
             else:
-                for attr in cls._attrs.values():
+                for attr in cls._tx_attrs.values():
                     arrowtail = "arrowtail=diamond, dir=both, " \
                         if attr.cont else ""
                     mult_list = attr.mult in [MULT_ZEROORMORE, MULT_ONEORMORE]
@@ -70,7 +70,7 @@ def metamodel_export(metamodel, file_name):
             f.write('{}[ label="{{{}|{}}}"]\n'.format(
                     id(cls), name, attrs))
 
-            for inherited_by in cls._inh_by:
+            for inherited_by in cls._tx_inh_by:
                 f.write('{} -> {} [dir=back]\n'
                         .format(id(cls), id(inherited_by)))
 
@@ -97,7 +97,7 @@ def model_export(model, file_name):
             attrs = ""
             obj_cls = obj.__class__
             name = ""
-            for attr_name, attr in obj_cls._attrs.items():
+            for attr_name, attr in obj_cls._tx_attrs.items():
 
                 attr_value = getattr(obj, attr_name)
 
@@ -124,7 +124,7 @@ def model_export(model, file_name):
                             name = attr_value
                         else:
                             if attr.cls.__name__ in BASE_TYPE_NAMES \
-                                    or attr.cls._type == RULE_MATCH:
+                                    or attr.cls._tx_type == RULE_MATCH:
                                 if type(attr_value) in [str, text]:
                                     attr_value = \
                                         attr_value.replace('\n', r'\n')\

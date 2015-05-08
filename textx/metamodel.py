@@ -196,7 +196,7 @@ class TextXMetaModel(object):
         """
         For the given rule/class name sets PEG rule.
         """
-        self[name]._peg_rule = rule
+        self[name]._tx_peg_rule = rule
 
     def new_import(self, import_name):
         """
@@ -243,54 +243,44 @@ class TextXMetaModel(object):
             one Meta class with the type name of the rule.
             Model is a graph of python instances of this metaclasses.
             Attributes:
-                _attrs(dict): A dict of meta-attributes keyed by name.
-                _inh_by(list): Classes that inherits this one.
-                _position(int): A position in the input string where this
+                _tx_attrs(dict): A dict of meta-attributes keyed by name.
+                _tx_inh_by(list): Classes that inherits this one.
+                _tx_position(int): A position in the input string where this
                     class is defined.
-                _type(int): The type of the textX rule this class is created
+                _tx_type(int): The type of the textX rule this class is created
                     for. See textx.const
-                _metamodel(TextXMetaModel): A metamodel this class belongs to.
-                _peg_rule(ParsingExpression): An arpeggio PEG rule that matches
+                _tx_metamodel(TextXMetaModel): A metamodel this class belongs to.
+                _tx_peg_rule(ParsingExpression): An arpeggio PEG rule that matches
                     this class.
             """
-
-            def __init__(_self):
-                """
-                Initializes attributes.
-                """
-                # For generic meta-class instantiation
-                # call default attribute initializers.
-                self.init_obj_attrs(_self)
 
         cls = Meta
         cls.__name__ = name
 
-        self.init_class(cls, self, peg_rule, position, inherits, root)
+        self.init_class(cls, peg_rule, position, inherits, root)
 
         return cls
 
-    def init_class(self, cls, metamodel, peg_rule, position, inherits=None,
-                   root=False):
+    def init_class(self, cls, peg_rule, position, inherits=None, root=False):
         """
         Setup meta-class special attributes, namespaces etc. This is called
         both for textX created classes as well as user classes.
         """
-        cls._metamodel = metamodel
-        cls._typename = cls.__name__
+        cls._tx_metamodel = self
 
         # Attribute information (MetaAttr instances) keyed by name.
-        cls._attrs = OrderedDict()
+        cls._tx_attrs = OrderedDict()
 
         # A list of inheriting classes
-        cls._inh_by = inherits if inherits else []
+        cls._tx_inh_by = inherits if inherits else []
 
-        cls._position = position
+        cls._tx_position = position
 
         # The type of the rule this meta-class results from.
         # There are three rule types: normal, abstract and match
-        cls._type = RULE_NORMAL
+        cls._tx_type = RULE_NORMAL
 
-        cls._peg_rule = peg_rule
+        cls._tx_peg_rule = peg_rule
 
         # Push this class and PEG rule in the current namespace
         current_namespace = self.namespaces[self.namespace_stack[-1]]
@@ -299,43 +289,51 @@ class TextXMetaModel(object):
         if root:
             self.rootcls = cls
 
-    def init_obj_attrs(self, obj):
+    def init_obj_attrs(self, obj, user=False):
         """
         Initialize obj attributes.
         Args:
             obj(object): A python object to set attributes to.
+            user(bool): If this object is a user object mangle attribute names.
         """
-        for attr in obj.__class__._attrs.values():
+        for attr in obj.__class__._tx_attrs.values():
+
+            if user:
+                # Mangle name to prvent name clashing
+                attr_name = "_txa_%s" % attr.name
+            else:
+                attr_name = attr.name
+
             if attr.mult in [MULT_ZEROORMORE, MULT_ONEORMORE]:
                 # list
-                setattr(obj, attr.name, [])
+                setattr(obj, attr_name, [])
             elif attr.cls.__name__ in BASE_TYPE_NAMES:
                 # Instantiate base python type
                 if self.auto_init_attributes:
-                    setattr(obj, attr.name,
+                    setattr(obj, attr_name,
                             python_type(attr.cls.__name__)())
                 else:
                     # See https://github.com/igordejanovic/textX/issues/11
                     if attr.bool_assignment:
                         # Only ?= assignments shall have default
                         # value of False.
-                        setattr(obj, attr.name, False)
+                        setattr(obj, attr_name, False)
                     else:
                         # Set base type attribute to None initially
                         # in order to be able to detect if an optional
                         # values are given in the model. Default values
                         # can be specified using object processors.
-                        setattr(obj, attr.name, None)
+                        setattr(obj, attr_name, None)
             else:
                 # Reference to other obj
-                setattr(obj, attr.name, None)
+                setattr(obj, attr_name, None)
 
     def new_cls_attr(self, clazz, name, cls=None, mult=MULT_ONE, cont=True,
                      ref=False, bool_assignment=False, position=0):
         """Creates new meta attribute of this class."""
         attr = MetaAttr(name, cls, mult, cont, ref, bool_assignment,
                         position)
-        clazz._attrs[name] = attr
+        clazz._tx_attrs[name] = attr
         return attr
 
     def __getitem__(self, name):
