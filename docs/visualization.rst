@@ -33,6 +33,10 @@ tool::
 
   dot -Tpng -O entity.dot
 
+The following image is generated:
+
+|entity_mm|
+
 
 Model visualization
 -------------------
@@ -49,4 +53,13 @@ Similar to meta-model visualization you can visualize your models also::
 Convert this dot file to png with::
 
   dot -Tpng -O person.dot
+
+The following image is generated:
+
+|person_model|
+
+
+.. |entity_mm| image:: https://raw.githubusercontent.com/igordejanovic/textX/master/examples/Entity/dotexport/entity_meta.dot.png
+.. |person_model| image:: https://raw.githubusercontent.com/igordejanovic/textX/master/examples/Entity/dotexport/entity.dot.png
+
 
