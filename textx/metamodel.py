@@ -253,84 +253,90 @@ class TextXMetaModel(object):
                 _peg_rule(ParsingExpression): An arpeggio PEG rule that matches
                     this class.
             """
-            # Attribute information (MetaAttr instances) keyed by name.
-            _attrs = OrderedDict()
 
-            # A list of inheriting classes
-            _inh_by = inherits if inherits else []
-
-            _position = position
-
-            # The type of the rule this meta-class results from.
-            # There are three rule types: normal, abstract and match
-            _type = RULE_NORMAL
-
-            _peg_rule = peg_rule
-
-            def __init__(self):
+            def __init__(_self):
                 """
                 Initializes attributes.
                 """
                 # For generic meta-class instantiation
                 # call default attribute initializers.
-                self.init_attrs(self, self._attrs)
-
-            @staticmethod
-            def init_attrs(obj, attrs):
-                """
-                Initialize obj attributes.
-                Args:
-                    obj(object): A python object to set attributes to.
-                    attrs(dict): A dict of meta-attributes from meta-class.
-                """
-                for attr in attrs.values():
-                    if attr.mult in [MULT_ZEROORMORE, MULT_ONEORMORE]:
-                        # list
-                        setattr(obj, attr.name, [])
-                    elif attr.cls.__name__ in BASE_TYPE_NAMES:
-                        # Instantiate base python type
-                        if self.auto_init_attributes:
-                            setattr(obj, attr.name,
-                                    python_type(attr.cls.__name__)())
-                        else:
-                            # See https://github.com/igordejanovic/textX/issues/11
-                            if attr.bool_assignment:
-                                # Only ?= assignments shall have default
-                                # value of False.
-                                setattr(obj, attr.name, False)
-                            else:
-                                # Set base type attribute to None initially
-                                # in order to be able to detect if an optional
-                                # values are given in the model. Default values
-                                # can be specified using object processors.
-                                setattr(obj, attr.name, None)
-                    else:
-                        # Reference to other obj
-                        setattr(obj, attr.name, None)
-
-            @classmethod
-            def new_attr(clazz, name, cls=None, mult=MULT_ONE, cont=True,
-                         ref=False, bool_assignment=False, position=0):
-                """Creates new meta attribute of this class."""
-                attr = MetaAttr(name, cls, mult, cont, ref, bool_assignment,
-                                position)
-                clazz._attrs[name] = attr
-                return attr
+                self.init_obj_attrs(_self)
 
         cls = Meta
         cls.__name__ = name
-        cls._metamodel = self
 
+        self.init_class(cls, self, peg_rule, position, inherits, root)
+
+        return cls
+
+    def init_class(self, cls, metamodel, peg_rule, position, inherits=None,
+                   root=False):
+        """
+        Setup meta-class special attributes, namespaces etc. This is called
+        both for textX created classes as well as user classes.
+        """
+        cls._metamodel = metamodel
         cls._typename = cls.__name__
+
+        # Attribute information (MetaAttr instances) keyed by name.
+        cls._attrs = OrderedDict()
+
+        # A list of inheriting classes
+        cls._inh_by = inherits if inherits else []
+
+        cls._position = position
+
+        # The type of the rule this meta-class results from.
+        # There are three rule types: normal, abstract and match
+        cls._type = RULE_NORMAL
+
+        cls._peg_rule = peg_rule
 
         # Push this class and PEG rule in the current namespace
         current_namespace = self.namespaces[self.namespace_stack[-1]]
-        current_namespace[name] = cls
+        current_namespace[cls.__name__] = cls
 
         if root:
             self.rootcls = cls
 
-        return cls
+    def init_obj_attrs(self, obj):
+        """
+        Initialize obj attributes.
+        Args:
+            obj(object): A python object to set attributes to.
+        """
+        for attr in obj.__class__._attrs.values():
+            if attr.mult in [MULT_ZEROORMORE, MULT_ONEORMORE]:
+                # list
+                setattr(obj, attr.name, [])
+            elif attr.cls.__name__ in BASE_TYPE_NAMES:
+                # Instantiate base python type
+                if self.auto_init_attributes:
+                    setattr(obj, attr.name,
+                            python_type(attr.cls.__name__)())
+                else:
+                    # See https://github.com/igordejanovic/textX/issues/11
+                    if attr.bool_assignment:
+                        # Only ?= assignments shall have default
+                        # value of False.
+                        setattr(obj, attr.name, False)
+                    else:
+                        # Set base type attribute to None initially
+                        # in order to be able to detect if an optional
+                        # values are given in the model. Default values
+                        # can be specified using object processors.
+                        setattr(obj, attr.name, None)
+            else:
+                # Reference to other obj
+                setattr(obj, attr.name, None)
+
+    def new_cls_attr(self, clazz, name, cls=None, mult=MULT_ONE, cont=True,
+                     ref=False, bool_assignment=False, position=0):
+        """Creates new meta attribute of this class."""
+        attr = MetaAttr(name, cls, mult, cont, ref, bool_assignment,
+                        position)
+        clazz._attrs[name] = attr
+        return attr
 
     def __getitem__(self, name):
         """

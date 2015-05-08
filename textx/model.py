@@ -158,17 +158,16 @@ def parse_tree_to_objgraph(parser, parse_tree):
                 # At this point we need object to be allocated
                 # So that nested object get correct reference
                 inst = user_class.__new__(user_class)
-
-                # This will serve as a dummy object to collect attribute
-                # values used in constructor call.
-                obj_attrs = mclass()
             else:
                 # Generic class will call attributes init
                 # from the constructor
-                inst = mclass()
+                inst = mclass.__new__(mclass)
 
-                # Collect attributes directly on meta-class instance
-                obj_attrs = inst
+            # Initialize object attributes
+            parser.metamodel.init_obj_attrs(inst)
+
+            # Collect attributes directly on meta-class instance
+            obj_attrs = inst
 
             inst._position = node.position
 
@@ -191,7 +190,14 @@ def parse_tree_to_objgraph(parser, parse_tree):
             # proper initialization at this point.
             if node.rule_name in metamodel.user_classes:
                 try:
-                    inst.__init__(**obj_attrs.__dict__)
+                    # Get only attributes defined by the grammar as well
+                    # as `parent` if exists
+                    attrs = {}
+                    if hasattr(obj_attrs, 'parent'):
+                        attrs['parent'] = obj_attrs.parent
+                    for a in obj_attrs.__class__._attrs:
+                        attrs[a] = getattr(obj_attrs, a)
+                    inst.__init__(**attrs)
                 except TypeError as e:
                     # Add class name information in case of
                     # wrong constructor parameters

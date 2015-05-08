@@ -320,9 +320,19 @@ def rule_name_SA(parser, node, children):
     if parser.debug:
         print("Creating class: {}".format(rule_name))
 
-    # Create class to collect attributes. At this time PEG rule
-    # is not known.
-    cls = parser.metamodel.new_class(rule_name, None, node.position)
+    # If a class is given by the user use it. Else, create new class.
+    if rule_name in parser.metamodel.user_classes:
+
+        cls = parser.metamodel.user_classes[rule_name]
+
+        # Initialize special attributes if not already done
+        if not hasattr(cls, '_attrs'):
+            parser.metamodel.init_class(cls, parser.metamodel, None,
+                                        node.position)
+    else:
+        # Create class to collect attributes. At this time PEG rule
+        # is not known.
+        cls = parser.metamodel.new_class(rule_name, None, node.position)
 
     parser._current_cls = cls
 
@@ -544,7 +554,8 @@ def assignment_SA(parser, node, children):
         if cls_attr.mult is not MULT_ONEORMORE:
             cls_attr.mult = MULT_ZEROORMORE
     else:
-        cls_attr = cls.new_attr(name=attr_name, position=node.position)
+        cls_attr = parser.metamodel.new_cls_attr(cls, name=attr_name,
+                                                 position=node.position)
 
     # Keep track of metaclass references and containments
     if type(rhs_rule) is tuple and rhs_rule[0] == "obj_ref":
