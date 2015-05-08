@@ -58,7 +58,7 @@ def test_user_class_constructor_call():
             self.parent = parent
             self.sec = sec
 
-    metamodel = metamodel_from_str(grammar, classes = [Second])
+    metamodel = metamodel_from_str(grammar, classes=[Second])
 
     model_str = 'first 34 45 7 A 45 65 B true C "dfdf"'
     model = metamodel.model_from_str(model_str)
