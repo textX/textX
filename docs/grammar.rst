@@ -327,11 +327,13 @@ There are two types of match expressions:
 References
 ^^^^^^^^^^
 
-Other rules can be referenced from each rule. References are usually used as a
+Rules can reference each other. References are usually used as a
 RHS of the assignments. There are two types of rule references:
 
 * **Match rule reference** - will *call* other rule. When instance of the called
-  rule is created it will be assigned to the attribute on the LHS.
+  rule is created it will be assigned to the attribute on the LHS. We say that
+  referred object is contained inside referring object (e.g. they form a
+  :ref:`parent-child relationship <parent-child>`.
 
   Example::
 
@@ -343,11 +345,12 @@ RHS of the assignments. There are two types of rule references:
 
   :code:`StructureElement` will be matched zero or more times. With each match a
   new instance of :code:`StructureElement` will be created and appended to
-  elements :code:`list`.
+  elements :code:`list`. A :code:`parent` attribute of each
+  :code:`StructureElement` will be set to the containing :code:`Structure`.
 
 * **Link rule reference** - will match an identifier of some class object at the
-  given place and convert that identifier to python reference on target object. This
-  resolving to reference is done automatically by textX. By default a
+  given place and convert that identifier to python reference to target object.
+  This reference resolving is done automatically by textX. By default a
   :code:`name` attribute is used as an identifier of the object. Currently,
   there is no automatic support for name spaces in textX. All objects of the
   same class are in a single namespace.
@@ -380,7 +383,7 @@ RHS of the assignments. There are two types of rule references:
   instance will be set to it.
 
   :code:`ID` rule is used by default to match link identifier. If you want to
-  change that your can use following syntax::
+  change that you can use the following syntax::
 
     ScreenInstance:
       'screen' type=[ScreenType|WORD]
@@ -395,8 +398,8 @@ Repetition modifiers
 ^^^^^^^^^^^^^^^^^^^^
 
 Repetition modifiers are used for the modification of repetition expressions
-(:code:`*`, :code:`+`, :code:`*=`,:code:`+=`). They are specified in brackets
-:code:`[  ]`. If there are more modifiers they are separated by comma.
+(:code:`*`, :code:`+`, :code:`*=`, :code:`+=`). They are specified in brackets
+:code:`[  ]`. If there are more modifiers they are separated by a comma.
 
 Currently there are two modifiers defined:
 
@@ -451,7 +454,7 @@ Currently there are two modifiers defined:
    :code:`conditions {` because :code:`eolterm` effect start immediately.
    In this example we wanted to give user freedom to specify var names on
    the next line, even to put some empty lines if he/she wish. In order to do
-   that we could modify example like this::
+   that we should modify example like this::
 
       Conditions:
         'conditions' '{'
@@ -474,7 +477,7 @@ There are three kinds of rules in textX:
 - Abstract rules
 - Match rules
 
-**Abstract rules** are rules given as a ordered choice of other rules. For
+**Abstract rules** are rules given as an ordered choice of other rules. For
 example::
 
   Command:
@@ -521,11 +524,11 @@ Rule modifiers
 
 Rule modifiers are used for  the modification of rules expression. They are
 specified in brackets (:code:`[  ]`) after the rule name. Currently, they are
-used to alter per rule parser global configuration for white-space handling.
+used to alter parser configuration for whitespace handling on the rule level.
 
-Currently, there are two modifiers defined:
+There are two rule modifier at the moment:
 
-* **skipws, noskipws** - are used to enable/disable white-space skipping during
+* **skipws, noskipws** - are used to enable/disable whitespace skipping during
   parsing. This will change global parser :code:`skipws` setting given during
   meta-model instantiation.
 
@@ -537,20 +540,21 @@ Currently, there are two modifiers defined:
         'first' 'second';
 
   In this example code:`Rule` rule will use default parser behavior set during
-  meta-model instantiation while :code:`Rule2` rule will disable white-space
+  meta-model instantiation while :code:`Rule2` rule will disable whitespace
   skipping. This will change :code:`Rule2` to match the word :code:`firstsecond`
-  but not words :code:`first second` with white-spaces in between.
+  but not words :code:`first second` with whitespaces in between.
 
   .. note::
 
-     Remember that white-space handling modification will start immediately after
-     previous match. In the above example, and additional :code:`/\s*/` is given
-     before :code:`Rule2` call to consume all white-spaces before trying to match
+     Remember that whitespace handling modification will start immediately after
+     previous match. In the above example, additional :code:`/\s*/` is given
+     before :code:`Rule2` call to consume all whitespaces before trying to match
      :code:`Rule2`.
 
-* **ws** - used to redefine what are white-spaces per rule. textX has a default
-  white-space set to space, tab and new-line. This can be changed globally during
-  meta-model instantiation or per rule using this modifier.
+* **ws** - used to redefine what is considered to be a whitespaces on the rule
+  level. textX by default treat space, tab and new-line as a whitespace
+  characters. This can be changed globally during meta-model instantiation (see
+  :ref:`parser-whitespace`) or per rule using this modifier.
 
   Example::
 
@@ -567,8 +571,8 @@ Currently, there are two modifiers defined:
 
   .. note::
 
-     As in previous example the modification will start immediately so if you want
-     to consume preceding spaces you must do that explicitely as given with
+     As in previous example the modification will start immediately so if you
+     want to consume preceding spaces you must do that explicitely as given with
      :code:`/\s*/` in the :code:`Rule`.
 
 
@@ -633,7 +637,8 @@ Example::
 current grammar file.
 
 If you want to override default search order you can specify fully qualified
-name of the rule using dot notation.
+name of the rule using dot notation when giving the name of the referring
+object.
 
 Example::
 
@@ -647,5 +652,6 @@ Example::
     '[' values+=BASETYPE[','] ']'
   ;
 
-:code:`List` from :code:`component.types` is used for :code:`a` attribute.
+:code:`List` from :code:`component.types` is matched/instantiated and set to
+:code:`a` attribute.
 

@@ -126,7 +126,7 @@ Model processors
 To register model processor call :code:`register_model_processor` on the
 meta-model instance:
 
-.. highlight:: python
+.. code-block:: python
 
   from textx.metamodel import metamodel_from_file
 
@@ -154,7 +154,7 @@ They are registered per class/rule.
 Let's do some additional checks for the above Entity-Attribute example:
 
 
-.. highlight:: python
+.. code-block:: python
 
   def entity_obj_processor(entity):
     '''
@@ -283,6 +283,8 @@ use :code:`ignore_case` parameter to the meta-model constructor call::
 
   my_metamodel = metamodel_from_file('mygrammar.tx', ignore_case=True)
 
+
+.. _parser-whitespace:
 
 Whitespace handling
 -------------------
