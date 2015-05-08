@@ -73,7 +73,7 @@ Where :code:`person.ent` file might contain this::
 Special attributes
 ------------------
 
-Besides attributes specified by the grammar each model object has
+Beside attributes specified by the grammar each model object has
 :code:`_position` attribute that hold the position in the input string where
 the object has been matched by the parser.
 

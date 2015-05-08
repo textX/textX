@@ -95,19 +95,23 @@ Sequence
 ^^^^^^^^
 
 Sequence is the simplest textX expression that is given by just writing
-contained expression in a row. For example the following rule::
+contained sub-expressions one after another. For example the following rule::
 
   Colors:
     "red" "green" "blue"
   ;
 
 is defined as a sequence consisting of three string matches (:code:`red`
-:code:`green` and :code:`blue`). Contained expression will be matched in the exact
-order they are given. If some of the expression does not match the sequence
-as a whole will fail. The above rule defined by sequence will match only the
-following string::
+:code:`green` and :code:`blue`). Contained expressions will be matched in the
+exact order they are given. If some of the expressions does not match the
+sequence as a whole will fail. The above rule defined by the sequence will match
+only the following string::
 
   red green blue
+
+.. note::
+   If whitespace skipping is included (which is default) arbitrary whitespaces
+   can occur between matched words.
 
 
 Ordered choice
@@ -129,12 +133,12 @@ match in that order.
 .. note::
 
    In most classic parsing technologies an unordered match (alternative) is used
-   which may lead to ambiguous grammar where multiple parse tree may exist for the
-   same input string.
+   which may lead to ambiguous grammar where multiple parse tree may exist for
+   the same input string.
 
-Underlaying parsing technology of textX is `Arpeggio`_ which is parser based on PEG
-grammars and thus the :code:`|` operator directly translates to Arpeggio's PEG
-ordered choice. Using ordered choice yield unambiguous parsing. If the text
+Underlaying parsing technology of textX is `Arpeggio`_ which is parser based on
+PEG grammars and thus the :code:`|` operator directly translates to Arpeggio's
+PEG ordered choice. Using ordered choice yield unambiguous parsing. If the text
 parses there is only one parse tree possible.
 
 .. _Arpeggio: https://github.com/igordejanovic/arpeggio
@@ -180,11 +184,11 @@ Repetitions
       ("red"|"green"|"blue")*
     ;
 
-  In this example *zero or more* repetition is applied on *ordered choice*. In
-  each repeated match one color will be matched trying out from left to right.
-  Thus, :code:`Colors` rule will match color as many as possible but will not
-  fail if no color exists in the input string. The following would be matched by
-  :code:`Colors` rule::
+  In this example *zero or more* repetition is applied on an *ordered choice*.
+  In each repeated match one color will be matched trying out from left to
+  right.  Thus, :code:`Colors` rule will match color as many as possible but
+  will not fail if no color exists in the input string. The following would be
+  matched by :code:`Colors` rule::
 
     red blue green
 
@@ -197,8 +201,8 @@ Repetitions
 
 * *One or more* repetition is specified by :code:`+` operator and will match the
   contained expression one or more times. Thus, everything that is written for
-  *zero or more* applies here except that at least one match must be performed
-  for this expression to succeed. Here is an above example modified to match at
+  *zero or more* applies here except that at least one match must be found for
+  this expression to succeed. Here is an above example modified to match at
   least one color::
 
     Colors:
@@ -234,9 +238,10 @@ instantiate :code:`Person` objects with four attributes:
   assigned to :code:`height` attribute of the :code:`Person` instance.
 
 Notice the comma as the separator between matches and the semicolon match at the
-end of the rule.
+end of the rule. Those matches must be found in the input but the matched
+strings will be discarded. They represent a syntactic noise.
 
-If the RHS is textX one of BASETYPEs than the matched string will be converted
+If the RHS is one of textX BASETYPEs than the matched string will be converted
 to some of plain python types (e.g. int, string, boolean).
 
 If RHS is string or regex match like in this example::
@@ -245,7 +250,7 @@ If RHS is string or regex match like in this example::
     color=/\w+/
   ;
 
-than the attribute given by LHS will be set to be the matched string.
+then the attribute given by LHS will be set to be the matched string.
 
 If the RHS is a reference to other rule than the attribute given by the LHS will
 be set to refer to the object created by the RHS rule.
@@ -279,7 +284,7 @@ There are four types of assignments:
 
 * **Zero or more assignment** (:code:`*=`) - LHS attribute will be a
   :code:`list`. This assignment will match RHS as long as match succeeds and
-  each matched object will append to the attribute. If no match succeeds
+  each matched object will be appended to the attribute. If no match succeeds
   attribute will be an empty list.
 
   Examples::
@@ -556,7 +561,7 @@ Currently, there are two modifiers defined:
 
   In this example code:`Rule` will use default parser behavior but the
   :code:`Rule2` will alter the white-space definition to be new-line only.
-  This means that the words :code:`code` and :code:`second` will get matched
+  This means that the words :code:`first` and :code:`second` will get matched
   only if they are on separate lines or in the same line but without other
   characters in between (even tabs and spaces).
 

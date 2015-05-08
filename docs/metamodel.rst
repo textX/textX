@@ -4,15 +4,16 @@ textX meta-models
 =================
 
 Meta-model is Python object that knows about all classes that can be
-instantiated parsing input. Meta-model is built from the grammar by the call
-:code:`metamodel_from_file` or :code:`metamodel_from_str`::
+instantiated while parsing input. Meta-model is built from the grammar by the
+functions :code:`metamodel_from_file` or :code:`metamodel_from_str` in the
+:code:`textx.metamodel` module::
 
   from textx.metamodel import metamodel_from_file
   my_metamodel = metamodel_from_file('my_grammar.tx')
 
 Each rule from the grammar will result in a Python class kept in a meta-model.
 Besides, meta-model knows how to parse input strings and convert them to
-the :ref:`model`.
+:ref:`model`.
 
 Parsing input and creating model is done by :code:`model_from_file` and
 :code:`model_from_str` methods of the meta-model object::
@@ -77,6 +78,8 @@ grammar.
    section) then `parent` constructor parameter should also be given.
 
 
+.. _parent-child:
+
 Parent-child relationships
 --------------------------
 
@@ -101,27 +104,29 @@ Model and object processors
 ---------------------------
 
 To specify static semantics of the language textX uses a concept called
-**processors**. Processors are python callable that can modify model elements
+**processor**. Processors are python callable that can modify model elements
 during model parsing/instantiation or do some additional checks that are not
 possible to do by the grammar alone.
 
 There are two types of processors:
 
-- model processors - are callable that are called at the end of the parsing
+- **model processors** - are callable that are called at the end of the parsing
   when the whole model is instantiated. These processors accepts meta-model and
   model as parameters.
-- object processors - are registered for particular classes (grammar rules)
+- **object processors** - are registered for particular classes (grammar rules)
   and are called when the objects of the given class is instantiated.
 
 Processors can modify model/objects or raise exception
-(code:`TextXSemanticError`) if some constraint is not met. User code that call
+(:code:`TextXSemanticError`) if some constraint is not met. User code that call
 model instantiation/parsing can catch those exception and report to the user.
 
 Model processors
 ################
 
 To register model processor call :code:`register_model_processor` on the
-meta-model instance::
+meta-model instance:
+
+.. highlight:: python
 
   from textx.metamodel import metamodel_from_file
 
@@ -146,7 +151,10 @@ The purpose of object processors is the same as for model processors but they
 are called as soon as the particular object is recognized in the input string.
 They are registered per class/rule.
 
-Let's do some additional checks for the above Entity-Attribute example::
+Let's do some additional checks for the above Entity-Attribute example:
+
+
+.. highlight:: python
 
   def entity_obj_processor(entity):
     '''
@@ -263,6 +271,8 @@ multiplicity assignments (:code:`*=` and :code:`+=`) will always be python
 lists.
 
 
+.. _parser-config:
+
 Case sensitivity
 ----------------
 
@@ -293,10 +303,10 @@ Automatic keywords
 ------------------
 
 When designing a DSL it is usually desirable to match keywords on word
-boundaries.  For example, if we have Entity-Attribute grammar from the above
-that a word :code:`entity` will be considered a keyword and should be matched on
-word boundaries only. If we have word `entity2` at the place where `entity`
-should be matched the match should not succeed.
+boundaries.  For example, if we have Entity grammar from the above than a word
+:code:`entity` will be considered a keyword and should be matched on word
+boundaries only. If we have word :code:`entity2` at the place where
+:code:`entity` should be matched the match should not succeed.
 
 We could achieve this by using regular expression match and word boundaries
 regular expression rule for each keyword-like match::
