@@ -38,18 +38,26 @@ from the grammar which they represent::
   from textx.metamodel import metamodel_from_str
 
   grammar = '''
+  EntityModel:
+    entities+=Entity    // each model has one or more entities
+  ;
+
   Entity:
     'entity' name=ID '{'
-      attributes+=Attribute
+      attributes+=Attribute     // each entity has one or more attributes
     '}'
   ;
+
   Attribute:
-    name=ID ':' type=ID
+    name=ID ':' type=[Entity]   // type is a reference to an entity. There are
+                                // built-in entities registered on the meta-model
+                                // for primitive types (integer, string)
   ;
   '''
 
   class Entity(object):
-    def __init__(self, name, attributes):
+    def __init__(self, parent, name, attributes):
+      self.parent = parent
       self.name = name
       self.attributes = attributes
 
@@ -65,6 +73,8 @@ grammar.
    Constructor of user classes should accept all attributes defined by the
    corresponding rule from the grammar. In the previous example we have
    provided `name` and `attributes` attributes from the `Entity` rule.
+   If the class is a child in parent-child relationship (see in the next
+   section) then `parent` constructor parameter should also be given.
 
 
 Parent-child relationships
@@ -76,6 +86,9 @@ child of some :code:`Entity` object.
 
 textX gives automatic support for these relationships by providing
 :code:`parent` attribute on each child object.
+
+When you navigate :ref:`model` each child instance will have a :code:`parent`
+attribute.
 
 .. note::
    Always provide parent parameter in user classes for each class that is a
@@ -175,6 +188,39 @@ processor :code:`move_command_processor` in :ref:`robot example
 <move_command_processor>`
 
 
+.. _builtins:
+
+Built-in objects
+----------------
+
+Often you will need objects that should be a part of each model and you do not
+want users to specify them in every model they create. Most notable example is
+primitive types (e.g. integer, string, bool).
+
+Let's provide :code:`integer` and :code:`string` Entities to our :code:`Entity`
+meta-model in order to simplify model creation so that user can use the names of
+these two entities for :code:`Attribute` types::
+
+
+    class Entity(object):
+        def __init__(self, parent, name, attributes):
+            self.parent = parent
+            self.name = name
+            self.attributes = attributes
+
+    entity_builtins = {
+            'integer': Entity(None, 'integer', []),
+            'string': Entity(None, 'string', [])
+    }
+    entity_mm = metamodel_from_file(
+      'entity.tx',
+      classes=[Entity]            # Register Entity user class,
+      builtins=entity_builtins    # Register integer and string built-in objs
+    )
+
+Now an :code:`integer` and :code:`string` :code:`Attribute` type can be used.
+See :ref:`model` and :code:`Entity` example for more.
+
 .. _auto-initialization:
 
 Auto-initialization of attributes
@@ -211,7 +257,7 @@ to the meta-model constructor that is by default :code:`True` but can be set to
 
 If auto-initialization is disabled than each optional attribute that was not
 matched on the input will be set to :code:`None`.  This holds true for plain
-assignments (:code:`=`). An optional assignment (:code:`?=`) which will always
+assignments (:code:`=`). An optional assignment (:code:`?=`) will always
 be :code:`False` if the RHS object is not matched in the input. Many
 multiplicity assignments (:code:`*=` and :code:`+=`) will always be python
 lists.

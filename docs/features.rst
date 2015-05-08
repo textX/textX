@@ -23,7 +23,6 @@ Automatic linking
 You can have a references to other objects in your language and the textual
 representation of the reference will be resolved to proper python reference
 automatically.
-See the :ref:`linking` section.
 
 
 Model/object post-processing
