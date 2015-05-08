@@ -17,7 +17,7 @@ automatically get exported to dot.
 Meta-model visualization
 ------------------------
 
-To visualize meta-model::
+To visualize meta-model (see Entity example)::
 
   from textx.metamodel import metamodel_from_file
   from textx.export import metamodel_export
@@ -41,7 +41,8 @@ The following image is generated:
 Model visualization
 -------------------
 
-Similar to meta-model visualization you can visualize your models also::
+Similar to meta-model visualization you can visualize your models also (see
+Entity example)::
 
   from textx.export import model_export
 

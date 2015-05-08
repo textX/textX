@@ -5,7 +5,7 @@ Error handling
 textX will raise an error if syntax or semantic error is detected during
 meta-model or model parsing/construction.
 
-For syntax error :code:`TextXSyntaError` is raised. For semantic error
+For syntax error :code:`TextXSyntaxError` is raised. For semantic error
 :code:`TextXSemanticError` is raised. Both exceptions inherits from
 :code:`TextXError`. These exceptions are located in :code:`textx.exceptions`
 module.

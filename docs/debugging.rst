@@ -9,7 +9,9 @@ debugging is enabled textX will print various debugging messages.
 If :code:`debug` parameter to meta-model construction is set to :code:`True`
 debug messages during grammar parsing and meta-model construction will be
 printed. Additionally a parse tree created during grammar parse as well as
-meta-model (if constructed successfully) dot files will be generated::
+meta-model (if constructed successfully) dot files will be generated:
+
+.. code:: python
 
   form textx.metamodel import metamodel_from_file
 
@@ -18,6 +20,8 @@ meta-model (if constructed successfully) dot files will be generated::
 If :code:`debug` is set in the :code:`model_from_file/str` calls than various
 messages during model parsing and construction will be printed. Additionally,
 parse tree created from the input as well as model will be exported to dot
-file::
+file:
+
+.. code:: python
 
   my_model = my_metamodel.model_from_file('mymodel.mod', debug=True)
