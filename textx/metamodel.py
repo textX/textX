@@ -68,7 +68,7 @@ class TextXMetaModel(object):
         builtins(dict): A dict of named object used in linking phase.
             References to named objects not defined in the model will be
             searched here.
-        classes(dict): A dict of user supplied classes to use instead of
+        user_classes(dict): A dict of user supplied classes to use instead of
             generic ones.
         obj_processors(dict): A dict of user supplied object processors.
     """
