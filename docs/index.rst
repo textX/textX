@@ -45,6 +45,8 @@ tutorial` ) or code generator using one of python's template engines.
    metamodel
    model
    visualization
+   error_handling
+   debugging
    tutorial_basic
    tutorial_advanced
 
