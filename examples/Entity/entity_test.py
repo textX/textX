@@ -2,22 +2,26 @@ from textx.metamodel import metamodel_from_file
 from textx.export import metamodel_export, model_export
 
 
+class Entity(object):
+    """
+    We are registering user Entity class to support
+    primitive types (integer, string) in our entity models
+    Thus, user does not need to provide integer and string
+    Entities the model but can reference them in attribute types
+    """
+    def __init__(self, parent, name, attributes):
+        self.parent = parent
+        self.name = name
+        self.attributes = attributes
+
+    def __str__(self):
+        return self.name
+
+
 def get_entity_mm():
     """
     Builds and returns a meta-model for Entity language.
     """
-
-    # We are registering user Entity class to support
-    # primitive types (integer, string) in our entity models
-    # Thus, user does not need to provide integer and string
-    # Entities the model but can reference them in attribute types
-
-    class Entity(object):
-        def __init__(self, parent, name, attributes):
-            self.parent = parent
-            self.name = name
-            self.attributes = attributes
-
     # Built-in primitive types
     # Each model will have this entities during reference resolving but
     # these entities will not be a part of `entities` list of EntityModel.
@@ -46,4 +50,3 @@ if __name__ == "__main__":
     model_export(person_model, 'dotexport/entity.dot')
 
 
-    # Generate java code

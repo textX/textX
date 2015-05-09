@@ -1,6 +1,6 @@
 entity Person {
-  name : string
-  address: Address
+  name : string       // A comment is everyting after // to the end of line
+  address: Address    // It is defined by the Comment rule in the grammar
   age: integer
 }
 
