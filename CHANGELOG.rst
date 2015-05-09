@@ -1,6 +1,14 @@
 textX changelog
 ---------------
 
+* 2015-05-08 Release 0.4
+  - Reworked meta-class/objects initialization.
+  - Added _tx_ prefix to textX class and object special attributes to prevent
+    name clashing with the user attributes.
+  - Entity example.
+  - More tests.
+  - Documentation finished (except the advanced tutorial).
+
 * 2015-04-04 Release 0.3.1
   - Bugfix: Boolean type matching for BASETYPE defined attributes.
   - More tests.
