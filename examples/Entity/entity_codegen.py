@@ -13,8 +13,6 @@ if __name__ == "__main__":
     # Build Person model from person.ent file
     person_model = entity_mm.model_from_file('person.ent')
 
-    # Generate java code
-
     def javatype(s):
         """
         Maps type names from Entity to Java.

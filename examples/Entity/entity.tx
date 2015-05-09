@@ -1,3 +1,7 @@
+/*
+  Entity DSL grammar.
+*/
+
 EntityModel:
   entities+=Entity    // each model has one or more entities
 ;
