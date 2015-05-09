@@ -74,13 +74,14 @@ Special attributes
 ------------------
 
 Beside attributes specified by the grammar each model object has
-:code:`_position` attribute that hold the position in the input string where
+:code:`_tx_position` attribute that hold the position in the input string where
 the object has been matched by the parser.
 
 This is an absolute position in the input stream. To convert it to line/column
 format use :code:`pos_to_linecol` method of the parser::
 
-  entity_mm.parser.pos_to_linecol(person_model.entities[0]._position)
+  line, col = entity_mm.parser.pos_to_linecol(
+      person_model.entities[0]._tx_position)
 
-This will give the line/column position tuple of the first entity.
+This will give the line/column position of the first entity.
 
