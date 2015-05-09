@@ -3,9 +3,9 @@
 textX meta-models
 =================
 
-Meta-model is Python object that knows about all classes that can be
-instantiated while parsing input. Meta-model is built from the grammar by the
-functions :code:`metamodel_from_file` or :code:`metamodel_from_str` in the
+textX meta-model is a Python object that knows about all classes that can be
+instantiated while parsing input. A meta-model is built from the grammar by
+the functions :code:`metamodel_from_file` or :code:`metamodel_from_str` in the
 :code:`textx.metamodel` module::
 
   from textx.metamodel import metamodel_from_file
@@ -31,9 +31,9 @@ These classes are instantiated during parsing of input string/file to create
 a graph of python objects, a.k.a. :ref:`model` or Abstract-Syntax Tree (AST).
 
 Most of the time dynamically created classes will be sufficient but sometimes
-it is needed to use our own classes instead.
+you will want to use your own classes instead.
 To do so use parameter :code:`classes` during meta-model instantiation. This
-parameter is a list of our classes that should be named the same as the rules
+parameter is a list of your classes that should be named the same as the rules
 from the grammar which they represent::
 
   from textx.metamodel import metamodel_from_str
@@ -63,7 +63,7 @@ from the grammar which they represent::
       self.attributes = attributes
 
 
-  # Use our Entity class. Attribute class will be created dynamically.
+  # Use our Entity class. "Attribute" class will be created dynamically.
   entity_mm = metamodel_from_str(grammar, classes=[Entity])
 
 Now :code:`entity_mm` can be used to parse input models where our :code:`Entity`
@@ -72,10 +72,10 @@ grammar.
 
 .. note::
    Constructor of user classes should accept all attributes defined by the
-   corresponding rule from the grammar. In the previous example we have
-   provided `name` and `attributes` attributes from the `Entity` rule.
+   corresponding rule from the grammar. In the previous example we have provided
+   :code:`name` and :code:`attributes` attributes from the :code:`Entity` rule.
    If the class is a child in parent-child relationship (see in the next
-   section) then `parent` constructor parameter should also be given.
+   section) then :code:`parent` constructor parameter should also be given.
 
 
 .. _parent-child:
@@ -118,7 +118,7 @@ There are two types of processors:
 
 Processors can modify model/objects or raise exception
 (:code:`TextXSemanticError`) if some constraint is not met. User code that call
-model instantiation/parsing can catch those exception and report to the user.
+model instantiation/parsing can catch and handle those exception.
 
 Model processors
 ################
@@ -151,37 +151,34 @@ The purpose of object processors is the same as for model processors but they
 are called as soon as the particular object is recognized in the input string.
 They are registered per class/rule.
 
-Let's do some additional checks for the above Entity-Attribute example:
+Let's do some additional checks for the above Entity DSL example:
 
 
 .. code-block:: python
 
   def entity_obj_processor(entity):
     '''
-    Check that there should be at most 10 attributes in an entity.
+    Check that Entity names are capitalized. This could also be specified
+    in the grammar using regex match but we will do that check here just
+    as an example.
     '''
 
-    if len(entity.attributes) > 10:
-      raise TextXSemanticError('There is %d attributes for entity %s.'
-                               'Maximum is 10.' % (len(entity.attributes),
-                                                   entity.name))
+    if entity.name != entity.name.capitalize():
+      raise TextXSemanticError('Entity name "%s" must be capitalized.' %
+                               entity.name)
 
   def attribute_obj_processor(attribute):
     '''
-    Check valid types.
+    Obj. processors can also introduce changes in the objects they process.
+    Here we set "primitive" attribute based on the Entity they refer to.
     '''
+    attribute.primitive = attribute.type.name in ['integer', 'string']
 
-    if attribute.type not in ['int', 'float', bool', 'string']:
-      raise TextXSemanticError('Invalid type %s for attribute %s of'
-                               ' entity %s.' % (attribute.type,
-                                                attribute.name,
-                                                attribute.parent.name))
 
   obj_processors = {
       'Entity': entity_obj_processor,
       'Attribute': attribute_obj_processor,
       }
-
 
   entity_mm.register_obj_processors(obj_processors)
 
@@ -191,7 +188,7 @@ Let's do some additional checks for the above Entity-Attribute example:
   entity_mm.model_from_file('my_entity_model.ent')
 
 
-For an example usage of object processor that modify objects see object
+For another example usage of object processor that modify objects see object
 processor :code:`move_command_processor` in :ref:`robot example
 <move_command_processor>`
 
@@ -291,8 +288,8 @@ Whitespace handling
 
 Parser will skip whitespaces by default. Whitespaces are spaces, tabs and
 newlines by default. Skipping of whitespaces can be disabled by :code:`skipws`
-bool parameter in constructor call. Also, whitespace can be redefined by
-:code:`ws` string parameter::
+bool parameter in constructor call. Also, what is a whitespace can be redefined
+by :code:`ws` string parameter::
 
   from textx.metamodel import metamodel_from_file
   my_metamodel = metamodel_from_file('mygrammar.tx', skipws=False, ws='\s\n')
@@ -307,8 +304,8 @@ Automatic keywords
 When designing a DSL it is usually desirable to match keywords on word
 boundaries.  For example, if we have Entity grammar from the above than a word
 :code:`entity` will be considered a keyword and should be matched on word
-boundaries only. If we have word :code:`entity2` at the place where
-:code:`entity` should be matched the match should not succeed.
+boundaries only. If we have a word :code:`entity2` in the input string at the
+place where :code:`entity` should be matched the match should not succeed.
 
 We could achieve this by using regular expression match and word boundaries
 regular expression rule for each keyword-like match::
@@ -318,7 +315,7 @@ regular expression rule for each keyword-like match::
 
 But the grammar will be cumbersome to read.
 
-textX can do automatic word boundary match for all keyword-like simple matches.
+textX can do automatic word boundary match for all keyword-like string matches.
 To enable this feature set parameter :code:`autokwd` to :code:`True` in the
 constructor call::
 
