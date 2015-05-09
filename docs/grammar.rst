@@ -333,7 +333,7 @@ RHS of the assignments. There are two types of rule references:
 * **Match rule reference** - will *call* other rule. When instance of the called
   rule is created it will be assigned to the attribute on the LHS. We say that
   referred object is contained inside referring object (e.g. they form a
-  :ref:`parent-child relationship <parent-child>`.
+  :ref:`parent-child relationship <parent-child>`).
 
   Example::
 
@@ -345,7 +345,7 @@ RHS of the assignments. There are two types of rule references:
 
   :code:`StructureElement` will be matched zero or more times. With each match a
   new instance of :code:`StructureElement` will be created and appended to
-  elements :code:`list`. A :code:`parent` attribute of each
+  :code:`elements` python list. A :code:`parent` attribute of each
   :code:`StructureElement` will be set to the containing :code:`Structure`.
 
 * **Link rule reference** - will match an identifier of some class object at the
