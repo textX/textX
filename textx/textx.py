@@ -43,7 +43,7 @@ def textx_rule():           return [abstract_rule, match_rule, common_rule]
 def common_rule():          return rule_name, Optional(rule_params), ":", common_rule_body, ";"
 def match_rule():           return rule_name, Optional(rule_params), ":", match_rule_body, ";"
 def abstract_rule():        return rule_name, Optional(rule_params), ":", abstract_rule_body, ";"
-def rule_params():          return '[', OneOrMore(rule_param), ']'
+def rule_params():          return '[', rule_param, ZeroOrMore(',', rule_param), ']'
 def rule_param():           return param_name, Optional('=', string_value)
 def param_name():           return ident
 

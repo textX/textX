@@ -38,8 +38,8 @@ def test_skipws():
     # Change default behavior
     metamodel = metamodel_from_str(grammar, skipws=False)
 
-    # Rule2 disables ws skipping but default rule is applied
-    # for rule Rule so this will not parse.
+    # ws skipping is disabled globally but Rule2 enables ws skipping
+    # so this will not parse.
     with pytest.raises(TextXSyntaxError):
         metamodel.model_from_str("entity Person first second")
 
@@ -84,3 +84,27 @@ def test_ws():
     # But this will
     metamodel.model_from_str("entity Person first\t \tsecond")
     metamodel.model_from_str("entity Person \nfirst\t \tsecond")
+
+
+def test_skipws_ws():
+    """
+    Test 'skipws' and 'ws'rule modifier in combination.
+    """
+
+    grammar = """
+    Rule:
+        'entity' name=ID call=Rule2;
+    Rule2[skipws, ws=' \t']:
+        'first' 'second';
+    """
+
+    # Change default behavior
+    metamodel = metamodel_from_str(grammar, skipws=False)
+
+    # Skipping of ws is disabled globally but Rule2 overrides that.
+    with pytest.raises(TextXSyntaxError):
+        metamodel.model_from_str("entity Person first second")
+
+    # This will parse.
+    metamodel.model_from_str("entityPerson first\t\t \t second")
+
