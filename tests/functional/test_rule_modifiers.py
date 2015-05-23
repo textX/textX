@@ -66,5 +66,21 @@ def test_ws():
         metamodel.model_from_str("entity Person first second")
 
     # This will parse.
-    metamodel.model_from_str("""entity Person first
-second""")
+    metamodel.model_from_str("entity Person first\nsecond")
+
+    # In this variant we will skip spaces and tabs but not newlines.
+    grammar = """
+    Rule:
+        'entity' name=ID /\s*/ call=Rule2;
+    Rule2[ws=' \t']:
+        'first' 'second';
+    """
+    metamodel = metamodel_from_str(grammar)
+
+    # This will not parse
+    with pytest.raises(TextXSyntaxError):
+        metamodel.model_from_str("entity Person first\n second")
+
+    # But this will
+    metamodel.model_from_str("entity Person first\t \tsecond")
+    metamodel.model_from_str("entity Person \nfirst\t \tsecond")
