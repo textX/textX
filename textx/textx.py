@@ -350,6 +350,19 @@ def rule_params_SA(parser, node, children):
             raise TextXSyntaxError(
                 'Invalid rule param "{}" at {}.'
                 .format(name, parser.pos_to_linecol(node.position)))
+
+        if name == 'ws' and '\\' in value:
+            new_value = ""
+            if "\\n" in value:
+                new_value += "\n"
+            if "\\r" in value:
+                new_value += "\r"
+            if "\\t" in value:
+                new_value += "\t"
+            if " " in value:
+                new_value += " "
+            value = new_value
+
         params[name] = value
 
     return params
