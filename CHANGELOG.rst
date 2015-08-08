@@ -1,6 +1,12 @@
 textX changelog
 ---------------
 
+* 2015-08-08 Release 0.4.1
+  - Fixed bug with multiple rule params.
+  - Fixed ws rule loaded from file.
+  - Fixed loading of README in setup.py to use utf-8 encoding always.
+  - Added more tests.
+
 * 2015-05-08 Release 0.4
   - Reworked meta-class/objects initialization.
   - Added _tx_ prefix to textX class and object special attributes to prevent
