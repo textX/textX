@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import os
+import codecs
 from setuptools import setup
 
 __author__ = "Igor R. Dejanović <igor DOT dejanovic AT gmail DOT com>"
@@ -14,7 +15,8 @@ AUTHOR_EMAIL = 'igor DOT dejanovic AT gmail DOT com'
 LICENSE = 'MIT'
 URL = 'https://github.com/igordejanovic/textX'
 DOWNLOAD_URL = 'https://github.com/igordejanovic/textX/archive/v%s.tar.gz' % VERSION
-README = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
+README = codecs.open(os.path.join(os.path.dirname(__file__), 'README.rst'),
+                     'r', encoding='utf-8').read()
 
 setup(
     name = NAME,
