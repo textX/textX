@@ -245,7 +245,7 @@ def parse_tree_to_objgraph(parser, parse_tree):
             cls = metamodel[model_obj.__class__.__name__]
             metaattr = cls._tx_attrs[attr_name]
 
-            # Mangle attribute name to prevent name clasing with property
+            # Mangle attribute name to prevent name clashing with property
             # setters on user classes
             if cls.__name__ in metamodel.user_classes:
                 txa_attr_name = "_txa_%s" % attr_name
