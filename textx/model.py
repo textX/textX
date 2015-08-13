@@ -159,7 +159,7 @@ def parse_tree_to_objgraph(parser, parse_tree):
                 return process_node(node[0])
 
             if parser.debug:
-                print("CREATING INSTANCE {}".format(node.rule_name))
+                parser.dprint("CREATING INSTANCE {}".format(node.rule_name))
 
             # If user class is given
             # use it instead of generic one
@@ -191,8 +191,8 @@ def parse_tree_to_objgraph(parser, parse_tree):
 
             for n in node:
                 if parser.debug:
-                    print("Recursing into {} = '{}'"
-                          .format(type(n).__name__, text(n)))
+                    parser.dprint("Recursing into {} = '{}'"
+                                  .format(type(n).__name__, text(n)))
                 process_node(n)
 
             parser._inst_stack.pop()
@@ -224,7 +224,7 @@ def parse_tree_to_objgraph(parser, parse_tree):
                     # print("Constructor params: {}".format(text(obj_attrs.__dict__)))
                     e.args += ("for class %s" %
                                inst.__class__.__name__,)
-                    print(traceback.print_exc())
+                    parser.dprint(traceback.print_exc())
                     raise e
 
             # Special case for 'name' attrib. It is used for cross-referencing
@@ -235,7 +235,7 @@ def parse_tree_to_objgraph(parser, parse_tree):
                 parser._instances[id(inst.__class__)][inst.name] = inst
 
             if parser.debug:
-                print("LEAVING INSTANCE {}".format(node.rule_name))
+                parser.dprint("LEAVING INSTANCE {}".format(node.rule_name))
 
         else:
             # Handle assignments
@@ -253,7 +253,8 @@ def parse_tree_to_objgraph(parser, parse_tree):
                 txa_attr_name = attr_name
 
             if parser.debug:
-                print('Handling assignment: {} {}...'.format(op, txa_attr_name))
+                parser.dprint('Handling assignment: {} {}...'
+                              .format(op, txa_attr_name))
 
             if op == 'optional':
                 setattr(obj_attr, txa_attr_name, True)
@@ -318,8 +319,8 @@ def parse_tree_to_objgraph(parser, parse_tree):
                 return
             assert type(obj_ref) is ObjCrossRef, type(obj_ref)
             if parser.debug:
-                print("Resolving obj crossref: {}:{}"
-                      .format(obj_ref.cls, obj_ref.obj_name))
+                parser.dprint("Resolving obj crossref: {}:{}"
+                              .format(obj_ref.cls, obj_ref.obj_name))
 
             def _resolve_ref_abstract(obj_cls):
                 """
@@ -366,7 +367,8 @@ def parse_tree_to_objgraph(parser, parse_tree):
 
         def _resolve(o):
             if parser.debug:
-                print("RESOLVING CLASS: {}".format(o.__class__.__name__))
+                parser.dprint("RESOLVING CLASS: {}"
+                              .format(o.__class__.__name__))
             if o in resolved_set:
                 return
             resolved_set.add(o)
@@ -375,10 +377,10 @@ def parse_tree_to_objgraph(parser, parse_tree):
             if hasattr(o.__class__, "_tx_attrs"):
                 for attr in o.__class__._tx_attrs.values():
                     if parser.debug:
-                        print("RESOLVING ATTR: {}".format(attr.name))
-                        print("mult={}, ref={}, con={}".format(
-                            attr.mult,
-                            attr.ref, attr.cont))
+                        parser.dprint("RESOLVING ATTR: {}".format(attr.name))
+                        parser.dprint("mult={}, ref={}, con={}".format(
+                                      attr.mult,
+                                      attr.ref, attr.cont))
                     attr_value = getattr(o, attr.name)
                     if attr.mult in [MULT_ONEORMORE, MULT_ZEROORMORE]:
                         for idx, list_attr_value in enumerate(attr_value):
@@ -429,7 +431,7 @@ def parse_tree_to_objgraph(parser, parse_tree):
     # processors if any processor is defined.
     if metamodel.obj_processors:
         if parser.debug:
-            print("CALLING OBJECT PROCESSORS")
+            parser.dprint("CALLING OBJECT PROCESSORS")
         call_obj_processors(model)
 
     return model

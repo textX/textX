@@ -9,6 +9,7 @@
 import codecs
 import os
 from collections import OrderedDict
+from arpeggio import DebugPrinter
 from .textx import language_from_str, python_type, BASE_TYPE_NAMES, ID, BOOL,\
     INT, FLOAT, STRING, NUMBER, BASETYPE
 from .const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, RULE_NORMAL
@@ -46,7 +47,7 @@ class TextXClass(object):
     pass
 
 
-class TextXMetaModel(object):
+class TextXMetaModel(DebugPrinter):
     """
     Meta-model contains all information about language abstract syntax.
     Furthermore, this class is in charge for model instantiation and new
@@ -75,7 +76,7 @@ class TextXMetaModel(object):
 
     def __init__(self, file_name=None, classes=None, builtins=None,
                  auto_init_attributes=True, ignore_case=False,
-                 skipws=True, ws=None, autokwd=False, debug=False):
+                 skipws=True, ws=None, autokwd=False, **kwargs):
         """
         Args:
             file_name(str): A file name if meta-model is going to be
@@ -99,6 +100,7 @@ class TextXMetaModel(object):
                 boundaries. Default is False.
             debug(bool): Should debug messages be printed.
         """
+        super(TextXMetaModel, self).__init__(**kwargs)
 
         self.file_name = file_name
         self.rootcls = None
@@ -111,7 +113,6 @@ class TextXMetaModel(object):
             for c in classes:
                 self.user_classes[c.__name__] = c
 
-        self.debug = debug
         self.auto_init_attributes = auto_init_attributes
         self.ignore_case = ignore_case
         self.skipws = skipws
@@ -217,6 +218,8 @@ class TextXMetaModel(object):
 
         if import_file_name not in self.namespaces:
             self._enter_namespace(import_file_name)
+            if self.debug:
+                self.dprint("*** IMPORTING FILE: %s" % import_file_name)
             metamodel_from_file(import_file_name, metamodel=self)
             self._leave_namespace()
 

@@ -200,7 +200,7 @@ class TextXModelSA(SemanticAction):
 
             def _inner_resolve(rule):
                 if parser.debug:
-                    print("Resolving rule: {}".format(rule))
+                    parser.dprint("Resolving rule: {}".format(rule))
 
                 if type(rule) == RuleCrossRef:
                     rule_name = rule.rule_name
@@ -227,7 +227,7 @@ class TextXModelSA(SemanticAction):
             _inner_resolve(node)
 
         if parser.debug:
-            print("CROSS-REFS RESOLVING")
+            parser.dprint("CROSS-REFS RESOLVING")
 
         resolve(textx_parser.parser_model)
 
@@ -247,7 +247,7 @@ class TextXModelSA(SemanticAction):
                 return cls_crossref
 
         if parser.debug:
-            print("RESOLVING METACLASS REFS")
+            parser.dprint("RESOLVING METACLASS REFS")
 
         for cls in xtext_parser.metamodel:
 
@@ -269,16 +269,18 @@ class TextXModelSA(SemanticAction):
                     attr.ref = True
 
                 if parser.debug:
-                    print("Resolved attribute {}:{}[cls={}, cont={}, ref={}, mult={}, pos={}]"
-                          .format(cls.__name__, attr.name, attr.cls.__name__,
-                                  attr.cont, attr.ref, attr.mult,
-                                  attr.position))
+                    parser.dprint("Resolved attribute {}:{}[cls={}, cont={}, "
+                                  "ref={}, mult={}, pos={}]"
+                                  .format(cls.__name__, attr.name,
+                                          attr.cls.__name__,
+                                          attr.cont, attr.ref, attr.mult,
+                                          attr.position))
 
     def second_pass(self, parser, textx_parser):
         """Cross reference resolving for parser model."""
 
         if parser.debug:
-            print("RESOLVING XTEXT PARSER: second_pass")
+            parser.dprint("RESOLVING XTEXT PARSER: second_pass")
 
         self._resolve_rule_refs(parser, textx_parser)
         self._resolve_cls_refs(parser, textx_parser)
@@ -317,7 +319,7 @@ def rule_name_SA(parser, node, children):
     rule_name = str(node)
 
     if parser.debug:
-        print("Creating class: {}".format(rule_name))
+        parser.dprint("Creating class: {}".format(rule_name))
 
     # If a class is given by the user use it. Else, create new class.
     if rule_name in parser.metamodel.user_classes:
@@ -378,7 +380,8 @@ def rule_param_SA(parser, node, children):
             param_value = False
 
     if parser.debug:
-        print("TextX rule param: ", param_name, param_value)
+        parser.dprint("TextX rule param: {}, {}".format(param_name,
+                                                        param_value))
 
     return {param_name: param_value}
 rule_param.sem = rule_param_SA
@@ -540,11 +543,12 @@ def assignment_SA(parser, node, children):
     target_cls = None
 
     if parser.debug:
-        print("Processing assignment {}{}...".format(attr_name, op))
+        parser.dprint("Processing assignment {}{}...".format(attr_name, op))
 
     if parser.debug:
-        print("Creating attribute {}:{}".format(cls.__name__, attr_name))
-        print("Assignment operation = {}".format(op))
+        parser.dprint("Creating attribute {}:{}".format(cls.__name__,
+                                                        attr_name))
+        parser.dprint("Assignment operation = {}".format(op))
 
     if attr_name in cls._tx_attrs:
         # If attribute already exists in the metamodel it is
@@ -642,10 +646,11 @@ def assignment_SA(parser, node, children):
     cls_attr.cls = ClassCrossRef(cls_name=attr_type, position=node.position)
 
     if parser.debug:
-        print("Created attribute {}:{}[cls={}, cont={}, ref={}, mult={}, pos={}]"
-              .format(cls.__name__, attr_name, cls_attr.cls.cls_name,
-                      cls_attr.cont, cls_attr.ref, cls_attr.mult,
-                      cls_attr.position))
+        parser.dprint("Created attribute {}:{}[cls={}, cont={}, "
+                      "ref={}, mult={}, pos={}]"
+                      .format(cls.__name__, attr_name, cls_attr.cls.cls_name,
+                              cls_attr.cont, cls_attr.ref, cls_attr.mult,
+                              cls_attr.position))
 
     assignment_rule._attr_name = attr_name
     assignment_rule._exp_str = attr_name    # For nice error reporting
@@ -734,7 +739,7 @@ def language_from_str(language_def, metamodel):
     """
 
     if metamodel.debug:
-        print("*** TEXTX PARSER ***")
+        metamodel.dprint("*** PARSING LANGUAGE DEFINITION ***")
 
     # Check the cache for already conctructed textX parser
     if metamodel.debug in textX_parsers:
