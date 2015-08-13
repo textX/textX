@@ -80,7 +80,7 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                 line, col = e.parser.pos_to_linecol(e.position)
                 raise TextXSyntaxError(text(e), line, col)
 
-        def get_model_from_file(self, file_name, encoding):
+        def get_model_from_file(self, file_name, encoding, debug):
             """
             Creates model from the parse tree from the previous parse call.
             If file_name is given file will be parsed before model
@@ -89,7 +89,8 @@ def get_model_parser(top_rule, comments_model, **kwargs):
             with codecs.open(file_name, 'r', encoding) as f:
                 model_str = f.read()
 
-            model = self.get_model_from_str(model_str, file_name=file_name)
+            model = self.get_model_from_str(model_str, file_name=file_name,
+                                            debug=debug)
 
             # Register filename of the model for later use.
             try:
@@ -99,16 +100,27 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                 pass
             return model
 
-        def get_model_from_str(self, model_str, file_name=None):
+        def get_model_from_str(self, model_str, file_name=None, debug=None):
             """
             Parses given string and creates model object graph.
             """
-            if self.debug:
-                print("*** MODEL ***")
-            self.parse(model_str, file_name=file_name)
-            # Transform parse tree to model. Skip root node which
-            # represents the whole file ending in EOF.
-            model = parse_tree_to_objgraph(self, self.parse_tree[0])
+            old_debug_state = self.debug
+
+            try:
+                if debug is not None:
+                    self.debug = debug
+
+                if self.debug:
+                    self.dprint("*** PARSING MODEL ***")
+
+                self.parse(model_str, file_name=file_name)
+                # Transform parse tree to model. Skip root node which
+                # represents the whole file ending in EOF.
+                model = parse_tree_to_objgraph(self, self.parse_tree[0])
+            finally:
+                if debug is not None:
+                    self.debug = old_debug_state
+
             try:
                 model._filename = None
             except AttributeError:

@@ -394,20 +394,21 @@ class TextXMetaModel(object):
     def current_namespace(self):
         return self.namespaces[self.namespace_stack[-1]]
 
-    def model_from_str(self, model_str):
+    def model_from_str(self, model_str, debug=None):
         """
         Instantiates model from the given string.
         """
-        model = self.parser.get_model_from_str(model_str)
+        model = self.parser.get_model_from_str(model_str, debug=debug)
         for p in self._model_processors:
             p(model, self)
         return model
 
-    def model_from_file(self, file_name, encoding='utf-8'):
+    def model_from_file(self, file_name, encoding='utf-8', debug=None):
         """
         Instantiates model from the given file.
         """
-        model = self.parser.get_model_from_file(file_name, encoding)
+        model = self.parser.get_model_from_file(file_name,
+                                                encoding, debug=debug)
         for p in self._model_processors:
             p(model, self)
         return model
