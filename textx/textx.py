@@ -261,8 +261,6 @@ class TextXModelSA(SemanticAction):
 
                 # If target cls is of a base type or match rule
                 # then attr can not be a reference.
-                if not attr.cls:
-                    print("Attribute: ", attr.name)
                 if attr.cls.__name__ in BASE_TYPE_NAMES \
                         or attr.cls._tx_type == RULE_MATCH:
                     attr.ref = False
