@@ -778,6 +778,9 @@ def language_from_str(language_def, metamodel):
     # Construct new parser based on the given language description.
     lang_parser = parser.getASG()
 
+    # Meta-model is constructed. Validate semantics of metamodel.
+    parser.metamodel.validate()
+
     # Meta-model is constructed. Here we connect meta-model and language
     # parser for convenience.
     lang_parser.metamodel = parser.metamodel
