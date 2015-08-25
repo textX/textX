@@ -513,13 +513,8 @@ Examples::
     STRING|/(\w|\+|-)+/
   ;
 
-These rules can be used in match references only and results in objects of base
-python types (str, int, bool, float).
-
-.. warning::
-
-   Rules referenced from an abstract rule can not be of match type. Only normal
-   and abstract rules are allowed.
+These rules can be used in match references only and results in objects of base python
+types (str, int, bool, float).
 
 
 .. _rule-modifiers:
