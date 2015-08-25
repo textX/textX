@@ -111,10 +111,17 @@ def model_export(model, file_name):
                     else:
                         for idx, list_obj in enumerate(attr_value):
                             if list_obj is not None:
-                                f.write('{} -> {} [label="{}:{}" {}]\n'
-                                        .format(id(obj), id(list_obj),
+                                if type(list_obj) in PRIMITIVE_PYTHON_TYPES:
+                                    f.write(
+                                        '{} -> "{}:{}" [label="{}:{}" {}]\n'
+                                        .format(id(obj), list_obj,
+                                                type(list_obj).__name__,
                                                 attr_name, idx, endmark))
-                                _export(list_obj)
+                                else:
+                                    f.write('{} -> {} [label="{}:{}" {}]\n'
+                                            .format(id(obj), id(list_obj),
+                                                    attr_name, idx, endmark))
+                                    _export(list_obj)
                 else:
                     # Plain attributes
                     if not attr.ref:
