@@ -15,9 +15,7 @@ else:
     text = str
 
 from .const import MULT_ZEROORMORE, MULT_ONEORMORE, MULT_ONE, RULE_MATCH
-from .textx import BASE_TYPE_NAMES
-
-PRIMITIVE_PYTHON_TYPES = [int, float, str, bool]
+from .textx import BASE_TYPE_NAMES, PRIMITIVE_PYTHON_TYPES
 
 HEADER = '''
     digraph xtext {
