@@ -12,9 +12,7 @@ from collections import OrderedDict
 from arpeggio import DebugPrinter
 from .textx import language_from_str, python_type, BASE_TYPE_NAMES, ID, BOOL,\
     INT, FLOAT, STRING, NUMBER, BASETYPE
-from .const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, RULE_NORMAL, \
-    RULE_MATCH, RULE_ABSTRACT
-from .exceptions import TextXSemanticError
+from .const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, RULE_NORMAL
 
 
 class MetaAttr(object):
@@ -254,9 +252,10 @@ class TextXMetaModel(DebugPrinter):
                     class is defined.
                 _tx_type(int): The type of the textX rule this class is created
                     for. See textx.const
-                _tx_metamodel(TextXMetaModel): A metamodel this class belongs to.
-                _tx_peg_rule(ParsingExpression): An arpeggio PEG rule that matches
-                    this class.
+                _tx_metamodel(TextXMetaModel): A metamodel this class belongs
+                    to.
+                _tx_peg_rule(ParsingExpression): An arpeggio PEG rule that
+                    matches this class.
             """
 
         cls = Meta
@@ -346,15 +345,7 @@ class TextXMetaModel(DebugPrinter):
         Validates metamodel. Called after construction to check for some
         textX rules.
         """
-        # Check that all classes inheriting abstract rule are not match rules.
-        for cls in self:
-            if cls._tx_type == RULE_ABSTRACT:
-                for inh_by in cls._tx_inh_by:
-                    if inh_by._tx_type == RULE_MATCH:
-                        raise TextXSemanticError(
-                            "Match rule {} cannot be a part of "
-                            "abstract rule {}.".format(inh_by.__name__,
-                                                       cls.__name__))
+        # TODO: Implement complex textX validations.
 
     def __getitem__(self, name):
         """
