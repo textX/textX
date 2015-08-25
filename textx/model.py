@@ -17,6 +17,7 @@ from arpeggio import Parser, Sequence, NoMatch, EOF, Terminal
 from .exceptions import TextXSyntaxError, TextXSemanticError
 from .const import MULT_ONE, MULT_ONEORMORE, MULT_ZEROORMORE, RULE_NORMAL,\
     RULE_ABSTRACT
+from .textx import PRIMITIVE_PYTHON_TYPES
 
 
 def convert(value, _type):
@@ -403,20 +404,23 @@ def parse_tree_to_objgraph(parser, parse_tree):
         """
         Depth-first model object processing.
         """
-        metaclass = metamodel[model_obj.__class__.__name__]
 
-        for metaattr in metaclass._tx_attrs.values():
-            # If attribute is containment reference
-            # go down
-            if metaattr.ref and metaattr.cont:
-                attr = getattr(model_obj, metaattr.name)
-                if attr:
-                    if metaattr.mult != MULT_ONE:
-                        for obj in attr:
-                            if obj:
-                                call_obj_processors(obj)
-                    else:
-                        call_obj_processors(attr)
+        if type(model_obj) in PRIMITIVE_PYTHON_TYPES:
+            metaclass = type(model_obj)
+        else:
+            metaclass = metamodel[model_obj.__class__.__name__]
+
+            for metaattr in metaclass._tx_attrs.values():
+                # If attribute is containment reference go down
+                if metaattr.ref and metaattr.cont:
+                    attr = getattr(model_obj, metaattr.name)
+                    if attr:
+                        if metaattr.mult != MULT_ONE:
+                            for obj in attr:
+                                if obj:
+                                    call_obj_processors(obj)
+                        else:
+                            call_obj_processors(attr)
 
         obj_processor = metamodel.obj_processors.get(metaclass.__name__, None)
         if obj_processor:

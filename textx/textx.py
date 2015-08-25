@@ -107,6 +107,8 @@ BASE_TYPE_RULES = {rule.rule_name: rule
                                 STRING, NUMBER, BASETYPE]}
 BASE_TYPE_NAMES = BASE_TYPE_RULES.keys()
 
+PRIMITIVE_PYTHON_TYPES = [int, float, text, bool]
+
 for regex in [ID, BOOL, INT, FLOAT, STRING]:
     regex.compile()
 
