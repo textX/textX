@@ -1,6 +1,14 @@
 textX changelog
 ---------------
 
+* 2015-08-27 Release 0.4.2
+  - Added debug parameter to model_from_str.
+  - All prints converted to DebugPrinter.
+  - Fixed issue when object processor is applied to the list of BASETYPE
+    elements.
+  - Fix in model export to dot to render proper base python type values inside
+    lists.
+
 * 2015-08-08 Release 0.4.1
   - Fixed bug with multiple rule params.
   - Fixed ws rule loaded from file.
