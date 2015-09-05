@@ -3,7 +3,7 @@
 textX
 =====
 
-|build-status| |docs|
+|pypi-badge| |build-status| |docs|
 
 textX is a meta-language for building Domain-Specific Languages (DSLs) inspired
 by `Xtext`_.  From a single language description (grammar) textX will build a
@@ -153,6 +153,10 @@ Note: For code contributions please try to adhere to the `PEP-8 guidelines`_. Al
 .. _project on github: https://github.com/igordejanovic/textx/
 .. _PEP-8 guidelines: http://legacy.python.org/dev/peps/pep-0008/
 .. _issue tracker: https://github.com/igordejanovic/textx/issues/
+
+.. |pypi-badge| image:: https://img.shields.io/pypi/v/textX.svg
+   :target: https://pypi.python.org/pypi/textX
+   :alt: PyPI Version
 
 .. |build-status| image:: https://travis-ci.org/igordejanovic/textX.svg?branch=master
    :target: https://travis-ci.org/igordejanovic/textX
