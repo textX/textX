@@ -97,8 +97,8 @@ file.
 .. |example.dot| image:: https://raw.githubusercontent.com/igordejanovic/textX/master/examples/hello_world/example.dot.png
 
 
-Editor support
---------------
+Editor/IDE support
+------------------
 
 If you are a vim editor user check out `support for vim <https://github.com/igordejanovic/textx.vim/>`_.
 
