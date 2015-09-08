@@ -130,12 +130,16 @@ meta-model instance:
 
   from textx.metamodel import metamodel_from_file
 
+  # Model processor is a callable that will accept meta-model and model as its
+  # parameters.
   def check_some_semantics(metamodel, model):
     ...
     ... Do some check on the model and raise TextXSemanticError if semantics
     ... rules are violated.
 
   my_metamodel = metamodel_from_file('mygrammar.tx')
+
+  # Register model processor on meta-model instance
   my_metamodel.register_model_processor(check_some_semantics)
 
   # Parse model. check_some_semantics will be called automatically after
@@ -175,11 +179,15 @@ Let's do some additional checks for the above Entity DSL example:
     attribute.primitive = attribute.type.name in ['integer', 'string']
 
 
+  # Object processors are registered by defining a map between a rule name
+  # and the callable that will process the instances of that rule/class.
   obj_processors = {
       'Entity': entity_obj_processor,
       'Attribute': attribute_obj_processor,
       }
 
+  # This map/dict is registered on a meta-model by the "register_obj_processors"
+  # call.
   entity_mm.register_obj_processors(obj_processors)
 
   # Parse model. At each successful parse of Entity or Attribute the registered
@@ -286,7 +294,7 @@ use :code:`ignore_case` parameter to the meta-model constructor call::
 Whitespace handling
 -------------------
 
-Parser will skip whitespaces by default. Whitespaces are spaces, tabs and
+The parser will skip whitespaces by default. Whitespaces are spaces, tabs and
 newlines by default. Skipping of whitespaces can be disabled by :code:`skipws`
 bool parameter in constructor call. Also, what is a whitespace can be redefined
 by :code:`ws` string parameter::
