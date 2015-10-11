@@ -1,7 +1,6 @@
 .. _metamodel:
 
-textX meta-models
-=================
+# textX meta-models
 
 textX meta-model is a Python object that knows about all classes that can be
 instantiated while parsing input. A meta-model is built from the grammar by
@@ -23,8 +22,7 @@ Parsing input and creating model is done by :code:`model_from_file` and
 
 .. _custom-classes:
 
-Custom classes
---------------
+## Custom classes
 
 For each grammar rule a Python class with the same name is created dynamically.
 These classes are instantiated during parsing of input string/file to create
@@ -78,10 +76,7 @@ grammar.
    section) then :code:`parent` constructor parameter should also be given.
 
 
-.. _parent-child:
-
-Parent-child relationships
---------------------------
+## Parent-child relationships
 
 There is often an intrinsic parent-child relationship between object in the
 model. In the previous example each :code:`Attribute` instance will always be a
@@ -100,8 +95,7 @@ attribute.
 
 .. _processors:
 
-Model and object processors
----------------------------
+## Processors
 
 To specify static semantics of the language textX uses a concept called
 **processor**. Processors are python callable that can modify model elements
@@ -120,8 +114,7 @@ Processors can modify model/objects or raise exception
 (:code:`TextXSemanticError`) if some constraint is not met. User code that call
 model instantiation/parsing can catch and handle those exception.
 
-Model processors
-################
+### Model processors
 
 To register model processor call :code:`register_model_processor` on the
 meta-model instance:
@@ -148,8 +141,7 @@ meta-model instance:
   my_metamodel.model_from_file('some_model.ext')
 
 
-Object processors
-#################
+### Object processors
 
 The purpose of object processors is the same as for model processors but they
 are called as soon as the particular object is recognized in the input string.
@@ -201,10 +193,7 @@ processor :code:`move_command_processor` in :ref:`robot example
 <move_command_processor>`
 
 
-.. _builtins:
-
-Built-in objects
-----------------
+## Built-in objects
 
 Often you will need objects that should be a part of each model and you do not
 want users to specify them in every model they create. Most notable example is
@@ -234,10 +223,8 @@ these two entities for :code:`Attribute` types::
 Now an :code:`integer` and :code:`string` :code:`Attribute` type can be used.
 See :ref:`model` and :code:`Entity` example for more.
 
-.. _auto-initialization:
 
-Auto-initialization of attributes
----------------------------------
+## Auto-initialization of attributes
 
 Each object that is recognized in the input string will be instantiated and
 their attributes will be set to the values parsed from the input. In the event
@@ -276,23 +263,19 @@ multiplicity assignments (:code:`*=` and :code:`+=`) will always be python
 lists.
 
 
-.. _parser-config:
+## Parser configuration
 
-Case sensitivity
-----------------
+### Case sensitivity
 
 Parser is by default case sensitive. For DSLs that should be case insensitive
-use :code:`ignore_case` parameter to the meta-model constructor call::
+use `ignore\_case` parameter to the meta-model constructor call::
 
   from textx.metamodel import metamodel_from_file
 
   my_metamodel = metamodel_from_file('mygrammar.tx', ignore_case=True)
 
 
-.. _parser-whitespace:
-
-Whitespace handling
--------------------
+### Whitespace handling
 
 The parser will skip whitespaces by default. Whitespaces are spaces, tabs and
 newlines by default. Skipping of whitespaces can be disabled by :code:`skipws`
@@ -306,8 +289,7 @@ Whitespaces and whitespace skipping can be defined in the grammar on the level
 of a single rule by :ref:`rule-modifiers`.
 
 
-Automatic keywords
-------------------
+### Automatic keywords
 
 When designing a DSL it is usually desirable to match keywords on word
 boundaries.  For example, if we have Entity grammar from the above than a word

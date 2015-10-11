@@ -4,16 +4,15 @@
 
     A single description is used to define both language concrete syntax and its
     meta-model (a.k.a. abstract syntax). See the description of
-    :ref:`metamodel`.
-
+    [grammar](grammar.md) and [metamodel](metamodel.md).
 
 * **Automatic model (AST) construction**
 
     Parse tree will be automatically transformed to a graph of python objects
-    (a.k.a. the model). See the :ref:`model` section.
+    (a.k.a. the model). See the [model](model.md) section.
 
     Python classes will be created by textX but if needed a user supplied
-    classes may be used. See :ref:`custom-classes`.
+    classes may be used. See [custom classes](metamodel.md#custom-classes).
 
 * **Automatic linking**
 
@@ -24,31 +23,31 @@
 * **Automatic parent-child relationships**
 
     textX will maintain a parent-child relationships imposed by the grammar.
-    See :ref:`parent-child`.
+    See [parent-child relationships](metamodel.md#parent-child-relationships).
 
 * **Parser control**
 
     Parser can be configured with regard to case handling, whitespace handling,
-    keyword handling etc. See :ref:`parser-config`.
+    keyword handling etc. See [parser
+    configuration](metamodel.md#parser-configuration).
 
 
 * **Model/object post-processing**
 
     A callbacks (so called processors) can be registered for models and
     individual classes.  This enables model/object postprocessing (validation,
-    additional changes etc.).  See the :ref:`processors` section.
+    additional changes etc.).  See [processors](metamodel.md#processors) section.
 
 
 * **Grammar modularization - imports**
 
     Grammar can be split out in multiple files and than files/grammars can be
-    imported where needed. See :ref:`import` section.
+    imported where needed. See [Grammar
+    modularization](grammar.md#grammar-modularization).
 
 
 * **Meta-model/model visualization**
 
-    Both meta-model and parsed models can be visulized using `GraphViz`_ software
-    package.  See :ref:`visualization` section.
-
-
-.. _GraphViz: http://graphviz.org/
+    Both meta-model and parsed models can be visulized using
+    [GraphViz](http://graphviz.org/) software package. See
+    [visualization](visualization.md) section.
