@@ -14,8 +14,7 @@ implemented 100% in Python using `Arpeggio`_ parser.
 It is fully dynamic - no code generation at all!
 
 
-.. note::
-   Documentation is moved to http://igordejanovic.net/textX/
+.. note:: Documentation is moved to http://igordejanovic.net/textX/
 
 Installation
 ------------
