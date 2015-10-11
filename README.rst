@@ -13,6 +13,10 @@ textX follows the syntax and semantics of Xtext but differs in some places and i
 implemented 100% in Python using `Arpeggio`_ parser.
 It is fully dynamic - no code generation at all!
 
+
+.. note::
+   Documentation is moved to http://igordejanovic.net/textX/
+
 Installation
 ------------
 
@@ -165,8 +169,8 @@ Note: For code contributions please try to adhere to the `PEP-8 guidelines`_. Al
 .. |build-status| image:: https://travis-ci.org/igordejanovic/textX.svg?branch=master
    :target: https://travis-ci.org/igordejanovic/textX
 
-.. |docs| image:: https://readthedocs.org/projects/textx/badge/?version=latest
-   :target: https://readthedocs.org/projects/textx/?badge=latest
+.. |docs| image:: https://img.shields.io/badge/docs-latest-green.svg
+   :target: http://igordejanovic.net/textX/
    :alt: Documentation Status
 
 
