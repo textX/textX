@@ -12,7 +12,7 @@ parser.add_argument('model', help="Model file name", nargs="?")
 args = parser.parse_args()
 
 if args.cmd not in ['vis', 'check']:
-    print "Unknown command {}. Command must be one of 'vis', 'check'.".format(args.cmd)
+    print("Unknown command {}. Command must be one of 'vis', 'check'.".format(args.cmd))
     sys.exit(1)
 
 metamodel = metamodel_from_file(args.metamodel)
