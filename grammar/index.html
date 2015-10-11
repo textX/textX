@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="author" content="Igor Dejanović">
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+
+	<title>Grammar - textX</title>
+
+        <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="../css/highlight.css">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            
+
+            <!-- Main title -->
+            <a class="navbar-brand" href="..">textX</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            
+                <!-- Main navigation -->
+                <ul class="nav navbar-nav">
+                
+                
+                    <li >
+                        <a href="..">Home</a>
+                    </li>
+                
+                
+                
+                    <li class="dropdown active">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">User Guide <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../getting_started/">Getting started</a>
+</li>
+
+                        
+                            
+<li class="active">
+    <a href="./">Grammar</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../metamodel/">Meta-model</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../model/">Model</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../visualization/">Visualization</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../error_handling/">Error handling</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../debugging/">Debugging</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../tutorial_basic/">Basic tutorial</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../about/discuss/">Discuss</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../about/contributing/">Contributing</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../about/license/">License</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                </ul>
+            
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
+                
+                    <li >
+                        <a rel="next" href="../getting_started/">
+                            <i class="fa fa-arrow-left"></i> Previous
+                        </a>
+                    </li>
+                    <li >
+                        <a rel="prev" href="../metamodel/">
+                            Next <i class="fa fa-arrow-right"></i>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a href="https://github.com/igordejanovic/textX">
+                            
+                                <i class="fa fa-github"></i>
+                            
+                            GitHub
+                        </a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#textx-grammar">textX grammar</a></li>
+        
+            <li><a href="#rules">Rules</a></li>
+        
+            <li><a href="#textx-base-types">textX base types</a></li>
+        
+            <li><a href="#rule-expressions">Rule expressions</a></li>
+        
+            <li><a href="#rule-types">Rule types</a></li>
+        
+            <li><a href="#rule-modifiers">Rule modifiers</a></li>
+        
+            <li><a href="#grammar-comments">Grammar comments</a></li>
+        
+            <li><a href="#language-comments">Language comments</a></li>
+        
+            <li><a href="#grammar-modularization">Grammar modularization</a></li>
+        
+    
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="textx-grammar">textX grammar</h1>
+<p>Language syntax and meta-model are defined by textX grammar given as a set of
+textX rules.</p>
+<h2 id="rules">Rules</h2>
+<p>The basic building blocks of the textX language are rules. Rule is written
+in the following form:</p>
+<pre><code>Hello:
+  'hello' who=ID;
+;
+</code></pre>
+<p>This rule is called <code>Hello</code>. After the name is a colon. Between the colon and
+the semicolon at the end is a body of the rule given as textX expression. This
+rule tells us that the pattern of <code>Hello</code> objects in the input string consists
+of the word <code>hello</code> followed by the ID rule (here ID is a rule reference to the
+builtin rule, more about this in a moment).</p>
+<p>These are valid <code>Hello</code> objects:</p>
+<pre><code>hello Alice
+hello Bob
+hello foo1234
+</code></pre>
+<p>Rule <code>Hello</code> at the same time defines a Python class <code>Hello</code>. When the rule is
+recognized in the input stream an object of this class will get created and the
+attribute <code>who</code> will be set to whatever the rule <code>ID</code> has matched after the word
+<code>hello</code> (this is specified by the assignment <code>who=ID</code>).</p>
+<p>Of course, there are many more rule expressions than shown in this small example.
+In the next section a detailed description of each textX expression is given.</p>
+<h2 id="textx-base-types">textX base types</h2>
+<p>In the previous example you have seen an <code>ID</code> rule. This rule is a part of
+built-in rules that form the base of textX type system. Base types/rules are
+given in the following figure:</p>
+<p><img alt="base types" src="../images/base_types.png" /></p>
+<ul>
+<li><code>ID</code> rule will match an common identifier consisting of letters, digits
+  and underscores. The regex pattern that describe this rule is <code>'[^\d\W]\w*\b'</code>.
+  This match will be converted to a python string.</li>
+<li><code>INT</code> rule will match an integer number. This match will be converted to
+  python <code>int</code> type.</li>
+<li><code>FLOAT</code> rule will match a float number. This match will be converted to
+  python <code>float</code> type.</li>
+<li><code>BOOL</code> rule will match words <code>true</code> or <code>false</code>. This match
+  will be converted to python <code>bool</code> type.</li>
+<li><code>STRING</code> rule will match a quoted string. This match will be converted
+  to python <code>str</code> type.</li>
+</ul>
+<p>Built-in types are automatically converted to python types during object
+instantiation. See
+<a href="../metamodel/#auto-initialization-of-attributes">auto-initialization</a> for more information.</p>
+<h2 id="rule-expressions">Rule expressions</h2>
+<p>Rule expressions is a body of the rule. It is specified using basic expressions
+and operators.</p>
+<p>The basic expressions are:</p>
+<ul>
+<li>Sequence</li>
+<li>Ordered choice (<code>|</code>)</li>
+<li>Optional (<code>?</code>)</li>
+<li>
+<p>Repetitions</p>
+<ul>
+<li>Zero or more (<code>*</code>)</li>
+<li>One or more (<code>+</code>)</li>
+</ul>
+</li>
+<li>
+<p>Assignments</p>
+<ul>
+<li>Plain (<code>=</code>)</li>
+<li>Boolean (<code>?=</code>)</li>
+<li>Zero or more (<code>*=</code>)</li>
+<li>One or more (<code>+=</code>)</li>
+</ul>
+</li>
+<li>
+<p>Matches</p>
+<ul>
+<li>String match (<code>'...'</code>)</li>
+<li>Regex match (<code>/.../</code>)</li>
+</ul>
+</li>
+<li>
+<p>References</p>
+<ul>
+<li>Match reference</li>
+<li>Link reference (<code>[..]</code>)</li>
+</ul>
+</li>
+</ul>
+<h3 id="sequence">Sequence</h3>
+<p>Sequence is the simplest textX expression that is given by just writing
+contained sub-expressions one after another. For example the following rule:</p>
+<pre><code>Colors:
+  "red" "green" "blue"
+;
+</code></pre>
+<p>is defined as a sequence consisting of three string matches (<code>red</code>
+<code>green</code> and <code>blue</code>). Contained expressions will be matched in the
+exact order they are given. If some of the expressions does not match the
+sequence as a whole will fail. The above rule defined by the sequence will match
+only the following string:</p>
+<pre><code>red green blue
+</code></pre>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If whitespace skipping is included (which is default) arbitrary whitespaces
+can occur between matched words.</p>
+</div>
+<h3 id="ordered-choice">Ordered choice</h3>
+<p>Ordered choice is given as a set of expression separated by <code>|</code> operator.
+This operator will try to match contained expression from left to right and the
+first match that succeeds will be used.</p>
+<p>Example:</p>
+<pre><code>Color:
+  "red" | "green" | "blue"
+;
+</code></pre>
+<p>This will match either <code>red</code> or <code>green</code> or <code>blue</code> and the parser will try the
+match in that order.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In most classic parsing technologies an unordered match (alternative) is used
+which may lead to ambiguous grammar where multiple parse tree may exist for
+the same input string.</p>
+</div>
+<p>Underlaying parsing technology of textX is 
+<a href="https://github.com/igordejanovic/Arpeggio">Arpeggio</a> which is parser based on
+PEG grammars and thus the <code>|</code> operator directly translates to Arpeggio's
+PEG ordered choice. Using ordered choice yield unambiguous parsing. If the text
+parses there is only one parse tree possible.</p>
+<h3 id="optional">Optional</h3>
+<p><code>Optional</code> is an expression that will match contained expression if it can but
+will not failed otherwise. Thus, optional expression always succeeds.</p>
+<p>Example:</p>
+<pre><code>MoveUp:
+  'up' INT?
+;
+</code></pre>
+<p><code>INT</code> match is optional in this example. This means that the <code>up</code> keyword is
+required but afterwards and integer may be found but it doesn't have to.</p>
+<p>Following lines will match:</p>
+<pre><code>up 45
+up 1
+up
+</code></pre>
+<p>Optional expression can be more complex. For example:</p>
+<pre><code>MoveUp:
+  'up' ( INT | FLOAT )?
+</code></pre>
+<p>Now, an ordered choice in parentheses is optional.</p>
+<h3 id="repetitions">Repetitions</h3>
+<ul>
+<li>
+<p><strong>Zero or more</strong> repetition is specified by <code>*</code> operator and will match
+  the contained expression zero or more times. Here is an example:</p>
+<pre><code>Colors:
+  ("red"|"green"|"blue")*
+;
+</code></pre>
+<p>In this example <em>zero or more</em> repetition is applied on the <em>ordered choice</em>.
+In each repeated match one color will be matched trying out from left to
+right.  Thus, <code>Colors</code> rule will match color as many as possible but
+will not fail if no color exists in the input string. The following would be
+matched by <code>Colors</code> rule:</p>
+<pre><code>red blue green
+</code></pre>
+<p>but also:</p>
+<pre><code>red blue blue red red green
+</code></pre>
+<p>or empty string.</p>
+</li>
+<li>
+<p><strong>One or more</strong> repetition is specified by <code>+</code> operator and will match the
+  contained expression one or more times. Thus, everything that is written for
+  <strong>zero or more</strong> applies here except that at least one match must be found for
+  this expression to succeed. Here is an above example modified to match at
+  least one color:</p>
+<pre><code>Colors:
+  ("red"|"green"|"blue")+
+;
+</code></pre>
+</li>
+</ul>
+<h3 id="assignments">Assignments</h3>
+<p>Assignment is used as a part of the meta-model deduction process. Each
+assignment will result in an attribute of the meta-class created by the rule.</p>
+<p>Each assignment consists of LHS (left-hand side) and RHS (right-hand side). The
+LHS is always a name of the meta-class attribute while the RHS can be a
+reference to other rule (either a match or link reference) or a simple match
+(string or regex match). For example:</p>
+<pre><code>Person:
+  name=Name ',' surename=Surename ',' age=INT ',' height=INT ';'
+;
+</code></pre>
+<p>The <code>Name</code> and <code>Surename</code> rules referenced in the RHS of the first two
+assignments are not given in this example.</p>
+<p>This example describes rule and meta-class <code>Person</code> that will parse and
+instantiate <code>Person</code> objects with four attributes:</p>
+<ul>
+<li><code>name</code> - which will use rule <code>Name</code> to match the input and the
+  <code>name</code> will be a reference to the instance of <code>Name</code> class,</li>
+<li><code>surename</code> - will use <code>Surename</code> rule to match the input,</li>
+<li><code>age</code> - will use builtin type <code>INT</code> to match a number from the
+  input string. <code>age</code> will be converted to python <code>int</code> type.</li>
+<li><code>height</code> - the same as <code>age</code> but the matched number will be
+  assigned to <code>height</code> attribute of the <code>Person</code> instance.</li>
+</ul>
+<p>Notice the comma as the separator between matches and the semicolon match at the
+end of the rule. Those matches must be found in the input but the matched
+strings will be discarded. They represent a syntactic noise.</p>
+<p>If the RHS is one of textX BASETYPEs than the matched string will be converted
+to some of plain python types (e.g. <code>int</code>, <code>string</code>, <code>boolean</code>).</p>
+<p>If RHS is string or regex match like in this example:</p>
+<pre><code>Color:
+  color=/\w+/
+;
+</code></pre>
+<p>then the attribute given by LHS will be set to be the string matched by the RHS
+regular expression or string.</p>
+<p>If the RHS is a reference to other rule than the attribute given by the LHS will
+be set to refer to the object created by the RHS rule.</p>
+<p>Following strings are matched by the <code>Person</code> rule from above:</p>
+<pre><code>Petar, Petrovic, 27, 185;
+John, Doe, 34, 178;
+</code></pre>
+<p>There are four types of assignments:</p>
+<ul>
+<li>
+<p><strong>Plain assignment</strong> (<code>=</code>) will match its RHS once and assign what is
+  matched to the attribute given by LHS. The above example uses plain
+  assignments.</p>
+<p>Examples:</p>
+<pre><code>a=INT
+b=FLOAT
+c=/[a-Z0-9]+/
+dir=Direction
+</code></pre>
+</li>
+<li>
+<p><strong>Boolean assignment</strong> (<code>?=</code>) will set the attribute on <code>True</code> if
+  the RHS match succeeds or <code>False</code> otherwise.</p>
+<p>Examples::</p>
+<pre><code>cold ?= 'cold'
+number_given ?= INT
+</code></pre>
+</li>
+<li>
+<p><strong>Zero or more assignment</strong> (<code>*=</code>) - LHS attribute will be a
+  <code>list</code>. This assignment will match RHS as long as match succeeds and
+  each matched object will be appended to the attribute. If no match succeeds
+  attribute will be an empty list.</p>
+<p>Examples::</p>
+<pre><code>commands*=Command
+numbers*=INT
+</code></pre>
+</li>
+<li>
+<p><strong>One or more assignment</strong> (<code>+=</code>) - same as previous but must match RHS
+  at least once. If no match succeeds this assignment does not succeeds.</p>
+</li>
+</ul>
+<h3 id="matches">Matches</h3>
+<p>Match expression are, besides base type rules, the expression at the lowest
+level. They are the basic building blocks for more complex expressions. These
+expressions will consume input on success.</p>
+<p>There are two types of match expressions:</p>
+<ul>
+<li>
+<p><strong>String match</strong> - is written as a single quoted string. It will match literal
+  string on the input.</p>
+<p>Here are a few examples of string matches:</p>
+<pre><code>'blue'
+'zero'
+'person'
+</code></pre>
+</li>
+<li>
+<p><strong>Regex match</strong> - uses regular expression defined inside <code>/ /</code> to match
+  input. Therefore, it defines a whole class of strings that can be matched.
+  Internally a python <code>re</code> module is used.</p>
+<p>Here are few example of regex matches:</p>
+<pre><code>/\s*/
+/[-\w]*\b/
+/[^}]*/
+</code></pre>
+</li>
+</ul>
+<h3 id="references">References</h3>
+<p>Rules can reference each other. References are usually used as a
+RHS of the assignments. There are two types of rule references:</p>
+<ul>
+<li>
+<p><strong>Match rule reference</strong> - will <em>call</em> other rule. When instance of the called
+  rule is created it will be assigned to the attribute on the LHS. We say that
+  referred object is contained inside referring object (e.g. they form a
+  <a href="../metamodel/#parent-child-relationships">parent-child relationship</a>.</p>
+<p>Example::</p>
+<pre><code>Structure:
+  'structure' '{'
+    elements*=StructureElement
+  '}'
+;
+</code></pre>
+<p><code>StructureElement</code> will be matched zero or more times. With each match a new
+instance of <code>StructureElement</code> will be created and appended to <code>elements</code>
+python list. A <code>parent</code> attribute of each <code>StructureElement</code> will be set to
+the containing <code>Structure</code>.</p>
+</li>
+<li>
+<p><strong>Link rule reference</strong> - will match an identifier of some class object at the
+  given place and convert that identifier to python reference to target object.
+  This reference resolving is done automatically by textX. By default a
+  <code>name</code> attribute is used as an identifier of the object. Currently,
+  there is no automatic support for name spaces in textX. All objects of the
+  same class are in a single namespace.</p>
+<p>Example:</p>
+<pre><code>ScreenType:
+  'screen' name=ID "{"
+  '}'
+;
+
+ScreenInstance:
+  'screen' type=[ScreenType]
+;
+</code></pre>
+<p>The <code>type</code> attribute is a link to <code>ScreenType</code> object. This is a valid
+usage:</p>
+<pre><code>// This is definition of ScreenType object
+screen Introduction {
+
+}
+
+// And this is reference link to the above ScreenType object
+// ScreenInstance instance
+screen Introduction
+</code></pre>
+<p><code>Introduction</code> will be matched, the <code>ScreenType</code> object with that name will
+be found and <code>type</code> attribute of <code>ScreenInstance</code> instance will be set to
+it.</p>
+<p><code>ID</code> rule is used by default to match link identifier. If you want to change
+that you can use the following syntax:</p>
+<pre><code>ScreenInstance:
+  'screen' type=[ScreenType|WORD]
+;
+</code></pre>
+<p>Here, instead of <code>ID</code> a <code>WORD</code> rule is used to match object identifier.</p>
+</li>
+</ul>
+<h3 id="repetition-modifiers">Repetition modifiers</h3>
+<p>Repetition modifiers are used for the modification of repetition expressions
+(<code>*</code>, <code>+</code>, <code>*=</code>, <code>+=</code>). They are specified in brackets <code>[  ]</code>. If there are more
+modifiers they are separated by a comma.</p>
+<p>Currently there are two modifiers defined:</p>
+<ul>
+<li>
+<p><strong>Separator modifier</strong> - is used to define separator on multiple matches.
+  Separator is simple match (string match or regex match).</p>
+<p>Example:</p>
+<pre><code>numbers*=INT[',']
+</code></pre>
+<p>Here a separator string match is defined (<code>','</code>). This will match zero
+or more integers separated by commas.</p>
+<pre><code>45, 47, 3, 78
+</code></pre>
+<p>A regex can be specified as a separator.</p>
+<pre><code>fields += ID[/;|,|:/]
+</code></pre>
+<p>This will match IDs separated by either <code>;</code> or <code>,</code> or <code>:</code>.</p>
+<pre><code>first, second; third, fourth: fifth
+</code></pre>
+</li>
+<li>
+<p><strong>End-of-line terminate modifier</strong> (<code>eolterm</code>) - used to terminate repetition
+  on end-of-line. By default repetition match will span lines. When this
+  modifier is specified repetition will work inside current line only.</p>
+<p>Example:</p>
+<pre><code>STRING*[',', eolterm]
+</code></pre>
+<p>Here we have separator as well as <code>eolterm</code> defined. This will match
+zero or more strings separated by commas inside one line.</p>
+<pre><code>"first", "second", "third"
+"fourth"
+</code></pre>
+<p>If we run example expression once on this string it will match first line only.
+<code>"fourth"</code> in the second line will not be matched.</p>
+</li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Be aware that when <code>eolterm</code> modifier is used its effect starts from
+previous match. For example:</p>
+<pre><code>Conditions:
+  'conditions' '{'
+    varNames+=WORD[eolterm]    // match var names until end of line
+  '}'
+</code></pre>
+<p>In this example <code>varNames</code> must be matched in the same line with
+<code>conditions {</code> because <code>eolterm</code> effect start immediately.
+In this example we wanted to give user freedom to specify var names on
+the next line, even to put some empty lines if he/she wish. In order to do
+that we should modify example like this::</p>
+<pre><code>Conditions:
+  'conditions' '{'
+    /\s*/
+    varNames+=WORD[eolterm]    // match var names until end of line
+  '}'
+</code></pre>
+<p>Regex match <code>/\s*/</code> will collect whitespaces (spaces and new-lines)
+before <code>WORD</code> match begins. Afterwards, repeated matches will work
+inside one line only.</p>
+</div>
+<h2 id="rule-types">Rule types</h2>
+<p>There are three kinds of rules in textX:</p>
+<ul>
+<li>Common rules (or just rules)</li>
+<li>Abstract rules</li>
+<li>Match rules</li>
+</ul>
+<p><strong>Abstract rules</strong> are rules given as an ordered choice of other rules. For
+example:</p>
+<pre><code>Command:
+  MoveCommand | InitialCommand
+;
+</code></pre>
+<p>A meta-class of this rule will never be instantiated. The purpose of this rule
+is to generalize other rules and be used in match and link references.</p>
+<p>For example:</p>
+<pre><code>Program:
+  'begin'
+    commands*=Command
+  'end'
+;
+</code></pre>
+<p>Python objects in <code>commands</code> list will be either instances of <code>MoveCommand</code> or
+<code>InitialCommand</code>.</p>
+<p><strong>Match rule</strong> is special kind of rule that is given as ordered choice of simple
+matches and base type rule references. It is usually used to specify some
+enumerated values.</p>
+<p>Examples:</p>
+<pre><code>Widget:
+  "edit"|"combo"|"checkbox"|"togglebutton"
+;
+
+Name:
+  STRING|/(\w|\+|-)+/
+;
+</code></pre>
+<p>These rules can be used in match references only and results in objects of base
+python types (<code>str</code>, <code>int</code>, <code>bool</code>, <code>float</code>).</p>
+<h2 id="rule-modifiers">Rule modifiers</h2>
+<p>Rule modifiers are used for  the modification of rules expression. They are
+specified in brackets (<code>[  ]</code>) at the begining of the rule definition after the
+rule name. Currently, they are used to alter parser configuration for whitespace
+handling on the rule level.</p>
+<p>There are two rule modifier at the moment:</p>
+<ul>
+<li>
+<p><strong>skipws, noskipws</strong> - are used to enable/disable whitespace skipping during
+  parsing. This will change global parser <code>skipws</code> setting given during
+  meta-model instantiation.</p>
+<p>Example:</p>
+<pre><code>Rule:
+    'entity' name=ID /\s*/ call=Rule2;
+Rule2[noskipws]:
+    'first' 'second';
+</code></pre>
+<p>In this example <code>Rule</code> rule will use default parser behavior set during
+meta-model instantiation while <code>Rule2</code> rule will disable whitespace
+skipping. This will change <code>Rule2</code> to match the word <code>firstsecond</code> but not
+words <code>first second</code> with whitespaces in between.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Remember that whitespace handling modification will start immediately
+after previous match. In the above example, additional <code>/\s*/</code> is given
+before <code>Rule2</code> call to consume all whitespaces before trying to match
+<code>Rule2</code>.</p>
+</div>
+</li>
+<li>
+<p><strong>ws</strong> - used to redefine what is considered to be a whitespaces on the rule
+  level. textX by default treat space, tab and new-line as a whitespace
+  characters. This can be changed globally during meta-model instantiation (see
+  <a href="../metamodel/#whitespace-handling">Whitespace handling</a>) or per rule using 
+  this modifier.</p>
+<p>Example:</p>
+<pre><code>Rule:
+    'entity' name=ID /\s*/ call=Rule2;
+Rule2[ws='\n']:
+    'first' 'second';
+</code></pre>
+<p>In this example <code>Rule</code> will use default parser behavior but the
+<code>Rule2</code> will alter the white-space definition to be new-line only.
+This means that the words <code>first</code> and <code>second</code> will get matched
+only if they are on separate lines or in the same line but without other
+characters in between (even tabs and spaces).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As in previous example the modification will start immediately so if you
+want to consume preceding spaces you must do that explicitely as given
+with <code>/\s*/</code> in the :<code>Rule</code>.</p>
+</div>
+</li>
+</ul>
+<h2 id="grammar-comments">Grammar comments</h2>
+<p>Syntax for comments inside grammar is <code>//</code> for line comments and
+<code>/* ... */</code> for block comments.</p>
+<h2 id="language-comments">Language comments</h2>
+<p>To support comments in your DSL use a special grammar rule <code>Comment</code>.
+textX will try to match this rule in between each other normal grammar match
+(similar to whitespace matching).
+If the match succeeds the matched content will be discarded.</p>
+<p>For example, in the <a href="../tutorial_basic/">robot language example</a> comments are
+defined like this:</p>
+<pre><code>Comment:
+  /\/\/.*$/
+;
+</code></pre>
+<p>Which states that everything starting with <code>//</code> and continuing until the
+end of line is a comment.</p>
+<h2 id="grammar-modularization">Grammar modularization</h2>
+<p>Grammars can be defined in multiple files and than imported. Rules used in
+references are first searched in current file and than in imported files in the
+order of import.</p>
+<p>Example:</p>
+<pre><code>import scheme
+
+Library:
+  'library' name=Name '{'
+    attributes*=LibraryAttribute
+
+    scheme=Scheme
+
+  '}'
+;
+</code></pre>
+<p><code>Scheme</code> rule is defined in <code>scheme.tx</code> grammar file imported at the beginning.</p>
+<p>Grammar files may be located in folders. In that case dot notation is used.</p>
+<p>Example:</p>
+<pre><code>import component.types
+</code></pre>
+<p><code>types.tx</code> grammar is located in <code>component</code> folder relatively from current
+grammar file.</p>
+<p>If you want to override default search order you can specify fully qualified
+name of the rule using dot notation when giving the name of the referring
+object.</p>
+<p>Example:</p>
+<pre><code>import component.types
+
+MyRule:
+  a = component.types.List
+;
+
+List:
+  '[' values+=BASETYPE[','] ']'
+;
+</code></pre>
+<p><code>List</code> from <code>component.types</code> is matched/instantiated and set to <code>a</code> attribute.</p></div>
+            
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            
+            <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+
+        <script src="../js/jquery-1.10.2.min.js"></script>
+        <script src="../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../js/highlight.pack.js"></script>
+        <script>var base_url = '..';</script>
+        <script data-main="../mkdocs/js/search.js" src="../mkdocs/js/require.js"></script>
+        <script src="../js/base.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            From here you can search these documents. Enter
+                            your search terms below.
+                        </p>
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                            </div>
+                        </form>
+                        <div id="mkdocs-search-results"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </body>
+</html>

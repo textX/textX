@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="A meta-language for building Domain-Specific Languages (DSLs)">
+        <meta name="author" content="Igor Dejanović">
+        
+        <link rel="shortcut icon" href="./img/favicon.ico">
+
+	<title>textX</title>
+
+        <link href="./css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="./css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link href="./css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="./css/highlight.css">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        
+    </head>
+
+    <body class="homepage">
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            
+
+            <!-- Main title -->
+            <a class="navbar-brand" href=".">textX</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            
+                <!-- Main navigation -->
+                <ul class="nav navbar-nav">
+                
+                
+                    <li class="active">
+                        <a href=".">Home</a>
+                    </li>
+                
+                
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">User Guide <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="getting_started/">Getting started</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="grammar/">Grammar</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="metamodel/">Meta-model</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="model/">Model</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="visualization/">Visualization</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="error_handling/">Error handling</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="debugging/">Debugging</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="tutorial_basic/">Basic tutorial</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="about/discuss/">Discuss</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="about/contributing/">Contributing</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="about/license/">License</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                </ul>
+            
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
+                
+                    <li class="disabled">
+                        <a rel="next" >
+                            <i class="fa fa-arrow-left"></i> Previous
+                        </a>
+                    </li>
+                    <li >
+                        <a rel="prev" href="getting_started/">
+                            Next <i class="fa fa-arrow-right"></i>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a href="https://github.com/igordejanovic/textX">
+                            
+                                <i class="fa fa-github"></i>
+                            
+                            GitHub
+                        </a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#textx">textX</a></li>
+        
+            <li><a href="#feature-highlights">Feature highlights</a></li>
+        
+    
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="textx">textX</h1>
+<hr />
+<p><a href="https://github.com/igordejanovic/textX">textX</a> is a meta-language (i.e. a
+language for language definition) for domain-specific language (DSL)
+specification in Python.</p>
+<p>From a single grammar description textX automatically builds a meta-model (in
+the form of Python classes) and a parser for your language. Parser will parse
+expressions on your language and automatically build a graph of Python objects
+(i.e. the model) corresponding to the meta-model.</p>
+<p>textX is inspired by <a href="http://www.eclipse.org/xtext/">Xtext</a> - a Java based
+language workbench for building DSLs with full tooling support (editors,
+debuggers etc.) on Eclipse platform.  If you like Java and
+<a href="http://www.eclipse.org/">Eclipse</a> check it out. It is a great tool.</p>
+<p>See <a href="getting_started/">Getting Started guide</a> to get you going. Also, you can
+check out <a href="https://github.com/igordejanovic/textX/tree/master/examples/">examples</a>.</p>
+<h2 id="feature-highlights">Feature highlights</h2>
+<ul>
+<li>
+<p><strong>Meta-model/parser from a single description</strong></p>
+<p>A single description is used to define both language concrete syntax and its
+meta-model (a.k.a. abstract syntax). See the description of
+<a href="grammar/">grammar</a> and <a href="metamodel/">metamodel</a>.</p>
+</li>
+<li>
+<p><strong>Automatic model (AST) construction</strong></p>
+<p>Parse tree will be automatically transformed to a graph of python objects
+(a.k.a. the model). See the <a href="model/">model</a> section.</p>
+<p>Python classes will be created by textX but if needed a user supplied
+classes may be used. See <a href="metamodel/#custom-classes">custom classes</a>.</p>
+</li>
+<li>
+<p><strong>Automatic linking</strong></p>
+<p>You can have a references to other objects in your language and the textual
+representation of the reference will be resolved to proper python reference
+automatically.</p>
+</li>
+<li>
+<p><strong>Automatic parent-child relationships</strong></p>
+<p>textX will maintain a parent-child relationships imposed by the grammar.
+See <a href="metamodel/#parent-child-relationships">parent-child relationships</a>.</p>
+</li>
+<li>
+<p><strong>Parser control</strong></p>
+<p>Parser can be configured with regard to case handling, whitespace handling,
+keyword handling etc. See <a href="metamodel/#parser-configuration">parser
+configuration</a>.</p>
+</li>
+<li>
+<p><strong>Model/object post-processing</strong></p>
+<p>A callbacks (so called processors) can be registered for models and
+individual classes.  This enables model/object postprocessing (validation,
+additional changes etc.).  See <a href="metamodel/#processors">processors</a> section.</p>
+</li>
+<li>
+<p><strong>Grammar modularization - imports</strong></p>
+<p>Grammar can be split out in multiple files and than files/grammars can be
+imported where needed. See <a href="grammar/#grammar-modularization">Grammar
+modularization</a>.</p>
+</li>
+<li>
+<p><strong>Meta-model/model visualization</strong></p>
+<p>Both meta-model and parsed models can be visulized using
+<a href="http://graphviz.org/">GraphViz</a> software package. See
+<a href="visualization/">visualization</a> section.</p>
+</li>
+</ul></div>
+            
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            
+            <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+
+        <script src="./js/jquery-1.10.2.min.js"></script>
+        <script src="./js/bootstrap-3.0.3.min.js"></script>
+        <script src="./js/highlight.pack.js"></script>
+        <script>var base_url = '.';</script>
+        <script data-main="./mkdocs/js/search.js" src="./mkdocs/js/require.js"></script>
+        <script src="./js/base.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            From here you can search these documents. Enter
+                            your search terms below.
+                        </p>
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                            </div>
+                        </form>
+                        <div id="mkdocs-search-results"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </body>
+</html>
+
+<!--
+MkDocs version : 0.14.0
+Build Date UTC : 2015-10-11 21:48:32.898832
+-->

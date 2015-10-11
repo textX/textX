@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="author" content="Igor Dejanović">
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+
+	<title>Basic tutorial - textX</title>
+
+        <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="../css/highlight.css">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            
+
+            <!-- Main title -->
+            <a class="navbar-brand" href="..">textX</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            
+                <!-- Main navigation -->
+                <ul class="nav navbar-nav">
+                
+                
+                    <li >
+                        <a href="..">Home</a>
+                    </li>
+                
+                
+                
+                    <li class="dropdown active">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">User Guide <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../getting_started/">Getting started</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../grammar/">Grammar</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../metamodel/">Meta-model</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../model/">Model</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../visualization/">Visualization</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../error_handling/">Error handling</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../debugging/">Debugging</a>
+</li>
+
+                        
+                            
+<li class="active">
+    <a href="./">Basic tutorial</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../about/discuss/">Discuss</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../about/contributing/">Contributing</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../about/license/">License</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                </ul>
+            
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
+                
+                    <li >
+                        <a rel="next" href="../debugging/">
+                            <i class="fa fa-arrow-left"></i> Previous
+                        </a>
+                    </li>
+                    <li >
+                        <a rel="prev" href="../about/discuss/">
+                            Next <i class="fa fa-arrow-right"></i>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a href="https://github.com/igordejanovic/textX">
+                            
+                                <i class="fa fa-github"></i>
+                            
+                            GitHub
+                        </a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#basic-tutorial">Basic tutorial</a></li>
+        
+            <li><a href="#robot-language">Robot language</a></li>
+        
+            <li><a href="#grammar">Grammar</a></li>
+        
+            <li><a href="#instantiating-meta-model">Instantiating meta-model</a></li>
+        
+            <li><a href="#instantiating-model">Instantiating model</a></li>
+        
+            <li><a href="#interpreting-model">Interpreting model</a></li>
+        
+    
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="basic-tutorial">Basic tutorial</h1>
+<p>In this tutorial we will build a simple robot language to demonstrate
+the basic workflow when working with textX.</p>
+<h2 id="robot-language">Robot language</h2>
+<p>When building a DSL we should first do a domain analysis, to see what concepts
+do we have and what are their relationships and constraints. In the following
+paragraph a short analysis is done. Important concepts are emphasized.</p>
+<p>In this case we want an imperative language that should define robot movement on
+the imaginary grid.  Robot should <code>move</code> in four base <code>direction</code>. We will
+call that direction <code>up, down, left</code> and <code>right</code> (you could use north,
+south, west and east if you like).  Additionally, we shall have a robot
+coordinate given in x, y <code>position</code>.  For simplicity our robot can move in
+discrete <code>steps</code>. In each movement robot can move by 1 or more steps but in
+the same direction. Coordinate is given as a pair of integer numbers. Robot will
+have an <code>initial position</code>. If not given explicitly it is assumed that
+position is <code>(0, 0)</code>.</p>
+<p>So, lets build a simple robot language.</p>
+<h2 id="grammar">Grammar</h2>
+<p>First we need to define a grammar for the language. In textX the grammar will
+also define a meta-model (a.k.a. abstract syntax) for the language which can be
+visualized and be used as a part of the documentation.</p>
+<p>Usually we start by outlining some program in the language we are building.</p>
+<p>Here is an example of <em>program</em> on robot language:</p>
+<pre><code>begin
+    initial 3, 1
+    up 4
+    left 9
+    down
+    right 1
+end
+</code></pre>
+<p>We have <code>begin</code> and <code>end</code> keywords that define the beginning and end of the
+program. In this case we could do without these keywords but lets have it to
+make it more interesting.</p>
+<p>In between those two keywords we have a sequence of instruction. First
+instruction will position our robot at coordinate <code>(3, 1)</code>. After that robot will
+move <code>up 4 steps</code>, <code>left 9 steps</code>, <code>down 1 step</code> (1 step is default) and finally <code>1
+step to the right</code>.</p>
+<p>Lets start with grammar definition. We shall start in a top-down manner so lets
+first define a program as a whole.</p>
+<pre><code>Program:
+  'begin'
+    commands*=Command
+  'end'
+;
+</code></pre>
+<p>Here we see that our program is defined with sequence of:</p>
+<ul>
+<li>string match (<code>'begin'</code>),</li>
+<li>zero or more assignment to <code>commands</code> attribute,</li>
+<li>string match (<code>'end'</code>).</li>
+</ul>
+<p>String matches will require literal strings given at the begin and end of
+program. If this is not satisfied a syntax error will be raised. This whole rule
+(<code>Program</code>) will create a class with the same name in the meta-model. Each
+program will be an instance of this class. <code>commands</code> assignment will result in
+a python attribute <code>commands</code> on the instance of <code>Program</code> class. This attribute
+will be of Python <code>list</code> type (because <code>*=</code> assignment is used).  Each element
+of this list will be a specific command.</p>
+<p>Now, we see that we have different types of commands. First command has two
+parameters and it defines the robot initial position. Other commands has one or
+zero parameters and define the robot movement.</p>
+<p>To state that some textX rule is specialised in 2 or more rules we use an
+abstract rule. For <code>Command</code> we shall define two specializations:
+<code>InitialCommand</code> and <code>MoveCommand</code> like this:</p>
+<pre><code>Command:
+  InitialCommand | MoveCommand
+;
+</code></pre>
+<p>Abstract rule is given as ordered choice of other rules. This can be read as
+<em>Each command is either a InitialCommand or MoveCommand</em>.</p>
+<p>Lets now define command for setting initial position.</p>
+<pre><code>InitialCommand:
+  'initial' x=INT ',' y=INT
+;
+</code></pre>
+<p>This rule specifies a class <code>InitialCommand</code> in the meta-model. Each initial
+position command will be an instance of this class.</p>
+<p>So, this command should start with the keyword <code>initial</code> after which we give an
+integer number (base type rule <code>INT</code> - this number will be available as
+attribute <code>x</code> on the <code>InitialCommand</code> instance), than a separator <code>,</code> is
+required after which we have <code>y</code> coordinate as integer number (this will be
+available as attribute <code>y</code>). Using base type rule <code>INT</code> matched number from
+input string will be automatically converted to python type <code>int</code>.</p>
+<p>Now, lets define a movement command. We know that this command consists of
+direction identifier and optional number of steps (if not given the default will
+be 1).</p>
+<pre><code>MoveCommand:
+  direction=Direction (steps=INT)?
+;
+</code></pre>
+<p>So, the movement command model object will have two attributes.
+<code>direction</code> attribute will define one of the four possible directions and
+<code>steps</code> attribute will be an integer that will hold how many steps a robot
+will move in given direction. Steps are optional so if not given in the program
+it will still be a correct syntax. Notice, that the default of 1 is not
+specified in the grammar. The grammar deals with syntax constraints. Additional
+semantics will be handled later in model/object processors (see below).</p>
+<p>Now, the missing part is <code>Direction</code> rule referenced from the previous rule.
+This rule will define what can be written as a direction.  We will define this
+rule like this:</p>
+<pre><code>Direction:
+  "up"|"down"|"left"|"right"
+;
+</code></pre>
+<p>This kind of rule is called a <em>match rule</em>. This rule does not result in a new
+object. It consists of ordered choice of simple matches (string, regex), base
+type rules (INT, STRING, BOOL...) and/or other match rule references.</p>
+<p>The result of this match will be assigned to the attribute from which it was
+referenced. If base type was used it will be converted in a proper python type.
+If not, it will be a python string that will contain the text that was matched
+from the input.</p>
+<p>In this case a one of 4 words will be matched and that string will be assigned
+to the <code>direction</code> attribute of the <code>MoveCommand</code> instance.</p>
+<p>The final touch to the grammar is a definition of the comment rule. We want to
+comment our robot code, right?</p>
+<p>In textX a special rule called <code>Comment</code> is used for that purpose.
+Lets define a C-style single line comments.</p>
+<pre><code>Comment:
+  /\/\/.*$/
+;
+</code></pre>
+<p>Our grammar is done. Save it in <code>robot.tx</code> file. The content of this file should
+now be:</p>
+<pre><code>Program:
+  'begin'
+    commands*=Command
+  'end'
+;
+
+Command:
+  InitialCommand | MoveCommand
+;
+
+InitialCommand:
+  'initial' x=INT ',' y=INT
+;
+
+MoveCommand:
+  direction=Direction (steps=INT)?
+;
+
+Direction:
+  "up"|"down"|"left"|"right"
+;
+
+Comment:
+  /\/\/.*$/
+;
+</code></pre>
+<p>Notice that we have not constrained initial position command to be specified
+just once on the beginning of the program. This basically means that this
+command can be given multiple times throughout the program. I will leave as an
+exercise to the reader to implement this constraint.</p>
+<h2 id="instantiating-meta-model">Instantiating meta-model</h2>
+<p>In order to parse our models we first need to construct a meta-model. A
+textX meta-model is a Python object that contains all classes that can be
+instantiated in our model. For each grammar rule a class is created.
+Additionally, meta-model contains a parser that knows how to parse input
+strings. From parsed input (parse tree) meta-model will create a model.</p>
+<p>Meta-models are created from our grammar description, in this case
+<code>robot.tx</code> file:</p>
+<pre><code class="python">from textx.metamodel import metamodel_from_file
+robot_mm = metamodel_from_file('robot.tx')
+</code></pre>
+
+<p>Next step during language design is meta-model visualization. It is usually
+easier to comprehend our language if rendered graphically. To do so we use
+excellent <a href="http://www.graphviz.org/">GraphViz</a> software package and its DSL for
+graph specification called <em>dot</em>. It is a textual language for visual graph
+definition.</p>
+<p>Lets export our meta-model to dot language.</p>
+<pre><code class="python">from textx.export import metamodel_export
+metamodel_export(robot_mm, 'robot_meta.dot')
+</code></pre>
+
+<p>First parameter is our meta-model object while the second is an output dot
+filename.</p>
+<p><code>dot</code> file can be opened with dot viewer (there are many to choose from) or
+transformed with <code>dot</code> tool to raster or vector graphics.</p>
+<p>For example:</p>
+<pre><code>dot -Tpng robot_meta.dot -O robot_meta.png
+</code></pre>
+<p>This command will create <code>png</code> image out of <code>dot</code> file.</p>
+<p><img alt="Robot meta-model" src="https://raw.githubusercontent.com/igordejanovic/textX/master/examples/robot/robot_meta.dot.png" /></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This meta-model can be used to parse multiple models.</p>
+</div>
+<h2 id="instantiating-model">Instantiating model</h2>
+<p>Now, when we have our meta-model we can parse models from strings or external
+textual files.</p>
+<pre><code class="python">robot_model = robot_mm.model_from_file('program.rbt')
+</code></pre>
+
+<p>This command will parse file <code>program.rbt</code> and constructs our robot model.
+In this file does not match our language a syntax error will be raised on the
+first error encountered.</p>
+<p>In the same manner as meta-model visualization we can visualize our model too.</p>
+<pre><code class="python">from textx.export import model_export
+model_export(robot_model, 'program.dot')
+</code></pre>
+
+<p>This will create <code>program.dot</code> file that can be visualized using proper viewer
+or transformed to image.</p>
+<pre><code>dot -Tpng program.dot -O program.png
+</code></pre>
+<p>For the robot program above we should get an image like this:</p>
+<p><img alt="Robot program" src="https://raw.githubusercontent.com/igordejanovic/textX/master/examples/robot/program.dot.png" /></p>
+<h2 id="interpreting-model">Interpreting model</h2>
+<p>When we have successfully parsed and loaded our model/program (or mogram or
+prodel ;) ) we can do various stuff. Usually what would you like to do is to
+translate your program to some other language (Java, Python, C#, Ruby,...) or
+you could build an interpreter that will evaluate/interpret your model directly.
+Or you could analyse your model, extract informations from it etc. It is up to
+you to decide.</p>
+<p>We will show here how to build a simple interpreter that will start the robot
+from the initial position and print the position of the robot after each
+command.</p>
+<p>Lets imagine that we have a robot that understands our language.</p>
+<pre><code>class Robot(object):
+
+  def __init__(self):
+    # Initial position is (0,0)
+    self.x = 0
+    self.y = 0
+
+  def __str__(self):
+    return "Robot position is {}, {}.".format(self.x, self.y)
+</code></pre>
+<p>Now, our robot will have an <code>interpret</code> method that accepts our robot model and
+runs it. At each step this method will update the robot position and print it.</p>
+<pre><code>def interpret(self, model):
+
+    # model is an instance of Program
+    for c in model.commands:
+
+        if c.__class__.__name__ == "InitialCommand":
+            print("Setting position to: {}, {}".format(c.x, c.y))
+            self.x = c.x
+            self.y = c.y
+        else:
+            dir = c.direction
+            print("Going {} for {} step(s).".format(dir, c.steps))
+
+            move = {
+                "up": (0, 1),
+                "down": (0, -1),
+                "left": (-1, 0),
+                "right": (1, 0)
+            }[dir]
+
+            # Calculate new robot position
+            self.x += c.steps * move[0]
+            self.y += c.steps * move[1]
+
+        print(self)
+</code></pre>
+<p>Now lets give our <code>robot_model</code> to <code>Robot</code> instance and see what happens.</p>
+<pre><code class="python">robot = Robot()
+robot.interpret(robot_model)
+</code></pre>
+
+<p>You should get this output:</p>
+<pre><code>Setting position to: 3, 1
+Robot position is 3, 1.
+Going up for 4 step(s).
+Robot position is 3, 5.
+Going left for 9 step(s).
+Robot position is -6, 5.
+Going down for 0 step(s).
+Robot position is -6, 5.
+Going right for 1 step(s).
+Robot position is -5, 5.
+</code></pre>
+<p>It is <em>almost</em> correct. We can see that down movement is for 0 steps because we
+have not defined the steps for <code>down</code> command and haven't done anything yet to
+implement default of 1.</p>
+<p>The best way to implement default value for step is to use so called <a href="../metamodel/#object-processors">object
+processor</a> for <code>MoveCommand</code>.
+Object processor is a callable that gets called whenever textX parses and
+instantiates an object of particular class. You can register object processors
+for the classes your wish to process in some way immediately after
+instantiation.</p>
+<p>Lets define our processor for <code>MoveCommand</code>.</p>
+<pre><code>def move_command_processor(move_cmd):
+
+  if move_cmd.steps == 0:
+    move_cmd.steps = 1
+</code></pre>
+<p>Now, register this processor on meta-model. After meta-model construction add a
+line for registration.</p>
+<pre><code class="python">robot_mm.register_obj_processors({'MoveCommand': move_command_processor})
+</code></pre>
+
+<p><code>register_obj_processors</code> accepts a dictionary keyed by class name. The
+values are callables that should handle instances of the given class.</p>
+<p>If you run robot interpreter again you will get output like this:</p>
+<pre><code>Setting position to: 3, 1
+Robot position is 3, 1.
+Going up for 4 step(s).
+Robot position is 3, 5.
+Going left for 9 step(s).
+Robot position is -6, 5.
+Going down for 1 step(s).
+Robot position is -6, 4.
+Going right for 1 step(s).
+Robot position is -5, 4.
+</code></pre>
+<p>And now our robot behaves as expected!</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The code from this tutorial can be found in the
+<a href="https://github.com/igordejanovic/textX/tree/master/examples/robot">examples/robot</a>
+folder.</p>
+</div></div>
+            
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            
+            <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+
+        <script src="../js/jquery-1.10.2.min.js"></script>
+        <script src="../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../js/highlight.pack.js"></script>
+        <script>var base_url = '..';</script>
+        <script data-main="../mkdocs/js/search.js" src="../mkdocs/js/require.js"></script>
+        <script src="../js/base.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            From here you can search these documents. Enter
+                            your search terms below.
+                        </p>
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                            </div>
+                        </form>
+                        <div id="mkdocs-search-results"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </body>
+</html>
