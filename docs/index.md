@@ -74,3 +74,17 @@ check out [examples](https://github.com/igordejanovic/textX/tree/master/examples
     [GraphViz](http://graphviz.org/) software package. See
     [visualization](visualization.md) section.
 
+
+## Open-source projects using textX
+
+- [applang](https://github.com/kosanmil/applang) - Textual DSL for generating mobile applications
+- [pyTabs](https://github.com/E2Music/pyTabs) - A Domain-Specific Language (DSL) for simplified music notation
+- [pyFlies](https://github.com/igordejanovic/pyFlies) - DSL for cognitive experiments modeling
+
+
+## Editor/IDE support
+
+If you are a vim editor user check out [support for vim](https://github.com/igordejanovic/textx.vim/).
+
+If you are more of an IDE type check out [textX-ninja project](https://github.com/igordejanovic/textX-ninja).
+

@@ -16,3 +16,21 @@ It is fully dynamic - no code generation at all!
 
 Documentation is available at http://igordejanovic.net/textX/
 
+
+.. _Arpeggio: https://github.com/igordejanovic/Arpeggio
+.. _Xtext: http://www.eclipse.org/Xtext/
+
+.. |pypi-badge| image:: https://img.shields.io/pypi/v/textX.svg
+   :target: https://pypi.python.org/pypi/textX
+   :alt: PyPI Version
+
+.. |license| image:: https://img.shields.io/pypi/l/Arpeggio.svg
+
+.. |build-status| image:: https://travis-ci.org/igordejanovic/textX.svg?branch=master
+   :target: https://travis-ci.org/igordejanovic/textX
+
+.. |docs| image:: https://img.shields.io/badge/docs-latest-green.svg
+   :target: http://igordejanovic.net/textX/
+   :alt: Documentation Status
+
+
