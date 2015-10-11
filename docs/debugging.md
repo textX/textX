@@ -1,27 +1,24 @@
-.. _debugging:
-
-Debugging
-=========
+# Debugging
 
 textX supports debugging on the meta-model (grammar) and model level. If
 debugging is enabled textX will print various debugging messages.
 
-If :code:`debug` parameter to meta-model construction is set to :code:`True`
-debug messages during grammar parsing and meta-model construction will be
-printed. Additionally a parse tree created during grammar parse as well as
-meta-model (if constructed successfully) dot files will be generated:
+If `debug` parameter to meta-model construction is set to `True` debug messages
+during grammar parsing and meta-model construction will be printed. Additionally
+a parse tree created during grammar parse as well as meta-model (if constructed
+successfully) dot files will be generated:
 
-.. code:: python
+```python
+form textx.metamodel import metamodel_from_file
 
-  form textx.metamodel import metamodel_from_file
+my_metamodel = metamodel_from_file('mygrammar.tx', debug=True)
+```
 
-  my_metamodel = metamodel_from_file('mygrammar.tx', debug=True)
-
-If :code:`debug` is set in the :code:`model_from_file/str` calls than various
+If `debug` is set in the `model_from_file/str` calls than various
 messages during model parsing and construction will be printed. Additionally,
 parse tree created from the input as well as model will be exported to dot
-file:
+file.
 
-.. code:: python
-
+```python
   my_model = my_metamodel.model_from_file('mymodel.mod', debug=True)
+```
