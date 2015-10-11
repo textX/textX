@@ -16,17 +16,61 @@ language workbench for building DSLs with full tooling support (editors,
 debuggers etc.) on Eclipse platform.  If you like Java and
 [Eclipse](http://www.eclipse.org/) check it out. It is a great tool.
 
-# Scope
+See [Getting Started guide](getting_started.md) to get you going. Also, you can
+check out [examples](https://github.com/igordejanovic/textX/tree/master/examples/).
 
-Each language consists of:
 
-* Abstract syntax
-* One or more concrete syntaxes
-* Semantics
+## Feature highlights
 
-The focus of textX is the definition of abstract and textual concrete syntax
-using single textual description. The semantic is out of scope for this tool but
-it is easy to do in a pragmatic way by writing an interpreter (see :ref:`basic
-tutorial` ) or code generator using one of python's template engines.
+* **Meta-model/parser from a single description**
 
+    A single description is used to define both language concrete syntax and its
+    meta-model (a.k.a. abstract syntax). See the description of
+    [grammar](grammar.md) and [metamodel](metamodel.md).
+
+* **Automatic model (AST) construction**
+
+    Parse tree will be automatically transformed to a graph of python objects
+    (a.k.a. the model). See the [model](model.md) section.
+
+    Python classes will be created by textX but if needed a user supplied
+    classes may be used. See [custom classes](metamodel.md#custom-classes).
+
+* **Automatic linking**
+
+    You can have a references to other objects in your language and the textual
+    representation of the reference will be resolved to proper python reference
+    automatically.
+
+* **Automatic parent-child relationships**
+
+    textX will maintain a parent-child relationships imposed by the grammar.
+    See [parent-child relationships](metamodel.md#parent-child-relationships).
+
+* **Parser control**
+
+    Parser can be configured with regard to case handling, whitespace handling,
+    keyword handling etc. See [parser
+    configuration](metamodel.md#parser-configuration).
+
+
+* **Model/object post-processing**
+
+    A callbacks (so called processors) can be registered for models and
+    individual classes.  This enables model/object postprocessing (validation,
+    additional changes etc.).  See [processors](metamodel.md#processors) section.
+
+
+* **Grammar modularization - imports**
+
+    Grammar can be split out in multiple files and than files/grammars can be
+    imported where needed. See [Grammar
+    modularization](grammar.md#grammar-modularization).
+
+
+* **Meta-model/model visualization**
+
+    Both meta-model and parsed models can be visulized using
+    [GraphViz](http://graphviz.org/) software package. See
+    [visualization](visualization.md) section.
 

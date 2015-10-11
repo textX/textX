@@ -8,7 +8,6 @@ repo_url: https://github.com/igordejanovic/textX
 pages:
 - Home: index.md
 - User Guide:
-    - Features: features.md
     - Getting started: getting_started.md
     - Grammar: grammar.md
     - Meta-model: metamodel.md
@@ -18,6 +17,7 @@ pages:
     - Debugging: debugging.md
     - Basic tutorial: tutorial_basic.md
 - About:
+    - Discuss: about/discuss.md
     - Contributing: about/contributing.md
     - License: about/license.md
 

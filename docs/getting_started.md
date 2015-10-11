@@ -103,4 +103,5 @@ These are the steps to build a very basic Hello World - like language.
    graph of objects with plain attributes!
 
 
-
+!!! note
+    Try out a [complete tutorial](tutorial_basic.md) for building a simple robot language.
