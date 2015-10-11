@@ -81,6 +81,12 @@ check out [examples](https://github.com/igordejanovic/textX/tree/master/examples
 - [pyTabs](https://github.com/E2Music/pyTabs) - A Domain-Specific Language (DSL) for simplified music notation
 - [pyFlies](https://github.com/igordejanovic/pyFlies) - DSL for cognitive experiments modeling
 
+## textX in the industry
+
+[Typhoon HIL, Inc.](https://www.typhoon-hil.com/) is a technology leader for
+ultra-high fidelity Hardware-in-the-Loop (HIL) real-time emulators for power
+electronics.  textX is used as a part of Typhoon-HIL's schematic editor for the
+description of power electronic and DSP schemes and components.
 
 ## Editor/IDE support
 
