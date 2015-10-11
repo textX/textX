@@ -1,0 +1,26 @@
+site_name: textX
+
+site_description: A meta-language for building Domain-Specific Languages (DSLs)
+site_author: Igor Dejanović
+
+repo_url: https://github.com/igordejanovic/textX
+
+pages:
+- Home: index.md
+- User Guide:
+    - Features: features.md
+    - Getting started: getting_started.md
+    - Grammar: grammar.md
+    - Meta-model: metamodel.md
+    - Model: model.md
+    - Visualization: visualization.md
+    - Error handling: error_handling.md
+    - Debugging: debugging.md
+    - Basic tutorial: tutorial_basic.md
+- About:
+    - Contributing: about/contributing.md
+    - License: about/license.md
+
+markdown_extensions:
+    - admonition:
+
