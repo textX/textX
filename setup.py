@@ -32,6 +32,7 @@ setup(
     download_url = DOWNLOAD_URL,
     packages = ["textx"],
     install_requires = ["Arpeggio"],
+    scripts=['bin/textx'],
     keywords = "parser meta-language meta-model language DSL",
     classifiers=[
         'Development Status :: 3 - Alpha',
