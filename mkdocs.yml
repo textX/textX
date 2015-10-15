@@ -8,14 +8,16 @@ repo_url: https://github.com/igordejanovic/textX
 pages:
 - Home: index.md
 - User Guide:
-    - Getting started: getting_started.md
     - Grammar: grammar.md
     - Meta-model: metamodel.md
     - Model: model.md
     - Visualization: visualization.md
     - Error handling: error_handling.md
     - Debugging: debugging.md
-    - Basic tutorial: tutorial_basic.md
+- Tutorials:
+    - Hello World: tutorials/hello_world.md
+    - Robot: tutorials/robot.md
+    - Entity: tutorials/entity.md
 - About:
     - Discuss: about/discuss.md
     - Contributing: about/contributing.md

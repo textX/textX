@@ -1,25 +1,9 @@
-# Getting started
+# Hello World example
+
+This is an example of very simple Hello World like language.
 
 ---
 
-## Installation
-
-    pip install textX
-
-
-You should see an output similar to this.
-
-To verify that the library is properly installed run Python interpreter and
-try to import module `textx`.
-
-    python
-
-
-    import textx
-
-If there is no error textX is properly installed.
-
-# Quick start
 
 These are the steps to build a very basic Hello World - like language.
 
@@ -43,7 +27,7 @@ These are the steps to build a very basic Hello World - like language.
     must be matched the regular expression rule `/[^,]*/` (match non-comma zero
     or more times). For more information on grammar rules see ...
 
-2. Create meta-model from textX language description:
+2. Create meta-model from textX language description (file `hello.py`):
 
         from textx.metamodel import metamodel_from_file
         hello_meta = metamodel_from_file('hello.tx')
@@ -104,4 +88,4 @@ These are the steps to build a very basic Hello World - like language.
 
 
 !!! note
-    Try out a [complete tutorial](tutorial_basic.md) for building a simple robot language.
+    Try out a [complete tutorial](tutorials/robot.md) for building a simple robot language.

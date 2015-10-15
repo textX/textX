@@ -75,6 +75,43 @@ check out [examples](https://github.com/igordejanovic/textX/tree/master/examples
     [visualization](visualization.md) section.
 
 
+## Installation
+
+    pip install textX
+
+
+You should see an output similar to this:
+
+    Collecting textx
+      Downloading textX-0.4.2.tar.gz
+    Collecting Arpeggio (from textx)
+      Downloading Arpeggio-1.1.tar.gz
+    Building wheels for collected packages: textx, Arpeggio
+      Running setup.py bdist_wheel for textx
+      Stored in directory: /home/igor/.cache/pip/wheels/b7/d9/ab/05ac4d429fb9c424e8610e295d564e6f0482d2bf772efbb3be
+      Running setup.py bdist_wheel for Arpeggio
+      Stored in directory: /home/igor/.cache/pip/wheels/31/0c/fa/864d57518f97af0a57a71cc124c556af5c965580181204cab3
+    Successfully built textx Arpeggio
+    Installing collected packages: Arpeggio, textx
+    Successfully installed Arpeggio-1.1 textx-0.4.2
+
+To verify that the library is properly run:
+
+    $ python -c 'import textx'
+
+If there is no error textX is properly installed.
+
+## Getting started
+
+See textX `Tutorials` to get you started:
+
+- [Hello World](tutorials/hello_world.md)
+- [Robot](tutorials/robot.md)
+- [Entity](tutorials/entity.md)
+
+For specific information read various `User Guide` sections.
+
+
 ## Open-source projects using textX
 
 - [applang](https://github.com/kosanmil/applang) - Textual DSL for generating mobile applications

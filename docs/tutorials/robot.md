@@ -1,7 +1,9 @@
-# Basic tutorial
+# Robot tutorial
 
 In this tutorial we will build a simple robot language to demonstrate
 the basic workflow when working with textX.
+
+---
 
 ## Robot language
 
@@ -227,7 +229,7 @@ For example:
 
 This command will create `png` image out of `dot` file.
 
-![Robot meta-model](https://raw.githubusercontent.com/igordejanovic/textX/master/examples/robot/robot_meta.dot.png)
+![Robot meta-model](../images/robot.tx.dot.png)
 
 !!! note
     This meta-model can be used to parse multiple models.
@@ -259,7 +261,7 @@ or transformed to image.
 
 For the robot program above we should get an image like this:
 
-![Robot program](https://raw.githubusercontent.com/igordejanovic/textX/master/examples/robot/program.dot.png)
+![Robot program](../images/program.rbt.dot.png)
 
 
 ## Interpreting model
