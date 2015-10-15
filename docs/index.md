@@ -1,4 +1,4 @@
-# textX
+![textX logo](images/textX-logo.svg)
 
 ---
 
