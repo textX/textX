@@ -12,12 +12,6 @@
     
         
     <url>
-     <loc>None/getting_started/</loc>
-     <lastmod>2015-10-15</lastmod>
-     <changefreq>daily</changefreq>
-    </url>
-        
-    <url>
      <loc>None/grammar/</loc>
      <lastmod>2015-10-15</lastmod>
      <changefreq>daily</changefreq>
@@ -53,8 +47,24 @@
      <changefreq>daily</changefreq>
     </url>
         
+    
+
+    
+        
     <url>
-     <loc>None/tutorial_basic/</loc>
+     <loc>None/tutorials/hello_world/</loc>
+     <lastmod>2015-10-15</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>None/tutorials/robot/</loc>
+     <lastmod>2015-10-15</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>None/tutorials/entity/</loc>
      <lastmod>2015-10-15</lastmod>
      <changefreq>daily</changefreq>
     </url>

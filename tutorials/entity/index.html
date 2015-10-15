@@ -7,15 +7,15 @@
         
         <meta name="author" content="Igor Dejanović">
         
-        <link rel="shortcut icon" href="../img/favicon.ico">
+        <link rel="shortcut icon" href="../../img/favicon.ico">
 
-	<title>Getting started - textX</title>
+	<title>Entity - textX</title>
 
-        <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
-        <link href="../css/font-awesome-4.0.3.css" rel="stylesheet">
-        <link href="../css/base.css" rel="stylesheet">
-        <link rel="stylesheet" href="../css/highlight.css">
-        <link href="../style.css" rel="stylesheet">
+        <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="../../css/highlight.css">
+        <link href="../../style.css" rel="stylesheet">
 
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!--[if lt IE 9]>
@@ -44,7 +44,7 @@
             
 
             <!-- Main title -->
-            <a class="navbar-brand" href="..">textX</a>
+            <a class="navbar-brand" href="../..">textX</a>
         </div>
 
         <!-- Expanded navigation -->
@@ -55,60 +55,75 @@
                 
                 
                     <li >
-                        <a href="..">Home</a>
+                        <a href="../..">Home</a>
+                    </li>
+                
+                
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">User Guide <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../../grammar/">Grammar</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../../metamodel/">Meta-model</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../../model/">Model</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../../visualization/">Visualization</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../../error_handling/">Error handling</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../../debugging/">Debugging</a>
+</li>
+
+                        
+                        </ul>
                     </li>
                 
                 
                 
                     <li class="dropdown active">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">User Guide <b class="caret"></b></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tutorials <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                         
                             
+<li >
+    <a href="../hello_world/">Hello World</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../robot/">Robot</a>
+</li>
+
+                        
+                            
 <li class="active">
-    <a href="./">Getting started</a>
-</li>
-
-                        
-                            
-<li >
-    <a href="../grammar/">Grammar</a>
-</li>
-
-                        
-                            
-<li >
-    <a href="../metamodel/">Meta-model</a>
-</li>
-
-                        
-                            
-<li >
-    <a href="../model/">Model</a>
-</li>
-
-                        
-                            
-<li >
-    <a href="../visualization/">Visualization</a>
-</li>
-
-                        
-                            
-<li >
-    <a href="../error_handling/">Error handling</a>
-</li>
-
-                        
-                            
-<li >
-    <a href="../debugging/">Debugging</a>
-</li>
-
-                        
-                            
-<li >
-    <a href="../tutorial_basic/">Basic tutorial</a>
+    <a href="./">Entity</a>
 </li>
 
                         
@@ -123,19 +138,19 @@
                         
                             
 <li >
-    <a href="../about/discuss/">Discuss</a>
+    <a href="../../about/discuss/">Discuss</a>
 </li>
 
                         
                             
 <li >
-    <a href="../about/contributing/">Contributing</a>
+    <a href="../../about/contributing/">Contributing</a>
 </li>
 
                         
                             
 <li >
-    <a href="../about/license/">License</a>
+    <a href="../../about/license/">License</a>
 </li>
 
                         
@@ -154,12 +169,12 @@
                 </li>
                 
                     <li >
-                        <a rel="next" href="..">
+                        <a rel="next" href="../robot/">
                             <i class="fa fa-arrow-left"></i> Previous
                         </a>
                     </li>
                     <li >
-                        <a rel="prev" href="../grammar/">
+                        <a rel="prev" href="../../about/discuss/">
                             Next <i class="fa fa-arrow-right"></i>
                         </a>
                     </li>
@@ -184,109 +199,19 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
     
-        <li class="main active"><a href="#getting-started">Getting started</a></li>
-        
-            <li><a href="#installation">Installation</a></li>
-        
-    
-        <li class="main "><a href="#quick-start">Quick start</a></li>
+        <li class="main active"><a href="#entity-tutorial">Entity tutorial</a></li>
         
     
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h1 id="getting-started">Getting started</h1>
+<h1 id="entity-tutorial">Entity tutorial</h1>
+<p>A tutorial for building ER-like language and generating Java code.</p>
 <hr />
-<h2 id="installation">Installation</h2>
-<pre><code>pip install textX
-</code></pre>
-<p>You should see an output similar to this.</p>
-<p>To verify that the library is properly installed run Python interpreter and
-try to import module <code>textx</code>.</p>
-<pre><code>python
-
-
-import textx
-</code></pre>
-<p>If there is no error textX is properly installed.</p>
-<h1 id="quick-start">Quick start</h1>
-<p>These are the steps to build a very basic Hello World - like language.</p>
-<ol>
-<li>
-<p>Write a language description in textX (file <code>hello.tx</code>):</p>
-<pre><code>HelloWorldModel:
-  'hello' to_greet+=Who[',']
-;
-
-Who:
-  name = /[^,]*/
-;
-</code></pre>
-<p>Description consists of a set of parsing rules which at the same time
-describe Python classes that will be used to instantiate object of your
-model.  This small example consists of two rules: <code>HelloWorldModel</code> and
-<code>Who</code>.  <code>HelloWorldModel</code> must start with the keyword <code>hello</code> after which a
-one or more <code>Who</code> object must be written separated by commas. <code>Who</code> objects
-will be parsed, instantiated and stored in a <code>to_greet</code> list on a
-<code>HelloWorldModel</code> object. <code>Who</code> objects consists only of its names which
-must be matched the regular expression rule <code>/[^,]*/</code> (match non-comma zero
-or more times). For more information on grammar rules see ...</p>
-</li>
-<li>
-<p>Create meta-model from textX language description:</p>
-<pre><code>from textx.metamodel import metamodel_from_file
-hello_meta = metamodel_from_file('hello.tx')
-</code></pre>
-</li>
-<li>
-<p>Optionally export meta-model to dot (visualize your language abstract syntax):</p>
-<pre><code>from textx.export import metamodel_export
-metamodel_export(hello_meta, 'hello_meta.dot')
-</code></pre>
-<p><img alt="hello meta-model" src="../images/hello_meta.dot.png" /></p>
-<p>You can see that for each rule from language description an appropriate
-Python class has been created. A BASETYPE hierarchy is built-in. Each
-meta-model has it.</p>
-</li>
-<li>
-<p>Create some content (i.e. model) in your new language (<code>example.hello</code>):</p>
-<pre><code>hello World, Solar System, Universe
-</code></pre>
-<p>Your language syntax is also described by language rules from step 1.</p>
-<p>If we break down the text of the example model it looks like this:</p>
-<p><img alt="hello model parts" src="../images/hello_parts.png" /></p>
-<p>We see that the whole line is a <code>HelloWorldModel</code> and the parts <code>World</code>, 
-<code>Solar System</code>, and <code>Universe</code> are <code>Who</code> objects. Red coloured text is
-syntactic noise that is needed by the parser (and programmers) to recognize
-the boundaries of the objects in the text.</p>
-</li>
-<li>
-<p>Use meta-model to create models from textual description:</p>
-<pre><code>example_hello_model = hello_meta.model_from_file('example.hello')
-</code></pre>
-<p>Textual model ‘example.hello’ will be parsed and transformed to a plain
-Python object graph. Object classes are those defined by the meta-model.</p>
-</li>
-<li>
-<p>You can optionally export model to <code>dot</code> file to visualize it:</p>
-<pre><code>from textx.export import model_export
-model_export(example_hello_model, 'example.dot')
-</code></pre>
-<p><img alt="Example hello model" src="../images/example.dot.png" /></p>
-<p>This is an object graph automatically constructed from <code>example.hello</code>
-file.</p>
-<p>We see that each <code>Who</code> object is contained in the python attribute
-<code>to_greet</code> of list type which is defined by the grammar.</p>
-</li>
-<li>
-<p>Use your model: interpret it, generate code … It is a plain Python
-   graph of objects with plain attributes!</p>
-</li>
-</ol>
 <div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Try out a <a href="../tutorial_basic/">complete tutorial</a> for building a simple robot language.</p>
+<p class="admonition-title">TODO</p>
+<p>Will be done soon. In the meantime see Entity example.</p>
 </div></div>
             
         </div>
@@ -297,12 +222,12 @@ file.</p>
             <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p>
         </footer>
 
-        <script src="../js/jquery-1.10.2.min.js"></script>
-        <script src="../js/bootstrap-3.0.3.min.js"></script>
-        <script src="../js/highlight.pack.js"></script>
-        <script>var base_url = '..';</script>
-        <script data-main="../mkdocs/js/search.js" src="../mkdocs/js/require.js"></script>
-        <script src="../js/base.js"></script>
+        <script src="../../js/jquery-1.10.2.min.js"></script>
+        <script src="../../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../../js/highlight.pack.js"></script>
+        <script>var base_url = '../..';</script>
+        <script data-main="../../mkdocs/js/search.js" src="../../mkdocs/js/require.js"></script>
+        <script src="../../js/base.js"></script>
 
         <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
             <div class="modal-dialog">

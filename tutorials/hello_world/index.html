@@ -9,7 +9,7 @@
         
         <link rel="shortcut icon" href="../../img/favicon.ico">
 
-	<title>Discuss - textX</title>
+	<title>Hello World - textX</title>
 
         <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../../css/font-awesome-4.0.3.css" rel="stylesheet">
@@ -105,25 +105,25 @@
                 
                 
                 
-                    <li class="dropdown">
+                    <li class="dropdown active">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tutorials <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                         
                             
-<li >
-    <a href="../../tutorials/hello_world/">Hello World</a>
+<li class="active">
+    <a href="./">Hello World</a>
 </li>
 
                         
                             
 <li >
-    <a href="../../tutorials/robot/">Robot</a>
+    <a href="../robot/">Robot</a>
 </li>
 
                         
                             
 <li >
-    <a href="../../tutorials/entity/">Entity</a>
+    <a href="../entity/">Entity</a>
 </li>
 
                         
@@ -132,25 +132,25 @@
                 
                 
                 
-                    <li class="dropdown active">
+                    <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                         
                             
-<li class="active">
-    <a href="./">Discuss</a>
+<li >
+    <a href="../../about/discuss/">Discuss</a>
 </li>
 
                         
                             
 <li >
-    <a href="../contributing/">Contributing</a>
+    <a href="../../about/contributing/">Contributing</a>
 </li>
 
                         
                             
 <li >
-    <a href="../license/">License</a>
+    <a href="../../about/license/">License</a>
 </li>
 
                         
@@ -169,12 +169,12 @@
                 </li>
                 
                     <li >
-                        <a rel="next" href="../../tutorials/entity/">
+                        <a rel="next" href="../../debugging/">
                             <i class="fa fa-arrow-left"></i> Previous
                         </a>
                     </li>
                     <li >
-                        <a rel="prev" href="../contributing/">
+                        <a rel="prev" href="../robot/">
                             Next <i class="fa fa-arrow-right"></i>
                         </a>
                     </li>
@@ -199,22 +199,93 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
     
-        <li class="main active"><a href="#discuss-ask-questions">Discuss, ask questions</a></li>
+        <li class="main active"><a href="#hello-world-example">Hello World example</a></li>
         
     
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h1 id="discuss-ask-questions">Discuss, ask questions</h1>
-<p>Please use <a href="https://groups.google.com/forum/?hl=en#!forum/textx-talk">discussion
-forum</a> for general
-discussions.</p>
-<p>For bug reports or suggestions please use <a href="https://github.com/igordejanovic/textx/issues/">github issue
-tracker</a>.</p>
-<p>If you have some specific question on textX usage please use
-<a href="http://stackoverflow.com/">stackoverflow</a>.  Just make sure to tag your question
-with <code>textx</code>.</p></div>
+<h1 id="hello-world-example">Hello World example</h1>
+<p>This is an example of very simple Hello World like language.</p>
+<hr />
+<p>These are the steps to build a very basic Hello World - like language.</p>
+<ol>
+<li>
+<p>Write a language description in textX (file <code>hello.tx</code>):</p>
+<pre><code>HelloWorldModel:
+  'hello' to_greet+=Who[',']
+;
+
+Who:
+  name = /[^,]*/
+;
+</code></pre>
+<p>Description consists of a set of parsing rules which at the same time
+describe Python classes that will be used to instantiate object of your
+model.  This small example consists of two rules: <code>HelloWorldModel</code> and
+<code>Who</code>.  <code>HelloWorldModel</code> must start with the keyword <code>hello</code> after which a
+one or more <code>Who</code> object must be written separated by commas. <code>Who</code> objects
+will be parsed, instantiated and stored in a <code>to_greet</code> list on a
+<code>HelloWorldModel</code> object. <code>Who</code> objects consists only of its names which
+must be matched the regular expression rule <code>/[^,]*/</code> (match non-comma zero
+or more times). For more information on grammar rules see ...</p>
+</li>
+<li>
+<p>Create meta-model from textX language description (file <code>hello.py</code>):</p>
+<pre><code>from textx.metamodel import metamodel_from_file
+hello_meta = metamodel_from_file('hello.tx')
+</code></pre>
+</li>
+<li>
+<p>Optionally export meta-model to dot (visualize your language abstract syntax):</p>
+<pre><code>from textx.export import metamodel_export
+metamodel_export(hello_meta, 'hello_meta.dot')
+</code></pre>
+<p><img alt="hello meta-model" src="../images/hello_meta.dot.png" /></p>
+<p>You can see that for each rule from language description an appropriate
+Python class has been created. A BASETYPE hierarchy is built-in. Each
+meta-model has it.</p>
+</li>
+<li>
+<p>Create some content (i.e. model) in your new language (<code>example.hello</code>):</p>
+<pre><code>hello World, Solar System, Universe
+</code></pre>
+<p>Your language syntax is also described by language rules from step 1.</p>
+<p>If we break down the text of the example model it looks like this:</p>
+<p><img alt="hello model parts" src="../images/hello_parts.png" /></p>
+<p>We see that the whole line is a <code>HelloWorldModel</code> and the parts <code>World</code>, 
+<code>Solar System</code>, and <code>Universe</code> are <code>Who</code> objects. Red coloured text is
+syntactic noise that is needed by the parser (and programmers) to recognize
+the boundaries of the objects in the text.</p>
+</li>
+<li>
+<p>Use meta-model to create models from textual description:</p>
+<pre><code>example_hello_model = hello_meta.model_from_file('example.hello')
+</code></pre>
+<p>Textual model ‘example.hello’ will be parsed and transformed to a plain
+Python object graph. Object classes are those defined by the meta-model.</p>
+</li>
+<li>
+<p>You can optionally export model to <code>dot</code> file to visualize it:</p>
+<pre><code>from textx.export import model_export
+model_export(example_hello_model, 'example.dot')
+</code></pre>
+<p><img alt="Example hello model" src="../images/example.dot.png" /></p>
+<p>This is an object graph automatically constructed from <code>example.hello</code>
+file.</p>
+<p>We see that each <code>Who</code> object is contained in the python attribute
+<code>to_greet</code> of list type which is defined by the grammar.</p>
+</li>
+<li>
+<p>Use your model: interpret it, generate code … It is a plain Python
+   graph of objects with plain attributes!</p>
+</li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Try out a <a href="../robot/">complete tutorial</a> for building a simple robot language.</p>
+</div></div>
             
         </div>
 

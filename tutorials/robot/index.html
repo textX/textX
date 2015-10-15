@@ -7,15 +7,15 @@
         
         <meta name="author" content="Igor Dejanović">
         
-        <link rel="shortcut icon" href="../img/favicon.ico">
+        <link rel="shortcut icon" href="../../img/favicon.ico">
 
-	<title>Basic tutorial - textX</title>
+	<title>Robot - textX</title>
 
-        <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
-        <link href="../css/font-awesome-4.0.3.css" rel="stylesheet">
-        <link href="../css/base.css" rel="stylesheet">
-        <link rel="stylesheet" href="../css/highlight.css">
-        <link href="../style.css" rel="stylesheet">
+        <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="../../css/highlight.css">
+        <link href="../../style.css" rel="stylesheet">
 
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!--[if lt IE 9]>
@@ -44,7 +44,7 @@
             
 
             <!-- Main title -->
-            <a class="navbar-brand" href="..">textX</a>
+            <a class="navbar-brand" href="../..">textX</a>
         </div>
 
         <!-- Expanded navigation -->
@@ -55,60 +55,75 @@
                 
                 
                     <li >
-                        <a href="..">Home</a>
+                        <a href="../..">Home</a>
                     </li>
                 
                 
                 
-                    <li class="dropdown active">
+                    <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">User Guide <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                         
                             
 <li >
-    <a href="../getting_started/">Getting started</a>
+    <a href="../../grammar/">Grammar</a>
 </li>
 
                         
                             
 <li >
-    <a href="../grammar/">Grammar</a>
+    <a href="../../metamodel/">Meta-model</a>
 </li>
 
                         
                             
 <li >
-    <a href="../metamodel/">Meta-model</a>
+    <a href="../../model/">Model</a>
 </li>
 
                         
                             
 <li >
-    <a href="../model/">Model</a>
+    <a href="../../visualization/">Visualization</a>
 </li>
 
                         
                             
 <li >
-    <a href="../visualization/">Visualization</a>
+    <a href="../../error_handling/">Error handling</a>
 </li>
 
                         
                             
 <li >
-    <a href="../error_handling/">Error handling</a>
+    <a href="../../debugging/">Debugging</a>
 </li>
 
                         
+                        </ul>
+                    </li>
+                
+                
+                
+                    <li class="dropdown active">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tutorials <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
                             
 <li >
-    <a href="../debugging/">Debugging</a>
+    <a href="../hello_world/">Hello World</a>
 </li>
 
                         
                             
 <li class="active">
-    <a href="./">Basic tutorial</a>
+    <a href="./">Robot</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../entity/">Entity</a>
 </li>
 
                         
@@ -123,19 +138,19 @@
                         
                             
 <li >
-    <a href="../about/discuss/">Discuss</a>
+    <a href="../../about/discuss/">Discuss</a>
 </li>
 
                         
                             
 <li >
-    <a href="../about/contributing/">Contributing</a>
+    <a href="../../about/contributing/">Contributing</a>
 </li>
 
                         
                             
 <li >
-    <a href="../about/license/">License</a>
+    <a href="../../about/license/">License</a>
 </li>
 
                         
@@ -154,12 +169,12 @@
                 </li>
                 
                     <li >
-                        <a rel="next" href="../debugging/">
+                        <a rel="next" href="../hello_world/">
                             <i class="fa fa-arrow-left"></i> Previous
                         </a>
                     </li>
                     <li >
-                        <a rel="prev" href="../about/discuss/">
+                        <a rel="prev" href="../entity/">
                             Next <i class="fa fa-arrow-right"></i>
                         </a>
                     </li>
@@ -184,7 +199,7 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
     
-        <li class="main active"><a href="#basic-tutorial">Basic tutorial</a></li>
+        <li class="main active"><a href="#robot-tutorial">Robot tutorial</a></li>
         
             <li><a href="#robot-language">Robot language</a></li>
         
@@ -201,9 +216,10 @@
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h1 id="basic-tutorial">Basic tutorial</h1>
+<h1 id="robot-tutorial">Robot tutorial</h1>
 <p>In this tutorial we will build a simple robot language to demonstrate
 the basic workflow when working with textX.</p>
+<hr />
 <h2 id="robot-language">Robot language</h2>
 <p>When building a DSL we should first do a domain analysis, to see what concepts
 do we have and what are their relationships and constraints. In the following
@@ -385,7 +401,7 @@ transformed with <code>dot</code> tool to raster or vector graphics.</p>
 <pre><code>dot -Tpng robot_meta.dot -O robot_meta.png
 </code></pre>
 <p>This command will create <code>png</code> image out of <code>dot</code> file.</p>
-<p><img alt="Robot meta-model" src="https://raw.githubusercontent.com/igordejanovic/textX/master/examples/robot/robot_meta.dot.png" /></p>
+<p><img alt="Robot meta-model" src="../../images/robot.tx.dot.png" /></p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This meta-model can be used to parse multiple models.</p>
@@ -409,7 +425,7 @@ or transformed to image.</p>
 <pre><code>dot -Tpng program.dot -O program.png
 </code></pre>
 <p>For the robot program above we should get an image like this:</p>
-<p><img alt="Robot program" src="https://raw.githubusercontent.com/igordejanovic/textX/master/examples/robot/program.dot.png" /></p>
+<p><img alt="Robot program" src="../../images/program.rbt.dot.png" /></p>
 <h2 id="interpreting-model">Interpreting model</h2>
 <p>When we have successfully parsed and loaded our model/program (or mogram or
 prodel ;) ) we can do various stuff. Usually what would you like to do is to
@@ -479,7 +495,7 @@ Robot position is -5, 5.
 <p>It is <em>almost</em> correct. We can see that down movement is for 0 steps because we
 have not defined the steps for <code>down</code> command and haven't done anything yet to
 implement default of 1.</p>
-<p>The best way to implement default value for step is to use so called <a href="../metamodel/#object-processors">object
+<p>The best way to implement default value for step is to use so called <a href="../../metamodel/#object-processors">object
 processor</a> for <code>MoveCommand</code>.
 Object processor is a callable that gets called whenever textX parses and
 instantiates an object of particular class. You can register object processors
@@ -526,12 +542,12 @@ folder.</p>
             <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p>
         </footer>
 
-        <script src="../js/jquery-1.10.2.min.js"></script>
-        <script src="../js/bootstrap-3.0.3.min.js"></script>
-        <script src="../js/highlight.pack.js"></script>
-        <script>var base_url = '..';</script>
-        <script data-main="../mkdocs/js/search.js" src="../mkdocs/js/require.js"></script>
-        <script src="../js/base.js"></script>
+        <script src="../../js/jquery-1.10.2.min.js"></script>
+        <script src="../../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../../js/highlight.pack.js"></script>
+        <script>var base_url = '../..';</script>
+        <script data-main="../../mkdocs/js/search.js" src="../../mkdocs/js/require.js"></script>
+        <script src="../../js/base.js"></script>
 
         <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
             <div class="modal-dialog">

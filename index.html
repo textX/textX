@@ -66,12 +66,6 @@
                         
                             
 <li >
-    <a href="getting_started/">Getting started</a>
-</li>
-
-                        
-                            
-<li >
     <a href="grammar/">Grammar</a>
 </li>
 
@@ -106,9 +100,30 @@
 </li>
 
                         
+                        </ul>
+                    </li>
+                
+                
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tutorials <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
                             
 <li >
-    <a href="tutorial_basic/">Basic tutorial</a>
+    <a href="tutorials/hello_world/">Hello World</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="tutorials/robot/">Robot</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="tutorials/entity/">Entity</a>
 </li>
 
                         
@@ -159,7 +174,7 @@
                         </a>
                     </li>
                     <li >
-                        <a rel="prev" href="getting_started/">
+                        <a rel="prev" href="grammar/">
                             Next <i class="fa fa-arrow-right"></i>
                         </a>
                     </li>
@@ -185,6 +200,12 @@
     <ul class="nav bs-sidenav">
     
         <li class="main active"><a href="#feature-highlights">Feature highlights</a></li>
+        
+    
+        <li class="main "><a href="#installation">Installation</a></li>
+        
+    
+        <li class="main "><a href="#getting-started">Getting started</a></li>
         
     
         <li class="main "><a href="#open-source-projects-using-textx">Open-source projects using textX</a></li>
@@ -213,8 +234,6 @@ expressions on your language and automatically build a graph of Python objects
 language workbench for building DSLs with full tooling support (editors,
 debuggers etc.) on Eclipse platform.  If you like Java and
 <a href="http://www.eclipse.org/">Eclipse</a> check it out. It is a great tool.</p>
-<p>See <a href="getting_started/">Getting Started guide</a> to get you going. Also, you can
-check out <a href="https://github.com/igordejanovic/textX/tree/master/examples/">examples</a>.</p>
 <h2 id="feature-highlights">Feature highlights</h2>
 <ul>
 <li>
@@ -266,6 +285,37 @@ modularization</a>.</p>
 <a href="visualization/">visualization</a> section.</p>
 </li>
 </ul>
+<h2 id="installation">Installation</h2>
+<pre><code>pip install textX
+</code></pre>
+<p>You should see an output similar to this:</p>
+<pre><code>Collecting textx
+  Downloading textX-0.4.2.tar.gz
+Collecting Arpeggio (from textx)
+  Downloading Arpeggio-1.1.tar.gz
+Building wheels for collected packages: textx, Arpeggio
+  Running setup.py bdist_wheel for textx
+  Stored in directory: /home/igor/.cache/pip/wheels/b7/d9/ab/05ac4d429fb9c424e8610e295d564e6f0482d2bf772efbb3be
+  Running setup.py bdist_wheel for Arpeggio
+  Stored in directory: /home/igor/.cache/pip/wheels/31/0c/fa/864d57518f97af0a57a71cc124c556af5c965580181204cab3
+Successfully built textx Arpeggio
+Installing collected packages: Arpeggio, textx
+Successfully installed Arpeggio-1.1 textx-0.4.2
+</code></pre>
+<p>To verify that the library is properly run:</p>
+<pre><code>$ python -c 'import textx'
+</code></pre>
+<p>If there is no error textX is properly installed.</p>
+<h2 id="getting-started">Getting started</h2>
+<p>See textX <code>Tutorials</code> to get you started:</p>
+<ul>
+<li><a href="tutorials/hello_world/">Hello World</a></li>
+<li><a href="tutorials/robot/">Robot</a></li>
+<li><a href="tutorials/entity/">Entity</a></li>
+</ul>
+<p>For specific information read various <code>User Guide</code> sections.</p>
+<p>Also, you can
+check out <a href="https://github.com/igordejanovic/textX/tree/master/examples/">examples</a>.</p>
 <h2 id="open-source-projects-using-textx">Open-source projects using textX</h2>
 <ul>
 <li><a href="https://github.com/kosanmil/applang">applang</a> - Textual DSL for generating mobile applications</li>
@@ -326,5 +376,5 @@ description of power electronic and DSP schemes and components.</p>
 
 <!--
 MkDocs version : 0.14.0
-Build Date UTC : 2015-10-15 10:42:24.238449
+Build Date UTC : 2015-10-15 12:11:26.906889
 -->
