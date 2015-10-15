@@ -176,7 +176,7 @@ Let's do some additional checks for the above Entity DSL example.
 
 
 For another example usage of object processor that modify objects see object
-processor `move_command_processor` [robot example](tutorial_basic.md).
+processor `move_command_processor` [robot example](tutorials/robot.md).
 
 ## Built-in objects
 

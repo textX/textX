@@ -569,7 +569,7 @@ textX will try to match this rule in between each other normal grammar match
 If the match succeeds the matched content will be discarded.
 
 
-For example, in the [robot language example](tutorial_basic.md) comments are
+For example, in the [robot language example](tutorials/robot.md) comments are
 defined like this:
 
     Comment:

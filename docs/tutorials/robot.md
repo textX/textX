@@ -343,7 +343,7 @@ have not defined the steps for `down` command and haven't done anything yet to
 implement default of 1.
 
 The best way to implement default value for step is to use so called [object
-processor](metamodel.md#object-processors) for `MoveCommand`.
+processor](../metamodel.md#object-processors) for `MoveCommand`.
 Object processor is a callable that gets called whenever textX parses and
 instantiates an object of particular class. You can register object processors
 for the classes your wish to process in some way immediately after

@@ -88,4 +88,4 @@ These are the steps to build a very basic Hello World - like language.
 
 
 !!! note
-    Try out a [complete tutorial](tutorials/robot.md) for building a simple robot language.
+    Try out a [complete tutorial](robot.md) for building a simple robot language.

@@ -16,9 +16,6 @@ language workbench for building DSLs with full tooling support (editors,
 debuggers etc.) on Eclipse platform.  If you like Java and
 [Eclipse](http://www.eclipse.org/) check it out. It is a great tool.
 
-See [Getting Started guide](getting_started.md) to get you going. Also, you can
-check out [examples](https://github.com/igordejanovic/textX/tree/master/examples/).
-
 
 ## Feature highlights
 
@@ -110,6 +107,9 @@ See textX `Tutorials` to get you started:
 - [Entity](tutorials/entity.md)
 
 For specific information read various `User Guide` sections.
+
+Also, you can
+check out [examples](https://github.com/igordejanovic/textX/tree/master/examples/).
 
 
 ## Open-source projects using textX
