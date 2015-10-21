@@ -39,7 +39,7 @@ These are the steps to build a very basic Hello World - like language.
         from textx.export import metamodel_export
         metamodel_export(hello_meta, 'hello_meta.dot')
 
-    ![hello meta-model](images/hello_meta.dot.png)
+    ![hello meta-model](../images/hello_meta.dot.png)
 
     You can see that for each rule from language description an appropriate
     Python class has been created. A BASETYPE hierarchy is built-in. Each
@@ -53,7 +53,7 @@ These are the steps to build a very basic Hello World - like language.
 
     If we break down the text of the example model it looks like this:
 
-    ![hello model parts](images/hello_parts.png)
+    ![hello model parts](../images/hello_parts.png)
 
     We see that the whole line is a `HelloWorldModel` and the parts `World`, 
     `Solar System`, and `Universe` are `Who` objects. Red coloured text is
@@ -75,7 +75,7 @@ These are the steps to build a very basic Hello World - like language.
         from textx.export import model_export
         model_export(example_hello_model, 'example.dot')
 
-    ![Example hello model](images/example.dot.png)
+    ![Example hello model](../images/example.dot.png)
 
     This is an object graph automatically constructed from `example.hello`
     file.
