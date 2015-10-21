@@ -18,14 +18,15 @@ These are the steps to build a very basic Hello World - like language.
         ;
 
     Description consists of a set of parsing rules which at the same time
-    describe Python classes that will be used to instantiate object of your
-    model.  This small example consists of two rules: `HelloWorldModel` and
-    `Who`.  `HelloWorldModel` must start with the keyword `hello` after which a
-    one or more `Who` object must be written separated by commas. `Who` objects
-    will be parsed, instantiated and stored in a `to_greet` list on a
-    `HelloWorldModel` object. `Who` objects consists only of its names which
-    must be matched the regular expression rule `/[^,]*/` (match non-comma zero
-    or more times). For more information on grammar rules see ...
+    describe Python classes that will be dynamically created and used to
+    instantiate objects of your model.  This small example consists of two
+    rules: `HelloWorldModel` and `Who`.  `HelloWorldModel` starts with the
+    keyword `hello` after which a one or more `Who` object must be written
+    separated by commas. `Who` objects will be parsed, instantiated and stored
+    in a `to_greet` list on a `HelloWorldModel` object. `Who` objects consists
+    only of its names which must be matched the regular expression rule
+    `/[^,]*/` (match non-comma zero or more times). Please see [textX
+    grammar](../grammar.md) section for more information on writing grammar rules.
 
 2. Create meta-model from textX language description (file `hello.py`):
 
