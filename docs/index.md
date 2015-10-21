@@ -6,6 +6,10 @@
 language for language definition) for domain-specific language (DSL)
 specification in Python.
 
+In a nutshell, textX will help you build your textual language in an easy way.
+You can invent your own language or build a support for already existing
+textual language or file format.
+
 From a single grammar description textX automatically builds a meta-model (in
 the form of Python classes) and a parser for your language. Parser will parse
 expressions on your language and automatically build a graph of Python objects

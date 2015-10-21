@@ -15,19 +15,20 @@ To visualize meta-model (see [Entity
 example](https://github.com/igordejanovic/textX/tree/master/examples/Entity))
 do:
 
-    from textx.metamodel import metamodel_from_file
-    from textx.export import metamodel_export
+```python
+from textx.metamodel import metamodel_from_file
+from textx.export import metamodel_export
 
-    entity_mm = metamodel_from_file('entity.tx')
+entity_mm = metamodel_from_file('entity.tx')
 
-    metamodel_export(entity_mm, 'entity.dot')
-
+metamodel_export(entity_mm, 'entity.dot')
+```
 
 `entity.dot` file will be created. You can visualize this file by a
 various dot viewers or can convert it to various image formats by 'dot'
 tool.
 
-    dot -Tpng -O entity.dot
+    $ dot -Tpng -O entity.dot
 
 The following image is generated:
 
@@ -39,16 +40,18 @@ The following image is generated:
 Similar to meta-model visualization you can visualize your models also (see [Entity
 example](https://github.com/igordejanovic/textX/tree/master/examples/Entity)).
 
-    from textx.export import model_export
+```python
+from textx.export import model_export
 
-    person_model = entity_mm.model_from_file('person.ent')
+person_model = entity_mm.model_from_file('person.ent')
 
-    model_export(person_model, 'person.dot')
+model_export(person_model, 'person.dot')
+```
 
 
 Convert this `dot` file to `png` with:
 
-    dot -Tpng -O person.dot
+    $ dot -Tpng -O person.dot
 
 The following image is generated:
 

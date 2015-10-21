@@ -5,16 +5,23 @@ textX
 
 |pypi-badge| |license| |build-status| |docs|
 
-textX is a meta-language for building Domain-Specific Languages (DSLs) inspired
-by `Xtext`_.  From a single language description (grammar) textX will build a
+textX is a meta-language for building Domain-Specific Languages (DSLs) in Python.
+It is inspired by `Xtext`_.
+
+In a nutshell, textX will help you build your textual language in an easy way.
+You can invent your own language or build a support for already existing
+textual language or file format.
+
+From a single language description (grammar) textX will build a
 parser and a meta-model (a.k.a. abstract syntax) for the language.
+See the docs for the details.
 
 textX follows the syntax and semantics of Xtext but differs in some places and is
 implemented 100% in Python using `Arpeggio`_ parser.
 It is fully dynamic - no code generation at all!
 
 
-Documentation is available at http://igordejanovic.net/textX/
+The full documentation with tutorials is available at http://igordejanovic.net/textX/
 
 
 .. _Arpeggio: https://github.com/igordejanovic/Arpeggio
