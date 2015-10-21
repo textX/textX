@@ -222,14 +222,15 @@ Who:
 ;
 </code></pre>
 <p>Description consists of a set of parsing rules which at the same time
-describe Python classes that will be used to instantiate object of your
-model.  This small example consists of two rules: <code>HelloWorldModel</code> and
-<code>Who</code>.  <code>HelloWorldModel</code> must start with the keyword <code>hello</code> after which a
-one or more <code>Who</code> object must be written separated by commas. <code>Who</code> objects
-will be parsed, instantiated and stored in a <code>to_greet</code> list on a
-<code>HelloWorldModel</code> object. <code>Who</code> objects consists only of its names which
-must be matched the regular expression rule <code>/[^,]*/</code> (match non-comma zero
-or more times). For more information on grammar rules see ...</p>
+describe Python classes that will be dynamically created and used to
+instantiate objects of your model.  This small example consists of two
+rules: <code>HelloWorldModel</code> and <code>Who</code>.  <code>HelloWorldModel</code> starts with the
+keyword <code>hello</code> after which a one or more <code>Who</code> object must be written
+separated by commas. <code>Who</code> objects will be parsed, instantiated and stored
+in a <code>to_greet</code> list on a <code>HelloWorldModel</code> object. <code>Who</code> objects consists
+only of its names which must be matched the regular expression rule
+<code>/[^,]*/</code> (match non-comma zero or more times). Please see <a href="../../grammar/">textX
+grammar</a> section for more information on writing grammar rules.</p>
 </li>
 <li>
 <p>Create meta-model from textX language description (file <code>hello.py</code>):</p>
