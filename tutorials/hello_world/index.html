@@ -243,7 +243,7 @@ hello_meta = metamodel_from_file('hello.tx')
 <pre><code>from textx.export import metamodel_export
 metamodel_export(hello_meta, 'hello_meta.dot')
 </code></pre>
-<p><img alt="hello meta-model" src="../images/hello_meta.dot.png" /></p>
+<p><img alt="hello meta-model" src="../../images/hello_meta.dot.png" /></p>
 <p>You can see that for each rule from language description an appropriate
 Python class has been created. A BASETYPE hierarchy is built-in. Each
 meta-model has it.</p>
@@ -254,7 +254,7 @@ meta-model has it.</p>
 </code></pre>
 <p>Your language syntax is also described by language rules from step 1.</p>
 <p>If we break down the text of the example model it looks like this:</p>
-<p><img alt="hello model parts" src="../images/hello_parts.png" /></p>
+<p><img alt="hello model parts" src="../../images/hello_parts.png" /></p>
 <p>We see that the whole line is a <code>HelloWorldModel</code> and the parts <code>World</code>, 
 <code>Solar System</code>, and <code>Universe</code> are <code>Who</code> objects. Red coloured text is
 syntactic noise that is needed by the parser (and programmers) to recognize
@@ -272,7 +272,7 @@ Python object graph. Object classes are those defined by the meta-model.</p>
 <pre><code>from textx.export import model_export
 model_export(example_hello_model, 'example.dot')
 </code></pre>
-<p><img alt="Example hello model" src="../images/example.dot.png" /></p>
+<p><img alt="Example hello model" src="../../images/example.dot.png" /></p>
 <p>This is an object graph automatically constructed from <code>example.hello</code>
 file.</p>
 <p>We see that each <code>Who</code> object is contained in the python attribute
