@@ -221,31 +221,33 @@ automatically get exported to dot.</p>
 <p>To visualize meta-model (see <a href="https://github.com/igordejanovic/textX/tree/master/examples/Entity">Entity
 example</a>)
 do:</p>
-<pre><code>from textx.metamodel import metamodel_from_file
+<pre><code class="python">from textx.metamodel import metamodel_from_file
 from textx.export import metamodel_export
 
 entity_mm = metamodel_from_file('entity.tx')
 
 metamodel_export(entity_mm, 'entity.dot')
 </code></pre>
+
 <p><code>entity.dot</code> file will be created. You can visualize this file by a
 various dot viewers or can convert it to various image formats by 'dot'
 tool.</p>
-<pre><code>dot -Tpng -O entity.dot
+<pre><code>$ dot -Tpng -O entity.dot
 </code></pre>
 <p>The following image is generated:</p>
 <p><img alt="Entity meta-model" src="https://raw.githubusercontent.com/igordejanovic/textX/master/examples/Entity/dotexport/entity_meta.dot.png" /></p>
 <h2 id="model-visualization">Model visualization</h2>
 <p>Similar to meta-model visualization you can visualize your models also (see <a href="https://github.com/igordejanovic/textX/tree/master/examples/Entity">Entity
 example</a>).</p>
-<pre><code>from textx.export import model_export
+<pre><code class="python">from textx.export import model_export
 
 person_model = entity_mm.model_from_file('person.ent')
 
 model_export(person_model, 'person.dot')
 </code></pre>
+
 <p>Convert this <code>dot</code> file to <code>png</code> with:</p>
-<pre><code>dot -Tpng -O person.dot
+<pre><code>$ dot -Tpng -O person.dot
 </code></pre>
 <p>The following image is generated:</p>
 <p><img alt="Person model" src="https://raw.githubusercontent.com/igordejanovic/textX/master/examples/Entity/dotexport/entity.dot.png" /></p></div>
