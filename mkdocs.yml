@@ -4,6 +4,7 @@ site_description: A meta-language for building Domain-Specific Languages (DSLs)
 site_author: Igor Dejanović
 
 repo_url: https://github.com/igordejanovic/textX
+google_analytics: ['UA-68681917-1', 'igordejanovic.net']
 
 pages:
 - Home: index.md
