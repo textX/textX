@@ -3,29 +3,42 @@ import sys
 import argparse
 from textx.metamodel import metamodel_from_file
 from textx.export import metamodel_export, model_export
+from textx.exceptions import TextXError
 
 parser = argparse.ArgumentParser(description="textX checker and visualizer")
-parser.add_argument('cmd', help="Command - check or vis")
+parser.add_argument('cmd', help="Command - 'check' or 'visualize'")
 parser.add_argument('metamodel', help="Meta-model file name")
 parser.add_argument('model', help="Model file name", nargs="?")
 
 args = parser.parse_args()
 
-if args.cmd not in ['vis', 'check']:
-    print("Unknown command {}. Command must be one of 'vis', 'check'.".format(args.cmd))
+if args.cmd not in ['visualize', 'check']:
+    print("Unknown command {}. Command must be one of 'visualize', 'check'.".format(args.cmd))
     sys.exit(1)
 
-metamodel = metamodel_from_file(args.metamodel)
-print("Meta-model OK.")
+try:
+    metamodel = metamodel_from_file(args.metamodel)
+    print("Meta-model OK.")
+except TextXError as e:
+    print("Error in meta-model file.")
+    print(e)
+    sys.exit(1)
 
 if args.model:
-    model = metamodel.model_from_file(args.model)
-    print("Model OK.")
+    try:
+        model = metamodel.model_from_file(args.model)
+        print("Model OK.")
+    except TextXError as e:
+        print("Error in model file.")
+        print(e)
+        sys.exit(1)
 
-if args.cmd == "vis":
-    print("Generating .dot file for meta-model.")
+if args.cmd == "visualize":
+    print("Generating '%s.dot' file for meta-model." % args.metamodel)
+    print("To convert to png run 'dot -Tpng -O %s.dot'" % args.metamodel)
     metamodel_export(metamodel, "%s.dot" % args.metamodel)
 
     if args.model:
-        print("Generating .dot file for model.")
+        print("Generating '%s.dot' file for model." % args.model)
+        print("To convert to png run 'dot -Tpng -O %s.dot'" % args.model)
         model_export(model, "%s.dot" % args.model)
