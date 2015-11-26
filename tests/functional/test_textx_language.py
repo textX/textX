@@ -215,6 +215,30 @@ def test_float_variations():
     assert model.a[0] == 0.01
 
 
+def test_string_escaping():
+    """
+    Test quotes escaping inside strings.
+    """
+    grammar = """
+        Rule: a+=STRING[','];
+    """
+    meta = metamodel_from_str(grammar)
+
+    model = meta.model_from_str(r"""
+    "Double quotes string", "Double quotes with 'single quotes embedded'",
+    "Double quotes with \" escaped quotes",
+    'Single quotes string', 'Single quotes with "double quotes embedded"',
+    'Single quotes with \' escaped single quotes'
+    """)
+
+    assert model.a[0] == r"Double quotes string"
+    assert model.a[1] == r"Double quotes with 'single quotes embedded'"
+    assert model.a[2] == r'Double quotes with " escaped quotes'
+    assert model.a[3] == r"Single quotes string"
+    assert model.a[4] == r'Single quotes with "double quotes embedded"'
+    assert model.a[5] == r"Single quotes with ' escaped single quotes"
+
+
 def test_rule_call_forward_backward_reference():
 
     grammar = """
