@@ -5,7 +5,17 @@ from textx.metamodel import metamodel_from_file
 from textx.export import metamodel_export, model_export
 from textx.exceptions import TextXError
 
-parser = argparse.ArgumentParser(description="textX checker and visualizer")
+class MyParser(argparse.ArgumentParser):
+    """
+    Custom arugment parser for printing help message in case of error.
+    See http://stackoverflow.com/questions/4042452/display-help-message-with-python-argparse-when-script-is-called-without-any-argu
+    """
+    def error(self, message):
+        sys.stderr.write('error: %s\n' % message)
+        self.print_help()
+        sys.exit(2)
+
+parser = MyParser(description="textX checker and visualizer")
 parser.add_argument('cmd', help="Command - 'check' or 'visualize'")
 parser.add_argument('metamodel', help="Meta-model file name")
 parser.add_argument('model', help="Model file name", nargs="?")
