@@ -41,7 +41,8 @@ def metamodel_export(metamodel, file_name):
             name = cls.__name__
             attrs = ""
             if cls._tx_type == RULE_MATCH:
-                attrs = cls._match_str.replace("|", "\\|")\
+                attrs = cls._match_str.replace("\\", "\\\\")\
+                                      .replace("|", "\\|")\
                                       .replace('"', '\\"')\
                                       .replace('{', '\\{')\
                                       .replace('}', '\\}')
