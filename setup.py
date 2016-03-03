@@ -5,7 +5,7 @@ import codecs
 from setuptools import setup
 
 __author__ = "Igor R. Dejanović <igor DOT dejanovic AT gmail DOT com>"
-__version__ = "0.4.2"
+__version__ = "1.0"
 
 NAME = 'textX'
 DESC = 'Meta-language for DSL implementation inspired by Xtext'
@@ -35,7 +35,7 @@ setup(
     scripts=['bin/textx'],
     keywords = "parser meta-language meta-model language DSL",
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
         'Intended Audience :: Information Technology',
         'Intended Audience :: Science/Research',

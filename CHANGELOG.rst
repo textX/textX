@@ -1,6 +1,12 @@
 textX changelog
 ---------------
 
+* 2016-03-03 Release 1.0
+  - Migrated docs to MkDocs.
+  - Docs improvement.
+  - Fixed escaping of backslashes in the dot exporter.
+  - Added `textx` command/script for (meta)model checking/visualization.
+
 * 2015-08-27 Release 0.4.2
   - Added debug parameter to model_from_str.
   - All prints converted to DebugPrinter.
