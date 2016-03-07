@@ -59,3 +59,6 @@ The following image is generated:
 
 
 
+!!! note
+    See also [textx command/tool](textx_command.md) for model visualization
+    from command line.

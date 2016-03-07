@@ -11,3 +11,6 @@ All exceptions have `message` attribute with the error message and `line` and
 `col` attributes with the line and column where the error is found.
 
 
+!!! note
+    See also [textx command/tool](textx_command.md) for (meta)model checking 
+    from command line.
