@@ -345,17 +345,19 @@ implement default of 1.
 The best way to implement default value for step is to use so called [object
 processor](../metamodel.md#object-processors) for `MoveCommand`.
 Object processor is a callable that gets called whenever textX parses and
-instantiates an object of particular class. You can register object processors
-for the classes your wish to process in some way immediately after
-instantiation.
+instantiates an object of particular class. Use `register_obj_processors`
+method on meta-model to register callables/processors for classes your wish to
+process in some way immediately after instantiation.
 
 Lets define our processor for `MoveCommand`.
 
-    def move_command_processor(move_cmd):
+```python
+def move_command_processor(move_cmd):
 
-      if move_cmd.steps == 0:
-        move_cmd.steps = 1
-
+  # If steps is not given, set it do default 1 value.
+  if move_cmd.steps == 0:
+    move_cmd.steps = 1
+```
 
 Now, register this processor on meta-model. After meta-model construction add a
 line for registration.
