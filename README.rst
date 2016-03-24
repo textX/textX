@@ -1,8 +1,5 @@
 .. image:: https://raw.githubusercontent.com/igordejanovic/textX/master/art/textX-logo.png
 
-textX
-=====
-
 |pypi-badge| |license| |build-status| |docs|
 
 textX is a meta-language for building Domain-Specific Languages (DSLs) in Python.
