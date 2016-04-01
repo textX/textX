@@ -136,15 +136,15 @@ class TextXMetaModel(DebugPrinter):
         self._enter_namespace('base')
 
         # Base types hierarchy should exist in each meta-model
-        base_id = self.new_class('ID', ID, 0)
-        base_string = self.new_class('STRING', STRING, 0)
-        base_bool = self.new_class('BOOL', BOOL, 0)
-        base_int = self.new_class('INT', INT, 0)
-        base_float = self.new_class('FLOAT', FLOAT, 0)
-        base_number = self.new_class('NUMBER', NUMBER, 0,
+        base_id = self._new_class('ID', ID, 0)
+        base_string = self._new_class('STRING', STRING, 0)
+        base_bool = self._new_class('BOOL', BOOL, 0)
+        base_int = self._new_class('INT', INT, 0)
+        base_float = self._new_class('FLOAT', FLOAT, 0)
+        base_number = self._new_class('NUMBER', NUMBER, 0,
                                      [base_float, base_int])
-        self.new_class('BASETYPE', BASETYPE, 0,
-                       [base_number, base_bool, base_id, base_string])
+        self._new_class('BASETYPE', BASETYPE, 0,
+                        [base_number, base_bool, base_id, base_string])
 
         # If file_name is given its absolute path will be a namespace
         if file_name:
@@ -193,13 +193,13 @@ class TextXMetaModel(DebugPrinter):
 
         return namespace
 
-    def set_rule(self, name, rule):
+    def _set_rule(self, name, rule):
         """
         For the given rule/class name sets PEG rule.
         """
         self[name]._tx_peg_rule = rule
 
-    def new_import(self, import_name):
+    def _new_import(self, import_name):
         """
         Starts a new import.
         Args:
@@ -229,7 +229,7 @@ class TextXMetaModel(DebugPrinter):
         self.imported_namespaces[current_namespace].append(
             self.namespaces[import_file_name])
 
-    def new_class(self, name, peg_rule, position, inherits=None, root=False):
+    def _new_class(self, name, peg_rule, position, inherits=None, root=False):
         """
         Creates a new class with the given name in the current namespace.
         Args:
@@ -258,14 +258,17 @@ class TextXMetaModel(DebugPrinter):
                     matches this class.
             """
 
+            def __repr__(self):
+                return "<textx:{} object at {}>".format(name, hex(id(self)))
+
         cls = Meta
         cls.__name__ = name
 
-        self.init_class(cls, peg_rule, position, inherits, root)
+        self._init_class(cls, peg_rule, position, inherits, root)
 
         return cls
 
-    def init_class(self, cls, peg_rule, position, inherits=None, root=False):
+    def _init_class(self, cls, peg_rule, position, inherits=None, root=False):
         """
         Setup meta-class special attributes, namespaces etc. This is called
         both for textX created classes as well as user classes.
@@ -293,7 +296,7 @@ class TextXMetaModel(DebugPrinter):
         if root:
             self.rootcls = cls
 
-    def init_obj_attrs(self, obj, user=False):
+    def _init_obj_attrs(self, obj, user=False):
         """
         Initialize obj attributes.
         Args:
@@ -332,7 +335,7 @@ class TextXMetaModel(DebugPrinter):
                 # Reference to other obj
                 setattr(obj, attr_name, None)
 
-    def new_cls_attr(self, clazz, name, cls=None, mult=MULT_ONE, cont=True,
+    def _new_cls_attr(self, clazz, name, cls=None, mult=MULT_ONE, cont=True,
                      ref=False, bool_assignment=False, position=0):
         """Creates new meta attribute of this class."""
         attr = MetaAttr(name, cls, mult, cont, ref, bool_assignment,
@@ -363,8 +366,8 @@ class TextXMetaModel(DebugPrinter):
         else:
             # If not fully qualified search in the current namespace
             # and after that in the imported_namespaces
-            if name in self.current_namespace:
-                return self.current_namespace[name]
+            if name in self._current_namespace:
+                return self._current_namespace[name]
 
             for namespace in \
                     self.imported_namespaces[self._namespace_stack[-1]]:
@@ -381,8 +384,8 @@ class TextXMetaModel(DebugPrinter):
         """
 
         # Current namespace
-        for name in self.current_namespace:
-            yield self.current_namespace[name]
+        for name in self._current_namespace:
+            yield self._current_namespace[name]
 
         # Imported namespaces
         for namespace in \
@@ -403,7 +406,7 @@ class TextXMetaModel(DebugPrinter):
             return False
 
     @property
-    def current_namespace(self):
+    def _current_namespace(self):
         return self.namespaces[self._namespace_stack[-1]]
 
     def model_from_str(self, model_str, debug=None):

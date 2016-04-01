@@ -173,14 +173,14 @@ def parse_tree_to_objgraph(parser, parse_tree):
                 inst = user_class.__new__(user_class)
 
                 # Initialize object attributes for user class
-                parser.metamodel.init_obj_attrs(inst, user=True)
+                parser.metamodel._init_obj_attrs(inst, user=True)
             else:
                 # Generic class will call attributes init
                 # from the constructor
                 inst = mclass.__new__(mclass)
 
                 # Initialize object attributes
-                parser.metamodel.init_obj_attrs(inst)
+                parser.metamodel._init_obj_attrs(inst)
 
             # Collect attributes directly on meta-class instance
             obj_attrs = inst

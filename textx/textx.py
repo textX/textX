@@ -292,7 +292,7 @@ textx_model.sem = TextXModelSA()
 
 
 def import_stm_SA(parser, node, children):
-    parser.metamodel.new_import(children[0])
+    parser.metamodel._new_import(children[0])
 import_stm.sem = import_stm_SA
 
 
@@ -311,7 +311,7 @@ def textx_rule_SA(parser, node, children):
                     root=True, **rule_params)
 
     # Add PEG rule to the meta-class
-    parser.metamodel.set_rule(rule_name, rule)
+    parser.metamodel._set_rule(rule_name, rule)
 
     return rule
 textx_rule.sem = textx_rule_SA
@@ -329,11 +329,11 @@ def rule_name_SA(parser, node, children):
         cls = parser.metamodel.user_classes[rule_name]
 
         # Initialize special attributes
-        parser.metamodel.init_class(cls, None, node.position)
+        parser.metamodel._init_class(cls, None, node.position)
     else:
         # Create class to collect attributes. At this time PEG rule
         # is not known.
-        cls = parser.metamodel.new_class(rule_name, None, node.position)
+        cls = parser.metamodel._new_class(rule_name, None, node.position)
 
     parser._current_cls = cls
 
@@ -570,7 +570,7 @@ def assignment_SA(parser, node, children):
         if cls_attr.mult is not MULT_ONEORMORE:
             cls_attr.mult = MULT_ZEROORMORE
     else:
-        cls_attr = parser.metamodel.new_cls_attr(cls, name=attr_name,
+        cls_attr = parser.metamodel._new_cls_attr(cls, name=attr_name,
                                                  position=node.position)
 
     # Keep track of metaclass references and containments
