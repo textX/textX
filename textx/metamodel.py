@@ -61,7 +61,7 @@ class TextXMetaModel(DebugPrinter):
             grammar file. Special key 'base' is used for BASETYPE classes.
             None key is used for all classes imported from the grammar
             given as a string.
-        namespace_stack(list): A stack of namespace names (usually absolute
+        _namespace_stack(list): A stack of namespace names (usually absolute
             filenames). Used to keep track of the current namespace.
         imported_namespaces(dict): A dict from namespace name to the list of
             references to imported namespaces. Used in searches for the
@@ -127,7 +127,7 @@ class TextXMetaModel(DebugPrinter):
 
         # Namespaces
         self.namespaces = {}
-        self.namespace_stack = []
+        self._namespace_stack = []
 
         # Imported namespaces
         self.imported_namespaces = {}
@@ -166,13 +166,13 @@ class TextXMetaModel(DebugPrinter):
             self.imported_namespaces[namespace_name] = \
                 [self.namespaces['base']]
 
-        self.namespace_stack.append(namespace_name)
+        self._namespace_stack.append(namespace_name)
 
     def _leave_namespace(self):
         """
         Leaves current namespace (i.e. grammar file).
         """
-        self.namespace_stack.pop()
+        self._namespace_stack.pop()
 
     def _fqn_to_namespace(self, fqn):
         """
@@ -184,7 +184,7 @@ class TextXMetaModel(DebugPrinter):
             An absolute file name of the grammar fqn rule/class came from.
         """
 
-        current_namespace = self.namespace_stack[-1]
+        current_namespace = self._namespace_stack[-1]
         current_dir = ''
         if current_namespace and current_namespace != 'base':
             current_dir = os.path.dirname(current_namespace)
@@ -209,7 +209,7 @@ class TextXMetaModel(DebugPrinter):
 
         # Find the absolute file name of the import based on the relative
         # import_name and current grammar file (namespace)
-        current_namespace = self.namespace_stack[-1]
+        current_namespace = self._namespace_stack[-1]
         current_dir = ''
         if current_namespace and current_namespace != 'base':
             current_dir = os.path.dirname(current_namespace)
@@ -287,7 +287,7 @@ class TextXMetaModel(DebugPrinter):
         cls._tx_peg_rule = peg_rule
 
         # Push this class and PEG rule in the current namespace
-        current_namespace = self.namespaces[self.namespace_stack[-1]]
+        current_namespace = self.namespaces[self._namespace_stack[-1]]
         current_namespace[cls.__name__] = cls
 
         if root:
@@ -367,7 +367,7 @@ class TextXMetaModel(DebugPrinter):
                 return self.current_namespace[name]
 
             for namespace in \
-                    self.imported_namespaces[self.namespace_stack[-1]]:
+                    self.imported_namespaces[self._namespace_stack[-1]]:
                 if name in namespace:
                     return namespace[name]
 
@@ -386,7 +386,7 @@ class TextXMetaModel(DebugPrinter):
 
         # Imported namespaces
         for namespace in \
-                self.imported_namespaces[self.namespace_stack[-1]]:
+                self.imported_namespaces[self._namespace_stack[-1]]:
             for name in namespace:
                 # yield class
                 yield namespace[name]
@@ -404,7 +404,7 @@ class TextXMetaModel(DebugPrinter):
 
     @property
     def current_namespace(self):
-        return self.namespaces[self.namespace_stack[-1]]
+        return self.namespaces[self._namespace_stack[-1]]
 
     def model_from_str(self, model_str, debug=None):
         """
