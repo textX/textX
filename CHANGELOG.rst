@@ -1,6 +1,12 @@
 textX changelog
 ---------------
 
+* 2016-04-01 Release 1.1
+  - Metamodel API tiding. Some undocumented internally used attrs/methods made
+    private.
+  - textx command is console entry point now.
+  - Some fixes and improvements in the docs and examples.
+
 * 2016-03-03 Release 1.0
   - Migrated docs to MkDocs.
   - Docs improvement.

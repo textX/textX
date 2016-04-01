@@ -5,7 +5,7 @@ import codecs
 from setuptools import setup
 
 __author__ = "Igor R. Dejanović <igor DOT dejanovic AT gmail DOT com>"
-__version__ = "1.0"
+__version__ = "1.1"
 
 NAME = 'textX'
 DESC = 'Meta-language for DSL implementation inspired by Xtext'
