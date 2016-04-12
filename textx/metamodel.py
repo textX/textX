@@ -52,7 +52,6 @@ class TextXMetaModel(DebugPrinter):
     Meta-model contains all information about language abstract syntax.
     Furthermore, this class is in charge for model instantiation and new
     language class creation.
-    This class inherits dictionary as is used for language class lookup.
 
     Attributes:
         rootcls(TextXClass): A language class that is a root of the metamodel.
