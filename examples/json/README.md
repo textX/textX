@@ -1,13 +1,13 @@
 # JSON example
 
-textX grammar is given in json.tx.
+JSON grammar is given in `json.tx`.
 It is a simplified version. Numbers and strings are parser by textX builtin
 rules.
 
 All examples are taken from [json.org example
 page](http://json.org/example.html).
 
-Visualization files are created using textx command line tool and GraphViz dot
+Visualization files are created using `textx` command line tool and GraphViz dot
 tool.
 
 For example:
