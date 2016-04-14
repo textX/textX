@@ -54,3 +54,9 @@ docs/_build/
 # DOT files
 *.dot
 site
+.directory
+*.png
+examples/Entity/srcgen/
+tags
+textX.mm
+textx.build/
