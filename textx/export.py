@@ -3,10 +3,12 @@
 # Name: export.py
 # Purpose: Export of textX based models and metamodels to dot file
 # Author: Igor R. Dejanovic <igor DOT dejanovic AT gmail DOT com>
-# Copyright: (c) 2014 Igor R. Dejanovic <igor DOT dejanovic AT gmail DOT com>
+# Copyright: (c) 2014-2016 Igor R. Dejanovic <igor DOT dejanovic AT gmail DOT com>
 # License: MIT License
 #######################################################################
 from __future__ import unicode_literals
+from .const import MULT_ZEROORMORE, MULT_ONEORMORE, MULT_ONE, RULE_MATCH
+from .textx import PRIMITIVE_PYTHON_TYPES
 import codecs
 import sys
 if sys.version < '3':
@@ -14,8 +16,6 @@ if sys.version < '3':
 else:
     text = str
 
-from .const import MULT_ZEROORMORE, MULT_ONEORMORE, MULT_ONE, RULE_MATCH
-from .textx import BASE_TYPE_NAMES, PRIMITIVE_PYTHON_TYPES
 
 HEADER = '''
     digraph xtext {
@@ -30,6 +30,9 @@ HEADER = '''
 
 
 '''
+
+def dot_escape(s):
+    return s.replace('\n', r'\n').replace('"', r'\"').replace(':', r'\:')
 
 
 def metamodel_export(metamodel, file_name):
@@ -105,7 +108,7 @@ def model_export(model, file_name):
                     [MULT_ONE, MULT_ONEORMORE] else ""
 
                 if attr.mult in [MULT_ONEORMORE, MULT_ZEROORMORE]:
-                    if not attr.ref:
+                    if all([type(x) in PRIMITIVE_PYTHON_TYPES for x in attr_value]):
                         attrs += "{}{}:list=[".format(required, attr_name)
                         attrs += ",".join([str(x) for x in attr_value])
                         attrs += "]\\l"
@@ -124,24 +127,18 @@ def model_export(model, file_name):
                                                     attr_name, idx, endmark))
                                     _export(list_obj)
                 else:
+
                     # Plain attributes
-                    if not attr.ref:
+                    if type(attr_value) in [str, text]:
+                        attr_value = dot_escape(attr_value)
+
+                    if type(attr_value) in PRIMITIVE_PYTHON_TYPES:
                         if attr_name == 'name':
                             name = attr_value
                         else:
-                            if attr.cls.__name__ in BASE_TYPE_NAMES \
-                                    or attr.cls._tx_type == RULE_MATCH:
-                                if type(attr_value) in [str, text]:
-                                    attr_value = \
-                                        attr_value.replace('\n', r'\n')\
-                                        .replace('"', '\\"')
-                                attrs += "{}{}:{}={}\\l".format(
-                                    required, attr_name, type(attr_value)
-                                    .__name__, attr_value)
-                            else:
-                                attrs += "{}{}:{}\\l".format(
-                                    required, attr_name, type(attr_value)
-                                    .__name__)
+                            attrs += "{}{}:{}={}\\l".format(
+                                required, attr_name, type(attr_value)
+                                .__name__, attr_value)
                     else:
                         # Object references
                         if attr_value is not None:
