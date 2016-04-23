@@ -27,6 +27,8 @@ def textx():
     parser.add_argument('model', help='Model file name', nargs='?')
     parser.add_argument('-i', help='case-insensitive parsing',
                         action='store_true')
+    parser.add_argument('-d', help='run in debug mode',
+                        action='store_true')
 
     args = parser.parse_args()
 
@@ -36,7 +38,8 @@ def textx():
         sys.exit(1)
 
     try:
-        metamodel = metamodel_from_file(args.metamodel, ignore_case=args.ci)
+        metamodel = metamodel_from_file(args.metamodel, ignore_case=args.i,
+                                        debug=args.d)
         print("Meta-model OK.")
     except TextXError as e:
         print("Error in meta-model file.")
@@ -45,7 +48,7 @@ def textx():
 
     if args.model:
         try:
-            model = metamodel.model_from_file(args.model)
+            model = metamodel.model_from_file(args.model, debug=args.d)
             print("Model OK.")
         except TextXError as e:
             print("Error in model file.")
