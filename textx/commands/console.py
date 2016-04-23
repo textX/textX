@@ -21,10 +21,12 @@ def textx():
             self.print_help()
             sys.exit(2)
 
-    parser = MyParser(description="textX checker and visualizer")
-    parser.add_argument('cmd', help="Command - 'check' or 'visualize'")
-    parser.add_argument('metamodel', help="Meta-model file name")
-    parser.add_argument('model', help="Model file name", nargs="?")
+    parser = MyParser(description='textX checker and visualizer')
+    parser.add_argument('cmd', help='Command - "check" or "visualize"')
+    parser.add_argument('metamodel', help='Meta-model file name')
+    parser.add_argument('model', help='Model file name', nargs='?')
+    parser.add_argument('-ci', help='case-insensitive parsing',
+                        action='store_true')
 
     args = parser.parse_args()
 
@@ -34,7 +36,7 @@ def textx():
         sys.exit(1)
 
     try:
-        metamodel = metamodel_from_file(args.metamodel)
+        metamodel = metamodel_from_file(args.metamodel, ignore_case=args.ci)
         print("Meta-model OK.")
     except TextXError as e:
         print("Error in meta-model file.")
