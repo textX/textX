@@ -25,7 +25,7 @@ def textx():
     parser.add_argument('cmd', help='Command - "check" or "visualize"')
     parser.add_argument('metamodel', help='Meta-model file name')
     parser.add_argument('model', help='Model file name', nargs='?')
-    parser.add_argument('-ci', help='case-insensitive parsing',
+    parser.add_argument('-i', help='case-insensitive parsing',
                         action='store_true')
 
     args = parser.parse_args()
