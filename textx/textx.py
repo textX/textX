@@ -614,12 +614,12 @@ def assignment_SA(parser, node, children):
     if modifiers:
         modifiers, position = modifiers
         # Sanity check. Modifiers do not make
-        # sense for ?= operator at the moment.
-        if op == '?=':
+        # sense for ?= and = operator at the moment.
+        if op == '?=' or op == '=':
             line, col = parser.pos_to_linecol(position)
             raise TextXSyntaxError(
-                'Modifiers are not allowed for "?=" operator at {}'
-                .format(text((line, col))), line, col)
+                'Modifiers are not allowed for "{}" operator at {}'
+                .format(op, text((line, col))), line, col)
 
         # Separator modifier
         if 'sep' in modifiers:

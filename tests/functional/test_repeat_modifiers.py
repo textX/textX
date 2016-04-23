@@ -75,6 +75,9 @@ def test_assignment_modifier_separator_oneormore():
 
 
 def test_assignment_modifier_separator_optional():
+    """
+    Modifiers are not allowed for ?= assignment.
+    """
     model = """
     Rule:
         a?=AorB[','];
@@ -84,6 +87,18 @@ def test_assignment_modifier_separator_optional():
     with pytest.raises(TextXSyntaxError):
         metamodel_from_str(model)
 
+def test_assignment_modifier_separator_plain():
+    """
+    Modifiers are not allowed for plain assignment.
+    """
+    model = """
+    Rule:
+        a=AorB[','];
+    AorB:
+        "a"|"b";
+    """
+    with pytest.raises(TextXSyntaxError):
+        metamodel_from_str(model)
 
 def test_modifier_eolterm_zeroormore():
     model = """
