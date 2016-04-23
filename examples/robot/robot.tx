@@ -14,7 +14,7 @@ An example of the robot program:
 
 */
 
-// This is a normal rule. For each rule a class with the same name will be
+// This is a common rule. For each rule a class with the same name will be
 // created.
 Program:
   'begin'

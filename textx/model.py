@@ -15,8 +15,8 @@ import codecs
 import traceback
 from arpeggio import Parser, Sequence, NoMatch, EOF, Terminal
 from .exceptions import TextXSyntaxError, TextXSemanticError
-from .const import MULT_ONE, MULT_ONEORMORE, MULT_ZEROORMORE, RULE_NORMAL,\
-    RULE_ABSTRACT
+from .const import MULT_ONE, MULT_ONEORMORE, MULT_ZEROORMORE, RULE_COMMON,\
+    RULE_ABSTRACT, RULE_MATCH
 from .textx import PRIMITIVE_PYTHON_TYPES
 
 
@@ -330,20 +330,20 @@ def parse_tree_to_objgraph(parser, parse_tree):
                 for inherited in obj_cls._tx_inh_by:
                     if inherited._tx_type == RULE_ABSTRACT:
                         return _resolve_ref_abstract(inherited)
-                    elif inherited._tx_type == RULE_NORMAL:
+                    elif inherited._tx_type == RULE_COMMON:
                         if id(inherited) in parser._instances:
                             objs = parser._instances[id(inherited)]
                             if obj_ref.obj_name in objs:
                                 return objs[obj_ref.obj_name]
 
-            if obj_ref.cls._tx_type == RULE_NORMAL:
+            if obj_ref.cls._tx_type == RULE_COMMON:
                 if id(obj_ref.cls) in parser._instances:
                     objs = parser._instances[id(obj_ref.cls)]
                     if obj_ref.obj_name in objs:
                         return objs[obj_ref.obj_name]
             elif obj_ref.cls._tx_type == RULE_ABSTRACT:
                 # For abstract rule ref do a depth first search on
-                # the inheritance tree to find normal rules
+                # the inheritance tree to find common rules
                 # and return a first instance of that meta-class instance with
                 # the referred name.
                 obj = _resolve_ref_abstract(obj_ref.cls)
@@ -374,7 +374,7 @@ def parse_tree_to_objgraph(parser, parse_tree):
                 return
             resolved_set.add(o)
 
-            # If this object has attributes (created using a normal rule)
+            # If this object has attributes (created using a common rule)
             if hasattr(o.__class__, "_tx_attrs"):
                 for attr in o.__class__._tx_attrs.values():
                     if parser.debug:

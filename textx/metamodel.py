@@ -12,7 +12,7 @@ from collections import OrderedDict
 from arpeggio import DebugPrinter
 from .textx import language_from_str, python_type, BASE_TYPE_NAMES, ID, BOOL,\
     INT, FLOAT, STRING, NUMBER, BASETYPE
-from .const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, RULE_NORMAL
+from .const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, RULE_COMMON
 
 
 class MetaAttr(object):
@@ -283,8 +283,8 @@ class TextXMetaModel(DebugPrinter):
         cls._tx_position = position
 
         # The type of the rule this meta-class results from.
-        # There are three rule types: normal, abstract and match
-        cls._tx_type = RULE_NORMAL
+        # There are three rule types: common, abstract and match
+        cls._tx_type = RULE_COMMON
 
         cls._tx_peg_rule = peg_rule
 
