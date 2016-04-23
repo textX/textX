@@ -10,17 +10,19 @@ To check and visualize (meta)models from command line.
 To get basic help:
 
     $ textx --help
-    usage: textx [-h] cmd metamodel [model]
+    usage: textx [-h] [-i] [-d] cmd metamodel [model]
 
     textX checker and visualizer
 
     positional arguments:
-      cmd         Command - 'check' or 'visualize'
+      cmd         Command - "check" or "visualize"
       metamodel   Meta-model file name
       model       Model file name
 
     optional arguments:
       -h, --help  show this help message and exit
+      -i          case-insensitive parsing
+      -d          run in debug mode
 
 
 You can check and visualize (generate .dot file) your meta-model or model using
