@@ -238,15 +238,16 @@ class TextXModelSA(SemanticAction):
 
     def _resolve_cls_refs(self, grammar_parser, model_parser):
 
-        resolved_set = set()
+        resolved_classes = {}
 
         def _resolve_cls(cls):
 
-            if cls in resolved_set:
-                return cls
+            if cls in resolved_classes:
+                return resolved_classes[cls]
 
             metamodel = model_parser.metamodel
 
+            to_resolve = cls
             if isinstance(cls, ClassCrossRef):
                 if cls.cls_name not in metamodel:
                     line, col = grammar_parser.pos_to_linecol(cls.position)
@@ -254,8 +255,7 @@ class TextXModelSA(SemanticAction):
                         'Unknown class/rule "{}" at {}.'
                         .format(cls.cls_name, (line, col)), line, col)
                 cls = metamodel[cls.cls_name]
-
-            resolved_set.add(cls)
+            resolved_classes[to_resolve] = cls
 
             if cls._tx_type == RULE_ABSTRACT:
                 # Resolve inherited classes
@@ -312,7 +312,6 @@ class TextXModelSA(SemanticAction):
 
         for cls in model_parser.metamodel:
             _resolve_cls(cls)
-
 
     def second_pass(self, grammar_parser, model_parser):
         """Cross reference resolving for parser model."""
