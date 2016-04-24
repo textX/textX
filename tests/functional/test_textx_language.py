@@ -44,6 +44,22 @@ def test_match_rule():
     assert model.__class__ == text
     assert model == "two"
 
+def test_match_rule_multiple():
+    """
+    If match rule has multiple simple matches resulting string should
+    be made by concatenation of simple matches.
+    """
+    grammar = """
+    Rule: 'one' 'two' | 'three';
+    """
+    meta = metamodel_from_str(grammar)
+    assert meta
+    assert meta['Rule']._tx_type is RULE_MATCH
+
+    model = meta.model_from_str(' one two')
+    assert model
+    assert model.__class__ == text
+    assert model == "onetwo"
 
 def test_regex_match_rule():
     """
@@ -65,16 +81,16 @@ def test_regex_match_rule():
     assert model == "bar7"
 
 
-def test_basetype_match_rule_is_abstract():
+def test_basetype_match_rule_is_match():
     """
-    Test that ordered choice of basetypes is an abstract rule.
+    Test that ordered choice of basetypes is a match rule.
     """
     grammar = """
     Rule: INT|ID;
     """
     meta = metamodel_from_str(grammar)
     assert meta
-    assert meta['Rule']._tx_type is RULE_ABSTRACT
+    assert meta['Rule']._tx_type is RULE_MATCH
 
     model = meta.model_from_str('34')
     assert model

@@ -458,6 +458,15 @@ There are three kinds of rules in textX:
 - Abstract rules
 - Match rules
 
+**Common rules** are rules that contains at least one assignment, i.e., they
+have attributes defined. For example:
+
+    InitialCommand:
+      'initial' x=INT ',' y=INT
+    ;
+
+This rule have two attributes defined: `x` and `y`.
+    
 **Abstract rules** are rules given as an ordered choice of other rules. For
 example:
 
@@ -465,8 +474,9 @@ example:
       MoveCommand | InitialCommand
     ;
 
-A meta-class of this rule will never be instantiated. The purpose of this rule
-is to generalize other rules and be used in match and link references.
+At least one of the referenced rules must be the common rule. A meta-class of
+this rule will never be instantiated. The purpose of this rule is to generalize
+other rules and be used in match and link references.
 
 For example:
 
@@ -480,9 +490,9 @@ Python objects in `commands` list will be either instances of `MoveCommand` or
 `InitialCommand`.
 
 
-**Match rule** is special kind of rule that is given as ordered choice of simple
-matches and base type rule references. It is usually used to specify some
-enumerated values.
+**Match rule** is a rule that have no assignments either direct or indirect,
+i.e. all referenced rules are match rules too. It is usually used to specify
+enumerated values or some complex string matches.
 
 Examples:
 
@@ -494,14 +504,18 @@ Examples:
       STRING|/(\w|\+|-)+/
     ;
 
-These rules can be used in match references only and results in objects of base
-python types (`str`, `int`, `bool`, `float`).
+    Value:
+      /(\w|\+|-)+/ | FLOAT | INT
+    ;
+
+These rules can be used in match references only and they produce objects of
+base python types (`str`, `int`, `bool`, `float`).
 
 
 ## Rule modifiers
 
 Rule modifiers are used for  the modification of rules expression. They are
-specified in brackets (`[  ]`) at the begining of the rule definition after the
+specified in brackets (`[  ]`) at the beginning of the rule definition after the
 rule name. Currently, they are used to alter parser configuration for whitespace
 handling on the rule level.
 

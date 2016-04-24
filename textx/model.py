@@ -140,6 +140,20 @@ def parse_tree_to_objgraph(parser, parse_tree):
 
     metamodel = parser.metamodel
 
+    def process_match(nt):
+        """
+        Process subtree for match rules.
+        """
+        if isinstance(nt, Terminal):
+            return convert(nt.value, nt.rule_name)
+        else:
+            # If RHS of assignment is NonTerminal it is a product of
+            # complex match rule. Convert nodes to text and do the join.
+            if len(nt) > 1:
+                return "".join([text(process_match(n)) for n in nt])
+            else:
+                return process_match(nt[0])
+
     def process_node(node):
         if isinstance(node, Terminal):
             return convert(node.value, node.rule_name)
@@ -154,10 +168,15 @@ def parse_tree_to_objgraph(parser, parse_tree):
             # Get class
             mclass = metamodel[node.rule_name]
 
-            # If there is no attributes collected it is an abstract rule
-            # Skip it.
-            if not mclass._tx_attrs:
+            if mclass._tx_type == RULE_ABSTRACT:
+                # If this meta-class is product of abstract rule replace it
+                # with matched concrete meta-class down the inheritance tree.
+                # Abstract meta-class should never be instantiated.
                 return process_node(node[0])
+            elif mclass._tx_type == RULE_MATCH:
+                # If this is a product of match rule handle it as a RHS
+                # of assignment and return plain python type.
+                return process_match(node)
 
             if parser.debug:
                 parser.dprint("CREATING INSTANCE {}".format(node.rule_name))
@@ -268,7 +287,7 @@ def parse_tree_to_objgraph(parser, parse_tree):
                         .format(attr_name,
                                 parser.pos_to_linecol(node.position)))
 
-                # Recurse and convert value to proper type
+                # Convert tree bellow assignment to proper value
                 value = process_node(node[0])
 
                 if metaattr.ref and not metaattr.cont:

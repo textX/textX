@@ -12,7 +12,8 @@ from collections import OrderedDict
 from arpeggio import DebugPrinter
 from .textx import language_from_str, python_type, BASE_TYPE_NAMES, ID, BOOL,\
     INT, FLOAT, STRING, NUMBER, BASETYPE
-from .const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, RULE_COMMON
+from .const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, RULE_COMMON, \
+    RULE_MATCH
 
 
 class MetaAttr(object):
@@ -228,7 +229,8 @@ class TextXMetaModel(DebugPrinter):
         self.imported_namespaces[current_namespace].append(
             self.namespaces[import_file_name])
 
-    def _new_class(self, name, peg_rule, position, inherits=None, root=False):
+    def _new_class(self, name, peg_rule, position, inherits=None, root=False,
+                   rule_type=RULE_COMMON):
         """
         Creates a new class with the given name in the current namespace.
         Args:
@@ -237,6 +239,8 @@ class TextXMetaModel(DebugPrinter):
                 this class.
             positon(int): A position in the input where class is defined.
             root(bool): Is this class a root class of the metamodel.
+            rule_type: The type of the rule this meta-class is for. One of
+                RULE_COMMON, RULE_ABSTRACT or RULE_MATCH.
         """
 
         class Meta(TextXClass):
@@ -245,8 +249,10 @@ class TextXMetaModel(DebugPrinter):
             one Meta class with the type name of the rule.
             Model is a graph of python instances of this metaclasses.
             Attributes:
-                _tx_attrs(dict): A dict of meta-attributes keyed by name.
-                _tx_inh_by(list): Classes that inherits this one.
+                _tx_attrs(dict): A dict of meta-attributes keyed by name. Used by
+                    common rules.
+                _tx_inh_by(list): Classes that inherits this one. Used by
+                    abstract rules.
                 _tx_position(int): A position in the input string where this
                     class is defined.
                 _tx_type(int): The type of the textX rule this class is created
@@ -263,11 +269,12 @@ class TextXMetaModel(DebugPrinter):
         cls = Meta
         cls.__name__ = name
 
-        self._init_class(cls, peg_rule, position, inherits, root)
+        self._init_class(cls, peg_rule, position, inherits, root, rule_type)
 
         return cls
 
-    def _init_class(self, cls, peg_rule, position, inherits=None, root=False):
+    def _init_class(self, cls, peg_rule, position, inherits=None, root=False,
+                    rule_type=RULE_COMMON):
         """
         Setup meta-class special attributes, namespaces etc. This is called
         both for textX created classes as well as user classes.
@@ -284,7 +291,9 @@ class TextXMetaModel(DebugPrinter):
 
         # The type of the rule this meta-class results from.
         # There are three rule types: common, abstract and match
-        cls._tx_type = RULE_COMMON
+        # Base types are match rules.
+        cls._tx_type = rule_type \
+            if cls.__name__ not in BASE_TYPE_NAMES else RULE_MATCH
 
         cls._tx_peg_rule = peg_rule
 

@@ -8,7 +8,7 @@
 #######################################################################
 from __future__ import unicode_literals
 from .const import MULT_ZEROORMORE, MULT_ONEORMORE, MULT_ONE, RULE_MATCH
-from .textx import PRIMITIVE_PYTHON_TYPES
+from .textx import PRIMITIVE_PYTHON_TYPES, BASE_TYPE_NAMES
 import codecs
 import sys
 if sys.version < '3':
@@ -31,6 +31,20 @@ HEADER = '''
 
 '''
 
+def match_str(cls):
+    """
+    For a given match rule meta-class returns a nice string representation.
+    """
+    mstr = ""
+    if not cls._tx_inh_by and cls.__name__ not in BASE_TYPE_NAMES:
+        mstr = text(cls._tx_peg_rule)
+        mstr = mstr.replace("\\", "\\\\")\
+                    .replace("|", "\\|")\
+                    .replace('"', '\\"')\
+                    .replace('{', '\\{')\
+                    .replace('}', '\\}')
+    return mstr
+
 def dot_escape(s):
     return s.replace('\n', r'\n').replace('"', r'\"').replace(':', r'\:')
 
@@ -44,11 +58,7 @@ def metamodel_export(metamodel, file_name):
             name = cls.__name__
             attrs = ""
             if cls._tx_type == RULE_MATCH:
-                attrs = cls._match_str.replace("\\", "\\\\")\
-                                      .replace("|", "\\|")\
-                                      .replace('"', '\\"')\
-                                      .replace('{', '\\{')\
-                                      .replace('}', '\\}')
+                attrs = match_str(cls)
             else:
                 for attr in cls._tx_attrs.values():
                     arrowtail = "arrowtail=diamond, dir=both, " \
