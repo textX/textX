@@ -53,6 +53,31 @@ def test_abstract_rule():
     assert model.attr.__class__.__name__ == 'RuleA'
 
 
+def test_abstract_single():
+    """
+    Test abstract rule with single rule reference.
+    """
+    grammar = """
+    IconSpecification:
+        commands*=Command
+    ;
+
+    Command:
+        ImageCommand
+    ;
+
+    ImageCommand:
+        'image' '(' image_file=STRING ')'
+    ;
+    """
+    metamodel = metamodel_from_str(grammar)
+    model = metamodel.model_from_str('image("testimage.svg")')
+
+    assert metamodel['IconSpecification']._tx_type is RULE_COMMON
+    assert metamodel['Command']._tx_type is RULE_ABSTRACT
+    assert metamodel['ImageCommand']._tx_type is RULE_COMMON
+
+
 def test_match_rule():
     """
     Match rule always returns string.
@@ -661,6 +686,3 @@ def test_sequence_ordered_choice():
     assert model.c == 0
     assert model.b is False
     assert model.d is False
-
-
-

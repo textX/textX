@@ -44,7 +44,7 @@ def rule_params():          return '[', rule_param, ZeroOrMore(',', rule_param),
 def rule_param():           return param_name, Optional('=', string_value)
 def param_name():           return ident
 
-def abstract_rule_body():   return abstract_rule_ref, OneOrMore("|", abstract_rule_ref)
+def abstract_rule_body():   return abstract_rule_ref, ZeroOrMore("|", abstract_rule_ref)
 def common_rule_body():     return sequence
 
 def sequence():             return OneOrMore(choice)
