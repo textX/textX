@@ -27,6 +27,32 @@ def test_common_rule():
     assert model.a == "something"
 
 
+def test_abstract_rule():
+
+    grammar = """
+    Model: 'start' attr=Rule;
+    Rule: Rule1|Rule2|Rule3;
+    Rule1: RuleA|RuleB;
+    RuleA: a=INT;
+    RuleB: a=STRING;
+    Rule2: b=STRING;
+    Rule3: c=ID;
+    """
+    meta = metamodel_from_str(grammar)
+    assert meta
+    assert set([x.__name__ for x in meta]) == \
+        set(['Model', 'Rule', 'RuleA', 'RuleB', 'Rule1', 'Rule2', 'Rule3'])\
+        .union(set(BASE_TYPE_NAMES))
+    assert meta['Rule']._tx_type is RULE_ABSTRACT
+    assert meta['Rule1']._tx_type is RULE_ABSTRACT
+
+    model = meta.model_from_str('start 34')
+    assert model
+    assert model.attr
+    assert model.attr.a == 34
+    assert model.attr.__class__.__name__ == 'RuleA'
+
+
 def test_match_rule():
     """
     Match rule always returns string.
@@ -44,6 +70,7 @@ def test_match_rule():
     assert model.__class__ == text
     assert model == "two"
 
+
 def test_match_rule_multiple():
     """
     If match rule has multiple simple matches resulting string should
@@ -60,6 +87,24 @@ def test_match_rule_multiple():
     assert model
     assert model.__class__ == text
     assert model == "onetwo"
+
+
+def test_match_rule_complex():
+    """
+    Test match rule that has complex expressions.
+    """
+    grammar = """
+    Rule: ('one' /\d+/)* 'foo'+ |'two'|'three';
+    """
+    meta = metamodel_from_str(grammar)
+    assert meta
+    assert meta['Rule']._tx_type is RULE_MATCH
+
+    model = meta.model_from_str('one 45 one 78 foo foo foo' )
+    assert model
+    assert model.__class__ == text
+    assert model == "one45one78foofoofoo"
+
 
 def test_regex_match_rule():
     """
@@ -135,6 +180,12 @@ def test_all_basetypes():
     meta = metamodel_from_str(grammar)
     assert meta
     assert meta['Rule']._tx_type is RULE_COMMON
+    assert meta['BASETYPE']._tx_type is RULE_MATCH
+    assert meta['NUMBER']._tx_type is RULE_MATCH
+    assert meta['INT']._tx_type is RULE_MATCH
+    assert meta['FLOAT']._tx_type is RULE_MATCH
+    assert meta['STRING']._tx_type is RULE_MATCH
+    assert meta['BOOL']._tx_type is RULE_MATCH
 
     model = meta.model_from_str('3.4 5 true 0 "some string" '
                                 '\'some other string\' some_id')
@@ -272,30 +323,6 @@ def test_rule_call_forward_backward_reference():
     assert model.attr
     assert model.attr.attr
     assert model.attr.attr == "three"
-
-
-def test_abstract_rule():
-
-    grammar = """
-    Model: 'start' attr=Rule;
-    Rule: Rule1|Rule2|Rule3;
-    Rule1: RuleA|RuleB;
-    RuleA: a=INT;
-    RuleB: a=STRING;
-    Rule2: b=STRING;
-    Rule3: c=ID;
-    """
-    meta = metamodel_from_str(grammar)
-    assert meta
-    assert set([x.__name__ for x in meta]) == \
-        set(['Model', 'Rule', 'RuleA', 'RuleB', 'Rule1', 'Rule2', 'Rule3'])\
-        .union(set(BASE_TYPE_NAMES))
-
-    model = meta.model_from_str('start 34')
-    assert model
-    assert model.attr
-    assert model.attr.a == 34
-    assert model.attr.__class__.__name__ == 'RuleA'
 
 
 def test_assignment_zeroormore():
@@ -528,8 +555,9 @@ def test_repeat_rule_ref():
     """
     metamodel = metamodel_from_str(grammar)
 
+    assert metamodel['Rule']._tx_type is RULE_MATCH
     model = metamodel.model_from_str("""first second third""")
-    assert model
+    assert model == 'firstsecondthird'
 
 
 def test_repeat_strmatch():
@@ -539,7 +567,8 @@ def test_repeat_strmatch():
     metamodel = metamodel_from_str(grammar)
 
     model = metamodel.model_from_str("""first first""")
-    assert model
+    assert metamodel['Rule']._tx_type is RULE_MATCH
+    assert model == 'firstfirst'
 
 
 def test_repeat_strmatch_with_separator():
@@ -548,8 +577,9 @@ def test_repeat_strmatch_with_separator():
     """
     metamodel = metamodel_from_str(grammar)
 
+    assert metamodel['Rule']._tx_type is RULE_MATCH
     model = metamodel.model_from_str("""first, first""")
-    assert model
+    assert model == 'first,first'
 
 
 def test_default_attribute_values():
