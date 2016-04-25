@@ -7,6 +7,7 @@ python:
 before_install:
     # Installing Arpeggio as a dependency
     - cd ..
+    - pip install Jinja2
     - git clone --depth=1 --branch=master git://github.com/igordejanovic/Arpeggio.git
     - cd Arpeggio && python setup.py install
     - cd ../textX
