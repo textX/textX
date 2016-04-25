@@ -18,7 +18,6 @@ else:
     text = str
 
 import re
-import os
 from arpeggio import StrMatch, Optional, ZeroOrMore, OneOrMore, Sequence,\
     OrderedChoice, RegExMatch, Match, NoMatch, EOF, ParsingExpression,\
     SemanticAction, ParserPython, SemanticActionSingleChild
@@ -342,8 +341,18 @@ def textx_rule_SA(parser, node, children):
     else:
         rule_name, rule = children[0]
         rule_params = {}
-    rule = Sequence(nodes=[rule], rule_name=rule_name,
-                    root=True, **rule_params)
+
+    if rule.root:
+        # If it is rule node it must be kept because it could be
+        # e.g., single assignment in the rule.
+        rule = Sequence(nodes=[rule], rule_name=rule_name,
+                        root=True, **rule_params)
+    else:
+        # Promote rule node to root node.
+        rule.rule_name = rule_name
+        rule.root = True
+        for param in rule_params:
+            setattr(rule, param, rule_params[param])
 
     # Add PEG rule to the meta-class
     parser.metamodel._set_rule(rule_name, rule)
