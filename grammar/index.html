@@ -653,14 +653,22 @@ inside one line only.</p>
 <li>Abstract rules</li>
 <li>Match rules</li>
 </ul>
+<p><strong>Common rules</strong> are rules that contains at least one assignment, i.e., they
+have attributes defined. For example:</p>
+<pre><code>InitialCommand:
+  'initial' x=INT ',' y=INT
+;
+</code></pre>
+<p>This rule have two attributes defined: <code>x</code> and <code>y</code>.</p>
 <p><strong>Abstract rules</strong> are rules given as an ordered choice of other rules. For
 example:</p>
 <pre><code>Command:
   MoveCommand | InitialCommand
 ;
 </code></pre>
-<p>A meta-class of this rule will never be instantiated. The purpose of this rule
-is to generalize other rules and be used in match and link references.</p>
+<p>At least one of the referenced rules must be the common rule. A meta-class of
+this rule will never be instantiated. The purpose of this rule is to generalize
+other rules and be used in match and link references.</p>
 <p>For example:</p>
 <pre><code>Program:
   'begin'
@@ -670,9 +678,9 @@ is to generalize other rules and be used in match and link references.</p>
 </code></pre>
 <p>Python objects in <code>commands</code> list will be either instances of <code>MoveCommand</code> or
 <code>InitialCommand</code>.</p>
-<p><strong>Match rule</strong> is special kind of rule that is given as ordered choice of simple
-matches and base type rule references. It is usually used to specify some
-enumerated values.</p>
+<p><strong>Match rule</strong> is a rule that have no assignments either direct or indirect,
+i.e. all referenced rules are match rules too. It is usually used to specify
+enumerated values or some complex string matches.</p>
 <p>Examples:</p>
 <pre><code>Widget:
   "edit"|"combo"|"checkbox"|"togglebutton"
@@ -681,12 +689,16 @@ enumerated values.</p>
 Name:
   STRING|/(\w|\+|-)+/
 ;
+
+Value:
+  /(\w|\+|-)+/ | FLOAT | INT
+;
 </code></pre>
-<p>These rules can be used in match references only and results in objects of base
-python types (<code>str</code>, <code>int</code>, <code>bool</code>, <code>float</code>).</p>
+<p>These rules can be used in match references only and they produce objects of
+base python types (<code>str</code>, <code>int</code>, <code>bool</code>, <code>float</code>).</p>
 <h2 id="rule-modifiers">Rule modifiers</h2>
 <p>Rule modifiers are used for  the modification of rules expression. They are
-specified in brackets (<code>[  ]</code>) at the begining of the rule definition after the
+specified in brackets (<code>[  ]</code>) at the beginning of the rule definition after the
 rule name. Currently, they are used to alter parser configuration for whitespace
 handling on the rule level.</p>
 <p>There are two rule modifier at the moment:</p>
