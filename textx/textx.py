@@ -460,12 +460,18 @@ abstract_rule_ref.sem = abstract_rule_ref_SA
 
 
 def common_rule_body_SA(parser, node, children):
-    return Sequence(nodes=children[:])
+    if len(children) > 1:
+        return Sequence(nodes=children[:])
+    else:
+        return children[0]
 common_rule_body.sem = common_rule_body_SA
 
 
 def sequence_SA(parser, node, children):
-    return Sequence(nodes=children[:])
+    if len(children) > 1:
+        return Sequence(nodes=children[:])
+    else:
+        return children[0]
 sequence.sem = sequence_SA
 
 

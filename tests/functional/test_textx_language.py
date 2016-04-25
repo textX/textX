@@ -78,6 +78,18 @@ def test_abstract_single():
     assert metamodel['ImageCommand']._tx_type is RULE_COMMON
 
 
+def test_abstract_with_match_rule():
+    """
+    To be abstract rule at least one alternative must be either abstract or common.
+    """
+    grammar="""
+    Rule: STRING|Rule1|ID;
+    Rule1: a='a'; // common rule
+    """
+    meta = metamodel_from_str(grammar)
+    assert meta['Rule']._tx_type is RULE_ABSTRACT
+
+
 def test_match_rule():
     """
     Match rule always returns string.

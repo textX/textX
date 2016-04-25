@@ -7,6 +7,8 @@
 # License: MIT License
 #######################################################################
 from __future__ import unicode_literals
+from arpeggio import Match, OrderedChoice, Sequence, OneOrMore, ZeroOrMore,\
+    Optional
 from .const import MULT_ZEROORMORE, MULT_ONEORMORE, MULT_ONE, RULE_MATCH
 from .textx import PRIMITIVE_PYTHON_TYPES, BASE_TYPE_NAMES
 import codecs
@@ -35,18 +37,49 @@ def match_str(cls):
     """
     For a given match rule meta-class returns a nice string representation.
     """
+    def r(s):
+        if s.root:
+            return s.rule_name
+        else:
+            if isinstance(s, Match):
+                return text(s)
+            elif isinstance(s, OrderedChoice):
+                return "|".join([r(x) for x in s.nodes])
+            elif isinstance(s, Sequence):
+                return " ".join([r(x) for x in s.nodes])
+            elif isinstance(s, ZeroOrMore):
+                return "({})*".format(r(s.nodes[0]))
+            elif isinstance(s, OneOrMore):
+                return "({})+".format(r(s.nodes[0]))
+            elif isinstance(s, Optional):
+                return "{}?".format(r(s.nodes[0]))
+
     mstr = ""
     if not cls._tx_inh_by and cls.__name__ not in BASE_TYPE_NAMES:
-        mstr = text(cls._tx_peg_rule)
-        mstr = mstr.replace("\\", "\\\\")\
-                    .replace("|", "\\|")\
-                    .replace('"', '\\"')\
-                    .replace('{', '\\{')\
-                    .replace('}', '\\}')
+        e = cls._tx_peg_rule.nodes[0]
+        print(cls.__name__)
+        if isinstance(e, OrderedChoice):
+            print('OrderedChoice')
+            mstr = "|".join([r(x) for x in e.nodes])
+        elif isinstance(e, Sequence):
+            print('Sequence')
+            mstr = " ".join([r(x) for x in e.nodes])
+        else:
+            mstr = e.rule_name
+
+        mstr = dot_escape(mstr)
+
     return mstr
 
 def dot_escape(s):
-    return s.replace('\n', r'\n').replace('"', r'\"').replace(':', r'\:')
+    return s.replace('\n', r'\n')\
+            .replace('"', r'\"')\
+            .replace(':', r'\:')\
+            .replace("\\", "\\\\")\
+            .replace("|", "\\|")\
+            .replace('"', '\\"')\
+            .replace('{', '\\{')\
+            .replace('}', '\\}')
 
 
 def metamodel_export(metamodel, file_name):
