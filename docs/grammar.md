@@ -474,9 +474,10 @@ example:
       MoveCommand | InitialCommand
     ;
 
-At least one of the referenced rules must be the common rule. A meta-class of
-this rule will never be instantiated. The purpose of this rule is to generalize
-other rules and be used in match and link references.
+Besides its syntax form, other condition that must be satisfied is that at least
+one of the referenced rules must be a common rule or abstract rule. A meta-class
+of this rule will never be instantiated. The purpose of this rule is to
+generalize other rules and be used in match and link references.
 
 For example:
 
