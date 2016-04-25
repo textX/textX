@@ -1,0 +1,71 @@
+experiment "Simon"
+"
+A simple behavioural task to assess a Simon effect.
+
+See also:
+http://en.wikipedia.org/wiki/Simon_effect
+"
+
+test Simon {
+    conditions {
+        position     color        congruency        response
+
+        left         green        congruent         left
+        left         red          incongruent       right
+        right        green        incongruent       left
+        right        red          congruent         right
+    }
+    
+    stimuli{
+        all: shape(rectangle, position position, color color, fillColor color)
+        error: sound(1000, duration 300)
+        correct: sound(500, duration 300)
+        fixation: shape(cross)
+    }
+}
+
+screen Practice {
+    Simon test
+    ----------
+    
+    You will be presented with a colored rectangle positioned
+    left or right.
+    Press LEFT for the GREEN rectangle and right for the red.
+    
+    Press SPACE for the practice block.
+}
+
+screen Real {
+    Simon test
+    ----------
+    
+    Now a REAL testing will be performed.
+    
+    Press SPACE for the real block.
+}
+
+structure {
+    screen Practice
+    test Simon 1 practice randomize
+    screen Real
+    test Simon 10 randomize
+}
+
+/*
+target Expyriment {
+  output = "/home/igor/tmp/Simon/"
+  responses {
+      // see expyriment/misc/constants.py
+    left = K_LEFT
+    right = K_RIGHT
+  }
+}
+*/
+
+target PsychoPy {
+  output = "/home/igor/tmp/SimonPsycho/"
+  responses {
+    left = left
+    right = right
+  }
+}

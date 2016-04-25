@@ -1,0 +1,272 @@
+/*
+  This is a textX specification of pyFlies DSL for cognitive test
+  experiments definition.
+  Author: Igor R. Dejanovic <igor DOT dejanovic AT gmail DOT com>
+  Copyright: (c) 2014 Igor R. Dejanovic <igor DOT dejanovic AT gmail DOT com>
+  License: GPLv3 License
+*/
+
+PyFliesModel:
+  "experiment" name=STRING
+  (description=STRING)?
+  ("basepath" basepath=STRING)?
+  blocks+=BlockType
+  structure=Structure
+  targets*=Target
+;
+
+BlockType:
+  TestType | ScreenType | SubjectType
+;
+
+TestType:
+  "test" name=ID "{"
+    'conditions' '{'
+      // Strip all whitespaces before next WORD
+      // because next rule is eolterm and
+      // terminates on newlines.
+      /\s*/
+
+      // Parameter names are in the first line of condition specification
+      condVarNames+=WORD[eolterm]    // match var names until end of line
+
+      // The rest of the description are conditions, one per line
+      // The order of condition values match the param name positions.
+      conditions+=Condition
+    '}'
+
+    'stimuli' '{'
+        condStimuli+=ConditionStimuli
+        ('duration' duration=Duration)?
+    '}'
+  "}"
+;
+
+Condition:
+  /\s*/
+  varValues+=WORD[eolterm]  // match values until end of line
+;
+
+ConditionStimuli:
+  // Condition stimuli is given in the form of
+  // condition match expression : stimuli definitions
+  conditionMatch=ConditionMatch ':' stimuli+=Stimulus
+;
+
+ConditionMatch:
+  expression=ConditionMatchExpression
+;
+
+ConditionMatchExpression:
+   FixedCondition | OrdinalCondition | ExpressionCondition
+;
+
+FixedCondition:
+  expression = FixedConditionEnum
+;
+
+FixedConditionEnum:
+  "all" | "error" | "fixation" | "correct"
+;
+
+OrdinalCondition:
+  expression = INT
+;
+
+ExpressionCondition:
+  expression = OrExpression
+;
+
+OrExpression: operand=AndExpression ('or' operand=AndExpression)*;
+AndExpression: operand=NotEqualsExpression ('and' operand=NotEqualsExpression)*;
+
+NotEqualsExpression:
+  NotExpression | EqualsExpression;
+
+NotExpression: 'not' operand=EqualsExpression;
+EqualsExpression: varName=WORD '=' varValue=WORD;
+
+
+Stimulus:
+  Image | Shape | Sound | Audio | Text
+;
+
+Image:
+  'image' '(' file=STRING
+   (','
+        ( ('position' x=WORD (y=INT)?)
+          |('duration' duration=Duration)
+          |(keep?='keep')           // Keep stimuli presented after duration elapses
+          |(target?='target')      // Target stimuli, measure time from its presentation.
+          |('size' width=WORD (height=INT)?) // size - used for rectangle
+        )+[','])?
+  ')'
+;
+
+Shape:
+  'shape' '(' shape=ShapeType
+   (','
+        ( ('position' x=WORD (y=INT)?)  // center of the shape
+          |('duration' duration=Duration)
+          |(keep?='keep')           // Keep stimuli presented after duration elapses
+          |(target?='target')      // Target stimuli, measure time from its presentation.
+          |('radius' radius=INT)  // radius - used for circle
+          |('from' _from=Point)     // from, to - used for line
+          |('to' to=Point)
+          |('size' width=WORD (height=INT)?)  // size - for rectangle and cross
+          |('color' color=WORD)
+          |('fillColor' fillColor=WORD)
+          |('lineWidth' lineWidth=WORD)
+        )+[','])?
+  ')'
+;
+
+ShapeType:
+  "rectangle" | "circle" | "line" | "cross"
+;
+
+Text:
+  'text' '(' text=TextType
+   (','
+        ( ('position' x=WORD (y=INT)?)
+          |('duration' duration=Duration)
+          |(keep?='keep')           // Keep stimuli presented after duration elapses
+          |(target?='target')      // Target stimuli, measure time from its presentation.
+          |('size' size=INT)
+          |('color' color=WORD)
+        )+[','])?
+  ')'
+;
+
+Sound:
+  'sound' '(' frequency=INT
+    (',' (
+           ('duration' duration=Duration)
+           |(target?='target')
+         )+[',']
+    )?
+  ')'
+;
+
+Audio:
+  'audio' '(' file=STRING
+    (',' (
+           ('duration' duration=Duration)
+           |(target?='target')
+         )+[',']
+    )?
+  ')'
+;
+
+
+TextType:
+  STRING | /\w*\b/
+;
+
+WORD:
+  INT|/[-\w]*\b/
+;
+
+Duration:
+  /*
+    _from , to - duration will be randomly choosen from the given interval.
+    value - duration is fixed.
+  */
+  ('[' _from=INT ',' to=INT ']') | value = INT
+;
+
+Point:
+  '[' x=INT ',' y=INT ']'
+;
+
+Block:
+  Sequence | Randomize
+;
+
+TestInstance:
+  'test' type=[TestType] trials=INT (practice?="practice" | randomize?="randomize")*
+;
+
+ScreenInstance:
+  'screen' type=[ScreenType]
+;
+
+SubjectInstance:
+  'subject' type=[SubjectType]
+;
+
+Reference:
+  TestInstance | ScreenInstance | SubjectInstance
+;
+
+StructureElement:
+  Reference | Block
+;
+
+
+Structure:
+  'structure' '{'
+    elements*=StructureElement
+  '}'
+;
+
+Sequence:
+  'sequence' '{'
+    elements*=StructureElement
+  '}'
+;
+
+Randomize:
+  'randomize' '{'
+    elements*=StructureElement
+  '}'
+;
+
+ScreenType:
+  'screen' name=ID "{"
+  /*    content=/(.|\n)*?(?=})/  */
+      content=/[^}]*/
+  '}'
+;
+
+SubjectType:
+  'subject' name=ID '{'
+    attribute+=SubjectAttribute
+  '}'
+;
+
+SubjectAttribute:
+  type=SubjectAttributeType name=ID (label=STRING)?
+;
+
+SubjectAttributeType:
+  "int"|"string"|"float"|Enum
+;
+
+Enum:
+  '[' values+=ID[','] ']'
+;
+
+Target:
+  'target' name=ID '{'
+    'output' '=' output=STRING
+    'responses' '{'
+        responseMap*=ResponseMap
+    '}'
+    targetParam*=TargetParam
+  '}'
+;
+
+TargetParam:
+  name=ID '=' value=BASETYPE
+;
+
+ResponseMap:
+  name=ID '=' target=BASETYPE
+;
+
+// Special rule for comments
+Comment:
+  /\/\/.*$/|/\/\*(.|\n)*?\*\//  // Non-greedy match of block component content
+;
+
