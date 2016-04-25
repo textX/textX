@@ -198,6 +198,7 @@ class TextXMetaModel(DebugPrinter):
         For the given rule/class name sets PEG rule.
         """
         self[name]._tx_peg_rule = rule
+        rule._tx_class = self[name]
 
     def _new_import(self, import_name):
         """
@@ -230,7 +231,7 @@ class TextXMetaModel(DebugPrinter):
             self.namespaces[import_file_name])
 
     def _new_class(self, name, peg_rule, position, inherits=None, root=False,
-                   rule_type=RULE_COMMON):
+                   rule_type=RULE_MATCH):
         """
         Creates a new class with the given name in the current namespace.
         Args:
@@ -274,7 +275,7 @@ class TextXMetaModel(DebugPrinter):
         return cls
 
     def _init_class(self, cls, peg_rule, position, inherits=None, root=False,
-                    rule_type=RULE_COMMON):
+                    rule_type=RULE_MATCH):
         """
         Setup meta-class special attributes, namespaces etc. This is called
         both for textX created classes as well as user classes.
@@ -292,8 +293,7 @@ class TextXMetaModel(DebugPrinter):
         # The type of the rule this meta-class results from.
         # There are three rule types: common, abstract and match
         # Base types are match rules.
-        cls._tx_type = rule_type \
-            if cls.__name__ not in BASE_TYPE_NAMES else RULE_MATCH
+        cls._tx_type = rule_type
 
         cls._tx_peg_rule = peg_rule
 

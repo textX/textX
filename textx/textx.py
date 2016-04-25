@@ -26,7 +26,7 @@ from arpeggio import RegExMatch as _
 
 from .exceptions import TextXSyntaxError, TextXSemanticError
 from .const import MULT_ZEROORMORE, MULT_ONEORMORE, \
-    MULT_OPTIONAL, RULE_MATCH, RULE_ABSTRACT
+    MULT_OPTIONAL, RULE_COMMON, RULE_MATCH, RULE_ABSTRACT
 
 
 # textX grammar
@@ -35,16 +35,12 @@ def textx_model():          return ZeroOrMore(import_stm), ZeroOrMore(textx_rule
 def import_stm():           return 'import', grammar_to_import
 def grammar_to_import():    return _(r'(\w|\.)+')
 
-def textx_rule():           return [abstract_rule, common_rule]
 # Rules
-def common_rule():          return rule_name, Optional(rule_params), ":", common_rule_body, ";"
-def abstract_rule():        return rule_name, Optional(rule_params), ":", abstract_rule_body, ";"
+def textx_rule():           return rule_name, Optional(rule_params), ":", textx_rule_body, ";"
 def rule_params():          return '[', rule_param, ZeroOrMore(',', rule_param), ']'
 def rule_param():           return param_name, Optional('=', string_value)
 def param_name():           return ident
-
-def abstract_rule_body():   return abstract_rule_ref, ZeroOrMore("|", abstract_rule_ref)
-def common_rule_body():     return sequence
+def textx_rule_body():      return sequence
 
 def sequence():             return OneOrMore(choice)
 def choice():               return repeatable_expr, ZeroOrMore("|", repeatable_expr)
@@ -65,7 +61,6 @@ def assignment_rhs():       return [simple_match, reference], Optional(repeat_mo
 # References
 def reference():            return [rule_ref, obj_ref]
 def rule_ref():             return ident
-def abstract_rule_ref():    return ident
 def obj_ref():              return '[', class_name, Optional('|', obj_ref_rule), ']'
 
 def rule_name():            return ident
@@ -175,7 +170,6 @@ class TextXModelSA(SemanticAction):
             comments_model = None
 
         root_rule = children[0]
-
         from .model import get_model_parser
         model_parser = get_model_parser(root_rule, comments_model,
                                         ignore_case=metamodel.ignore_case,
@@ -205,10 +199,17 @@ class TextXModelSA(SemanticAction):
                 if grammar_parser.debug:
                     grammar_parser.dprint("Resolving rule: {}".format(rule))
 
-                if type(rule) == RuleCrossRef:
+                # Save initial rule name to detect special abstract rule case.
+                initial_rule_name = rule.rule_name
+
+                if type(rule) is RuleCrossRef:
                     rule_name = rule.rule_name
                     if rule_name in model_parser.metamodel:
                         rule = model_parser.metamodel[rule_name]._tx_peg_rule
+                        if type(rule) is RuleCrossRef:
+                            rule = _inner_resolve(rule)
+                            model_parser.metamodel[rule_name]\
+                                ._tx_peg_rule = rule
                     else:
                         line, col = grammar_parser.pos_to_linecol(rule.position)
                         raise TextXSemanticError(
@@ -219,11 +220,42 @@ class TextXModelSA(SemanticAction):
                 assert isinstance(rule, ParsingExpression),\
                     "{}:{}".format(type(rule), text(rule))
 
-                # Recurse into subrules
+                # If there is meta-class attributes collected than this
+                # is common rule
+                if hasattr(rule, '_tx_class') and \
+                        len(rule._tx_class._tx_attrs) > 0:
+                    rule._tx_class._tx_type = RULE_COMMON
+
+                # Recurse into subrules, resolve and determine rule types.
+                abstract = False
                 for idx, child in enumerate(rule.nodes):
                     if child not in resolved_set:
                         resolved_set.add(rule)
-                        rule.nodes[idx] = _inner_resolve(child)
+                        child = _inner_resolve(child)
+                        rule.nodes[idx] = child
+
+                    # Detect abstract rules.
+                    if rule.rule_name != initial_rule_name:
+                        # Special case when there is only a single rule ref in
+                        # the rule.
+                        abstract = True
+                    elif rule.root and \
+                            not rule.rule_name.startswith('__asgn') and \
+                            hasattr(child, '_tx_class') and \
+                            isinstance(rule, OrderedChoice):
+                        # If this is root rule, OrderedChoice, and its not
+                        # assignment and there exists child that has its meta-class
+                        # which is abstract or common than this must be abstract.
+                        abstract |= child._tx_class._tx_type != RULE_MATCH
+
+                if abstract:
+                    cls = model_parser.metamodel[initial_rule_name]
+                    cls._tx_type = RULE_ABSTRACT
+                    # Add inherited classes to this rule's meta-class
+                    for idx, child in enumerate(rule.nodes):
+                        if child.root and hasattr(child, '_tx_class'):
+                            if child._tx_class not in cls._tx_inh_by:
+                                cls._tx_inh_by.append(child._tx_class)
 
                 return rule
 
@@ -258,26 +290,17 @@ class TextXModelSA(SemanticAction):
 
             if cls._tx_type == RULE_ABSTRACT:
                 # Resolve inherited classes
-                match = True
                 for idx, inh in enumerate(cls._tx_inh_by):
                     inh = _resolve_cls(inh)
                     cls._tx_inh_by[idx] = inh
-                    match &= inh._tx_type == RULE_MATCH
-
-                # If all inherited classes are of match type than this is
-                # match rule.
-                if match:
-                    cls._tx_type = RULE_MATCH
 
             else:
 
                 # If this is not abstract class than it must be common or match.
                 # Resolve referred classes.
-                match = True
+                # If there is no attributes collected than it ``
                 for attr in cls._tx_attrs.values():
                     attr.cls = _resolve_cls(attr.cls)
-
-                    match &= attr.cls._tx_type == RULE_MATCH
 
                     # If target cls is of a base type or match rule
                     # then attr can not be a reference.
@@ -296,12 +319,6 @@ class TextXModelSA(SemanticAction):
                                     attr.cls.__name__,
                                     attr.cont, attr.ref, attr.mult,
                                     attr.position))
-
-                if match and not cls._tx_attrs:
-                    # If all attribute references are of match type and this
-                    # class hasn't any attributes of its own than this class is of
-                    # match type too.
-                    cls._tx_type = RULE_MATCH
 
             return cls
 
@@ -336,25 +353,26 @@ grammar_to_import.sem = grammar_to_import_SA
 
 
 def textx_rule_SA(parser, node, children):
-    if len(children[0]) > 2:
-        rule_name, rule_params, rule = children[0]
+    if len(children) > 2:
+        rule_name, rule_params, rule = children
     else:
-        rule_name, rule = children[0]
+        rule_name, rule = children
         rule_params = {}
 
-    if rule.root:
-        # If it is rule node it must be kept because it could be
+    if rule.rule_name.startswith('__asgn'):
+        # If it is assignment node it must be kept because it could be
         # e.g., single assignment in the rule.
         rule = Sequence(nodes=[rule], rule_name=rule_name,
                         root=True, **rule_params)
     else:
-        # Promote rule node to root node.
-        rule.rule_name = rule_name
-        rule.root = True
-        for param in rule_params:
-            setattr(rule, param, rule_params[param])
+        if not isinstance(rule, RuleCrossRef):
+            # Promote rule node to root node.
+            rule.rule_name = rule_name
+            rule.root = True
+            for param in rule_params:
+                setattr(rule, param, rule_params[param])
 
-    # Add PEG rule to the meta-class
+    # Connect meta-class and the PEG rule
     parser.metamodel._set_rule(rule_name, rule)
 
     return rule
@@ -433,12 +451,6 @@ def rule_param_SA(parser, node, children):
 rule_param.sem = rule_param_SA
 
 
-def rules_SA(parser, node, children):
-    return children
-common_rule.sem = rules_SA
-abstract_rule.sem = rules_SA
-
-
 def rule_ref_SA(parser, node, children):
     rule_name = text(node)
     # Here a name of the meta-class (rule) is expected but to support
@@ -447,33 +459,12 @@ def rule_ref_SA(parser, node, children):
 rule_ref.sem = rule_ref_SA
 
 
-def abstract_rule_body_SA(parser, node, children):
-    # This is a body of an abstract rule so set
-    # the proper type
-    parser._current_cls._tx_type = RULE_ABSTRACT
-    return OrderedChoice(nodes=children[:])
-abstract_rule_body.sem = abstract_rule_body_SA
-
-
-def abstract_rule_ref_SA(parser, node, children):
-    rule_name = str(node)
-    # This rule is used in alternative (inheritance)
-    # Crossref resolving will be done in the second pass.
-    parser._current_cls._tx_inh_by.append(
-        ClassCrossRef(cls_name=rule_name,
-                      position=node.position))
-    # Here a name of the class (rule) is expected but to support
-    # forward referencing we are postponing resolving to second_pass.
-    return RuleCrossRef(rule_name, rule_name, node.position)
-abstract_rule_ref.sem = abstract_rule_ref_SA
-
-
-def common_rule_body_SA(parser, node, children):
+def textx_rule_body_SA(parser, node, children):
     if len(children) > 1:
         return Sequence(nodes=children[:])
     else:
         return children[0]
-common_rule_body.sem = common_rule_body_SA
+textx_rule_body.sem = textx_rule_body_SA
 
 
 def sequence_SA(parser, node, children):

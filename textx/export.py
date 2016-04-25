@@ -56,13 +56,10 @@ def match_str(cls):
 
     mstr = ""
     if not cls._tx_inh_by and cls.__name__ not in BASE_TYPE_NAMES:
-        e = cls._tx_peg_rule.nodes[0]
-        print(cls.__name__)
+        e = cls._tx_peg_rule
         if isinstance(e, OrderedChoice):
-            print('OrderedChoice')
             mstr = "|".join([r(x) for x in e.nodes])
         elif isinstance(e, Sequence):
-            print('Sequence')
             mstr = " ".join([r(x) for x in e.nodes])
         else:
             mstr = e.rule_name
@@ -74,7 +71,6 @@ def match_str(cls):
 def dot_escape(s):
     return s.replace('\n', r'\n')\
             .replace('"', r'\"')\
-            .replace(':', r'\:')\
             .replace("\\", "\\\\")\
             .replace("|", "\\|")\
             .replace('"', '\\"')\
