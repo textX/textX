@@ -1,5 +1,9 @@
+from os.path import dirname, join
 from textx.metamodel import metamodel_from_file
 from textx.export import metamodel_export, model_export
+
+
+this_folder = dirname(__file__)
 
 
 class Entity(object):
@@ -18,7 +22,7 @@ class Entity(object):
         return self.name
 
 
-def get_entity_mm():
+def get_entity_mm(debug=False):
     """
     Builds and returns a meta-model for Entity language.
     """
@@ -29,24 +33,28 @@ def get_entity_mm():
             'integer': Entity(None, 'integer', []),
             'string': Entity(None, 'string', [])
     }
-    entity_mm = metamodel_from_file('entity.tx',
+    entity_mm = metamodel_from_file(join(this_folder, 'entity.tx'),
                                     classes=[Entity],  # Register Entity class
                                     builtins=entity_builtins,
-                                    debug=False)
+                                    debug=debug)
 
     return entity_mm
 
-if __name__ == "__main__":
 
-    entity_mm = get_entity_mm()
+def main(debug=False):
+
+    entity_mm = get_entity_mm(debug)
 
     # Export to .dot file for visualization
-    metamodel_export(entity_mm, 'dotexport/entity_meta.dot')
+    metamodel_export(entity_mm, join(this_folder,
+                                     'dotexport', 'entity_meta.dot'))
 
     # Build Person model from person.ent file
-    person_model = entity_mm.model_from_file('person.ent')
+    person_model = entity_mm.model_from_file(join(this_folder, 'person.ent'))
 
     # Export to .dot file for visualization
-    model_export(person_model, 'dotexport/entity.dot')
+    model_export(person_model, join(this_folder, 'dotexport', 'entity.dot'))
 
 
+if __name__ == "__main__":
+    main()

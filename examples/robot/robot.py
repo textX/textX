@@ -1,3 +1,4 @@
+from os.path import join, dirname
 from textx.metamodel import metamodel_from_file
 from textx.export import metamodel_export, model_export
 
@@ -49,17 +50,23 @@ class Robot(object):
 
             print(self)
 
-if __name__ == "__main__":
 
-    robot_mm = metamodel_from_file('robot.tx', debug=False)
-    metamodel_export(robot_mm, 'robot_meta.dot')
+def main(debug=False):
+
+    this_folder = dirname(__file__)
+
+    robot_mm = metamodel_from_file(join(this_folder, 'robot.tx'), debug=False)
+    metamodel_export(robot_mm, join(this_folder, 'robot_meta.dot'))
 
     # Register object processor for MoveCommand
     robot_mm.register_obj_processors({'MoveCommand': move_command_processor})
 
-    robot_model = robot_mm.model_from_file('program.rbt')
-    model_export(robot_model, 'program.dot')
+    robot_model = robot_mm.model_from_file(join(this_folder, 'program.rbt'))
+    model_export(robot_model, join(this_folder, 'program.dot'))
 
     robot = Robot()
     robot.interpret(robot_model)
 
+
+if __name__ == "__main__":
+    main()
