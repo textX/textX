@@ -607,6 +607,32 @@ def test_repeat_strmatch_with_separator():
     assert model == 'first,first'
 
 
+def test_empty_strmatch():
+    """
+    Test empty str match.
+    """
+    grammar = """
+    Rule: first='' 'a';
+    """
+    mm = metamodel_from_str(grammar)
+    model = mm.model_from_str('a')
+    assert model
+
+
+def test_empty_regexmatch():
+    """
+    Test emtpy regex match.
+    Note, there must be at least one space between slashes or else it will be
+    parsed as line comment.
+    """
+    grammar = """
+    Rule: first=/ / 'a';
+    """
+    mm = metamodel_from_str(grammar)
+    model = mm.model_from_str('a')
+    assert model
+
+
 def test_default_attribute_values():
     """
     Test default values for unsupplied base type

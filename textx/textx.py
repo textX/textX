@@ -681,7 +681,10 @@ assignment.sem = assignment_SA
 
 
 def str_match_SA(parser, node, children):
-    to_match = children[0]
+    try:
+        to_match = children[0]
+    except:
+        to_match = ''
 
     # Support for autokwd metamodel param.
     if parser.metamodel.autokwd:
@@ -697,7 +700,10 @@ str_match.sem = str_match_SA
 
 
 def re_match_SA(parser, node, children):
-    to_match = children[0]
+    try:
+        to_match = children[0]
+    except:
+        to_match = ''
     regex = RegExMatch(to_match, ignore_case=parser.metamodel.ignore_case)
     try:
         regex.compile()
