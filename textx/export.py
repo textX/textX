@@ -39,7 +39,7 @@ def match_str(cls):
     For a given match rule meta-class returns a nice string representation.
     """
     def r(s):
-        if s.root:
+        if s.root and s.rule_name in BASE_TYPE_NAMES:
             return s.rule_name
         else:
             if isinstance(s, Match):
@@ -56,14 +56,15 @@ def match_str(cls):
                 return "{}?".format(r(s.nodes[0]))
 
     mstr = ""
-    if not cls._tx_inh_by and cls.__name__ not in BASE_TYPE_NAMES:
+    if cls.__name__ not in BASE_TYPE_NAMES:
         e = cls._tx_peg_rule
         if isinstance(e, OrderedChoice):
-            mstr = "|".join([r(x) for x in e.nodes])
+            mstr = "|".join([r(x) for x in e.nodes
+                             if x.rule_name in BASE_TYPE_NAMES or not x.root])
         elif isinstance(e, Sequence):
             mstr = " ".join([r(x) for x in e.nodes])
         else:
-            mstr = e.rule_name
+            mstr = r(e)
 
         mstr = dot_escape(mstr)
 
@@ -87,7 +88,7 @@ def metamodel_export(metamodel, file_name):
         for cls in metamodel:
             name = cls.__name__
             attrs = ""
-            if cls._tx_type == RULE_MATCH:
+            if cls._tx_type is not RULE_COMMON:
                 attrs = match_str(cls)
             else:
                 for attr in cls._tx_attrs.values():
