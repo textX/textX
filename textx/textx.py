@@ -265,7 +265,8 @@ class TextXModelSA(SemanticAction):
         if grammar_parser.debug:
             grammar_parser.dprint("RESOLVING RULE CROSS-REFS")
 
-        resolve(model_parser.parser_model)
+        for cls in model_parser.metamodel:
+            resolve(cls._tx_peg_rule)
 
     def _resolve_cls_refs(self, grammar_parser, model_parser):
 
