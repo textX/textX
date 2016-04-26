@@ -87,6 +87,7 @@ def test_assignment_modifier_separator_optional():
     with pytest.raises(TextXSyntaxError):
         metamodel_from_str(model)
 
+
 def test_assignment_modifier_separator_plain():
     """
     Modifiers are not allowed for plain assignment.
@@ -99,6 +100,7 @@ def test_assignment_modifier_separator_plain():
     """
     with pytest.raises(TextXSyntaxError):
         metamodel_from_str(model)
+
 
 def test_modifier_eolterm_zeroormore():
     model = """

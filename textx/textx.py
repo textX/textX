@@ -360,9 +360,12 @@ def textx_rule_SA(parser, node, children):
         rule_name, rule = children
         rule_params = {}
 
-    if rule.rule_name.startswith('__asgn'):
+    if rule.rule_name.startswith('__asgn') or\
+            (isinstance(rule, Match) and rule_params):
         # If it is assignment node it must be kept because it could be
         # e.g., single assignment in the rule.
+        # Also, handle a special case where rule consists only of a single match
+        # and there are rule modifiers defined.
         rule = Sequence(nodes=[rule], rule_name=rule_name,
                         root=True, **rule_params)
     else:
