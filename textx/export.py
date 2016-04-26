@@ -9,7 +9,8 @@
 from __future__ import unicode_literals
 from arpeggio import Match, OrderedChoice, Sequence, OneOrMore, ZeroOrMore,\
     Optional
-from .const import MULT_ZEROORMORE, MULT_ONEORMORE, MULT_ONE, RULE_MATCH
+from .const import MULT_ZEROORMORE, MULT_ONEORMORE, MULT_ONE, RULE_ABSTRACT, \
+    RULE_COMMON
 from .textx import PRIMITIVE_PYTHON_TYPES, BASE_TYPE_NAMES
 import codecs
 import sys
@@ -109,7 +110,8 @@ def metamodel_export(metamodel, file_name):
                                                      attr.name, attr_type)
 
             f.write('{}[ label="{{{}|{}}}"]\n'.format(
-                    id(cls), name, attrs))
+                    id(cls), "*{}".format(name)
+                    if cls._tx_type is RULE_ABSTRACT else name, attrs))
 
             for inherited_by in cls._tx_inh_by:
                 f.write('{} -> {} [dir=back]\n'
