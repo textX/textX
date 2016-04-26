@@ -467,19 +467,9 @@ have attributes defined. For example:
 
 This rule have two attributes defined: `x` and `y`.
     
-**Abstract rules** are rules given as an ordered choice of other rules. For
-example:
-
-    Command:
-      MoveCommand | InitialCommand
-    ;
-
-Besides its syntax form, other condition that must be satisfied is that at least
-one of the referenced rules must be a common rule or abstract rule. A meta-class
-of this rule will never be instantiated. The purpose of this rule is to
-generalize other rules and be used in match and link references.
-
-For example:
+**Abstract rules** are rules that have no assignments and reference at least one
+abstract or common rule. They are usually given as an ordered choice of other
+rules and they are used to generalize other rules. For example:
 
     Program:
       'begin'
@@ -487,13 +477,46 @@ For example:
       'end'
     ;
 
-Python objects in `commands` list will be either instances of `MoveCommand` or
-`InitialCommand`.
+    Command:
+      MoveCommand | InitialCommand
+    ;
 
+In this example, Python objects in `commands` list will be either instances of
+`MoveCommand` or `InitialCommand`.  `Command` rule is abstract.  A meta-class of
+this rule will never be instantiated. Abstract rule can also be used in link
+rule references:
 
-**Match rule** is a rule that have no assignments either direct or indirect,
+    ListOfCommands:
+      commands*=[Command][',']
+    ;
+
+Abstract rules may reference match rules and base types. For example:
+
+    Value:
+        STRING | FLOAT | BOOL | Object | Array | "null"
+    ;
+
+In this example base types as well as string match `"null"` are all match rules
+but `Object` and `Array` are common rules and therefore `Value` is abstract.
+
+Abstract rules can be a complex mix of rule references and match expressions as
+long as there is at least one abstract or common reference.
+For example:
+
+    Value:
+      'id' /\d+-\d+/ | FLOAT | Object
+    ;
+
+Rule with a single reference to abstract or common rule is also abstract:
+
+    Value:
+      OtherRule
+    ;
+
+**Match rules** are rules that have no assignments either direct or indirect,
 i.e. all referenced rules are match rules too. It is usually used to specify
-enumerated values or some complex string matches.
+enumerated values or some complex string matches that can't be done with regular
+expressions.
 
 Examples:
 
@@ -509,8 +532,11 @@ Examples:
       /(\w|\+|-)+/ | FLOAT | INT
     ;
 
-These rules can be used in match references only and they produce objects of
-base python types (`str`, `int`, `bool`, `float`).
+These rules can be used in match references only (i.e., you can't link to these
+rules as they don't exists as objects), and they produce objects of base python
+types (`str`, `int`, `bool`, `float`).
+
+All base type rules (e.g., `INT`, `STRING`, `BASETYPE`) are match rules.
 
 
 ## Rule modifiers
