@@ -660,27 +660,50 @@ have attributes defined. For example:</p>
 ;
 </code></pre>
 <p>This rule have two attributes defined: <code>x</code> and <code>y</code>.</p>
-<p><strong>Abstract rules</strong> are rules given as an ordered choice of other rules. For
-example:</p>
-<pre><code>Command:
-  MoveCommand | InitialCommand
-;
-</code></pre>
-<p>At least one of the referenced rules must be the common rule. A meta-class of
-this rule will never be instantiated. The purpose of this rule is to generalize
-other rules and be used in match and link references.</p>
-<p>For example:</p>
+<p><strong>Abstract rules</strong> are rules that have no assignments and reference at least one
+abstract or common rule. They are usually given as an ordered choice of other
+rules and they are used to generalize other rules. For example:</p>
 <pre><code>Program:
   'begin'
     commands*=Command
   'end'
 ;
+
+Command:
+  MoveCommand | InitialCommand
+;
 </code></pre>
-<p>Python objects in <code>commands</code> list will be either instances of <code>MoveCommand</code> or
-<code>InitialCommand</code>.</p>
-<p><strong>Match rule</strong> is a rule that have no assignments either direct or indirect,
+<p>In this example, Python objects in <code>commands</code> list will be either instances of
+<code>MoveCommand</code> or <code>InitialCommand</code>.  <code>Command</code> rule is abstract.  A meta-class of
+this rule will never be instantiated. Abstract rule can also be used in link
+rule references:</p>
+<pre><code>ListOfCommands:
+  commands*=[Command][',']
+;
+</code></pre>
+<p>Abstract rules may reference match rules and base types. For example:</p>
+<pre><code>Value:
+    STRING | FLOAT | BOOL | Object | Array | "null"
+;
+</code></pre>
+<p>In this example base types as well as string match <code>"null"</code> are all match rules
+but <code>Object</code> and <code>Array</code> are common rules and therefore <code>Value</code> is abstract.</p>
+<p>Abstract rules can be a complex mix of rule references and match expressions as
+long as there is at least one abstract or common reference.
+For example:</p>
+<pre><code>Value:
+  'id' /\d+-\d+/ | FLOAT | Object
+;
+</code></pre>
+<p>Rule with a single reference to abstract or common rule is also abstract:</p>
+<pre><code>Value:
+  OtherRule
+;
+</code></pre>
+<p><strong>Match rules</strong> are rules that have no assignments either direct or indirect,
 i.e. all referenced rules are match rules too. It is usually used to specify
-enumerated values or some complex string matches.</p>
+enumerated values or some complex string matches that can't be done with regular
+expressions.</p>
 <p>Examples:</p>
 <pre><code>Widget:
   "edit"|"combo"|"checkbox"|"togglebutton"
@@ -694,8 +717,10 @@ Value:
   /(\w|\+|-)+/ | FLOAT | INT
 ;
 </code></pre>
-<p>These rules can be used in match references only and they produce objects of
-base python types (<code>str</code>, <code>int</code>, <code>bool</code>, <code>float</code>).</p>
+<p>These rules can be used in match references only (i.e., you can't link to these
+rules as they don't exists as objects), and they produce objects of base python
+types (<code>str</code>, <code>int</code>, <code>bool</code>, <code>float</code>).</p>
+<p>All base type rules (e.g., <code>INT</code>, <code>STRING</code>, <code>BASETYPE</code>) are match rules.</p>
 <h2 id="rule-modifiers">Rule modifiers</h2>
 <p>Rule modifiers are used for  the modification of rules expression. They are
 specified in brackets (<code>[  ]</code>) at the beginning of the rule definition after the
