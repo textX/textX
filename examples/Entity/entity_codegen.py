@@ -27,7 +27,7 @@ def main(debug=False):
         }.get(s.name, s.name)
 
     # Create output folder
-    srcgen_folder = join(this_folder, 'scrgen')
+    srcgen_folder = join(this_folder, 'srcgen')
     if not exists(srcgen_folder):
         mkdir(srcgen_folder)
 
