@@ -5,7 +5,7 @@ template engine (http://jinja.pocoo.org/docs/dev/)
 from os import mkdir
 from os.path import exists, dirname, join
 import jinja2
-from entity_test import get_entity_mm, Entity
+from entity_test import get_entity_mm, PrimitiveType
 
 
 def main(debug=False):
@@ -19,15 +19,12 @@ def main(debug=False):
 
     def javatype(s):
         """
-        Maps type names from Entity to Java.
+        Maps type names from PrimitiveType to Java.
         """
-        if isinstance(s, Entity):
-            s = s.name
-
         return {
                 'integer': 'int',
                 'string': 'String'
-        }.get(s, s)
+        }.get(s.name, s.name)
 
     # Create output folder
     if not exists('srcgen'):
