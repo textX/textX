@@ -15,9 +15,9 @@ Entity:
 ;
 
 Attribute:
-    name=ID ':' type=[Type]     // type is a reference Type. There are
-                                // built-in entities registered on the meta-model
-                                // for primitive types (int, string)
+    name=ID ':' type=[Type]     // type is a reference to Type instance.
+                                // There are two built-in primitive types 
+                                // registered on meta-model in entity_test.py
 ;
 
 // Type can be PrimitiveType or Entity
