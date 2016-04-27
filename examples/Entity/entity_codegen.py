@@ -5,7 +5,7 @@ template engine (http://jinja.pocoo.org/docs/dev/)
 from os import mkdir
 from os.path import exists, dirname, join
 import jinja2
-from entity_test import get_entity_mm, PrimitiveType
+from entity_test import get_entity_mm
 
 
 def main(debug=False):
@@ -27,8 +27,9 @@ def main(debug=False):
         }.get(s.name, s.name)
 
     # Create output folder
-    if not exists('srcgen'):
-        mkdir('srcgen')
+    srcgen_folder = join(this_folder, 'scrgen')
+    if not exists(srcgen_folder):
+        mkdir(srcgen_folder)
 
     # Initialize template engine.
     jinja_env = jinja2.Environment(
@@ -42,7 +43,7 @@ def main(debug=False):
 
     for entity in person_model.entities:
         # For each entity generate java file
-        with open(join('srcgen',
+        with open(join(srcgen_folder,
                        "%s.java" % entity.name.capitalize()), 'w') as f:
             f.write(template.render(entity=entity))
 
