@@ -25,6 +25,7 @@ template :code:`java.template`. For each Entity instance one java file is
 generated.
 
 **Note:** Meta-model/grammar can be checked/visualized by :code:`textx` command
-line tool but model can't because it depends of two built-in primitive types
-(:code:`integer` and :code:`string`).
+line tool but model can't because it depends on two built-in primitive types
+(:code:`integer` and :code:`string`) which must be provided during meta-model
+instantiation (see :code:`entity_test.py` file).
 
