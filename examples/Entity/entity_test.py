@@ -1,5 +1,5 @@
 import os
-from os.path import dirname, join
+from os.path import dirname, join, exists
 from textx.metamodel import metamodel_from_file
 from textx.export import metamodel_export, model_export
 
@@ -46,15 +46,16 @@ def main(debug=False):
     entity_mm = get_entity_mm(debug)
 
     # Export to .dot file for visualization
-    os.mkdir(join(this_folder, 'dotexport'))
-    metamodel_export(entity_mm, join(this_folder,
-                                     'dotexport', 'entity_meta.dot'))
+    dot_folder = join(this_folder, 'dotexport')
+    if not os.path.exists(dot_folder):
+        os.mkdir(dot_folder)
+    metamodel_export(entity_mm, join(dot_folder, 'entity_meta.dot'))
 
     # Build Person model from person.ent file
     person_model = entity_mm.model_from_file(join(this_folder, 'person.ent'))
 
     # Export to .dot file for visualization
-    model_export(person_model, join(this_folder, 'dotexport', 'entity.dot'))
+    model_export(person_model, join(dot_folder, 'entity.dot'))
 
 
 if __name__ == "__main__":
