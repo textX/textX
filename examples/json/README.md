@@ -9,9 +9,9 @@ and strings are parser by textX builtin rules.
 All examples are taken from [json.org example
 page](http://json.org/example.html).
 
-Test script :code:`json.py` will instantiate JSON meta-model defined in
-:code:`json.tx` file, export it to dot file for visualization purposes and than
-instantiate all examples. Each, JSON example file is also exported to dot.
+Test script `json.py` will instantiate JSON meta-model defined in `json.tx`
+file, export it to dot file for visualization purposes and than instantiate all
+examples. Each, JSON example file is also exported to dot.
 
 Checking and visualization can also be done using `textx` command line tool and
 GraphViz dot tool.
