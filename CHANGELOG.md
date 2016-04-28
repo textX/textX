@@ -1,5 +1,4 @@
-textX changelog
----------------
+# textX changelog
 
 * 2016-04-28 Release 1.2
   - Reworked rule types detection and handling. Simplified textX grammar.
@@ -12,7 +11,6 @@ textX changelog
 
 * 2016-04-01 Release 1.1.1
   - Bugfix release. Added missing commands package.
-
 
 * 2016-04-01 Release 1.1
   - Metamodel API tiding. Some undocumented internally used attrs/methods made
