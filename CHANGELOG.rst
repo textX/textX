@@ -1,8 +1,18 @@
 textX changelog
 ---------------
 
+* 2016-04-28 Release 1.2
+  - Reworked rule types detection and handling. Simplified textX grammar.
+  - Performance improvements.
+  - Updated docs to reflect changes.
+  - Additional examples. Fixing and tidying up.
+  - Various improvements in the dot rendering. Added * prefix for abstract classes.
+  - Extended tests. Added test for all examples.
+  - Improvements in textx command.
+
 * 2016-04-01 Release 1.1.1
   - Bugfix release. Added missing commands package.
+
 
 * 2016-04-01 Release 1.1
   - Metamodel API tiding. Some undocumented internally used attrs/methods made
