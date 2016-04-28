@@ -1,5 +1,5 @@
 /*
-    A simplified grammar of JSON data-interchange format.
+    A grammar for JSON data-interchange format.
     See: http://www.json.org/
 */
 File:
