@@ -95,7 +95,7 @@ def get_model_parser(top_rule, comments_model, **kwargs):
 
             # Register filename of the model for later use.
             try:
-                model._filename = file_name
+                model._tx_filename = file_name
             except AttributeError:
                 # model is some primitive python type (e.g. str)
                 pass
@@ -123,7 +123,7 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                     self.debug = old_debug_state
 
             try:
-                model._filename = None
+                model._tx_filename = None
             except AttributeError:
                 # model is some primitive python type (e.g. str)
                 pass
