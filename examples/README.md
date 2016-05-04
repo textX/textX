@@ -16,8 +16,5 @@ Example language are:
     tutorial](http://igordejanovic.net/textX/tutorials/entity/).
   - `workflow` - A simple DSL for workflow descriptions.
   - `json` - An example of using textX for parsing data-interchange formats.
-  - `StateMachine` - State machine language and example from
-    [Fowler's](http://www.martinfowler.com/aboutMe.html) [DSL
-    book](http://www.martinfowler.com/books/dsl.html).
   - `pyFlies` - A real-world example of full DSL for description of cognitive
     reaction-time experiments. See [the pyFlies project]().
