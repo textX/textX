@@ -13,7 +13,7 @@ paragraph a short analysis is done. Important concepts are emphasized.
 
 In this case we want an imperative language that should define robot movement on
 the imaginary grid.  Robot should `move` in four base `direction`. We will
-call that direction `up, down, left` and `right` (you could use north,
+call these directions `up, down, left` and `right` (you could use north,
 south, west and east if you like).  Additionally, we shall have a robot
 coordinate given in x, y `position`.  For simplicity our robot can move in
 discrete `steps`. In each movement robot can move by 1 or more steps but in
@@ -27,7 +27,7 @@ So, lets build a simple robot language.
 
 ## Grammar
 
-First we need to define a grammar for the language. In textX the grammar will
+First, we need to define a grammar for the language. In textX the grammar will
 also define a meta-model (a.k.a. abstract syntax) for the language which can be
 visualized and be used as a part of the documentation.
 
@@ -48,9 +48,9 @@ program. In this case we could do without these keywords but lets have it to
 make it more interesting.
 
 In between those two keywords we have a sequence of instruction. First
-instruction will position our robot at coordinate `(3, 1)`. After that robot will
-move `up 4 steps`, `left 9 steps`, `down 1 step` (1 step is default) and finally `1
-step to the right`.
+instruction will position our robot at coordinate `(3, 1)`. After that robot
+will move `up 4 steps`, `left 9 steps`, `down 1 step` (1 step is the default)
+and finally `1 step to the right`.
 
 Lets start with grammar definition. We shall start in a top-down manner so lets
 first define a program as a whole.
