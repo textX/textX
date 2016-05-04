@@ -10,11 +10,11 @@ EntityModel:
 
 Entity:
     'entity' name=ID '{'
-        attributes+=Attribute     // Each entity has one or more attributes.
+        properties+=Property // Each entity has one or more properties.
     '}'
 ;
 
-Attribute:
+Property:
     name=ID ':' type=[Type]     // type is a reference to Type instance.
                                 // There are two built-in primitive types 
                                 // registered on meta-model in entity_test.py
