@@ -20,6 +20,10 @@ language workbench for building DSLs with full tooling support (editors,
 debuggers etc.) on Eclipse platform.  If you like Java and
 [Eclipse](http://www.eclipse.org/) check it out. It is a great tool.
 
+Watch the introduction video:
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/CN2IVtInapo" frameborder="0" allowfullscreen></iframe>
+
 
 ## Feature highlights
 
