@@ -8,11 +8,16 @@ how to check/visualize meta-models and models.
 Example language are:
   - `hello_world` - a very simple language used for [the hello world
     tutorial](http://igordejanovic.net/textX/tutorials/hello_world/).
-  - `robot` - Simple DSL for moving robot on an imaginary grid. Used for [the
-    robot tutorial](http://igordejanovic.net/textX/tutorials/robot/).
-  - `Entity` - Simple DSL for modeling data. Used for [the Entity tutorial](http://igordejanovic.net/textX/tutorials/entity/).
+  - `robot` - Simple DSL for moving robot on an imaginary grid. This example
+    shows how to use model interpretation. Used for [the robot
+    tutorial](http://igordejanovic.net/textX/tutorials/robot/).
+  - `Entity` - Simple DSL for modeling data. This example shows how to use
+    source code generation. Used for [the Entity
+    tutorial](http://igordejanovic.net/textX/tutorials/entity/).
   - `workflow` - A simple DSL for workflow descriptions.
   - `json` - An example of using textX for parsing data-interchange formats.
-  - `StateMachine` - State machine language and example from [Fowler's](http://www.martinfowler.com/aboutMe.html) [DSL book](http://www.martinfowler.com/books/dsl.html).
+  - `StateMachine` - State machine language and example from
+    [Fowler's](http://www.martinfowler.com/aboutMe.html) [DSL
+    book](http://www.martinfowler.com/books/dsl.html).
   - `pyFlies` - A real-world example of full DSL for description of cognitive
     reaction-time experiments. See [the pyFlies project]().
