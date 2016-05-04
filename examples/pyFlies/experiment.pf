@@ -7,61 +7,62 @@ http://en.wikipedia.org/wiki/Posner_cueing_task
 "
 
 test Posner {
-	conditions {
-		cue     position 	congruency		response
+    conditions {
+        cue     position    congruency      response
 
-		left	left      	congruent		left
-		left	right     	incongruent		right
-		right	left      	incongruent		left
-		right	right     	congruent		right
-	}
-	
-	stimuli{
-		all:  		shape(rectangle, keep, position cue, linewidth 5)
-		      		shape(cross, position position)
-		      		
-		fixation: 	shape(cross, duration 1, keep)
-              		shape(rectangle, duration 1, position left, keep)
-              		shape(rectangle, duration 1, position right, keep)
+        left    left        congruent       left
+        left    right       incongruent     right
+        right   left        incongruent     left
+        right   right       congruent       right
+    }
 
-		duration 1000 1500		
-	}
+    stimuli{
+        all:        shape(rectangle, keep, position cue, linewidth 5)
+                    shape(cross, position position)
+
+        fixation:   shape(cross, duration 1, keep)
+                    shape(rectangle, duration 1, position left, keep)
+                    shape(rectangle, duration 1, position right, keep)
+
+        duration 1000 1500
+    }
 }
 
 screen Practice {
   Posner Cueing
   -------------
-	
+
   You will be presented with the two empty squares positioned left and right
-  from the center of the screen. You should concentrate on the center of the screen
-  and wait for the cue. The cue will be presented as a square highlight.
-  After some time a cross shaped object will be presented in some of the squares.
-  React as fast as you can by pressing button when you detect a cross shaped object.
-	
+  from the center of the screen. You should concentrate on the center of the
+  screen and wait for the cue. The cue will be presented as a square highlight.
+  After some time a cross shaped object will be presented in some of the
+  squares.  React as fast as you can by pressing button when you detect a cross
+  shaped object.
+
   Press SPACE for practice block.
 }
 
 screen Real {
   Posner Cueing
   -------------
-	
+
   Now a REAL testing will be performed.
 
   Press SPACE to start the test.
-	
+
 }
 
 structure {
-	screen Practice
-	test Posner 1 practice randomize
-	screen Real
-	test Posner 1 randomize
+    screen Practice
+    test Posner 1 practice randomize
+    screen Real
+    test Posner 1 randomize
 }
 
 target Expyriment {
   output = "/home/igor/tmp/Simon/"
   responses {
-  	// see expyriment/misc/constants.py
+    // see expyriment/misc/constants.py
     left = K_LEFT
     right = K_RIGHT
   }
