@@ -242,7 +242,7 @@ do we have and what are their relationships and constraints. In the following
 paragraph a short analysis is done. Important concepts are emphasized.</p>
 <p>In this case we want an imperative language that should define robot movement on
 the imaginary grid.  Robot should <code>move</code> in four base <code>direction</code>. We will
-call that direction <code>up, down, left</code> and <code>right</code> (you could use north,
+call these directions <code>up, down, left</code> and <code>right</code> (you could use north,
 south, west and east if you like).  Additionally, we shall have a robot
 coordinate given in x, y <code>position</code>.  For simplicity our robot can move in
 discrete <code>steps</code>. In each movement robot can move by 1 or more steps but in
@@ -251,7 +251,7 @@ have an <code>initial position</code>. If not given explicitly it is assumed tha
 position is <code>(0, 0)</code>.</p>
 <p>So, lets build a simple robot language.</p>
 <h2 id="grammar">Grammar</h2>
-<p>First we need to define a grammar for the language. In textX the grammar will
+<p>First, we need to define a grammar for the language. In textX the grammar will
 also define a meta-model (a.k.a. abstract syntax) for the language which can be
 visualized and be used as a part of the documentation.</p>
 <p>Usually we start by outlining some program in the language we are building.</p>
@@ -268,9 +268,9 @@ end
 program. In this case we could do without these keywords but lets have it to
 make it more interesting.</p>
 <p>In between those two keywords we have a sequence of instruction. First
-instruction will position our robot at coordinate <code>(3, 1)</code>. After that robot will
-move <code>up 4 steps</code>, <code>left 9 steps</code>, <code>down 1 step</code> (1 step is default) and finally <code>1
-step to the right</code>.</p>
+instruction will position our robot at coordinate <code>(3, 1)</code>. After that robot
+will move <code>up 4 steps</code>, <code>left 9 steps</code>, <code>down 1 step</code> (1 step is the default)
+and finally <code>1 step to the right</code>.</p>
 <p>Lets start with grammar definition. We shall start in a top-down manner so lets
 first define a program as a whole.</p>
 <pre><code>Program:

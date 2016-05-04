@@ -217,6 +217,10 @@
     
         <li class="main active"><a href="#entity-tutorial">Entity tutorial</a></li>
         
+            <li><a href="#entity-language">Entity language</a></li>
+        
+            <li><a href="#the-grammar">The grammar</a></li>
+        
     
     </ul>
 </div></div>
@@ -226,9 +230,118 @@
 <p>A tutorial for building ER-like language and generating Java code.</p>
 <hr />
 <div class="admonition note">
-<p class="admonition-title">TODO</p>
+<p class="admonition-title">Work in progress</p>
 <p>Will be done soon. In the meantime see <a href="https://github.com/igordejanovic/textX/tree/master/examples/Entity">Entity example</a>.</p>
-</div></div>
+</div>
+<h2 id="entity-language">Entity language</h2>
+<p>In this example we will see how to make a simple language form data modeling.
+We will use this language to generate Java source code (POJO classes).</p>
+<p>Our main concept will be <code>Entity</code>. Each entity will have one or more
+<code>properties</code>.  Each property is defined by its <code>name</code> and its <code>type</code>.</p>
+<p>Let's sketch out a model on our language.</p>
+<pre><code>entity Person {
+  name : string       
+  address: Address   
+  age: integer      
+}
+
+entity Address {
+  street : string
+  city : string
+  country : string
+}
+</code></pre>
+<h2 id="the-grammar">The grammar</h2>
+<p>In our example we see that each entity starts with a keyword <code>entity</code>. After
+that, we have a name that is identifier and open brace.
+Inside braces we have properties. In textX this is written as:</p>
+<pre><code>Entity:
+    'entity' name=ID '{'
+        properties+=Property
+    '}'
+;
+</code></pre>
+<p>We can see that the <code>Entity</code> rule references <code>Property</code> rule from the
+assignment. Each property is defined by the <code>name</code>, semi-colon (<code>:</code>) and the
+name of the type. This can be written as:</p>
+<pre><code>Property:
+    name=ID ':' type=ID
+;
+</code></pre>
+<p>Now, grammar like this will parse a single <code>Entity</code>. We haven't stated yet that
+that our model consists of many <code>Entity</code> instances.</p>
+<p>Let's specify that. We are introducing rule for the whole model which states
+that each entity model contains one or more <code>entities</code>.</p>
+<pre><code>EntityModel:
+    entities+=Entity
+;
+</code></pre>
+<p>This rule must be first rule in the textX grammar file. First rule is always
+considered a <code>root rule</code>.</p>
+<p>This grammar will parse the example model from the beginning.</p>
+<p>Meta-model now looks like this:</p>
+<p><img alt="Entity metamodel 1" src="../entity/entity1.tx.dot.png" /></p>
+<p>While the example Person model looks like this:</p>
+<p><img alt="Person model 1" src="../entity/person1.ent.dot.png" /></p>
+<p>What you see on the model diagram are actual Python objects.
+It looks good, but it would be even better if a reference to <code>Address</code> from
+properties would be actual Python reference, not just a value of <code>str</code> type.</p>
+<p>This resolving of object names to references can be done automatically by textX.
+To do so we shall change our <code>Property</code> rule to be:</p>
+<pre><code>Property:
+    name=ID ':' type=[Entity]
+;
+</code></pre>
+<p>Now, we state that type is a reference (we are using <code>[]</code>) to object of class
+<code>Entity</code>. This instructs textX to search for the name of <code>Entity</code> after the 
+colon and when found to resolve it to an <code>Entity</code> instance with the same name
+defined elsewhere in the model.</p>
+<p>But, we have problem now. There are no entities called <code>string</code> and <code>integer</code>
+which we use for several properties in our model. To remedy this, we must 
+introduce dummy entities with those names and change <code>properties</code> attribute
+assignment to be <code>zero or more</code> (<code>*=</code>) since our dummy entities will have no
+attributes.</p>
+<p>Although, this solution is possible it wouldn't be elegant at all. So let's
+do something better. First, let's introduce an abstract concept called <code>Type</code>
+which will be generalization of simple types (like <code>integer</code> and <code>string</code>) and
+complex types (like <code>Entity</code>).</p>
+<pre><code>Type:
+  SimpleType | Entity 
+;
+</code></pre>
+<p>This is called abstract rule, and it means that <code>Type</code> is either <code>SimpleType</code>
+or <code>Entity</code> instance. <code>Type</code> class from the meta-model will never be
+instantiated.</p>
+<p>Now, we shall change our <code>Property</code> rule definition:</p>
+<pre><code>Property:
+    name=ID ':' type=[Type]
+;
+</code></pre>
+<p>And, at the end, there must be a way to specify our simple types. Let's do that
+at the beginning of our model.</p>
+<pre><code>EntityModel:
+    simple_types *= SimpleType
+    entities += Entity
+;
+</code></pre>
+<p>And the definition of <code>SimpleType</code> would be:</p>
+<pre><code>SimpleType:
+  'type' name=ID
+;
+</code></pre>
+<p>So, simple types are defined at the beginning of the model using keyword <code>type</code>
+after which we specify the name of the type.</p>
+<p>Our person model will begin now with:</p>
+<pre><code>type string
+type integer
+
+entity Person {
+...
+</code></pre>
+<p>Meta-model now looks like this:</p>
+<p><img alt="Entity metamodel 2" src="../entity/entity2.tx.dot.png" /></p>
+<p>While the example Person model looks like this:</p>
+<p><img alt="Person model 2" src="../entity/person2.ent.dot.png" /></p></div>
             
         </div>
 
