@@ -22,4 +22,4 @@ You will get following output:
 
 Now, you can use some `dot` viewer to view meta-model and model diagrams.
 Alternativelly, you can convert `dot` files to some other graphical format as
-stated above.
+stated above. See `png` files from this folder.
