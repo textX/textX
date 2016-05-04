@@ -9,12 +9,12 @@ Example language are:
   - `hello_world` - a very simple language used for [the hello world
     tutorial](http://igordejanovic.net/textX/tutorials/hello_world/).
   - `robot` - Simple DSL for moving robot on an imaginary grid. This example
-    shows how to use model interpretation. Used for [the robot
+    shows how to do model interpretation. Used for [the robot
     tutorial](http://igordejanovic.net/textX/tutorials/robot/).
-  - `Entity` - Simple DSL for modeling data. This example shows how to use
-    source code generation. Used for [the Entity
+  - `Entity` - Simple DSL for modeling data. This example shows how to generate
+    source code from the model. Used for [the Entity
     tutorial](http://igordejanovic.net/textX/tutorials/entity/).
   - `workflow` - A simple DSL for workflow descriptions.
   - `json` - An example of using textX for parsing data-interchange formats.
-  - `pyFlies` - A real-world example of full DSL for description of cognitive
-    reaction-time experiments. See [the pyFlies project]().
+  - `pyFlies` - An example of real DSL for the description of cognitive
+    reaction-time experiments. See [the pyFlies project](http://igordejanovic.net/pyFlies/).
