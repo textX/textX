@@ -83,6 +83,7 @@ The basic expressions are:
 * [Syntactic predicates](#syntactic-predicates)
     * Not (`!`) - negative lookahead
     * And (`&`) - positive lookahead
+* [Match suppression](#match-suppression)
 
 
 ### Matches
@@ -438,6 +439,43 @@ predicates:
     will not succeed for the first two `a` chars because they are not followed
     by `b`.
 
+
+### Match suppression
+
+Sometimes it is necessary to define match rule that should return only parts of
+the match. For that we use match suppression operator (`-`) after the expression
+you want to suppress.
+
+For example:
+
+    FullyQualifiedID[noskipws]:
+        /\s*/-
+        QuotedID+['.']
+        /\s*/-
+    ;
+    QuotedID:
+        '"'?- ID '"'?-
+    ;
+
+Because we use `noskipws` rule param, `FullyQualifiedID` does not skip
+whitespaces automatically. Thus, we have to match whitespaces ourself but we
+don't want those whitespaces in the resulting string. You might wonder why we
+are using `noskipws`. It is because we do not want whitespaces in between each
+`QuotedID` match. So, for example, `first.  second` shouldn't match but
+`first.second` should.
+
+In rule `FullyQualifiedID` we are suppressing whitespace matches `/\s*/-`.  We
+also state in `QuotedID` that there are optional quotation marks around each
+ID but we don't want those either `'"'?-`.
+
+Given this input:
+  
+    first."second".third."fourth"
+
+`FullyQualifiedID` will return:
+
+    first.second.third.fourth
+  
 
 ## Repetition modifiers
 
