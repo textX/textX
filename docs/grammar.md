@@ -457,7 +457,7 @@ For example:
         '"'?- ID '"'?-
     ;
 
-Because we use `noskipws` rule param, `FullyQualifiedID` does not skip
+Because we use `noskipws` rule modifier, `FullyQualifiedID` does not skip
 whitespaces automatically. Thus, we have to match whitespaces ourself but we
 don't want those whitespaces in the resulting string. You might wonder why we
 are using `noskipws`. It is because we do not want whitespaces in between each
