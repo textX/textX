@@ -63,31 +63,60 @@ and operators.
 
 The basic expressions are:
 
+* Matches
+    * String match (`'...'` or `"..."`)
+    * Regex match (`/.../`)
 * Sequence
 * Ordered choice (`|`)
 * Optional (`?`)
 * Repetitions
     * Zero or more (`*`)
     * One or more (`+`)
-
+* References
+    * Match reference
+    * Link reference (`[..]`)
 * Assignments
     * Plain (`=`)
     * Boolean (`?=`)
     * Zero or more (`*=`)
     * One or more (`+=`)
+* Syntactic predicates
+    * Not (`!`) - negative lookahead
+    * And (`&`) - positive lookahead
 
-* Matches
-    * String match (`'...'`)
-    * Regex match (`/.../`)
 
-* References
-    * Match reference
-    * Link reference (`[..]`)
+### Matches
+
+Match expression are, besides base type rules, the expression at the lowest
+level. They are the basic building blocks for more complex expressions. These
+expressions will consume input on success.
+
+There are two types of match expressions:
+
+* **String match** - is written as a single quoted string. It will match literal
+  string on the input.
+
+    Here are a few examples of string matches:
+
+        'blue'
+        'zero'
+        'person'
+
+* **Regex match** - uses regular expression defined inside `/ /` to match
+  input. Therefore, it defines a whole class of strings that can be matched.
+  Internally a python `re` module is used.
+
+    Here are few example of regex matches:
+
+        /\s*/
+        /[-\w]*\b/
+        /[^}]*/
+
 
 ### Sequence
 
-Sequence is the simplest textX expression that is given by just writing
-contained sub-expressions one after another. For example the following rule:
+Sequence is textX expression that is given by just writing contained
+sub-expressions one after another. For example the following rule:
 
     Colors:
       "red" "green" "blue"
@@ -126,10 +155,10 @@ match in that order.
     which may lead to ambiguous grammar where multiple parse tree may exist for
     the same input string.
 
-Underlaying parsing technology of textX is 
+Underlaying parsing technology of textX is
 [Arpeggio](https://github.com/igordejanovic/Arpeggio) which is parser based on
-PEG grammars and thus the `|` operator directly translates to Arpeggio's
-PEG ordered choice. Using ordered choice yield unambiguous parsing. If the text
+PEG grammars and thus the `|` operator directly translates to Arpeggio's PEG
+ordered choice. Using ordered choice yield unambiguous parsing. If the text
 parses there is only one parse tree possible.
 
 
@@ -283,34 +312,6 @@ There are four types of assignments:
   at least once. If no match succeeds this assignment does not succeeds.
 
 
-
-### Matches
-
-Match expression are, besides base type rules, the expression at the lowest
-level. They are the basic building blocks for more complex expressions. These
-expressions will consume input on success.
-
-There are two types of match expressions:
-
-* **String match** - is written as a single quoted string. It will match literal
-  string on the input.
-
-    Here are a few examples of string matches:
-
-        'blue'
-        'zero'
-        'person'
-
-* **Regex match** - uses regular expression defined inside `/ /` to match
-  input. Therefore, it defines a whole class of strings that can be matched.
-  Internally a python `re` module is used.
-
-    Here are few example of regex matches:
-
-        /\s*/
-        /[-\w]*\b/
-        /[^}]*/
-
 ### References
 
 Rules can reference each other. References are usually used as a
@@ -376,6 +377,66 @@ RHS of the assignments. There are two types of rule references:
         ;
 
     Here, instead of `ID` a `WORD` rule is used to match object identifier.
+
+
+### Syntactic predicates
+
+Syntactic predicates are expression that are used to implement lookahead. These
+expression will never consume any input. There are two type of syntactic
+predicates:
+
+* **Not - negative lookahead** (`!`) - will succeed if the current input doesn't
+  match expression given after the `!` operator.
+
+    Example problem:
+
+        Expression: Let | ID | NUMBER;
+        Let:
+            'let'
+                expr+=Expression
+            'end'
+        ;
+
+    In this example we have nested expressions built with `Let` rule. The problem
+    is that `ID` rule from `Expression `will match keyword `end` and thus will
+    consume end of `Let` rule so the parser will hit EOF without completing any
+    `Let` rule. To fix this we can specify that `ID` will match any identifier
+    except keywords `let` and `end` like this:
+
+        Expression: Let | MyID | NUMBER;
+        Let:
+            'let'
+                expr+=Expression
+            'end'
+        ;
+        Keyword: 'let' | 'end';
+        MyID: !Keyword ID;
+
+    Now, `MyID` will match `ID` only if it is not a keyword.
+
+
+* **And - positive lookahead** (`&`) - will succeed if the current input starts
+  with the string matched by the expression given after the `&` operator.
+
+    Example:
+
+        Model:
+            elements+=Element
+        ;
+        Element:
+            AbeforeB | A | B
+        ;
+        AbeforeB: 
+            a='a' &'b'      // this succeeds only if 'b' follows 'a'
+        ;
+        A: a='a';
+        B: a='b';
+
+    Given the input string `a a a b` first two `a` chars will be matched by the
+    rule `A` but the third `a` will be matched by the rule `AbeforeB`.
+    So, even `AbeforeB` matches only `a` and is tried before any other match it
+    will not succeed for the first two `a` chars because they are not followed
+    by `b`.
 
 
 ### Repetition modifiers
