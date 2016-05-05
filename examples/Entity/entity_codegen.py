@@ -33,7 +33,9 @@ def main(debug=False):
 
     # Initialize template engine.
     jinja_env = jinja2.Environment(
-        loader=jinja2.FileSystemLoader(this_folder))
+        loader=jinja2.FileSystemLoader(this_folder),
+        trim_blocks=True,
+        lstrip_blocks=True)
 
     # Register filter for mapping Entity type names to Java type names.
     jinja_env.filters['javatype'] = javatype

@@ -3,8 +3,8 @@
 */
 
 EntityModel:
-    types*=PrimitiveType    // At the beginning of model we can define
-                            // zero or more primitive types.
+    types*=SimpleType       // At the beginning of model we can define
+                            // zero or more simple types.
     entities+=Entity        // Each model has one or more entities.
 ;
 
@@ -16,16 +16,16 @@ Entity:
 
 Property:
     name=ID ':' type=[Type]     // type is a reference to Type instance.
-                                // There are two built-in primitive types 
+                                // There are two built-in simple types 
                                 // registered on meta-model in entity_test.py
 ;
 
-// Type can be PrimitiveType or Entity
+// Type can be SimpleType or Entity
 Type:
-    PrimitiveType | Entity
+    SimpleType | Entity
 ;
 
-PrimitiveType:
+SimpleType:
     'type' name=ID
 ;
 

@@ -7,10 +7,10 @@ from textx.export import metamodel_export, model_export
 this_folder = dirname(__file__)
 
 
-class PrimitiveType(object):
+class SimpleType(object):
     """
-    We are registering user PrimitiveType class to support
-    primitive types (integer, string) in our entity models
+    We are registering user SimpleType class to support
+    simple types (integer, string) in our entity models
     Thus, user doesn't need to provide integer and string
     types in the model but can reference them in attribute types nevertheless.
     """
@@ -26,15 +26,15 @@ def get_entity_mm(debug=False):
     """
     Builds and returns a meta-model for Entity language.
     """
-    # Built-in primitive types
-    # Each model will have this primitive types during reference resolving but
+    # Built-in simple types
+    # Each model will have this simple types during reference resolving but
     # these will not be a part of `types` list of EntityModel.
     type_builtins = {
-            'integer': PrimitiveType(None, 'integer'),
-            'string': PrimitiveType(None, 'string')
+            'integer': SimpleType(None, 'integer'),
+            'string': SimpleType(None, 'string')
     }
     entity_mm = metamodel_from_file(join(this_folder, 'entity.tx'),
-                                    classes=[PrimitiveType],
+                                    classes=[SimpleType],
                                     builtins=type_builtins,
                                     debug=debug)
 
