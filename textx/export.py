@@ -43,19 +43,20 @@ def match_str(cls):
             return s.rule_name
         else:
             if isinstance(s, Match):
-                return text(s)
+                result = text(s)
             elif isinstance(s, OrderedChoice):
-                return "|".join([r(x) for x in s.nodes])
+                result = "|".join([r(x) for x in s.nodes])
             elif isinstance(s, Sequence):
-                return " ".join([r(x) for x in s.nodes])
+                result = " ".join([r(x) for x in s.nodes])
             elif isinstance(s, ZeroOrMore):
-                return "({})*".format(r(s.nodes[0]))
+                result = "({})*".format(r(s.nodes[0]))
             elif isinstance(s, OneOrMore):
-                return "({})+".format(r(s.nodes[0]))
+                result =  "({})+".format(r(s.nodes[0]))
             elif isinstance(s, Optional):
-                return "{}?".format(r(s.nodes[0]))
+                result =  "{}?".format(r(s.nodes[0]))
             elif isinstance(s, SyntaxPredicate):
-                return ""
+                result =  ""
+            return "{}{}".format(result, "-" if s.suppress else "")
 
     mstr = ""
     if cls.__name__ not in BASE_TYPE_NAMES:
