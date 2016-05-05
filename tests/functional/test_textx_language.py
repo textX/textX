@@ -724,3 +724,53 @@ def test_sequence_ordered_choice():
     assert model.c == 0
     assert model.b is False
     assert model.d is False
+
+
+def test_syntactic_predicate_not():
+    """
+    Test negative lookahead using `not` syntactic predicate.
+    """
+    grammar = """
+    Expression: Let | MyID | NUMBER;
+    Let:
+        'let'
+            expr+=Expression
+        'end'
+    ;
+
+    Keyword: 'let' | 'end';
+    MyID: !Keyword ID;
+    """
+    meta = metamodel_from_str(grammar)
+
+    model = meta.model_from_str("""
+                                let let let 34 end let foo end end end
+                                """)
+
+    assert model
+    assert len(model.expr) == 1
+    assert model.expr[0].expr[0].expr[0] == 34
+    assert model.expr[0].expr[1].expr[0] == 'foo'
+
+
+def test_syntactic_predicate_and():
+    """
+    Test positive lookahead using `and` syntactic predicate.
+    """
+    grammar = """
+    Model: elements+=Element;
+    Element: AbeforeB | A | B;
+    AbeforeB:  a='a' &'b';      // this succeeds only if 'b' follows 'a'
+    A: a='a';
+    B: a='b';
+    """
+    meta = metamodel_from_str(grammar)
+
+    model = meta.model_from_str('a a a b')
+
+    assert model
+    assert len(model.elements) == 4
+    assert model.elements[0].__class__.__name__ == 'A'
+    assert model.elements[1].__class__.__name__ == 'A'
+    assert model.elements[2].__class__.__name__ == 'AbeforeB'
+    assert model.elements[3].__class__.__name__ == 'B'

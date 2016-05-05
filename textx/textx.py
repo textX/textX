@@ -19,8 +19,8 @@ else:
 
 import re
 from arpeggio import StrMatch, Optional, ZeroOrMore, OneOrMore, Sequence,\
-    OrderedChoice, RegExMatch, Match, NoMatch, EOF, ParsingExpression,\
-    SemanticAction, ParserPython, SemanticActionSingleChild
+    OrderedChoice, Not, And, RegExMatch, Match, NoMatch, EOF, \
+    ParsingExpression, SemanticAction, ParserPython, SemanticActionSingleChild
 from arpeggio.export import PMDOTExporter
 from arpeggio import RegExMatch as _
 
@@ -45,11 +45,14 @@ def textx_rule_body():      return sequence
 def sequence():             return OneOrMore(choice)
 def choice():               return repeatable_expr, ZeroOrMore("|", repeatable_expr)
 def repeatable_expr():      return expression, Optional(repeat_operator)
-def expression():           return [assignment, simple_match, rule_ref, bracketed_sequence]
+def expression():           return [assignment, (Optional(syntactic_predicate),
+                                                 [simple_match, rule_ref,
+                                                  bracketed_sequence])]
 def bracketed_sequence():   return '(', sequence, ')'
 def repeat_operator():      return ['*', '?', '+'], Optional(repeat_modifiers)
 def repeat_modifiers():     return '[', OneOrMore([simple_match,
                                                    'eolterm']), ']'
+def syntactic_predicate():  return ['!', '&']
 def simple_match():         return [str_match, re_match]
 
 # Assignment
@@ -488,6 +491,16 @@ def choice_SA(parser, node, children):
         return children[0]
 choice.sem = choice_SA
 
+def expression_SA(parser, node, children):
+    if len(children) > 1:
+        if children[0] == '!':
+            return Not(nodes=[children[1]])
+        else:
+            return And(nodes=[children[1]])
+    else:
+        return children[0]
+expression.sem=expression_SA
+
 
 def repeat_modifiers_SA(parser, node, children):
     modifiers = {}
@@ -756,7 +769,7 @@ string_value.sem = string_value_SA
 
 # Default actions
 bracketed_sequence.sem = SemanticActionSingleChild()
-expression.sem = SemanticActionSingleChild()
+#expression.sem = SemanticActionSingleChild()
 
 
 # parser object cache. To speed up parser initialization (e.g. during imports)
