@@ -290,43 +290,66 @@ instantiation. See
 and operators.</p>
 <p>The basic expressions are:</p>
 <ul>
+<li>Matches<ul>
+<li>String match (<code>'...'</code> or <code>"..."</code>)</li>
+<li>Regex match (<code>/.../</code>)</li>
+</ul>
+</li>
 <li>Sequence</li>
 <li>Ordered choice (<code>|</code>)</li>
 <li>Optional (<code>?</code>)</li>
-<li>
-<p>Repetitions</p>
-<ul>
+<li>Repetitions<ul>
 <li>Zero or more (<code>*</code>)</li>
 <li>One or more (<code>+</code>)</li>
 </ul>
 </li>
-<li>
-<p>Assignments</p>
-<ul>
+<li>References<ul>
+<li>Match reference</li>
+<li>Link reference (<code>[..]</code>)</li>
+</ul>
+</li>
+<li>Assignments<ul>
 <li>Plain (<code>=</code>)</li>
 <li>Boolean (<code>?=</code>)</li>
 <li>Zero or more (<code>*=</code>)</li>
 <li>One or more (<code>+=</code>)</li>
 </ul>
 </li>
-<li>
-<p>Matches</p>
-<ul>
-<li>String match (<code>'...'</code>)</li>
-<li>Regex match (<code>/.../</code>)</li>
+<li>Syntactic predicates<ul>
+<li>Not (<code>!</code>) - negative lookahead</li>
+<li>And (<code>&amp;</code>) - positive lookahead</li>
 </ul>
 </li>
-<li>
-<p>References</p>
-<ul>
-<li>Match reference</li>
-<li>Link reference (<code>[..]</code>)</li>
 </ul>
+<h3 id="matches">Matches</h3>
+<p>Match expression are, besides base type rules, the expression at the lowest
+level. They are the basic building blocks for more complex expressions. These
+expressions will consume input on success.</p>
+<p>There are two types of match expressions:</p>
+<ul>
+<li>
+<p><strong>String match</strong> - is written as a single quoted string. It will match literal
+  string on the input.</p>
+<p>Here are a few examples of string matches:</p>
+<pre><code>'blue'
+'zero'
+'person'
+</code></pre>
+</li>
+<li>
+<p><strong>Regex match</strong> - uses regular expression defined inside <code>/ /</code> to match
+  input. Therefore, it defines a whole class of strings that can be matched.
+  Internally a python <code>re</code> module is used.</p>
+<p>Here are few example of regex matches:</p>
+<pre><code>/\s*/
+/[-\w]*\b/
+/[^}]*/
+</code></pre>
 </li>
 </ul>
 <h3 id="sequence">Sequence</h3>
-<p>Sequence is the simplest textX expression that is given by just writing
-contained sub-expressions one after another. For example the following rule:</p>
+<p>Sequence is textX expression that is given by just writing contained
+sub-expressions one after another. For example the following rule:</p>
 <pre><code>Colors:
   "red" "green" "blue"
 ;
@@ -360,10 +383,10 @@ match in that order.</p>
 which may lead to ambiguous grammar where multiple parse tree may exist for
 the same input string.</p>
 </div>
-<p>Underlaying parsing technology of textX is 
+<p>Underlaying parsing technology of textX is
 <a href="https://github.com/igordejanovic/Arpeggio">Arpeggio</a> which is parser based on
-PEG grammars and thus the <code>|</code> operator directly translates to Arpeggio's
-PEG ordered choice. Using ordered choice yield unambiguous parsing. If the text
+PEG grammars and thus the <code>|</code> operator directly translates to Arpeggio's PEG
+ordered choice. Using ordered choice yield unambiguous parsing. If the text
 parses there is only one parse tree possible.</p>
 <h3 id="optional">Optional</h3>
 <p><code>Optional</code> is an expression that will match contained expression if it can but
@@ -496,32 +519,6 @@ numbers*=INT
   at least once. If no match succeeds this assignment does not succeeds.</p>
 </li>
 </ul>
-<h3 id="matches">Matches</h3>
-<p>Match expression are, besides base type rules, the expression at the lowest
-level. They are the basic building blocks for more complex expressions. These
-expressions will consume input on success.</p>
-<p>There are two types of match expressions:</p>
-<ul>
-<li>
-<p><strong>String match</strong> - is written as a single quoted string. It will match literal
-  string on the input.</p>
-<p>Here are a few examples of string matches:</p>
-<pre><code>'blue'
-'zero'
-'person'
-</code></pre>
-</li>
-<li>
-<p><strong>Regex match</strong> - uses regular expression defined inside <code>/ /</code> to match
-  input. Therefore, it defines a whole class of strings that can be matched.
-  Internally a python <code>re</code> module is used.</p>
-<p>Here are few example of regex matches:</p>
-<pre><code>/\s*/
-/[-\w]*\b/
-/[^}]*/
-</code></pre>
-</li>
-</ul>
 <h3 id="references">References</h3>
 <p>Rules can reference each other. References are usually used as a
 RHS of the assignments. There are two types of rule references:</p>
@@ -581,6 +578,61 @@ that you can use the following syntax:</p>
 ;
 </code></pre>
 <p>Here, instead of <code>ID</code> a <code>WORD</code> rule is used to match object identifier.</p>
+</li>
+</ul>
+<h3 id="syntactic-predicates">Syntactic predicates</h3>
+<p>Syntactic predicates are expression that are used to implement lookahead. These
+expression will never consume any input. There are two type of syntactic
+predicates:</p>
+<ul>
+<li>
+<p><strong>Not - negative lookahead</strong> (<code>!</code>) - will succeed if the current input doesn't
+  match expression given after the <code>!</code> operator.</p>
+<p>Example problem:</p>
+<pre><code>Expression: Let | ID | NUMBER;
+Let:
+    'let'
+        expr+=Expression
+    'end'
+;
+</code></pre>
+<p>In this example we have nested expressions built with <code>Let</code> rule. The problem
+is that <code>ID</code> rule from <code>Expression</code>will match keyword <code>end</code> and thus will
+consume end of <code>Let</code> rule so the parser will hit EOF without completing any
+<code>Let</code> rule. To fix this we can specify that <code>ID</code> will match any identifier
+except keywords <code>let</code> and <code>end</code> like this:</p>
+<pre><code>Expression: Let | MyID | NUMBER;
+Let:
+    'let'
+        expr+=Expression
+    'end'
+;
+Keyword: 'let' | 'end';
+MyID: !Keyword ID;
+</code></pre>
+<p>Now, <code>MyID</code> will match <code>ID</code> only if it is not a keyword.</p>
+</li>
+<li>
+<p><strong>And - positive lookahead</strong> (<code>&amp;</code>) - will succeed if the current input starts
+  with the string matched by the expression given after the <code>&amp;</code> operator.</p>
+<p>Example:</p>
+<pre><code>Model:
+    elements+=Element
+;
+Element:
+    AbeforeB | A | B
+;
+AbeforeB: 
+    a='a' &amp;'b'      // this succeeds only if 'b' follows 'a'
+;
+A: a='a';
+B: a='b';
+</code></pre>
+<p>Given the input string <code>a a a b</code> first two <code>a</code> chars will be matched by the
+rule <code>A</code> but the third <code>a</code> will be matched by the rule <code>AbeforeB</code>.
+So, even <code>AbeforeB</code> matches only <code>a</code> and is tried before any other match it
+will not succeed for the first two <code>a</code> chars because they are not followed
+by <code>b</code>.</p>
 </li>
 </ul>
 <h3 id="repetition-modifiers">Repetition modifiers</h3>
