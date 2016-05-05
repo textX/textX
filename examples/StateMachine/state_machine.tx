@@ -44,3 +44,7 @@ Transition:
 SMID:
     !Keyword ID
 ;
+
+Comment:
+    /\/\*(.|\n)*?\*\//
+;

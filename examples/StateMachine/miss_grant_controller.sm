@@ -1,3 +1,8 @@
+/*
+  The original Miss Grant Controller example from Martin Fowler's book on
+  DSLs - http://www.martinfowler.com/books/dsl.html
+*/
+
 events
   doorClosed    D1CL
   drawerOpened  D2OP

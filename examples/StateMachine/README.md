@@ -1,10 +1,11 @@
-This textX example is based on the example from the [Martin Fowler's]() [book on
-DSLs]().
+This textX example is based on the example from the [Martin
+Fowler's](http://www.martinfowler.com/aboutMe.html) [book on
+DSLs](http://www.martinfowler.com/books/dsl.html).
 
 File `state_machine.tx` is the grammar of the language. State machine instances
 are given in files `miss_grant_controller.sm` and  `gate.sm`.
 
-`miss_grant_controller.sm` is original example from Fowler's book.
+`miss_grant_controller.sm` is the original example from Fowler's book.
 
 `gate.sm` is a simple state machine model of a gate that unlocks by inserting
 a coin and locks again when someone pass trough the gate.
