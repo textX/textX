@@ -164,6 +164,17 @@ def test_match_rule_suppress():
                                 ''')
     assert model == 'first.second.third.fourth'
 
+    # Checking suppress rule reference
+    grammar = """
+        First: 'a' Second- Third;
+        Second: 'b';
+        Third: Second;
+    """
+    meta = metamodel_from_str(grammar)
+    model = meta.model_from_str('a b b')
+    # Second b should be suppressed
+    assert model == 'ab'
+
 
 def test_regex_match_rule():
     """

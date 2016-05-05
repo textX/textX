@@ -138,6 +138,7 @@ class RuleCrossRef(object):
         self.rule_name = rule_name
         self.cls = cls
         self.position = position
+        self.suppress = False
 
     def __str__(self):
         return self.rule_name
@@ -207,12 +208,19 @@ class TextXModelSA(SemanticAction):
 
                 if type(rule) is RuleCrossRef:
                     rule_name = rule.rule_name
+                    suppress = rule.suppress
                     if rule_name in model_parser.metamodel:
                         rule = model_parser.metamodel[rule_name]._tx_peg_rule
                         if type(rule) is RuleCrossRef:
                             rule = _inner_resolve(rule)
                             model_parser.metamodel[rule_name]\
                                 ._tx_peg_rule = rule
+                        if suppress:
+                            # Special case. Suppression on rule reference.
+                            model_parser.metamodel[rule_name]\
+                                ._tx_peg_rule = Sequence(nodes=[rule],
+                                                         rule_name=rule_name,
+                                                         suppress=suppress)
                     else:
                         line, col = grammar_parser.pos_to_linecol(rule.position)
                         raise TextXSemanticError(
