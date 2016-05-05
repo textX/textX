@@ -1,0 +1,19 @@
+events
+  passTrough    GTPT
+  coinInserted  CINS
+end
+
+commands
+  unlockGate    GTUN
+  lockGate      GTLK
+end
+
+state idle
+  actions {lockGate}
+  coinInserted => unlocked
+end
+
+state unlocked
+  actions {unlockGate}
+  passTrough => idle
+end

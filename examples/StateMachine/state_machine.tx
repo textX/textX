@@ -1,0 +1,46 @@
+StateMachine:
+    'events'
+        events+=Event
+    'end'
+
+    ('resetEvents'
+        resetEvents+=[Event|SMID]
+    'end')?
+
+    'commands'
+        commands+=Command
+    'end'
+
+    states+=State
+;
+
+Keyword:
+    'end' | 'events' | 'resetEvents' | 'state' | 'actions'
+;
+
+Event:
+    name=SMID code=ID
+;
+
+Command:
+    name=SMID code=ID
+;
+
+State:
+    'state' name=ID
+        ('actions' '{' actions+=Action '}')?
+        transitions+=Transition
+    'end'
+;
+
+Action:
+    name=ID
+;
+
+Transition:
+    event=[Event|SMID] '=>' to_state=[State]
+;
+
+SMID:
+    !Keyword ID
+;
