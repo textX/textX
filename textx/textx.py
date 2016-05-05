@@ -44,7 +44,7 @@ def textx_rule_body():      return sequence
 
 def sequence():             return OneOrMore(choice)
 def choice():               return repeatable_expr, ZeroOrMore("|", repeatable_expr)
-def repeatable_expr():      return expression, Optional(repeat_operator)
+def repeatable_expr():      return expression, Optional(repeat_operator), Optional('-')
 def expression():           return [assignment, (Optional(syntactic_predicate),
                                                  [simple_match, rule_ref,
                                                   bracketed_sequence])]
@@ -526,42 +526,57 @@ repeat_operator.sem = repeat_operator_SA
 def repeatable_expr_SA(parser, node, children):
     expr = children[0]
     rule = expr
+    repeat_op = False
+    suppress = False
     if len(children) > 1:
-        repeat_op = children[1]
-        if len(repeat_op) > 1:
-            repeat_op, modifiers = repeat_op
+        # We can have repeat operator and/or suppression operator
+        if len(children) > 2:
+            repeat_op = children[1]
+            suppress = True
         else:
-            repeat_op = repeat_op[0]
-            modifiers = None
+            if children[1] == '-':
+                suppress = True
+            else:
+                repeat_op = children[1]
 
-        if repeat_op == '?':
-            rule = Optional(nodes=[expr])
-        elif repeat_op == '*':
-            rule = ZeroOrMore(nodes=[expr])
-        else:
-            rule = OneOrMore(nodes=[expr])
+        if repeat_op:
+            if len(repeat_op) > 1:
+                repeat_op, modifiers = repeat_op
+            else:
+                repeat_op = repeat_op[0]
+                modifiers = None
 
-        if modifiers:
-            modifiers, position = modifiers
-            # Sanity check. Modifiers do not make
-            # sense for ? operator at the moment.
             if repeat_op == '?':
-                line, col = parser.pos_to_linecol(position)
-                raise TextXSyntaxError(
-                    'Modifiers are not allowed for "?" operator at {}'
-                    .format(text((line, col))), line, col)
-            # Separator modifier
-            if 'sep' in modifiers:
-                sep = modifiers['sep']
-                rule = Sequence(nodes=[expr,
-                                ZeroOrMore(nodes=[
-                                           Sequence(nodes=[sep, expr])])])
-                if repeat_op == '*':
-                    rule = Optional(nodes=[rule])
+                rule = Optional(nodes=[expr])
+            elif repeat_op == '*':
+                rule = ZeroOrMore(nodes=[expr])
+            else:
+                rule = OneOrMore(nodes=[expr])
 
-            # End of line termination modifier
-            if 'eolterm' in modifiers:
-                rule.eolterm = True
+            if modifiers:
+                modifiers, position = modifiers
+                # Sanity check. Modifiers do not make
+                # sense for ? operator at the moment.
+                if repeat_op == '?':
+                    line, col = parser.pos_to_linecol(position)
+                    raise TextXSyntaxError(
+                        'Modifiers are not allowed for "?" operator at {}'
+                        .format(text((line, col))), line, col)
+                # Separator modifier
+                if 'sep' in modifiers:
+                    sep = modifiers['sep']
+                    rule = Sequence(nodes=[expr,
+                                    ZeroOrMore(nodes=[
+                                            Sequence(nodes=[sep, expr])])])
+                    if repeat_op == '*':
+                        rule = Optional(nodes=[rule])
+
+                # End of line termination modifier
+                if 'eolterm' in modifiers:
+                    rule.eolterm = True
+
+    # Mark rule for suppression
+    rule.suppress = suppress
 
     return rule
 repeatable_expr.sem = repeatable_expr_SA

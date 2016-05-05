@@ -143,6 +143,28 @@ def test_match_rule_complex():
     assert model == "one45one78foofoofoo"
 
 
+def test_match_rule_suppress():
+    """
+    Test suppressing operator in match rules.
+    """
+    grammar = """
+    FullyQualifiedID[noskipws]:
+        /\s*/-
+        QuotedID+['.']
+        /\s*/-
+    ;
+    QuotedID:
+        '"'?- ID '"'?-
+    ;
+    """
+
+    meta = metamodel_from_str(grammar)
+    model = meta.model_from_str('''
+                                first."second".third."fourth"
+                                ''')
+    assert model == 'first.second.third.fourth'
+
+
 def test_regex_match_rule():
     """
     Match rule always returns string.
