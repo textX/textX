@@ -223,6 +223,8 @@
         
             <li><a href="#rule-expressions">Rule expressions</a></li>
         
+            <li><a href="#repetition-modifiers">Repetition modifiers</a></li>
+        
             <li><a href="#rule-types">Rule types</a></li>
         
             <li><a href="#rule-modifiers">Rule modifiers</a></li>
@@ -290,32 +292,32 @@ instantiation. See
 and operators.</p>
 <p>The basic expressions are:</p>
 <ul>
-<li>Matches<ul>
+<li><a href="#matches">Matches</a><ul>
 <li>String match (<code>'...'</code> or <code>"..."</code>)</li>
 <li>Regex match (<code>/.../</code>)</li>
 </ul>
 </li>
-<li>Sequence</li>
-<li>Ordered choice (<code>|</code>)</li>
-<li>Optional (<code>?</code>)</li>
-<li>Repetitions<ul>
+<li><a href="#sequence">Sequence</a></li>
+<li><a href="#ordered-choice">Ordered choice</a> (<code>|</code>)</li>
+<li><a href="#optional">Optional</a> (<code>?</code>)</li>
+<li><a href="#repetitions">Repetitions</a><ul>
 <li>Zero or more (<code>*</code>)</li>
 <li>One or more (<code>+</code>)</li>
 </ul>
 </li>
-<li>References<ul>
+<li><a href="#references">References</a><ul>
 <li>Match reference</li>
 <li>Link reference (<code>[..]</code>)</li>
 </ul>
 </li>
-<li>Assignments<ul>
+<li><a href="#assignments">Assignments</a><ul>
 <li>Plain (<code>=</code>)</li>
 <li>Boolean (<code>?=</code>)</li>
 <li>Zero or more (<code>*=</code>)</li>
 <li>One or more (<code>+=</code>)</li>
 </ul>
 </li>
-<li>Syntactic predicates<ul>
+<li><a href="#syntactic-predicates">Syntactic predicates</a><ul>
 <li>Not (<code>!</code>) - negative lookahead</li>
 <li>And (<code>&amp;</code>) - positive lookahead</li>
 </ul>
@@ -635,7 +637,7 @@ will not succeed for the first two <code>a</code> chars because they are not fol
 by <code>b</code>.</p>
 </li>
 </ul>
-<h3 id="repetition-modifiers">Repetition modifiers</h3>
+<h2 id="repetition-modifiers">Repetition modifiers</h2>
 <p>Repetition modifiers are used for the modification of repetition expressions
 (<code>*</code>, <code>+</code>, <code>*=</code>, <code>+=</code>). They are specified in brackets <code>[  ]</code>. If there are more
 modifiers they are separated by a comma.</p>
