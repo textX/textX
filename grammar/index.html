@@ -652,7 +652,7 @@ QuotedID:
     '"'?- ID '"'?-
 ;
 </code></pre>
-<p>Because we use <code>noskipws</code> rule param, <code>FullyQualifiedID</code> does not skip
+<p>Because we use <code>noskipws</code> rule modifier, <code>FullyQualifiedID</code> does not skip
 whitespaces automatically. Thus, we have to match whitespaces ourself but we
 don't want those whitespaces in the resulting string. You might wonder why we
 are using <code>noskipws</code>. It is because we do not want whitespaces in between each
