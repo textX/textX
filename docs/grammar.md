@@ -63,24 +63,24 @@ and operators.
 
 The basic expressions are:
 
-* Matches
+* [Matches](#matches)
     * String match (`'...'` or `"..."`)
     * Regex match (`/.../`)
-* Sequence
-* Ordered choice (`|`)
-* Optional (`?`)
-* Repetitions
+* [Sequence](#sequence)
+* [Ordered choice](#ordered-choice) (`|`)
+* [Optional](#optional) (`?`)
+* [Repetitions](#repetitions)
     * Zero or more (`*`)
     * One or more (`+`)
-* References
+* [References](#references)
     * Match reference
     * Link reference (`[..]`)
-* Assignments
+* [Assignments](#assignments)
     * Plain (`=`)
     * Boolean (`?=`)
     * Zero or more (`*=`)
     * One or more (`+=`)
-* Syntactic predicates
+* [Syntactic predicates](#syntactic-predicates)
     * Not (`!`) - negative lookahead
     * And (`&`) - positive lookahead
 
@@ -439,7 +439,7 @@ predicates:
     by `b`.
 
 
-### Repetition modifiers
+## Repetition modifiers
 
 Repetition modifiers are used for the modification of repetition expressions
 (`*`, `+`, `*=`, `+=`). They are specified in brackets `[  ]`. If there are more
