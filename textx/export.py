@@ -8,7 +8,7 @@
 #######################################################################
 from __future__ import unicode_literals
 from arpeggio import Match, OrderedChoice, Sequence, OneOrMore, ZeroOrMore,\
-    Optional
+    Optional, SyntaxPredicate
 from .const import MULT_ZEROORMORE, MULT_ONEORMORE, MULT_ONE, RULE_ABSTRACT, \
     RULE_COMMON
 from .textx import PRIMITIVE_PYTHON_TYPES, BASE_TYPE_NAMES
@@ -54,6 +54,8 @@ def match_str(cls):
                 return "({})+".format(r(s.nodes[0]))
             elif isinstance(s, Optional):
                 return "{}?".format(r(s.nodes[0]))
+            elif isinstance(s, SyntaxPredicate):
+                return ""
 
     mstr = ""
     if cls.__name__ not in BASE_TYPE_NAMES:
