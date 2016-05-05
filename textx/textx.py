@@ -491,6 +491,7 @@ def choice_SA(parser, node, children):
         return children[0]
 choice.sem = choice_SA
 
+
 def expression_SA(parser, node, children):
     if len(children) > 1:
         if children[0] == '!':
@@ -769,7 +770,6 @@ string_value.sem = string_value_SA
 
 # Default actions
 bracketed_sequence.sem = SemanticActionSingleChild()
-#expression.sem = SemanticActionSingleChild()
 
 
 # parser object cache. To speed up parser initialization (e.g. during imports)
