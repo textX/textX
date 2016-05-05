@@ -1,20 +1,20 @@
 This is an example of a simple Entity DSL.
 
 File `entity.tx` contains a grammar of the language.  Each entity DSL model
-consists of zero or more primitive types definitions and one or more `Entity`
+consists of zero or more simple types definitions and one or more `Entity`
 instances.  Each `Entity` instance contains one or more `Attribute` instance.
 Each `Attribute` has a name conforming to built-in `ID` rule and a type which
-can be a reference to either `PrimitiveType` or `Entity` from the model or one
-of two built-in primitive types representing basic types (`integer` and
-`string`, see file `entity_test.py`).
+can be a reference to either `SimpleType` or `Entity` from the model or one of
+two built-in simple types representing basic types (`integer` and `string`, see
+file `entity_test.py`).
 
 Example model is given in the file `person.ent`.
 
 A program `entity_test.py` will instantiate meta-model from the grammar,
-register built-in primitive types `integer` and `string` and register user class
-`PrimitiveType` so that built-in types can be instantiated from the code. A
-person example model is than parsed/instantiated by the meta-model and both
-meta-model and model are exported to .dot files in the folder `dotexport`.
+register built-in simple types `integer` and `string` and register user class
+`SimpleType` so that built-in types can be instantiated from the code. A person
+example model is than parsed/instantiated by the meta-model and both meta-model
+and model are exported to .dot files in the folder `dotexport`.
 
 An example of code generation is presented in the program `entity_codegen.py`.
 The code is generated in the `srcgen` subfolder using
@@ -22,7 +22,7 @@ The code is generated in the `srcgen` subfolder using
 `java.template`. For each Entity instance one java file is generated.
 
 **Note:** Meta-model/grammar can be checked/visualized by `textx` command line
-tool but model can't because it depends on two built-in primitive types
-(`integer` and `string`) which must be provided during meta-model instantiation
-(see `entity_test.py` file).
+tool but model can't because it depends on two built-in simple types (`integer`
+and `string`) which must be provided during meta-model instantiation (see
+`entity_test.py` file).
 
