@@ -13,6 +13,6 @@ class {{entity.name}} {
   public void set{{property.name|capitalize}}({{property.type|javatype}} new_value){
     this.{{property.name}} = new_value;
   }
-  {% endfor %}
 
+  {% endfor %}
 }

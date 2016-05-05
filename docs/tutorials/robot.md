@@ -389,3 +389,6 @@ And now our robot behaves as expected!
     [examples/robot](https://github.com/igordejanovic/textX/tree/master/examples/robot)
     folder.
 
+    Next, you can read [the Entity tutorial](entity.md) where you can see how to
+    generate source code from your models.
+
