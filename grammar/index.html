@@ -322,6 +322,7 @@ and operators.</p>
 <li>And (<code>&amp;</code>) - positive lookahead</li>
 </ul>
 </li>
+<li><a href="#match-suppression">Match suppression</a></li>
 </ul>
 <h3 id="matches">Matches</h3>
 <p>Match expression are, besides base type rules, the expression at the lowest
@@ -637,6 +638,35 @@ will not succeed for the first two <code>a</code> chars because they are not fol
 by <code>b</code>.</p>
 </li>
 </ul>
+<h3 id="match-suppression">Match suppression</h3>
+<p>Sometimes it is necessary to define match rule that should return only parts of
+the match. For that we use match suppression operator (<code>-</code>) after the expression
+you want to suppress.</p>
+<p>For example:</p>
+<pre><code>FullyQualifiedID[noskipws]:
+    /\s*/-
+    QuotedID+['.']
+    /\s*/-
+;
+QuotedID:
+    '"'?- ID '"'?-
+;
+</code></pre>
+<p>Because we use <code>noskipws</code> rule param, <code>FullyQualifiedID</code> does not skip
+whitespaces automatically. Thus, we have to match whitespaces ourself but we
+don't want those whitespaces in the resulting string. You might wonder why we
+are using <code>noskipws</code>. It is because we do not want whitespaces in between each
+<code>QuotedID</code> match. So, for example, <code>first.  second</code> shouldn't match but
+<code>first.second</code> should.</p>
+<p>In rule <code>FullyQualifiedID</code> we are suppressing whitespace matches <code>/\s*/-</code>.  We
+also state in <code>QuotedID</code> that there are optional quotation marks around each
+ID but we don't want those either <code>'"'?-</code>.</p>
+<p>Given this input:</p>
+<pre><code>first."second".third."fourth"
+</code></pre>
+<p><code>FullyQualifiedID</code> will return:</p>
+<pre><code>first.second.third.fourth
+</code></pre>
 <h2 id="repetition-modifiers">Repetition modifiers</h2>
 <p>Repetition modifiers are used for the modification of repetition expressions
 (<code>*</code>, <code>+</code>, <code>*=</code>, <code>+=</code>). They are specified in brackets <code>[  ]</code>. If there are more
