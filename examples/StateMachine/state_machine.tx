@@ -28,13 +28,9 @@ Command:
 
 State:
     'state' name=ID
-        ('actions' '{' actions+=Action '}')?
+        ('actions' '{' actions+=[Command] '}')?
         transitions+=Transition
     'end'
-;
-
-Action:
-    name=ID
 ;
 
 Transition:
