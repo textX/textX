@@ -29,6 +29,7 @@ HEADER = '''
         style=filled,
         fillcolor=aliceblue
     ]
+    nodesep = 0.3
     edge[dir=black,arrowtail=empty]
 
 
