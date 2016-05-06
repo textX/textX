@@ -20,6 +20,7 @@ pages:
     - Hello World: tutorials/hello_world.md
     - Robot: tutorials/robot.md
     - Entity: tutorials/entity.md
+    - State Machine: tutorials/state_machine.md
 - About:
     - Discuss: about/discuss.md
     - Contributing: about/contributing.md
