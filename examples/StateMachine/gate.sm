@@ -15,5 +15,5 @@ end
 
 state unlocked
   actions {unlockGate}
-  passTrough => idle
+  passTrough => locked
 end
