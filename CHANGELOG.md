@@ -1,5 +1,13 @@
 # textX changelog
 
+* 2016-05-05 Release 1.3
+  - Added support for syntactic predicates (`!` and `&`). A.K.A. negative and
+    positive lookahead. Tests. Docs.
+  - Added support for match suppression (operator `-`). Tests. Docs.
+  - Added Entity tutorial + video.
+  - Added StateMachine example from Martin Fowler's DSL book.
+  - Various improvements in documentation and examples.
+
 * 2016-04-28 Release 1.2
   - Reworked rule types detection and handling. Simplified textX grammar.
   - Performance improvements.
