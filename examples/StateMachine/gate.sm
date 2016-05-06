@@ -8,7 +8,7 @@ commands
   lockGate      GTLK
 end
 
-state idle
+state locked
   actions {lockGate}
   coinInserted => unlocked
 end
