@@ -21,7 +21,7 @@ For example:
 
 Will create this diagram:
 
-![Miss Grant'c Controller state diagram](https://github.com/igordejanovic/textX/blob/master/examples/StateMachine/miss_grant_controller.dot.png)
+![Miss Grant'c Controller state diagram](https://raw.githubusercontent.com/igordejanovic/textX/master/examples/StateMachine/miss_grant_controller.sm.dot.png)
 
 Script `state_machine.py` is model interpreter. You can run models by 
 following commands:
