@@ -342,12 +342,12 @@
         },
         {
             "location": "/tutorials/state_machine/",
-            "text": "State machine language\n\n\nThis is video tutorial that explains the implementation of StateMachine example.\n\n\n\n\nSee \nthe blog post about this language\nimplementation\n.",
+            "text": "State machine language\n\n\nThis is a video tutorial that explains the implementation of \nthe StateMachine example\n.\n\n\n\n\nSee \nthe blog post about this language\nimplementation\n.",
             "title": "State Machine"
         },
         {
             "location": "/tutorials/state_machine/#state-machine-language",
-            "text": "This is video tutorial that explains the implementation of StateMachine example.   See  the blog post about this language\nimplementation .",
+            "text": "This is a video tutorial that explains the implementation of  the StateMachine example .   See  the blog post about this language\nimplementation .",
             "title": "State machine language"
         },
         {
