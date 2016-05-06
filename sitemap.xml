@@ -75,6 +75,12 @@
      <changefreq>daily</changefreq>
     </url>
         
+    <url>
+     <loc>None/tutorials/state_machine/</loc>
+     <lastmod>2016-05-06</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
     
 
     

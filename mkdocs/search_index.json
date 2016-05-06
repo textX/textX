@@ -341,6 +341,16 @@
             "title": "Generating source code"
         },
         {
+            "location": "/tutorials/state_machine/",
+            "text": "State machine language\n\n\nThis is video tutorial that explains the implementation of StateMachine example.\n\n\n\n\nSee \nthe blog post about this language\nimplementation\n.",
+            "title": "State Machine"
+        },
+        {
+            "location": "/tutorials/state_machine/#state-machine-language",
+            "text": "This is video tutorial that explains the implementation of StateMachine example.   See  the blog post about this language\nimplementation .",
+            "title": "State machine language"
+        },
+        {
             "location": "/about/discuss/",
             "text": "Discuss, ask questions\n\n\nPlease use \ndiscussion\nforum\n for general\ndiscussions.\n\n\nFor bug reports or suggestions please use \ngithub issue\ntracker\n.\n\n\nIf you have some specific question on textX usage please use\n\nstackoverflow\n.  Just make sure to tag your question\nwith \ntextx\n.",
             "title": "Discuss"
