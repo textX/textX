@@ -18,6 +18,8 @@ Example language are:
   - `json` - An example of using textX for parsing data-interchange formats.
   - `StateMachine` - State machine language and example from
     [Fowler's](http://www.martinfowler.com/aboutMe.html) [DSL
-    book](http://www.martinfowler.com/books/dsl.html).
+    book](http://www.martinfowler.com/books/dsl.html). An example of source code
+    generator - generating `dot` file, and an example of state machine
+    interpreter.
   - `pyFlies` - An example of real DSL for the description of cognitive
     reaction-time experiments. See [the pyFlies project](http://igordejanovic.net/pyFlies/).
