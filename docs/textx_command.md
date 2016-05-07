@@ -40,6 +40,10 @@ Create image from .dot file:
   
     $ dot -Tpng -O robot.tx.dot
 
+Or use some `dot` viewer. For example:
+
+    $ xdot robot.tx.dot
+
 Visualize model:
 
     $ textx visualize robot.tx program.rbt
