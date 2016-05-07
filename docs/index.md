@@ -24,6 +24,8 @@ Watch the introduction video:
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/CN2IVtInapo" frameborder="0" allowfullscreen></iframe>
 
+Check out [State Machine video tutorial](tutorials/state_machine.md).
+
 
 ## Feature highlights
 
@@ -113,6 +115,7 @@ See textX `Tutorials` to get you started:
 - [Hello World](tutorials/hello_world.md)
 - [Robot](tutorials/robot.md)
 - [Entity](tutorials/entity.md)
+- [State Machine](tutorials/state_machine.md) - video tutorial
 
 For specific information read various `User Guide` sections.
 
