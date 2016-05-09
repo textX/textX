@@ -246,10 +246,10 @@
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h1 id="textx-grammar">textX grammar</h1>
+<h1 id="textx-grammar">textX grammar<a class="headerlink" href="#textx-grammar" title="Permanent link">&para;</a></h1>
 <p>Language syntax and meta-model are defined by textX grammar given as a set of
 textX rules.</p>
-<h2 id="rules">Rules</h2>
+<h2 id="rules">Rules<a class="headerlink" href="#rules" title="Permanent link">&para;</a></h2>
 <p>The basic building blocks of the textX language are rules. Rule is written
 in the following form:</p>
 <pre><code>Hello:
@@ -272,7 +272,7 @@ attribute <code>who</code> will be set to whatever the rule <code>ID</code> has 
 <code>hello</code> (this is specified by the assignment <code>who=ID</code>).</p>
 <p>Of course, there are many more rule expressions than shown in this small example.
 In the next section a detailed description of each textX expression is given.</p>
-<h2 id="textx-base-types">textX base types</h2>
+<h2 id="textx-base-types">textX base types<a class="headerlink" href="#textx-base-types" title="Permanent link">&para;</a></h2>
 <p>In the previous example you have seen an <code>ID</code> rule. This rule is a part of
 built-in rules that form the base of textX type system. Base types/rules are
 given in the following figure:</p>
@@ -293,7 +293,7 @@ given in the following figure:</p>
 <p>Built-in types are automatically converted to python types during object
 instantiation. See
 <a href="../metamodel/#auto-initialization-of-attributes">auto-initialization</a> for more information.</p>
-<h2 id="rule-expressions">Rule expressions</h2>
+<h2 id="rule-expressions">Rule expressions<a class="headerlink" href="#rule-expressions" title="Permanent link">&para;</a></h2>
 <p>Rule expressions is a body of the rule. It is specified using basic expressions
 and operators.</p>
 <p>The basic expressions are:</p>
@@ -330,7 +330,7 @@ and operators.</p>
 </li>
 <li><a href="#match-suppression">Match suppression</a></li>
 </ul>
-<h3 id="matches">Matches</h3>
+<h3 id="matches">Matches<a class="headerlink" href="#matches" title="Permanent link">&para;</a></h3>
 <p>Match expression are, besides base type rules, the expression at the lowest
 level. They are the basic building blocks for more complex expressions. These
 expressions will consume input on success.</p>
@@ -356,7 +356,7 @@ expressions will consume input on success.</p>
 </code></pre>
 </li>
 </ul>
-<h3 id="sequence">Sequence</h3>
+<h3 id="sequence">Sequence<a class="headerlink" href="#sequence" title="Permanent link">&para;</a></h3>
 <p>Sequence is textX expression that is given by just writing contained
 sub-expressions one after another. For example the following rule:</p>
 <pre><code>Colors:
@@ -375,7 +375,7 @@ only the following string:</p>
 <p>If whitespace skipping is included (which is default) arbitrary whitespaces
 can occur between matched words.</p>
 </div>
-<h3 id="ordered-choice">Ordered choice</h3>
+<h3 id="ordered-choice">Ordered choice<a class="headerlink" href="#ordered-choice" title="Permanent link">&para;</a></h3>
 <p>Ordered choice is given as a set of expression separated by <code>|</code> operator.
 This operator will try to match contained expression from left to right and the
 first match that succeeds will be used.</p>
@@ -397,7 +397,7 @@ the same input string.</p>
 PEG grammars and thus the <code>|</code> operator directly translates to Arpeggio's PEG
 ordered choice. Using ordered choice yield unambiguous parsing. If the text
 parses there is only one parse tree possible.</p>
-<h3 id="optional">Optional</h3>
+<h3 id="optional">Optional<a class="headerlink" href="#optional" title="Permanent link">&para;</a></h3>
 <p><code>Optional</code> is an expression that will match contained expression if it can but
 will not failed otherwise. Thus, optional expression always succeeds.</p>
 <p>Example:</p>
@@ -417,7 +417,7 @@ up
   'up' ( INT | FLOAT )?
 </code></pre>
 <p>Now, an ordered choice in parentheses is optional.</p>
-<h3 id="repetitions">Repetitions</h3>
+<h3 id="repetitions">Repetitions<a class="headerlink" href="#repetitions" title="Permanent link">&para;</a></h3>
 <ul>
 <li>
 <p><strong>Zero or more</strong> repetition is specified by <code>*</code> operator and will match
@@ -450,7 +450,7 @@ matched by <code>Colors</code> rule:</p>
 </code></pre>
 </li>
 </ul>
-<h3 id="assignments">Assignments</h3>
+<h3 id="assignments">Assignments<a class="headerlink" href="#assignments" title="Permanent link">&para;</a></h3>
 <p>Assignment is used as a part of the meta-model deduction process. Each
 assignment will result in an attribute of the meta-class created by the rule.</p>
 <p>Each assignment consists of LHS (left-hand side) and RHS (right-hand side). The
@@ -528,7 +528,7 @@ numbers*=INT
   at least once. If no match succeeds this assignment does not succeeds.</p>
 </li>
 </ul>
-<h3 id="references">References</h3>
+<h3 id="references">References<a class="headerlink" href="#references" title="Permanent link">&para;</a></h3>
 <p>Rules can reference each other. References are usually used as a
 RHS of the assignments. There are two types of rule references:</p>
 <ul>
@@ -589,7 +589,7 @@ that you can use the following syntax:</p>
 <p>Here, instead of <code>ID</code> a <code>WORD</code> rule is used to match object identifier.</p>
 </li>
 </ul>
-<h3 id="syntactic-predicates">Syntactic predicates</h3>
+<h3 id="syntactic-predicates">Syntactic predicates<a class="headerlink" href="#syntactic-predicates" title="Permanent link">&para;</a></h3>
 <p>Syntactic predicates are expression that are used to implement lookahead. These
 expression will never consume any input. There are two type of syntactic
 predicates:</p>
@@ -644,7 +644,7 @@ will not succeed for the first two <code>a</code> chars because they are not fol
 by <code>b</code>.</p>
 </li>
 </ul>
-<h3 id="match-suppression">Match suppression</h3>
+<h3 id="match-suppression">Match suppression<a class="headerlink" href="#match-suppression" title="Permanent link">&para;</a></h3>
 <p>Sometimes it is necessary to define match rule that should return only parts of
 the match. For that we use match suppression operator (<code>-</code>) after the expression
 you want to suppress.</p>
@@ -673,7 +673,7 @@ ID but we don't want those either <code>'"'?-</code>.</p>
 <p><code>FullyQualifiedID</code> will return:</p>
 <pre><code>first.second.third.fourth
 </code></pre>
-<h2 id="repetition-modifiers">Repetition modifiers</h2>
+<h2 id="repetition-modifiers">Repetition modifiers<a class="headerlink" href="#repetition-modifiers" title="Permanent link">&para;</a></h2>
 <p>Repetition modifiers are used for the modification of repetition expressions
 (<code>*</code>, <code>+</code>, <code>*=</code>, <code>+=</code>). They are specified in brackets <code>[  ]</code>. If there are more
 modifiers they are separated by a comma.</p>
@@ -736,7 +736,7 @@ that we should modify example like this::</p>
 before <code>WORD</code> match begins. Afterwards, repeated matches will work
 inside one line only.</p>
 </div>
-<h2 id="rule-types">Rule types</h2>
+<h2 id="rule-types">Rule types<a class="headerlink" href="#rule-types" title="Permanent link">&para;</a></h2>
 <p>There are three kinds of rules in textX:</p>
 <ul>
 <li>Common rules (or just rules)</li>
@@ -811,7 +811,7 @@ Value:
 rules as they don't exists as objects), and they produce objects of base python
 types (<code>str</code>, <code>int</code>, <code>bool</code>, <code>float</code>).</p>
 <p>All base type rules (e.g., <code>INT</code>, <code>STRING</code>, <code>BASETYPE</code>) are match rules.</p>
-<h2 id="rule-modifiers">Rule modifiers</h2>
+<h2 id="rule-modifiers">Rule modifiers<a class="headerlink" href="#rule-modifiers" title="Permanent link">&para;</a></h2>
 <p>Rule modifiers are used for  the modification of rules expression. They are
 specified in brackets (<code>[  ]</code>) at the beginning of the rule definition after the
 rule name. Currently, they are used to alter parser configuration for whitespace
@@ -865,10 +865,10 @@ with <code>/\s*/</code> in the :<code>Rule</code>.</p>
 </div>
 </li>
 </ul>
-<h2 id="grammar-comments">Grammar comments</h2>
+<h2 id="grammar-comments">Grammar comments<a class="headerlink" href="#grammar-comments" title="Permanent link">&para;</a></h2>
 <p>Syntax for comments inside grammar is <code>//</code> for line comments and
 <code>/* ... */</code> for block comments.</p>
-<h2 id="language-comments">Language comments</h2>
+<h2 id="language-comments">Language comments<a class="headerlink" href="#language-comments" title="Permanent link">&para;</a></h2>
 <p>To support comments in your DSL use a special grammar rule <code>Comment</code>.
 textX will try to match this rule in between each other normal grammar match
 (similar to whitespace matching).
@@ -881,7 +881,7 @@ defined like this:</p>
 </code></pre>
 <p>Which states that everything starting with <code>//</code> and continuing until the
 end of line is a comment.</p>
-<h2 id="grammar-modularization">Grammar modularization</h2>
+<h2 id="grammar-modularization">Grammar modularization<a class="headerlink" href="#grammar-modularization" title="Permanent link">&para;</a></h2>
 <p>Grammars can be defined in multiple files and than imported. Rules used in
 references are first searched in current file and than in imported files in the
 order of import.</p>
@@ -924,6 +924,8 @@ List:
 
         <footer class="col-md-12">
             <hr>
+            
+                <p>Copyright &copy; 2016 <a href="http://igordejanovic.net/">Igor Dejanović</a>.</p>
             
             <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p>
         </footer>

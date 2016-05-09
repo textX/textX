@@ -238,11 +238,11 @@
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h1 id="robot-tutorial">Robot tutorial</h1>
+<h1 id="robot-tutorial">Robot tutorial<a class="headerlink" href="#robot-tutorial" title="Permanent link">&para;</a></h1>
 <p>In this tutorial we will build a simple robot language to demonstrate
 the basic workflow when working with textX.</p>
 <hr />
-<h2 id="robot-language">Robot language</h2>
+<h2 id="robot-language">Robot language<a class="headerlink" href="#robot-language" title="Permanent link">&para;</a></h2>
 <p>When building a DSL we should first do a domain analysis, to see what concepts
 do we have and what are their relationships and constraints. In the following
 paragraph a short analysis is done. Important concepts are emphasized.</p>
@@ -256,7 +256,7 @@ the same direction. Coordinate is given as a pair of integer numbers. Robot will
 have an <code>initial position</code>. If not given explicitly it is assumed that
 position is <code>(0, 0)</code>.</p>
 <p>So, lets build a simple robot language.</p>
-<h2 id="grammar">Grammar</h2>
+<h2 id="grammar">Grammar<a class="headerlink" href="#grammar" title="Permanent link">&para;</a></h2>
 <p>First, we need to define a grammar for the language. In textX the grammar will
 also define a meta-model (a.k.a. abstract syntax) for the language which can be
 visualized and be used as a part of the documentation.</p>
@@ -393,7 +393,7 @@ Comment:
 just once on the beginning of the program. This basically means that this
 command can be given multiple times throughout the program. I will leave as an
 exercise to the reader to implement this constraint.</p>
-<h2 id="instantiating-meta-model">Instantiating meta-model</h2>
+<h2 id="instantiating-meta-model">Instantiating meta-model<a class="headerlink" href="#instantiating-meta-model" title="Permanent link">&para;</a></h2>
 <p>In order to parse our models we first need to construct a meta-model. A
 textX meta-model is a Python object that contains all classes that can be
 instantiated in our model. For each grammar rule a class is created.
@@ -428,7 +428,7 @@ transformed with <code>dot</code> tool to raster or vector graphics.</p>
 <p class="admonition-title">Note</p>
 <p>This meta-model can be used to parse multiple models.</p>
 </div>
-<h2 id="instantiating-model">Instantiating model</h2>
+<h2 id="instantiating-model">Instantiating model<a class="headerlink" href="#instantiating-model" title="Permanent link">&para;</a></h2>
 <p>Now, when we have our meta-model we can parse models from strings or external
 textual files.</p>
 <pre><code class="python">robot_model = robot_mm.model_from_file('program.rbt')
@@ -448,7 +448,7 @@ or transformed to image.</p>
 </code></pre>
 <p>For the robot program above we should get an image like this:</p>
 <p><img alt="Robot program" src="../../images/program.rbt.dot.png" /></p>
-<h2 id="interpreting-model">Interpreting model</h2>
+<h2 id="interpreting-model">Interpreting model<a class="headerlink" href="#interpreting-model" title="Permanent link">&para;</a></h2>
 <p>When we have successfully parsed and loaded our model/program (or mogram or
 prodel ;) ) we can do various stuff. Usually what would you like to do is to
 translate your program to some other language (Java, Python, C#, Ruby,...) or
@@ -564,6 +564,8 @@ generate source code from your models.</p>
 
         <footer class="col-md-12">
             <hr>
+            
+                <p>Copyright &copy; 2016 <a href="http://igordejanovic.net/">Igor Dejanović</a>.</p>
             
             <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p>
         </footer>

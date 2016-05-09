@@ -240,7 +240,7 @@
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h1 id="textx-meta-models">textX meta-models</h1>
+<h1 id="textx-meta-models">textX meta-models<a class="headerlink" href="#textx-meta-models" title="Permanent link">&para;</a></h1>
 <p>textX meta-model is a Python object that knows about all classes that can be
 instantiated while parsing input. A meta-model is built from the grammar by
 the functions <code>metamodel_from_file</code> or <code>metamodel_from_str</code> in the
@@ -255,7 +255,7 @@ Besides, meta-model knows how to parse input strings and convert them to
 <code>model_from_str</code> methods of the meta-model object:</p>
 <pre><code>my_model = my_metamodel.model_from_file('some_input.md')
 </code></pre>
-<h2 id="custom-classes">Custom classes</h2>
+<h2 id="custom-classes">Custom classes<a class="headerlink" href="#custom-classes" title="Permanent link">&para;</a></h2>
 <p>For each grammar rule a Python class with the same name is created dynamically.
 These classes are instantiated during parsing of input string/file to create
 a graph of python objects, a.k.a. <code>model</code> or Abstract-Syntax Tree (AST).</p>
@@ -303,7 +303,7 @@ corresponding rule from the grammar. In the previous example we have provided
 If the class is a child in parent-child relationship (see in the next
 section) then <code>parent</code> constructor parameter should also be given.</p>
 </div>
-<h2 id="parent-child-relationships">Parent-child relationships</h2>
+<h2 id="parent-child-relationships">Parent-child relationships<a class="headerlink" href="#parent-child-relationships" title="Permanent link">&para;</a></h2>
 <p>There is often an intrinsic parent-child relationship between object in the
 model. In the previous example each <code>Attribute</code> instance will always be a child
 of some <code>Entity</code> object.</p>
@@ -316,7 +316,7 @@ attribute.</p>
 <p>Always provide parent parameter in user classes for each class that is a
 child in parent-child relationship.</p>
 </div>
-<h2 id="processors">Processors</h2>
+<h2 id="processors">Processors<a class="headerlink" href="#processors" title="Permanent link">&para;</a></h2>
 <p>To specify static semantics of the language textX uses a concept called
 <strong>processor</strong>. Processors are python callable that can modify model elements
 during model parsing/instantiation or do some additional checks that are not
@@ -332,7 +332,7 @@ possible to do by the grammar alone.</p>
 <p>Processors can modify model/objects or raise exception (<code>TextXSemanticError</code>) if
 some constraint is not met. User code that call model instantiation/parsing can
 catch and handle those exception.</p>
-<h3 id="model-processors">Model processors</h3>
+<h3 id="model-processors">Model processors<a class="headerlink" href="#model-processors" title="Permanent link">&para;</a></h3>
 <p>To register model processor call <code>register_model_processor</code> on the meta-model
 instance.</p>
 <pre><code>from textx.metamodel import metamodel_from_file
@@ -354,7 +354,7 @@ my_metamodel.register_model_processor(check_some_semantics)
 # an instance of TextXSemanticError will be raised.
 my_metamodel.model_from_file('some_model.ext')
 </code></pre>
-<h3 id="object-processors">Object processors</h3>
+<h3 id="object-processors">Object processors<a class="headerlink" href="#object-processors" title="Permanent link">&para;</a></h3>
 <p>The purpose of object processors is the same as for model processors but they
 are called as soon as the particular object is recognized in the input string.
 They are registered per class/rule.</p>
@@ -396,7 +396,7 @@ entity_mm.model_from_file('my_entity_model.ent')
 </code></pre>
 <p>For another example usage of object processor that modify objects see object
 processor <code>move_command_processor</code> <a href="../tutorials/robot/">robot example</a>.</p>
-<h2 id="built-in-objects">Built-in objects</h2>
+<h2 id="built-in-objects">Built-in objects<a class="headerlink" href="#built-in-objects" title="Permanent link">&para;</a></h2>
 <p>Often you will need objects that should be a part of each model and you do not
 want users to specify them in every model they create. Most notable example is
 primitive types (e.g. <code>integer</code>, <code>string</code>, <code>bool</code>).</p>
@@ -421,7 +421,7 @@ entity_mm = metamodel_from_file(
 </code></pre>
 <p>Now an <code>integer</code> and <code>string</code> <code>Attribute</code> type can be used.  See
 <a href="../model/">model</a> and <a href="https://github.com/igordejanovic/textX/tree/master/examples/Entity">Entitiy</a> example for more.</p>
-<h2 id="auto-initialization-of-attributes">Auto-initialization of attributes</h2>
+<h2 id="auto-initialization-of-attributes">Auto-initialization of attributes<a class="headerlink" href="#auto-initialization-of-attributes" title="Permanent link">&para;</a></h2>
 <p>Each object that is recognized in the input string will be instantiated and
 their attributes will be set to the values parsed from the input. In the event
 that defined attribute is optional, it will nevertheless be created on the
@@ -451,8 +451,8 @@ matched on the input will be set to <code>None</code>.  This holds true for plai
 assignments (<code>=</code>). An optional assignment (<code>?=</code>) will always be <code>False</code> if the
 RHS object is not matched in the input. Many multiplicity assignments (<code>*=</code> and
 <code>+=</code>) will always be python lists.</p>
-<h2 id="parser-configuration">Parser configuration</h2>
-<h3 id="case-sensitivity">Case sensitivity</h3>
+<h2 id="parser-configuration">Parser configuration<a class="headerlink" href="#parser-configuration" title="Permanent link">&para;</a></h2>
+<h3 id="case-sensitivity">Case sensitivity<a class="headerlink" href="#case-sensitivity" title="Permanent link">&para;</a></h3>
 <p>Parser is by default case sensitive. For DSLs that should be case insensitive
 use <code>ignore_case</code> parameter to the meta-model constructor call.</p>
 <pre><code class="python">from textx.metamodel import metamodel_from_file
@@ -460,7 +460,7 @@ use <code>ignore_case</code> parameter to the meta-model constructor call.</p>
 my_metamodel = metamodel_from_file('mygrammar.tx', ignore_case=True)
 </code></pre>
 
-<h3 id="whitespace-handling">Whitespace handling</h3>
+<h3 id="whitespace-handling">Whitespace handling<a class="headerlink" href="#whitespace-handling" title="Permanent link">&para;</a></h3>
 <p>The parser will skip whitespaces by default. Whitespaces are spaces, tabs and
 newlines by default. Skipping of whitespaces can be disabled by <code>skipws</code> bool
 parameter in constructor call. Also, what is a whitespace can be redefined by
@@ -471,7 +471,7 @@ my_metamodel = metamodel_from_file('mygrammar.tx', skipws=False, ws='\s\n')
 
 <p>Whitespaces and whitespace skipping can be defined in the grammar on the level
 of a single rule by <a href="../grammar/#rule-modifiers">rule modifiers</a>.</p>
-<h3 id="automatic-keywords">Automatic keywords</h3>
+<h3 id="automatic-keywords">Automatic keywords<a class="headerlink" href="#automatic-keywords" title="Permanent link">&para;</a></h3>
 <p>When designing a DSL it is usually desirable to match keywords on word
 boundaries.  For example, if we have Entity grammar from the above than a word
 <code>entity</code> will be considered a keyword and should be matched on word boundaries
@@ -497,6 +497,8 @@ regular expression <code>[^\d\W]\w*</code>.</p></div>
 
         <footer class="col-md-12">
             <hr>
+            
+                <p>Copyright &copy; 2016 <a href="http://igordejanovic.net/">Igor Dejanović</a>.</p>
             
             <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p>
         </footer>
