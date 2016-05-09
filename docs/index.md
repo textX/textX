@@ -20,11 +20,13 @@ language workbench for building DSLs with full tooling support (editors,
 debuggers etc.) on Eclipse platform.  If you like Java and
 [Eclipse](http://www.eclipse.org/) check it out. It is a great tool.
 
-Watch the introduction video:
+Video tutorial for textX installation and implementing a simple data modeling
+language is bellow.
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/CN2IVtInapo" frameborder="0" allowfullscreen></iframe>
 
-Check out [State Machine video tutorial](tutorials/state_machine.md).
+For a not-so-basic video tutorial check out [State Machine video
+tutorial](tutorials/state_machine.md).
 
 
 ## Feature highlights
