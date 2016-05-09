@@ -237,15 +237,51 @@ a parse tree created during grammar parse as well as meta-model (if constructed
 successfully) dot files will be generated:</p>
 <pre><code class="python">form textx.metamodel import metamodel_from_file
 
-my_metamodel = metamodel_from_file('mygrammar.tx', debug=True)
+robot_metamodel = metamodel_from_file('robot.tx', debug=True)
 </code></pre>
 
 <p>If <code>debug</code> is set in the <code>model_from_file/str</code> calls than various
 messages during model parsing and construction will be printed. Additionally,
 parse tree created from the input as well as model will be exported to dot
 file.</p>
-<pre><code class="python">  my_model = my_metamodel.model_from_file('mymodel.mod', debug=True)
-</code></pre></div>
+<pre><code class="python">  robot_program = robot_metamodel.model_from_file('program.rbt', debug=True)
+</code></pre>
+
+<p>Alternatively, you can use <a href="../textx_command/">textx check or visualize command</a>
+in debug mode.</p>
+<pre><code>$ textx -d visualize robot.tx program.rbt
+
+*** PARSING LANGUAGE DEFINITION ***
+New rule: grammar_to_import -&gt; RegExMatch
+New rule: import_stm -&gt; Sequence
+New rule: rule_name -&gt; RegExMatch
+New rule: param_name -&gt; RegExMatch
+New rule: string_value -&gt; OrderedChoice
+New rule: rule_param -&gt; Sequence
+Rule rule_param founded in cache.
+New rule: rule_params -&gt; Sequence
+...
+
+&gt;&gt; Matching rule textx_model=Sequence at position 0 =&gt; */* This ex
+  &gt;&gt; Matching rule ZeroOrMore in textx_model at position 0 =&gt; */* This ex
+      &gt;&gt; Matching rule import_stm=Sequence in textx_model at position 0 =&gt; */* This ex
+        ?? Try match rule StrMatch(import) in import_stm at position 0 =&gt; */* This ex
+        &gt;&gt; Matching rule comment=OrderedChoice in import_stm at position 0 =&gt; */* This ex
+            ?? Try match rule comment_line=RegExMatch(//.*?$) in comment at position 0 =&gt; */* This ex
+            -- NoMatch at 0
+            ?? Try match rule comment_block=RegExMatch(/\*(.|\n)*?\*/) in comment at position 0 =&gt; */* This ex
+
+...
+
+
+Generating 'robot.tx.dot' file for meta-model.
+To convert to png run 'dot -Tpng -O robot.tx.dot'
+Generating 'program.rbt.dot' file for model.
+To convert to png run 'dot -Tpng -O program.rbt.dot'
+</code></pre>
+<p>This command renders parse trees and parser models for both textX and your
+language to dot files. Also, a meta-model and model of the language will be
+rendered if parsed correctly.</p></div>
             
         </div>
 
