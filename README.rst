@@ -14,8 +14,8 @@ parser and a meta-model (a.k.a. abstract syntax) for the language.
 See the docs for the details.
 
 textX follows the syntax and semantics of Xtext but differs in some places and is
-implemented 100% in Python using `Arpeggio`_ parser.
-It is fully dynamic - no code generation at all!
+implemented 100% in Python using `Arpeggio`_ PEG parser - no grammar
+ambiguities, unlimited lookahead, interpreter style of work.
 
 
 The full documentation with tutorials is available at http://igordejanovic.net/textX/
