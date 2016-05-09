@@ -28,4 +28,8 @@ pages:
 
 markdown_extensions:
     - admonition:
+    - toc:
+        permalink: True
+
+copyright: Copyright &copy; 2016 <a href="http://igordejanovic.net/">Igor Dejanović</a>.
 
