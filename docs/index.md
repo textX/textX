@@ -86,29 +86,23 @@ tutorial](tutorials/state_machine.md).
 
 ## Installation
 
-    pip install textX
+    $ pip install textX
 
+Note: Previous command requires [pip](https://pypi.python.org/pypi/pip) to be
+installed.
 
-You should see an output similar to this:
+To verify that textX is properly installed run:
 
-    Collecting textx
-      Downloading textX-0.4.2.tar.gz
-    Collecting Arpeggio (from textx)
-      Downloading Arpeggio-1.1.tar.gz
-    Building wheels for collected packages: textx, Arpeggio
-      Running setup.py bdist_wheel for textx
-      Stored in directory: /home/igor/.cache/pip/wheels/b7/d9/ab/05ac4d429fb9c424e8610e295d564e6f0482d2bf772efbb3be
-      Running setup.py bdist_wheel for Arpeggio
-      Stored in directory: /home/igor/.cache/pip/wheels/31/0c/fa/864d57518f97af0a57a71cc124c556af5c965580181204cab3
-    Successfully built textx Arpeggio
-    Installing collected packages: Arpeggio, textx
-    Successfully installed Arpeggio-1.1 textx-0.4.2
+    $ textx
 
-To verify that the library is properly run:
+You should get output like this:
 
-    $ python -c 'import textx'
+    error: the following arguments are required: cmd, metamodel
+    usage: textx [-h] [-i] [-d] cmd metamodel [model]
 
-If there is no error textX is properly installed.
+    textX checker and visualizer
+
+    ...
 
 ## Getting started
 
@@ -125,18 +119,24 @@ Also, you can
 check out [examples](https://github.com/igordejanovic/textX/tree/master/examples/).
 
 
-## Open-source projects using textX
+## Projects using textX
 
-- [applang](https://github.com/kosanmil/applang) - Textual DSL for generating mobile applications
-- [pyTabs](https://github.com/E2Music/pyTabs) - A Domain-Specific Language (DSL) for simplified music notation
-- [pyFlies](https://github.com/igordejanovic/pyFlies) - DSL for cognitive experiments modeling
+Here is a non-complete list of projects using textX.
 
-## textX in the industry
+* Open-source
 
-[Typhoon HIL, Inc.](https://www.typhoon-hil.com/) is a technology leader for
-ultra-high fidelity Hardware-in-the-Loop (HIL) real-time emulators for power
-electronics.  textX is used as a part of Typhoon-HIL's schematic editor for the
-description of power electronic and DSP schemes and components.
+    - [pyTabs](https://github.com/E2Music/pyTabs) - A Domain-Specific Language (DSL) for simplified music notation
+    - [applang](https://github.com/kosanmil/applang) - Textual DSL for generating mobile applications
+    - [pyFlies](https://github.com/igordejanovic/pyFlies) - DSL for cognitive experiments modeling
+
+* Commercial
+
+    - textX is used as a part of [Typhoon-HIL's](https://www.typhoon-hil.com/)
+      schematic editor for the description of power electronic and DSP schemes and
+      components.
+
+If you are using textX to build some cool stuff drop me a line at igor dot
+dejanovic at gmail. I would like to hear from you!
 
 ## Editor/IDE support
 
