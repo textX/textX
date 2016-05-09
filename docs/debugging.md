@@ -11,7 +11,7 @@ successfully) dot files will be generated:
 ```python
 form textx.metamodel import metamodel_from_file
 
-my_metamodel = metamodel_from_file('mygrammar.tx', debug=True)
+robot_metamodel = metamodel_from_file('robot.tx', debug=True)
 ```
 
 If `debug` is set in the `model_from_file/str` calls than various
@@ -20,5 +20,43 @@ parse tree created from the input as well as model will be exported to dot
 file.
 
 ```python
-  my_model = my_metamodel.model_from_file('mymodel.mod', debug=True)
+  robot_program = robot_metamodel.model_from_file('program.rbt', debug=True)
 ```
+
+Alternatively, you can use [textx check or visualize command](textx_command.md)
+in debug mode.
+
+    $ textx -d visualize robot.tx program.rbt
+
+    *** PARSING LANGUAGE DEFINITION ***
+    New rule: grammar_to_import -> RegExMatch
+    New rule: import_stm -> Sequence
+    New rule: rule_name -> RegExMatch
+    New rule: param_name -> RegExMatch
+    New rule: string_value -> OrderedChoice
+    New rule: rule_param -> Sequence
+    Rule rule_param founded in cache.
+    New rule: rule_params -> Sequence
+    ...
+
+    >> Matching rule textx_model=Sequence at position 0 => */* This ex
+      >> Matching rule ZeroOrMore in textx_model at position 0 => */* This ex
+          >> Matching rule import_stm=Sequence in textx_model at position 0 => */* This ex
+            ?? Try match rule StrMatch(import) in import_stm at position 0 => */* This ex
+            >> Matching rule comment=OrderedChoice in import_stm at position 0 => */* This ex
+                ?? Try match rule comment_line=RegExMatch(//.*?$) in comment at position 0 => */* This ex
+                -- NoMatch at 0
+                ?? Try match rule comment_block=RegExMatch(/\*(.|\n)*?\*/) in comment at position 0 => */* This ex
+
+    ...
+
+
+    Generating 'robot.tx.dot' file for meta-model.
+    To convert to png run 'dot -Tpng -O robot.tx.dot'
+    Generating 'program.rbt.dot' file for model.
+    To convert to png run 'dot -Tpng -O program.rbt.dot'
+
+This command renders parse trees and parser models for both textX and your
+language to dot files. Also, a meta-model and model of the language will be
+rendered if parsed correctly.
+
