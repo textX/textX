@@ -217,10 +217,11 @@ class TextXModelSA(SemanticAction):
                                 ._tx_peg_rule = rule
                         if suppress:
                             # Special case. Suppression on rule reference.
-                            model_parser.metamodel[rule_name]\
-                                ._tx_peg_rule = Sequence(nodes=[rule],
-                                                         rule_name=rule_name,
-                                                         suppress=suppress)
+                            _tx_class = rule._tx_class
+                            rule = Sequence(nodes=[rule],
+                                            rule_name=rule_name,
+                                            suppress=suppress)
+                            rule._tx_class = _tx_class
                     else:
                         line, col = grammar_parser.pos_to_linecol(rule.position)
                         raise TextXSemanticError(
@@ -232,7 +233,7 @@ class TextXModelSA(SemanticAction):
                     "{}:{}".format(type(rule), text(rule))
 
                 # If there is meta-class attributes collected than this
-                # is common rule
+                # is a common rule
                 if hasattr(rule, '_tx_class') and \
                         len(rule._tx_class._tx_attrs) > 0:
                     rule._tx_class._tx_type = RULE_COMMON
@@ -271,13 +272,13 @@ class TextXModelSA(SemanticAction):
                 return rule
 
             resolved_set.add(node)
-            _inner_resolve(node)
+            return _inner_resolve(node)
 
         if grammar_parser.debug:
             grammar_parser.dprint("RESOLVING RULE CROSS-REFS")
 
         for cls in model_parser.metamodel:
-            resolve(cls._tx_peg_rule)
+            cls._tx_peg_rule = resolve(cls._tx_peg_rule)
 
     def _resolve_cls_refs(self, grammar_parser, model_parser):
 
