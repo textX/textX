@@ -60,7 +60,9 @@ def match_str(cls):
             return "{}{}".format(result, "-" if s.suppress else "")
 
     mstr = ""
-    if cls.__name__ not in BASE_TYPE_NAMES:
+    if cls.__name__ not in BASE_TYPE_NAMES and \
+            not (cls._tx_type is RULE_ABSTRACT and
+                 cls.__name__ != cls._tx_peg_rule.rule_name):
         e = cls._tx_peg_rule
         if isinstance(e, OrderedChoice):
             mstr = "|".join([r(x) for x in e.nodes
@@ -76,12 +78,12 @@ def match_str(cls):
 
 def dot_escape(s):
     return s.replace('\n', r'\n')\
+            .replace('\\', '\\\\')\
             .replace('"', r'\"')\
-            .replace("\\", "\\\\")\
-            .replace("|", "\\|")\
-            .replace('"', '\\"')\
-            .replace('{', '\\{')\
-            .replace('}', '\\}')
+            .replace('|', r'\|')\
+            .replace('{', r'\{')\
+            .replace('}', r'\}')\
+            .replace('?', r'\?')
 
 
 def metamodel_export(metamodel, file_name):
