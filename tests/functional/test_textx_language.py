@@ -71,10 +71,11 @@ def test_abstract_single():
     ;
     """
     metamodel = metamodel_from_str(grammar)
-    model = metamodel.model_from_str('image("testimage.svg")')
+    metamodel.model_from_str('image("testimage.svg")')
 
     assert metamodel['IconSpecification']._tx_type is RULE_COMMON
     assert metamodel['Command']._tx_type is RULE_ABSTRACT
+    assert metamodel['Command']._tx_inh_by == [metamodel['ImageCommand']]
     assert metamodel['ImageCommand']._tx_type is RULE_COMMON
 
 
@@ -88,6 +89,23 @@ def test_abstract_with_match_rule():
     """
     meta = metamodel_from_str(grammar)
     assert meta['Rule']._tx_type is RULE_ABSTRACT
+
+
+def test_unreferenced_abstract_rule():
+    """
+    Test that unreferenced abstract rule is properly recognized.
+    """
+    grammar = """
+    First: name=ID;
+    Second: Third;
+    Third: a=STRING;
+    """
+    mm = metamodel_from_str(grammar)
+
+    assert mm['First']._tx_type == RULE_COMMON
+    assert mm['Second']._tx_type == RULE_ABSTRACT
+    assert mm['Second']._tx_inh_by == [mm['Third']]
+    assert mm['Third']._tx_type == RULE_COMMON
 
 
 def test_match_rule():
@@ -174,6 +192,22 @@ def test_match_rule_suppress():
     model = meta.model_from_str('a b b')
     # Second b should be suppressed
     assert model == 'ab'
+
+
+def test_rule_single_reference_to_match_rule():
+    """
+    Test that rule with single reference to match rule is match rule.
+    """
+    grammar = """
+    First: name=ID Second;
+    Second: Third;
+    Third: STRING|INT;
+    """
+    mm = metamodel_from_str(grammar)
+
+    assert mm['First']._tx_type == RULE_COMMON
+    assert mm['Second']._tx_type == RULE_MATCH
+    assert mm['Third']._tx_type == RULE_MATCH
 
 
 def test_regex_match_rule():

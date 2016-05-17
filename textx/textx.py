@@ -191,20 +191,22 @@ class TextXModelSA(SemanticAction):
 
         resolved_set = set()
 
-        def resolve(node):
+        def resolve(node, cls_rule_name):
             """
             Recursively resolve peg rule references and textx rule types.
 
             Args:
                 node(ParsingExpression or RuleCrossRef)
+                cls_rule_name(str): The name of corresponding class/rule.
             """
 
-            def _inner_resolve(rule):
+            def _inner_resolve(rule, cls_rule_name=None):
                 if grammar_parser.debug:
                     grammar_parser.dprint("Resolving rule: {}".format(rule))
 
                 # Save initial rule name to detect special abstract rule case.
-                initial_rule_name = rule.rule_name
+                initial_rule_name = cls_rule_name \
+                    if cls_rule_name else rule.rule_name
 
                 if type(rule) is RuleCrossRef:
                     rule_name = rule.rule_name
@@ -239,46 +241,47 @@ class TextXModelSA(SemanticAction):
                     rule._tx_class._tx_type = RULE_COMMON
 
                 # Recurse into subrules, resolve and determine rule types.
-                abstract = False
                 for idx, child in enumerate(rule.nodes):
                     if child not in resolved_set:
                         resolved_set.add(rule)
                         child = _inner_resolve(child)
                         rule.nodes[idx] = child
 
-                    # Detect abstract rules.
-                    if rule.rule_name != initial_rule_name:
-                        # Special case when there is only a single rule ref in
-                        # the rule.
-                        abstract = True
-                    elif rule.root and \
-                            not rule.rule_name.startswith('__asgn') and \
-                            hasattr(child, '_tx_class') and \
-                            isinstance(rule, OrderedChoice):
-                        # If this is root rule, OrderedChoice, and its not
-                        # assignment and there exists child that has its meta-class
-                        # which is abstract or common than this must be abstract.
-                        abstract |= child._tx_class._tx_type != RULE_MATCH
+                # Check if this rule is abstract
+                # Abstract are root rules which haven't got any attributes
+                # and reference at least one non-match rule.
+                if initial_rule_name in model_parser.metamodel:
+                    cls =  model_parser.metamodel[initial_rule_name]
+                    abstract = False
+                    if rule.rule_name and initial_rule_name != rule.rule_name:
+                        abstract = model_parser.metamodel[rule.rule_name]._tx_type != RULE_MATCH
+                    else:
+                        abstract = not cls._tx_attrs and \
+                            any([c._tx_class._tx_type != RULE_MATCH
+                                for c in rule.nodes if hasattr(c, '_tx_class')])
 
-                if abstract:
-                    cls = model_parser.metamodel[initial_rule_name]
-                    cls._tx_type = RULE_ABSTRACT
-                    # Add inherited classes to this rule's meta-class
-                    for idx, child in enumerate(rule.nodes):
-                        if child.root and hasattr(child, '_tx_class'):
-                            if child._tx_class not in cls._tx_inh_by:
-                                cls._tx_inh_by.append(child._tx_class)
+                    if abstract:
+                        cls._tx_type = RULE_ABSTRACT
+                        # Add inherited classes to this rule's meta-class
+                        if rule.rule_name and initial_rule_name != rule.rule_name:
+                            if rule._tx_class not in cls._tx_inh_by:
+                                cls._tx_inh_by.append(rule._tx_class)
+                        else:
+                            for idx, child in enumerate(rule.nodes):
+                                if child.root and hasattr(child, '_tx_class'):
+                                    if child._tx_class not in cls._tx_inh_by:
+                                        cls._tx_inh_by.append(child._tx_class)
 
                 return rule
 
             resolved_set.add(node)
-            return _inner_resolve(node)
+            return _inner_resolve(node, cls_rule_name)
 
         if grammar_parser.debug:
             grammar_parser.dprint("RESOLVING RULE CROSS-REFS")
 
         for cls in model_parser.metamodel:
-            cls._tx_peg_rule = resolve(cls._tx_peg_rule)
+            cls._tx_peg_rule = resolve(cls._tx_peg_rule, cls.__name__)
 
     def _resolve_cls_refs(self, grammar_parser, model_parser):
 
