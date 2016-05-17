@@ -1,5 +1,10 @@
 # textX changelog
 
+* 2016-05-17 Release 1.3.1
+  - Fixing several bugs in special cases regarding abstract rule with a single
+    rule reference and match suppression.
+  - Improvements in docs, tutorials and examples.
+
 * 2016-05-05 Release 1.3
   - Added support for syntactic predicates (`!` and `&`). A.K.A. negative and
     positive lookahead. Tests. Docs.
