@@ -131,7 +131,7 @@ Here is a non-complete list of projects using textX.
 
 * Commercial
 
-    - textX is used as a part of [Typhoon-HIL's](https://www.typhoon-hil.com/)
+    - textX is used as a part of [Typhoon-HIL's](https://www.typhoon-hil.com/?utm_campaign=1604_HIL402%20Campaign&utm_content=Igor_github&utm_source=email)
       schematic editor for the description of power electronic and DSP schemes and
       components.
 
