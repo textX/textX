@@ -1,0 +1,24 @@
+IBMRapsodyModel:
+    header= /[^\n]*/
+    root=Object
+;
+
+Object:
+    '{' name=ID
+        keys+=Key
+    '}'
+;
+
+Key:
+    '-' name=ID '=' (values=Value (';'? !('-'|'}') values=Value)*)? ';'?
+;
+
+Value:
+     STRING | INT | FLOAT | GUID | Object | ID
+;
+
+GUID:
+    'GUID' value=/[a-f0-9]*-[a-f0-9]*-[a-f0-9]*-[a-f0-9]*-[a-f0-9]*/
+;
+
+
