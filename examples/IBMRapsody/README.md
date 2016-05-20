@@ -11,3 +11,17 @@ To check and visualize meta-model and test model:
 
     $ textx visualize ibm_rapsody.tx test.ibmr
 
+Load from code:
+
+    from textx.metamodel import metamodel_from_file
+
+    meta = metamodel_from_file('ibm_raposody.tx')
+    model = meta.model_from_file('test.ibmr')
+
+
+`model` will be an instance of `IBMRapsodyModel` class described by the grammar.
+
+    print(model.root.name)
+    for key in model.root.keys:
+      print(key.name, key.values)
+
