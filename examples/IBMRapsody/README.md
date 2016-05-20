@@ -1,4 +1,4 @@
-# textX example for IBM Rapsody
+# IBM Rapsody example
 
 See:
   - https://www.reddit.com/r/Python/comments/4k50gf/textx_13_a_libtool_for_building_dsls_and_parsers/
