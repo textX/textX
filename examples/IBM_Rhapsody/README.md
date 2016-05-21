@@ -9,23 +9,23 @@ Example taken from https://github.com/mansam/exploring-rhapsody/blob/master/Ligh
 
 To check and visualize meta-model and test model:
 
-    $ textx visualize ibm_rapsody.tx test.ibmr
+    $ textx visualize ibm_rhapsody.tx test.ibmr
 
 Load from code:
 
 ```python
 from textx.metamodel import metamodel_from_file
 
-meta = metamodel_from_file('ibm_raposody.tx')
+meta = metamodel_from_file('ibm_rhapsody.tx')
 model = meta.model_from_file('test.ibmr')
 ```
 
 
-`model` will be an instance of `IBMRapsodyModel` class described by the grammar.
+`model` will be an instance of `IBMRhapsodyModel` class described by the grammar.
 
 ```python
 print(model.root.name)
-for key in model.root.keys:
-  print(key.name, key.values)
+for property in model.root.properties:
+  print(property.name, property.values)
 ```
 

@@ -1,15 +1,15 @@
-IBMRapsodyModel:
+IBMRhapsodyModel:
     header= /[^\n]*/
     root=Object
 ;
 
 Object:
     '{' name=ID
-        keys+=Key
+        properties+=Property
     '}'
 ;
 
-Key:
+Property:
     '-' name=ID '=' (values=Value (';'? !('-'|'}') values=Value)*)? ';'?
 ;
 
