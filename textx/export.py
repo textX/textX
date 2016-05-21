@@ -90,9 +90,9 @@ def dot_escape(s):
 
 def dot_repr(o):
     if type(o) in [str, text]:
-        return "'{}'".format(dot_escape(str(o)))
+        return "'{}'".format(dot_escape(text(o)))
     else:
-        return str(o)
+        return text(o)
 
 
 def metamodel_export(metamodel, file_name):
