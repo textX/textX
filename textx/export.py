@@ -89,7 +89,7 @@ def dot_escape(s):
 
 
 def dot_repr(o):
-    if type(o) in [str, text]:
+    if type(o) is text:
         return "'{}'".format(dot_escape(text(o)))
     else:
         return text(o)
@@ -186,7 +186,7 @@ def model_export(model, file_name):
                 else:
 
                     # Plain attributes
-                    if type(attr_value) in [str, text] and attr_name != 'name':
+                    if type(attr_value) is text and attr_name != 'name':
                         attr_value = dot_repr(attr_value)
 
                     if type(attr_value) in PRIMITIVE_PYTHON_TYPES:
