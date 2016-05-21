@@ -23,3 +23,6 @@ Example language are:
     interpreter.
   - `pyFlies` - An example of real DSL for the description of cognitive
     reaction-time experiments. See [the pyFlies project](http://igordejanovic.net/pyFlies/).
+  - `IBM_Rhapsody` - An example of loading of a model made using IBM Rational
+    Rhapsody.
+
