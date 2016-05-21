@@ -83,7 +83,16 @@ def dot_escape(s):
             .replace('|', r'\|')\
             .replace('{', r'\{')\
             .replace('}', r'\}')\
+            .replace('>', r'\>')\
+            .replace('<', r'\<')\
             .replace('?', r'\?')
+
+
+def dot_repr(o):
+    if type(o) in [str, text]:
+        return "'{}'".format(dot_escape(str(o)))
+    else:
+        return str(o)
 
 
 def metamodel_export(metamodel, file_name):
@@ -158,7 +167,7 @@ def model_export(model, file_name):
                 if attr.mult in [MULT_ONEORMORE, MULT_ZEROORMORE]:
                     if all([type(x) in PRIMITIVE_PYTHON_TYPES for x in attr_value]):
                         attrs += "{}{}:list=[".format(required, attr_name)
-                        attrs += ",".join([str(x) for x in attr_value])
+                        attrs += ",".join([dot_repr(x) for x in attr_value])
                         attrs += "]\\l"
                     else:
                         for idx, list_obj in enumerate(attr_value):
@@ -177,8 +186,8 @@ def model_export(model, file_name):
                 else:
 
                     # Plain attributes
-                    if type(attr_value) in [str, text]:
-                        attr_value = dot_escape(attr_value)
+                    if type(attr_value) in [str, text] and attr_name != 'name':
+                        attr_value = dot_repr(attr_value)
 
                     if type(attr_value) in PRIMITIVE_PYTHON_TYPES:
                         if attr_name == 'name':
