@@ -1,4 +1,4 @@
-# IBM Rapsody example
+# IBM Rational Rhapsody example
 
 See:
   - https://www.reddit.com/r/Python/comments/4k50gf/textx_13_a_libtool_for_building_dsls_and_parsers/
@@ -9,20 +9,20 @@ Example taken from https://github.com/mansam/exploring-rhapsody/blob/master/Ligh
 
 To check and visualize meta-model and test model:
 
-    $ textx visualize ibm_rhapsody.tx test.ibmr
-    $ dot -Tpng -O *dot
+    $ textx visualize rhapsody.tx LightSwitch.rpy
+    $ dot -Tpdf -O *dot
 
 Load from code:
 
 ```python
 from textx.metamodel import metamodel_from_file
 
-meta = metamodel_from_file('ibm_rhapsody.tx')
-model = meta.model_from_file('test.ibmr')
+meta = metamodel_from_file('rhapsody.tx')
+model = meta.model_from_file('LightSwitch.rpy')
 ```
 
 
-`model` will be an instance of `IBMRhapsodyModel` class described by the grammar.
+`model` will be an instance of `RhapsodyModel` class described by the grammar.
 Each object attribute will be of a proper class defined by the grammar.
 
 ```python

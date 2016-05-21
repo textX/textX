@@ -1,4 +1,4 @@
-IBMRhapsodyModel:
+RhapsodyModel:
     header= /[^\n]*/
     root=Object
 ;
