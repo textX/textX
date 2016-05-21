@@ -10,6 +10,7 @@ Example taken from https://github.com/mansam/exploring-rhapsody/blob/master/Ligh
 To check and visualize meta-model and test model:
 
     $ textx visualize ibm_rhapsody.tx test.ibmr
+    $ dot -Tpng -O *dot
 
 Load from code:
 
@@ -22,6 +23,7 @@ model = meta.model_from_file('test.ibmr')
 
 
 `model` will be an instance of `IBMRhapsodyModel` class described by the grammar.
+Each object attribute will be of a proper class defined by the grammar.
 
 ```python
 print(model.root.name)
