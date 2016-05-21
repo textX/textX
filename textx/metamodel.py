@@ -12,8 +12,7 @@ from collections import OrderedDict
 from arpeggio import DebugPrinter
 from .textx import language_from_str, python_type, BASE_TYPE_NAMES, ID, BOOL,\
     INT, FLOAT, STRING, NUMBER, BASETYPE
-from .const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, RULE_COMMON, \
-    RULE_MATCH
+from .const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, RULE_MATCH
 
 
 class MetaAttr(object):
