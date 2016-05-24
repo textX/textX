@@ -26,4 +26,4 @@ with codecs.open("simon.pf", encoding="utf-8") as f:
     '''
 
     print(timeit.timeit("mm.model_from_str(input)", setup=setup, number=200))
-    # 1.53 s
+    # 1.3 s without memoization
