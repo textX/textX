@@ -1,0 +1,26 @@
+RhapsodyModel:
+    header= /[^\n]*/
+    root=Object
+;
+
+Object:
+    '{' name=ID
+        properties+=Property
+    '}'
+;
+
+Property:
+    '-' name=ID '=' (values=Value (';'? !('-'|'}') values=Value)*)? ';'?
+;
+
+Value:
+     STRING | INT | FLOAT | GUID | Object | ID
+;
+
+GUID:
+    'GUID' value=/[a-f0-9]*-[a-f0-9]*-[a-f0-9]*-[a-f0-9]*-[a-f0-9]*/
+;
+
+Comment:
+    /\/\/.*$/
+;
