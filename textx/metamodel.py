@@ -75,7 +75,8 @@ class TextXMetaModel(DebugPrinter):
 
     def __init__(self, file_name=None, classes=None, builtins=None,
                  auto_init_attributes=True, ignore_case=False,
-                 skipws=True, ws=None, autokwd=False, **kwargs):
+                 skipws=True, ws=None, autokwd=False, memoization=False,
+                 **kwargs):
         """
         Args:
             file_name(str): A file name if meta-model is going to be
@@ -97,6 +98,8 @@ class TextXMetaModel(DebugPrinter):
             ws (str): A string consisting of whitespace characters.
             autokwd(bool): If keyword-like matches should be matched on word
                 boundaries. Default is False.
+            memoization(bool): If memoization should be used (a.k.a. packrat
+                parsing). Default is False.
             debug(bool): Should debug messages be printed.
         """
         super(TextXMetaModel, self).__init__(**kwargs)
@@ -117,6 +120,7 @@ class TextXMetaModel(DebugPrinter):
         self.skipws = skipws
         self.ws = ws
         self.autokwd = autokwd
+        self.memoization = memoization
 
         # Registered model processors
         self._model_processors = []

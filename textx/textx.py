@@ -180,6 +180,7 @@ class TextXModelSA(SemanticAction):
                                         skipws=metamodel.skipws,
                                         ws=metamodel.ws,
                                         autokwd=metamodel.autokwd,
+                                        memoization=metamodel.memoization,
                                         debug=metamodel.debug)
 
         model_parser.metamodel = metamodel
@@ -827,7 +828,9 @@ def language_from_str(language_def, metamodel):
         # the textX grammar specified in this module
         parser = ParserPython(textx_model, comment_def=comment,
                               ignore_case=False,
-                              reduce_tree=False, debug=metamodel.debug)
+                              reduce_tree=False,
+                              memoization=metamodel.memoization,
+                              debug=metamodel.debug)
 
         # Prepare regex used in keyword-like strmatch detection.
         # See str_match_SA
