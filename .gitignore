@@ -60,3 +60,4 @@ examples/Entity/srcgen/
 tags
 textX.mm
 textx.build/
+*.pstats
