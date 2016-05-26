@@ -1,0 +1,3 @@
+psutil
+memory_profiler
+gprof2dot
