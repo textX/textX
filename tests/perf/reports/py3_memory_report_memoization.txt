@@ -1,0 +1,19 @@
+Python 3.5.1
+Filename: test_memory_memoization.py
+
+Line #    Mem usage    Increment   Line Contents
+================================================
+     6     23.9 MiB      0.0 MiB   @profile
+     7                             def memoization():
+     8     28.0 MiB      4.1 MiB       mm = metamodel_from_file('rhapsody.tx', memoization=True)
+     9                             
+    10                                 # Small file
+    11     28.0 MiB      0.0 MiB       this_folder = dirname(__file__)
+    12     28.0 MiB      0.0 MiB       model = mm.model_from_file(join(this_folder,
+    13   1420.5 MiB   1392.5 MiB                                       'test_inputs', 'LightSwitch.rpy'))
+    14                             
+    15                                 # Large file
+    16   1420.5 MiB      0.0 MiB       model2 = mm.model_from_file(join(this_folder,
+    17   2920.0 MiB   1499.4 MiB                                        'test_inputs', 'LightSwitchDouble.rpy'))
+
+
