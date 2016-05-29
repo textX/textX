@@ -10,7 +10,7 @@ from __future__ import unicode_literals
 from arpeggio import Match, OrderedChoice, Sequence, OneOrMore, ZeroOrMore,\
     Optional, SyntaxPredicate
 from .const import MULT_ZEROORMORE, MULT_ONEORMORE, MULT_ONE, RULE_ABSTRACT, \
-    RULE_COMMON
+    RULE_COMMON, RULE_MATCH
 from .textx import PRIMITIVE_PYTHON_TYPES, BASE_TYPE_NAMES
 import codecs
 import sys
@@ -40,24 +40,27 @@ def match_str(cls):
     For a given match rule meta-class returns a nice string representation.
     """
     def r(s):
-        if s.root and s.rule_name in BASE_TYPE_NAMES:
-            return s.rule_name
-        else:
-            if isinstance(s, Match):
-                result = text(s)
-            elif isinstance(s, OrderedChoice):
-                result = "|".join([r(x) for x in s.nodes])
-            elif isinstance(s, Sequence):
-                result = " ".join([r(x) for x in s.nodes])
-            elif isinstance(s, ZeroOrMore):
-                result = "({})*".format(r(s.nodes[0]))
-            elif isinstance(s, OneOrMore):
-                result =  "({})+".format(r(s.nodes[0]))
-            elif isinstance(s, Optional):
-                result =  "{}?".format(r(s.nodes[0]))
-            elif isinstance(s, SyntaxPredicate):
-                result =  ""
-            return "{}{}".format(result, "-" if s.suppress else "")
+        if s.root:
+            if s.rule_name in BASE_TYPE_NAMES or \
+                    (hasattr(s, '_tx_class') and
+                     s._tx_class._tx_type is not RULE_MATCH):
+                return s.rule_name
+
+        if isinstance(s, Match):
+            result = text(s)
+        elif isinstance(s, OrderedChoice):
+            result = "|".join([r(x) for x in s.nodes])
+        elif isinstance(s, Sequence):
+            result = " ".join([r(x) for x in s.nodes])
+        elif isinstance(s, ZeroOrMore):
+            result = "({})*".format(r(s.nodes[0]))
+        elif isinstance(s, OneOrMore):
+            result =  "({})+".format(r(s.nodes[0]))
+        elif isinstance(s, Optional):
+            result =  "{}?".format(r(s.nodes[0]))
+        elif isinstance(s, SyntaxPredicate):
+            result =  ""
+        return "{}{}".format(result, "-" if s.suppress else "")
 
     mstr = ""
     if cls.__name__ not in BASE_TYPE_NAMES and \
