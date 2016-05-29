@@ -299,6 +299,8 @@ class TextXMetaModel(DebugPrinter):
         cls._tx_type = rule_type
 
         cls._tx_peg_rule = peg_rule
+        if peg_rule:
+            peg_rule._tx_class = cls
 
         # Push this class and PEG rule in the current namespace
         current_namespace = self.namespaces[self._namespace_stack[-1]]
