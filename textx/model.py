@@ -327,51 +327,42 @@ def parse_tree_to_objgraph(parser, parse_tree):
 
     def resolve_refs(model):
         """
-        Resolves obj cross refs.
+        Resolves model references.
         """
         # TODO: Scoping and name-space rules.
 
         resolved_set = set()
         metamodel = parser.metamodel
 
-        def _resolve_ref(obj_ref):
+        def _resolve_link_rule_ref(obj_ref):
+
             if obj_ref is None:
                 return
+
             assert type(obj_ref) is ObjCrossRef, type(obj_ref)
+
             if parser.debug:
                 parser.dprint("Resolving obj crossref: {}:{}"
                               .format(obj_ref.cls, obj_ref.obj_name))
 
-            def _resolve_ref_abstract(obj_cls):
+            def _inner_resolve_link_rule_ref(cls, obj_name):
                 """
-                Depth-first resolving of abstract rules.
+                Depth-first resolving of link rule reference.
                 """
-                for inherited in obj_cls._tx_inh_by:
-                    if inherited._tx_type == RULE_ABSTRACT:
-                        return _resolve_ref_abstract(inherited)
-                    elif inherited._tx_type == RULE_COMMON:
-                        if id(inherited) in parser._instances:
-                            objs = parser._instances[id(inherited)]
-                            if obj_ref.obj_name in objs:
-                                return objs[obj_ref.obj_name]
+                if cls._tx_type is RULE_ABSTRACT:
+                    for inherited in cls._tx_inh_by:
+                        result = _inner_resolve_link_rule_ref(inherited, obj_name)
+                        if result:
+                            return result
+                elif cls._tx_type == RULE_COMMON:
+                    if id(cls) in parser._instances:
+                        objs = parser._instances[id(cls)]
+                        if obj_name in objs:
+                            return objs[obj_name]
 
-            if obj_ref.cls._tx_type == RULE_COMMON:
-                if id(obj_ref.cls) in parser._instances:
-                    objs = parser._instances[id(obj_ref.cls)]
-                    if obj_ref.obj_name in objs:
-                        return objs[obj_ref.obj_name]
-            elif obj_ref.cls._tx_type == RULE_ABSTRACT:
-                # For abstract rule ref do a depth first search on
-                # the inheritance tree to find common rules
-                # and return a first instance of that meta-class instance with
-                # the referred name.
-                obj = _resolve_ref_abstract(obj_ref.cls)
-                if obj:
-                    return obj
-            else:
-                pass
-                # TODO: Match rules cannot be referred. This is
-                #       an error in language description.
+            result = _inner_resolve_link_rule_ref(obj_ref.cls, obj_ref.obj_name)
+            if result:
+                return result
 
             # As a fall-back search builtins if given
             if metamodel.builtins:
@@ -385,7 +376,7 @@ def parse_tree_to_objgraph(parser, parse_tree):
                 .format(obj_ref.obj_name, obj_ref.cls.__name__, (line, col)),
                 line=line, col=col)
 
-        def _resolve(o):
+        def _resolve_obj_attributes(o):
             if parser.debug:
                 parser.dprint("RESOLVING CLASS: {}"
                               .format(o.__class__.__name__))
@@ -406,18 +397,19 @@ def parse_tree_to_objgraph(parser, parse_tree):
                         for idx, list_attr_value in enumerate(attr_value):
                             if attr.ref:
                                 if attr.cont:
-                                    _resolve(list_attr_value)
+                                    _resolve_obj_attributes(list_attr_value)
                                 else:
                                     attr_value[idx] = \
-                                        _resolve_ref(list_attr_value)
+                                        _resolve_link_rule_ref(list_attr_value)
                     else:
                         if attr.ref:
                             if attr.cont:
-                                _resolve(attr_value)
+                                _resolve_obj_attributes(attr_value)
                             else:
-                                setattr(o, attr.name, _resolve_ref(attr_value))
+                                setattr(o, attr.name,
+                                        _resolve_link_rule_ref(attr_value))
 
-        _resolve(model)
+        _resolve_obj_attributes(model)
 
     def call_obj_processors(model_obj):
         """

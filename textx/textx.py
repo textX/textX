@@ -190,99 +190,130 @@ class TextXModelSA(SemanticAction):
     def _resolve_rule_refs(self, grammar_parser, model_parser):
         """Resolves parser ParsingExpression crossrefs."""
 
-        resolved_set = set()
-
-        def resolve(node, cls_rule_name):
+        def _resolve_rule(rule):
             """
-            Recursively resolve peg rule references and textx rule types.
+            Recursively resolve peg rule references.
 
             Args:
-                node(ParsingExpression or RuleCrossRef)
-                cls_rule_name(str): The name of corresponding class/rule.
+                rule(ParsingExpression or RuleCrossRef)
+            """
+            if not isinstance(rule, RuleCrossRef) and rule in resolved_rules:
+                return rule
+            resolved_rules.add(rule)
+
+            if grammar_parser.debug:
+                grammar_parser.dprint("Resolving rule: {}".format(rule))
+
+            if type(rule) is RuleCrossRef:
+                rule_name = rule.rule_name
+                suppress = rule.suppress
+                if rule_name in model_parser.metamodel:
+                    rule = model_parser.metamodel[rule_name]._tx_peg_rule
+                    if type(rule) is RuleCrossRef:
+                        rule = _resolve_rule(rule)
+                        model_parser.metamodel[rule_name]._tx_peg_rule = rule
+                    if suppress:
+                        # Special case. Suppression on rule reference.
+                        _tx_class = rule._tx_class
+                        rule = Sequence(nodes=[rule],
+                                        rule_name=rule_name,
+                                        suppress=suppress)
+                        rule._tx_class = _tx_class
+                else:
+                    line, col = grammar_parser.pos_to_linecol(rule.position)
+                    raise TextXSemanticError(
+                        'Unexisting rule "{}" at position {}.'
+                        .format(rule.rule_name,
+                                (line, col)), line, col)
+
+            assert isinstance(rule, ParsingExpression),\
+                "{}:{}".format(type(rule), text(rule))
+
+            # Recurse into subrules, and resolve rules.
+            for idx, child in enumerate(rule.nodes):
+                if child not in resolved_rules:
+                    child = _resolve_rule(child)
+                    rule.nodes[idx] = child
+
+            return rule
+
+        # Two pass resolving
+        for i in range(2):
+            if grammar_parser.debug:
+                grammar_parser.dprint("RESOLVING RULE CROSS-REFS - PASS {}"
+                                      .format(i + 1))
+            resolved_rules = set()
+            for cls in model_parser.metamodel:
+                cls._tx_peg_rule = _resolve_rule(cls._tx_peg_rule)
+
+    def _determine_rule_types(self, metamodel):
+        """Determine textX rule/metaclass types"""
+
+        def _determine_rule_type(cls):
+            """
+            Determine rule type (abstract, match, common) and inherited classes.
             """
 
-            def _inner_resolve(rule, cls_rule_name=None):
-                if grammar_parser.debug:
-                    grammar_parser.dprint("Resolving rule: {}".format(rule))
+            if cls in resolved_classes:
+                return
+            resolved_classes.add(cls)
 
-                # Save initial rule name to detect special abstract rule case.
-                initial_rule_name = cls_rule_name \
-                    if cls_rule_name else rule.rule_name
+            # If there are attributes collected than this is a common
+            # rule
+            if len(cls._tx_attrs) > 0:
+                cls._tx_type = RULE_COMMON
+                return
 
-                if type(rule) is RuleCrossRef:
-                    rule_name = rule.rule_name
-                    suppress = rule.suppress
-                    if rule_name in model_parser.metamodel:
-                        rule = model_parser.metamodel[rule_name]._tx_peg_rule
-                        if type(rule) is RuleCrossRef:
-                            rule = _inner_resolve(rule)
-                            model_parser.metamodel[rule_name]\
-                                ._tx_peg_rule = rule
-                        if suppress:
-                            # Special case. Suppression on rule reference.
-                            _tx_class = rule._tx_class
-                            rule = Sequence(nodes=[rule],
-                                            rule_name=rule_name,
-                                            suppress=suppress)
-                            rule._tx_class = _tx_class
-                    else:
-                        line, col = grammar_parser.pos_to_linecol(rule.position)
-                        raise TextXSemanticError(
-                            'Unexisting rule "{}" at position {}.'
-                            .format(rule.rule_name,
-                                    (line, col)), line, col)
+            rule = cls._tx_peg_rule
 
-                assert isinstance(rule, ParsingExpression),\
-                    "{}:{}".format(type(rule), text(rule))
-
-                # If there is meta-class attributes collected than this
-                # is a common rule
-                if hasattr(rule, '_tx_class') and \
-                        len(rule._tx_class._tx_attrs) > 0:
-                    rule._tx_class._tx_type = RULE_COMMON
-
-                # Recurse into subrules, resolve and determine rule types.
-                for idx, child in enumerate(rule.nodes):
-                    if child not in resolved_set:
-                        resolved_set.add(rule)
-                        child = _inner_resolve(child)
-                        rule.nodes[idx] = child
-
-                # Check if this rule is abstract
-                # Abstract are root rules which haven't got any attributes
-                # and reference at least one non-match rule.
-                if initial_rule_name in model_parser.metamodel:
-                    cls =  model_parser.metamodel[initial_rule_name]
-                    abstract = False
-                    if rule.rule_name and initial_rule_name != rule.rule_name:
-                        abstract = model_parser.metamodel[rule.rule_name]._tx_type != RULE_MATCH
-                    else:
-                        abstract = not cls._tx_attrs and \
-                            any([c._tx_class._tx_type != RULE_MATCH
-                                for c in rule.nodes if hasattr(c, '_tx_class')])
-
-                    if abstract:
-                        cls._tx_type = RULE_ABSTRACT
-                        # Add inherited classes to this rule's meta-class
-                        if rule.rule_name and initial_rule_name != rule.rule_name:
-                            if rule._tx_class not in cls._tx_inh_by:
-                                cls._tx_inh_by.append(rule._tx_class)
+            # Check if this rule is abstract
+            # Abstract are root rules which haven't got any attributes
+            # and reference at least one non-match rule.
+            abstract = False
+            if rule.rule_name and cls.__name__ != rule.rule_name:
+                # Special case. Body of the rule is a single rule
+                # reference and the referenced rule is not match rule.
+                target_cls = metamodel[rule.rule_name]
+                _determine_rule_type(target_cls)
+                abstract = target_cls._tx_type != RULE_MATCH
+            else:
+                # Find at leat one referenced rule that is not match
+                # rule by going down the parser
+                # model and finding root rules.
+                def _has_nonmatch_ref(rule):
+                    for r in rule.nodes:
+                        if r.root:
+                            _determine_rule_type(r._tx_class)
+                            result = r._tx_class._tx_type != RULE_MATCH
                         else:
-                            for idx, child in enumerate(rule.nodes):
-                                if child.root and hasattr(child, '_tx_class'):
-                                    if child._tx_class not in cls._tx_inh_by:
-                                        cls._tx_inh_by.append(child._tx_class)
+                            result = _has_nonmatch_ref(r)
+                        if result:
+                            return True
+                abstract = _has_nonmatch_ref(rule)
 
-                return rule
+            if abstract:
+                cls._tx_type = RULE_ABSTRACT
+                # Add inherited classes to this rule's meta-class
+                if rule.rule_name and cls.__name__ != rule.rule_name:
+                    if rule._tx_class not in cls._tx_inh_by:
+                        cls._tx_inh_by.append(rule._tx_class)
+                else:
+                    # Recursivelly append all referenced classes.
+                    def _add_reffered_classes(rule, inh_by):
+                        for r in rule.nodes:
+                            if r.root:
+                                if hasattr(r, '_tx_class'):
+                                    _determine_rule_type(r._tx_class)
+                                    if r._tx_class._tx_type != RULE_MATCH and\
+                                        r._tx_class not in inh_by:
+                                            inh_by.append(r._tx_class)
+                            else:
+                                _add_reffered_classes(r, inh_by)
+                    _add_reffered_classes(rule, cls._tx_inh_by)
 
-            resolved_set.add(node)
-            return _inner_resolve(node, cls_rule_name)
-
-        if grammar_parser.debug:
-            grammar_parser.dprint("RESOLVING RULE CROSS-REFS")
-
-        for cls in model_parser.metamodel:
-            cls._tx_peg_rule = resolve(cls._tx_peg_rule, cls.__name__)
+        resolved_classes = set()
+        for cls in metamodel:
+            _determine_rule_type(cls)
 
     def _resolve_cls_refs(self, grammar_parser, model_parser):
 
@@ -353,6 +384,7 @@ class TextXModelSA(SemanticAction):
             grammar_parser.dprint("RESOLVING MODEL PARSER: second_pass")
 
         self._resolve_rule_refs(grammar_parser, model_parser)
+        self._determine_rule_types(model_parser.metamodel)
         self._resolve_cls_refs(grammar_parser, model_parser)
 
         return model_parser
