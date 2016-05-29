@@ -3,17 +3,17 @@ Filename: test_memory_nomemoization.py
 
 Line #    Mem usage    Increment   Line Contents
 ================================================
-     6     24.4 MiB      0.0 MiB   @profile
+     6     24.7 MiB      0.0 MiB   @profile
      7                             def nomemoization():
-     8     24.5 MiB      0.1 MiB       mm = metamodel_from_file('rhapsody.tx')
+     8     25.1 MiB      0.4 MiB       mm = metamodel_from_file('rhapsody.tx')
      9                             
     10                                 # Small file
-    11     24.5 MiB      0.0 MiB       this_folder = dirname(__file__)
-    12     24.5 MiB      0.0 MiB       model = mm.model_from_file(join(this_folder,
-    13    145.0 MiB    120.4 MiB                                       'test_inputs', 'LightSwitch.rpy'))
+    11     25.1 MiB      0.0 MiB       this_folder = dirname(__file__)
+    12     25.1 MiB      0.0 MiB       model = mm.model_from_file(join(this_folder,
+    13     81.3 MiB     56.2 MiB                                       'test_inputs', 'LightSwitch.rpy'))
     14                             
     15                                 # Large file
-    16    145.0 MiB      0.0 MiB       model2 = mm.model_from_file(join(this_folder,
-    17    356.9 MiB    211.9 MiB                                        'test_inputs', 'LightSwitchDouble.rpy'))
+    16     81.3 MiB      0.0 MiB       model2 = mm.model_from_file(join(this_folder,
+    17    167.3 MiB     86.0 MiB                                        'test_inputs', 'LightSwitchDouble.rpy'))
 
 

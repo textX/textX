@@ -4,64 +4,64 @@ Python 3.5.1
 
 1. Small file, no memoization. File: LightSwitch.rpy
 File size: 672.24 KB
-Elapsed time: 5.92 sec
-Speed = 113.65 KB/sec
+Elapsed time: 4.81 sec
+Speed = 139.75 KB/sec
 
 1. Large file, no memoization. File: LightSwitchDouble.rpy
 File size: 1344.08 KB
-Elapsed time: 11.31 sec
-Speed = 118.87 KB/sec
+Elapsed time: 9.46 sec
+Speed = 142.02 KB/sec
 
 2. Small file, no memoization. File: LightSwitch.rpy
 File size: 672.24 KB
-Elapsed time: 6.03 sec
-Speed = 111.56 KB/sec
+Elapsed time: 5.00 sec
+Speed = 134.47 KB/sec
 
 2. Large file, no memoization. File: LightSwitchDouble.rpy
 File size: 1344.08 KB
-Elapsed time: 11.30 sec
-Speed = 118.90 KB/sec
+Elapsed time: 9.52 sec
+Speed = 141.24 KB/sec
 
 3. Small file, no memoization. File: LightSwitch.rpy
 File size: 672.24 KB
-Elapsed time: 5.92 sec
-Speed = 113.52 KB/sec
+Elapsed time: 5.19 sec
+Speed = 129.49 KB/sec
 
 3. Large file, no memoization. File: LightSwitchDouble.rpy
 File size: 1344.08 KB
-Elapsed time: 11.75 sec
-Speed = 114.38 KB/sec
+Elapsed time: 9.59 sec
+Speed = 140.16 KB/sec
 
 
 *** Memoization
 
 1. Small file, with memoization. File: LightSwitch.rpy
 File size: 672.24 KB
-Elapsed time: 7.06 sec
-Speed = 95.24 KB/sec
+Elapsed time: 5.88 sec
+Speed = 114.28 KB/sec
 
 1. Large file, with memoization. File: LightSwitchDouble.rpy
 File size: 1344.08 KB
-Elapsed time: 13.30 sec
-Speed = 101.10 KB/sec
+Elapsed time: 11.27 sec
+Speed = 119.31 KB/sec
 
 2. Small file, with memoization. File: LightSwitch.rpy
 File size: 672.24 KB
-Elapsed time: 7.23 sec
-Speed = 92.98 KB/sec
+Elapsed time: 5.87 sec
+Speed = 114.56 KB/sec
 
 2. Large file, with memoization. File: LightSwitchDouble.rpy
 File size: 1344.08 KB
-Elapsed time: 13.63 sec
-Speed = 98.61 KB/sec
+Elapsed time: 11.07 sec
+Speed = 121.38 KB/sec
 
 3. Small file, with memoization. File: LightSwitch.rpy
 File size: 672.24 KB
-Elapsed time: 7.62 sec
-Speed = 88.23 KB/sec
+Elapsed time: 5.95 sec
+Speed = 112.92 KB/sec
 
 3. Large file, with memoization. File: LightSwitchDouble.rpy
 File size: 1344.08 KB
-Elapsed time: 13.63 sec
-Speed = 98.59 KB/sec
+Elapsed time: 11.07 sec
+Speed = 121.44 KB/sec
 
