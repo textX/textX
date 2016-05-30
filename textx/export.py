@@ -35,17 +35,19 @@ HEADER = '''
 
 '''
 
-def match_str(cls):
+def match_abstract_str(cls):
     """
-    For a given match rule meta-class returns a nice string representation.
+    For a given abstract or match rule meta-class returns a nice string
+    representation for the body.
     """
     def r(s):
         if s.root:
-            if s.rule_name in BASE_TYPE_NAMES or \
+            if s in visited or s.rule_name in BASE_TYPE_NAMES or \
                     (hasattr(s, '_tx_class') and
                      s._tx_class._tx_type is not RULE_MATCH):
                 return s.rule_name
 
+        visited.add(s)
         if isinstance(s, Match):
             result = text(s)
         elif isinstance(s, OrderedChoice):
@@ -67,6 +69,7 @@ def match_str(cls):
             not (cls._tx_type is RULE_ABSTRACT and
                  cls.__name__ != cls._tx_peg_rule.rule_name):
         e = cls._tx_peg_rule
+        visited = set([e])
         if isinstance(e, OrderedChoice):
             mstr = "|".join([r(x) for x in e.nodes
                              if x.rule_name in BASE_TYPE_NAMES or not x.root])
@@ -107,7 +110,7 @@ def metamodel_export(metamodel, file_name):
             name = cls.__name__
             attrs = ""
             if cls._tx_type is not RULE_COMMON:
-                attrs = match_str(cls)
+                attrs = match_abstract_str(cls)
             else:
                 for attr in cls._tx_attrs.values():
                     arrowtail = "arrowtail=diamond, dir=both, " \
