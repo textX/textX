@@ -169,7 +169,7 @@ class TextXModelSA(SemanticAction):
         metamodel = grammar_parser.metamodel
 
         if 'Comment' in metamodel:
-            comments_model = grammar_parser.metamodel['Comment']._tx_peg_rule
+            comments_model = metamodel['Comment']._tx_peg_rule
         else:
             comments_model = None
 
@@ -243,8 +243,13 @@ class TextXModelSA(SemanticAction):
                 grammar_parser.dprint("RESOLVING RULE CROSS-REFS - PASS {}"
                                       .format(i + 1))
             resolved_rules = set()
+            # Start from the root of the parser
+            _resolve_rule(model_parser.parser_model)
+            # Resolve rules of all meta-classes to handle unreferenced
+            # rules also.
             for cls in model_parser.metamodel:
                 cls._tx_peg_rule = _resolve_rule(cls._tx_peg_rule)
+
 
     def _determine_rule_types(self, metamodel):
         """Determine textX rule/metaclass types"""
@@ -409,11 +414,12 @@ def textx_rule_SA(parser, node, children):
         rule_params = {}
 
     if rule.rule_name.startswith('__asgn') or\
-            (isinstance(rule, Match) and rule_params):
+            ((isinstance(rule, Match) or isinstance(rule, RuleCrossRef)) and
+             rule_params):
         # If it is assignment node it must be kept because it could be
         # e.g., single assignment in the rule.
         # Also, handle a special case where rule consists only of a single match
-        # and there are rule modifiers defined.
+        # or single rule reference and there are rule modifiers defined.
         rule = Sequence(nodes=[rule], rule_name=rule_name,
                         root=True, **rule_params)
     else:
