@@ -64,7 +64,7 @@ def get_model_parser(top_rule, comments_model, **kwargs):
             # By default first rule is starting rule
             # and must be followed by the EOF
             self.parser_model = Sequence(
-                nodes=[top_rule, EOF()], rule_name='ModelFile', root=True)
+                nodes=[top_rule, EOF()], rule_name='Model', root=True)
             self.comments_model = comments_model
 
             # Stack for metaclass instances
