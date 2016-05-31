@@ -69,7 +69,9 @@ def match_abstract_str(cls):
             not (cls._tx_type is RULE_ABSTRACT and
                  cls.__name__ != cls._tx_peg_rule.rule_name):
         e = cls._tx_peg_rule
-        visited = set([e])
+        visited = set()
+        if not isinstance(e, Match):
+            visited.add(e)
         if isinstance(e, OrderedChoice):
             mstr = "|".join([r(x) for x in e.nodes
                              if x.rule_name in BASE_TYPE_NAMES or not x.root])
