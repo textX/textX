@@ -1,5 +1,15 @@
 # textX changelog
 
+* 2016-05-31 Release 1.4
+  - Significant performance improvements done in Arpeggio (see issue #22).
+  - Fixed wrong rule type detection and infinite recursion in dot export for 
+    recursive match rules (issues #23 and #25).
+  - Added new performance tests to keep track of both speed and memory
+    consumption.
+  - Memoization is disabled by default. Added `memoization` parameter to
+    meta-model instantiation.
+  - New example - IBM Rational Rhapsody format.
+
 * 2016-05-17 Release 1.3.1
   - Fixing several bugs in special cases regarding abstract rule with a single
     rule reference and match suppression.
