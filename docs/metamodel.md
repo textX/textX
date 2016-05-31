@@ -304,3 +304,20 @@ my_metamodel = metamodel_from_file('mygrammar.tx', autokwd=True)
 A keyword is considered any simple match from the grammar that is matched by the
 regular expression `[^\d\W]\w*`.
 
+
+### Memoization (a.k.a. packrat parsing)
+
+This technique is based on memoizing result on each parsing expression rule.
+For some grammars with a lot of backtracking this can yield a significant
+speed increase at the expense of some memory used for the memoization cache.
+
+Starting with textX 1.4 this feature is disabled by default. If you think that
+parsing is slow, try to enable memoization by setting `memoization` parameter
+to `True` during meta-model instantiation.
+
+```python
+from textx.metamodel import metamodel_from_file
+my_metamodel = metamodel_from_file('mygrammar.tx', memoization=True)
+```
+
+
