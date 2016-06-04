@@ -14,6 +14,9 @@ Example language are:
   - `Entity` - Simple DSL for modeling data. This example shows how to generate
     source code from the model. Used for [the Entity
     tutorial](http://igordejanovic.net/textX/tutorials/entity/).
+  - `expression` - Two simple expression languages with variable assignment and
+    expression evaluation. `calc.py` - four basic arithmetic operations.
+    `bool.py` - three basic boolean operations.
   - `workflow` - A simple DSL for workflow descriptions.
   - `json` - An example of using textX for parsing data-interchange formats.
   - `StateMachine` - State machine language and example from
