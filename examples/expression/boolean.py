@@ -85,14 +85,14 @@ class Operand(ExpressionElement):
 
 def main(debug=False):
 
-    calc_mm = metamodel_from_str(grammar,
+    bool_mm = metamodel_from_str(grammar,
                                  classes=[Bool, Or, And, Not, Operand],
                                  ignore_case=True,
                                  debug=debug)
 
     this_folder = dirname(__file__)
     if debug:
-        metamodel_export(calc_mm, join(this_folder, 'bool_metamodel.dot'))
+        metamodel_export(bool_mm, join(this_folder, 'bool_metamodel.dot'))
 
     input_expr = '''
         a = true;
@@ -100,7 +100,7 @@ def main(debug=False):
         a and false or not b
     '''
 
-    model = calc_mm.model_from_str(input_expr)
+    model = bool_mm.model_from_str(input_expr)
 
     if debug:
         model_export(model, join(this_folder, 'bool_model.dot'))
