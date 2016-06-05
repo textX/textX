@@ -40,15 +40,15 @@ def textx_rule():           return rule_name, Optional(rule_params), ":", textx_
 def rule_params():          return '[', rule_param, ZeroOrMore(',', rule_param), ']'
 def rule_param():           return param_name, Optional('=', string_value)
 def param_name():           return ident
-def textx_rule_body():      return sequence
+def textx_rule_body():      return choice
 
-def sequence():             return OneOrMore(choice)
-def choice():               return repeatable_expr, ZeroOrMore("|", repeatable_expr)
+def choice():               return sequence, ZeroOrMore("|", sequence)
+def sequence():             return OneOrMore(repeatable_expr)
 def repeatable_expr():      return expression, Optional(repeat_operator), Optional('-')
 def expression():           return [assignment, (Optional(syntactic_predicate),
                                                  [simple_match, rule_ref,
-                                                  bracketed_sequence])]
-def bracketed_sequence():   return '(', sequence, ')'
+                                                  bracketed_choice])]
+def bracketed_choice():   return '(', choice, ')'
 def repeat_operator():      return ['*', '?', '+'], Optional(repeat_modifiers)
 def repeat_modifiers():     return '[', OneOrMore([simple_match,
                                                    'eolterm']), ']'
@@ -519,7 +519,7 @@ rule_ref.sem = rule_ref_SA
 
 def textx_rule_body_SA(parser, node, children):
     if len(children) > 1:
-        return Sequence(nodes=children[:])
+        return OrderedChoice(nodes=children[:])
     else:
         return children[0]
 textx_rule_body.sem = textx_rule_body_SA
@@ -835,7 +835,7 @@ string_value.sem = string_value_SA
 
 
 # Default actions
-bracketed_sequence.sem = SemanticActionSingleChild()
+bracketed_choice.sem = SemanticActionSingleChild()
 
 
 # parser object cache. To speed up parser initialization (e.g. during imports)

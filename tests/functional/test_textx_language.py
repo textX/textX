@@ -763,9 +763,9 @@ def test_sequence_ordered_choice():
 
     grammar = """
     Model:
-        ('first' a=INT b?='a_is_here')|
-        ('second' c=INT d?='c_is_here')|
-        (e=RuleA)
+        ('first' a=INT b?='a_is_here' |
+        'second' c=INT d?='c_is_here' |
+        e=RuleA)
         'END'
     ;
     RuleA: 'rule' name=ID;
