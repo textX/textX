@@ -28,9 +28,10 @@ An example input is:
     b = not a;
     a and b or not false
 
-Evaluation is done using custom classes. Provided classes have `value` property
-which will evaluate the result using appropriate operations and values of
-referenced subexpressions.
+Evaluation is done using [custom
+classes](http://igordejanovic.net/textX/metamodel/#custom-classes). Provided
+classes have `value` property which will evaluate the result using appropriate
+operations and values of referenced subexpressions.
 
 In this examples, grammar is embedded inside Python string so `textx` command
 cannot be used. Instead, meta-model and model are exported to dot if the
