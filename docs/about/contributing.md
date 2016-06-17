@@ -19,7 +19,7 @@ For code/doc/test contributions do the following:
 !!! note
     For code contributions please try to adhere to the [PEP-8
     guidelines](http://legacy.python.org/dev/peps/pep-0008/).  Although I am not
-    strict in that regard it is useful to have a common ground for coding style.
+    strict in that regard it is useful to have a common ground for the coding style.
     To make things easier use tools for code checking (PyLint, PyFlakes, pep8
     etc.).
 
