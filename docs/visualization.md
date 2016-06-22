@@ -60,5 +60,5 @@ The following image is generated:
 
 
 !!! note
-    Also see [textx command/tool](textx_command.md) for model visualization
+    Also, see [textx command/tool](textx_command.md) for model visualization
     from the command line.
