@@ -7,20 +7,20 @@ language for language definition) for domain-specific language (DSL)
 specification in Python.
 
 In a nutshell, textX will help you build your textual language in an easy way.
-You can invent your own language or build a support for already existing
+You can invent your own language or build a support for an already existing
 textual language or file format.
 
 From a single grammar description textX automatically builds a meta-model (in
 the form of Python classes) and a parser for your language. Parser will parse
-expressions on your language and automatically build a graph of Python objects
+expressions of your language and automatically build a graph of Python objects
 (i.e. the model) corresponding to the meta-model.
 
 textX is inspired by [Xtext](http://www.eclipse.org/xtext/) - a Java based
 language workbench for building DSLs with full tooling support (editors,
-debuggers etc.) on Eclipse platform.  If you like Java and
+debuggers etc.) on the Eclipse platform.  If you like Java and
 [Eclipse](http://www.eclipse.org/) check it out. It is a great tool.
 
-Video tutorial for textX installation and implementing a simple data modeling
+A video tutorial for textX installation and implementation of a simple data modeling
 language is bellow.
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/CN2IVtInapo" frameborder="0" allowfullscreen></iframe>
@@ -39,16 +39,16 @@ tutorial](tutorials/state_machine.md).
 
 * **Automatic model (AST) construction**
 
-    Parse tree will be automatically transformed to a graph of python objects
+    Parse tree will automatically be transformed to a graph of python objects
     (a.k.a. the model). See the [model](model.md) section.
 
-    Python classes will be created by textX but if needed a user supplied
+    Python classes will be created by textX but, if needed, user supplied
     classes may be used. See [custom classes](metamodel.md#custom-classes).
 
 * **Automatic linking**
 
-    You can have a references to other objects in your language and the textual
-    representation of the reference will be resolved to proper python reference
+    You can have references to other objects in your language and the textual
+    representation of the reference will be resolved to the proper python reference
     automatically.
 
 * **Automatic parent-child relationships**
@@ -72,7 +72,7 @@ tutorial](tutorials/state_machine.md).
 
 * **Grammar modularization - imports**
 
-    Grammar can be split out in multiple files and than files/grammars can be
+    Grammar can be split into multiple files and then files/grammars can be
     imported where needed. See [Grammar
     modularization](grammar.md#grammar-modularization).
 

@@ -1,11 +1,11 @@
 # Debugging
 
-textX supports debugging on the meta-model (grammar) and model level. If
-debugging is enabled textX will print various debugging messages.
+textX supports debugging on the meta-model (grammar) and model levels. If
+debugging is enabled, textX will print various debugging messages.
 
-If `debug` parameter to meta-model construction is set to `True` debug messages
-during grammar parsing and meta-model construction will be printed. Additionally
-a parse tree created during grammar parse as well as meta-model (if constructed
+If the `debug` parameter of the meta-model construction is set to `True`, debug messages
+during grammar parsing and meta-model construction will be printed. Additionally,
+a parse tree created during the grammar parsing as well as meta-model (if constructed
 successfully) dot files will be generated:
 
 ```python
@@ -14,10 +14,10 @@ form textx.metamodel import metamodel_from_file
 robot_metamodel = metamodel_from_file('robot.tx', debug=True)
 ```
 
-If `debug` is set in the `model_from_file/str` calls than various
-messages during model parsing and construction will be printed. Additionally,
-parse tree created from the input as well as model will be exported to dot
-file.
+If `debug` is set in the `model_from_file/str` calls, various
+messages during the modelk6 parsing and construction will be printed. Additionally,
+parse tree created from the input as well as the model will be exported to dot
+files.
 
 ```python
   robot_program = robot_metamodel.model_from_file('program.rbt', debug=True)
@@ -56,7 +56,7 @@ in debug mode.
     Generating 'program.rbt.dot' file for model.
     To convert to png run 'dot -Tpng -O program.rbt.dot'
 
-This command renders parse trees and parser models for both textX and your
+This command renders parse trees and parser models of both textX and your
 language to dot files. Also, a meta-model and model of the language will be
 rendered if parsed correctly.
 

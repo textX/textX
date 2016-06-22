@@ -1,18 +1,18 @@
 # textX meta-models
 
 textX meta-model is a Python object that knows about all classes that can be
-instantiated while parsing input. A meta-model is built from the grammar by
+instantiated while parsing the input. A meta-model is built from the grammar by
 the functions `metamodel_from_file` or `metamodel_from_str` in the
 `textx.metamodel` module.
 
     from textx.metamodel import metamodel_from_file
     my_metamodel = metamodel_from_file('my_grammar.tx')
 
-Each rule from the grammar will result in a Python class kept in a meta-model.
-Besides, meta-model knows how to parse input strings and convert them to
+Each rule from the grammar will result in a Python class kept in the meta-model.
+Besides, meta-model knows how to parse the input strings and convert them to
 [model](model.md).
 
-Parsing input and creating model is done by `model_from_file` and
+Parsing the input and creating the model is done by `model_from_file` and
 `model_from_str` methods of the meta-model object:
 
     my_model = my_metamodel.model_from_file('some_input.md')
@@ -21,12 +21,12 @@ Parsing input and creating model is done by `model_from_file` and
 ## Custom classes
 
 For each grammar rule a Python class with the same name is created dynamically.
-These classes are instantiated during parsing of input string/file to create
+These classes are instantiated during the parsing of the input string/file to create
 a graph of python objects, a.k.a. `model` or Abstract-Syntax Tree (AST).
 
-Most of the time dynamically created classes will be sufficient but sometimes
+Most of the time dynamically created classes will be sufficient, but sometimes
 you will want to use your own classes instead. To do so use parameter `classes`
-during meta-model instantiation. This parameter is a list of your classes that
+during the meta-model instantiation. This parameter is a list of your classes that
 should be named the same as the rules from the grammar which they represent.
 
     from textx.metamodel import metamodel_from_str
@@ -59,56 +59,56 @@ should be named the same as the rules from the grammar which they represent.
     # Use our Entity class. "Attribute" class will be created dynamically.
     entity_mm = metamodel_from_str(grammar, classes=[Entity])
 
-Now `entity_mm` can be used to parse input models where our `Entity` class will
+Now `entity_mm` can be used to parse the input models where our `Entity` class will
 be instantiated to represent each `Entity` rule from the grammar.
 
 !!! note
-    Constructor of user classes should accept all attributes defined by the
-    corresponding rule from the grammar. In the previous example we have provided
+    Constructor of the user-defined classes should accept all attributes defined by the
+    corresponding rule from the grammar. In the previous example, we have provided
     `name` and `attributes` attributes from the `Entity` rule.
-    If the class is a child in parent-child relationship (see in the next
-    section) then `parent` constructor parameter should also be given.
+    If the class is a child in a parent-child relationship (see the next
+    section), then the `parent` constructor parameter should also be given.
 
 
 ## Parent-child relationships
 
 There is often an intrinsic parent-child relationship between object in the
-model. In the previous example each `Attribute` instance will always be a child
+model. In the previous example, each `Attribute` instance will always be a child
 of some `Entity` object.
 
-textX gives automatic support for these relationships by providing `parent`
+textX gives automatic support for these relationships by providing the `parent`
 attribute on each child object.
 
 When you navigate [model](model.md) each child instance will have a `parent`
 attribute.
 
 !!! note
-    Always provide parent parameter in user classes for each class that is a
-    child in parent-child relationship.
+    Always provide the parent parameter in user-defined classes for each class that is a
+    child in a parent-child relationship.
 
 
 ## Processors
 
 To specify static semantics of the language textX uses a concept called
-**processor**. Processors are python callable that can modify model elements
+**processor**. Processors are python callables that can modify the model elements
 during model parsing/instantiation or do some additional checks that are not
 possible to do by the grammar alone.
 
 There are two types of processors:
 
-- **model processors** - are callable that are called at the end of the parsing
-  when the whole model is instantiated. These processors accepts meta-model and
+- **model processors** - are callables that are called at the end of the parsing
+  when the whole model is instantiated. These processors accept the meta-model and
   model as parameters.
 - **object processors** - are registered for particular classes (grammar rules)
   and are called when the objects of the given class is instantiated.
 
 Processors can modify model/objects or raise exception (`TextXSemanticError`) if
-some constraint is not met. User code that call model instantiation/parsing can
-catch and handle those exception.
+some constraint is not met. User code that calls the model instantiation/parsing can
+catch and handle this exception.
 
 ### Model processors
 
-To register model processor call `register_model_processor` on the meta-model
+To register a model processor call `register_model_processor` on the meta-model
 instance.
 
     from textx.metamodel import metamodel_from_file
@@ -117,23 +117,23 @@ instance.
     # parameters.
     def check_some_semantics(metamodel, model):
       ...
-      ... Do some check on the model and raise TextXSemanticError if semantics
+      ... Do some check on the model and raise TextXSemanticError if the semantics
       ... rules are violated.
 
     my_metamodel = metamodel_from_file('mygrammar.tx')
 
-    # Register model processor on meta-model instance
+    # Register model processor on the meta-model instance
     my_metamodel.register_model_processor(check_some_semantics)
 
-    # Parse model. check_some_semantics will be called automatically after
-    # successful parse to do further checks. If the rules are not met
+    # Parse the model. check_some_semantics will be called automatically after
+    # a successful parse to do further checks. If the rules are not met,
     # an instance of TextXSemanticError will be raised.
     my_metamodel.model_from_file('some_model.ext')
 
 
 ### Object processors
 
-The purpose of object processors is the same as for model processors but they
+The purpose of the object processors is the same as of the model processors, but they
 are called as soon as the particular object is recognized in the input string.
 They are registered per class/rule.
 
@@ -141,7 +141,7 @@ Let's do some additional checks for the above Entity DSL example.
 
     def entity_obj_processor(entity):
       '''
-      Check that Entity names are capitalized. This could also be specified
+      Check that Ethe ntity names are capitalized. This could also be specified
       in the grammar using regex match but we will do that check here just
       as an example.
       '''
@@ -169,24 +169,24 @@ Let's do some additional checks for the above Entity DSL example.
     # call.
     entity_mm.register_obj_processors(obj_processors)
 
-    # Parse model. At each successful parse of Entity or Attribute the registered
+    # Parse the model. At each successful parse of Entity or Attribute, the registered
     # processor will be called and the semantics error will be raised if the
-    # check do not pass.
+    # check does not pass.
     entity_mm.model_from_file('my_entity_model.ent')
 
 
-For another example usage of object processor that modify objects see object
+For another example of the usage of an object processor that modifies the objects, see object
 processor `move_command_processor` [robot example](tutorials/robot.md).
 
 ## Built-in objects
 
-Often you will need objects that should be a part of each model and you do not
-want users to specify them in every model they create. Most notable example is
+Often, you will need objects that should be a part of each model and you do not
+want users to specify them in every model they create. The most notable example are
 primitive types (e.g. `integer`, `string`, `bool`).
 
 Let's provide `integer` and `string` Entities to our `Entity` meta-model in
-order to simplify model creation so that user can use the names of these two
-entities for `Attribute` types.
+order to simplify the model creation so that the users can use the names of these two
+entities as the `Attribute` types.
 
     class Entity(object):
         def __init__(self, parent, name, attributes):
@@ -204,18 +204,18 @@ entities for `Attribute` types.
       builtins=entity_builtins    # Register integer and string built-in objs
     )
 
-Now an `integer` and `string` `Attribute` type can be used.  See
+Now an `integer` and `string` `Attribute` types can be used.  See
 [model](model.md) and [Entitiy](https://github.com/igordejanovic/textX/tree/master/examples/Entity) example for more.
 
 
-## Auto-initialization of attributes
+## Auto-initialization of the attributes
 
 Each object that is recognized in the input string will be instantiated and
-their attributes will be set to the values parsed from the input. In the event
-that defined attribute is optional, it will nevertheless be created on the
+its attributes will be set to the values parsed from the input. In the event
+that a defined attribute is optional, it will nevertheless be created on the
 instance and set to the default value.
 
-Here is a list of default values for each base textX type:
+Here is a list of the default values for each base textX type:
 
  - ID - empty string - ''
  - INT - int - 0
@@ -226,23 +226,23 @@ Here is a list of default values for each base textX type:
 Each attribute with zero or more multiplicity (`*=`) that does not match any
 object from the input will be initialized to an empty list.
 
-Attribute declared with one or more multiplicity (`+=`) must match at least one
-object from the input and therefore will be transformed to python list
+An attribute declared with one or more multiplicity (`+=`) must match at least one
+object from the input and will therefore be transformed to python list
 containing all matched objects.
 
 The drawback of this auto-initialization system is that we can't be sure if
-the attribute was missing from the input or was matched but the value was
-default.
+the attribute was missing from the input or was matched, but the given value was
+the same as the default value.
 
 In some applications it is important to distinguish between those two
-situations. For that purpose there is a parameter `auto_init_attributes` to the
-meta-model constructor that is by default `True` but can be set to `False` to
-prevent auto-initialization to take place.
+situations. For that purpose, there is a parameter `auto_init_attributes` of the
+meta-model constructor that is `True` by default, but can be set to `False` to
+prevent auto-initialization from taking place.
 
-If auto-initialization is disabled than each optional attribute that was not
-matched on the input will be set to `None`.  This holds true for plain
+If auto-initialization is disabled, then each optional attribute that was not
+matched on the input will be set to `None`.  This is true for the plain
 assignments (`=`). An optional assignment (`?=`) will always be `False` if the
-RHS object is not matched in the input. Many multiplicity assignments (`*=` and
+RHS object is not matched in the input. The multiplicity assignments (`*=` and
 `+=`) will always be python lists.
 
 
@@ -251,7 +251,7 @@ RHS object is not matched in the input. Many multiplicity assignments (`*=` and
 ### Case sensitivity
 
 Parser is by default case sensitive. For DSLs that should be case insensitive
-use `ignore_case` parameter to the meta-model constructor call.
+use `ignore_case` parameter of the meta-model constructor call.
 
 ```python
 from textx.metamodel import metamodel_from_file
@@ -263,9 +263,9 @@ my_metamodel = metamodel_from_file('mygrammar.tx', ignore_case=True)
 ### Whitespace handling
 
 The parser will skip whitespaces by default. Whitespaces are spaces, tabs and
-newlines by default. Skipping of whitespaces can be disabled by `skipws` bool
-parameter in constructor call. Also, what is a whitespace can be redefined by
-`ws` string parameter.
+newlines by default. Skipping of the whitespaces can be disabled by `skipws` bool
+parameter in the constructor call. Also, what is a whitespace can be redefined by
+the `ws` string parameter.
 
 ```python
 from textx.metamodel import metamodel_from_file
@@ -278,13 +278,13 @@ of a single rule by [rule modifiers](grammar.md#rule-modifiers).
 
 ### Automatic keywords
 
-When designing a DSL it is usually desirable to match keywords on word
-boundaries.  For example, if we have Entity grammar from the above than a word
+When designing a DSL, it is usually desirable to match keywords on word
+boundaries.  For example, if we have Entity grammar from the above, then a word
 `entity` will be considered a keyword and should be matched on word boundaries
 only. If we have a word `entity2` in the input string at the place where
-`entity` should be matched the match should not succeed.
+`entity` should be matched, the match should not succeed.
 
-We could achieve this by using regular expression match and word boundaries
+We could achieve this by using a regular expression match and the word boundaries
 regular expression rule for each keyword-like match.
 
     Enitity:
@@ -301,8 +301,8 @@ from textx.metamodel import metamodel_from_file
 my_metamodel = metamodel_from_file('mygrammar.tx', autokwd=True)
 ```
 
-A keyword is considered any simple match from the grammar that is matched by the
-regular expression `[^\d\W]\w*`.
+Any simple match from the grammar that is matched by the
+regular expression `[^\d\W]\w*` is considered to be a keyword.
 
 
 ### Memoization (a.k.a. packrat parsing)
