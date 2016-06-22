@@ -1,6 +1,6 @@
 # textx command/tool
 
-To check and visualize (meta)models from command line.
+To check and visualize (meta)models from the command line.
 
 ---
 
@@ -25,10 +25,10 @@ To get basic help:
       -d          run in debug mode
 
 
-You can check and visualize (generate .dot file) your meta-model or model using
+You can check and visualize (generate a .dot file) your meta-model or model using
 this tool.
 
-For example, to check and visualize of metamodel you could issue:
+For example, to check and visualize a metamodel you could issue:
 
 
     $ textx visualize robot.tx
@@ -36,7 +36,7 @@ For example, to check and visualize of metamodel you could issue:
     Generating 'robot.tx.dot' file for meta-model.
     To convert to png run 'dot -Tpng -O robot.tx.dot'
 
-Create image from .dot file:
+Create an image from the .dot file:
   
     $ dot -Tpng -O robot.tx.dot
 
