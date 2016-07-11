@@ -4,9 +4,9 @@
 
 Currently, textX has [import
 statement](http://igordejanovic.net/textX/grammar/#grammar-modularization)
-which enables one grammar to import rules form the other. But for some more
+which enables one grammar to import rules form the other one. But for some more
 complex use-cases (see [issue 26](https://github.com/igordejanovic/textX/issues/26))
-it is not enough.
+this is not enough.
 
 
 ## Modularization at the grammar/meta-model level
@@ -37,17 +37,17 @@ Motivation example (see [issue 26](https://github.com/igordejanovic/textX/issues
 
 ###  Problem
 
-Structural meta-model references rule/class from the type meta-model
+Structural meta-model references a rule/class from the type meta-model
 (`Element` references `TypeDef`).
 
 
 ### Possible solution
 
-Let meta-model inherits other meta-models
+Let the meta-model inherit other meta-models
 
     struct_meta = metamodel_from_str(struct_meta_def, inherits=[type_meta])
 
-All referenced but missing rules from the struct meta-model will be
+All referenced but the missing rules from the struct meta-model will be
 searched in types meta-model. Currently, this is supported by the
 grammar import but it should be supported at the API level so that grammars
 could be defined as strings. To support multiple inheritance properly
@@ -58,18 +58,18 @@ investigate C3 linearization as a solution.
 
 Should we override rules inside inherited grammars? For example, if we
 override `Range` to specify some different syntax or meta-class attributes,
-should new definition be used from the `Type` rule in the `type_meta_def`
+should the new definition be used from the `Type` rule in the `type_meta_def`
 grammar?  If we instantiate model using `type_meta`, original `Range` will
 be used but if we instantiate `TypeDef` using `struct_meta` our redefined
-`Range` will be used. These will be objects of a different `Range` classes.
+`Range` will be used. These will be objects of different `Range` classes.
 Do we want it to work that way? IMHO we should use one `Range` class for
 all our models.
 
 
 ### Possible solution
 
-Maybe it would be best to make one integral meta-model with a strict rules
-for meta-class resolution but provide a means to define root rule for each
+Maybe it would be best to make one integral meta-model with strict rules
+for meta-class resolution but provide means to define the root rule for each
 model parse.
 
 For example:
@@ -103,7 +103,7 @@ Parsing of models:
                                         ref_models=[type_model])
 
 `ref_models` is an iterable of models used for object reference resolving.
-Each nameable from the reference models can be used in link rule reference
+Each nameable from the reference models can be used in the link rule reference
 resolving.
 
 `type_model` model parse could use redefined `Range` from the integral
@@ -111,15 +111,15 @@ meta-model `meta`, thus, `struct_model` will reference right class instances.
 
 This idea is compatible with the current usage of `import` keyword in the
 meta-model definition. The semantics of import will change to use the same C3
-linearization and inheritance semantics. Probably it would be the best to
+linearization and inheritance semantics. Probably it would be best to
 change `import` keyword to `inherits`.
 
-In addition, a new function for composing meta-model could be introduced:
+In addition, a new function for composing the meta-model could be introduced:
 
     meta = compose_metamodels(struct_meta, new_range_meta, type_meta)
 
 To support this kind of composition, meta-model loading should not fail in the
-event of missing rule references. Meta-model might be constructed in unresolved
+event of missing rule references. Meta-model might be constructed in the unresolved
 phase. Composing it with other meta-models might resolve it fully or
 partially. Only fully resolved meta-models can be used for model parsing.
 

@@ -1,11 +1,11 @@
 # textX grammar
 
-Language syntax and meta-model are defined by textX grammar given as a set of
-textX rules.
+The language syntax and the meta-model are defined by the textX grammar in the form 
+of a set of textX rules.
 
 ## Rules
 
-The basic building blocks of the textX language are rules. Rule is written
+The basic building blocks of the textX language are rules. Each rule is written
 in the following form:
 
     Hello:
@@ -13,10 +13,10 @@ in the following form:
     ;
 
 This rule is called `Hello`. After the name is a colon. Between the colon and
-the semicolon at the end is a body of the rule given as textX expression. This
+the semicolon at the end is a body of the rule given as a textX expression. This
 rule tells us that the pattern of `Hello` objects in the input string consists
-of the word `hello` followed by the ID rule (here ID is a rule reference to the
-builtin rule, more about this in a moment).
+of the word `hello`, followed by the ID rule (here ID is a rule reference to the
+built-in rule, more about this in a moment).
 
 These are valid `Hello` objects:
 
@@ -25,17 +25,17 @@ These are valid `Hello` objects:
     hello foo1234
 
 Rule `Hello` at the same time defines a Python class `Hello`. When the rule is
-recognized in the input stream an object of this class will get created and the
+recognized in the input stream, an object of this class will get created and the
 attribute `who` will be set to whatever the rule `ID` has matched after the word
 `hello` (this is specified by the assignment `who=ID`).
 
-Of course, there are many more rule expressions than shown in this small example.
-In the next section a detailed description of each textX expression is given.
+Of course, there are many more rule expressions than were shown in this small example.
+In the next section, a detailed description of each textX expression is given.
 
 ## textX base types
 
 In the previous example you have seen an `ID` rule. This rule is a part of
-built-in rules that form the base of textX type system. Base types/rules are
+built-in rules that form the base of textX's type system. Base types/rules are
 given in the following figure:
 
 ![base types](images/base_types.png)
@@ -58,7 +58,7 @@ instantiation. See
 
 ## Rule expressions
 
-Rule expressions is a body of the rule. It is specified using basic expressions
+Rule expressions represent the body of a rule. They is specified using basic expressions
 and operators.
 
 The basic expressions are:
@@ -88,13 +88,13 @@ The basic expressions are:
 
 ### Matches
 
-Match expression are, besides base type rules, the expression at the lowest
+Match expressions are, besides base type rules, the expressions at the lowest
 level. They are the basic building blocks for more complex expressions. These
 expressions will consume input on success.
 
 There are two types of match expressions:
 
-* **String match** - is written as a single quoted string. It will match literal
+* **String match** - is written as a single quoted string. It will match a literal
   string on the input.
 
     Here are a few examples of string matches:
@@ -104,7 +104,7 @@ There are two types of match expressions:
         'person'
 
 * **Regex match** - uses regular expression defined inside `/ /` to match
-  input. Therefore, it defines a whole class of strings that can be matched.
+  the input. Therefore, it defines a whole class of strings that can be matched.
   Internally a python `re` module is used.
 
     Here are few example of regex matches:
@@ -116,8 +116,8 @@ There are two types of match expressions:
 
 ### Sequence
 
-Sequence is textX expression that is given by just writing contained
-sub-expressions one after another. For example the following rule:
+Sequence is a textX expression that is given by just writing contained
+sub-expressions one after another. For example,the following rule:
 
     Colors:
       "red" "green" "blue"
@@ -125,20 +125,20 @@ sub-expressions one after another. For example the following rule:
 
 is defined as a sequence consisting of three string matches (`red`
 `green` and `blue`). Contained expressions will be matched in the
-exact order they are given. If some of the expressions does not match the
+exact order they are given. If some of the expressions do not match, the
 sequence as a whole will fail. The above rule defined by the sequence will match
 only the following string:
 
     red green blue
 
 !!! note
-    If whitespace skipping is included (which is default) arbitrary whitespaces
+    If whitespace skipping is enabled (it is by default), arbitrary whitespaces
     can occur between matched words.
 
 
 ### Ordered choice
 
-Ordered choice is given as a set of expression separated by `|` operator.
+Ordered choice is given as a set of expression separated by the`|` operator.
 This operator will try to match contained expression from left to right and the
 first match that succeeds will be used.
 
@@ -148,25 +148,25 @@ Example:
       "red" | "green" | "blue"
     ;
 
-This will match either `red` or `green` or `blue` and the parser will try the
-match in that order.
+This will match either `red` or `green` or `blue` and the parser will try to
+match the expressions in that order.
 
 !!! note
-    In most classic parsing technologies an unordered match (alternative) is used
-    which may lead to ambiguous grammar where multiple parse tree may exist for
+    In most classic parsing technologies an unordered match (alternative) is used.
+    This may lead to ambiguous grammars where multiple parse tree may exist for
     the same input string.
 
-Underlaying parsing technology of textX is
-[Arpeggio](https://github.com/igordejanovic/Arpeggio) which is parser based on
+Underlying parsing technology of textX is
+[Arpeggio](https://github.com/igordejanovic/Arpeggio) which is a parser based on
 PEG grammars and thus the `|` operator directly translates to Arpeggio's PEG
-ordered choice. Using ordered choice yield unambiguous parsing. If the text
-parses there is only one parse tree possible.
+ordered choice. Using ordered choice yields unambiguous parsing. If the text
+parses there is only one possible parse tree.
 
 
 ### Optional
 
-`Optional` is an expression that will match contained expression if it can but
-will not failed otherwise. Thus, optional expression always succeeds.
+`Optional` is an expression that will match the contained expression if that is possible, but
+will not fail otherwise. Thus, optional expression always succeeds.
 
 Example:
 
@@ -175,7 +175,7 @@ Example:
     ;
 
 `INT` match is optional in this example. This means that the `up` keyword is
-required but afterwards and integer may be found but it doesn't have to.
+required, but the following integer may or may not be found.
 
 Following lines will match:
 
@@ -183,17 +183,17 @@ Following lines will match:
     up 1
     up
 
-Optional expression can be more complex. For example:
+Optional expressions can be more complex. For example:
 
     MoveUp:
       'up' ( INT | FLOAT )?
 
-Now, an ordered choice in parentheses is optional.
+Now, an ordered choice in the parentheses is optional.
 
 
 ### Repetitions
 
-* **Zero or more** repetition is specified by `*` operator and will match
+* **Zero or more** repetition is specified by the `*` operator and will match
   the contained expression zero or more times. Here is an example:
 
         Colors:
@@ -201,10 +201,10 @@ Now, an ordered choice in parentheses is optional.
         ;
 
     In this example *zero or more* repetition is applied on the *ordered choice*.
-    In each repeated match one color will be matched trying out from left to
-    right.  Thus, `Colors` rule will match color as many as possible but
+    In each repeated match one color will be matched, trying from left to
+    right.  Thus, `Colors` rule will match color as many times as possible, but
     will not fail if no color exists in the input string. The following would be
-    matched by `Colors` rule:
+    matched by the `Colors` rule:
 
         red blue green
 
@@ -212,7 +212,7 @@ Now, an ordered choice in parentheses is optional.
 
         red blue blue red red green
 
-    or empty string.
+    or an empty string.
 
 
 * **One or more** repetition is specified by `+` operator and will match the
@@ -227,12 +227,12 @@ Now, an ordered choice in parentheses is optional.
 
 ### Assignments
 
-Assignment is used as a part of the meta-model deduction process. Each
+Assignments are used as a part of the meta-model deduction process. Each
 assignment will result in an attribute of the meta-class created by the rule.
 
-Each assignment consists of LHS (left-hand side) and RHS (right-hand side). The
+Each assignment consists of the LHS (left-hand side) and the RHS (right-hand side). The
 LHS is always a name of the meta-class attribute while the RHS can be a
-reference to other rule (either a match or link reference) or a simple match
+reference to other rules (either a match or a link reference) or a simple match
 (string or regex match). For example:
 
     Person:
@@ -242,34 +242,34 @@ reference to other rule (either a match or link reference) or a simple match
 The `Name` and `Surename` rules referenced in the RHS of the first two
 assignments are not given in this example.
 
-This example describes rule and meta-class `Person` that will parse and
-instantiate `Person` objects with four attributes:
+This example describes the rule and meta-class `Person`, that will parse and
+instantiate the `Person` objects with  these four attributes:
 
-* `name` - which will use rule `Name` to match the input and the
-  `name` will be a reference to the instance of `Name` class,
+* `name` - which will use the rule `Name` to match the input, it 
+  will be a reference to the instance of the `Name` class,
 * `surename` - will use `Surename` rule to match the input,
-* `age` - will use builtin type `INT` to match a number from the
-  input string. `age` will be converted to python `int` type.
-* `height` - the same as `age` but the matched number will be
-  assigned to `height` attribute of the `Person` instance.
+* `age` - will use the built-in type `INT` to match a number from the
+  input string. `age` will be converted to the python `int` type.
+* `height` - the same as `age`, but the matched number will be
+  assigned to the `height` attribute of the `Person` instance.
 
 Notice the comma as the separator between matches and the semicolon match at the
 end of the rule. Those matches must be found in the input but the matched
 strings will be discarded. They represent a syntactic noise.
 
-If the RHS is one of textX BASETYPEs than the matched string will be converted
-to some of plain python types (e.g. `int`, `string`, `boolean`).
+If the RHS is one of textX BASETYPEs, then the matched string will be converted
+to some of the plain python types (e.g. `int`, `string`, `boolean`).
 
-If RHS is string or regex match like in this example:
+If the RHS is a string or regex match like in this example:
 
     Color:
       color=/\w+/
     ;
 
-then the attribute given by LHS will be set to be the string matched by the RHS
+then the attribute given by the LHS will be set as the string matched by the RHS
 regular expression or string.
 
-If the RHS is a reference to other rule than the attribute given by the LHS will
+If the RHS is a reference to some other rule, then the attribute given by the LHS will
 be set to refer to the object created by the RHS rule.
 
 Following strings are matched by the `Person` rule from above:
@@ -281,7 +281,7 @@ Following strings are matched by the `Person` rule from above:
 There are four types of assignments:
 
 * **Plain assignment** (`=`) will match its RHS once and assign what is
-  matched to the attribute given by LHS. The above example uses plain
+  matched to the attribute given by the LHS. The above example uses plain
   assignments.
 
     Examples:
@@ -291,8 +291,8 @@ There are four types of assignments:
         c=/[a-Z0-9]+/
         dir=Direction
 
-* **Boolean assignment** (`?=`) will set the attribute on `True` if
-  the RHS match succeeds or `False` otherwise.
+* **Boolean assignment** (`?=`) will set the attribute to `True` if
+  the RHS match succeeds and to `False` otherwise.
 
     Examples::
 
@@ -300,17 +300,17 @@ There are four types of assignments:
         number_given ?= INT
 
 * **Zero or more assignment** (`*=`) - LHS attribute will be a
-  `list`. This assignment will match RHS as long as match succeeds and
-  each matched object will be appended to the attribute. If no match succeeds
-  attribute will be an empty list.
+  `list`. This assignment will keep matching the RHS as long as the match succeeds and
+  each matched object will be appended to the attribute. If no match succeeds,
+  the attribute will be an empty list.
 
     Examples::
 
         commands*=Command
         numbers*=INT
 
-* **One or more assignment** (`+=`) - same as previous but must match RHS
-  at least once. If no match succeeds this assignment does not succeeds.
+* **One or more assignment** (`+=`) - same as the previous assignment, but it must match the RHS
+  at least once. If no match succeeds, this assignment does not succeed.
 
 
 ### References
@@ -318,9 +318,9 @@ There are four types of assignments:
 Rules can reference each other. References are usually used as a
 RHS of the assignments. There are two types of rule references:
 
-* **Match rule reference** - will *call* other rule. When instance of the called
-  rule is created it will be assigned to the attribute on the LHS. We say that
-  referred object is contained inside referring object (e.g. they form a
+* **Match rule reference** - will *call* another rule. When instance of the called
+  rule is created, it will be assigned to the attribute on the LHS. We say that the
+  referred object is contained inside the referring object (e.g. they form a
   [parent-child relationship](metamodel.md#parent-child-relationships).
 
     Example::
@@ -331,16 +331,16 @@ RHS of the assignments. There are two types of rule references:
           '}'
         ;
 
-    `StructureElement` will be matched zero or more times. With each match a new
-    instance of `StructureElement` will be created and appended to `elements`
+    `StructureElement` will be matched zero or more times. With each match, a new
+    instance of the `StructureElement` will be created and appended to the `elements`
     python list. A `parent` attribute of each `StructureElement` will be set to
     the containing `Structure`.
 
 * **Link rule reference** - will match an identifier of some class object at the
-  given place and convert that identifier to python reference to target object.
-  This reference resolving is done automatically by textX. By default a
-  `name` attribute is used as an identifier of the object. Currently,
-  there is no automatic support for name spaces in textX. All objects of the
+  given place and convert that identifier to a python reference to the target object.
+  This reference resolving is done automatically by textX. By default, a
+  `name` attribute is used as the identifier of the object. Currently,
+  there is no automatic support for namespaces in textX. All objects of the
   same class are in a single namespace.
 
     Example:
@@ -354,40 +354,40 @@ RHS of the assignments. There are two types of rule references:
           'screen' type=[ScreenType]
         ;
 
-    The `type` attribute is a link to `ScreenType` object. This is a valid
+    The `type` attribute is a link to the `ScreenType` object. This is a valid
     usage:
 
-        // This is definition of ScreenType object
+        // This is a definition of the ScreenType object
         screen Introduction {
 
         }
 
-        // And this is reference link to the above ScreenType object
+        // And this is a reference link to the ScreenType object defined above
         // ScreenInstance instance
         screen Introduction
 
     `Introduction` will be matched, the `ScreenType` object with that name will
-    be found and `type` attribute of `ScreenInstance` instance will be set to
+    be found and the `type` attribute of `ScreenInstance` instance will be set to
     it.
 
-    `ID` rule is used by default to match link identifier. If you want to change
-    that you can use the following syntax:
+    `ID` rule is used by default to match the link identifier. If you want to change
+    that, you can use the following syntax:
 
         ScreenInstance:
           'screen' type=[ScreenType|WORD]
         ;
 
-    Here, instead of `ID` a `WORD` rule is used to match object identifier.
+    Here, instead of `ID` a `WORD` rule is used to match the object's identifier.
 
 
 ### Syntactic predicates
 
-Syntactic predicates are expression that are used to implement lookahead. These
+Syntactic predicates are expressions that are used to implement lookahead. These
 expression will never consume any input. There are two type of syntactic
 predicates:
 
 * **Not - negative lookahead** (`!`) - will succeed if the current input doesn't
-  match expression given after the `!` operator.
+  match the expression given after the `!` operator.
 
     Example problem:
 
@@ -398,10 +398,10 @@ predicates:
             'end'
         ;
 
-    In this example we have nested expressions built with `Let` rule. The problem
-    is that `ID` rule from `Expression `will match keyword `end` and thus will
-    consume end of `Let` rule so the parser will hit EOF without completing any
-    `Let` rule. To fix this we can specify that `ID` will match any identifier
+    In this example we have nested expressions built with the `Let` rule. The problem
+    is that the `ID` rule from `Expression` will match keyword `end` and thus will
+    consume end of `Let` rule, so the parser will hit EOF without completing any
+    `Let` rules. To fix this, we can specify that `ID` will match any identifier
     except keywords `let` and `end` like this:
 
         Expression: Let | MyID | NUMBER;
@@ -434,16 +434,16 @@ predicates:
         B: a='b';
 
     Given the input string `a a a b` first two `a` chars will be matched by the
-    rule `A` but the third `a` will be matched by the rule `AbeforeB`.
-    So, even `AbeforeB` matches only `a` and is tried before any other match it
+    rule `A`, but the third `a` will be matched by the rule `AbeforeB`.
+    So, even when `AbeforeB` matches only `a` and is tried before any other match, it
     will not succeed for the first two `a` chars because they are not followed
     by `b`.
 
 
 ### Match suppression
 
-Sometimes it is necessary to define match rule that should return only parts of
-the match. For that we use match suppression operator (`-`) after the expression
+Sometimes it is necessary to define match rules that should return only parts of
+the match. For that we use match the suppression operator (`-`) after the expression
 you want to suppress.
 
 For example:
@@ -458,15 +458,15 @@ For example:
     ;
 
 Because we use `noskipws` rule modifier, `FullyQualifiedID` does not skip
-whitespaces automatically. Thus, we have to match whitespaces ourself but we
+whitespaces automatically. Thus, we have to match whitespaces ourself, but we
 don't want those whitespaces in the resulting string. You might wonder why we
 are using `noskipws`. It is because we do not want whitespaces in between each
 `QuotedID` match. So, for example, `first.  second` shouldn't match but
 `first.second` should.
 
-In rule `FullyQualifiedID` we are suppressing whitespace matches `/\s*/-`.  We
+In the rule `FullyQualifiedID` we are suppressing whitespace matches `/\s*/-`.  We
 also state in `QuotedID` that there are optional quotation marks around each
-ID but we don't want those either `'"'?-`.
+ID, but we don't want those either `'"'?-`.
 
 Given this input:
   
@@ -479,25 +479,25 @@ Given this input:
 
 ## Repetition modifiers
 
-Repetition modifiers are used for the modification of repetition expressions
+Repetition modifiers are used for the modification of the repetition expressions
 (`*`, `+`, `*=`, `+=`). They are specified in brackets `[  ]`. If there are more
-modifiers they are separated by a comma.
+modifiers, they are separated by a comma.
 
-Currently there are two modifiers defined:
+Currently, there are two modifiers defined:
 
 * **Separator modifier** - is used to define separator on multiple matches.
-  Separator is simple match (string match or regex match).
+  Separator is a simple match (string match or regex match).
 
     Example:
 
         numbers*=INT[',']
 
-    Here a separator string match is defined (`','`). This will match zero
+    Here, a separator string match is defined (`','`). This will match zero
     or more integers separated by commas.
 
         45, 47, 3, 78
 
-    A regex can be specified as a separator.
+    A regex can also be specified as a separator.
 
         fields += ID[/;|,|:/]
 
@@ -506,24 +506,24 @@ Currently there are two modifiers defined:
         first, second; third, fourth: fifth
 
 * **End-of-line terminate modifier** (`eolterm`) - used to terminate repetition
-  on end-of-line. By default repetition match will span lines. When this
-  modifier is specified repetition will work inside current line only.
+  on end-of-line. By default the repetition match will span lines. When this
+  modifier is specified, repetition will work inside the current line only.
 
     Example:
 
         STRING*[',', eolterm]
 
-    Here we have separator as well as `eolterm` defined. This will match
+    Here we have a separator as well as the `eolterm` defined. This will match
     zero or more strings separated by commas inside one line.
 
         "first", "second", "third"
         "fourth"
 
-    If we run example expression once on this string it will match first line only.
+    If we run the example expression once on this string, it will match the first line only.
     `"fourth"` in the second line will not be matched.
 
 !!! warning
-    Be aware that when `eolterm` modifier is used its effect starts from
+    Be aware that when `eolterm` modifier is used, its effect starts from the
     previous match. For example:
 
         Conditions:
@@ -531,11 +531,11 @@ Currently there are two modifiers defined:
             varNames+=WORD[eolterm]    // match var names until end of line
           '}'
 
-    In this example `varNames` must be matched in the same line with
+    In this example `varNames` must be matched in the same line as
     `conditions {` because `eolterm` effect start immediately.
-    In this example we wanted to give user freedom to specify var names on
-    the next line, even to put some empty lines if he/she wish. In order to do
-    that we should modify example like this::
+    In this example we wanted to give the user the freedom to specify var names on
+    the next line, even to put some empty lines if he/she wishes. In order to do
+    that, we should modify the example like this::
 
         Conditions:
           'conditions' '{'
@@ -544,10 +544,8 @@ Currently there are two modifiers defined:
           '}'
 
     Regex match `/\s*/` will collect whitespaces (spaces and new-lines)
-    before `WORD` match begins. Afterwards, repeated matches will work
+    before the `WORD` match begins. Afterwards, repeated matches will work
     inside one line only.
-
-
 
 ## Rule types
 
@@ -557,14 +555,14 @@ There are three kinds of rules in textX:
 - Abstract rules
 - Match rules
 
-**Common rules** are rules that contains at least one assignment, i.e., they
+**Common rules** are rules that contain at least one assignment, i.e., they
 have attributes defined. For example:
 
     InitialCommand:
       'initial' x=INT ',' y=INT
     ;
 
-This rule have two attributes defined: `x` and `y`.
+This rule has two defined attributes: `x` and `y`.
     
 **Abstract rules** are rules that have no assignments and reference at least one
 abstract or common rule. They are usually given as an ordered choice of other
@@ -580,7 +578,7 @@ rules and they are used to generalize other rules. For example:
       MoveCommand | InitialCommand
     ;
 
-In this example, Python objects in `commands` list will be either instances of
+In this example, Python objects in the `commands` list will either contain instances of
 `MoveCommand` or `InitialCommand`.  `Command` rule is abstract.  A meta-class of
 this rule will never be instantiated. Abstract rule can also be used in link
 rule references:
@@ -595,7 +593,7 @@ Abstract rules may reference match rules and base types. For example:
         STRING | FLOAT | BOOL | Object | Array | "null"
     ;
 
-In this example base types as well as string match `"null"` are all match rules
+In this example, the base types as well as the string match `"null"` are all match rules,
 but `Object` and `Array` are common rules and therefore `Value` is abstract.
 
 Abstract rules can be a complex mix of rule references and match expressions as
@@ -606,14 +604,14 @@ For example:
       'id' /\d+-\d+/ | FLOAT | Object
     ;
 
-Rule with a single reference to abstract or common rule is also abstract:
+A rule with a single reference to an abstract or common rule is also abstract:
 
     Value:
       OtherRule
     ;
 
 **Match rules** are rules that have no assignments either direct or indirect,
-i.e. all referenced rules are match rules too. It is usually used to specify
+i.e. all referenced rules are match rules too. They are usually used to specify
 enumerated values or some complex string matches that can't be done with regular
 expressions.
 
@@ -632,7 +630,7 @@ Examples:
     ;
 
 These rules can be used in match references only (i.e., you can't link to these
-rules as they don't exists as objects), and they produce objects of base python
+rules as they don't exists as objects), and they produce objects of the base python
 types (`str`, `int`, `bool`, `float`).
 
 All base type rules (e.g., `INT`, `STRING`, `BASETYPE`) are match rules.
@@ -640,16 +638,16 @@ All base type rules (e.g., `INT`, `STRING`, `BASETYPE`) are match rules.
 
 ## Rule modifiers
 
-Rule modifiers are used for  the modification of rules expression. They are
-specified in brackets (`[  ]`) at the beginning of the rule definition after the
-rule name. Currently, they are used to alter parser configuration for whitespace
+Rule modifiers are used for the modification of the rule's expression. They are
+specified in brackets (`[  ]`) at the beginning of the rule's definition after the
+rule's name. Currently, they are used to alter parser configuration for whitespace
 handling on the rule level.
 
-There are two rule modifier at the moment:
+There are two rule modifiers at the moment:
 
 * **skipws, noskipws** - are used to enable/disable whitespace skipping during
-  parsing. This will change global parser `skipws` setting given during
-  meta-model instantiation.
+  parsing. This will change the global parser's `skipws` setting given during
+  the meta-model instantiation.
 
     Example:
 
@@ -658,21 +656,21 @@ There are two rule modifier at the moment:
         Rule2[noskipws]:
             'first' 'second';
 
-    In this example `Rule` rule will use default parser behavior set during
-    meta-model instantiation while `Rule2` rule will disable whitespace
-    skipping. This will change `Rule2` to match the word `firstsecond` but not
+    In this example `Rule` rule will use default parser behaviour set during
+    the meta-model instantiation, while `Rule2` rule will disable whitespace
+    skipping. This will change `Rule2` to match the word `firstsecond`, but not
     words `first second` with whitespaces in between.
 
     !!! note
 
         Remember that whitespace handling modification will start immediately
-        after previous match. In the above example, additional `/\s*/` is given
-        before `Rule2` call to consume all whitespaces before trying to match
+        after the previous match. In the above example, additional `/\s*/` is given
+        before the `Rule2` call to consume all whitespaces before trying to match
         `Rule2`.
 
 * **ws** - used to redefine what is considered to be a whitespaces on the rule
-  level. textX by default treat space, tab and new-line as a whitespace
-  characters. This can be changed globally during meta-model instantiation (see
+  level. textX by default treats space, tab and new-line as a whitespace
+  characters. This can be changed globally during the meta-model instantiation (see
   [Whitespace handling](metamodel.md#whitespace-handling)) or per rule using 
   this modifier.
 
@@ -683,7 +681,7 @@ There are two rule modifier at the moment:
         Rule2[ws='\n']:
             'first' 'second';
 
-    In this example `Rule` will use default parser behavior but the
+    In this example `Rule` will use the default parser behavior but the
     `Rule2` will alter the white-space definition to be new-line only.
     This means that the words `first` and `second` will get matched
     only if they are on separate lines or in the same line but without other
@@ -691,22 +689,22 @@ There are two rule modifier at the moment:
 
     !!! note
 
-        As in previous example the modification will start immediately so if you
-        want to consume preceding spaces you must do that explicitely as given
+        As in the previous example, the modification will start immediately, so if you
+        want to consume preceding spaces you must do that explicitly, as given
         with `/\s*/` in the :`Rule`.
 
 
 ## Grammar comments
 
-Syntax for comments inside grammar is `//` for line comments and
+Syntax for comments inside a grammar is `//` for line comments and
 `/* ... */` for block comments.
 
 ## Language comments
 
 To support comments in your DSL use a special grammar rule `Comment`.
 textX will try to match this rule in between each other normal grammar match
-(similar to whitespace matching).
-If the match succeeds the matched content will be discarded.
+(similarly to the whitespace matching).
+If the match succeeds, the matched content will be discarded.
 
 
 For example, in the [robot language example](tutorials/robot.md) comments are
@@ -722,9 +720,9 @@ end of line is a comment.
 
 ## Grammar modularization
 
-Grammars can be defined in multiple files and than imported. Rules used in
-references are first searched in current file and than in imported files in the
-order of import.
+Grammars can be defined in multiple files and than imported. Rules used in the
+references are first searched for in the current file and then in the imported files, in the
+order of the import.
 
   Example:
 
@@ -741,16 +739,16 @@ order of import.
 
 `Scheme` rule is defined in `scheme.tx` grammar file imported at the beginning.
 
-Grammar files may be located in folders. In that case dot notation is used.
+Grammar files may be located in folders. In that case, dot notation is used.
 
   Example:
 
     import component.types
 
-`types.tx` grammar is located in `component` folder relatively from current
+`types.tx` grammar is located in the `component` folder relatively to the current
 grammar file.
 
-If you want to override default search order you can specify fully qualified
+If you want to override the default search order, you can specify a fully qualified
 name of the rule using dot notation when giving the name of the referring
 object.
 
