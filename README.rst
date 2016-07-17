@@ -9,7 +9,7 @@ In a nutshell, textX will help you build your textual language in an easy way.
 You can invent your own language or build a support for already existing
 textual language or file format.
 
-From a single language description (grammar) textX will build a
+From a single language description (grammar), textX will build a
 parser and a meta-model (a.k.a. abstract syntax) for the language.
 See the docs for the details.
 

@@ -8,6 +8,14 @@ meta-model and model to dot files respectively.
 If [debugging](debugging.md) is enabled, meta-model, model and parse trees will
 automatically get exported to dot.
 
+Dot files can be viewed by dot viewers.  There are quite a few dot viewers
+freely available (e.g. [xdot](https://github.com/jrfonseca/xdot.py),
+[ZGRViewer](http://zvtm.sourceforge.net/zgrviewer.html)).
+
+Alternatively, dot files can be converted to image formats using `dot` command.
+For more info see [this SO thread](http://stackoverflow.com/questions/1494492/graphviz-how-to-go-from-dot-to-a-graph).
+
+
 
 ## Meta-model visualization
 

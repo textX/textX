@@ -10,18 +10,18 @@ In a nutshell, textX will help you build your textual language in an easy way.
 You can invent your own language or build a support for an already existing
 textual language or file format.
 
-From a single grammar description textX automatically builds a meta-model (in
-the form of Python classes) and a parser for your language. Parser will parse
-expressions of your language and automatically build a graph of Python objects
-(i.e. the model) corresponding to the meta-model.
+From a single grammar description, textX automatically builds a meta-model (in
+the form of Python classes) and a parser for your language. The parser will
+parse expressions of your language and automatically build a graph of Python
+objects (i.e. the model) corresponding to the meta-model.
 
 textX is inspired by [Xtext](http://www.eclipse.org/xtext/) - a Java based
 language workbench for building DSLs with full tooling support (editors,
 debuggers etc.) on the Eclipse platform.  If you like Java and
 [Eclipse](http://www.eclipse.org/) check it out. It is a great tool.
 
-A video tutorial for textX installation and implementation of a simple data modeling
-language is bellow.
+A video tutorial for textX installation and implementation of a simple data
+modeling language is bellow.
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/CN2IVtInapo" frameborder="0" allowfullscreen></iframe>
 
