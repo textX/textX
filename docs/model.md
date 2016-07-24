@@ -70,11 +70,21 @@ Where `person.ent` file might contain this:
     }
 
 
-## Special attributes
+## Special model object's attributes
 
-Beside attributes specified by the grammar each model object has the
-`_tx_position` attribute that holds the position in the input string where
-the object has been matched by the parser.
+Beside attributes specified by the grammar, there are several special
+attributes on model objects created by textX. All special attributes' names
+start with prefix `_tx`.
+
+These special attributes don't exist if the type of the resulting model object
+don't allow dynamic attribute creation (e.g. for Python base builtin types -
+str, int).
+
+### _tx_position
+
+`_tx_position` attribute holds the position in the input string where the
+object has been matched by the parser. Each object from the model object graph
+has this attribute.
 
 This is an absolute position in the input stream. To convert it to line/column
 format use `pos_to_linecol` method of the parser.
@@ -85,4 +95,24 @@ line, col = entity_mm.parser.pos_to_linecol(
 ```
 
 This will give the line/column position of the first entity.
+
+### _tx_filename
+
+This attribute exists only on the root of the model. If the model is loaded
+from a file, this attribute will be the full path of the source file. If the
+model is created from a string this attribute will be `None`.
+
+### _tx_metamodel
+
+This attribute exists only on the root of the model. It is a reference to the
+metamodel object used for creating the model.
+
+This attribute can be usefull to access the parser given the reference to the
+model.
+
+```python
+parser = model._tx_metamodel.parser
+line, col = parser.pos_to_linecol(some_model_object)
+```
+
 

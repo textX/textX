@@ -124,6 +124,7 @@ def get_model_parser(top_rule, comments_model, **kwargs):
 
             try:
                 model._tx_filename = None
+                model._tx_metamodel = self.metamodel
             except AttributeError:
                 # model is some primitive python type (e.g. str)
                 pass
