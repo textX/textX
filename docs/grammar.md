@@ -109,9 +109,13 @@ There are two types of match expressions:
 
     Here are few example of regex matches:
 
-        /\s*/
+        /\d*/
+        /\d{3,4}-\d{3}/
         /[-\w]*\b/
         /[^}]*/
+
+  For more information on Regular Expression in Python see [Regular Expression
+  HOWTO](https://docs.python.org/3/howto/regex.html).
 
 
 ### Sequence
@@ -382,9 +386,14 @@ RHS of the assignments. There are two types of rule references:
 
 ### Syntactic predicates
 
-Syntactic predicates are expressions that are used to implement lookahead. These
-expression will never consume any input. There are two type of syntactic
-predicates:
+Syntactic predicates are operators that are used to implement lookahead. The
+lookahead is used to do parsing decision based on the part of the input ahead
+of the current position. Syntactic predicates are written as a prefix of some
+textX rule expression. The rule expression will be used to match input ahead
+of the current location in the input string. It will either fail or succeed but
+will never consume any input.
+
+There are two type of syntactic predicates:
 
 * **Not - negative lookahead** (`!`) - will succeed if the current input doesn't
   match the expression given after the `!` operator.
@@ -398,11 +407,12 @@ predicates:
             'end'
         ;
 
-    In this example we have nested expressions built with the `Let` rule. The problem
-    is that the `ID` rule from `Expression` will match keyword `end` and thus will
-    consume end of `Let` rule, so the parser will hit EOF without completing any
-    `Let` rules. To fix this, we can specify that `ID` will match any identifier
-    except keywords `let` and `end` like this:
+    In this example we have nested expressions built with indirectly recurssive
+    `Let` rule. The problem is that the `ID` rule from `Expression` will match
+    keyword `end` and thus will consume end of `Let` rule, so the parser will
+    hit EOF without completing any `Let` rules. To fix this, we can specify
+    that `ID` will match any identifier except keywords `let` and `end` like
+    this:
 
         Expression: Let | MyID | NUMBER;
         Let:
@@ -434,17 +444,17 @@ predicates:
         B: a='b';
 
     Given the input string `a a a b` first two `a` chars will be matched by the
-    rule `A`, but the third `a` will be matched by the rule `AbeforeB`.
-    So, even when `AbeforeB` matches only `a` and is tried before any other match, it
-    will not succeed for the first two `a` chars because they are not followed
-    by `b`.
+    rule `A`, but the third `a` will be matched by the rule `AbeforeB`.  So,
+    even when `AbeforeB` matches only `a` and is tried before any other match,
+    it will not succeed for the first two `a` chars because they are not
+    followed by `b`.
 
 
 ### Match suppression
 
-Sometimes it is necessary to define match rules that should return only parts of
-the match. For that we use match the suppression operator (`-`) after the expression
-you want to suppress.
+Sometimes it is necessary to define match rules that should return only parts
+of the match. For that we use match the suppression operator (`-`) after the
+expression you want to suppress.
 
 For example:
 
