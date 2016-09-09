@@ -8,12 +8,12 @@ from textx.exceptions import TextXError
 
 def textx():
     """
-    textx console command
+    textx console command.
     """
 
     class MyParser(argparse.ArgumentParser):
         """
-        Custom arugment parser for printing help message in case of error.
+        Custom argument parser for printing help message in case of an error.
         See http://stackoverflow.com/questions/4042452/display-help-message-with-python-argparse-when-script-is-called-without-any-argu
         """
         def error(self, message):
