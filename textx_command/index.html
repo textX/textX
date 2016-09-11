@@ -231,7 +231,7 @@
                 <div class="col-md-9" role="main">
 
 <h1 id="textx-commandtool">textx command/tool<a class="headerlink" href="#textx-commandtool" title="Permanent link">&para;</a></h1>
-<p>To check and visualize (meta)models from command line.</p>
+<p>To check and visualize (meta)models from the command line.</p>
 <hr />
 <h2 id="using-the-tool">Using the tool<a class="headerlink" href="#using-the-tool" title="Permanent link">&para;</a></h2>
 <p>To get basic help:</p>
@@ -250,15 +250,15 @@ optional arguments:
   -i          case-insensitive parsing
   -d          run in debug mode
 </code></pre>
-<p>You can check and visualize (generate .dot file) your meta-model or model using
+<p>You can check and visualize (generate a .dot file) your meta-model or model using
 this tool.</p>
-<p>For example, to check and visualize of metamodel you could issue:</p>
+<p>For example, to check and visualize a metamodel you could issue:</p>
 <pre><code>$ textx visualize robot.tx
 Meta-model OK.
 Generating 'robot.tx.dot' file for meta-model.
 To convert to png run 'dot -Tpng -O robot.tx.dot'
 </code></pre>
-<p>Create image from .dot file:</p>
+<p>Create an image from the .dot file:</p>
 <pre><code>$ dot -Tpng -O robot.tx.dot
 </code></pre>
 <p>Or use some <code>dot</code> viewer. For example:</p>

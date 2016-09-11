@@ -231,7 +231,7 @@
         
             <li><a href="#built-in-objects">Built-in objects</a></li>
         
-            <li><a href="#auto-initialization-of-attributes">Auto-initialization of attributes</a></li>
+            <li><a href="#auto-initialization-of-the-attributes">Auto-initialization of the attributes</a></li>
         
             <li><a href="#parser-configuration">Parser configuration</a></li>
         
@@ -242,26 +242,26 @@
 
 <h1 id="textx-meta-models">textX meta-models<a class="headerlink" href="#textx-meta-models" title="Permanent link">&para;</a></h1>
 <p>textX meta-model is a Python object that knows about all classes that can be
-instantiated while parsing input. A meta-model is built from the grammar by
+instantiated while parsing the input. A meta-model is built from the grammar by
 the functions <code>metamodel_from_file</code> or <code>metamodel_from_str</code> in the
 <code>textx.metamodel</code> module.</p>
 <pre><code>from textx.metamodel import metamodel_from_file
 my_metamodel = metamodel_from_file('my_grammar.tx')
 </code></pre>
-<p>Each rule from the grammar will result in a Python class kept in a meta-model.
-Besides, meta-model knows how to parse input strings and convert them to
+<p>Each rule from the grammar will result in a Python class kept in the meta-model.
+Besides, meta-model knows how to parse the input strings and convert them to
 <a href="../model/">model</a>.</p>
-<p>Parsing input and creating model is done by <code>model_from_file</code> and
+<p>Parsing the input and creating the model is done by <code>model_from_file</code> and
 <code>model_from_str</code> methods of the meta-model object:</p>
 <pre><code>my_model = my_metamodel.model_from_file('some_input.md')
 </code></pre>
 <h2 id="custom-classes">Custom classes<a class="headerlink" href="#custom-classes" title="Permanent link">&para;</a></h2>
 <p>For each grammar rule a Python class with the same name is created dynamically.
-These classes are instantiated during parsing of input string/file to create
+These classes are instantiated during the parsing of the input string/file to create
 a graph of python objects, a.k.a. <code>model</code> or Abstract-Syntax Tree (AST).</p>
-<p>Most of the time dynamically created classes will be sufficient but sometimes
+<p>Most of the time dynamically created classes will be sufficient, but sometimes
 you will want to use your own classes instead. To do so use parameter <code>classes</code>
-during meta-model instantiation. This parameter is a list of your classes that
+during the meta-model instantiation. This parameter is a list of your classes that
 should be named the same as the rules from the grammar which they represent.</p>
 <pre><code>from textx.metamodel import metamodel_from_str
 
@@ -293,47 +293,47 @@ class Entity(object):
 # Use our Entity class. "Attribute" class will be created dynamically.
 entity_mm = metamodel_from_str(grammar, classes=[Entity])
 </code></pre>
-<p>Now <code>entity_mm</code> can be used to parse input models where our <code>Entity</code> class will
+<p>Now <code>entity_mm</code> can be used to parse the input models where our <code>Entity</code> class will
 be instantiated to represent each <code>Entity</code> rule from the grammar.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Constructor of user classes should accept all attributes defined by the
-corresponding rule from the grammar. In the previous example we have provided
+<p>Constructor of the user-defined classes should accept all attributes defined by the
+corresponding rule from the grammar. In the previous example, we have provided
 <code>name</code> and <code>attributes</code> attributes from the <code>Entity</code> rule.
-If the class is a child in parent-child relationship (see in the next
-section) then <code>parent</code> constructor parameter should also be given.</p>
+If the class is a child in a parent-child relationship (see the next
+section), then the <code>parent</code> constructor parameter should also be given.</p>
 </div>
 <h2 id="parent-child-relationships">Parent-child relationships<a class="headerlink" href="#parent-child-relationships" title="Permanent link">&para;</a></h2>
 <p>There is often an intrinsic parent-child relationship between object in the
-model. In the previous example each <code>Attribute</code> instance will always be a child
+model. In the previous example, each <code>Attribute</code> instance will always be a child
 of some <code>Entity</code> object.</p>
-<p>textX gives automatic support for these relationships by providing <code>parent</code>
+<p>textX gives automatic support for these relationships by providing the <code>parent</code>
 attribute on each child object.</p>
 <p>When you navigate <a href="../model/">model</a> each child instance will have a <code>parent</code>
 attribute.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Always provide parent parameter in user classes for each class that is a
-child in parent-child relationship.</p>
+<p>Always provide the parent parameter in user-defined classes for each class that is a
+child in a parent-child relationship.</p>
 </div>
 <h2 id="processors">Processors<a class="headerlink" href="#processors" title="Permanent link">&para;</a></h2>
 <p>To specify static semantics of the language textX uses a concept called
-<strong>processor</strong>. Processors are python callable that can modify model elements
+<strong>processor</strong>. Processors are python callables that can modify the model elements
 during model parsing/instantiation or do some additional checks that are not
 possible to do by the grammar alone.</p>
 <p>There are two types of processors:</p>
 <ul>
-<li><strong>model processors</strong> - are callable that are called at the end of the parsing
-  when the whole model is instantiated. These processors accepts meta-model and
+<li><strong>model processors</strong> - are callables that are called at the end of the parsing
+  when the whole model is instantiated. These processors accept the meta-model and
   model as parameters.</li>
 <li><strong>object processors</strong> - are registered for particular classes (grammar rules)
   and are called when the objects of the given class is instantiated.</li>
 </ul>
 <p>Processors can modify model/objects or raise exception (<code>TextXSemanticError</code>) if
-some constraint is not met. User code that call model instantiation/parsing can
-catch and handle those exception.</p>
+some constraint is not met. User code that calls the model instantiation/parsing can
+catch and handle this exception.</p>
 <h3 id="model-processors">Model processors<a class="headerlink" href="#model-processors" title="Permanent link">&para;</a></h3>
-<p>To register model processor call <code>register_model_processor</code> on the meta-model
+<p>To register a model processor call <code>register_model_processor</code> on the meta-model
 instance.</p>
 <pre><code>from textx.metamodel import metamodel_from_file
 
@@ -341,27 +341,27 @@ instance.</p>
 # parameters.
 def check_some_semantics(metamodel, model):
   ...
-  ... Do some check on the model and raise TextXSemanticError if semantics
+  ... Do some check on the model and raise TextXSemanticError if the semantics
   ... rules are violated.
 
 my_metamodel = metamodel_from_file('mygrammar.tx')
 
-# Register model processor on meta-model instance
+# Register model processor on the meta-model instance
 my_metamodel.register_model_processor(check_some_semantics)
 
-# Parse model. check_some_semantics will be called automatically after
-# successful parse to do further checks. If the rules are not met
+# Parse the model. check_some_semantics will be called automatically after
+# a successful parse to do further checks. If the rules are not met,
 # an instance of TextXSemanticError will be raised.
 my_metamodel.model_from_file('some_model.ext')
 </code></pre>
 <h3 id="object-processors">Object processors<a class="headerlink" href="#object-processors" title="Permanent link">&para;</a></h3>
-<p>The purpose of object processors is the same as for model processors but they
+<p>The purpose of the object processors is the same as of the model processors, but they
 are called as soon as the particular object is recognized in the input string.
 They are registered per class/rule.</p>
 <p>Let's do some additional checks for the above Entity DSL example.</p>
 <pre><code>def entity_obj_processor(entity):
   '''
-  Check that Entity names are capitalized. This could also be specified
+  Check that Ethe ntity names are capitalized. This could also be specified
   in the grammar using regex match but we will do that check here just
   as an example.
   '''
@@ -389,20 +389,20 @@ obj_processors = {
 # call.
 entity_mm.register_obj_processors(obj_processors)
 
-# Parse model. At each successful parse of Entity or Attribute the registered
+# Parse the model. At each successful parse of Entity or Attribute, the registered
 # processor will be called and the semantics error will be raised if the
-# check do not pass.
+# check does not pass.
 entity_mm.model_from_file('my_entity_model.ent')
 </code></pre>
-<p>For another example usage of object processor that modify objects see object
+<p>For another example of the usage of an object processor that modifies the objects, see object
 processor <code>move_command_processor</code> <a href="../tutorials/robot/">robot example</a>.</p>
 <h2 id="built-in-objects">Built-in objects<a class="headerlink" href="#built-in-objects" title="Permanent link">&para;</a></h2>
-<p>Often you will need objects that should be a part of each model and you do not
-want users to specify them in every model they create. Most notable example is
+<p>Often, you will need objects that should be a part of each model and you do not
+want users to specify them in every model they create. The most notable example are
 primitive types (e.g. <code>integer</code>, <code>string</code>, <code>bool</code>).</p>
 <p>Let's provide <code>integer</code> and <code>string</code> Entities to our <code>Entity</code> meta-model in
-order to simplify model creation so that user can use the names of these two
-entities for <code>Attribute</code> types.</p>
+order to simplify the model creation so that the users can use the names of these two
+entities as the <code>Attribute</code> types.</p>
 <pre><code>class Entity(object):
     def __init__(self, parent, name, attributes):
         self.parent = parent
@@ -419,14 +419,14 @@ entity_mm = metamodel_from_file(
   builtins=entity_builtins    # Register integer and string built-in objs
 )
 </code></pre>
-<p>Now an <code>integer</code> and <code>string</code> <code>Attribute</code> type can be used.  See
+<p>Now an <code>integer</code> and <code>string</code> <code>Attribute</code> types can be used.  See
 <a href="../model/">model</a> and <a href="https://github.com/igordejanovic/textX/tree/master/examples/Entity">Entitiy</a> example for more.</p>
-<h2 id="auto-initialization-of-attributes">Auto-initialization of attributes<a class="headerlink" href="#auto-initialization-of-attributes" title="Permanent link">&para;</a></h2>
+<h2 id="auto-initialization-of-the-attributes">Auto-initialization of the attributes<a class="headerlink" href="#auto-initialization-of-the-attributes" title="Permanent link">&para;</a></h2>
 <p>Each object that is recognized in the input string will be instantiated and
-their attributes will be set to the values parsed from the input. In the event
-that defined attribute is optional, it will nevertheless be created on the
+its attributes will be set to the values parsed from the input. In the event
+that a defined attribute is optional, it will nevertheless be created on the
 instance and set to the default value.</p>
-<p>Here is a list of default values for each base textX type:</p>
+<p>Here is a list of the default values for each base textX type:</p>
 <ul>
 <li>ID - empty string - ''</li>
 <li>INT - int - 0</li>
@@ -436,25 +436,25 @@ instance and set to the default value.</p>
 </ul>
 <p>Each attribute with zero or more multiplicity (<code>*=</code>) that does not match any
 object from the input will be initialized to an empty list.</p>
-<p>Attribute declared with one or more multiplicity (<code>+=</code>) must match at least one
-object from the input and therefore will be transformed to python list
+<p>An attribute declared with one or more multiplicity (<code>+=</code>) must match at least one
+object from the input and will therefore be transformed to python list
 containing all matched objects.</p>
 <p>The drawback of this auto-initialization system is that we can't be sure if
-the attribute was missing from the input or was matched but the value was
-default.</p>
+the attribute was missing from the input or was matched, but the given value was
+the same as the default value.</p>
 <p>In some applications it is important to distinguish between those two
-situations. For that purpose there is a parameter <code>auto_init_attributes</code> to the
-meta-model constructor that is by default <code>True</code> but can be set to <code>False</code> to
-prevent auto-initialization to take place.</p>
-<p>If auto-initialization is disabled than each optional attribute that was not
-matched on the input will be set to <code>None</code>.  This holds true for plain
+situations. For that purpose, there is a parameter <code>auto_init_attributes</code> of the
+meta-model constructor that is <code>True</code> by default, but can be set to <code>False</code> to
+prevent auto-initialization from taking place.</p>
+<p>If auto-initialization is disabled, then each optional attribute that was not
+matched on the input will be set to <code>None</code>.  This is true for the plain
 assignments (<code>=</code>). An optional assignment (<code>?=</code>) will always be <code>False</code> if the
-RHS object is not matched in the input. Many multiplicity assignments (<code>*=</code> and
+RHS object is not matched in the input. The multiplicity assignments (<code>*=</code> and
 <code>+=</code>) will always be python lists.</p>
 <h2 id="parser-configuration">Parser configuration<a class="headerlink" href="#parser-configuration" title="Permanent link">&para;</a></h2>
 <h3 id="case-sensitivity">Case sensitivity<a class="headerlink" href="#case-sensitivity" title="Permanent link">&para;</a></h3>
 <p>Parser is by default case sensitive. For DSLs that should be case insensitive
-use <code>ignore_case</code> parameter to the meta-model constructor call.</p>
+use <code>ignore_case</code> parameter of the meta-model constructor call.</p>
 <pre><code class="python">from textx.metamodel import metamodel_from_file
 
 my_metamodel = metamodel_from_file('mygrammar.tx', ignore_case=True)
@@ -462,9 +462,9 @@ my_metamodel = metamodel_from_file('mygrammar.tx', ignore_case=True)
 
 <h3 id="whitespace-handling">Whitespace handling<a class="headerlink" href="#whitespace-handling" title="Permanent link">&para;</a></h3>
 <p>The parser will skip whitespaces by default. Whitespaces are spaces, tabs and
-newlines by default. Skipping of whitespaces can be disabled by <code>skipws</code> bool
-parameter in constructor call. Also, what is a whitespace can be redefined by
-<code>ws</code> string parameter.</p>
+newlines by default. Skipping of the whitespaces can be disabled by <code>skipws</code> bool
+parameter in the constructor call. Also, what is a whitespace can be redefined by
+the <code>ws</code> string parameter.</p>
 <pre><code class="python">from textx.metamodel import metamodel_from_file
 my_metamodel = metamodel_from_file('mygrammar.tx', skipws=False, ws='\s\n')
 </code></pre>
@@ -472,12 +472,12 @@ my_metamodel = metamodel_from_file('mygrammar.tx', skipws=False, ws='\s\n')
 <p>Whitespaces and whitespace skipping can be defined in the grammar on the level
 of a single rule by <a href="../grammar/#rule-modifiers">rule modifiers</a>.</p>
 <h3 id="automatic-keywords">Automatic keywords<a class="headerlink" href="#automatic-keywords" title="Permanent link">&para;</a></h3>
-<p>When designing a DSL it is usually desirable to match keywords on word
-boundaries.  For example, if we have Entity grammar from the above than a word
+<p>When designing a DSL, it is usually desirable to match keywords on word
+boundaries.  For example, if we have Entity grammar from the above, then a word
 <code>entity</code> will be considered a keyword and should be matched on word boundaries
 only. If we have a word <code>entity2</code> in the input string at the place where
-<code>entity</code> should be matched the match should not succeed.</p>
-<p>We could achieve this by using regular expression match and word boundaries
+<code>entity</code> should be matched, the match should not succeed.</p>
+<p>We could achieve this by using a regular expression match and the word boundaries
 regular expression rule for each keyword-like match.</p>
 <pre><code>Enitity:
   /\bentity\b/ name=ID ...
@@ -490,8 +490,18 @@ call.</p>
 my_metamodel = metamodel_from_file('mygrammar.tx', autokwd=True)
 </code></pre>
 
-<p>A keyword is considered any simple match from the grammar that is matched by the
-regular expression <code>[^\d\W]\w*</code>.</p></div>
+<p>Any simple match from the grammar that is matched by the
+regular expression <code>[^\d\W]\w*</code> is considered to be a keyword.</p>
+<h3 id="memoization-aka-packrat-parsing">Memoization (a.k.a. packrat parsing)<a class="headerlink" href="#memoization-aka-packrat-parsing" title="Permanent link">&para;</a></h3>
+<p>This technique is based on memoizing result on each parsing expression rule.
+For some grammars with a lot of backtracking this can yield a significant
+speed increase at the expense of some memory used for the memoization cache.</p>
+<p>Starting with textX 1.4 this feature is disabled by default. If you think that
+parsing is slow, try to enable memoization by setting <code>memoization</code> parameter
+to <code>True</code> during meta-model instantiation.</p>
+<pre><code class="python">from textx.metamodel import metamodel_from_file
+my_metamodel = metamodel_from_file('mygrammar.tx', memoization=True)
+</code></pre></div>
             
         </div>
 

@@ -231,7 +231,7 @@
         
             <li><a href="#instantiating-model">Instantiating model</a></li>
         
-            <li><a href="#interpreting-model">Interpreting model</a></li>
+            <li><a href="#interpreting-the-model">Interpreting the model</a></li>
         
     
     </ul>
@@ -243,25 +243,25 @@
 the basic workflow when working with textX.</p>
 <hr />
 <h2 id="robot-language">Robot language<a class="headerlink" href="#robot-language" title="Permanent link">&para;</a></h2>
-<p>When building a DSL we should first do a domain analysis, to see what concepts
-do we have and what are their relationships and constraints. In the following
+<p>When building a DSL, we should first do a domain analysis, to see which concepts
+we have and what their relationships and constraints are. In the following
 paragraph a short analysis is done. Important concepts are emphasized.</p>
 <p>In this case we want an imperative language that should define robot movement on
-the imaginary grid.  Robot should <code>move</code> in four base <code>direction</code>. We will
+an imaginary grid.  Robot should <code>move</code> in four base <code>direction</code>. We will
 call these directions <code>up, down, left</code> and <code>right</code> (you could use north,
-south, west and east if you like).  Additionally, we shall have a robot
-coordinate given in x, y <code>position</code>.  For simplicity our robot can move in
-discrete <code>steps</code>. In each movement robot can move by 1 or more steps but in
-the same direction. Coordinate is given as a pair of integer numbers. Robot will
+south, west and east if you like).  Additionally, we shall have the robot's
+coordinates given as the x, y <code>position</code>.  For simplicity our robot can move in
+discrete <code>steps</code>. In each movement the robot can move by 1 or more steps, but in
+the same direction. Coordinates are given as pairs of integer numbers. The robot will
 have an <code>initial position</code>. If not given explicitly it is assumed that
-position is <code>(0, 0)</code>.</p>
+this position is <code>(0, 0)</code>.</p>
 <p>So, lets build a simple robot language.</p>
 <h2 id="grammar">Grammar<a class="headerlink" href="#grammar" title="Permanent link">&para;</a></h2>
 <p>First, we need to define a grammar for the language. In textX the grammar will
 also define a meta-model (a.k.a. abstract syntax) for the language which can be
 visualized and be used as a part of the documentation.</p>
-<p>Usually we start by outlining some program in the language we are building.</p>
-<p>Here is an example of <em>program</em> on robot language:</p>
+<p>Usually, we start by outlining some program in the language we are building.</p>
+<p>Here is an example of the <em>program</em> in the robot language:</p>
 <pre><code>begin
     initial 3, 1
     up 4
@@ -273,11 +273,11 @@ end
 <p>We have <code>begin</code> and <code>end</code> keywords that define the beginning and end of the
 program. In this case we could do without these keywords but lets have it to
 make it more interesting.</p>
-<p>In between those two keywords we have a sequence of instruction. First
-instruction will position our robot at coordinate <code>(3, 1)</code>. After that robot
+<p>In between those two keywords we have a sequence of instructions. First
+instruction will position our robot at coordinates <code>(3, 1)</code>. After that robot
 will move <code>up 4 steps</code>, <code>left 9 steps</code>, <code>down 1 step</code> (1 step is the default)
 and finally <code>1 step to the right</code>.</p>
-<p>Lets start with grammar definition. We shall start in a top-down manner so lets
+<p>Lets start with the grammar definition. We shall start in a top-down manner so lets
 first define a program as a whole.</p>
 <pre><code>Program:
   'begin'
@@ -285,22 +285,22 @@ first define a program as a whole.</p>
   'end'
 ;
 </code></pre>
-<p>Here we see that our program is defined with sequence of:</p>
+<p>Here we see that our program is defined with a sequence of:</p>
 <ul>
 <li>string match (<code>'begin'</code>),</li>
 <li>zero or more assignment to <code>commands</code> attribute,</li>
 <li>string match (<code>'end'</code>).</li>
 </ul>
-<p>String matches will require literal strings given at the begin and end of
-program. If this is not satisfied a syntax error will be raised. This whole rule
+<p>String matches will require literal strings given at the begin and end of the
+program. If this is not satisfied, a syntax error will be raised. This whole rule
 (<code>Program</code>) will create a class with the same name in the meta-model. Each
 program will be an instance of this class. <code>commands</code> assignment will result in
-a python attribute <code>commands</code> on the instance of <code>Program</code> class. This attribute
+a python attribute <code>commands</code> on the instance of the <code>Program</code> class. This attribute
 will be of Python <code>list</code> type (because <code>*=</code> assignment is used).  Each element
 of this list will be a specific command.</p>
-<p>Now, we see that we have different types of commands. First command has two
-parameters and it defines the robot initial position. Other commands has one or
-zero parameters and define the robot movement.</p>
+<p>Now, we see that we have different types of commands. The first command has two
+parameters and it defines the robot's initial position. Other commands have one or
+zero parameters and define the robot's movement.</p>
 <p>To state that some textX rule is specialised in 2 or more rules we use an
 abstract rule. For <code>Command</code> we shall define two specializations:
 <code>InitialCommand</code> and <code>MoveCommand</code> like this:</p>
@@ -308,24 +308,24 @@ abstract rule. For <code>Command</code> we shall define two specializations:
   InitialCommand | MoveCommand
 ;
 </code></pre>
-<p>Abstract rule is given as ordered choice of other rules. This can be read as
-<em>Each command is either a InitialCommand or MoveCommand</em>.</p>
-<p>Lets now define command for setting initial position.</p>
+<p>An abstract rule is given as an ordered choice of other rules. This can be read as
+<em>Each command is either an InitialCommand or MoveCommand</em>.</p>
+<p>Lets now define a command for setting the initial position.</p>
 <pre><code>InitialCommand:
   'initial' x=INT ',' y=INT
 ;
 </code></pre>
-<p>This rule specifies a class <code>InitialCommand</code> in the meta-model. Each initial
+<p>This rule specifies the <code>InitialCommand</code> class in the meta-model. Each initial
 position command will be an instance of this class.</p>
 <p>So, this command should start with the keyword <code>initial</code> after which we give an
 integer number (base type rule <code>INT</code> - this number will be available as
-attribute <code>x</code> on the <code>InitialCommand</code> instance), than a separator <code>,</code> is
-required after which we have <code>y</code> coordinate as integer number (this will be
-available as attribute <code>y</code>). Using base type rule <code>INT</code> matched number from
-input string will be automatically converted to python type <code>int</code>.</p>
+the attribute <code>x</code> on the <code>InitialCommand</code> instance). After this, a separator <code>,</code> is
+required after which we have the <code>y</code> coordinate as an integer number (this will be
+available as attribute <code>y</code>). Using the base type rule <code>INT</code>, the matched number from
+input string will automatically be converted to python type <code>int</code>.</p>
 <p>Now, lets define a movement command. We know that this command consists of
-direction identifier and optional number of steps (if not given the default will
-be 1).</p>
+direction identifier and optional number of steps (if not given,
+it will be 1 by default).</p>
 <pre><code>MoveCommand:
   direction=Direction (steps=INT)?
 ;
@@ -333,11 +333,11 @@ be 1).</p>
 <p>So, the movement command model object will have two attributes.
 <code>direction</code> attribute will define one of the four possible directions and
 <code>steps</code> attribute will be an integer that will hold how many steps a robot
-will move in given direction. Steps are optional so if not given in the program
-it will still be a correct syntax. Notice, that the default of 1 is not
+will move in the given direction. Steps are optional so if not given in the program,
+the syntax will still be correct. Notice, that the default of 1 is not
 specified in the grammar. The grammar deals with syntax constraints. Additional
-semantics will be handled later in model/object processors (see below).</p>
-<p>Now, the missing part is <code>Direction</code> rule referenced from the previous rule.
+semantics will be handled later in the model/object processors (see below).</p>
+<p>Now, the missing part is the <code>Direction</code> rule referenced from the previous rule.
 This rule will define what can be written as a direction.  We will define this
 rule like this:</p>
 <pre><code>Direction:
@@ -345,13 +345,13 @@ rule like this:</p>
 ;
 </code></pre>
 <p>This kind of rule is called a <em>match rule</em>. This rule does not result in a new
-object. It consists of ordered choice of simple matches (string, regex), base
+object. It consists of an ordered choice of simple matches (string, regex), base
 type rules (INT, STRING, BOOL...) and/or other match rule references.</p>
 <p>The result of this match will be assigned to the attribute from which it was
-referenced. If base type was used it will be converted in a proper python type.
+referenced. If a base type was used it will be converted to a proper python type.
 If not, it will be a python string that will contain the text that was matched
 from the input.</p>
-<p>In this case a one of 4 words will be matched and that string will be assigned
+<p>In this case one of the four words will be matched and that string will be assigned
 to the <code>direction</code> attribute of the <code>MoveCommand</code> instance.</p>
 <p>The final touch to the grammar is a definition of the comment rule. We want to
 comment our robot code, right?</p>
@@ -361,7 +361,7 @@ Lets define a C-style single line comments.</p>
   /\/\/.*$/
 ;
 </code></pre>
-<p>Our grammar is done. Save it in <code>robot.tx</code> file. The content of this file should
+<p>Our grammar is done. Save it as the <code>robot.tx</code> file. The content of this file should
 now be:</p>
 <pre><code>Program:
   'begin'
@@ -390,15 +390,15 @@ Comment:
 ;
 </code></pre>
 <p>Notice that we have not constrained initial position command to be specified
-just once on the beginning of the program. This basically means that this
+just once at the beginning of the program. This basically means that this
 command can be given multiple times throughout the program. I will leave as an
 exercise to the reader to implement this constraint.</p>
 <h2 id="instantiating-meta-model">Instantiating meta-model<a class="headerlink" href="#instantiating-meta-model" title="Permanent link">&para;</a></h2>
 <p>In order to parse our models we first need to construct a meta-model. A
 textX meta-model is a Python object that contains all classes that can be
 instantiated in our model. For each grammar rule a class is created.
-Additionally, meta-model contains a parser that knows how to parse input
-strings. From parsed input (parse tree) meta-model will create a model.</p>
+Additionally, the meta-model contains a parser that knows how to parse input
+strings. From the parsed input (parse tree) the meta-model will create a model.</p>
 <p>Meta-models are created from our grammar description, in this case
 <code>robot.tx</code> file:</p>
 <pre><code class="python">from textx.metamodel import metamodel_from_file
@@ -406,23 +406,23 @@ robot_mm = metamodel_from_file('robot.tx')
 </code></pre>
 
 <p>Next step during language design is meta-model visualization. It is usually
-easier to comprehend our language if rendered graphically. To do so we use
-excellent <a href="http://www.graphviz.org/">GraphViz</a> software package and its DSL for
+easier to comprehend our language if it is rendered graphically. To do so we use
+the excellent <a href="http://www.graphviz.org/">GraphViz</a> software package and its DSL for
 graph specification called <em>dot</em>. It is a textual language for visual graph
 definition.</p>
-<p>Lets export our meta-model to dot language.</p>
+<p>Lets export our meta-model to the dot language.</p>
 <pre><code class="python">from textx.export import metamodel_export
 metamodel_export(robot_mm, 'robot_meta.dot')
 </code></pre>
 
-<p>First parameter is our meta-model object while the second is an output dot
+<p>The first parameter is our meta-model object, while the second one is an output dot
 filename.</p>
-<p><code>dot</code> file can be opened with dot viewer (there are many to choose from) or
+<p><code>dot</code> file can be opened with a dot viewer (there are many to choose from) or
 transformed with <code>dot</code> tool to raster or vector graphics.</p>
 <p>For example:</p>
 <pre><code>dot -Tpng robot_meta.dot -O robot_meta.png
 </code></pre>
-<p>This command will create <code>png</code> image out of <code>dot</code> file.</p>
+<p>This command will create a <code>png</code> image out of the <code>dot</code> file.</p>
 <p><img alt="Robot meta-model" src="../../images/robot.tx.dot.png" /></p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -434,28 +434,28 @@ textual files.</p>
 <pre><code class="python">robot_model = robot_mm.model_from_file('program.rbt')
 </code></pre>
 
-<p>This command will parse file <code>program.rbt</code> and constructs our robot model.
-In this file does not match our language a syntax error will be raised on the
-first error encountered.</p>
-<p>In the same manner as meta-model visualization we can visualize our model too.</p>
+<p>This command will parse file <code>program.rbt</code> and construct our robot model.
+If this file does not match our language a syntax error will be raised on the
+first encountered error.</p>
+<p>In the same manner as the meta-model visualization we can visualize our model too.</p>
 <pre><code class="python">from textx.export import model_export
 model_export(robot_model, 'program.dot')
 </code></pre>
 
 <p>This will create <code>program.dot</code> file that can be visualized using proper viewer
-or transformed to image.</p>
+or transformed to an image.</p>
 <pre><code>dot -Tpng program.dot -O program.png
 </code></pre>
 <p>For the robot program above we should get an image like this:</p>
 <p><img alt="Robot program" src="../../images/program.rbt.dot.png" /></p>
-<h2 id="interpreting-model">Interpreting model<a class="headerlink" href="#interpreting-model" title="Permanent link">&para;</a></h2>
+<h2 id="interpreting-the-model">Interpreting the model<a class="headerlink" href="#interpreting-the-model" title="Permanent link">&para;</a></h2>
 <p>When we have successfully parsed and loaded our model/program (or mogram or
-prodel ;) ) we can do various stuff. Usually what would you like to do is to
+prodel ;) ) we can do various stuff. Usually what you would like to do is to
 translate your program to some other language (Java, Python, C#, Ruby,...) or
-you could build an interpreter that will evaluate/interpret your model directly.
+you build an interpreter that will evaluate/interpret your model directly.
 Or you could analyse your model, extract informations from it etc. It is up to
 you to decide.</p>
-<p>We will show here how to build a simple interpreter that will start the robot
+<p>We will show here how to build a simple interpreter that will move the robot
 from the initial position and print the position of the robot after each
 command.</p>
 <p>Lets imagine that we have a robot that understands our language.</p>
@@ -470,7 +470,7 @@ command.</p>
     return "Robot position is {}, {}.".format(self.x, self.y)
 </code></pre>
 <p>Now, our robot will have an <code>interpret</code> method that accepts our robot model and
-runs it. At each step this method will update the robot position and print it.</p>
+runs it. At each step, this method will update the robot's position and print it.</p>
 <pre><code>def interpret(self, model):
 
     # model is an instance of Program
@@ -497,7 +497,7 @@ runs it. At each step this method will update the robot position and print it.</
 
         print(self)
 </code></pre>
-<p>Now lets give our <code>robot_model</code> to <code>Robot</code> instance and see what happens.</p>
+<p>Now lets pass our <code>robot_model</code> to <code>Robot</code> instance and see what happens.</p>
 <pre><code class="python">robot = Robot()
 robot.interpret(robot_model)
 </code></pre>
@@ -514,31 +514,31 @@ Robot position is -6, 5.
 Going right for 1 step(s).
 Robot position is -5, 5.
 </code></pre>
-<p>It is <em>almost</em> correct. We can see that down movement is for 0 steps because we
+<p>It is <em>almost</em> correct. We can see that the robot moves down 0 steps because we
 have not defined the steps for <code>down</code> command and haven't done anything yet to
-implement default of 1.</p>
-<p>The best way to implement default value for step is to use so called <a href="../../metamodel/#object-processors">object
-processor</a> for <code>MoveCommand</code>.
+implement the default value of 1.</p>
+<p>The best way to implement the default value for a step is to use the so called <a href="../../metamodel/#object-processors">object
+processor</a> for the <code>MoveCommand</code>.
 Object processor is a callable that gets called whenever textX parses and
-instantiates an object of particular class. Use <code>register_obj_processors</code>
+instantiates an object of a particular class. Use <code>register_obj_processors</code>
 method on meta-model to register callables/processors for classes your wish to
 process in some way immediately after instantiation.</p>
-<p>Lets define our processor for <code>MoveCommand</code>.</p>
+<p>Lets define our processor for the <code>MoveCommand</code>.</p>
 <pre><code class="python">def move_command_processor(move_cmd):
 
-  # If steps is not given, set it do default 1 value.
+  # If steps is not given, set it do default value of 1.
   if move_cmd.steps == 0:
     move_cmd.steps = 1
 </code></pre>
 
-<p>Now, register this processor on meta-model. After meta-model construction add a
+<p>Now, register this processor on the meta-model. After meta-model construction add a
 line for registration.</p>
 <pre><code class="python">robot_mm.register_obj_processors({'MoveCommand': move_command_processor})
 </code></pre>
 
 <p><code>register_obj_processors</code> accepts a dictionary keyed by class name. The
 values are callables that should handle instances of the given class.</p>
-<p>If you run robot interpreter again you will get output like this:</p>
+<p>If you run robot interpreter again you will get an output like this:</p>
 <pre><code>Setting position to: 3, 1
 Robot position is 3, 1.
 Going up for 4 step(s).
@@ -557,7 +557,7 @@ Robot position is -5, 4.
 <a href="https://github.com/igordejanovic/textX/tree/master/examples/robot">examples/robot</a>
 folder.</p>
 <p>Next, you can read <a href="../entity/">the Entity tutorial</a> where you can see how to
-generate source code from your models.</p>
+generate the source code from your models.</p>
 </div></div>
             
         </div>

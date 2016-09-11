@@ -236,11 +236,16 @@
 <p>A meta-model, model and parse-tree can be exported to dot files
 (<a href="http://www.graphviz.org/">GraphViz</a>) for visualization. Module <code>textx.export</code>
 contains functions <code>metamodel_export</code> and <code>model_export</code> that can export
-meta-model and model to dot file respectively.</p>
+meta-model and model to dot files respectively.</p>
 <p>If <a href="../debugging/">debugging</a> is enabled, meta-model, model and parse trees will
 automatically get exported to dot.</p>
+<p>Dot files can be viewed by dot viewers.  There are quite a few dot viewers
+freely available (e.g. <a href="https://github.com/jrfonseca/xdot.py">xdot</a>,
+<a href="http://zvtm.sourceforge.net/zgrviewer.html">ZGRViewer</a>).</p>
+<p>Alternatively, dot files can be converted to image formats using <code>dot</code> command.
+For more info see <a href="http://stackoverflow.com/questions/1494492/graphviz-how-to-go-from-dot-to-a-graph">this SO thread</a>.</p>
 <h2 id="meta-model-visualization">Meta-model visualization<a class="headerlink" href="#meta-model-visualization" title="Permanent link">&para;</a></h2>
-<p>To visualize meta-model (see <a href="https://github.com/igordejanovic/textX/tree/master/examples/Entity">Entity
+<p>To visualize a meta-model (see <a href="https://github.com/igordejanovic/textX/tree/master/examples/Entity">Entity
 example</a>)
 do:</p>
 <pre><code class="python">from textx.metamodel import metamodel_from_file
@@ -251,15 +256,15 @@ entity_mm = metamodel_from_file('entity.tx')
 metamodel_export(entity_mm, 'entity.dot')
 </code></pre>
 
-<p><code>entity.dot</code> file will be created. You can visualize this file by a
-various dot viewers or can convert it to various image formats by 'dot'
+<p><code>entity.dot</code> file will be created. You can visualize this file by using
+various dot viewers or convert it to various image formats using the 'dot'
 tool.</p>
 <pre><code>$ dot -Tpng -O entity.dot
 </code></pre>
 <p>The following image is generated:</p>
 <p><img alt="Entity meta-model" src="https://raw.githubusercontent.com/igordejanovic/textX/master/examples/Entity/dotexport/entity_meta.dot.png" /></p>
 <h2 id="model-visualization">Model visualization<a class="headerlink" href="#model-visualization" title="Permanent link">&para;</a></h2>
-<p>Similar to meta-model visualization you can visualize your models also (see <a href="https://github.com/igordejanovic/textX/tree/master/examples/Entity">Entity
+<p>Similarly to meta-model visualization, you can also visualize your models (see <a href="https://github.com/igordejanovic/textX/tree/master/examples/Entity">Entity
 example</a>).</p>
 <pre><code class="python">from textx.export import model_export
 
@@ -275,8 +280,8 @@ model_export(person_model, 'person.dot')
 <p><img alt="Person model" src="https://raw.githubusercontent.com/igordejanovic/textX/master/examples/Entity/dotexport/entity.dot.png" /></p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>See also <a href="../textx_command/">textx command/tool</a> for model visualization
-from command line.</p>
+<p>Also, see <a href="../textx_command/">textx command/tool</a> for model visualization
+from the command line.</p>
 </div></div>
             
         </div>

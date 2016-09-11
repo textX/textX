@@ -223,7 +223,7 @@
     
         <li class="main active"><a href="#textx-models">textX models</a></li>
         
-            <li><a href="#special-attributes">Special attributes</a></li>
+            <li><a href="#special-model-objects-attributes">Special model object's attributes</a></li>
         
     
     </ul>
@@ -234,14 +234,14 @@
 <p>Model is a python object graph consisting of POPOs (Plain Old Python Objects)
 constructed from the input string that conforms to your DSL defined by the
 grammar and additional <a href="../metamodel/#processors">model and object processors</a>.</p>
-<p>In a sense this structure is an Abstract Syntax Tree (AST) known from classic
-parsing theory but it is actually a graph structure where each reference is
+<p>In a sense, this structure is an Abstract Syntax Tree (AST) known from classic
+parsing theory, but it is actually a graph structure where each reference is
 resolved to a proper python reference.</p>
-<p>Each object is an instance of a class from meta-model. Classes are created
-on-the-fly from grammar rules or are <a href="../metamodel/#custom-classes">supplied by the
+<p>Each object is an instance of a class from the meta-model. Classes are created
+on-the-fly from the grammar rules or are <a href="../metamodel/#custom-classes">supplied by the
 user</a>.</p>
-<p>Model is created from input string using <code>model_from_file</code> and <code>model_from_str</code>
-methods of meta-model instance.</p>
+<p>A model is created from the input string using the <code>model_from_file</code> and <code>model_from_str</code>
+methods of the meta-model instance.</p>
 <pre><code>from textx.metamodel import metamodel_from_file
 
 my_mm = metamodel_from_file('mygrammar.tx')
@@ -249,7 +249,7 @@ my_mm = metamodel_from_file('mygrammar.tx')
 # Create model
 my_model = my_mm.model_from_file('some_model.ext')
 </code></pre>
-<p>Let's take a Entity language used in <a href="../metamodel/#custom-classes">Custom
+<p>Let's take the Entity language used in <a href="../metamodel/#custom-classes">Custom
 Classes</a> section.</p>
 <p>Content of <code>entity.tx</code> file:</p>
 <pre><code>EntityModel:
@@ -265,10 +265,10 @@ Entity:
 Attribute:
   name=ID ':' type=[Entity]   // type is a reference to an entity. There are
                               // built-in entities registered on the meta-model
-                              // for primitive types (integer, string)
+                              // for the primitive types (integer, string)
 ;
 </code></pre>
-<p>For meta-model construction and built-in registration see <a href="../metamodel/#custom-classes">Custom
+<p>For the meta-model construction and built-in registration see <a href="../metamodel/#custom-classes">Custom
 Classes</a> and
 <a href="../metamodel/#built-in-objects">Builtins</a> sections.</p>
 <p>Now, we can use the <code>entity_mm</code> meta-model to parse and create Entity models.</p>
@@ -288,17 +288,36 @@ entity Address {
   country : string
 }
 </code></pre>
-<h2 id="special-attributes">Special attributes<a class="headerlink" href="#special-attributes" title="Permanent link">&para;</a></h2>
-<p>Beside attributes specified by the grammar each model object has
-<code>_tx_position</code> attribute that hold the position in the input string where
-the object has been matched by the parser.</p>
+<h2 id="special-model-objects-attributes">Special model object's attributes<a class="headerlink" href="#special-model-objects-attributes" title="Permanent link">&para;</a></h2>
+<p>Beside attributes specified by the grammar, there are several special
+attributes on model objects created by textX. All special attributes' names
+start with prefix <code>_tx</code>.</p>
+<p>These special attributes don't exist if the type of the resulting model object
+don't allow dynamic attribute creation (e.g. for Python base builtin types -
+str, int).</p>
+<h3 id="_tx_position">_tx_position<a class="headerlink" href="#_tx_position" title="Permanent link">&para;</a></h3>
+<p><code>_tx_position</code> attribute holds the position in the input string where the
+object has been matched by the parser. Each object from the model object graph
+has this attribute.</p>
 <p>This is an absolute position in the input stream. To convert it to line/column
 format use <code>pos_to_linecol</code> method of the parser.</p>
 <pre><code class="python">line, col = entity_mm.parser.pos_to_linecol(
     person_model.entities[0]._tx_position)
 </code></pre>
 
-<p>This will give the line/column position of the first entity.</p></div>
+<p>This will give the line/column position of the first entity.</p>
+<h3 id="_tx_filename">_tx_filename<a class="headerlink" href="#_tx_filename" title="Permanent link">&para;</a></h3>
+<p>This attribute exists only on the root of the model. If the model is loaded
+from a file, this attribute will be the full path of the source file. If the
+model is created from a string this attribute will be <code>None</code>.</p>
+<h3 id="_tx_metamodel">_tx_metamodel<a class="headerlink" href="#_tx_metamodel" title="Permanent link">&para;</a></h3>
+<p>This attribute exists only on the root of the model. It is a reference to the
+metamodel object used for creating the model.</p>
+<p>This attribute can be usefull to access the parser given the reference to the
+model.</p>
+<pre><code class="python">parser = model._tx_metamodel.parser
+line, col = parser.pos_to_linecol(some_model_object)
+</code></pre></div>
             
         </div>
 
