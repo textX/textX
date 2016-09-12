@@ -15,7 +15,7 @@ robot_metamodel = metamodel_from_file('robot.tx', debug=True)
 ```
 
 If `debug` is set in the `model_from_file/str` calls, various
-messages during the modelk6 parsing and construction will be printed. Additionally,
+messages during the model parsing and construction will be printed. Additionally,
 parse tree created from the input as well as the model will be exported to dot
 files.
 
