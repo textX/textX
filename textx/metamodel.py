@@ -15,6 +15,9 @@ from .textx import language_from_str, python_type, BASE_TYPE_NAMES, ID, BOOL,\
 from .const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, RULE_MATCH
 
 
+__all__ = ['metamodel_from_str', 'metamodel_from_file']
+
+
 class MetaAttr(object):
     """
     A metaclass for attribute description.
