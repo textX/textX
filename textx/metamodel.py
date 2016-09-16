@@ -2,7 +2,7 @@
 # Name: metamodel.py
 # Purpose: Meta-model construction.
 # Author: Igor R. Dejanovic <igor DOT dejanovic AT gmail DOT com>
-# Copyright: (c) 2014 Igor R. Dejanovic <igor DOT dejanovic AT gmail DOT com>
+# Copyright: (c) 2014-2016 Igor R. Dejanovic <igor DOT dejanovic AT gmail DOT com>
 # License: MIT License
 #######################################################################
 
@@ -51,7 +51,8 @@ class TextXMetaModel(DebugPrinter):
     """
     Meta-model contains all information about language abstract syntax.
     Furthermore, this class is in charge for model instantiation and new
-    language class creation.
+    language class creation. This class should not be instantiated by the user
+    directly. It's instantiated by the metamodel_from_(file/str) functions.
 
     Attributes:
         rootcls(TextXClass): A language class that is a root of the metamodel.
@@ -263,7 +264,7 @@ class TextXMetaModel(DebugPrinter):
                     for. See textx.const
                 _tx_metamodel(TextXMetaModel): A metamodel this class belongs
                     to.
-                _tx_peg_rule(ParsingExpression): An arpeggio PEG rule that
+                _tx_peg_rule(ParsingExpression): An Arpeggio PEG rule that
                     matches this class.
             """
 
