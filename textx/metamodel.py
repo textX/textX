@@ -59,22 +59,24 @@ class TextXMetaModel(DebugPrinter):
 
     Attributes:
         rootcls(TextXClass): A language class that is a root of the metamodel.
-        namespaces(dict): A dict from abs. file name to the dict in the form
-            {clsname: cls} that holds meta-classes imported from the given
-            grammar file. Special key 'base' is used for BASETYPE classes.
-            None key is used for all classes imported from the grammar
+        root_path(str): The root dir used for the import statement.
+        namespaces(dict): A mapping from fully qualified module names to dicts
+            in the form {clsname: cls} that holds meta-classes imported from the
+            given grammar file. Special key '__base__' is used for BASETYPE
+            classes. None key is used for all classes imported from the grammar
             given as a string.
-        _namespace_stack(list): A stack of namespace names (usually absolute
-            filenames). Used to keep track of the current namespace.
-        imported_namespaces(dict): A dict from namespace name to the list of
-            references to imported namespaces. Used in searches for the
+        _namespace_stack(list): A stack of namespace names (fully qualified
+            module names). Used to keep track of the current namespace.
+        _imported_namespaces(dict): A mapping from namespace name to the list of
+            references to imported namespaces. Used in searches for
             unqualified rules.
         builtins(dict): A dict of named object used in linking phase.
             References to named objects not defined in the model will be
             searched here.
-        user_classes(dict): A dict of user supplied classes to use instead of
-            generic ones.
-        obj_processors(dict): A dict of user supplied object processors.
+        user_classes(list): A list of user supplied classes to use instead of
+            the dynamically created.
+        obj_processors(dict): A dict of user supplied object processors keyed
+            by rule/class name (may be a fully qualified name).
     """
 
     def __init__(self, file_name=None, classes=None, builtins=None,
@@ -137,10 +139,10 @@ class TextXMetaModel(DebugPrinter):
         self._namespace_stack = []
 
         # Imported namespaces
-        self.imported_namespaces = {}
+        self._imported_namespaces = {}
 
         # Create new namespace for BASETYPE classes
-        self._enter_namespace('base')
+        self._enter_namespace('__base__')
 
         # Base types hierarchy should exist in each meta-model
         base_id = self._new_class('ID', ID, 0)
@@ -149,29 +151,43 @@ class TextXMetaModel(DebugPrinter):
         base_int = self._new_class('INT', INT, 0)
         base_float = self._new_class('FLOAT', FLOAT, 0)
         base_number = self._new_class('NUMBER', NUMBER, 0,
-                                     [base_float, base_int])
+                                      [base_float, base_int])
         self._new_class('BASETYPE', BASETYPE, 0,
                         [base_number, base_bool, base_id, base_string])
 
-        # If file_name is given its absolute path will be a namespace
+        # Resolve file name to absolute path.
         if file_name:
             file_name = os.path.abspath(file_name)
 
+        # Root path will be dir name of the file if loaded from file.
+        # If the grammar is not loaded from file 'import' statement can't be
+        # used.
+        self.root_path = os.path.dirname(file_name) if file_name else None
+
         # Enter namespace for given file or None if metamodel is
         # constructed from string.
-        self._enter_namespace(file_name)
+        self._enter_namespace(self._namespace_for_file_name(file_name))
+
+    def _namespace_for_file_name(self, file_name):
+        if file_name is None or self.root_path is None:
+            return None
+        file_name = os.path.abspath(file_name)
+        p = os.path
+        q = p.splitext(p.relpath(file_name, start=self.root_path))[0]
+        return '.'.join(p.split(q)[1:])
 
     def _enter_namespace(self, namespace_name):
         """
         A namespace is usually an absolute file name of the grammar.
-        A special namespace 'base' is used for BASETYPE namespace.
+        A special namespace '__base__' is used for BASETYPE namespace.
         """
         if namespace_name not in self.namespaces:
             self.namespaces[namespace_name] = {}
 
             # BASETYPE namespace is imported in each namespace
-            self.imported_namespaces[namespace_name] = \
-                [self.namespaces['base']]
+            # as the first namespace to be searched.
+            self._imported_namespaces[namespace_name] = \
+                [self.namespaces['__base__']]
 
         self._namespace_stack.append(namespace_name)
 
@@ -180,25 +196,6 @@ class TextXMetaModel(DebugPrinter):
         Leaves current namespace (i.e. grammar file).
         """
         self._namespace_stack.pop()
-
-    def _fqn_to_namespace(self, fqn):
-        """
-        Based on current namespace and given fqn returns the absolute
-        filename of the fqn cls grammar file.
-        Args:
-            fqn(str): A fully qualified name of the class.
-        Returns:
-            An absolute file name of the grammar fqn rule/class came from.
-        """
-
-        current_namespace = self._namespace_stack[-1]
-        current_dir = ''
-        if current_namespace and current_namespace != 'base':
-            current_dir = os.path.dirname(current_namespace)
-        namespace = "%s.tx" % os.path.join(current_dir,
-                                           *(fqn.split("."))[:-1])
-
-        return namespace
 
     def _set_rule(self, name, rule):
         """
@@ -215,17 +212,23 @@ class TextXMetaModel(DebugPrinter):
                 (e.g. "first.second.expressions")
         """
 
-        # Find the absolute file name of the import based on the relative
-        # import_name and current grammar file (namespace)
-        current_namespace = self._namespace_stack[-1]
-        current_dir = ''
-        if current_namespace and current_namespace != 'base':
-            current_dir = os.path.dirname(current_namespace)
-        import_file_name = "%s.tx" % os.path.join(current_dir,
-                                                  *import_name.split("."))
+        # Import can't be used if meta-model is loaded from string
+        assert self.root_path is not None, \
+            '"import" statement can not be used if meta-model is ' \
+            'loaded from string.'
 
-        if import_file_name not in self.namespaces:
-            self._enter_namespace(import_file_name)
+        # Find the absolute file name of the import based on the relative
+        # import_name and current namespace
+        current_namespace = self._namespace_stack[-1]
+        if '.' in current_namespace:
+            root_namespace = current_namespace.rsplit('.', 1)[0]
+            import_name = "%s.%s" % (root_namespace, import_name)
+
+        import_file_name = "%s.tx" % os.path.join(self.root_path,
+                                                    *import_name.split("."))
+
+        if import_name not in self.namespaces:
+            self._enter_namespace(import_name)
             if self.debug:
                 self.dprint("*** IMPORTING FILE: %s" % import_file_name)
             metamodel_from_file(import_file_name, metamodel=self)
@@ -234,8 +237,8 @@ class TextXMetaModel(DebugPrinter):
         # Add the import to the imported_namespaces for current namespace
         # so that resolving of current grammar searches imported grammars
         # in the order of import
-        self.imported_namespaces[current_namespace].append(
-            self.namespaces[import_file_name])
+        self._imported_namespaces[current_namespace].append(
+            self.namespaces[import_name])
 
     def _new_class(self, name, peg_rule, position, inherits=None, root=False,
                    rule_type=RULE_MATCH):
@@ -375,10 +378,7 @@ class TextXMetaModel(DebugPrinter):
         """
         if "." in name:
             # Name is fully qualified
-            # Find the absolute file from the current namespace and
-            # the fully qualified name.
-            namespace = self._fqn_to_namespace(name)
-            name = name.split(".")[-1]
+            namespace, name = name.rsplit('.', 1)
             return self.namespaces[namespace][name]
         else:
             # If not fully qualified search in the current namespace
@@ -387,7 +387,7 @@ class TextXMetaModel(DebugPrinter):
                 return self._current_namespace[name]
 
             for namespace in \
-                    self.imported_namespaces[self._namespace_stack[-1]]:
+                    self._imported_namespaces[self._namespace_stack[-1]]:
                 if name in namespace:
                     return namespace[name]
 
@@ -406,7 +406,7 @@ class TextXMetaModel(DebugPrinter):
 
         # Imported namespaces
         for namespace in \
-                self.imported_namespaces[self._namespace_stack[-1]]:
+                self._imported_namespaces[self._namespace_stack[-1]]:
             for name in namespace:
                 # yield class
                 yield namespace[name]

@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 import pytest
 import os
 
-from textx.metamodel import metamodel_from_file
+from textx.metamodel import metamodel_from_file, metamodel_from_str
 from textx.export import metamodel_export, model_export
 
 
@@ -52,3 +52,21 @@ def test_multiple_imports():
 
     model = mm.model_from_str(model)
     model_export(model, 'multipleimport_test_model.dot')
+
+
+def test_no_import_for_string():
+    """
+    Test that import can't be used if meta-model is loaded from string.
+    """
+
+    grammar = """
+    import relativeimport.first
+
+    Second:
+        a = First
+    ;
+
+    """
+
+    with pytest.raises(AssertionError):
+        metamodel_from_str(grammar)
