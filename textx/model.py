@@ -7,17 +7,67 @@
 #######################################################################
 
 import sys
-if sys.version < '3':
-    text = unicode
-else:
-    text = str
 import codecs
 import traceback
 from arpeggio import Parser, Sequence, NoMatch, EOF, Terminal
 from .exceptions import TextXSyntaxError, TextXSemanticError
-from .const import MULT_ONE, MULT_ONEORMORE, MULT_ZEROORMORE, RULE_COMMON,\
-    RULE_ABSTRACT, RULE_MATCH
+from .const import MULT_OPTIONAL, MULT_ONE, MULT_ONEORMORE, MULT_ZEROORMORE, \
+    RULE_COMMON, RULE_ABSTRACT, RULE_MATCH
 from .textx import PRIMITIVE_PYTHON_TYPES
+if sys.version < '3':
+    text = unicode
+else:
+    text = str
+
+__all__ = ['all_of_type']
+
+
+def all_of_type(metamodel, root, typ):
+    """
+    Returns a set of all model elements of type 'typ' starting from model
+    element 'root'. The search process will follow containment links only.
+    Non-containing references shall not be followed.
+
+    Args:
+        meta_model (textX meta-model):
+        root (model object): Python model object which is the start of the
+            search process.
+        typ(str or python class): The type of the model object we are
+            looking for.
+    """
+
+    collected = set()
+
+    if type(typ) is not text:
+        typ = typ.__name__
+
+    def follow(elem):
+
+        if elem in collected:
+            return
+
+        if elem.__class__.__name__ == typ:
+            collected.add(elem)
+
+        # Use meta-model to search for all contained child elements.
+        cls = elem.__class__
+
+        if hasattr(cls, '_tx_attrs'):
+            for attr_name, attr in cls._tx_attrs.items():
+                # Follow only attributes with containment semantics
+                if attr.cont:
+                    if attr.mult in (MULT_ONE, MULT_OPTIONAL):
+                        new_elem = getattr(elem, attr_name)
+                        if new_elem:
+                            follow(new_elem)
+                    else:
+                        new_elem_list = getattr(elem, attr_name)
+                        if new_elem_list:
+                            for new_elem in new_elem_list:
+                                follow(new_elem)
+
+    follow(root)
+    return collected
 
 
 def convert(value, _type):
