@@ -24,7 +24,7 @@ __all__ = ['all_of_type']
 
 def all_of_type(metamodel, root, typ):
     """
-    Returns a set of all model elements of type 'typ' starting from model
+    Returns a list of all model elements of type 'typ' starting from model
     element 'root'. The search process will follow containment links only.
     Non-containing references shall not be followed.
 
@@ -36,7 +36,7 @@ def all_of_type(metamodel, root, typ):
             looking for.
     """
 
-    collected = set()
+    collected = []
 
     if type(typ) is not text:
         typ = typ.__name__
@@ -47,7 +47,7 @@ def all_of_type(metamodel, root, typ):
             return
 
         if elem.__class__.__name__ == typ:
-            collected.add(elem)
+            collected.append(elem)
 
         # Use meta-model to search for all contained child elements.
         cls = elem.__class__
