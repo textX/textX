@@ -36,4 +36,4 @@ def get_language(language_name):
                          .format(language_name,
                                  "\n".join([l.dist for l in langs])))
 
-    return langs[0].load()
+    return langs[0].load()()
