@@ -5,34 +5,30 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
+  <meta name="description" content="A meta-language for building Domain-Specific Languages (DSLs)">
   <meta name="author" content="Igor Dejanović">
   
-  <title>Error handling - textX</title>
+  <title>textX</title>
   
 
-  <link rel="shortcut icon" href="../img/favicon.ico">
+  <link rel="shortcut icon" href="./img/favicon.ico">
 
   
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
-  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
-  <link rel="stylesheet" href="../css/highlight.css">
-  <link href="../style.css" rel="stylesheet">
+  <link rel="stylesheet" href="./css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="./css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="./css/highlight.css">
+  <link href="./style.css" rel="stylesheet">
 
   
-  <script>
-    // Current page data
-    var mkdocs_page_name = "Error handling";
-    var mkdocs_page_input_path = "error_handling.md";
-    var mkdocs_page_url = "/error_handling/";
-  </script>
-  
-  <script src="../js/jquery-2.1.1.min.js"></script>
-  <script src="../js/modernizr-2.8.3.min.js"></script>
-  <script type="text/javascript" src="../js/highlight.pack.js"></script>
-  <script src="../js/theme.js"></script> 
+  <script src="./js/jquery-2.1.1.min.js"></script>
+  <script src="./js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="./js/highlight.pack.js"></script>
+  <script src="./js/theme.js"></script>
+  <script>var base_url = '.';</script>
+  <script data-main="./mkdocs/js/search.js" src="./mkdocs/js/require.js"></script>
+
 
   
   <script>
@@ -54,9 +50,9 @@
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
       <div class="wy-side-nav-search">
-        <a href=".." class="icon icon-home"> textX</a>
+        <a href="." class="icon icon-home"> textX</a>
         <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
   </form>
 </div>
@@ -67,7 +63,7 @@
           
             <li>
     <li class="toctree-l1 ">
-        <a class="" href="..">Home</a>
+        <a class="" href=".">Home</a>
         
     </li>
 <li>
@@ -79,56 +75,49 @@
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../grammar/">Grammar</a>
+        <a class="" href="grammar/">Grammar</a>
         
     </li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../metamodel/">Meta-model</a>
+        <a class="" href="metamodel/">Meta-model</a>
         
     </li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../model/">Model</a>
+        <a class="" href="model/">Model</a>
         
     </li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../visualization/">Visualization</a>
-        
-    </li>
-
-        
-            
-    <li class="toctree-l1 current">
-        <a class="current" href="./">Error handling</a>
-        
-            <ul>
-            
-                <li class="toctree-l3"><a href="#error-handling">Error handling</a></li>
-                
-            
-            </ul>
+        <a class="" href="visualization/">Visualization</a>
         
     </li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../debugging/">Debugging</a>
+        <a class="" href="error_handling/">Error handling</a>
         
     </li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../textx_command/">textx command</a>
+        <a class="" href="debugging/">Debugging</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="textx_command/">textx command</a>
         
     </li>
 
@@ -143,28 +132,28 @@
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../tutorials/hello_world/">Hello World</a>
+        <a class="" href="tutorials/hello_world/">Hello World</a>
         
     </li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../tutorials/robot/">Robot</a>
+        <a class="" href="tutorials/robot/">Robot</a>
         
     </li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../tutorials/entity/">Entity</a>
+        <a class="" href="tutorials/entity/">Entity</a>
         
     </li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../tutorials/state_machine/">State Machine</a>
+        <a class="" href="tutorials/state_machine/">State Machine</a>
         
     </li>
 
@@ -179,21 +168,21 @@
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../about/discuss/">Discuss</a>
+        <a class="" href="about/discuss/">Discuss</a>
         
     </li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../about/contributing/">Contributing</a>
+        <a class="" href="about/contributing/">Contributing</a>
         
     </li>
 
         
             
     <li class="toctree-l1 ">
-        <a class="" href="../about/license/">License</a>
+        <a class="" href="about/license/">License</a>
         
     </li>
 
@@ -211,7 +200,7 @@
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="..">textX</a>
+        <a href=".">textX</a>
       </nav>
 
       
@@ -219,15 +208,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href="..">Docs</a> &raquo;</li>
+    <li><a href=".">Docs</a> &raquo;</li>
     
-      
-        
-          <li>User Guide &raquo;</li>
-        
-      
     
-    <li>Error handling</li>
     <li class="wy-breadcrumbs-aside">
       
         
@@ -241,32 +224,22 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="error-handling">Error handling<a class="headerlink" href="#error-handling" title="Permanent link">&para;</a></h1>
-<p>textX will raise an error if a syntax or semantic error is detected during
-meta-model or model parsing/construction.</p>
-<p>For a syntax error <code>TextXSyntaxError</code> is raised. For a semantic error
-<code>TextXSemanticError</code> is raised. Both exceptions inherit from <code>TextXError</code>.
-These exceptions are located in <code>textx.exceptions</code> module.</p>
-<p>All exceptions have <code>message</code> attribute with the error message and <code>line</code> and
-<code>col</code> attributes, which show the line and column where the error was found.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>See also <a href="../textx_command/">textx command/tool</a> for (meta)model checking 
-from command line.</p>
-</div>
-              
+
+  <h1 id="search">Search Results</h1>
+
+  <form id="content_search" action="search.html">
+    <span role="status" aria-live="polite" class="ui-helper-hidden-accessible"></span>
+    <input name="q" id="mkdocs-search-query" type="text" class="search_input search-query ui-autocomplete-input" placeholder="Search the Docs" autocomplete="off" autofocus>
+  </form>
+
+  <div id="mkdocs-search-results">
+    Sorry, page not found.
+  </div>
+
+
             </div>
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="../debugging/" class="btn btn-neutral float-right" title="Debugging">Next <span class="icon icon-circle-arrow-right"></span></a>
-      
-      
-        <a href="../visualization/" class="btn btn-neutral" title="Visualization"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-      
-    </div>
   
 
   <hr/>
@@ -294,10 +267,6 @@ from command line.</p>
           <a href="https://github.com/igordejanovic/textX" class="icon icon-github" style="float: left; color: #fcfcfc"> GitHub</a>
       
       
-        <span><a href="../visualization/" style="color: #fcfcfc;">&laquo; Previous</a></span>
-      
-      
-        <span style="margin-left: 15px"><a href="../debugging/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>
