@@ -31,24 +31,24 @@ To run the example do the following:
 - Verify that textX is installed. See documentation how to do that.
 - Install [Jinja2]() for code generation
     
-    $ pip install Jinja2
+        $ pip install Jinja2
 
 - From the Entity example folder run
 
-    $ python entity_test.py
+        $ python entity_test.py
 
 - Previous command will generate dot files in `dotexport` folder. To convert 
   those files to PNG format do (you must have [GraphViz](http://graphviz.org/)
   installed):
 
-    $ dot -Tpng -O dotexport/*.dot
+        $ dot -Tpng -O dotexport/*.dot
 
   You will get `entity_meta.dot.png` (Entity meta-model) and `person.dot.png`
   (Person model) diagram.
 
 - Run code generation:
 
-    $ python entity_codegen.py
+        $ python entity_codegen.py
 
   This will produce Java files `Address.java` and `Person.java` in `srcgen`
   folder that corresponds to entities from the Person model.
