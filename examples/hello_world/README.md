@@ -9,13 +9,13 @@ To run the example do the following:
 
 - From the `hello_world` example folder run
 
-    $ python hello.py
+        $ python hello.py
 
 - Previous command will generate dot files representing Hello language
   meta-model and example model. To render those files to PNG format do (you
   must have [GraphViz](http://graphviz.org/) installed):
 
-    $ dot -Tpng -O *.dot
+        $ dot -Tpng -O *.dot
 
   You will get `hello_meta.dot.png` (Hello meta-model) and `example.dot.png`
   (example Hello model).
