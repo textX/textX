@@ -26,18 +26,16 @@ These are the steps to build a very basic Hello World - like language.
     in a `to_greet` list on a `HelloWorldModel` object. `Who` objects consists
     only of its names which must be matched the regular expression rule
     `/[^,]*/` (match non-comma zero or more times). Please see [textX
-    grammar](../grammar.md) section for more information on writing grammar rules.
+    grammar](../grammar.md) section for more information on writing grammar
+    rules.
 
-2. Create meta-model from textX language description (file `hello.py`):
+2. At this point you can check and visualise meta-model using following command
+   from command line:
 
-        from textx.metamodel import metamodel_from_file
-        hello_meta = metamodel_from_file('hello.tx')
-
-
-3. Optionally export meta-model to dot (visualize your language abstract syntax):
-
-        from textx.export import metamodel_export
-        metamodel_export(hello_meta, 'hello_meta.dot')
+        $ textx visualize hello.tx
+        Meta-model OK.
+        Generating 'hello.tx.dot' file for meta-model.
+        To convert to png run 'dot -Tpng -O hello.tx.dot'
 
     ![hello meta-model](../images/hello_meta.dot.png)
 
@@ -45,7 +43,8 @@ These are the steps to build a very basic Hello World - like language.
     Python class has been created. A BASETYPE hierarchy is built-in. Each
     meta-model has it.
 
-4. Create some content (i.e. model) in your new language (``example.hello``):
+
+3. Create some content (i.e. model) in your new language (``example.hello``):
 
         hello World, Solar System, Universe
 
@@ -60,20 +59,29 @@ These are the steps to build a very basic Hello World - like language.
     syntactic noise that is needed by the parser (and programmers) to recognize
     the boundaries of the objects in the text.
 
-5. Use meta-model to create models from textual description:
+4. To use your models from Python first create meta-model from textX language
+   description (file `hello.py`):
 
+        from textx.metamodel import metamodel_from_file
+        hello_meta = metamodel_from_file('hello.tx')
+
+5. Than use meta-model to create models from textual description:
 
         example_hello_model = hello_meta.model_from_file('example.hello')
 
-
-
-    Textual model ‘example.hello’ will be parsed and transformed to a plain
+    Textual model `example.hello` will be parsed and transformed to a plain
     Python object graph. Object classes are those defined by the meta-model.
 
-6. You can optionally export model to `dot` file to visualize it:
+6. You can optionally export model to `dot` file to visualize it. Run following
+   from the command line:
 
-        from textx.export import model_export
-        model_export(example_hello_model, 'example.dot')
+        $ textx visualize hello.tx example.hello
+        Meta-model OK.
+        Model OK.
+        Generating 'hello.tx.dot' file for meta-model.
+        To convert to png run 'dot -Tpng -O hello.tx.dot'
+        Generating 'example.hello.dot' file for model.
+        To convert to png run 'dot -Tpng -O example.hello.dot'
 
     ![Example hello model](../images/example.dot.png)
 
@@ -82,7 +90,6 @@ These are the steps to build a very basic Hello World - like language.
 
     We see that each `Who` object is contained in the python attribute
     `to_greet` of list type which is defined by the grammar.
-
 
 7. Use your model: interpret it, generate code … It is a plain Python
    graph of objects with plain attributes!

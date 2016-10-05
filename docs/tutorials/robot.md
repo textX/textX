@@ -11,15 +11,15 @@ When building a DSL we should first do a domain analysis, to see what concepts
 do we have and what are their relationships and constraints. In the following
 paragraph a short analysis is done. Important concepts are emphasized.
 
-In this case we want an imperative language that should define robot movement on
-the imaginary grid.  Robot should `move` in four base `direction`. We will
-call these directions `up, down, left` and `right` (you could use north,
-south, west and east if you like).  Additionally, we shall have a robot
-coordinate given in x, y `position`.  For simplicity our robot can move in
-discrete `steps`. In each movement robot can move by 1 or more steps but in
-the same direction. Coordinate is given as a pair of integer numbers. Robot will
-have an `initial position`. If not given explicitly it is assumed that
-position is `(0, 0)`.
+In this case we want an imperative language that should define `robot` movement
+on the imaginary grid.  Robot should `move` in four base `direction`. We will
+call these directions `up, down, left` and `right` (you could use north, south,
+west and east if you like).  Additionally, we shall have a robot coordinate
+given in x, y `position`.  For simplicity, our robot can move in discrete
+`steps`. In each movement robot can move by 1 or more steps but in the same
+direction. Coordinate is given as a pair of integer numbers. Robot will have an
+`initial position`. If not given explicitly it is assumed that position is `(0,
+0)`.
 
 
 So, lets build a simple robot language.
@@ -33,7 +33,7 @@ visualized and be used as a part of the documentation.
 
 Usually we start by outlining some program in the language we are building.
 
-Here is an example of *program* on robot language:
+Here is an example *program* on robot language:
 
     begin
         initial 3, 1
@@ -188,6 +188,31 @@ just once on the beginning of the program. This basically means that this
 command can be given multiple times throughout the program. I will leave as an
 exercise to the reader to implement this constraint.
 
+Next step during language design is meta-model visualization. It is usually
+easier to comprehend our language if rendered graphically. To do so we use
+excellent [GraphViz](http://www.graphviz.org/) software package and its DSL for
+graph specification called *dot*. It is a textual language for visual graph
+definition.
+
+Lets check our meta-model and export it to the dot language.
+
+    $ textx visualize robot.tx
+    Meta-model OK.
+    Generating 'robot.tx.dot' file for meta-model.
+    To convert to png run 'dot -Tpng -O robot.tx.dot'
+
+`dot` file can be opened with dot viewer (there are many to choose from) or
+transformed with `dot` tool to raster or vector graphics.
+
+For example:
+
+    dot -Tpng robot_meta.dot -O robot_meta.png
+
+This command will create `png` image out of `dot` file.
+
+![Robot meta-model](../images/robot.tx.dot.png)
+
+
 ## Instantiating meta-model
 
 In order to parse our models we first need to construct a meta-model. A
@@ -203,33 +228,6 @@ Meta-models are created from our grammar description, in this case
 from textx.metamodel import metamodel_from_file
 robot_mm = metamodel_from_file('robot.tx')
 ```
-
-Next step during language design is meta-model visualization. It is usually
-easier to comprehend our language if rendered graphically. To do so we use
-excellent [GraphViz](http://www.graphviz.org/) software package and its DSL for
-graph specification called *dot*. It is a textual language for visual graph
-definition.
-
-Lets export our meta-model to dot language.
-
-```python
-from textx.export import metamodel_export
-metamodel_export(robot_mm, 'robot_meta.dot')
-```
-
-First parameter is our meta-model object while the second is an output dot
-filename.
-
-`dot` file can be opened with dot viewer (there are many to choose from) or
-transformed with `dot` tool to raster or vector graphics.
-
-For example:
-
-    dot -Tpng robot_meta.dot -O robot_meta.png
-
-This command will create `png` image out of `dot` file.
-
-![Robot meta-model](../images/robot.tx.dot.png)
 
 !!! note
     This meta-model can be used to parse multiple models.
@@ -249,10 +247,13 @@ first error encountered.
 
 In the same manner as meta-model visualization we can visualize our model too.
 
-```python
-from textx.export import model_export
-model_export(robot_model, 'program.dot')
-```
+    $ textx visualize robot.tx program.rbt
+    Meta-model OK.
+    Model OK.
+    Generating 'robot.tx.dot' file for meta-model.
+    To convert to png run 'dot -Tpng -O robot.tx.dot'
+    Generating 'program.rbt.dot' file for model.
+    To convert to png run 'dot -Tpng -O program.rbt.dot'
 
 This will create `program.dot` file that can be visualized using proper viewer
 or transformed to image.
