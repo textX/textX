@@ -57,3 +57,218 @@ Tooling infrastructure, editor support etc. will be developed as independent
 projects (see for example
 [textx-tools](https://github.com/igordejanovic/textx-tools)).
 
+
+# Difference to Xtext grammar language
+
+textX grammar language is inspired by Xtext and thus there are a lot of
+similarities between these tools when it come to grammar specification. But,
+there are also differences in several places. In this section we shall outline
+those differences to give users already familiar with Xtext a brief overview.
+
+## Lexer and terminal rules
+
+textX uses PEG parsing which doesn't needs separate lexing phase.  This
+eliminate the need to define lexemes in the grammar.  Therefore, there is no
+`terminal` keyword in the textX nor any of special terminal definition rules
+used by Xtext.
+
+## Types used for rules
+
+Xtext integrates tightly with Java and Ecore typing system providing keyword
+`returns` in rule definition by which language designer might define a class
+used to instantiate objects recognized by the parser.
+
+In textX there is no keyword `returns`. The class used for the rule will be
+dynamically created Python class for all non-match rules. Language designer
+can provide class using [user classes]() registration on meta-model.
+If the rule is of [match type] than it will always return Python string or some
+of base Python types for [BASETYPES inherited rules]().
+
+## Assignment
+
+In textX there are two types of `many` assignments (`*=` - zero or more, `+=` -
+one or more) whereas in Xtext there is only one (`+=`) which defines the type
+of the attribute but doesn't specify any information for the parser.  Thus, if
+there should be zero or more matched elements you must additionally wrap your
+expression in `zero or more` match:
+
+In Xtext:
+    
+
+In textX:
+
+
+Similarly, optional assignment in Xtext is written as:
+
+
+    static?='static'?
+
+In textX a '?' at the end of the expression is implied, i.e. rhs of the
+assignment will be optional:
+
+    static?='static'
+
+
+## Repetition modifiers
+
+textX provides a syntactic construct called [repetition modifier]() which
+enables parser to be altered to a specific repetition operator instance.
+
+For example, there is often a need to define a separated list of elements.
+
+To match a list of integers separated by comma in Xtext you would write:
+
+    list_of_ints+=INT (',' list_of_ints+=INT)*
+
+In textX the same expression can be written as:
+
+    list_of_inst+=INT[',']
+
+The parser is instructed to parse one or more INT and comma in between.
+Repetition modifier can be a regular expression match too.
+
+For example, to match one or more integer separated by comma or semi-colon:
+
+    list_of_ints+=INT[/,|;/]
+
+Inside square brackets more than one repetition modifier can be defined.
+See [section in the docs]() for additional explanations.
+
+We are not aware of the similar feature in Xtext.
+
+
+## Rule modifiers
+
+Similarly to repetition modifiers, in textX parser can be altered at the rule
+level too. Currently, only white-space alteration can be defined on the rule
+level:
+
+For example:
+    
+        Rule:
+            'entity' name=ID /\s*/ call=Rule2;
+        Rule2[noskipws]:
+            'first' 'second';
+
+Parser will be altered for `Rule2` not to skip white-spaces. All down the call
+chain inherit modifiers.
+
+There are hidden rules in Xtext which can achieve the similar effect, even
+define different kind of tokens that can be hidden from the semantic model, but
+the rule modifier in textX serve different purpose. It is a general mechanism
+for parser alteration per rule that can be used in the future to define some
+other alteration (e.g. case sensitivity).
+
+## Unordered groups
+
+Xtext support unordered groups using `&` operator.
+
+For example:
+
+    Modifier: 
+        static?='static'? & final?='final'? & visibility=Visibility;
+     
+    enum Visibility:
+        PUBLIC='public' | PRIVATE='private' | PROTECTED='protected';
+
+textX at the moment doesn't provide unordered groups. To achieve similar
+feature, ordered choice in combination with `one or more` repetition operator
+must be used.
+
+    
+    Modifier: 
+        (static?='static' | final?='final' | visibility=Visibility)*;
+     
+    Visibility:
+        'public' | 'private' | 'protected';
+
+
+But, on the grammar level it doesn't prevent user to repeat one of the
+alternatives many times.
+
+## Syntactic predicates
+
+textX is backtracking parser, thus unlimited lookahead is always used.
+However, there still are situations where ambiguities arise. These ambiguities
+are always at the point of decision which of the alternative parsing expression
+to chose.  In the case of LL(\*) parser used by Xtext the order will be
+implementation specific and thus can lead to ambiguities on many occasions.  In
+the case of textX it will always be from left to right as defined by PEG
+ordered choice operator. But, even though the order in PEG case is
+predetermined, sometimes the order that should be taken depends on the input
+string itself.
+
+Consider [this example]():
+
+
+
+In this case syntactic predicates are used to cut of additional parse trees
+that would be produced if all path should be followed and produce only one.
+
+textX syntactic predicates are defined using positive and negative lookahead.
+
+In Xtext there is a syntactic predicate which aids in solving ambiguities 
+
+
+## Hidden rules
+
+Xtext uses hidden terminal rules to suppress non-important parts of the input
+from the semantic model. This is used for comments, whitespaces etc.
+Terminal rules are referenced from the `hidden` list in the parser rules. All
+rules called from the one using hidden terminals inherits them.
+
+textX provides support for whitespaces on the parser level and rule level and
+a special match rule `Comment` that can be used to describe comments pattern.
+
+## Parent-child relationships
+
+textX will provide explicit `parent` reference on all objects that are
+*contained* inside some other objects.  This attribute is a plain Python
+attribute. The relationship is imposed by the grammar.
+
+Xtext, begin based on Ecore, provides similar mechanism through Ecore API.
+
+## Enums
+
+Xtext support [Enum
+rules](http://www.eclipse.org/Xtext/documentation/301_grammarlanguage.html#enum-rules)
+while textX does not. In textX you use match rule with ordered choice to mimic
+enums.
+
+
+## Scoping
+
+At present stage textX doesn't provide builtin mechanism for scoping definition.
+However, this can be done in Python using object processors but there is no
+specific API that could help language developer in resolving links.
+
+Xtext does provide a [Scoping
+API](http://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#scoping)
+which can be used by the Xtend code to specify scoping rules.
+
+
+# Additional differences in the tool usage
+
+## Post-processing
+
+## Parser control
+
+## User classes
+
+## Builtin objects
+
+## IDE integration
+
+Xtext is integrated in Eclipse and InteliJ IDEs and generates full
+language-specific tool-chain from the grammar description and additional
+specifications.
+
+textX does not provide IDE integrations. There is [textx-tools]() project which
+provide pluggable platform for developing textX languages and generators with
+project scaffolding. Integration for popular code editors is planned. There is
+some basic [support for vim]() at the moment. There is a support for
+visualization of grammars (meta-models) and models but the model visualization
+is generic, i.e. it will show you the object graph of your model objects. We
+plan to develop language-specific model visualization support.
+
+
