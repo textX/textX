@@ -1,6 +1,7 @@
 """
 Model query and navigation API.
 """
+from __future__ import unicode_literals
 import pytest
 from textx.metamodel import metamodel_from_str
 from textx.model import children_of_type, parent_of_type, model_root
