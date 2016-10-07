@@ -90,7 +90,7 @@ MIT
 Python versions
 ===============
 
-2.7, 3.3+
+Tested for 2.7, 3.3+
 
 
 .. _Arpeggio: https://github.com/igordejanovic/Arpeggio
