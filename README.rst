@@ -56,10 +56,27 @@ Quick intro
         else:
             print('Line: from={} to={}'.format(_(shape.start), _(shape.end)))
 
+    # Output:
+    # Line: from=10,10 to=20,20
+    # Line: from=14,78 to=89,33
+    # Circle: center=14,20, radius=10
+    # Line: from=18,89 to=78,65
+
     # Collect all points starting from the root of the model
     points = children_of_type(model, "Point")
     for point in points:
         print('Point: {}'.format(_(point)))
+
+    # Output:
+    # Point: 10,10
+    # Point: 20,20
+    # Point: 14,78
+    # Point: 89,33
+    # Point: 14,20
+    # Point: 18,89
+    # Point: 78,65
+
+
 
 
 Docs and tutorials
