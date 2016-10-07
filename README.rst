@@ -35,6 +35,8 @@ Quick intro
     """
 
     mm = metamodel_from_str(grammar)
+
+    # Meta-model knows how to parse and instantiate models.
     model = mm.model_from_str("""
         line 10, 10 / 20, 20
         line 14, 78 / 89, 33
