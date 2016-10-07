@@ -18,6 +18,53 @@ implemented 100% in Python using `Arpeggio`_ PEG parser - no grammar
 ambiguities, unlimited lookahead, interpreter style of work.
 
 
+Quick intro
+===========
+
+.. code:: python
+
+    from textx.metamodel import metamodel_from_str
+    from textx.model import children_of_type
+
+    grammar = """
+    Model: shapes*=Shape;
+    Shape: Circle | Line;
+    Circle: 'circle' center=Point '/' radius=INT;
+    Line: 'line' start=Point '/' end=Point;
+    Point: x=INT ',' y=INT;
+    """
+
+    mm = metamodel_from_str(grammar)
+    model = mm.model_from_str("""
+        line 10, 10 / 20, 20
+        line 14, 78 / 89, 33
+        circle 14, 20/10
+        line 18, 89 / 78, 65
+    """)
+
+    # At this point model is plain Python object graph with instances of
+    # dynamically created classes and attributes following the grammar.
+
+    def _(p):
+        "returns coordinate of the given Point as string"
+        return "{},{}".format(p.x, p.y)
+
+    for shape in model.shapes:
+        if shape.__class__.__name__ == 'Circle':
+            print('Circle: center={}, radius={}'
+                  .format(_(shape.center), shape.radius))
+        else:
+            print('Line: from={} to={}'.format(_(shape.start), _(shape.end)))
+
+    # Collect all points starting from the root of the model
+    points = children_of_type(model, "Point")
+    for point in points:
+        print('Point: {}'.format(_(point)))
+
+
+Docs and tutorials
+==================
+
 The full documentation with tutorials is available at http://igordejanovic.net/textX/
 
 
