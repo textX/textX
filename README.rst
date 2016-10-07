@@ -77,12 +77,20 @@ Quick intro
     # Point: 78,65
 
 
-
-
 Docs and tutorials
 ==================
 
 The full documentation with tutorials is available at http://igordejanovic.net/textX/
+
+License
+=======
+
+MIT
+
+Python versions
+===============
+
+2.7, 3.3+
 
 
 .. _Arpeggio: https://github.com/igordejanovic/Arpeggio
