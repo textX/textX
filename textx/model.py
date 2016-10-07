@@ -19,17 +19,57 @@ if sys.version < '3':
 else:
     text = str
 
-__all__ = ['all_of_type']
+__all__ = ['children_of_type', 'parent_of_type', 'model_root', 'metamodel']
 
 
-def all_of_type(metamodel, root, typ):
+def model_root(obj):
+    """
+    Finds model root element for the given object.
+    """
+    p = obj
+    while hasattr(p, 'parent'):
+        p = p.parent
+    return p
+
+
+def metamodel(obj):
+    """
+    Returns metamodel of the given object's model.
+    """
+    return model_root(obj)._tx_metamodel
+
+
+def parent_of_type(obj, typ):
+    """
+    Finds first object up the parent chain, including the object itself,
+    of the given type.
+    If no parent of the given type exists None is returned.
+
+    Args:
+        obj (model object): Python model object which is the start of the
+            search process.
+        typ(str or python class): The type of the model object we are
+            looking for.
+    """
+    if type(typ) is not text:
+        typ = typ.__name__
+
+    p = obj
+    while p.__class__.__name__ != typ:
+        if hasattr(p, 'parent'):
+            p = p.parent
+        else:
+            return None
+    return p
+
+
+def children_of_type(root, typ):
     """
     Returns a list of all model elements of type 'typ' starting from model
     element 'root'. The search process will follow containment links only.
     Non-containing references shall not be followed.
 
     Args:
-        meta_model (textX meta-model):
         root (model object): Python model object which is the start of the
             search process.
         typ(str or python class): The type of the model object we are
