@@ -8,7 +8,9 @@ example page](http://json.org/example.html).
 
 Test script `json.py` will instantiate JSON meta-model defined in `json.tx`
 file, export it to dot file for visualization purposes and than instantiate all
-examples. Each, JSON example file is also exported to dot.
+examples. Each, JSON example file is also exported to dot. To run it use:
+
+    $ python json.py
 
 Checking and visualization can also be done using `textx` command line tool and
 GraphViz dot tool.

@@ -12,7 +12,9 @@ Action starts with a keyword `action` after which is given the name.
 An example of workflow is given in file `example.wf`.
 
 Test script `workflow.py` will load meta-model and example model and
-export them to dot files.
+export them to dot files. To run it do:
+
+    $ python workflow.py
 
 Checking and exporting to dot can also be done with `textx` command line tool:
 
