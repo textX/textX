@@ -62,6 +62,22 @@ considered a `root rule`.
 
 This grammar will parse the example model from the beginning.
 
+At any time you can check and visualize entity meta-model and person model
+using command:
+
+    $ textx visualize entity.tx person.ent
+
+Given grammar in file `entity.tx` and example Person model in file
+`person.ent`.
+
+This command will produce `entity.tx.dot` and `person.ent.dot` files which can
+be viewed by any dot viewer or converted to e.g. PNG format using command:
+
+    $ dot -Tpng -O *.dot
+
+Note that [GraphViz](http://graphviz.org/) must be installed to use dot command
+line utility.
+
 Meta-model now looks like this:
 
 ![Entity metamodel 1](entity/entity1.tx.dot.png)

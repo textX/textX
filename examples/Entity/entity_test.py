@@ -56,7 +56,7 @@ def main(debug=False):
     person_model = entity_mm.model_from_file(join(this_folder, 'person.ent'))
 
     # Export to .dot file for visualization
-    model_export(person_model, join(dot_folder, 'entity.dot'))
+    model_export(person_model, join(dot_folder, 'person.dot'))
 
 
 if __name__ == "__main__":

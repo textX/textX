@@ -23,6 +23,7 @@ pages:
     - Entity: tutorials/entity.md
     - State Machine: tutorials/state_machine.md
 - About:
+    - Comparison: about/comparison.md
     - Discuss: about/discuss.md
     - Contributing: about/contributing.md
     - License: about/license.md
