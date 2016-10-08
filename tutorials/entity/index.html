@@ -185,6 +185,13 @@
         
             
     <li class="toctree-l1 ">
+        <a class="" href="../../about/comparison/">Comparison</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
         <a class="" href="../../about/discuss/">Discuss</a>
         
     </li>
@@ -296,6 +303,18 @@ that each entity model contains one or more <code>entities</code>.</p>
 <p>This rule must be the first rule in the textX grammar file. First rule is always
 considered a <code>root rule</code>.</p>
 <p>This grammar will parse the example model from the beginning.</p>
+<p>At any time you can check and visualize entity meta-model and person model
+using command:</p>
+<pre><code>$ textx visualize entity.tx person.ent
+</code></pre>
+<p>Given grammar in file <code>entity.tx</code> and example Person model in file
+<code>person.ent</code>.</p>
+<p>This command will produce <code>entity.tx.dot</code> and <code>person.ent.dot</code> files which can
+be viewed by any dot viewer or converted to e.g. PNG format using command:</p>
+<pre><code>$ dot -Tpng -O *.dot
+</code></pre>
+<p>Note that <a href="http://graphviz.org/">GraphViz</a> must be installed to use dot command
+line utility.</p>
 <p>Meta-model now looks like this:</p>
 <p><img alt="Entity metamodel 1" src="../entity/entity1.tx.dot.png" /></p>
 <p>While the example (Person model) looks like this:</p>

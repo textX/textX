@@ -179,6 +179,13 @@
         
             
     <li class="toctree-l1 ">
+        <a class="" href="../../about/comparison/">Comparison</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
         <a class="" href="../../about/discuss/">Discuss</a>
         
     </li>
@@ -242,13 +249,12 @@
             <div class="section">
               
                 <h1 id="hello-world-example">Hello World example<a class="headerlink" href="#hello-world-example" title="Permanent link">&para;</a></h1>
-<p>This is an example of a very simple Hello World like language.</p>
+<p>This is an example of very simple Hello World like language.</p>
 <hr />
 <p>These are the steps to build a very basic Hello World - like language.</p>
 <ol>
 <li>
-<p>Write a language description in textX. Create a file called <code>hello.tx</code> in the
-   text editor of your choice and type in the following:</p>
+<p>Write a language description in textX (file <code>hello.tx</code>):</p>
 <pre><code>HelloWorldModel:
   'hello' to_greet+=Who[',']
 ;
@@ -261,59 +267,32 @@ Who:
 describe Python classes that will be dynamically created and used to
 instantiate objects of your model.  This small example consists of two
 rules: <code>HelloWorldModel</code> and <code>Who</code>.  <code>HelloWorldModel</code> starts with the
-keyword <code>hello</code> after which one or more <code>Who</code> objects must be written and
-separated with commas. <code>Who</code> objects will be parsed, instantiated and
-stored in a <code>to_greet</code> list on a <code>HelloWorldModel</code> object. <code>Who</code> objects
-consist only of their names which must match the regular expression rule
+keyword <code>hello</code> after which a one or more <code>Who</code> object must be written
+separated by commas. <code>Who</code> objects will be parsed, instantiated and stored
+in a <code>to_greet</code> list on a <code>HelloWorldModel</code> object. <code>Who</code> objects consists
+only of its names which must be matched the regular expression rule
 <code>/[^,]*/</code> (match non-comma zero or more times). Please see <a href="../../grammar/">textX
 grammar</a> section for more information on writing grammar
 rules.</p>
 </li>
 <li>
-<p>To create the meta-model from textX language description, create a python
-   file called <code>hello.py</code> in the same folder where your grammar is and type in
-   the following:</p>
-<pre><code>from textx.metamodel import metamodel_from_file
-hello_meta = metamodel_from_file('hello.tx')
-</code></pre>
-<p>This will import the function <code>metamodel_from_file</code> from the textX library.
-This function is used then to load the grammar from <code>hello.tx</code> file and
-to create meta-model object. This object will be refered by the variable
-<code>hello_meta</code>.</p>
-</li>
-<li>
-<p>Optionally, export the meta-model to dot to visualize your language's
-   abstract syntax.</p>
-<p>The easiest way to visualize the grammar/meta-model is to use <code>textx</code>
-command from the command shell:</p>
+<p>At this point you can check and visualise meta-model using following command
+   from command line:</p>
 <pre><code>$ textx visualize hello.tx
 Meta-model OK.
 Generating 'hello.tx.dot' file for meta-model.
 To convert to png run 'dot -Tpng -O hello.tx.dot'
 </code></pre>
-<p>This command will check the grammar and create <code>hello.tx.dot</code>. Dot files
-can be viewed by dot viewers or converted to image formats by <code>dot</code>
-command.  More information is available in the <a href="../../visualization/">visualization
-section</a>.</p>
-<p>Alternatively you could done the same by using textX API from Python.
-Open your <code>hello.py</code> and add the following:</p>
-<pre><code>from textx.export import metamodel_export
-metamodel_export(hello_meta, 'hello.tx.dot')
-</code></pre>
-<p>Executing your Python code you will get the same <code>hello.tx.dot</code> file.</p>
-<p>Rendering this <code>dot</code> file either by using dot viewer or by converting it to
-some other image format you will get this:</p>
 <p><img alt="hello meta-model" src="../../images/hello_meta.dot.png" /></p>
-<p>You can see that for each rule from the language description an appropriate
-Python class was created. A BASETYPE hierarchy is built-in. Each
+<p>You can see that for each rule from language description an appropriate
+Python class has been created. A BASETYPE hierarchy is built-in. Each
 meta-model has it.</p>
 </li>
 <li>
-<p>Create some content (i.e. model) in your new language. Create file
-   <code>example.hello</code>, open it up in textual editor and type the following:</p>
+<p>Create some content (i.e. model) in your new language (<code>example.hello</code>):</p>
 <pre><code>hello World, Solar System, Universe
 </code></pre>
-<p>Your language syntax is also described by the language rules from step 1.</p>
+<p>Your language syntax is also described by language rules from step 1.</p>
 <p>If we break down the text of the example model it looks like this:</p>
 <p><img alt="hello model parts" src="../../images/hello_parts.png" /></p>
 <p>We see that the whole line is a <code>HelloWorldModel</code> and the parts <code>World</code>, 
@@ -322,16 +301,22 @@ syntactic noise that is needed by the parser (and programmers) to recognize
 the boundaries of the objects in the text.</p>
 </li>
 <li>
-<p>Use meta-model to create models from a textual description. In your Python
-   <code>hello.py</code> file add this:</p>
+<p>To use your models from Python first create meta-model from textX language
+   description (file <code>hello.py</code>):</p>
+<pre><code>from textx.metamodel import metamodel_from_file
+hello_meta = metamodel_from_file('hello.tx')
+</code></pre>
+</li>
+<li>
+<p>Than use meta-model to create models from textual description:</p>
 <pre><code>example_hello_model = hello_meta.model_from_file('example.hello')
 </code></pre>
-<p>Textual model ‘example.hello’ will be parsed and transformed to a plain
+<p>Textual model <code>example.hello</code> will be parsed and transformed to a plain
 Python object graph. Object classes are those defined by the meta-model.</p>
 </li>
 <li>
-<p>To see your model you can export it to <code>dot</code> file. Again, we can do that by
-   using <code>textx</code> command or by using textX API.</p>
+<p>You can optionally export model to <code>dot</code> file to visualize it. Run following
+   from the command line:</p>
 <pre><code>$ textx visualize hello.tx example.hello
 Meta-model OK.
 Model OK.
@@ -340,13 +325,6 @@ To convert to png run 'dot -Tpng -O hello.tx.dot'
 Generating 'example.hello.dot' file for model.
 To convert to png run 'dot -Tpng -O example.hello.dot'
 </code></pre>
-<p>Or, for using textX API, add this to <code>hello.py</code> file:</p>
-<pre><code>from textx.export import model_export
-model_export(example_hello_model, 'example.hello.dot')
-</code></pre>
-<p>Now, use <code>dot</code> command to convert to some image format or open <code>dot</code> file
-directly in dot viewer.</p>
-<p>File <code>example.hello.dot</code> will render like this:</p>
 <p><img alt="Example hello model" src="../../images/example.dot.png" /></p>
 <p>This is an object graph automatically constructed from <code>example.hello</code>
 file.</p>
@@ -360,7 +338,7 @@ file.</p>
 </ol>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Check out a <a href="../robot/">complete tutorial</a> for building a simple robot language.</p>
+<p>Try out a <a href="../robot/">complete tutorial</a> for building a simple robot language.</p>
 </div>
               
             </div>
