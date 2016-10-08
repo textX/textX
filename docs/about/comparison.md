@@ -138,7 +138,7 @@ In Xtext:
 In textX:
 
     ASCII:
-    /0x[0-7]([0-9]|[A-F])/;
+        /0x[0-7]([0-9]|[A-F])/;
 
 Literal Regex match can be used anywhere a regular match rule can be used.
 
@@ -298,16 +298,7 @@ Python console.
 
 Example ipython session:
 
-```python
-Python 3.5.2 (default, Jun 28 2016, 08:46:01) 
-Type "copyright", "credits" or "license" for more information.
-
-IPython 5.0.0 -- An enhanced Interactive Python.
-?         -> Introduction and overview of IPython's features.
-%quickref -> Quick reference.
-help      -> Python's own help system.
-object?   -> Details about 'object', use 'object??' for extra details.
-
+```ipython
 In [1]: from textx.metamodel import metamodel_from_str
 
 In [2]: mm = metamodel_from_str("""
@@ -348,16 +339,17 @@ An approach to augment model after loading in Xtext is given
 
 In textX several aspect of [parsing can be
 controlled](../metamodel#parser-configuration):
+
 - Whitespaces
 - Case sensitivity
 - Keyword handling
 
-These settings are altered during meta-model construction.
-Whitespaces can be further controlled on a per-rule basis.
+These settings are altered during meta-model construction.  Whitespaces can be
+further controlled on a per-rule basis.
 
 Xtext enable [hidden terminal
 symbols](http://www.eclipse.org/Xtext/documentation/301_grammarlanguage.html#hidden-terminals)
-which can be used for whitespace handling and case sensitivity can be altered
+which can be used for whitespace handling. Case sensitivity can be altered
 for [parser rules but not for lexer
 rules](http://stackoverflow.com/questions/30889847/match-string-in-xtext-regardless-of-upper-lower-case).
 
@@ -366,18 +358,18 @@ rules](http://stackoverflow.com/questions/30889847/match-string-in-xtext-regardl
 
 textX will dynamically create ordinary Python classes from the grammar rules.
 You can [register your own classes](../metamodel#custom-classes) during
-meta-model construction which will be used instead thus it is easy to provide
+meta-model construction which will be used instead. Thus, it is easy to provide
 your domain model in the form of Python classes.
 
 Xtext is based on ECore model, thus all concepts will be instances of ECore
-classes. Additionally, There is [an
+classes. Additionally, there is [an
 API](http://www.eclipse.org/Xtext/documentation/305_xbase.html) which can be
-used to dynamically build JVM types from the DSL concepts, thus providing tight
+used to dynamically build JVM types from the DSL concepts providing tight
 integration with JVM.
 
 ## Built-in objects
 
-In textX you can provide objects that will be available in every model. It is
+In textX you can provide objects that will be available to every model. It is
 used to provide, e.g. built-in types of the language. For more details see
 [built-in objects section](../metamodel#built-in-objects) in the docs.
 
@@ -387,6 +379,7 @@ An approach to augment model after loading in Xtext is given
 ## Additional languages
 
 Xtext use two additional DSLs:
+
 - Xbase - a general expression language
 - Xtend - a modern Java dialect which can be used in various places in the
   Xtext framework
