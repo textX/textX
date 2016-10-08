@@ -154,8 +154,8 @@ Lets define a C-style single line comments.
       /\/\/.*$/
     ;
 
-Our grammar is done. Save it in `robot.tx` file. The content of this file should
-now be:
+Our grammar is done. Save it in `robot.tx` file. The content of this file
+should now be:
 
     Program:
       'begin'
@@ -222,7 +222,7 @@ Additionally, meta-model contains a parser that knows how to parse input
 strings. From parsed input (parse tree) meta-model will create a model.
 
 Meta-models are created from our grammar description, in this case
-`robot.tx` file:
+`robot.tx` file. Open `robot.py` Python file and write following:
 
 ```python
 from textx.metamodel import metamodel_from_file
@@ -235,7 +235,7 @@ robot_mm = metamodel_from_file('robot.tx')
 ## Instantiating model
 
 Now, when we have our meta-model we can parse models from strings or external
-textual files.
+textual files. Extend your `robot.py` with:
 
 ```python
 robot_model = robot_mm.model_from_file('program.rbt')
@@ -258,7 +258,7 @@ In the same manner as meta-model visualization we can visualize our model too.
 This will create `program.dot` file that can be visualized using proper viewer
 or transformed to image.
 
-    dot -Tpng program.dot -O program.png
+    $ dot -Tpng program.dot -O program.png
 
 For the robot program above we should get an image like this:
 
@@ -278,7 +278,8 @@ We will show here how to build a simple interpreter that will start the robot
 from the initial position and print the position of the robot after each
 command.
 
-Lets imagine that we have a robot that understands our language.
+Lets imagine that we have a robot that understands our language. In your
+`robot.py` file add:
 
     class Robot(object):
 
@@ -350,7 +351,7 @@ instantiates an object of particular class. Use `register_obj_processors`
 method on meta-model to register callables/processors for classes your wish to
 process in some way immediately after instantiation.
 
-Lets define our processor for `MoveCommand`.
+Lets define our processor for `MoveCommand` in `robot.py` file.
 
 ```python
 def move_command_processor(move_cmd):
