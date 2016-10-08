@@ -61,3 +61,7 @@ tags
 textX.mm
 textx.build/
 *.pstats
+venv
+*.pdf
+*.svg
+!docs/**/*svg
