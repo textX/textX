@@ -130,9 +130,14 @@ Here is a non-complete list of projects using textX.
 
 * Open-source
 
-    - [pyTabs](https://github.com/E2Music/pyTabs) - A Domain-Specific Language (DSL) for simplified music notation
-    - [applang](https://github.com/kosanmil/applang) - Textual DSL for generating mobile applications
-    - [pyFlies](https://github.com/igordejanovic/pyFlies) - DSL for cognitive experiments modeling
+    - [pyTabs](https://github.com/E2Music/pyTabs) - A Domain-Specific Language
+      (DSL) for simplified music notation
+    - [applang](https://github.com/kosanmil/applang) - Textual DSL for
+      generating mobile applications
+    - [pyFlies](https://github.com/igordejanovic/pyFlies) - DSL for cognitive
+      experiments modeling
+    - [ppci](http://ppci.readthedocs.io/en/latest/index.html) - Pure python
+      compiler infrastructure. 
 
 * Commercial
 

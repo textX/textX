@@ -22,6 +22,7 @@ pages:
     - Robot: tutorials/robot.md
     - Entity: tutorials/entity.md
     - State Machine: tutorials/state_machine.md
+    - Toy language compiler: tutorials/toylanguage.md
 - About:
     - Comparison: about/comparison.md
     - Discuss: about/discuss.md
