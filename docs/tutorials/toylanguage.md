@@ -1,6 +1,6 @@
 # Toy language compiler
 
-A toy language DSL compiler
+A toy language compiler tutorial
 
 ---
 
