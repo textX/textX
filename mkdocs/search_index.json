@@ -372,12 +372,12 @@
         },
         {
             "location": "/tutorials/toylanguage/",
-            "text": "Toy language compiler\n\u00b6\n\n\nA toy language compiler tutorial\n\n\n\n\nWindel Bouwman wrote an \nexcellent\ntutorial\n for using textX\nand \nppci\n to write a\ncompiler for a simple language.",
+            "text": "Toy language compiler\n\u00b6\n\n\nA toy language compiler tutorial\n\n\n\n\nWindel Bouwman\n wrote an \nexcellent\ntutorial\n for using textX\nand \nppci\n to write a\ncompiler for a simple language.",
             "title": "Toy language compiler"
         },
         {
             "location": "/tutorials/toylanguage/#toy-language-compiler",
-            "text": "A toy language compiler tutorial   Windel Bouwman wrote an  excellent\ntutorial  for using textX\nand  ppci  to write a\ncompiler for a simple language.",
+            "text": "A toy language compiler tutorial   Windel Bouwman  wrote an  excellent\ntutorial  for using textX\nand  ppci  to write a\ncompiler for a simple language.",
             "title": "Toy language compiler"
         },
         {
