@@ -117,6 +117,7 @@ See textX `Tutorials` to get you started:
 - [Robot](tutorials/robot.md)
 - [Entity](tutorials/entity.md)
 - [State Machine](tutorials/state_machine.md) - video tutorial
+- [Toy language compiler](tutorials/toylanguage.md)
 
 For specific information read various `User Guide` sections.
 
