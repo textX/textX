@@ -94,7 +94,9 @@ line, col = entity_mm.parser.pos_to_linecol(
     person_model.entities[0]._tx_position)
 ```
 
-This will give the line/column position of the first entity.
+Where `entity_mm` is a meta-model of the language.
+
+Previous example will give the line/column position of the first entity.
 
 ### _tx_filename
 
@@ -105,9 +107,9 @@ model is created from a string this attribute will be `None`.
 ### _tx_metamodel
 
 This attribute exists only on the root of the model. It is a reference to the
-metamodel object used for creating the model.
+meta-model object used for creating the model.
 
-This attribute can be usefull to access the parser given the reference to the
+This attribute can be useful to access the parser given the reference to the
 model.
 
 ```python
