@@ -153,5 +153,33 @@ dejanovic at gmail. I would like to hear from you!
 
 If you are a vim editor user check out [support for vim](https://github.com/igordejanovic/textx.vim/).
 
+For emacs there is [textx-mode](https://github.com/novakboskov/textx-mode) which
+is also available in [MELPA](https://melpa.org/#/textx-mode).
+
 If you are more of an IDE type check out [textX-ninja project](https://github.com/igordejanovic/textX-ninja).
+
+## Citing textX
+
+Dejanovi\'c, I., Vaderna, R., Milosavljevi\'c, G. & Vukovi\'c, \vZ. (2017).
+TextX: A Python tool for Domain-Specific Languages implementation.
+Knowledge-Based Systems, 115, 1-4.
+
+```bibtex
+@article{Dejanovic2017,
+	author = {Dejanovi\'{c}, I. and Vaderna, R. and Milosavljevi\'{c}, G. and Vukovi\'{c}, \v{Z}.},
+	doi = {10.1016/j.knosys.2016.10.023},
+	issn = {0950-7051},
+	journal = {Knowledge-Based Systems},
+	keywords = {Domain-Specific Language; Meta-model; Model; Model-Driven software development; Parser; Python },
+	note = {},
+	pages = {1--4},
+	title = {{TextX: A Python tool for Domain-Specific Languages implementation}},
+	url = {http://www.sciencedirect.com/science/article/pii/S0950705116304178},
+	volume = {115},
+	year = {2017}
+}
+```
+
+
+
 
