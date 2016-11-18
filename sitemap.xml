@@ -3,8 +3,8 @@
 
     
     <url>
-     <loc>None/</loc>
-     <lastmod>2016-10-16</lastmod>
+     <loc>/</loc>
+     <lastmod>2016-11-18</lastmod>
      <changefreq>daily</changefreq>
     </url>
     
@@ -12,78 +12,44 @@
     
         
     <url>
-     <loc>None/grammar/</loc>
-     <lastmod>2016-10-16</lastmod>
+     <loc>/grammar/</loc>
+     <lastmod>2016-11-18</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
-     <loc>None/metamodel/</loc>
-     <lastmod>2016-10-16</lastmod>
+     <loc>/metamodel/</loc>
+     <lastmod>2016-11-18</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
-     <loc>None/model/</loc>
-     <lastmod>2016-10-16</lastmod>
+     <loc>/model/</loc>
+     <lastmod>2016-11-18</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
-     <loc>None/visualization/</loc>
-     <lastmod>2016-10-16</lastmod>
+     <loc>/visualization/</loc>
+     <lastmod>2016-11-18</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
-     <loc>None/error_handling/</loc>
-     <lastmod>2016-10-16</lastmod>
+     <loc>/error_handling/</loc>
+     <lastmod>2016-11-18</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
-     <loc>None/debugging/</loc>
-     <lastmod>2016-10-16</lastmod>
+     <loc>/debugging/</loc>
+     <lastmod>2016-11-18</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
-     <loc>None/textx_command/</loc>
-     <lastmod>2016-10-16</lastmod>
-     <changefreq>daily</changefreq>
-    </url>
-        
-    
-
-    
-        
-    <url>
-     <loc>None/tutorials/hello_world/</loc>
-     <lastmod>2016-10-16</lastmod>
-     <changefreq>daily</changefreq>
-    </url>
-        
-    <url>
-     <loc>None/tutorials/robot/</loc>
-     <lastmod>2016-10-16</lastmod>
-     <changefreq>daily</changefreq>
-    </url>
-        
-    <url>
-     <loc>None/tutorials/entity/</loc>
-     <lastmod>2016-10-16</lastmod>
-     <changefreq>daily</changefreq>
-    </url>
-        
-    <url>
-     <loc>None/tutorials/state_machine/</loc>
-     <lastmod>2016-10-16</lastmod>
-     <changefreq>daily</changefreq>
-    </url>
-        
-    <url>
-     <loc>None/tutorials/toylanguage/</loc>
-     <lastmod>2016-10-16</lastmod>
+     <loc>/textx_command/</loc>
+     <lastmod>2016-11-18</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
@@ -92,26 +58,60 @@
     
         
     <url>
-     <loc>None/about/comparison/</loc>
-     <lastmod>2016-10-16</lastmod>
+     <loc>/tutorials/hello_world/</loc>
+     <lastmod>2016-11-18</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
-     <loc>None/about/discuss/</loc>
-     <lastmod>2016-10-16</lastmod>
+     <loc>/tutorials/robot/</loc>
+     <lastmod>2016-11-18</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
-     <loc>None/about/contributing/</loc>
-     <lastmod>2016-10-16</lastmod>
+     <loc>/tutorials/entity/</loc>
+     <lastmod>2016-11-18</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
-     <loc>None/about/license/</loc>
-     <lastmod>2016-10-16</lastmod>
+     <loc>/tutorials/state_machine/</loc>
+     <lastmod>2016-11-18</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>/tutorials/toylanguage/</loc>
+     <lastmod>2016-11-18</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    
+
+    
+        
+    <url>
+     <loc>/about/comparison/</loc>
+     <lastmod>2016-11-18</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>/about/discuss/</loc>
+     <lastmod>2016-11-18</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>/about/contributing/</loc>
+     <lastmod>2016-11-18</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>/about/license/</loc>
+     <lastmod>2016-11-18</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
