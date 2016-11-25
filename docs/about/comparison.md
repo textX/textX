@@ -404,14 +404,14 @@ Xtext is integrated in Eclipse and InteliJ IDEs and generates full
 language-specific tool-chain from the grammar description and additional
 specifications.
 
-textX does not provide IDE integrations. There is
-[textx-tools](https://github.com/igordejanovic/textx-tools) project which
+textX does not provide IDE integrations. There
+is [textx-tools](https://github.com/igordejanovic/textx-tools) project which
 provide pluggable platform for developing textX languages and generators with
 project scaffolding. Integration for popular code editors is planned. There is
-some basic [support for vim](https://github.com/igordejanovic/textx.vim) at the
-moment. There is a support for visualization of grammars (meta-models) and
-models but the model visualization is generic, i.e. it will show you the object
-graph of your model objects. We plan to develop language-specific model
-visualization support.
+some basic [support for vim](https://github.com/igordejanovic/textx.vim)
+and [emacs](https://github.com/novakboskov/textx-mode) at the moment. There is a
+support for visualization of grammars (meta-models) and models but the model
+visualization is generic, i.e. it will show you the object graph of your model
+objects. We plan to develop language-specific model visualization support.
 
 
