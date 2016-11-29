@@ -63,7 +63,7 @@ Convert this `dot` file to `png` with:
 
 The following image is generated:
 
-![Person model](https://raw.githubusercontent.com/igordejanovic/textX/master/examples/Entity/dotexport/entity.dot.png)
+![Person model](https://raw.githubusercontent.com/igordejanovic/textX/master/examples/Entity/dotexport/person.dot.png)
 
 
 
