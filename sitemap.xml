@@ -4,7 +4,7 @@
     
     <url>
      <loc>/</loc>
-     <lastmod>2016-11-18</lastmod>
+     <lastmod>2016-11-29</lastmod>
      <changefreq>daily</changefreq>
     </url>
     
@@ -13,43 +13,43 @@
         
     <url>
      <loc>/grammar/</loc>
-     <lastmod>2016-11-18</lastmod>
+     <lastmod>2016-11-29</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/metamodel/</loc>
-     <lastmod>2016-11-18</lastmod>
+     <lastmod>2016-11-29</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/model/</loc>
-     <lastmod>2016-11-18</lastmod>
+     <lastmod>2016-11-29</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/visualization/</loc>
-     <lastmod>2016-11-18</lastmod>
+     <lastmod>2016-11-29</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/error_handling/</loc>
-     <lastmod>2016-11-18</lastmod>
+     <lastmod>2016-11-29</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/debugging/</loc>
-     <lastmod>2016-11-18</lastmod>
+     <lastmod>2016-11-29</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/textx_command/</loc>
-     <lastmod>2016-11-18</lastmod>
+     <lastmod>2016-11-29</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
@@ -59,31 +59,31 @@
         
     <url>
      <loc>/tutorials/hello_world/</loc>
-     <lastmod>2016-11-18</lastmod>
+     <lastmod>2016-11-29</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/tutorials/robot/</loc>
-     <lastmod>2016-11-18</lastmod>
+     <lastmod>2016-11-29</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/tutorials/entity/</loc>
-     <lastmod>2016-11-18</lastmod>
+     <lastmod>2016-11-29</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/tutorials/state_machine/</loc>
-     <lastmod>2016-11-18</lastmod>
+     <lastmod>2016-11-29</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/tutorials/toylanguage/</loc>
-     <lastmod>2016-11-18</lastmod>
+     <lastmod>2016-11-29</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
@@ -93,25 +93,25 @@
         
     <url>
      <loc>/about/comparison/</loc>
-     <lastmod>2016-11-18</lastmod>
+     <lastmod>2016-11-29</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/about/discuss/</loc>
-     <lastmod>2016-11-18</lastmod>
+     <lastmod>2016-11-29</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/about/contributing/</loc>
-     <lastmod>2016-11-18</lastmod>
+     <lastmod>2016-11-29</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/about/license/</loc>
-     <lastmod>2016-11-18</lastmod>
+     <lastmod>2016-11-29</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
