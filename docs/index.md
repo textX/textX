@@ -160,7 +160,7 @@ If you are more of an IDE type check out [textX-ninja project](https://github.co
 
 ## Citing textX
 
-Dejanovi\'c, I., Vaderna, R., Milosavljevi\'c, G. & Vukovi\'c, \vZ. (2017).
+Dejanović I., Vaderna R., Milosavljević G., Vuković Ž. (2017).
 TextX: A Python tool for Domain-Specific Languages implementation.
 Knowledge-Based Systems, 115, 1-4.
 
