@@ -211,8 +211,8 @@ Now an `integer` and `string` `Attribute` types can be used.  See
 ## Match filters
 
 !!! note
-    Currently available in development version. It will be available in 1.5 stable
-    version.
+    Currently available in the development version. It will be available in
+    the 1.5 stable version.
 
 [Match rules](grammar.md#rule-types) by default return Python `string` type.
 Built-in match rules (i.e. `BASETYPEs`) on the other hand return Python base
@@ -220,7 +220,7 @@ types.
 
 Match filters are a dict of callables that is registered on metamodel and that
 will get called with the string matched by the match rule. Whatever is returned
-by the filter will be used of a matched string.
+by the filter will be used in place of the matched string.
 
 Example:
 
