@@ -106,18 +106,6 @@ def children_of_type(typ, root):
     return collected
 
 
-def convert(value, _type):
-    """
-    Convert instances of textx types to python types.
-    """
-    return {
-            'BOOL'  : lambda x: x == '1' or x.lower() == 'true',
-            'INT'   : lambda x: int(x),
-            'FLOAT' : lambda x: float(x),
-            'STRING': lambda x: x[1:-1].replace(r'\"', r'"').replace(r"\'", "'"),
-            }.get(_type, lambda x: x)(value)
-
-
 class ObjCrossRef(object):
     """
     Used for object cross reference resolving.
@@ -232,18 +220,20 @@ def parse_tree_to_objgraph(parser, parse_tree):
         Process subtree for match rules.
         """
         if isinstance(nt, Terminal):
-            return convert(nt.value, nt.rule_name)
+            return metamodel.convert(nt.value, nt.rule_name)
         else:
             # If RHS of assignment is NonTerminal it is a product of
             # complex match rule. Convert nodes to text and do the join.
             if len(nt) > 1:
-                return "".join([text(process_match(n)) for n in nt])
+                return metamodel.convert(
+                    "".join([text(process_match(n)) for n in nt]),
+                    nt.rule_name)
             else:
                 return process_match(nt[0])
 
     def process_node(node):
         if isinstance(node, Terminal):
-            return convert(node.value, node.rule_name)
+            return metamodel.convert(node.value, node.rule_name)
 
         assert node.rule.root,\
             "Not a root node: {}".format(node.rule.rule_name)
@@ -262,7 +252,7 @@ def parse_tree_to_objgraph(parser, parse_tree):
                 return process_node(node[0])
             elif mclass._tx_type == RULE_MATCH:
                 # If this is a product of match rule handle it as a RHS
-                # of assignment and return plain python type.
+                # of assignment and return converted python type.
                 return process_match(node)
 
             if parser.debug:

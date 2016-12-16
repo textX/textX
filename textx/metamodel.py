@@ -18,6 +18,14 @@ from .const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, RULE_MATCH
 __all__ = ['metamodel_from_str', 'metamodel_from_file']
 
 
+BASE_FILTERS = {
+    'BOOL': lambda x: x == '1' or x.lower() == 'true',
+    'INT': lambda x: int(x),
+    'FLOAT': lambda x: float(x),
+    'STRING': lambda x: x[1:-1].replace(r'\"', r'"').replace(r"\'", "'")
+}
+
+
 class MetaAttr(object):
     """
     A metaclass for attribute description.
@@ -58,6 +66,33 @@ class TextXMetaModel(DebugPrinter):
     directly. It's instantiated by the metamodel_from_(file/str) functions.
 
     Attributes:
+        file_name(str): A file name if meta-model is going to be
+            constructed from file or None otherwise.
+        auto_init_attributes(bool): If set then model attributes will be
+            automatically initialized to non-None values (e.g. for INT
+            attribute value will be 0, for BOOL it will be False). If this
+            parameter is False than all attributes will have a value
+            of None if not defined in the model. The only exception is
+            bool assignment ('?=') which always have a default of False.
+            Default is True.
+        ignore_case(bool): If case is ignored (default=False)
+        skipws (bool): Should the whitespace skipping be done.
+            Default is True.
+        ws (str): A string consisting of whitespace characters.
+        autokwd(bool): If keyword-like matches should be matched on word
+            boundaries. Default is False.
+        memoization(bool): If memoization should be used (a.k.a. packrat
+            parsing). Default is False.
+        debug(bool): Should debug messages be printed.
+        builtins(dict): A dict of named object used in linking phase.
+            References to named objects not defined in the model will be
+            searched here.
+        classes(list of classes): A list of user supplied classes to use
+            instead of the dynamically created.
+        match_filters(dict of callables): Callables keyed by match rule names
+            used to transform strings matched by match rules.
+        obj_processors(dict): A dict of user supplied object processors keyed
+            by rule/class name (may be a fully qualified name).
         rootcls(TextXClass): A language class that is a root of the metamodel.
         root_path(str): The root dir used for the import statement.
         namespaces(dict): A mapping from fully qualified module names to dicts
@@ -70,44 +105,12 @@ class TextXMetaModel(DebugPrinter):
         _imported_namespaces(dict): A mapping from namespace name to the list of
             references to imported namespaces. Used in searches for
             unqualified rules.
-        builtins(dict): A dict of named object used in linking phase.
-            References to named objects not defined in the model will be
-            searched here.
-        user_classes(list): A list of user supplied classes to use instead of
-            the dynamically created.
-        obj_processors(dict): A dict of user supplied object processors keyed
-            by rule/class name (may be a fully qualified name).
     """
 
     def __init__(self, file_name=None, classes=None, builtins=None,
-                 auto_init_attributes=True, ignore_case=False,
-                 skipws=True, ws=None, autokwd=False, memoization=False,
-                 **kwargs):
-        """
-        Args:
-            file_name(str): A file name if meta-model is going to be
-                constructed from file or None otherwise.
-            classes(list of python classes): Custom meta-classes used
-                instead of generic ones.
-            builtins(dict of named objects): Named objects used in linking
-                phase. This objects are part of each model.
-            auto_init_attributes(bool): If set than model attributes will be
-                automatically initialized to non-None values (e.g. for INT
-                attribute value will be 0, for BOOL it will be False). If this
-                parameter is False than all attributes will have a value
-                of None if not defined in the model. The only exception is
-                bool assignment ('?=') which always have a default of False.
-                Default is True.
-            ignore_case(bool): If case is ignored (default=False)
-            skipws (bool): Should the whitespace skipping be done.
-                Default is True.
-            ws (str): A string consisting of whitespace characters.
-            autokwd(bool): If keyword-like matches should be matched on word
-                boundaries. Default is False.
-            memoization(bool): If memoization should be used (a.k.a. packrat
-                parsing). Default is False.
-            debug(bool): Should debug messages be printed.
-        """
+                 match_filters=None, auto_init_attributes=True,
+                 ignore_case=False, skipws=True, ws=None, autokwd=False,
+                 memoization=False, **kwargs):
         super(TextXMetaModel, self).__init__(**kwargs)
 
         self.file_name = file_name
@@ -120,6 +123,8 @@ class TextXMetaModel(DebugPrinter):
         if classes:
             for c in classes:
                 self.user_classes[c.__name__] = c
+
+        self.match_filters = match_filters if match_filters else {}
 
         self.auto_init_attributes = auto_init_attributes
         self.ignore_case = ignore_case
@@ -369,6 +374,16 @@ class TextXMetaModel(DebugPrinter):
         textX rules.
         """
         # TODO: Implement complex textX validations.
+
+    def convert(self, value, _type):
+        """
+        Convert instances of textx types and rules to python base types and
+        user types using registered match filters.
+        """
+        return self.match_filters.get(
+            _type,
+            BASE_FILTERS.get(_type, lambda x: x)
+        )(value)
 
     def __getitem__(self, name):
         """
