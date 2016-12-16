@@ -835,8 +835,8 @@ def language_from_str(language_def, metamodel):
     if metamodel.debug in textX_parsers:
         parser = textX_parsers[metamodel.debug]
     else:
-        # Create parser for TextX descriptions from
-        # the textX grammar specified in this module
+        # Create parser for TextX grammars using
+        # the arpeggio grammar specified in this module
         parser = ParserPython(textx_model, comment_def=comment,
                               ignore_case=False,
                               reduce_tree=False,
@@ -853,11 +853,12 @@ def language_from_str(language_def, metamodel):
         line, col = parser.pos_to_linecol(e.position)
         raise TextXSyntaxError(text(e), line, col)
 
-    # Construct new parser based on the given language description.
+    # Construct new parser and meta-model based on the given language
+    # description.
     lang_parser = visit_parse_tree(parse_tree,
                                    TextXVisitor(parser, metamodel))
 
-    # Meta-model is constructed. Validate semantics of metamodel.
+    # Meta-model is constructed. Validate its semantics.
     metamodel.validate()
 
     # Here we connect meta-model and language parser for convenience.
