@@ -208,6 +208,59 @@ Now an `integer` and `string` `Attribute` types can be used.  See
 [model](model.md) and [Entitiy](https://github.com/igordejanovic/textX/tree/master/examples/Entity) example for more.
 
 
+## Match filters
+
+!!! note
+    Currently available in development version. It will be available in 1.5 stable
+    version.
+
+[Match rules](grammar.md#rule-types) by default return Python `string` type.
+Built-in match rules (i.e. `BASETYPEs`) on the other hand return Python base
+types.
+
+Match filters are a dict of callables that is registered on metamodel and that
+will get called with the string matched by the match rule. Whatever is returned
+by the filter will be used of a matched string.
+
+Example:
+
+```
+Model:
+  'begin' some_number=MyFloat 'end'
+;
+MyFloat:
+  /\d+\.(\d+)?/
+;
+```
+
+In this example `MyFloat` rule is a match rule and by default will return Python
+`string`, so attribute `some_number` will be of `string` type. To change that,
+register match filter for `MyFloat` rule:
+
+```
+mm = metamodel_from_str(grammar, match_filters={'MyFloat': lambda x: float(x)})
+```
+
+Now, `MyFloat` will always be converted to Python `float` type.
+
+Using match filters you can override built-in rule's conversions like this:
+
+```
+Model:
+  some_float=INT
+;
+```
+
+```
+mm = metamodel_from_str(grammar, match_filters={'INT': lambda x: float(x)})
+```
+
+In this example we use built-in rule `INT` that returns Python `int` type.
+Registering filter with the key `INT` we can change default behaviour and
+convert what is matched by this rule to some other object (`float` in this
+case).
+
+
 ## Auto-initialization of the attributes
 
 Each object that is recognized in the input string will be instantiated and
