@@ -93,7 +93,7 @@ searched for.
 Finds first object up the parent chain of the given type. If no parent of the
 given type exists `None` is returned.
 
-## `children_of_type(typ, root)`
+### `children_of_type(typ, root)`
 
 - `typ (str or python class)`: The type of the model object we are looking for.
 - `root (model object)`: Python model object which is the start of the search
