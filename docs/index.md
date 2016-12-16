@@ -59,8 +59,7 @@ tutorial](tutorials/state_machine.md).
 * **Parser control**
 
     Parser can be configured with regard to case handling, whitespace handling,
-    keyword handling etc. See [parser
-    configuration](metamodel.md#parser-configuration).
+    keyword handling etc. See [parser configuration](parser_config.md).
 
 
 * **Model/object post-processing**

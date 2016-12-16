@@ -680,9 +680,9 @@ There are two rule modifiers at the moment:
 
 * **ws** - used to redefine what is considered to be a whitespaces on the rule
   level. textX by default treats space, tab and new-line as a whitespace
-  characters. This can be changed globally during the meta-model instantiation (see
-  [Whitespace handling](metamodel.md#whitespace-handling)) or per rule using 
-  this modifier.
+  characters. This can be changed globally during the meta-model instantiation
+  (see [Whitespace handling](parser_config.md#whitespace-handling)) or per rule
+  using this modifier.
 
     Example:
 

@@ -13,6 +13,7 @@ pages:
     - Grammar: grammar.md
     - Meta-model: metamodel.md
     - Model: model.md
+    - Parser configuration: parser_config.md
     - Visualization: visualization.md
     - Error handling: error_handling.md
     - Debugging: debugging.md

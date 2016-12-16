@@ -337,8 +337,7 @@ An approach to augment model after loading in Xtext is given
 
 ## Parser control
 
-In textX several aspect of [parsing can be
-controlled](../metamodel#parser-configuration):
+In textX several aspect of [parsing can be controlled](../parser_config.md):
 
 - Whitespaces
 - Case sensitivity
