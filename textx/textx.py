@@ -846,9 +846,6 @@ def language_from_str(language_def, metamodel):
         # Cache it for subsequent calls
         textX_parsers[metamodel.debug] = parser
 
-    # Builtin rules representing primitive types
-    parser.root_rule_name = None
-
     # Parse language description with textX parser
     try:
         parse_tree = parser.parse(language_def)
