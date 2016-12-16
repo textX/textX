@@ -30,6 +30,12 @@
     </url>
         
     <url>
+     <loc>/parser_config/</loc>
+     <lastmod>2016-12-16</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
      <loc>/visualization/</loc>
      <lastmod>2016-12-16</lastmod>
      <changefreq>daily</changefreq>

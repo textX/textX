@@ -8,7 +8,7 @@
   
   <meta name="author" content="Igor Dejanović">
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Debugging - textX</title>
+  <title>Parser configuration - textX</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../css/theme.css" type="text/css" />
@@ -18,9 +18,9 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Debugging";
-    var mkdocs_page_input_path = "debugging.md";
-    var mkdocs_page_url = "/debugging/";
+    var mkdocs_page_name = "Parser configuration";
+    var mkdocs_page_input_path = "parser_config.md";
+    var mkdocs_page_url = "/parser_config/";
   </script>
   
   <script src="../js/jquery-2.1.1.min.js"></script>
@@ -91,8 +91,23 @@
 
         
             
-    <li class="toctree-l1 ">
-        <a class="" href="../parser_config/">Parser configuration</a>
+    <li class="toctree-l1 current">
+        <a class="current" href="./">Parser configuration</a>
+        
+            <ul>
+            
+                <li class="toctree-l3"><a href="#parser-configuration">Parser configuration</a></li>
+                
+                    <li><a class="toctree-l4" href="#case-sensitivity">Case sensitivity</a></li>
+                
+                    <li><a class="toctree-l4" href="#whitespace-handling">Whitespace handling</a></li>
+                
+                    <li><a class="toctree-l4" href="#automatic-keywords">Automatic keywords</a></li>
+                
+                    <li><a class="toctree-l4" href="#memoization-aka-packrat-parsing">Memoization (a.k.a. packrat parsing)</a></li>
+                
+            
+            </ul>
         
     </li>
 
@@ -112,15 +127,8 @@
 
         
             
-    <li class="toctree-l1 current">
-        <a class="current" href="./">Debugging</a>
-        
-            <ul>
-            
-                <li class="toctree-l3"><a href="#debugging">Debugging</a></li>
-                
-            
-            </ul>
+    <li class="toctree-l1 ">
+        <a class="" href="../debugging/">Debugging</a>
         
     </li>
 
@@ -240,10 +248,10 @@
         
       
     
-    <li>Debugging</li>
+    <li>Parser configuration</li>
     <li class="wy-breadcrumbs-aside">
       
-        <a href="https://github.com/igordejanovic/textX/edit/master/docs/debugging.md"
+        <a href="https://github.com/igordejanovic/textX/edit/master/docs/parser_config.md"
           class="icon icon-github"> Edit on GitHub</a>
       
     </li>
@@ -253,60 +261,57 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="debugging">Debugging<a class="headerlink" href="#debugging" title="Permanent link">&para;</a></h1>
-<p>textX supports debugging on the meta-model (grammar) and model levels. If
-debugging is enabled, textX will print various debugging messages.</p>
-<p>If the <code>debug</code> parameter of the meta-model construction is set to <code>True</code>, debug messages
-during grammar parsing and meta-model construction will be printed. Additionally,
-a parse tree created during the grammar parsing as well as meta-model (if constructed
-successfully) dot files will be generated:</p>
-<pre><code class="python">form textx.metamodel import metamodel_from_file
+                <h1 id="parser-configuration">Parser configuration<a class="headerlink" href="#parser-configuration" title="Permanent link">&para;</a></h1>
+<h2 id="case-sensitivity">Case sensitivity<a class="headerlink" href="#case-sensitivity" title="Permanent link">&para;</a></h2>
+<p>Parser is by default case sensitive. For DSLs that should be case insensitive
+use <code>ignore_case</code> parameter of the meta-model constructor call.</p>
+<pre><code class="python">from textx.metamodel import metamodel_from_file
 
-robot_metamodel = metamodel_from_file('robot.tx', debug=True)
+my_metamodel = metamodel_from_file('mygrammar.tx', ignore_case=True)
 </code></pre>
 
-<p>If <code>debug</code> is set in the <code>model_from_file/str</code> calls, various
-messages during the model parsing and construction will be printed. Additionally,
-parse tree created from the input as well as the model will be exported to dot
-files.</p>
-<pre><code class="python">  robot_program = robot_metamodel.model_from_file('program.rbt', debug=True)
+<h2 id="whitespace-handling">Whitespace handling<a class="headerlink" href="#whitespace-handling" title="Permanent link">&para;</a></h2>
+<p>The parser will skip whitespaces by default. Whitespaces are spaces, tabs and
+newlines by default. Skipping of the whitespaces can be disabled by <code>skipws</code> bool
+parameter in the constructor call. Also, what is a whitespace can be redefined by
+the <code>ws</code> string parameter.</p>
+<pre><code class="python">from textx.metamodel import metamodel_from_file
+my_metamodel = metamodel_from_file('mygrammar.tx', skipws=False, ws='\s\n')
 </code></pre>
 
-<p>Alternatively, you can use <a href="../textx_command/">textx check or visualize command</a>
-in debug mode.</p>
-<pre><code>$ textx -d visualize robot.tx program.rbt
-
-*** PARSING LANGUAGE DEFINITION ***
-New rule: grammar_to_import -&gt; RegExMatch
-New rule: import_stm -&gt; Sequence
-New rule: rule_name -&gt; RegExMatch
-New rule: param_name -&gt; RegExMatch
-New rule: string_value -&gt; OrderedChoice
-New rule: rule_param -&gt; Sequence
-Rule rule_param founded in cache.
-New rule: rule_params -&gt; Sequence
-...
-
-&gt;&gt; Matching rule textx_model=Sequence at position 0 =&gt; */* This ex
-  &gt;&gt; Matching rule ZeroOrMore in textx_model at position 0 =&gt; */* This ex
-      &gt;&gt; Matching rule import_stm=Sequence in textx_model at position 0 =&gt; */* This ex
-        ?? Try match rule StrMatch(import) in import_stm at position 0 =&gt; */* This ex
-        &gt;&gt; Matching rule comment=OrderedChoice in import_stm at position 0 =&gt; */* This ex
-            ?? Try match rule comment_line=RegExMatch(//.*?$) in comment at position 0 =&gt; */* This ex
-            -- NoMatch at 0
-            ?? Try match rule comment_block=RegExMatch(/\*(.|\n)*?\*/) in comment at position 0 =&gt; */* This ex
-
-...
-
-
-Generating 'robot.tx.dot' file for meta-model.
-To convert to png run 'dot -Tpng -O robot.tx.dot'
-Generating 'program.rbt.dot' file for model.
-To convert to png run 'dot -Tpng -O program.rbt.dot'
+<p>Whitespaces and whitespace skipping can be defined in the grammar on the level
+of a single rule by <a href="../grammar/#rule-modifiers">rule modifiers</a>.</p>
+<h2 id="automatic-keywords">Automatic keywords<a class="headerlink" href="#automatic-keywords" title="Permanent link">&para;</a></h2>
+<p>When designing a DSL, it is usually desirable to match keywords on word
+boundaries.  For example, if we have Entity grammar from the above, then a word
+<code>entity</code> will be considered a keyword and should be matched on word boundaries
+only. If we have a word <code>entity2</code> in the input string at the place where
+<code>entity</code> should be matched, the match should not succeed.</p>
+<p>We could achieve this by using a regular expression match and the word boundaries
+regular expression rule for each keyword-like match.</p>
+<pre><code>Enitity:
+  /\bentity\b/ name=ID ...
 </code></pre>
-<p>This command renders parse trees and parser models of both textX and your
-language to dot files. Also, a meta-model and model of the language will be
-rendered if parsed correctly.</p>
+<p>But the grammar will be cumbersome to read.</p>
+<p>textX can do automatic word boundary match for all keyword-like string matches.
+To enable this feature set parameter <code>autokwd</code> to <code>True</code> in the constructor
+call.</p>
+<pre><code class="python">from textx.metamodel import metamodel_from_file
+my_metamodel = metamodel_from_file('mygrammar.tx', autokwd=True)
+</code></pre>
+
+<p>Any simple match from the grammar that is matched by the
+regular expression <code>[^\d\W]\w*</code> is considered to be a keyword.</p>
+<h2 id="memoization-aka-packrat-parsing">Memoization (a.k.a. packrat parsing)<a class="headerlink" href="#memoization-aka-packrat-parsing" title="Permanent link">&para;</a></h2>
+<p>This technique is based on memoizing result on each parsing expression rule.
+For some grammars with a lot of backtracking this can yield a significant
+speed increase at the expense of some memory used for the memoization cache.</p>
+<p>Starting with textX 1.4 this feature is disabled by default. If you think that
+parsing is slow, try to enable memoization by setting <code>memoization</code> parameter
+to <code>True</code> during meta-model instantiation.</p>
+<pre><code class="python">from textx.metamodel import metamodel_from_file
+my_metamodel = metamodel_from_file('mygrammar.tx', memoization=True)
+</code></pre>
               
             </div>
           </div>
@@ -314,10 +319,10 @@ rendered if parsed correctly.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../textx_command/" class="btn btn-neutral float-right" title="textx command">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../visualization/" class="btn btn-neutral float-right" title="Visualization">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../error_handling/" class="btn btn-neutral" title="Error handling"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../model/" class="btn btn-neutral" title="Model"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -347,10 +352,10 @@ rendered if parsed correctly.</p>
           <a href="https://github.com/igordejanovic/textX" class="icon icon-github" style="float: left; color: #fcfcfc"> GitHub</a>
       
       
-        <span><a href="../error_handling/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../model/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../textx_command/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../visualization/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>

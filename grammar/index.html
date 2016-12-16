@@ -117,6 +117,13 @@
         
             
     <li class="toctree-l1 ">
+        <a class="" href="../parser_config/">Parser configuration</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
         <a class="" href="../visualization/">Visualization</a>
         
     </li>
@@ -869,9 +876,9 @@ before the <code>Rule2</code> call to consume all whitespaces before trying to m
 <li>
 <p><strong>ws</strong> - used to redefine what is considered to be a whitespaces on the rule
   level. textX by default treats space, tab and new-line as a whitespace
-  characters. This can be changed globally during the meta-model instantiation (see
-  <a href="../metamodel/#whitespace-handling">Whitespace handling</a>) or per rule using 
-  this modifier.</p>
+  characters. This can be changed globally during the meta-model instantiation
+  (see <a href="../parser_config/#whitespace-handling">Whitespace handling</a>) or per rule
+  using this modifier.</p>
 <p>Example:</p>
 <pre><code>Rule:
     'entity' name=ID /\s*/ call=Rule2;
