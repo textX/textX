@@ -91,6 +91,10 @@
             
                 <li class="toctree-l3"><a href="#textx-models">textX models</a></li>
                 
+                    <li><a class="toctree-l4" href="#model-api">Model API</a></li>
+                
+                    <li><a class="toctree-l4" href="#children_of_typetyp-root">children_of_type(typ, root)</a></li>
+                
                     <li><a class="toctree-l4" href="#special-model-objects-attributes">Special model object's attributes</a></li>
                 
             
@@ -306,6 +310,30 @@ entity Address {
   country : string
 }
 </code></pre>
+<h2 id="model-api">Model API<a class="headerlink" href="#model-api" title="Permanent link">&para;</a></h2>
+<p>Functions given in this section can be imported from <code>textx.model</code> module.</p>
+<h3 id="model_rootobj"><code>model_root(obj)</code><a class="headerlink" href="#model_rootobj" title="Permanent link">&para;</a></h3>
+<p><code>obj (model object)</code></p>
+<p>Finds the root of the model following <code>parent</code> references.</p>
+<h3 id="metamodelobj"><code>metamodel(obj)</code><a class="headerlink" href="#metamodelobj" title="Permanent link">&para;</a></h3>
+<p>Returns metamodel for the model given <code>obj</code> belongs to.</p>
+<h3 id="parent_of_typetyp-obj"><code>parent_of_type(typ, obj)</code><a class="headerlink" href="#parent_of_typetyp-obj" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>typ (str or class)</code>: the name of type of the type itself of the model object
+searched for.</li>
+<li><code>obj (model object)</code>: model object to start search from.</li>
+</ul>
+<p>Finds first object up the parent chain of the given type. If no parent of the
+given type exists <code>None</code> is returned.</p>
+<h2 id="children_of_typetyp-root"><code>children_of_type(typ, root)</code><a class="headerlink" href="#children_of_typetyp-root" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>typ (str or python class)</code>: The type of the model object we are looking for.</li>
+<li><code>root (model object)</code>: Python model object which is the start of the search
+    process.</li>
+</ul>
+<p>Returns a list of all model elements of type <code>typ</code> starting from model element
+<code>root</code>. The search process will follow containment links only. Non-containing
+references shall not be followed.</p>
 <h2 id="special-model-objects-attributes">Special model object's attributes<a class="headerlink" href="#special-model-objects-attributes" title="Permanent link">&para;</a></h2>
 <p>Beside attributes specified by the grammar, there are several special
 attributes on model objects created by textX. All special attributes' names
