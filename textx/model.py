@@ -39,41 +39,37 @@ def metamodel(obj):
     return model_root(obj)._tx_metamodel
 
 
-def parent_of_type(obj, typ):
+def parent_of_type(typ, obj):
     """
-    Finds first object up the parent chain, including the object itself,
-    of the given type.
+    Finds first object up the parent chain of the given type.
     If no parent of the given type exists None is returned.
 
     Args:
-        obj (model object): Python model object which is the start of the
-            search process.
         typ(str or python class): The type of the model object we are
             looking for.
+        obj (model object): Python model object which is the start of the
+            search process.
     """
     if type(typ) is not text:
         typ = typ.__name__
 
-    p = obj
-    while p.__class__.__name__ != typ:
-        if hasattr(p, 'parent'):
-            p = p.parent
-        else:
-            return None
-    return p
+    while hasattr(obj, 'parent'):
+        obj = obj.parent
+        if obj.__class__.__name__ == typ:
+            return obj
 
 
-def children_of_type(root, typ):
+def children_of_type(typ, root):
     """
     Returns a list of all model elements of type 'typ' starting from model
     element 'root'. The search process will follow containment links only.
     Non-containing references shall not be followed.
 
     Args:
-        root (model object): Python model object which is the start of the
-            search process.
         typ(str or python class): The type of the model object we are
             looking for.
+        root (model object): Python model object which is the start of the
+            search process.
     """
 
     collected = []

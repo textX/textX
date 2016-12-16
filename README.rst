@@ -66,7 +66,7 @@ Quick intro
     # Line: from=18,89 to=78,65
 
     # Collect all points starting from the root of the model
-    points = children_of_type(model, "Point")
+    points = children_of_type("Point", model)
     for point in points:
         print('Point: {}'.format(_(point)))
 

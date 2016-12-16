@@ -69,6 +69,39 @@ Where `person.ent` file might contain this:
       country : string
     }
 
+## Model API
+
+Functions given in this section can be imported from `textx.model` module.
+
+### `model_root(obj)`
+
+`obj (model object)`
+
+Finds the root of the model following `parent` references.
+
+
+### `metamodel(obj)`
+
+Returns metamodel for the model given `obj` belongs to.
+
+### `parent_of_type(typ, obj)`
+
+- `typ (str or class)`: the name of type of the type itself of the model object
+searched for.
+- `obj (model object)`: model object to start search from.
+
+Finds first object up the parent chain of the given type. If no parent of the
+given type exists `None` is returned.
+
+## `children_of_type(typ, root)`
+
+- `typ (str or python class)`: The type of the model object we are looking for.
+- `root (model object)`: Python model object which is the start of the search
+    process.
+
+Returns a list of all model elements of type `typ` starting from model element
+`root`. The search process will follow containment links only. Non-containing
+references shall not be followed.
 
 ## Special model object's attributes
 
