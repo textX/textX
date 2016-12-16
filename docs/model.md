@@ -71,6 +71,9 @@ Where `person.ent` file might contain this:
 
 ## Model API
 
+!!! note
+    This is available in the development version.
+
 Functions given in this section can be imported from `textx.model` module.
 
 ### `model_root(obj)`
