@@ -92,6 +92,8 @@
                 
                     <li><a class="toctree-l4" href="#built-in-objects">Built-in objects</a></li>
                 
+                    <li><a class="toctree-l4" href="#match-filters">Match filters</a></li>
+                
                     <li><a class="toctree-l4" href="#auto-initialization-of-the-attributes">Auto-initialization of the attributes</a></li>
                 
                     <li><a class="toctree-l4" href="#parser-configuration">Parser configuration</a></li>
@@ -439,6 +441,47 @@ entity_mm = metamodel_from_file(
 </code></pre>
 <p>Now an <code>integer</code> and <code>string</code> <code>Attribute</code> types can be used.  See
 <a href="../model/">model</a> and <a href="https://github.com/igordejanovic/textX/tree/master/examples/Entity">Entitiy</a> example for more.</p>
+<h2 id="match-filters">Match filters<a class="headerlink" href="#match-filters" title="Permanent link">&para;</a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Currently available in development version. It will be available in 1.5 stable
+version.</p>
+</div>
+<p><a href="../grammar/#rule-types">Match rules</a> by default return Python <code>string</code> type.
+Built-in match rules (i.e. <code>BASETYPEs</code>) on the other hand return Python base
+types.</p>
+<p>Match filters are a dict of callables that is registered on metamodel and that
+will get called with the string matched by the match rule. Whatever is returned
+by the filter will be used of a matched string.</p>
+<p>Example:</p>
+<pre><code>Model:
+  'begin' some_number=MyFloat 'end'
+;
+MyFloat:
+  /\d+\.(\d+)?/
+;
+</code></pre>
+
+<p>In this example <code>MyFloat</code> rule is a match rule and by default will return Python
+<code>string</code>, so attribute <code>some_number</code> will be of <code>string</code> type. To change that,
+register match filter for <code>MyFloat</code> rule:</p>
+<pre><code>mm = metamodel_from_str(grammar, match_filters={'MyFloat': lambda x: float(x)})
+</code></pre>
+
+<p>Now, <code>MyFloat</code> will always be converted to Python <code>float</code> type.</p>
+<p>Using match filters you can override built-in rule's conversions like this:</p>
+<pre><code>Model:
+  some_float=INT
+;
+</code></pre>
+
+<pre><code>mm = metamodel_from_str(grammar, match_filters={'INT': lambda x: float(x)})
+</code></pre>
+
+<p>In this example we use built-in rule <code>INT</code> that returns Python <code>int</code> type.
+Registering filter with the key <code>INT</code> we can change default behaviour and
+convert what is matched by this rule to some other object (<code>float</code> in this
+case).</p>
 <h2 id="auto-initialization-of-the-attributes">Auto-initialization of the attributes<a class="headerlink" href="#auto-initialization-of-the-attributes" title="Permanent link">&para;</a></h2>
 <p>Each object that is recognized in the input string will be instantiated and
 its attributes will be set to the values parsed from the input. In the event
