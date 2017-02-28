@@ -82,12 +82,16 @@ Quick intro
 Video tutorials
 ===============
 
-- Introduction to textX
+
+Introduction to textX
+~~~~~~~~~~~~~~~~~~~~~
 
 .. image:: https://img.youtube.com/vi/CN2IVtInapo/0.jpg
    :target: https://www.youtube.com/watch?v=CN2IVtInapo
 
-- Implementing Martin Fowler's State Machine DSL in textX
+
+Implementing Martin Fowler's State Machine DSL in textX
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. image:: https://img.youtube.com/vi/HI14jk0JIR0/0.jpg
    :target: https://www.youtube.com/watch?v=HI14jk0JIR0
