@@ -282,6 +282,7 @@ def parse_tree_to_objgraph(parser, parse_tree):
             obj_attrs = inst
 
             inst._tx_position = node.position
+            inst._tx_position_end = node.position_end
 
             # Push real obj. and dummy attr obj on the instance stack
             parser._inst_stack.append((inst, obj_attrs))

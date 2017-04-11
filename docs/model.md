@@ -116,7 +116,7 @@ These special attributes don't exist if the type of the resulting model object
 don't allow dynamic attribute creation (e.g. for Python base builtin types -
 str, int).
 
-### _tx_position
+### _tx_position and _tx_position_end
 
 `_tx_position` attribute holds the position in the input string where the
 object has been matched by the parser. Each object from the model object graph
@@ -133,6 +133,11 @@ line, col = entity_mm.parser.pos_to_linecol(
 Where `entity_mm` is a meta-model of the language.
 
 Previous example will give the line/column position of the first entity.
+
+`_tx_position_end` is the position in the input stream where the object ends.
+This position is one char past the last char belonging to the object. Thus,
+`_tx_position_end - _tx_position == length of the object str representation`.
+
 
 ### _tx_filename
 

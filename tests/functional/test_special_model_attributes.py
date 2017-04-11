@@ -30,4 +30,11 @@ def test_special_model_attributes():
 
     assert model._tx_filename is None
     assert model._tx_metamodel is mm
-    assert model.objs[1]._tx_position is 4
+    assert model.objs[1]._tx_position == 4
+    assert model.objs[1]._tx_position_end == 6
+
+    # Meta-model is also a model. Test classes.
+    assert mm["Root"]._tx_position == 5
+    assert mm["Root"]._tx_position_end == 41
+    assert mm["MyObj"]._tx_position == 46
+    assert mm["MyObj"]._tx_position_end == 74

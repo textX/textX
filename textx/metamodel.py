@@ -202,13 +202,6 @@ class TextXMetaModel(DebugPrinter):
         """
         self._namespace_stack.pop()
 
-    def _set_rule(self, name, rule):
-        """
-        For the given rule/class name sets PEG rule.
-        """
-        self[name]._tx_peg_rule = rule
-        rule._tx_class = self[name]
-
     def _new_import(self, import_name):
         """
         Starts a new import.
@@ -245,8 +238,8 @@ class TextXMetaModel(DebugPrinter):
         self._imported_namespaces[current_namespace].append(
             self.namespaces[import_name])
 
-    def _new_class(self, name, peg_rule, position, inherits=None, root=False,
-                   rule_type=RULE_MATCH):
+    def _new_class(self, name, peg_rule, position, position_end=None,
+                   inherits=None, root=False, rule_type=RULE_MATCH):
         """
         Creates a new class with the given name in the current namespace.
         Args:
@@ -271,6 +264,8 @@ class TextXMetaModel(DebugPrinter):
                     abstract rules.
                 _tx_position(int): A position in the input string where this
                     class is defined.
+                _tx_position_end(int): A position in the input string where
+                    this class ends.
                 _tx_type(int): The type of the textX rule this class is created
                     for. See textx.const
                 _tx_metamodel(TextXMetaModel): A metamodel this class belongs
@@ -285,12 +280,13 @@ class TextXMetaModel(DebugPrinter):
         cls = Meta
         cls.__name__ = name
 
-        self._init_class(cls, peg_rule, position, inherits, root, rule_type)
+        self._init_class(cls, peg_rule, position, position_end, inherits, root,
+                         rule_type)
 
         return cls
 
-    def _init_class(self, cls, peg_rule, position, inherits=None, root=False,
-                    rule_type=RULE_MATCH):
+    def _init_class(self, cls, peg_rule, position, position_end=None,
+                    inherits=None, root=False, rule_type=RULE_MATCH):
         """
         Setup meta-class special attributes, namespaces etc. This is called
         both for textX created classes as well as user classes.
@@ -304,6 +300,9 @@ class TextXMetaModel(DebugPrinter):
         cls._tx_inh_by = inherits if inherits else []
 
         cls._tx_position = position
+
+        cls._tx_position_end = \
+            position if position_end is None else position_end
 
         # The type of the rule this meta-class results from.
         # There are three rule types: common, abstract and match

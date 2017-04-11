@@ -438,7 +438,12 @@ class TextXVisitor(PTNodeVisitor):
                     setattr(rule, param, rule_params[param])
 
         # Connect meta-class and the PEG rule
-        self.metamodel._set_rule(rule_name, rule)
+        cls = self.metamodel[rule_name]
+        cls._tx_peg_rule = rule
+        rule._tx_class = cls
+
+        # Update end position for this rule.
+        cls._tx_position_end = node.position_end
 
         return rule
 
