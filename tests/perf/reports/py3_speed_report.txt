@@ -1,67 +1,67 @@
-Python 3.5.1
+Python 3.6.0
 
 *** No memoization
 
 1. Small file, no memoization. File: LightSwitch.rpy
 File size: 672.24 KB
-Elapsed time: 4.81 sec
-Speed = 139.75 KB/sec
+Elapsed time: 4.10 sec
+Speed = 163.88 KB/sec
 
 1. Large file, no memoization. File: LightSwitchDouble.rpy
 File size: 1344.08 KB
-Elapsed time: 9.46 sec
-Speed = 142.02 KB/sec
+Elapsed time: 8.52 sec
+Speed = 157.82 KB/sec
 
 2. Small file, no memoization. File: LightSwitch.rpy
 File size: 672.24 KB
-Elapsed time: 5.00 sec
-Speed = 134.47 KB/sec
+Elapsed time: 4.52 sec
+Speed = 148.72 KB/sec
 
 2. Large file, no memoization. File: LightSwitchDouble.rpy
 File size: 1344.08 KB
-Elapsed time: 9.52 sec
-Speed = 141.24 KB/sec
+Elapsed time: 8.53 sec
+Speed = 157.51 KB/sec
 
 3. Small file, no memoization. File: LightSwitch.rpy
 File size: 672.24 KB
-Elapsed time: 5.19 sec
-Speed = 129.49 KB/sec
+Elapsed time: 4.54 sec
+Speed = 148.09 KB/sec
 
 3. Large file, no memoization. File: LightSwitchDouble.rpy
 File size: 1344.08 KB
-Elapsed time: 9.59 sec
-Speed = 140.16 KB/sec
+Elapsed time: 8.56 sec
+Speed = 156.96 KB/sec
 
 
 *** Memoization
 
 1. Small file, with memoization. File: LightSwitch.rpy
 File size: 672.24 KB
-Elapsed time: 5.88 sec
-Speed = 114.28 KB/sec
+Elapsed time: 5.28 sec
+Speed = 127.22 KB/sec
 
 1. Large file, with memoization. File: LightSwitchDouble.rpy
 File size: 1344.08 KB
-Elapsed time: 11.27 sec
-Speed = 119.31 KB/sec
+Elapsed time: 9.99 sec
+Speed = 134.56 KB/sec
 
 2. Small file, with memoization. File: LightSwitch.rpy
 File size: 672.24 KB
-Elapsed time: 5.87 sec
-Speed = 114.56 KB/sec
+Elapsed time: 5.09 sec
+Speed = 132.17 KB/sec
 
 2. Large file, with memoization. File: LightSwitchDouble.rpy
 File size: 1344.08 KB
-Elapsed time: 11.07 sec
-Speed = 121.38 KB/sec
+Elapsed time: 9.90 sec
+Speed = 135.75 KB/sec
 
 3. Small file, with memoization. File: LightSwitch.rpy
 File size: 672.24 KB
-Elapsed time: 5.95 sec
-Speed = 112.92 KB/sec
+Elapsed time: 5.41 sec
+Speed = 124.35 KB/sec
 
 3. Large file, with memoization. File: LightSwitchDouble.rpy
 File size: 1344.08 KB
-Elapsed time: 11.07 sec
-Speed = 121.44 KB/sec
+Elapsed time: 9.96 sec
+Speed = 135.01 KB/sec
 
