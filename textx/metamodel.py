@@ -2,7 +2,7 @@
 # Name: metamodel.py
 # Purpose: Meta-model construction.
 # Author: Igor R. Dejanovic <igor DOT dejanovic AT gmail DOT com>
-# Copyright: (c) 2014-2016 Igor R. Dejanovic <igor DOT dejanovic AT gmail DOT com>
+# Copyright: (c) 2014-2017 Igor R. Dejanovic <igor DOT dejanovic AT gmail DOT com>
 # License: MIT License
 #######################################################################
 
@@ -96,14 +96,14 @@ class TextXMetaModel(DebugPrinter):
         rootcls(TextXClass): A language class that is a root of the metamodel.
         root_path(str): The root dir used for the import statement.
         namespaces(dict): A mapping from fully qualified module names to dicts
-            in the form {clsname: cls} that holds meta-classes imported from the
-            given grammar file. Special key '__base__' is used for BASETYPE
+            in the form {clsname: cls} that holds meta-classes imported from
+            the given grammar file. Special key '__base__' is used for BASETYPE
             classes. None key is used for all classes imported from the grammar
             given as a string.
         _namespace_stack(list): A stack of namespace names (fully qualified
             module names). Used to keep track of the current namespace.
-        _imported_namespaces(dict): A mapping from namespace name to the list of
-            references to imported namespaces. Used in searches for
+        _imported_namespaces(dict): A mapping from namespace name to the list
+            of references to imported namespaces. Used in searches for
             unqualified rules.
     """
 
@@ -223,7 +223,7 @@ class TextXMetaModel(DebugPrinter):
             import_name = "%s.%s" % (root_namespace, import_name)
 
         import_file_name = "%s.tx" % os.path.join(self.root_path,
-                                                    *import_name.split("."))
+                                                  *import_name.split("."))
 
         if import_name not in self.namespaces:
             self._enter_namespace(import_name)
@@ -258,8 +258,8 @@ class TextXMetaModel(DebugPrinter):
             one Meta class with the type name of the rule.
             Model is a graph of python instances of this metaclasses.
             Attributes:
-                _tx_attrs(dict): A dict of meta-attributes keyed by name. Used by
-                    common rules.
+                _tx_attrs(dict): A dict of meta-attributes keyed by name.
+                    Used by common rules.
                 _tx_inh_by(list): Classes that inherits this one. Used by
                     abstract rules.
                 _tx_position(int): A position in the input string where this
@@ -360,7 +360,7 @@ class TextXMetaModel(DebugPrinter):
                 setattr(obj, attr_name, None)
 
     def _new_cls_attr(self, clazz, name, cls=None, mult=MULT_ONE, cont=True,
-                     ref=False, bool_assignment=False, position=0):
+                      ref=False, bool_assignment=False, position=0):
         """Creates new meta attribute of this class."""
         attr = MetaAttr(name, cls, mult, cont, ref, bool_assignment,
                         position)
