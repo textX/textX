@@ -275,7 +275,11 @@ class TextXMetaModel(DebugPrinter):
             """
 
             def __repr__(self):
-                return "<textx:{} object at {}>".format(name, hex(id(self)))
+                if hasattr(self, 'name'):
+                    return "<{}:{}>".format(name, self.name)
+                else:
+                    return "<textx:{} object at {}>"\
+                        .format(name, hex(id(self)))
 
         cls = Meta
         cls.__name__ = name
