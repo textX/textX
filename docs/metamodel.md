@@ -98,8 +98,8 @@ are not possible to do by the grammar alone.
 There are two types of processors:
 
 - **model processors** - are callables that are called at the end of the parsing
-  when the whole model is instantiated. These processors accept the meta-model
-  and model as parameters.
+  when the whole model is instantiated. These processors accept the model 
+  and meta-model as parameters.
 - **object processors** - are registered for particular classes (grammar rules)
   and are called when the objects of the given class is instantiated.
 
@@ -116,7 +116,7 @@ instance.
 
     # Model processor is a callable that will accept meta-model and model as its
     # parameters.
-    def check_some_semantics(metamodel, model):
+    def check_some_semantics(model, metamodel):
       ...
       ... Do some check on the model and raise TextXSemanticError if the semantics
       ... rules are violated.

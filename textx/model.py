@@ -302,8 +302,8 @@ def parse_tree_to_objgraph(parser, parse_tree):
                 else:
                     obj_attrs.parent = parser._inst_stack[-1][0]
 
-            # If the class is user supplied we need to done
-            # proper initialization at this point.
+            # If the class is user supplied we need to do
+            # a proper initialization at this point.
             if node.rule_name in metamodel.user_classes:
                 try:
                     # Get only attributes defined by the grammar as well
@@ -429,7 +429,8 @@ def parse_tree_to_objgraph(parser, parse_tree):
                 """
                 if cls._tx_type is RULE_ABSTRACT:
                     for inherited in cls._tx_inh_by:
-                        result = _inner_resolve_link_rule_ref(inherited, obj_name)
+                        result = _inner_resolve_link_rule_ref(inherited,
+                                                              obj_name)
                         if result:
                             return result
                 elif cls._tx_type == RULE_COMMON:
@@ -438,7 +439,8 @@ def parse_tree_to_objgraph(parser, parse_tree):
                         if obj_name in objs:
                             return objs[obj_name]
 
-            result = _inner_resolve_link_rule_ref(obj_ref.cls, obj_ref.obj_name)
+            result = _inner_resolve_link_rule_ref(obj_ref.cls,
+                                                  obj_ref.obj_name)
             if result:
                 return result
 
