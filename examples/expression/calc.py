@@ -81,7 +81,7 @@ class Expression(ExpressionElement):
 class Operand(ExpressionElement):
     @property
     def value(self):
-        op = self.op[0]
+        op = self.op
         if type(op) in {int, float}:
             return op
         elif isinstance(op, ExpressionElement):

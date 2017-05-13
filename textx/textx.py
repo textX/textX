@@ -19,8 +19,8 @@ from arpeggio.export import PMDOTExporter
 from arpeggio import RegExMatch as _
 
 from .exceptions import TextXSyntaxError, TextXSemanticError
-from .const import MULT_ZEROORMORE, MULT_ONEORMORE, \
-    MULT_OPTIONAL, RULE_COMMON, RULE_MATCH, RULE_ABSTRACT
+from .const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, \
+    MULT_OPTIONAL, RULE_COMMON, RULE_MATCH, RULE_ABSTRACT, mult_lt
 
 import sys
 if sys.version < '3':
@@ -445,6 +445,50 @@ class TextXVisitor(PTNodeVisitor):
         # Update end position for this rule.
         cls._tx_position_end = node.position_end
 
+        # Update multiplicities of attributes based on their parent
+        # expressions.
+        def _update_attr_multiplicities(rule, oc_branch_set, mult=MULT_ONE):
+
+            if isinstance(rule, RuleCrossRef):
+                return
+
+            if isinstance(rule, OrderedChoice):
+                for on in rule.nodes:
+                    oc_branch_set = set()
+                    _update_attr_multiplicities(on, oc_branch_set, mult)
+            else:
+
+                for n in [x for x in rule.nodes
+                          if not isinstance(x, RuleCrossRef)]:
+
+                    m = mult
+                    if isinstance(n, OneOrMore):
+                        m = MULT_ONEORMORE
+                    elif isinstance(n, ZeroOrMore):
+                        if m != MULT_ONEORMORE:
+                            m = MULT_ZEROORMORE
+
+                    if n.rule_name.startswith('__asgn'):
+                        cls_attr = cls._tx_attrs[n._attr_name]
+                        if mult in [MULT_ZEROORMORE, MULT_ONEORMORE]:
+                            if mult_lt(cls_attr.mult, m):
+                                cls_attr.mult = m
+                        # If multiplicity is not "many" still we can have
+                        # "many" multiplicity if same attribute has been
+                        # assigned multiple times in the same OrderedChoice
+                        # branch.
+                        elif n._attr_name in oc_branch_set:
+                            cls_attr.mult = MULT_ONEORMORE
+                        else:
+                            # Keep track of assignments in the current OC
+                            # branch.
+                            oc_branch_set.add(n._attr_name)
+
+                    elif not n.root:
+                        _update_attr_multiplicities(n, oc_branch_set, m)
+
+        _update_attr_multiplicities(rule, set())
+
         return rule
 
     def visit_rule_name(self, node, children):
@@ -660,10 +704,6 @@ class TextXVisitor(PTNodeVisitor):
                     .format(attr_name, (line, col)), line, col)
 
             cls_attr = cls._tx_attrs[attr_name]
-            # Must be a many multiplicity.
-            # OneOrMore is "stronger" constraint.
-            if cls_attr.mult is not MULT_ONEORMORE:
-                cls_attr.mult = MULT_ZEROORMORE
         else:
             cls_attr = self.metamodel._new_cls_attr(cls, name=attr_name,
                                                     position=node.position)

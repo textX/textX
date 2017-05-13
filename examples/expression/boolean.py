@@ -73,7 +73,7 @@ class Not(ExpressionElement):
 class Operand(ExpressionElement):
     @property
     def value(self):
-        op = self.op[0]
+        op = self.op
         if type(op) is bool:
             return op
         elif op in namespace:
