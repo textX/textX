@@ -44,6 +44,33 @@ def test_modifier_separator_optional():
         metamodel_from_str(model)
 
 
+def test_modifier_separator_unordered_group():
+    model = """
+    Rule:
+        ("a" "b" "c")#[','];
+    """
+    metamodel = metamodel_from_str(model)
+
+    model = metamodel.model_from_str("a, b, c")
+    assert model
+    model = metamodel.model_from_str("c, a, b")
+    assert model
+
+    with pytest.raises(TextXSyntaxError):
+        metamodel.model_from_str("a, c b")
+
+    with pytest.raises(TextXSyntaxError):
+        metamodel.model_from_str("a, c, a, b")
+
+    with pytest.raises(TextXSyntaxError):
+        metamodel.model_from_str(",a, c, b")
+
+    with pytest.raises(TextXSyntaxError):
+        metamodel.model_from_str("a, c, b, ")
+
+    with pytest.raises(TextXSyntaxError):
+        metamodel.model_from_str("a, c, ,b ")
+
 def test_assignment_modifier_separator_zeroormore():
     model = """
     Rule:
@@ -181,4 +208,3 @@ def test_multiple_modifiers():
         123456
     """)
     assert model
-

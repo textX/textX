@@ -13,7 +13,7 @@
 from __future__ import unicode_literals
 import re
 from arpeggio import StrMatch, Optional, ZeroOrMore, OneOrMore, Sequence,\
-    OrderedChoice, Not, And, RegExMatch, Match, NoMatch, EOF, \
+    OrderedChoice, UnorderedGroup, Not, And, RegExMatch, Match, NoMatch, EOF, \
     ParsingExpression, ParserPython, PTNodeVisitor, visit_parse_tree
 from arpeggio.export import PMDOTExporter
 from arpeggio import RegExMatch as _
@@ -49,7 +49,7 @@ def expression():           return [assignment, (Optional(syntactic_predicate),
                                                  [simple_match, rule_ref,
                                                   bracketed_choice])]
 def bracketed_choice():     return '(', choice, ')'
-def repeat_operator():      return ['*', '?', '+'], Optional(repeat_modifiers)
+def repeat_operator():      return ['*', '?', '+', '#'], Optional(repeat_modifiers)
 def repeat_modifiers():     return '[', OneOrMore([simple_match,
                                                    'eolterm']), ']'
 def syntactic_predicate():  return ['!', '&']
@@ -588,8 +588,10 @@ class TextXVisitor(PTNodeVisitor):
                     rule = Optional(nodes=[expr])
                 elif repeat_op == '*':
                     rule = ZeroOrMore(nodes=[expr])
-                else:
+                elif repeat_op == '+':
                     rule = OneOrMore(nodes=[expr])
+                else:
+                    rule = UnorderedGroup(nodes=expr.nodes)
 
                 if modifiers:
                     modifiers, position = modifiers
