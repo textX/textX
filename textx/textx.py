@@ -601,14 +601,9 @@ class TextXVisitor(PTNodeVisitor):
                         raise TextXSyntaxError(
                             'Modifiers are not allowed for "?" operator at {}'
                             .format(text((line, col))), line, col)
+
                     # Separator modifier
-                    if 'sep' in modifiers:
-                        sep = modifiers['sep']
-                        rule = Sequence(nodes=[expr,
-                                        ZeroOrMore(nodes=[
-                                                Sequence(nodes=[sep, expr])])])
-                        if repeat_op == '*':
-                            rule = Optional(nodes=[rule])
+                    rule.sep = modifiers.get('sep', None)
 
                     # End of line termination modifier
                     if 'eolterm' in modifiers:
