@@ -717,18 +717,7 @@ class TextXVisitor(PTNodeVisitor):
                     .format(op, text((line, col))), line, col)
 
             # Separator modifier
-            if 'sep' in modifiers:
-                sep = modifiers['sep']
-                assignment_rule = Sequence(
-                    nodes=[rhs_rule,
-                           ZeroOrMore(
-                               nodes=[Sequence(nodes=[sep, rhs_rule])])],
-                    rule_name='__asgn_list', root=True)
-                if op == "*=":
-                    assignment_rule.root = False
-                    assignment_rule = Optional(nodes=[assignment_rule],
-                                               rule_name='__asgn_list',
-                                               root=True)
+            assignment_rule.sep = modifiers.get('sep', None)
 
             # End of line termination modifier
             if 'eolterm' in modifiers:
