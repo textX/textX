@@ -212,20 +212,23 @@ For example:
     enum Visibility:
         PUBLIC='public' | PRIVATE='private' | PROTECTED='protected';
 
-textX at the moment doesn't provide unordered groups. To achieve similar
-behavior, ordered choice in combination with `one or more` repetition operator
-must be used.
+In textX unordered groups are specified as a special kind of repetitions. Thus,
+repetition modifiers can be applied also:
 
-    
     Modifier: 
-        (static?='static' | final?='final' | visibility=Visibility)*;
+        (static?='static' final?='final' visibility=Visibility)#[',']
      
     Visibility:
         'public' | 'private' | 'protected';
+        
+Previous example will match any of the following:
 
+    private, static, final
+    static, private, final
+    ...
 
-But, on the grammar level it doesn't prevent user to repeat one of the
-alternatives many times.
+Notice the use of `,` separator as a repetition modifier.
+
 
 ## Syntactic predicates
 
