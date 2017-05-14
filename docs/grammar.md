@@ -72,6 +72,7 @@ The basic expressions are:
 * [Repetitions](#repetitions)
     * Zero or more (`*`)
     * One or more (`+`)
+    * Unordered group (`#`)
 * [References](#references)
     * Match reference
     * Link reference (`[..]`)
@@ -228,6 +229,28 @@ Now, an ordered choice in the parentheses is optional.
         Colors:
           ("red"|"green"|"blue")+
         ;
+
+* **Unordered group** is a special kind of a sequence. Syntactically it is
+  similar to a repetition. It is specified by `#` operator and must be applied
+  to sequences. This operator will match each element of the sequence in an
+  arbitrary order:
+
+        Colors:
+          ("red" "green" "blue")#
+        ;
+
+    For the previous example all following lines are valid:
+
+        red blue green
+        red green blue
+        blue green red
+        ...
+
+    But, the following lines are not valid:
+
+        red blue red green
+        blue green
+
 
 ### Assignments
 
@@ -490,8 +513,8 @@ Given this input:
 ## Repetition modifiers
 
 Repetition modifiers are used for the modification of the repetition expressions
-(`*`, `+`, `*=`, `+=`). They are specified in brackets `[  ]`. If there are more
-modifiers, they are separated by a comma.
+(`*`, `+`, `#`, `*=`, `+=`). They are specified in brackets `[ ]`. If there are
+more modifiers, they are separated by a comma.
 
 Currently, there are two modifiers defined:
 
