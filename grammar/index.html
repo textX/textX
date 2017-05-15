@@ -180,6 +180,17 @@
     </ul>
 	    </li>
           
+            <li class="toctree-l1">
+		
+    <span class="caption-text">What's new</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../whatsnew/release_1_5/">Release 1.5</a>
+                </li>
+    </ul>
+	    </li>
+          
         </ul>
       </div>
       &nbsp;
@@ -445,6 +456,38 @@ blue green red
 <pre><code>red blue red green
 blue green
 </code></pre>
+<p>Consider this example:</p>
+<pre><code>Modifier: 
+    (static?='static' final?='final' visibility=Visibility)*
+;
+
+Visibility:
+    'public' | 'private' | 'protected';
+</code></pre>
+<p>We want to provide modifiers to the type declarations in our language.
+Furthermore, we want modifiers to be written in any order user wants.
+Previously we would use <code>zero or more</code> repetition like in the given example
+but he problem with that is user now might left out something that is
+important (like visibility in this case) or even worse specify something
+multiple times. And, from the standpoint of the grammar it would be valid.</p>
+<p>With unordered groups you write:</p>
+<pre><code>Modifier: 
+    (static?='static' final?='final' visibility=Visibility)#
+;
+
+Visibility:
+    'public' | 'private' | 'protected';
+</code></pre>
+<p>Notice <code>#</code> operator. This operator can be applied to sequences only and
+defines that each element of the sequence must appear exactly once but the
+order is not relevant.</p>
+<p>Following will match (thanks to <code>?=</code> operator, only visibility must be
+specified):</p>
+<pre><code>public
+public static
+final protected static
+...
+</code></pre>
 </li>
 </ul>
 <h3 id="assignments">Assignments<a class="headerlink" href="#assignments" title="Permanent link">&para;</a></h3>
@@ -525,6 +568,27 @@ numbers*=INT
   at least once. If no match succeeds, this assignment does not succeed.</p>
 </li>
 </ul>
+<h4 id="multiple-assignment-to-the-same-attribute">Multiple assignment to the same attribute<a class="headerlink" href="#multiple-assignment-to-the-same-attribute" title="Permanent link">&para;</a></h4>
+<p>textX allows for multiple assignments to the same attribute. For example:</p>
+<pre><code>  MyRule:
+      a=INT b=FLOAT a*=ID
+  ;
+</code></pre>
+<p>Here <code>a</code> attribute will always be Python list.</p>
+<p>Consider this example:</p>
+<pre><code>  Method:
+      'func(' (params+=Parameter[','])? ')'
+  ;
+  Parameter:
+      type=ID name=ID | name=ID
+  ;
+</code></pre>
+<p>In <code>Parameter</code> rule, the <code>name</code> attribute assignments are part of different
+ordered choice alternatives and thus name will never have more than one value
+and thus should not be a list.</p>
+<p>The rule of the thumb for multiple assignments is that if there is no
+possibility for an attribute to collect more than one value during parsing it
+will be a single value object, otherwise it will be a list.</p>
 <h3 id="references">References<a class="headerlink" href="#references" title="Permanent link">&para;</a></h3>
 <p>Rules can reference each other. References are usually used as a
 RHS of the assignments. There are two types of rule references:</p>

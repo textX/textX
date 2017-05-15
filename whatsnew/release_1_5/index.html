@@ -8,7 +8,7 @@
   
   <meta name="author" content="Igor Dejanović">
   <link rel="shortcut icon" href="../../img/favicon.ico">
-  <title>License - textX</title>
+  <title>Release 1.5 - textX</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../../css/theme.css" type="text/css" />
@@ -18,9 +18,9 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "License";
-    var mkdocs_page_input_path = "about/license.md";
-    var mkdocs_page_url = "/about/license/";
+    var mkdocs_page_name = "Release 1.5";
+    var mkdocs_page_input_path = "whatsnew/release_1_5.md";
+    var mkdocs_page_url = "/whatsnew/release_1_5/";
   </script>
   
   <script src="../../js/jquery-2.1.1.min.js"></script>
@@ -135,22 +135,19 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="../comparison/">Comparison</a>
+    <a class="" href="../../about/comparison/">Comparison</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../discuss/">Discuss</a>
+    <a class="" href="../../about/discuss/">Discuss</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../contributing/">Contributing</a>
+    <a class="" href="../../about/contributing/">Contributing</a>
                 </li>
-                <li class=" current">
+                <li class="">
                     
-    <a class="current" href="./">License</a>
-    <ul class="subnav">
-            
-    </ul>
+    <a class="" href="../../about/license/">License</a>
                 </li>
     </ul>
 	    </li>
@@ -159,9 +156,33 @@
 		
     <span class="caption-text">What's new</span>
     <ul class="subnav">
-                <li class="">
+                <li class=" current">
                     
-    <a class="" href="../../whatsnew/release_1_5/">Release 1.5</a>
+    <a class="current" href="./">Release 1.5</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l3"><a href="#whats-new-in-textx-15">What's new in textX 1.5</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l4" href="#operator-precedence-change">Operator precedence change</a></li>
+        
+            <li><a class="toctree-l4" href="#unordered-groups">Unordered groups</a></li>
+        
+            <li><a class="toctree-l4" href="#match-filters">Match filters</a></li>
+        
+            <li><a class="toctree-l4" href="#multiple-assignments-to-the-same-attribute">Multiple assignments to the same attribute</a></li>
+        
+            <li><a class="toctree-l4" href="#model-api">Model API</a></li>
+        
+            <li><a class="toctree-l4" href="#additional-special-model-attributes">Additional special model attributes</a></li>
+        
+            <li><a class="toctree-l4" href="#textx-emacs-mode">textX Emacs mode</a></li>
+        
+        </ul>
+    
+
+    </ul>
                 </li>
     </ul>
 	    </li>
@@ -188,14 +209,14 @@
     
       
         
-          <li>About &raquo;</li>
+          <li>What's new &raquo;</li>
         
       
     
-    <li>License</li>
+    <li>Release 1.5</li>
     <li class="wy-breadcrumbs-aside">
       
-        <a href="https://github.com/igordejanovic/textX/edit/master/docs/about/license.md"
+        <a href="https://github.com/igordejanovic/textX/edit/master/docs/whatsnew/release_1_5.md"
           class="icon icon-github"> Edit on GitHub</a>
       
     </li>
@@ -205,23 +226,70 @@
           <div role="main">
             <div class="section">
               
-                <p>textX is distributed under the terms of MIT license.</p>
-<p>Copyright (c) 2014-2015 Igor R. Dejanović <igor DOT dejanovic AT gmail DOT com></p>
-<p>Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:</p>
-<p>The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.</p>
-<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.</p>
+                <h1 id="whats-new-in-textx-15">What's new in textX 1.5<a class="headerlink" href="#whats-new-in-textx-15" title="Permanent link">&para;</a></h1>
+<p>It's been quite a while since the last release of textX so this release brings a
+lot of new features and fixes.</p>
+<h2 id="operator-precedence-change">Operator precedence change<a class="headerlink" href="#operator-precedence-change" title="Permanent link">&para;</a></h2>
+<p>Probably the most important/visible change is the change in the operator
+precendence. In the previous version, sequence had lower precedence than
+ordered choice which is counter-intuitive to the users that had previous
+experience with other tools where this is not the case.</p>
+<p>Ordered choice is now of lowest precedence which brings some backward
+compatibility that should be addressed for migration to the new version.</p>
+<p>For example, previously you would write:</p>
+<pre><code>Rule:
+    ('a'  'b') | ('c' 'd')
+;
+</code></pre>
+<p>To match either <code>a b</code> or <code>c d</code>.</p>
+<p>Now you can drop parentheses as the precedence of sequence is higher:</p>
+<pre><code>Rule:
+    'a'  'b' | 'c' 'd'
+;
+</code></pre>
+<p>For the previous case there would be no problem in upgrade to 1.5 even if the
+grammar is not changed. But consider this:</p>
+<pre><code>Rule:
+    'a' 'b' | 'c' 'd'
+;
+</code></pre>
+<p>In the previous version this would match <code>a</code>, than <code>b</code> or <code>c</code>, and then <code>d</code> as
+the <code>|</code> operator was of higher precedence than sequence.</p>
+<p>For your grammar to match the same language you must now write:</p>
+<pre><code>Rule:
+  'a' ('b' | 'c') 'd'
+;
+</code></pre>
+<h2 id="unordered-groups">Unordered groups<a class="headerlink" href="#unordered-groups" title="Permanent link">&para;</a></h2>
+<p>There is often a need to specify several matches that should occur in an arbitrary
+order. </p>
+<p>Read more <a href="../../grammar/#repetitions">here</a></p>
+<h2 id="match-filters">Match filters<a class="headerlink" href="#match-filters" title="Permanent link">&para;</a></h2>
+<p>Match rules always return Python strings. Built-in rules return proper Python
+types. In order to change what is returned by match rules you can now register
+python callables that can additionally process returned strings.</p>
+<p>Read more <a href="../../metamodel/#match-filters">here</a></p>
+<h2 id="multiple-assignments-to-the-same-attribute">Multiple assignments to the same attribute<a class="headerlink" href="#multiple-assignments-to-the-same-attribute" title="Permanent link">&para;</a></h2>
+<p>textX had support for multiple assignments but it wasn't complete. When multiple
+assignment is detected, in the previous version, textX will decide that the
+multiplicity of the attribute is <em>many</em> but this lead to the problem if there is
+no way for parser to collect more than one value even if there is multiple
+assignments. For example, if all assignments belong to a different ordered
+choice alternative (see issue #33).</p>
+<p>In this version textX will correctly identify such cases. </p>
+<p>Read more <a href="../../grammar/#multiple-assignment-to-the-same-attribute">here</a></p>
+<h2 id="model-api">Model API<a class="headerlink" href="#model-api" title="Permanent link">&para;</a></h2>
+<p>There is now a set of handful functions for model querying.</p>
+<p>Read more <a href="../../model/#model-api">here</a>.</p>
+<h2 id="additional-special-model-attributes">Additional special model attributes<a class="headerlink" href="#additional-special-model-attributes" title="Permanent link">&para;</a></h2>
+<p>In addition to <code>_tx_position</code> there is now <code>_tx_position_end</code> attribute on each
+model object which has the value of the end of the match in the input stream.</p>
+<p>In addition there is now <code>_tx_metamodel</code> attribute on the model which enables
+easy access to the language meta-model.</p>
+<p>Read more about it <a href="../../model/#special-model-objects-attributes">here</a>.</p>
+<h2 id="textx-emacs-mode">textX Emacs mode<a class="headerlink" href="#textx-emacs-mode" title="Permanent link">&para;</a></h2>
+<p>textX now has a <a href="https://github.com/novakboskov/textx-mode">support for Emacs</a>.
+This package is also available in <a href="https://melpa.org/#/textx-mode">MELPA</a>.</p>
               
             </div>
           </div>
@@ -229,10 +297,8 @@ THE SOFTWARE.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../../whatsnew/release_1_5/" class="btn btn-neutral float-right" title="Release 1.5">Next <span class="icon icon-circle-arrow-right"></span></a>
       
-      
-        <a href="../contributing/" class="btn btn-neutral" title="Contributing"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../../about/license/" class="btn btn-neutral" title="License"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -262,10 +328,8 @@ THE SOFTWARE.</p>
           <a href="https://github.com/igordejanovic/textX" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
       
       
-        <span><a href="../contributing/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../../about/license/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
-      
-        <span style="margin-left: 15px"><a href="../../whatsnew/release_1_5/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>
