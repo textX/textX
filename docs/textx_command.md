@@ -4,11 +4,6 @@ To check and visualize (meta)models from the command line.
 
 ---
 
-!!! note
-    textx command is moving to
-    [textx-tools](https://github.com/igordejanovic/textx-tools) project from
-    textX version 1.5. See the project for more details.
-
 ## Using the tool
 
 To get basic help:

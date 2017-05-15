@@ -215,10 +215,6 @@ example for more.
 
 ## Match filters
 
-!!! note
-    Currently available in the development version. It will be available in
-    the 1.5 stable version.
-
 [Match rules](grammar.md#rule-types) by default return Python `string` type.
 Built-in match rules (i.e. `BASETYPEs`) on the other hand return Python base
 types.
