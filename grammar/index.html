@@ -439,9 +439,9 @@ matched by the <code>Colors</code> rule:</p>
 </li>
 <li>
 <p><strong>Unordered group</strong> is a special kind of a sequence. Syntactically it is
-  similar to a repetition. It is specified by <code>#</code> operator and must be applied
-  to sequences. This operator will match each element of the sequence in an
-  arbitrary order:</p>
+  similar to a repetition. It is specified by the <code>#</code> operator and must be
+  applied to sequences. This operator will match each element of the sequence in
+  an arbitrary order:</p>
 <pre><code>Colors:
   ("red" "green" "blue")#
 ;
@@ -458,36 +458,26 @@ blue green
 </code></pre>
 <p>Consider this example:</p>
 <pre><code>Modifier: 
-    (static?='static' final?='final' visibility=Visibility)*
-;
-
-Visibility:
-    'public' | 'private' | 'protected';
-</code></pre>
-<p>We want to provide modifiers to the type declarations in our language.
-Furthermore, we want modifiers to be written in any order user wants.
-Previously we would use <code>zero or more</code> repetition like in the given example
-but he problem with that is user now might left out something that is
-important (like visibility in this case) or even worse specify something
-multiple times. And, from the standpoint of the grammar it would be valid.</p>
-<p>With unordered groups you write:</p>
-<pre><code>Modifier: 
     (static?='static' final?='final' visibility=Visibility)#
 ;
 
 Visibility:
     'public' | 'private' | 'protected';
 </code></pre>
-<p>Notice <code>#</code> operator. This operator can be applied to sequences only and
-defines that each element of the sequence must appear exactly once but the
-order is not relevant.</p>
-<p>Following will match (thanks to <code>?=</code> operator, only visibility must be
-specified):</p>
+<p>We want to provide modifiers to the type declarations in our language.
+Furthermore, we want modifiers to be written in any order.</p>
+<p>The following lines will match (thanks to <code>?=</code> operator, only visibility
+must be specified):</p>
 <pre><code>public
 public static
 final protected static
 ...
 </code></pre>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Unordered group may also have
+<a href="#repetition-modifiers">repetition modifiers</a> defined.</p>
+</div>
 </li>
 </ul>
 <h3 id="assignments">Assignments<a class="headerlink" href="#assignments" title="Permanent link">&para;</a></h3>
