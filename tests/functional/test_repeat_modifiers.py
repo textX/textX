@@ -71,6 +71,38 @@ def test_modifier_separator_unordered_group():
     with pytest.raises(TextXSyntaxError):
         metamodel.model_from_str("a, c, ,b ")
 
+
+def test_modifier_separator_unordered_group_with_optionals():
+    model = """
+    Rule:
+        ("a" "b"? "c")#[','];
+    """
+    metamodel = metamodel_from_str(model)
+
+    model = metamodel.model_from_str("a, b, c")
+    assert model
+    model = metamodel.model_from_str("c, a")
+    assert model
+
+    with pytest.raises(TextXSyntaxError):
+        metamodel.model_from_str("a, c b")
+
+    with pytest.raises(TextXSyntaxError):
+        metamodel.model_from_str("a, c, ")
+
+    with pytest.raises(TextXSyntaxError):
+        metamodel.model_from_str("a, c, a, b")
+
+    with pytest.raises(TextXSyntaxError):
+        metamodel.model_from_str(",a, c, b")
+
+    with pytest.raises(TextXSyntaxError):
+        metamodel.model_from_str("a, c, b, ")
+
+    with pytest.raises(TextXSyntaxError):
+        metamodel.model_from_str("a, c, ,b ")
+
+
 def test_assignment_modifier_separator_zeroormore():
     model = """
     Rule:
