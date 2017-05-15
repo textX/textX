@@ -250,8 +250,45 @@ Now, an ordered choice in the parentheses is optional.
 
         red blue red green
         blue green
+        
+    Consider this example:
 
+        Modifier: 
+            (static?='static' final?='final' visibility=Visibility)*
+        ;
 
+        Visibility:
+            'public' | 'private' | 'protected';
+
+    We want to provide modifiers to the type declarations in our language.
+    Furthermore, we want modifiers to be written in any order user wants.
+    Previously we would use `zero or more` repetition like in the given example
+    but he problem with that is user now might left out something that is
+    important (like visibility in this case) or even worse specify something
+    multiple times. And, from the standpoint of the grammar it would be valid.
+
+    With unordered groups you write:
+
+        Modifier: 
+            (static?='static' final?='final' visibility=Visibility)#
+        ;
+
+        Visibility:
+            'public' | 'private' | 'protected';
+
+    Notice `#` operator. This operator can be applied to sequences only and
+    defines that each element of the sequence must appear exactly once but the
+    order is not relevant.
+
+    Following will match (thanks to `?=` operator, only visibility must be
+    specified):
+
+        public
+        public static
+        final protected static
+        ...
+
+        
 ### Assignments
 
 Assignments are used as a part of the meta-model deduction process. Each
