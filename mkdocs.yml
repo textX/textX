@@ -29,6 +29,8 @@ pages:
     - Discuss: about/discuss.md
     - Contributing: about/contributing.md
     - License: about/license.md
+- What's new:
+    - Release 1.5: whatsnew/release_1_5.md
 
 markdown_extensions:
     - admonition:

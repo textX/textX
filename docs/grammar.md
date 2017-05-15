@@ -377,7 +377,35 @@ There are four types of assignments:
   at least once. If no match succeeds, this assignment does not succeed.
 
 
-### References
+#### Multiple assignment to the same attribute
+
+textX allows for multiple assignments to the same attribute. For example:
+
+      MyRule:
+          a=INT b=FLOAT a*=ID
+      ;
+
+Here `a` attribute will always be Python list.
+
+Consider this example:
+
+      Method:
+          'func(' (params+=Parameter[','])? ')'
+      ;
+      Parameter:
+          type=ID name=ID | name=ID
+      ;
+
+In `Parameter` rule, the `name` attribute assignments are part of different
+ordered choice alternatives and thus name will never have more than one value
+and thus should not be a list.
+
+The rule of the thumb for multiple assignments is that if there is no
+possibility for an attribute to collect more than one value during parsing it
+will be a single value object, otherwise it will be a list.
+
+
+###References
 
 Rules can reference each other. References are usually used as a
 RHS of the assignments. There are two types of rule references:
