@@ -1,19 +1,19 @@
-Python 2.7.11
+Python 2.7.13
 Filename: test_memory_memoization.py
 
 Line #    Mem usage    Increment   Line Contents
 ================================================
-     6     12.9 MiB      0.0 MiB   @profile
+     6     13.2 MiB      0.0 MiB   @profile
      7                             def memoization():
-     8     13.4 MiB      0.5 MiB       mm = metamodel_from_file('rhapsody.tx', memoization=True)
+     8     13.7 MiB      0.5 MiB       mm = metamodel_from_file('rhapsody.tx', memoization=True)
      9                             
     10                                 # Small file
-    11     13.4 MiB      0.0 MiB       this_folder = dirname(__file__)
-    12     13.4 MiB      0.0 MiB       model = mm.model_from_file(join(this_folder,
-    13    126.0 MiB    112.6 MiB                                       'test_inputs', 'LightSwitch.rpy'))
+    11     13.7 MiB      0.0 MiB       this_folder = dirname(__file__)
+    12     13.7 MiB      0.0 MiB       model = mm.model_from_file(join(this_folder,
+    13    126.3 MiB    112.6 MiB                                       'test_inputs', 'LightSwitch.rpy'))
     14                             
     15                                 # Large file
-    16    126.0 MiB      0.0 MiB       model2 = mm.model_from_file(join(this_folder,
-    17    279.0 MiB    153.0 MiB                                        'test_inputs', 'LightSwitchDouble.rpy'))
+    16    126.3 MiB      0.0 MiB       model2 = mm.model_from_file(join(this_folder,
+    17    279.9 MiB    153.6 MiB                                        'test_inputs', 'LightSwitchDouble.rpy'))
 
 
