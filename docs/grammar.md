@@ -231,9 +231,9 @@ Now, an ordered choice in the parentheses is optional.
         ;
 
 * **Unordered group** is a special kind of a sequence. Syntactically it is
-  similar to a repetition. It is specified by `#` operator and must be applied
-  to sequences. This operator will match each element of the sequence in an
-  arbitrary order:
+  similar to a repetition. It is specified by the `#` operator and must be
+  applied to sequences. This operator will match each element of the sequence in
+  an arbitrary order:
 
         Colors:
           ("red" "green" "blue")#
@@ -254,39 +254,26 @@ Now, an ordered choice in the parentheses is optional.
     Consider this example:
 
         Modifier: 
-            (static?='static' final?='final' visibility=Visibility)*
-        ;
-
-        Visibility:
-            'public' | 'private' | 'protected';
-
-    We want to provide modifiers to the type declarations in our language.
-    Furthermore, we want modifiers to be written in any order user wants.
-    Previously we would use `zero or more` repetition like in the given example
-    but he problem with that is user now might left out something that is
-    important (like visibility in this case) or even worse specify something
-    multiple times. And, from the standpoint of the grammar it would be valid.
-
-    With unordered groups you write:
-
-        Modifier: 
             (static?='static' final?='final' visibility=Visibility)#
         ;
 
         Visibility:
             'public' | 'private' | 'protected';
 
-    Notice `#` operator. This operator can be applied to sequences only and
-    defines that each element of the sequence must appear exactly once but the
-    order is not relevant.
+    We want to provide modifiers to the type declarations in our language.
+    Furthermore, we want modifiers to be written in any order.
 
-    Following will match (thanks to `?=` operator, only visibility must be
-    specified):
+    The following lines will match (thanks to `?=` operator, only visibility
+    must be specified):
 
         public
         public static
         final protected static
         ...
+        
+    !!! note
+        Unordered group may also have
+        [repetition modifiers](#repetition-modifiers) defined.
 
         
 ### Assignments
