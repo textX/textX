@@ -1,5 +1,29 @@
 # textX changelog
 
+* 2017-05-15 Release 1.5
+  - For a more detailed feature highlights overview for this release
+    please see [what's new section in the docs](http://www.igordejanovic.net/textX/whatsnew/release_1_5).
+  - fixed issue #27 Operator precendence. Note: backward incompatibility! Be
+    sure to read
+    [what's new section in the docs](http://www.igordejanovic.net/textX/whatsnew/release_1_5) before upgrade.
+  - Issue #30 - match filters.
+    See [the docs](http://www.igordejanovic.net/textX/metamodel/#match-filters).
+  - Added support for unordered groups. See [the docs](http://www.igordejanovic.net/textX/grammar/#repetitions).
+  - Added `_tx_metamodel` attribute on the model object for easy access to the
+    language metamodel. See [the docs](http://www.igordejanovic.net/textX/model/#special-model-objects-attributes).
+  - Fixed issue #33. Much more robust support for multiple assignments to the
+    same attribute.
+  - Fixes in namespace support. Import now works even for grammar defined as
+    Python strings.
+  - Added special attribute `_tx_position_end` on model objects with the
+    information where the object ends in the input stream.
+  - Added various handy functions for querying a model. See [the docs on model
+    API](http://www.igordejanovic.net/textX/model/#model-api).
+  - New examples and additions to the docs. Added [comparison to Xtext](http://www.igordejanovic.net/textX/about/comparison) for
+    users with previous Xtext exposure. Added references to [ppci tutorial by
+    Windel Bouwman](https://ppci.readthedocs.io/en/latest/howto/toy.html).
+  - textX now have an [Emacs mode](https://github.com/novakboskov/textx-mode)!
+
 * 2016-05-31 Release 1.4
   - Significant performance improvements done in Arpeggio (see issue #22).
   - Fixed wrong rule type detection and infinite recursion in dot export for 
