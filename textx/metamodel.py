@@ -156,9 +156,10 @@ class TextXMetaModel(DebugPrinter):
         base_int = self._new_class('INT', INT, 0)
         base_float = self._new_class('FLOAT', FLOAT, 0)
         base_number = self._new_class('NUMBER', NUMBER, 0,
-                                      [base_float, base_int])
+                                      inherits=[base_float, base_int])
         self._new_class('BASETYPE', BASETYPE, 0,
-                        [base_number, base_bool, base_id, base_string])
+                        inherits=[base_number, base_bool, base_id,
+                                  base_string])
 
         # Resolve file name to absolute path.
         if file_name:
