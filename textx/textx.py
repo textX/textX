@@ -95,10 +95,14 @@ NUMBER      = OrderedChoice(nodes=[FLOAT, INT], rule_name='NUMBER', root=True)
 BASETYPE    = OrderedChoice(nodes=[NUMBER, BOOL, ID, STRING],
                             rule_name='BASETYPE', root=True)
 
+# A dummy rule for generic type. This rule should never be used for parsing.
+OBJECT = _(r'', rule_name='OBJECT', root=True)
+
 BASE_TYPE_RULES = {rule.rule_name: rule
                    for rule in [ID, BOOL, INT, FLOAT,
                                 STRING, NUMBER, BASETYPE]}
-BASE_TYPE_NAMES = BASE_TYPE_RULES.keys()
+BASE_TYPE_NAMES = list(BASE_TYPE_RULES.keys())
+ALL_TYPE_NAMES = BASE_TYPE_NAMES + ['OBJECT']
 
 PRIMITIVE_PYTHON_TYPES = [int, float, text, bool]
 
@@ -376,7 +380,6 @@ class TextXVisitor(PTNodeVisitor):
 
                 # If this is not abstract class than it must be common or
                 # match. Resolve referred classes.
-                # If there is no attributes collected than it ``
                 for attr in cls._tx_attrs.values():
                     attr.cls = _resolve_cls(attr.cls)
 
@@ -768,8 +771,15 @@ class TextXVisitor(PTNodeVisitor):
         else:
             # Use STRING as default attr class
             attr_type = base_rule_name if base_rule_name else 'STRING'
-        cls_attr.cls = ClassCrossRef(cls_name=attr_type,
-                                     position=node.position)
+        if not cls_attr.cls:
+            cls_attr.cls = ClassCrossRef(cls_name=attr_type,
+                                         position=node.position)
+        else:
+            # cls cross ref might already be set in case of multiple assignment
+            # to the same attribute. If types are not the same we shall use
+            # OBJECT as generic type.
+            if cls_attr.cls.cls_name != attr_type:
+                cls_attr.cls.cls_name = 'OBJECT'
 
         if self.debug:
             self.dprint("Created attribute {}:{}[cls={}, cont={}, "

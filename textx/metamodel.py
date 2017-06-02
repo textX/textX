@@ -11,8 +11,9 @@ import os
 from collections import OrderedDict
 from arpeggio import DebugPrinter
 from .textx import language_from_str, python_type, BASE_TYPE_NAMES, ID, BOOL,\
-    INT, FLOAT, STRING, NUMBER, BASETYPE
-from .const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, RULE_MATCH
+    INT, FLOAT, STRING, NUMBER, BASETYPE, OBJECT
+from .const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, RULE_MATCH, \
+    RULE_ABSTRACT
 
 
 __all__ = ['metamodel_from_str', 'metamodel_from_file']
@@ -157,9 +158,11 @@ class TextXMetaModel(DebugPrinter):
         base_float = self._new_class('FLOAT', FLOAT, 0)
         base_number = self._new_class('NUMBER', NUMBER, 0,
                                       inherits=[base_float, base_int])
-        self._new_class('BASETYPE', BASETYPE, 0,
-                        inherits=[base_number, base_bool, base_id,
-                                  base_string])
+        base_type = self._new_class('BASETYPE', BASETYPE, 0,
+                                    inherits=[base_number, base_bool, base_id,
+                                              base_string])
+        self._new_class('OBJECT', OBJECT, 0, inherits=[base_type],
+                        rule_type=RULE_ABSTRACT)
 
         # Resolve file name to absolute path.
         if file_name:

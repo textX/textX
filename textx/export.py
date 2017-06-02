@@ -11,7 +11,7 @@ from arpeggio import Match, OrderedChoice, Sequence, OneOrMore, ZeroOrMore,\
     Optional, SyntaxPredicate
 from .const import MULT_ZEROORMORE, MULT_ONEORMORE, MULT_ONE, RULE_ABSTRACT, \
     RULE_COMMON, RULE_MATCH
-from .textx import PRIMITIVE_PYTHON_TYPES, BASE_TYPE_NAMES
+from .textx import PRIMITIVE_PYTHON_TYPES, BASE_TYPE_NAMES, ALL_TYPE_NAMES
 import codecs
 import sys
 if sys.version < '3':
@@ -43,7 +43,7 @@ def match_abstract_str(cls):
     """
     def r(s):
         if s.root:
-            if s in visited or s.rule_name in BASE_TYPE_NAMES or \
+            if s in visited or s.rule_name in ALL_TYPE_NAMES or \
                     (hasattr(s, '_tx_class') and
                      s._tx_class._tx_type is not RULE_MATCH):
                 return s.rule_name
@@ -66,7 +66,7 @@ def match_abstract_str(cls):
         return "{}{}".format(result, "-" if s.suppress else "")
 
     mstr = ""
-    if cls.__name__ not in BASE_TYPE_NAMES and \
+    if cls.__name__ not in ALL_TYPE_NAMES and \
             not (cls._tx_type is RULE_ABSTRACT and
                  cls.__name__ != cls._tx_peg_rule.rule_name):
         e = cls._tx_peg_rule
@@ -124,7 +124,7 @@ def metamodel_export(metamodel, file_name):
                         [MULT_ONE, MULT_ONEORMORE] else ""
                     attr_type = "list[{}]".format(attr.cls.__name__) \
                         if mult_list else attr.cls.__name__
-                    if attr.ref:
+                    if attr.ref and attr.cls.__name__ != 'OBJECT':
                         # If attribute is a reference
                         mult = attr.mult if not attr.mult == MULT_ONE else ""
                         f.write('{} -> {}[{}headlabel="{} {}"]\n'

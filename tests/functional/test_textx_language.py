@@ -1,16 +1,16 @@
 from __future__ import unicode_literals
 import sys
-if sys.version < '3':
-    text = unicode
-else:
-    text = str
-
 import pytest
 
 from textx.metamodel import metamodel_from_str
-from textx.textx import BASE_TYPE_NAMES
+from textx.textx import ALL_TYPE_NAMES
 from textx.exceptions import TextXSyntaxError
 from textx.const import RULE_MATCH, RULE_ABSTRACT, RULE_COMMON
+
+if sys.version < '3':
+    text = unicode  # noqa
+else:
+    text = str
 
 
 def test_common_rule():
@@ -42,7 +42,7 @@ def test_abstract_rule():
     assert meta
     assert set([x.__name__ for x in meta]) == \
         set(['Model', 'Rule', 'RuleA', 'RuleB', 'Rule1', 'Rule2', 'Rule3'])\
-        .union(set(BASE_TYPE_NAMES))
+        .union(set(ALL_TYPE_NAMES))
     assert meta['Rule']._tx_type is RULE_ABSTRACT
     assert meta['Rule1']._tx_type is RULE_ABSTRACT
 
@@ -80,10 +80,11 @@ def test_abstract_single():
 
 
 def test_abstract_with_match_rule():
+    """To be abstract rule at least one alternative must be either abstract or
+    common.
     """
-    To be abstract rule at least one alternative must be either abstract or common.
-    """
-    grammar="""
+
+    grammar = """
     Rule: STRING|Rule1|ID;
     Rule1: a='a'; // common rule
     """
@@ -155,7 +156,7 @@ def test_match_rule_complex():
     assert meta
     assert meta['Rule']._tx_type is RULE_MATCH
 
-    model = meta.model_from_str('one 45 one 78 foo foo foo' )
+    model = meta.model_from_str('one 45 one 78 foo foo foo')
     assert model
     assert model.__class__ == text
     assert model == "one45one78foofoofoo"
@@ -222,7 +223,7 @@ def test_regex_match_rule():
     assert meta
     assert meta['Rule']._tx_type is RULE_MATCH
     assert set([x.__name__ for x in meta]) == set(['Rule'])\
-        .union(set(BASE_TYPE_NAMES))
+        .union(set(ALL_TYPE_NAMES))
 
     model = meta.model_from_str('bar7')
     assert model
@@ -420,7 +421,7 @@ def test_rule_call_forward_backward_reference():
     meta = metamodel_from_str(grammar)
     assert meta
     assert set([x.__name__ for x in meta]) == set(['Model', 'Rule1', 'Rule2'])\
-        .union(set(BASE_TYPE_NAMES))
+        .union(set(ALL_TYPE_NAMES))
 
     model = meta.model_from_str('start rule2 three')
     assert model
@@ -443,7 +444,7 @@ def test_assignment_zeroormore():
     assert meta
     assert set([x.__name__ for x in meta]) == \
         set(['Model', 'Rule', 'Rule1', 'Rule2', 'Rule3'])\
-        .union(set(BASE_TYPE_NAMES))
+        .union(set(ALL_TYPE_NAMES))
 
     model = meta.model_from_str('start 34 "foo"')
     assert model
@@ -470,6 +471,10 @@ def test_assignment_multiple_simple():
 
     model = meta.model_from_str('start 34 23 45')
 
+    assert meta['Model']._tx_attrs['a'].cls.__name__ == 'INT'
+    assert meta['Model']._tx_attrs['a'].mult == '1..*'
+    assert meta['Model']._tx_attrs['a'].cont
+    assert not meta['Model']._tx_attrs['a'].ref
     assert model
     assert model.a
     assert type(model.a) is list
@@ -478,6 +483,30 @@ def test_assignment_multiple_simple():
 
     model = meta.model_from_str('start 34 23')
     assert model.a == [34, 23]
+
+
+def test_assignment_multiple_different():
+    """
+    Test that multiple assignments of different type will result in a list of
+    OBJECT.
+    """
+
+    grammar = """
+    Model:
+        elements*=Element
+    ;
+    Element:
+       name=ID value=STRING | name=ID value=INT value=ID
+    ;
+
+    """
+    mm = metamodel_from_str(grammar)
+    assert mm['Element']._tx_attrs['name'].cls.__name__ == 'ID'
+    assert mm['Element']._tx_attrs['name'].mult == '1'
+    assert not mm['Element']._tx_attrs['name'].ref
+    assert mm['Element']._tx_attrs['value'].cls.__name__ == 'OBJECT'
+    assert mm['Element']._tx_attrs['value'].mult == '1..*'
+    assert mm['Element']._tx_attrs['value'].ref
 
 
 def test_assignment_oneoormore():
@@ -494,7 +523,7 @@ def test_assignment_oneoormore():
     assert meta
     assert set([x.__name__ for x in meta]) == \
         set(['Model', 'Rule', 'Rule1', 'Rule2', 'Rule3'])\
-        .union(set(BASE_TYPE_NAMES))
+        .union(set(ALL_TYPE_NAMES))
 
     model = meta.model_from_str('start 34 "foo"')
     assert model
@@ -523,7 +552,7 @@ def test_assignment_optional():
     assert meta
     assert set([x.__name__ for x in meta]) == \
         set(['Model', 'Rule', 'Rule1', 'Rule2', 'Rule3'])\
-        .union(set(BASE_TYPE_NAMES))
+        .union(set(ALL_TYPE_NAMES))
 
     model = meta.model_from_str('start')
     assert model
@@ -554,8 +583,9 @@ def test_repetition_separator_modifier():
     """
     meta = metamodel_from_str(grammar)
     assert meta
-    assert set([x.__name__ for x in meta]) == set(['Model', 'Rule', 'Rule1', 'Rule2', 'Rule3'])\
-        .union(set(BASE_TYPE_NAMES))
+    assert set([x.__name__ for x in meta]) == set(['Model', 'Rule', 'Rule1',
+                                                   'Rule2', 'Rule3'])\
+        .union(set(ALL_TYPE_NAMES))
 
     model = meta.model_from_str('start 34, "foo"; ident')
     assert model
@@ -585,7 +615,7 @@ def test_bool_match():
     assert meta
     assert set([x.__name__ for x in meta]) == \
         set(['Model', 'Rule', 'Rule1', 'Rule2', 'Rule3'])\
-        .union(set(BASE_TYPE_NAMES))
+        .union(set(ALL_TYPE_NAMES))
 
     model = meta.model_from_str('start rule 34')
     assert model
@@ -612,7 +642,7 @@ def test_object_and_rule_reference():
     assert meta
     assert set([x.__name__ for x in meta]) == \
         set(['Model', 'RuleA'])\
-        .union(set(BASE_TYPE_NAMES))
+        .union(set(ALL_TYPE_NAMES))
 
     model = meta.model_from_str('start rule rule1 rule rule2 ref rule1')
     assert model
@@ -639,7 +669,7 @@ def test_abstract_rule_and_object_reference():
     assert meta
     assert set([x.__name__ for x in meta]) == \
         set(['Model', 'RuleA', 'Rule1', 'Rule2', 'RuleI', 'RuleE'])\
-        .union(set(BASE_TYPE_NAMES))
+        .union(set(ALL_TYPE_NAMES))
 
     model = meta.model_from_str('start r2 rule1 rE rule2 ref rule2')
     assert model
@@ -774,7 +804,7 @@ def test_sequence_ordered_choice():
     assert meta
     assert set([x.__name__ for x in meta]) == \
         set(['Model', 'RuleA'])\
-        .union(set(BASE_TYPE_NAMES))
+        .union(set(ALL_TYPE_NAMES))
 
     model = meta.model_from_str('first 23 a_is_here END')
     assert model.a == 23
