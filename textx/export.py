@@ -15,7 +15,7 @@ from .textx import PRIMITIVE_PYTHON_TYPES, BASE_TYPE_NAMES
 import codecs
 import sys
 if sys.version < '3':
-    text = unicode
+    text = unicode  # noqa
 else:
     text = str
 
@@ -34,6 +34,7 @@ HEADER = '''
 
 
 '''
+
 
 def match_abstract_str(cls):
     """
@@ -57,11 +58,11 @@ def match_abstract_str(cls):
         elif isinstance(s, ZeroOrMore):
             result = "({})*".format(r(s.nodes[0]))
         elif isinstance(s, OneOrMore):
-            result =  "({})+".format(r(s.nodes[0]))
+            result = "({})+".format(r(s.nodes[0]))
         elif isinstance(s, Optional):
-            result =  "{}?".format(r(s.nodes[0]))
+            result = "{}?".format(r(s.nodes[0]))
         elif isinstance(s, SyntaxPredicate):
-            result =  ""
+            result = ""
         return "{}{}".format(result, "-" if s.suppress else "")
 
     mstr = ""
@@ -83,6 +84,7 @@ def match_abstract_str(cls):
         mstr = dot_escape(mstr)
 
     return mstr
+
 
 def dot_escape(s):
     return s.replace('\n', r'\n')\
@@ -173,7 +175,8 @@ def model_export(model, file_name):
                     [MULT_ONE, MULT_ONEORMORE] else ""
 
                 if attr.mult in [MULT_ONEORMORE, MULT_ZEROORMORE]:
-                    if all([type(x) in PRIMITIVE_PYTHON_TYPES for x in attr_value]):
+                    if all([type(x) in PRIMITIVE_PYTHON_TYPES
+                            for x in attr_value]):
                         attrs += "{}{}:list=[".format(required, attr_name)
                         attrs += ",".join([dot_repr(x) for x in attr_value])
                         attrs += "]\\l"
