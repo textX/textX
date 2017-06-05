@@ -237,14 +237,14 @@ of a set of textX rules.</p>
 <p>The basic building blocks of the textX language are rules. Each rule is written
 in the following form:</p>
 <pre><code>Hello:
-  'hello' who=ID;
+  'hello' who=ID
 ;
 </code></pre>
-<p>This rule is called <code>Hello</code>. After the name is a colon. Between the colon and
-the semicolon at the end is a body of the rule given as a textX expression. This
-rule tells us that the pattern of <code>Hello</code> objects in the input string consists
-of the word <code>hello</code>, followed by the ID rule (here ID is a rule reference to the
-built-in rule, more about this in a moment).</p>
+<p>This rule is called <code>Hello</code>. After the rule name, there is a colon. The body of the
+rule is given as a textX expression, starting at the colon and ending with a
+semicolon. This rule tells us that the pattern of <code>Hello</code> objects in input strings
+consists of the string literal <code>hello</code>, followed by the ID rule (here ID is a 
+reference to a built-in rule, more about this in a moment).</p>
 <p>These are valid <code>Hello</code> objects:</p>
 <pre><code>hello Alice
 hello Bob
@@ -254,25 +254,25 @@ hello foo1234
 recognized in the input stream, an object of this class will get created and the
 attribute <code>who</code> will be set to whatever the rule <code>ID</code> has matched after the word
 <code>hello</code> (this is specified by the assignment <code>who=ID</code>).</p>
-<p>Of course, there are many more rule expressions than were shown in this small example.
+<p>Of course, there are many more rule expressions than those shown in this small example.
 In the next section, a detailed description of each textX expression is given.</p>
 <h2 id="textx-base-types">textX base types<a class="headerlink" href="#textx-base-types" title="Permanent link">&para;</a></h2>
-<p>In the previous example you have seen an <code>ID</code> rule. This rule is a part of
+<p>In the previous example you have seen an <code>ID</code> rule. This rule is one of the
 built-in rules that form the base of textX's type system. Base types/rules are
-given in the following figure:</p>
+depicted in the following figure:</p>
 <p><img alt="base types" src="../images/base_types.png" /></p>
 <ul>
-<li><code>ID</code> rule will match an common identifier consisting of letters, digits
+<li><code>ID</code> rule: matches a common identifier consisting of letters, digits
   and underscores. The regex pattern that describe this rule is <code>'[^\d\W]\w*\b'</code>.
-  This match will be converted to a python string.</li>
-<li><code>INT</code> rule will match an integer number. This match will be converted to
-  python <code>int</code> type.</li>
-<li><code>FLOAT</code> rule will match a float number. This match will be converted to
-  python <code>float</code> type.</li>
-<li><code>BOOL</code> rule will match words <code>true</code> or <code>false</code>. This match
-  will be converted to python <code>bool</code> type.</li>
-<li><code>STRING</code> rule will match a quoted string. This match will be converted
-  to python <code>str</code> type.</li>
+  This match will be converted to a Python string.</li>
+<li><code>INT</code> rule: matches an integer number. This match will be converted to
+  a Python <code>int</code> instance.</li>
+<li><code>FLOAT</code> rule: will match a floating point number. This match will be converted
+  to a Python <code>float</code> instance.</li>
+<li><code>BOOL</code> rule: matches the words <code>true</code> or <code>false</code>. This match
+  will be converted to a Python <code>bool</code> instance.</li>
+<li><code>STRING</code> rule: matches a quoted string. This match will be converted
+  to a Python <code>str</code> instance.</li>
 </ul>
 <p>Built-in types are automatically converted to python types during object
 instantiation. See
@@ -586,8 +586,8 @@ RHS of the assignments. There are two types of rule references:</p>
 <li>
 <p><strong>Match rule reference</strong> - will <em>call</em> another rule. When instance of the called
   rule is created, it will be assigned to the attribute on the LHS. We say that the
-  referred object is contained inside the referring object (e.g. they form a
-  <a href="../metamodel/#parent-child-relationships">parent-child relationship</a>.</p>
+  referred object is contained inside the referring object (i.e. they form a
+  <a href="../metamodel/#parent-child-relationships">parent-child relationship</a>).</p>
 <p>Example::</p>
 <pre><code>Structure:
   'structure' '{'
