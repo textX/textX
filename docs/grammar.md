@@ -9,14 +9,14 @@ The basic building blocks of the textX language are rules. Each rule is written
 in the following form:
 
     Hello:
-      'hello' who=ID;
+      'hello' who=ID
     ;
 
-This rule is called `Hello`. After the name is a colon. Between the colon and
-the semicolon at the end is a body of the rule given as a textX expression. This
-rule tells us that the pattern of `Hello` objects in the input string consists
-of the word `hello`, followed by the ID rule (here ID is a rule reference to the
-built-in rule, more about this in a moment).
+This rule is called `Hello`. After the rule name, there is a colon. The body of the
+rule is given as a textX expression, starting at the colon and ending with a
+semicolon. This rule tells us that the pattern of `Hello` objects in input strings
+consists of the string literal `hello`, followed by the ID rule (here ID is a 
+reference to a built-in rule, more about this in a moment).
 
 These are valid `Hello` objects:
 
@@ -29,28 +29,28 @@ recognized in the input stream, an object of this class will get created and the
 attribute `who` will be set to whatever the rule `ID` has matched after the word
 `hello` (this is specified by the assignment `who=ID`).
 
-Of course, there are many more rule expressions than were shown in this small example.
+Of course, there are many more rule expressions than those shown in this small example.
 In the next section, a detailed description of each textX expression is given.
 
 ## textX base types
 
-In the previous example you have seen an `ID` rule. This rule is a part of
+In the previous example you have seen an `ID` rule. This rule is one of the
 built-in rules that form the base of textX's type system. Base types/rules are
-given in the following figure:
+depicted in the following figure:
 
 ![base types](images/base_types.png)
 
-* `ID` rule will match an common identifier consisting of letters, digits
+* `ID` rule: matches a common identifier consisting of letters, digits
   and underscores. The regex pattern that describe this rule is `'[^\d\W]\w*\b'`.
-  This match will be converted to a python string.
-* `INT` rule will match an integer number. This match will be converted to
-  python `int` type.
-* `FLOAT` rule will match a float number. This match will be converted to
-  python `float` type.
-* `BOOL` rule will match words `true` or `false`. This match
-  will be converted to python `bool` type.
-* `STRING` rule will match a quoted string. This match will be converted
-  to python `str` type.
+  This match will be converted to a Python string.
+* `INT` rule: matches an integer number. This match will be converted to
+  a Python `int` instance.
+* `FLOAT` rule: will match a floating point number. This match will be converted
+  to a Python `float` instance.
+* `BOOL` rule: matches the words `true` or `false`. This match
+  will be converted to a Python `bool` instance.
+* `STRING` rule: matches a quoted string. This match will be converted
+  to a Python `str` instance.
 
 Built-in types are automatically converted to python types during object
 instantiation. See
@@ -399,8 +399,8 @@ RHS of the assignments. There are two types of rule references:
 
 * **Match rule reference** - will *call* another rule. When instance of the called
   rule is created, it will be assigned to the attribute on the LHS. We say that the
-  referred object is contained inside the referring object (e.g. they form a
-  [parent-child relationship](metamodel.md#parent-child-relationships).
+  referred object is contained inside the referring object (i.e. they form a
+  [parent-child relationship](metamodel.md#parent-child-relationships)).
 
     Example::
 
