@@ -13,7 +13,7 @@ in the following form:
     ;
 
 This rule is called `Hello`. After the rule name, there is a colon. The body of the
-rule is given as a textX expression, starting at the colon and and ending with a
+rule is given as a textX expression, starting at the colon and ending with a
 semicolon. This rule tells us that the pattern of `Hello` objects in input strings
 consists of the string literal `hello`, followed by the ID rule (here ID is a 
 reference to a built-in rule, more about this in a moment).
