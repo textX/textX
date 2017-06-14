@@ -3,10 +3,10 @@
 textX supports debugging on the meta-model (grammar) and model levels. If
 debugging is enabled, textX will print various debugging messages.
 
-If the `debug` parameter of the meta-model construction is set to `True`, debug messages
-during grammar parsing and meta-model construction will be printed. Additionally,
-a parse tree created during the grammar parsing as well as meta-model (if constructed
-successfully) dot files will be generated:
+If the `debug` parameter of the meta-model construction is set to `True`, debug
+messages during grammar parsing and meta-model construction will be printed.
+Additionally, a parse tree created during the grammar parsing as well as
+meta-model (if constructed successfully) dot files will be generated:
 
 ```python
 form textx.metamodel import metamodel_from_file
@@ -14,10 +14,9 @@ form textx.metamodel import metamodel_from_file
 robot_metamodel = metamodel_from_file('robot.tx', debug=True)
 ```
 
-If `debug` is set in the `model_from_file/str` calls, various
-messages during the model parsing and construction will be printed. Additionally,
-parse tree created from the input as well as the model will be exported to dot
-files.
+If `debug` is set in the `model_from_file/str` calls, various messages during
+the model parsing and construction will be printed. Additionally, parse tree
+created from the input as well as the model will be exported to dot files.
 
 ```python
   robot_program = robot_metamodel.model_from_file('program.rbt', debug=True)

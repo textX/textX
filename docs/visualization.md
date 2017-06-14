@@ -32,9 +32,8 @@ entity_mm = metamodel_from_file('entity.tx')
 metamodel_export(entity_mm, 'entity.dot')
 ```
 
-`entity.dot` file will be created. You can visualize this file by using
-various dot viewers or convert it to various image formats using the 'dot'
-tool.
+`entity.dot` file will be created. You can visualize this file by using various
+dot viewers or convert it to various image formats using the 'dot' tool.
 
     $ dot -Tpng -O entity.dot
 
