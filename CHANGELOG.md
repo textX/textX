@@ -1,5 +1,11 @@
 # textX changelog
 
+* 2017-06-14 Release 1.5.1
+  - Fixed issue #34 triggered with multiple assignments with the different types
+    leading to errors in reference resolving.
+  - Fixed inheritance of base types.
+  - Some fixes in the docs (thanks borismarin@github).
+
 * 2017-05-15 Release 1.5
   - For a more detailed feature highlights overview for this release
     please see [what's new section in the docs](http://www.igordejanovic.net/textX/whatsnew/release_1_5).
