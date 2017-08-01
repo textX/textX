@@ -231,8 +231,8 @@
             <div class="section">
               
                 <h1 id="textx-grammar">textX grammar<a class="headerlink" href="#textx-grammar" title="Permanent link">&para;</a></h1>
-<p>The language syntax and the meta-model are defined by the textX grammar in the form 
-of a set of textX rules.</p>
+<p>The language syntax and the meta-model are defined by the textX grammar in the
+form of a set of textX rules.</p>
 <h2 id="rules">Rules<a class="headerlink" href="#rules" title="Permanent link">&para;</a></h2>
 <p>The basic building blocks of the textX language are rules. Each rule is written
 in the following form:</p>
@@ -240,11 +240,11 @@ in the following form:</p>
   'hello' who=ID
 ;
 </code></pre>
-<p>This rule is called <code>Hello</code>. After the rule name, there is a colon. The body of the
-rule is given as a textX expression, starting at the colon and ending with a
-semicolon. This rule tells us that the pattern of <code>Hello</code> objects in input strings
-consists of the string literal <code>hello</code>, followed by the ID rule (here ID is a 
-reference to a built-in rule, more about this in a moment).</p>
+<p>This rule is called <code>Hello</code>. After the rule name, there is a colon. The body of
+the rule is given as a textX expression, starting at the colon and ending with a
+semicolon. This rule tells us that the pattern of <code>Hello</code> objects in input
+strings consists of the string literal <code>hello</code>, followed by the ID rule (here ID
+is a reference to a built-in rule, more about this in a moment).</p>
 <p>These are valid <code>Hello</code> objects:</p>
 <pre><code>hello Alice
 hello Bob
@@ -254,8 +254,9 @@ hello foo1234
 recognized in the input stream, an object of this class will get created and the
 attribute <code>who</code> will be set to whatever the rule <code>ID</code> has matched after the word
 <code>hello</code> (this is specified by the assignment <code>who=ID</code>).</p>
-<p>Of course, there are many more rule expressions than those shown in this small example.
-In the next section, a detailed description of each textX expression is given.</p>
+<p>Of course, there are many more rule expressions than those shown in this small
+example. In the next section, a detailed description of each textX expression is
+given.</p>
 <h2 id="textx-base-types">textX base types<a class="headerlink" href="#textx-base-types" title="Permanent link">&para;</a></h2>
 <p>In the previous example you have seen an <code>ID</code> rule. This rule is one of the
 built-in rules that form the base of textX's type system. Base types/rules are
@@ -274,12 +275,13 @@ depicted in the following figure:</p>
 <li><code>STRING</code> rule: matches a quoted string. This match will be converted
   to a Python <code>str</code> instance.</li>
 </ul>
-<p>Built-in types are automatically converted to python types during object
-instantiation. See
-<a href="../metamodel/#auto-initialization-of-attributes">auto-initialization</a> for more information.</p>
+<p>textX base types are automatically converted to python types during object
+instantiation.
+See <a href="../metamodel/#auto-initialization-of-attributes">auto-initialization</a> for
+more information.</p>
 <h2 id="rule-expressions">Rule expressions<a class="headerlink" href="#rule-expressions" title="Permanent link">&para;</a></h2>
-<p>Rule expressions represent the body of a rule. They is specified using basic expressions
-and operators.</p>
+<p>Rule expressions represent the body of a rule. They is specified using basic
+expressions and operators.</p>
 <p>The basic expressions are:</p>
 <ul>
 <li><a href="#matches">Matches</a><ul>
@@ -331,8 +333,8 @@ expressions will consume input on success.</p>
 </code></pre>
 </li>
 <li>
-<p><strong>Regex match</strong> - uses regular expression defined inside <code>/ /</code> to match
-  the input. Therefore, it defines a whole class of strings that can be matched.
+<p><strong>Regex match</strong> - uses regular expression defined inside <code>/ /</code> to match the
+  input. Therefore, it defines a whole class of strings that can be matched.
   Internally a python <code>re</code> module is used.</p>
 <p>Here are few example of regex matches:</p>
 <pre><code>/\d*/
@@ -351,11 +353,11 @@ sub-expressions one after another. For example,the following rule:</p>
   "red" "green" "blue"
 ;
 </code></pre>
-<p>is defined as a sequence consisting of three string matches (<code>red</code>
-<code>green</code> and <code>blue</code>). Contained expressions will be matched in the
-exact order they are given. If some of the expressions do not match, the
-sequence as a whole will fail. The above rule defined by the sequence will match
-only the following string:</p>
+<p>is defined as a sequence consisting of three string matches (<code>red</code> <code>green</code> and
+<code>blue</code>). Contained expressions will be matched in the exact order they are
+given. If some of the expressions do not match, the sequence as a whole will
+fail. The above rule defined by the sequence will match only the following
+string:</p>
 <pre><code>red green blue
 </code></pre>
 <div class="admonition note">
@@ -380,14 +382,15 @@ match the expressions in that order.</p>
 This may lead to ambiguous grammars where multiple parse tree may exist for
 the same input string.</p>
 </div>
-<p>Underlying parsing technology of textX is
-<a href="https://github.com/igordejanovic/Arpeggio">Arpeggio</a> which is a parser based on
-PEG grammars and thus the <code>|</code> operator directly translates to Arpeggio's PEG
+<p>Underlying parsing technology of textX
+is <a href="https://github.com/igordejanovic/Arpeggio">Arpeggio</a> which is a parser based
+on PEG grammars and thus the <code>|</code> operator directly translates to Arpeggio's PEG
 ordered choice. Using ordered choice yields unambiguous parsing. If the text
 parses there is only one possible parse tree.</p>
 <h3 id="optional">Optional<a class="headerlink" href="#optional" title="Permanent link">&para;</a></h3>
-<p><code>Optional</code> is an expression that will match the contained expression if that is possible, but
-will not fail otherwise. Thus, optional expression always succeeds.</p>
+<p><code>Optional</code> is an expression that will match the contained expression if that is
+possible, but will not fail otherwise. Thus, optional expression always
+succeeds.</p>
 <p>Example:</p>
 <pre><code>MoveUp:
   'up' INT?
@@ -414,11 +417,11 @@ up
   ("red"|"green"|"blue")*
 ;
 </code></pre>
-<p>In this example <em>zero or more</em> repetition is applied on the <em>ordered choice</em>.
-In each repeated match one color will be matched, trying from left to
-right.  Thus, <code>Colors</code> rule will match color as many times as possible, but
-will not fail if no color exists in the input string. The following would be
-matched by the <code>Colors</code> rule:</p>
+<p>In this example <em>zero or more</em> repetition is applied on the <em>ordered
+choice</em>. In each repeated match one color will be matched, trying from left
+to right. Thus, <code>Colors</code> rule will match color as many times as possible,
+but will not fail if no color exists in the input string. The following
+would be matched by the <code>Colors</code> rule:</p>
 <pre><code>red blue green
 </code></pre>
 <p>but also:</p>
@@ -483,10 +486,10 @@ final protected static
 <h3 id="assignments">Assignments<a class="headerlink" href="#assignments" title="Permanent link">&para;</a></h3>
 <p>Assignments are used as a part of the meta-model deduction process. Each
 assignment will result in an attribute of the meta-class created by the rule.</p>
-<p>Each assignment consists of the LHS (left-hand side) and the RHS (right-hand side). The
-LHS is always a name of the meta-class attribute while the RHS can be a
-reference to other rules (either a match or a link reference) or a simple match
-(string or regex match). For example:</p>
+<p>Each assignment consists of the LHS (left-hand side) and the RHS (right-hand
+side). The LHS is always a name of the meta-class attribute while the RHS can be
+a reference to other rules (either a match or a link reference) or a simple
+match (string or regex match). For example:</p>
 <pre><code>Person:
   name=Name ',' surename=Surename ',' age=INT ',' height=INT ';'
 ;
@@ -516,8 +519,8 @@ to some of the plain python types (e.g. <code>int</code>, <code>string</code>, <
 </code></pre>
 <p>then the attribute given by the LHS will be set as the string matched by the RHS
 regular expression or string.</p>
-<p>If the RHS is a reference to some other rule, then the attribute given by the LHS will
-be set to refer to the object created by the RHS rule.</p>
+<p>If the RHS is a reference to some other rule, then the attribute given by the
+LHS will be set to refer to the object created by the RHS rule.</p>
 <p>Following strings are matched by the <code>Person</code> rule from above:</p>
 <pre><code>Petar, Petrovic, 27, 185;
 John, Doe, 34, 178;
@@ -544,10 +547,10 @@ number_given ?= INT
 </code></pre>
 </li>
 <li>
-<p><strong>Zero or more assignment</strong> (<code>*=</code>) - LHS attribute will be a
-  <code>list</code>. This assignment will keep matching the RHS as long as the match succeeds and
-  each matched object will be appended to the attribute. If no match succeeds,
-  the attribute will be an empty list.</p>
+<p><strong>Zero or more assignment</strong> (<code>*=</code>) - LHS attribute will be a <code>list</code>. This
+  assignment will keep matching the RHS as long as the match succeeds and each
+  matched object will be appended to the attribute. If no match succeeds, the
+  attribute will be an empty list.</p>
 <p>Examples::</p>
 <pre><code>commands*=Command
 numbers*=INT
@@ -564,7 +567,9 @@ numbers*=INT
       a=INT b=FLOAT a*=ID
   ;
 </code></pre>
-<p>Here <code>a</code> attribute will always be Python list.</p>
+<p>Here <code>a</code> attribute will always be a Python list. The type of <code>a</code> will be
+<code>OBJECT</code> as the two assignments have declared different types for <code>a</code> (<code>INT</code> and
+<code>ID</code>).</p>
 <p>Consider this example:</p>
 <pre><code>  Method:
       'func(' (params+=Parameter[','])? ')'
@@ -575,13 +580,14 @@ numbers*=INT
 </code></pre>
 <p>In <code>Parameter</code> rule, the <code>name</code> attribute assignments are part of different
 ordered choice alternatives and thus name will never have more than one value
-and thus should not be a list.</p>
+and thus should not be a list. The type of <code>name</code> is consistent in both
+assignments so it will be <code>ID</code>.</p>
 <p>The rule of the thumb for multiple assignments is that if there is no
 possibility for an attribute to collect more than one value during parsing it
 will be a single value object, otherwise it will be a list.</p>
 <h3 id="references">References<a class="headerlink" href="#references" title="Permanent link">&para;</a></h3>
-<p>Rules can reference each other. References are usually used as a
-RHS of the assignments. There are two types of rule references:</p>
+<p>Rules can reference each other. References are usually used as a RHS of the
+assignments. There are two types of rule references:</p>
 <ul>
 <li>
 <p><strong>Match rule reference</strong> - will <em>call</em> another rule. When instance of the called
@@ -602,11 +608,11 @@ the containing <code>Structure</code>.</p>
 </li>
 <li>
 <p><strong>Link rule reference</strong> - will match an identifier of some class object at the
-  given place and convert that identifier to a python reference to the target object.
-  This reference resolving is done automatically by textX. By default, a
-  <code>name</code> attribute is used as the identifier of the object. Currently,
-  there is no automatic support for namespaces in textX. All objects of the
-  same class are in a single namespace.</p>
+  given place and convert that identifier to a python reference to the target
+  object. This reference resolving is done automatically by textX. By default, a
+  <code>name</code> attribute is used as the identifier of the object. Currently, there is
+  no automatic support for namespaces in textX. All objects of the same class
+  are in a single namespace.</p>
 <p>Example:</p>
 <pre><code>ScreenType:
   'screen' name=ID "{"
@@ -642,11 +648,11 @@ that, you can use the following syntax:</p>
 </ul>
 <h3 id="syntactic-predicates">Syntactic predicates<a class="headerlink" href="#syntactic-predicates" title="Permanent link">&para;</a></h3>
 <p>Syntactic predicates are operators that are used to implement lookahead. The
-lookahead is used to do parsing decision based on the part of the input ahead
-of the current position. Syntactic predicates are written as a prefix of some
-textX rule expression. The rule expression will be used to match input ahead
-of the current location in the input string. It will either fail or succeed but
-will never consume any input.</p>
+lookahead is used to do parsing decision based on the part of the input ahead of
+the current position. Syntactic predicates are written as a prefix of some textX
+rule expression. The rule expression will be used to match input ahead of the
+current location in the input string. It will either fail or succeed but will
+never consume any input.</p>
 <p>There are two type of syntactic predicates:</p>
 <ul>
 <li>
@@ -663,9 +669,8 @@ Let:
 <p>In this example we have nested expressions built with indirectly recurssive
 <code>Let</code> rule. The problem is that the <code>ID</code> rule from <code>Expression</code> will match
 keyword <code>end</code> and thus will consume end of <code>Let</code> rule, so the parser will
-hit EOF without completing any <code>Let</code> rules. To fix this, we can specify
-that <code>ID</code> will match any identifier except keywords <code>let</code> and <code>end</code> like
-this:</p>
+hit EOF without completing any <code>Let</code> rules. To fix this, we can specify that
+<code>ID</code> will match any identifier except keywords <code>let</code> and <code>end</code> like this:</p>
 <pre><code>Expression: Let | MyID | NUMBER;
 Let:
     'let'
@@ -701,8 +706,8 @@ followed by <code>b</code>.</p>
 </li>
 </ul>
 <h3 id="match-suppression">Match suppression<a class="headerlink" href="#match-suppression" title="Permanent link">&para;</a></h3>
-<p>Sometimes it is necessary to define match rules that should return only parts
-of the match. For that we use match the suppression operator (<code>-</code>) after the
+<p>Sometimes it is necessary to define match rules that should return only parts of
+the match. For that we use match the suppression operator (<code>-</code>) after the
 expression you want to suppress.</p>
 <p>For example:</p>
 <pre><code>FullyQualifiedID[noskipws]:
@@ -718,10 +723,10 @@ QuotedID:
 whitespaces automatically. Thus, we have to match whitespaces ourself, but we
 don't want those whitespaces in the resulting string. You might wonder why we
 are using <code>noskipws</code>. It is because we do not want whitespaces in between each
-<code>QuotedID</code> match. So, for example, <code>first.  second</code> shouldn't match but
+<code>QuotedID</code> match. So, for example, <code>first. second</code> shouldn't match but
 <code>first.second</code> should.</p>
-<p>In the rule <code>FullyQualifiedID</code> we are suppressing whitespace matches <code>/\s*/-</code>.  We
-also state in <code>QuotedID</code> that there are optional quotation marks around each
+<p>In the rule <code>FullyQualifiedID</code> we are suppressing whitespace matches <code>/\s*/-</code>.
+We also state in <code>QuotedID</code> that there are optional quotation marks around each
 ID, but we don't want those either <code>'"'?-</code>.</p>
 <p>Given this input:</p>
 <pre><code>first."second".third."fourth"
@@ -764,8 +769,8 @@ zero or more strings separated by commas inside one line.</p>
 <pre><code>"first", "second", "third"
 "fourth"
 </code></pre>
-<p>If we run the example expression once on this string, it will match the first line only.
-<code>"fourth"</code> in the second line will not be matched.</p>
+<p>If we run the example expression once on this string, it will match the
+first line only. <code>"fourth"</code> in the second line will not be matched.</p>
 </li>
 </ul>
 <div class="admonition warning">
@@ -819,10 +824,10 @@ Command:
   MoveCommand | InitialCommand
 ;
 </code></pre>
-<p>In this example, Python objects in the <code>commands</code> list will either contain instances of
-<code>MoveCommand</code> or <code>InitialCommand</code>.  <code>Command</code> rule is abstract.  A meta-class of
-this rule will never be instantiated. Abstract rule can also be used in link
-rule references:</p>
+<p>In this example, Python objects in the <code>commands</code> list will either contain
+instances of <code>MoveCommand</code> or <code>InitialCommand</code>. <code>Command</code> rule is abstract. A
+meta-class of this rule will never be instantiated. Abstract rule can also be
+used in link rule references:</p>
 <pre><code>ListOfCommands:
   commands*=[Command][',']
 ;
@@ -832,11 +837,11 @@ rule references:</p>
     STRING | FLOAT | BOOL | Object | Array | "null"
 ;
 </code></pre>
-<p>In this example, the base types as well as the string match <code>"null"</code> are all match rules,
-but <code>Object</code> and <code>Array</code> are common rules and therefore <code>Value</code> is abstract.</p>
+<p>In this example, the base types as well as the string match <code>"null"</code> are all
+match rules, but <code>Object</code> and <code>Array</code> are common rules and therefore <code>Value</code> is
+abstract.</p>
 <p>Abstract rules can be a complex mix of rule references and match expressions as
-long as there is at least one abstract or common reference.
-For example:</p>
+long as there is at least one abstract or common reference. For example:</p>
 <pre><code>Value:
   'id' /\d+-\d+/ | FLOAT | Object
 ;
@@ -864,14 +869,14 @@ Value:
 ;
 </code></pre>
 <p>These rules can be used in match references only (i.e., you can't link to these
-rules as they don't exists as objects), and they produce objects of the base python
-types (<code>str</code>, <code>int</code>, <code>bool</code>, <code>float</code>).</p>
+rules as they don't exists as objects), and they produce objects of the base
+python types (<code>str</code>, <code>int</code>, <code>bool</code>, <code>float</code>).</p>
 <p>All base type rules (e.g., <code>INT</code>, <code>STRING</code>, <code>BASETYPE</code>) are match rules.</p>
 <h2 id="rule-modifiers">Rule modifiers<a class="headerlink" href="#rule-modifiers" title="Permanent link">&para;</a></h2>
 <p>Rule modifiers are used for the modification of the rule's expression. They are
-specified in brackets (<code>[  ]</code>) at the beginning of the rule's definition after the
-rule's name. Currently, they are used to alter parser configuration for whitespace
-handling on the rule level.</p>
+specified in brackets (<code>[ ]</code>) at the beginning of the rule's definition after
+the rule's name. Currently, they are used to alter parser configuration for
+whitespace handling on the rule level.</p>
 <p>There are two rule modifiers at the moment:</p>
 <ul>
 <li>
@@ -884,16 +889,16 @@ handling on the rule level.</p>
 Rule2[noskipws]:
     'first' 'second';
 </code></pre>
-<p>In this example <code>Rule</code> rule will use default parser behaviour set during
-the meta-model instantiation, while <code>Rule2</code> rule will disable whitespace
+<p>In this example <code>Rule</code> rule will use default parser behaviour set during the
+meta-model instantiation, while <code>Rule2</code> rule will disable whitespace
 skipping. This will change <code>Rule2</code> to match the word <code>firstsecond</code>, but not
 words <code>first second</code> with whitespaces in between.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Remember that whitespace handling modification will start immediately
-after the previous match. In the above example, additional <code>/\s*/</code> is given
-before the <code>Rule2</code> call to consume all whitespaces before trying to match
-<code>Rule2</code>.</p>
+after the previous match. In the above example, additional <code>/\s*/</code> is
+given before the <code>Rule2</code> call to consume all whitespaces before trying
+to match <code>Rule2</code>.</p>
 </div>
 </li>
 <li>
@@ -908,39 +913,39 @@ before the <code>Rule2</code> call to consume all whitespaces before trying to m
 Rule2[ws='\n']:
     'first' 'second';
 </code></pre>
-<p>In this example <code>Rule</code> will use the default parser behavior but the
-<code>Rule2</code> will alter the white-space definition to be new-line only.
-This means that the words <code>first</code> and <code>second</code> will get matched
-only if they are on separate lines or in the same line but without other
-characters in between (even tabs and spaces).</p>
+<p>In this example <code>Rule</code> will use the default parser behavior but the <code>Rule2</code>
+will alter the white-space definition to be new-line only. This means that
+the words <code>first</code> and <code>second</code> will get matched only if they are on separate
+lines or in the same line but without other characters in between (even tabs
+and spaces).</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>As in the previous example, the modification will start immediately, so if you
-want to consume preceding spaces you must do that explicitly, as given
-with <code>/\s*/</code> in the :<code>Rule</code>.</p>
+<p>As in the previous example, the modification will start immediately, so
+if you want to consume preceding spaces you must do that explicitly, as
+given with <code>/\s*/</code> in the :<code>Rule</code>.</p>
 </div>
 </li>
 </ul>
 <h2 id="grammar-comments">Grammar comments<a class="headerlink" href="#grammar-comments" title="Permanent link">&para;</a></h2>
-<p>Syntax for comments inside a grammar is <code>//</code> for line comments and
-<code>/* ... */</code> for block comments.</p>
+<p>Syntax for comments inside a grammar is <code>//</code> for line comments and <code>/* ... */</code>
+for block comments.</p>
 <h2 id="language-comments">Language comments<a class="headerlink" href="#language-comments" title="Permanent link">&para;</a></h2>
-<p>To support comments in your DSL use a special grammar rule <code>Comment</code>.
-textX will try to match this rule in between each other normal grammar match
-(similarly to the whitespace matching).
-If the match succeeds, the matched content will be discarded.</p>
+<p>To support comments in your DSL use a special grammar rule <code>Comment</code>. textX will
+try to match this rule in between each other normal grammar match (similarly to
+the whitespace matching). If the match succeeds, the matched content will be
+discarded.</p>
 <p>For example, in the <a href="../tutorials/robot/">robot language example</a> comments are
 defined like this:</p>
 <pre><code>Comment:
   /\/\/.*$/
 ;
 </code></pre>
-<p>Which states that everything starting with <code>//</code> and continuing until the
-end of line is a comment.</p>
+<p>Which states that everything starting with <code>//</code> and continuing until the end of
+line is a comment.</p>
 <h2 id="grammar-modularization">Grammar modularization<a class="headerlink" href="#grammar-modularization" title="Permanent link">&para;</a></h2>
 <p>Grammars can be defined in multiple files and than imported. Rules used in the
-references are first searched for in the current file and then in the imported files, in the
-order of the import.</p>
+references are first searched for in the current file and then in the imported
+files, in the order of the import.</p>
 <p>Example:</p>
 <pre><code>import scheme
 
@@ -958,11 +963,11 @@ Library:
 <p>Example:</p>
 <pre><code>import component.types
 </code></pre>
-<p><code>types.tx</code> grammar is located in the <code>component</code> folder relatively to the current
-grammar file.</p>
-<p>If you want to override the default search order, you can specify a fully qualified
-name of the rule using dot notation when giving the name of the referring
-object.</p>
+<p><code>types.tx</code> grammar is located in the <code>component</code> folder relatively to the
+current grammar file.</p>
+<p>If you want to override the default search order, you can specify a fully
+qualified name of the rule using dot notation when giving the name of the
+referring object.</p>
 <p>Example:</p>
 <pre><code>import component.types
 

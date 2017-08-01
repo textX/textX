@@ -242,12 +242,12 @@ my_metamodel = metamodel_from_file('mygrammar.tx', skipws=False, ws='\s\n')
 of a single rule by <a href="../grammar/#rule-modifiers">rule modifiers</a>.</p>
 <h2 id="automatic-keywords">Automatic keywords<a class="headerlink" href="#automatic-keywords" title="Permanent link">&para;</a></h2>
 <p>When designing a DSL, it is usually desirable to match keywords on word
-boundaries.  For example, if we have Entity grammar from the above, then a word
+boundaries. For example, if we have Entity grammar from the above, then a word
 <code>entity</code> will be considered a keyword and should be matched on word boundaries
 only. If we have a word <code>entity2</code> in the input string at the place where
 <code>entity</code> should be matched, the match should not succeed.</p>
-<p>We could achieve this by using a regular expression match and the word boundaries
-regular expression rule for each keyword-like match.</p>
+<p>We could achieve this by using a regular expression match and the word
+boundaries regular expression rule for each keyword-like match.</p>
 <pre><code>Enitity:
   /\bentity\b/ name=ID ...
 </code></pre>
@@ -262,12 +262,12 @@ my_metamodel = metamodel_from_file('mygrammar.tx', autokwd=True)
 <p>Any simple match from the grammar that is matched by the
 regular expression <code>[^\d\W]\w*</code> is considered to be a keyword.</p>
 <h2 id="memoization-aka-packrat-parsing">Memoization (a.k.a. packrat parsing)<a class="headerlink" href="#memoization-aka-packrat-parsing" title="Permanent link">&para;</a></h2>
-<p>This technique is based on memoizing result on each parsing expression rule.
-For some grammars with a lot of backtracking this can yield a significant
-speed increase at the expense of some memory used for the memoization cache.</p>
+<p>This technique is based on memoizing result on each parsing expression rule. For
+some grammars with a lot of backtracking this can yield a significant speed
+increase at the expense of some memory used for the memoization cache.</p>
 <p>Starting with textX 1.4 this feature is disabled by default. If you think that
-parsing is slow, try to enable memoization by setting <code>memoization</code> parameter
-to <code>True</code> during meta-model instantiation.</p>
+parsing is slow, try to enable memoization by setting <code>memoization</code> parameter to
+<code>True</code> during meta-model instantiation.</p>
 <pre><code class="python">from textx.metamodel import metamodel_from_file
 my_metamodel = metamodel_from_file('mygrammar.tx', memoization=True)
 </code></pre>
