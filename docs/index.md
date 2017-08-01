@@ -138,6 +138,7 @@ Here is a non-complete list of projects using textX.
       experiments modeling
     - [ppci](http://ppci.readthedocs.io/en/latest/index.html) - Pure python
       compiler infrastructure. 
+    - [Expremigen](https://github.com/shimpe/expremigen) -  Expressive midi generation
 
 * Commercial
 
