@@ -646,6 +646,12 @@ that, you can use the following syntax:</p>
 <p>Here, instead of <code>ID</code> a <code>WORD</code> rule is used to match the object's identifier.</p>
 </li>
 </ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Attributes with <code>name</code> names are used for reference auto-resolving. A dict
+lookup is used, thus they must be of a hashable type. See 
+<a href="https://github.com/igordejanovic/textX/issues/40">issue #40</a>.</p>
+</div>
 <h3 id="syntactic-predicates">Syntactic predicates<a class="headerlink" href="#syntactic-predicates" title="Permanent link">&para;</a></h3>
 <p>Syntactic predicates are operators that are used to implement lookahead. The
 lookahead is used to do parsing decision based on the part of the input ahead of
