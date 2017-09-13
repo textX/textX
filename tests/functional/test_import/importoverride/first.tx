@@ -1,0 +1,11 @@
+import second
+import relative.third
+
+First:
+  'first' first+=Second
+  'third' third+=Third
+;
+
+Third:
+  chain=STRING
+;
