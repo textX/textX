@@ -2,8 +2,8 @@ import second
 import relative.third
 
 First:
-  'first' first+=Second
-  'third' third+=Third
+  'first' seconds+=Second
+  'third' thirds+=Third
 ;
 
 Third:
