@@ -1,0 +1,10 @@
+import second
+
+First:
+  'first' first+=Second
+  'third' third+=Third
+;
+
+Third:
+  chain=STRING
+;
