@@ -267,7 +267,6 @@ def parse_tree_to_objgraph(parser, parse_tree):
                 # At this point we need object to be allocated
                 # So that nested object get correct reference
                 inst = user_class.__new__(user_class)
-                inst._tx_metaclass = user_class
 
                 # Initialize object attributes for user class
                 parser.metamodel._init_obj_attrs(inst, user=True)
@@ -275,7 +274,6 @@ def parse_tree_to_objgraph(parser, parse_tree):
                 # Generic class will call attributes init
                 # from the constructor
                 inst = mclass.__new__(mclass)
-                inst._tx_metaclass = mclass
 
                 # Initialize object attributes
                 parser.metamodel._init_obj_attrs(inst)
@@ -342,7 +340,7 @@ def parse_tree_to_objgraph(parser, parse_tree):
             attr_name = node.rule._attr_name
             op = node.rule_name.split('_')[-1]
             model_obj, obj_attr = parser._inst_stack[-1]
-            cls = model_obj._tx_metaclass
+            cls = type(model_obj)
             metaattr = cls._tx_attrs[attr_name]
 
             # Mangle attribute name to prevent name clashing with property
@@ -498,11 +496,8 @@ def parse_tree_to_objgraph(parser, parse_tree):
         Depth-first model object processing.
         """
 
-        if type(model_obj) in PRIMITIVE_PYTHON_TYPES:
-            metaclass = type(model_obj)
-        else:
-            metaclass = model_obj._tx_metaclass
-
+        metaclass = type(model_obj)
+        if type(model_obj) not in PRIMITIVE_PYTHON_TYPES:
             for metaattr in metaclass._tx_attrs.values():
                 # If attribute is containment reference go down
                 if metaattr.ref and metaattr.cont:

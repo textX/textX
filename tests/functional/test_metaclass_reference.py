@@ -21,8 +21,8 @@ def test_metaclass_ref():
 
     model = metamodel.model_from_str('first 45 "test" 12')
 
-    assert model._tx_metaclass is First
-    assert all(x._tx_metaclass is Second for x in model.seconds)
+    assert type(model) is First
+    assert all(type(x) is Second for x in model.seconds)
 
 
 def test_metaclass_user_class():
@@ -36,7 +36,7 @@ def test_metaclass_user_class():
     metamodel = metamodel_from_str(grammar, classes=[First])
 
     model = metamodel.model_from_str('first 45 12')
-    assert model._tx_metaclass is First
+    assert type(model) is First
 
 
 @pytest.mark.parametrize("filename", ["first.tx", "first_new.tx"])
@@ -51,5 +51,5 @@ def test_metaclass_relative_paths(filename):
     model = mm.model_from_str('first 12 45 third "abc" "xyz"')
     inner_second = model.first[0]
 
-    assert all(x._tx_metaclass is ThirdMasked for x in inner_second.second)
-    assert all(x._tx_metaclass is Third for x in model.third)
+    assert all(type(x) is ThirdMasked for x in inner_second.second)
+    assert all(type(x) is Third for x in model.third)
