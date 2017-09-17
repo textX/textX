@@ -1,0 +1,5 @@
+import second_repr
+
+First:
+    'second' seconds+=Second
+;

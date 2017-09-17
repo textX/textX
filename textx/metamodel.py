@@ -257,7 +257,7 @@ class TextXMetaModel(DebugPrinter):
         class TextXMetaClass(type):
 
             def __repr__(cls):
-                return '<textx:{} class at {}>'.format(cls.__name__,
+                return '<textx:{} class at {}>'.format(cls._tx_fqn,
                                                        id(cls))
 
         def __repr__(self):
@@ -268,7 +268,7 @@ class TextXMetaModel(DebugPrinter):
                 return "<{}:{}>".format(name, self.name)
             else:
                 return "<textx:{} instance at {}>"\
-                    .format(name, hex(id(self)))
+                    .format(self._tx_fqn, hex(id(self)))
 
         if sys.version >= '3':
             class TextXClass(object, metaclass=TextXMetaClass):
@@ -338,10 +338,22 @@ class TextXMetaModel(DebugPrinter):
 
         # Push this class and PEG rule in the current namespace
         current_namespace = self.namespaces[self._namespace_stack[-1]]
+        cls._tx_fqn = self._cls_fqn(cls)
         current_namespace[cls.__name__] = cls
 
         if root:
             self.rootcls = cls
+
+    def _cls_fqn(self, cls):
+        """
+        Returns fully qualified name for the class based on current namespace
+        and the class name.
+        """
+        ns = self._namespace_stack[-1]
+        if ns in ['__base__', None]:
+            return cls.__name__
+        else:
+            return ns + '.' + cls.__name__
 
     def _init_obj_attrs(self, obj, user=False):
         """
