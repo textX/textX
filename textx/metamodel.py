@@ -8,6 +8,7 @@
 
 import codecs
 import os
+import sys
 from collections import OrderedDict
 from arpeggio import DebugPrinter
 from .textx import language_from_str, python_type, BASE_TYPE_NAMES, ID, BOOL,\
@@ -52,11 +53,6 @@ class MetaAttr(object):
         self.ref = ref
         self.bool_assignment = bool_assignment
         self.position = position
-
-
-class TextXClass(object):
-    """Base class for all language classes."""
-    pass
 
 
 class TextXMetaModel(DebugPrinter):
@@ -258,36 +254,53 @@ class TextXMetaModel(DebugPrinter):
                 RULE_COMMON, RULE_ABSTRACT or RULE_MATCH.
         """
 
-        class Meta(TextXClass):
-            """
-            Dynamic metaclass. Each textX rule will result in creating
-            one Meta class with the type name of the rule.
-            Model is a graph of python instances of this metaclasses.
-            Attributes:
-                _tx_attrs(dict): A dict of meta-attributes keyed by name.
-                    Used by common rules.
-                _tx_inh_by(list): Classes that inherits this one. Used by
-                    abstract rules.
-                _tx_position(int): A position in the input string where this
-                    class is defined.
-                _tx_position_end(int): A position in the input string where
-                    this class ends.
-                _tx_type(int): The type of the textX rule this class is created
-                    for. See textx.const
-                _tx_metamodel(TextXMetaModel): A metamodel this class belongs
-                    to.
-                _tx_peg_rule(ParsingExpression): An Arpeggio PEG rule that
-                    matches this class.
-            """
+        class TextXMetaClass(type):
 
-            def __repr__(self):
-                if hasattr(self, 'name'):
-                    return "<{}:{}>".format(name, self.name)
-                else:
-                    return "<textx:{} object at {}>"\
-                        .format(name, hex(id(self)))
+            def __repr__(cls):
+                return '<textx:{} class at {}>'.format(cls.__name__,
+                                                       id(cls))
 
-        cls = Meta
+        def __repr__(self):
+            """
+            Used for TextXClass bellow.
+            """
+            if hasattr(self, 'name'):
+                return "<{}:{}>".format(name, self.name)
+            else:
+                return "<textx:{} instance at {}>"\
+                    .format(name, hex(id(self)))
+
+        if sys.version >= '3':
+            class TextXClass(object, metaclass=TextXMetaClass):
+                """
+                Dynamicaly created class. Each textX rule will result in
+                creating one Python class with the type name of the rule.
+                textX model is a graph of instances of these Python classes.
+
+                Attributes:
+                    _tx_attrs(dict): A dict of meta-attributes keyed by name.
+                        Used by common rules.
+                    _tx_inh_by(list): Classes that inherits this one. Used by
+                        abstract rules.
+                    _tx_position(int): A position in the input string where
+                        this class is defined.
+                    _tx_position_end(int): A position in the input string where
+                        this class ends.
+                    _tx_type(int): The type of the textX rule this class is
+                        created for. See textx.const
+                    _tx_metamodel(TextXMetaModel): A metamodel this class
+                        belongs to.
+                    _tx_peg_rule(ParsingExpression): An Arpeggio PEG rule that
+                        matches this class.
+
+                """
+            TextXClass.__repr__ = __repr__
+        else:
+            class TextXClass(object):
+                __metaclass__ = TextXMetaClass
+            TextXClass.__repr__ = __repr__
+
+        cls = TextXClass
         cls.__name__ = name
 
         self._init_class(cls, peg_rule, position, position_end, inherits, root,
