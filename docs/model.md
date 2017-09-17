@@ -155,4 +155,10 @@ parser = model._tx_metamodel.parser
 line, col = parser.pos_to_linecol(some_model_object)
 ```
 
+### _tx_fqn
+
+Is the fully qualified name of the grammar rule/Python class in regard to the
+import path of the grammar file where the rule is defined. This attribute is
+used in `__repr__` of auto-generated Python classes.
+
 
