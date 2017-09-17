@@ -5,12 +5,12 @@
 # Copyright: (c) 2014-2017 Igor R. Dejanovic <igor DOT dejanovic AT gmail DOT com>
 # License: MIT License
 #######################################################################
-
+from __future__ import absolute_import
 import codecs
 import os
-import sys
 from collections import OrderedDict
 from arpeggio import DebugPrinter
+from textx.six import add_metaclass
 from .textx import language_from_str, python_type, BASE_TYPE_NAMES, ID, BOOL,\
     INT, FLOAT, STRING, NUMBER, BASETYPE, OBJECT
 from .const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, RULE_MATCH, \
@@ -260,45 +260,41 @@ class TextXMetaModel(DebugPrinter):
                 return '<textx:{} class at {}>'.format(cls._tx_fqn,
                                                        id(cls))
 
-        def __repr__(self):
+        @add_metaclass(TextXMetaClass)
+        class TextXClass(object):
             """
-            Used for TextXClass bellow.
+            Dynamicaly created class. Each textX rule will result in
+            creating one Python class with the type name of the rule.
+            textX model is a graph of instances of these Python classes.
+
+            Attributes:
+                _tx_attrs(dict): A dict of meta-attributes keyed by name.
+                    Used by common rules.
+                _tx_inh_by(list): Classes that inherits this one. Used by
+                    abstract rules.
+                _tx_position(int): A position in the input string where
+                    this class is defined.
+                _tx_position_end(int): A position in the input string where
+                    this class ends.
+                _tx_type(int): The type of the textX rule this class is
+                    created for. See textx.const
+                _tx_metamodel(TextXMetaModel): A metamodel this class
+                    belongs to.
+                _tx_peg_rule(ParsingExpression): An Arpeggio PEG rule that
+                    matches this class.
+
             """
-            if hasattr(self, 'name'):
-                return "<{}:{}>".format(name, self.name)
-            else:
-                return "<textx:{} instance at {}>"\
-                    .format(self._tx_fqn, hex(id(self)))
 
-        if sys.version >= '3':
-            class TextXClass(object, metaclass=TextXMetaClass):
+            def __repr__(self):
                 """
-                Dynamicaly created class. Each textX rule will result in
-                creating one Python class with the type name of the rule.
-                textX model is a graph of instances of these Python classes.
-
-                Attributes:
-                    _tx_attrs(dict): A dict of meta-attributes keyed by name.
-                        Used by common rules.
-                    _tx_inh_by(list): Classes that inherits this one. Used by
-                        abstract rules.
-                    _tx_position(int): A position in the input string where
-                        this class is defined.
-                    _tx_position_end(int): A position in the input string where
-                        this class ends.
-                    _tx_type(int): The type of the textX rule this class is
-                        created for. See textx.const
-                    _tx_metamodel(TextXMetaModel): A metamodel this class
-                        belongs to.
-                    _tx_peg_rule(ParsingExpression): An Arpeggio PEG rule that
-                        matches this class.
-
+                Used for TextXClass bellow.
                 """
-            TextXClass.__repr__ = __repr__
-        else:
-            class TextXClass(object):
-                __metaclass__ = TextXMetaClass
-            TextXClass.__repr__ = __repr__
+                if hasattr(self, 'name'):
+                    return "<{}:{}>".format(name, self.name)
+                else:
+                    return "<textx:{} instance at {}>"\
+                        .format(self._tx_fqn, hex(id(self)))
+
 
         cls = TextXClass
         cls.__name__ = name
