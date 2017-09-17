@@ -164,6 +164,8 @@ class TextXMetaModel(DebugPrinter):
         self._new_class('OBJECT', OBJECT, 0, inherits=[base_type],
                         rule_type=RULE_ABSTRACT)
 
+        self._leave_namespace()
+
         # Resolve file name to absolute path.
         if file_name:
             file_name = os.path.abspath(file_name)
