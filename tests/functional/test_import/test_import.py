@@ -29,7 +29,7 @@ def test_import():
 
 def test_multiple_imports():
     """
-    Test that rules grammars imported from multiple places
+    Test that grammar rules imported from multiple places
     results in the same meta-class objects.
     """
 
