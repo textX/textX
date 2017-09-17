@@ -1,0 +1,8 @@
+import diamond.second
+import diamond.third
+
+First:
+  'second' seconds+=Second
+  'third' thirds+=Third
+;
+

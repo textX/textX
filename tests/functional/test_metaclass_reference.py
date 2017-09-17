@@ -43,7 +43,7 @@ def test_metaclass_user_class():
 def test_metaclass_relative_paths(filename):
     current_dir = os.path.dirname(__file__)
     mm = metamodel_from_file(os.path.join(current_dir, 'test_import',
-                             'importoverride', filename))
+                                          'importoverride', filename))
     Third = mm['Third']
     ThirdMasked = mm['relative.third.Third']
     assert Third is not ThirdMasked
@@ -53,3 +53,22 @@ def test_metaclass_relative_paths(filename):
 
     assert all(type(x) is ThirdMasked for x in inner_second.second)
     assert all(type(x) is Third for x in model.third)
+
+
+def test_diamond_import():
+    """
+    Test that diamond rule import results in the same class.
+    """
+
+    current_dir = os.path.dirname(__file__)
+    mm = metamodel_from_file(os.path.join(current_dir, 'test_import',
+                                          'importoverride',
+                                          'first_diamond.tx'))
+    First = mm['First']
+    MyDiamondRule = mm['diamond.last.MyDiamondRule']
+
+    model = mm.model_from_str('second 12 45 third 4 5')
+
+    assert type(model) is First
+    assert all(type(x.diamond) is MyDiamondRule for x in model.seconds)
+    assert all(type(x.diamond) is MyDiamondRule for x in model.thirds)
