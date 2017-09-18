@@ -332,6 +332,11 @@ model.</p>
 <pre><code class="python">parser = model._tx_metamodel.parser
 line, col = parser.pos_to_linecol(some_model_object)
 </code></pre>
+
+<h3 id="_tx_fqn">_tx_fqn<a class="headerlink" href="#_tx_fqn" title="Permanent link">&para;</a></h3>
+<p>Is the fully qualified name of the grammar rule/Python class in regard to the
+import path of the grammar file where the rule is defined. This attribute is
+used in <code>__repr__</code> of auto-generated Python classes.</p>
               
             </div>
           </div>
