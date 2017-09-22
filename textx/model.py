@@ -2,7 +2,8 @@
 # Name: model.py
 # Purpose: Model construction.
 # Author: Igor R. Dejanovic <igor DOT dejanovic AT gmail DOT com>
-# Copyright: (c) 2014 Igor R. Dejanovic <igor DOT dejanovic AT gmail DOT com>
+# Copyright:
+#    (c) 2014 Igor R. Dejanovic <igor DOT dejanovic AT gmail DOT com>
 # License: MIT License
 #######################################################################
 
@@ -15,7 +16,7 @@ from .const import MULT_OPTIONAL, MULT_ONE, MULT_ONEORMORE, MULT_ZEROORMORE, \
     RULE_COMMON, RULE_ABSTRACT, RULE_MATCH
 from .textx import PRIMITIVE_PYTHON_TYPES
 if sys.version < '3':
-    text = unicode
+    text = unicode  # noqa
 else:
     text = str
 
@@ -319,7 +320,6 @@ def parse_tree_to_objgraph(parser, parse_tree):
                 except TypeError as e:
                     # Add class name information in case of
                     # wrong constructor parameters
-                    # print("Constructor params: {}".format(text(obj_attrs.__dict__)))
                     e.args += ("for class %s" %
                                inst.__class__.__name__,)
                     parser.dprint(traceback.print_exc())

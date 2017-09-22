@@ -1,4 +1,4 @@
-import pytest
+import pytest  # noqa
 from textx.metamodel import metamodel_from_str
 
 
@@ -36,4 +36,3 @@ def test_user_classes_with_properties():
     assert type(model) is UserModel
     assert model.a == 42
     assert model._a == 42
-

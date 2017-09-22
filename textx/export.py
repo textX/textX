@@ -3,7 +3,8 @@
 # Name: export.py
 # Purpose: Export of textX based models and metamodels to dot file
 # Author: Igor R. Dejanovic <igor DOT dejanovic AT gmail DOT com>
-# Copyright: (c) 2014-2016 Igor R. Dejanovic <igor DOT dejanovic AT gmail DOT com>
+# Copyright:
+#    (c) 2014-2017 Igor R. Dejanovic <igor DOT dejanovic AT gmail DOT com>
 # License: MIT License
 #######################################################################
 from __future__ import unicode_literals

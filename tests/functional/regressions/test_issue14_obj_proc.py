@@ -1,5 +1,5 @@
 from __future__ import unicode_literals
-import pytest
+import pytest  # noqa
 
 from textx.metamodel import metamodel_from_str
 from textx.export import metamodel_export, model_export
@@ -48,6 +48,3 @@ def test_issue_14():
     """
     model = mm.model_from_str(model_str)
     model_export(model, 'test_issue_14_model.dot')
-
-
-

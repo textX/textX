@@ -1,5 +1,5 @@
 from __future__ import unicode_literals
-import pytest
+import pytest  # noqa
 from textx.metamodel import metamodel_from_str
 from arpeggio import Sequence, OrderedChoice
 
@@ -52,4 +52,3 @@ def test_match_complex_recursive_peg_rule_resolve():
     assert expr_ref.rule_name == 'expression'
     assert type(expr_ref) is Sequence
     assert expr_ref is expression_rule
-

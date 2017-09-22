@@ -1,5 +1,5 @@
 from __future__ import unicode_literals
-import pytest
+import pytest  # noqa
 from textx.metamodel import metamodel_from_str
 from textx.const import RULE_ABSTRACT, RULE_COMMON
 

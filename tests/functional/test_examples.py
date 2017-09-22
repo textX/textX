@@ -3,7 +3,8 @@
 # Name: test_examples
 # Purpose: Test that examples run without errors.
 # Author: Igor R. Dejanović <igor DOT dejanovic AT gmail DOT com>
-# Copyright: (c) 2014-2015 Igor R. Dejanović <igor DOT dejanovic AT gmail DOT com>
+# Copyright:
+#    (c) 2014-2015 Igor R. Dejanović <igor DOT dejanovic AT gmail DOT com>
 # License: MIT License
 #######################################################################
 import pytest  # noqa

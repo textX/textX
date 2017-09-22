@@ -1,4 +1,4 @@
-import pytest
+import pytest  # noqa
 from textx.metamodel import metamodel_from_str
 
 grammar = """
@@ -15,6 +15,7 @@ Second:
 
 """
 
+
 def test_user_class():
     """
     User supplied meta class.
@@ -30,7 +31,6 @@ def test_user_class():
             self.a = a
             self.b = b
             self.c = c
-
 
     modelstr = """
     first 34 45 65 "sdf" 45
@@ -51,8 +51,7 @@ def test_user_class():
     assert type(model.a) is list
     assert model.a == []
     assert type(model.b) is bool
-    assert model.b == False
+    assert model.b is False
 
     # Check additional attributes
     assert model.some_attr == 1
-

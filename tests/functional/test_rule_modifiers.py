@@ -107,4 +107,3 @@ def test_skipws_ws():
 
     # This will parse.
     metamodel.model_from_str("entityPerson first\t\t \t second")
-

@@ -2,7 +2,8 @@
 # Name: metamodel.py
 # Purpose: Meta-model construction.
 # Author: Igor R. Dejanovic <igor DOT dejanovic AT gmail DOT com>
-# Copyright: (c) 2014-2017 Igor R. Dejanovic <igor DOT dejanovic AT gmail DOT com>
+# Copyright:
+#   (c) 2014-2017 Igor R. Dejanovic <igor DOT dejanovic AT gmail DOT com>
 # License: MIT License
 #######################################################################
 from __future__ import absolute_import
@@ -294,7 +295,6 @@ class TextXMetaModel(DebugPrinter):
                 else:
                     return "<textx:{} instance at {}>"\
                         .format(self._tx_fqn, hex(id(self)))
-
 
         cls = TextXClass
         cls.__name__ = name

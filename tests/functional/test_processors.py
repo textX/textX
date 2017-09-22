@@ -1,7 +1,7 @@
 """
 Testing model and object processors.
 """
-import pytest
+import pytest  # noqa
 from textx.metamodel import metamodel_from_str
 
 grammar = """
@@ -83,4 +83,3 @@ def test_object_processors():
     for s in first.seconds:
         assert hasattr(s, '_second_called')
     assert call_order == [2, 2, 2, 1]
-

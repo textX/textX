@@ -1,7 +1,7 @@
 """
 Testing user class constructor call and parent reference.
 """
-import pytest
+import pytest  # noqa
 from textx.metamodel import metamodel_from_str
 
 
@@ -68,4 +68,3 @@ def test_user_class_constructor_call():
         assert s._called
         assert s.parent == model
         assert s.sec in [34, 45, 7]
-
