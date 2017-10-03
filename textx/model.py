@@ -473,7 +473,7 @@ def parse_tree_to_objgraph(parser, parse_tree):
                 attr_value.append(resolved)
             else:
                 setattr(obj, attr.name, resolved)
-        parser._crossrefs.clear()
+        del parser._crossrefs[:]
 
     def call_obj_processors(model_obj):
         """
