@@ -149,6 +149,10 @@ def get_model_parser(top_rule, comments_model, **kwargs):
             # { id(class): { obj.name: obj}}
             self._instances = {}
 
+            # List to keep track of all cross-ref that need to be resolved
+            # Contained elements are tuples: (instance, metaattr, cross-ref)
+            self._crossrefs = []
+
         def _parse(self):
             try:
                 return self.parser_model.parse(self)
@@ -372,6 +376,8 @@ def parse_tree_to_objgraph(parser, parse_tree):
                     # If this is non-containing reference create ObjCrossRef
                     value = ObjCrossRef(obj_name=value, cls=metaattr.cls,
                                         position=node[0].position)
+                    parser._crossrefs.append((model_obj, metaattr, value))
+                    return model_obj
 
                 if type(attr_value) is list:
                     attr_value.append(value)
@@ -392,6 +398,9 @@ def parse_tree_to_objgraph(parser, parse_tree):
                             value = ObjCrossRef(obj_name=value,
                                                 cls=metaattr.cls,
                                                 position=node[0].position)
+                            parser._crossrefs.append((obj_attr, metaattr,
+                                                      value))
+                            continue
 
                         if not hasattr(obj_attr, txa_attr_name) or \
                                 getattr(obj_attr, txa_attr_name) is None:
@@ -456,40 +465,15 @@ def parse_tree_to_objgraph(parser, parse_tree):
                 .format(obj_ref.obj_name, obj_ref.cls.__name__, (line, col)),
                 line=line, col=col)
 
-        def _resolve_obj_attributes(o):
-            if parser.debug:
-                parser.dprint("RESOLVING CLASS: {}"
-                              .format(o.__class__.__name__))
-            if o in resolved_set:
-                return
-            resolved_set.add(o)
-
-            # If this object has attributes (created using a common rule)
-            if hasattr(o.__class__, "_tx_attrs"):
-                for attr in o.__class__._tx_attrs.values():
-                    if parser.debug:
-                        parser.dprint("RESOLVING ATTR: {}".format(attr.name))
-                        parser.dprint("mult={}, ref={}, con={}".format(
-                                      attr.mult,
-                                      attr.ref, attr.cont))
-                    attr_value = getattr(o, attr.name)
-                    if attr.mult in [MULT_ONEORMORE, MULT_ZEROORMORE]:
-                        for idx, list_attr_value in enumerate(attr_value):
-                            if attr.ref:
-                                if attr.cont:
-                                    _resolve_obj_attributes(list_attr_value)
-                                else:
-                                    attr_value[idx] = \
-                                        _resolve_link_rule_ref(list_attr_value)
-                    else:
-                        if attr.ref:
-                            if attr.cont:
-                                _resolve_obj_attributes(attr_value)
-                            else:
-                                setattr(o, attr.name,
-                                        _resolve_link_rule_ref(attr_value))
-
-        _resolve_obj_attributes(model)
+        # If this object has attributes (created using a common rule)
+        for obj, attr, crossref in parser._crossrefs:
+            attr_value = getattr(obj, attr.name)
+            resolved = _resolve_link_rule_ref(crossref)
+            if attr.mult in [MULT_ONEORMORE, MULT_ZEROORMORE]:
+                attr_value.append(resolved)
+            else:
+                setattr(obj, attr.name, resolved)
+        parser._crossrefs.clear()
 
     def call_obj_processors(model_obj):
         """
