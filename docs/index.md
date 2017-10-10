@@ -162,7 +162,12 @@ If you are a vim editor user check out [support for vim](https://github.com/igor
 For emacs there is [textx-mode](https://github.com/novakboskov/textx-mode) which
 is also available in [MELPA](https://melpa.org/#/textx-mode).
 
-If you are more of an IDE type check out [textX-ninja project](https://github.com/igordejanovic/textX-ninja).
+There is a [project called viewX](https://github.com/danielkupco/viewX-vscode)
+for making language visualizers for [Visual Studio Code](https://code.visualstudio.com/).
+
+You can also check out [textX-ninja project](https://github.com/igordejanovic/textX-ninja).
+
+
 
 ## Citing textX
 
