@@ -157,13 +157,15 @@ dejanovic at gmail. I would like to hear from you!
 
 ## Editor/IDE support
 
+For a [Visual Studio Code](https://code.visualstudio.com/) support check
+out [viewX](https://github.com/danielkupco/viewX-vscode), a plugin for building
+language visualizers. This is a first project in the serie of projects that will
+provide full support for textX based languages in VSC.
+
 If you are a vim editor user check out [support for vim](https://github.com/igordejanovic/textx.vim/).
 
 For emacs there is [textx-mode](https://github.com/novakboskov/textx-mode) which
 is also available in [MELPA](https://melpa.org/#/textx-mode).
-
-There is a [project called viewX](https://github.com/danielkupco/viewX-vscode)
-for making language visualizers for [Visual Studio Code](https://code.visualstudio.com/).
 
 You can also check out [textX-ninja project](https://github.com/igordejanovic/textX-ninja).
 
