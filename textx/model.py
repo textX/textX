@@ -10,10 +10,11 @@
 import sys
 import codecs
 import traceback
+from collections import OrderedDict
 from arpeggio import Parser, Sequence, NoMatch, EOF, Terminal
 from .exceptions import TextXSyntaxError, TextXSemanticError
 from .const import MULT_OPTIONAL, MULT_ONE, MULT_ONEORMORE, MULT_ZEROORMORE, \
-    RULE_COMMON, RULE_ABSTRACT, RULE_MATCH
+    RULE_COMMON, RULE_ABSTRACT, RULE_MATCH, MULT_ASSIGN_ERROR, UNKNOWN_OBJ_ERROR
 from .textx import PRIMITIVE_PYTHON_TYPES
 if sys.version < '3':
     text = unicode  # noqa
@@ -21,7 +22,6 @@ else:
     text = str
 
 __all__ = ['children_of_type', 'parent_of_type', 'model_root', 'metamodel']
-
 
 def model_root(obj):
     """
@@ -158,7 +158,10 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                 return self.parser_model.parse(self)
             except NoMatch as e:
                 line, col = e.parser.pos_to_linecol(e.position)
-                raise TextXSyntaxError(text(e), line, col)
+                raise TextXSyntaxError(message=text(e),
+                                        line=line,
+                                        col=col,
+                                        expected_rules=e.rules)
 
         def get_model_from_file(self, file_name, encoding, debug):
             """
@@ -219,6 +222,9 @@ def parse_tree_to_objgraph(parser, parse_tree):
     """
 
     metamodel = parser.metamodel
+
+    pos_rule_dict = {}
+    pos_crossref_list = []
 
     def process_match(nt):
         """
@@ -365,9 +371,11 @@ def parse_tree_to_objgraph(parser, parse_tree):
                 attr_value = getattr(obj_attr, txa_attr_name)
                 if attr_value and type(attr_value) is not list:
                     raise TextXSemanticError(
-                        "Multiple assignments to attribute {} at {}"
-                        .format(attr_name,
-                                parser.pos_to_linecol(node.position)))
+                        message="Multiple assignments to attribute {} at {}"
+                                .format(attr_name, 
+                                        parser.pos_to_linecol(node.position)),
+                        err_type=MULT_ASSIGN_ERROR)
+                                        
 
                 # Convert tree bellow assignment to proper value
                 value = process_node(node[0])
@@ -385,6 +393,8 @@ def parse_tree_to_objgraph(parser, parse_tree):
                     setattr(obj_attr, txa_attr_name, value)
 
             elif op in ['list', 'oneormore', 'zeroormore']:
+                pos_index = 0
+                positions = [n.position for n in node if n.rule_name != 'sep']
                 for n in node:
                     # If the node is separator skip
                     if n.rule_name != 'sep':
@@ -397,9 +407,11 @@ def parse_tree_to_objgraph(parser, parse_tree):
                             # create ObjCrossRef
                             value = ObjCrossRef(obj_name=value,
                                                 cls=metaattr.cls,
-                                                position=node[0].position)
+                                                position=positions[pos_index])
+
                             parser._crossrefs.append((obj_attr, metaattr,
                                                       value))
+                            pos_index += 1
                             continue
 
                         if not hasattr(obj_attr, txa_attr_name) or \
@@ -409,6 +421,10 @@ def parse_tree_to_objgraph(parser, parse_tree):
             else:
                 # This shouldn't happen
                 assert False
+
+        if inst:
+            pos = (inst._tx_position, inst._tx_position_end)
+            pos_rule_dict[pos] = inst
 
         return inst
 
@@ -451,6 +467,32 @@ def parse_tree_to_objgraph(parser, parse_tree):
             result = _inner_resolve_link_rule_ref(obj_ref.cls,
                                                   obj_ref.obj_name)
             if result:
+                class RefRulePosition(object):
+                    """
+                    Used for "go to definition" support in text
+
+                    Attributes:
+                        name(str): A name of the target object.
+                        ref_pos_start(int): Reference starting position
+                        ref_pos_end(int): Reference ending position
+                        def_pos_start(int): Starting position of referenced object
+                        def_pos_end(int): Ending position of referenced object
+                    """
+                    def __init__(self, name, ref_pos_start, ref_pos_end,
+                                def_pos_start, def_pos_end):
+                        self.name = name
+                        self.ref_pos_start = ref_pos_start
+                        self.ref_pos_end = ref_pos_end
+                        self.def_pos_start = def_pos_start
+                        self.def_pos_end = def_pos_end
+
+                pos_crossref_list.append(
+                    RefRulePosition(name=obj_ref.obj_name,
+                                    ref_pos_start=obj_ref.position,
+                                    ref_pos_end=obj_ref.position + len(result.name),
+                                    def_pos_start=result._tx_position,
+                                    def_pos_end=result._tx_position_end))
+
                 return result
 
             # As a fall-back search builtins if given
@@ -461,9 +503,12 @@ def parse_tree_to_objgraph(parser, parse_tree):
 
             line, col = parser.pos_to_linecol(obj_ref.position)
             raise TextXSemanticError(
-                'Unknown object "{}" of class "{}" at {}'
-                .format(obj_ref.obj_name, obj_ref.cls.__name__, (line, col)),
-                line=line, col=col)
+                message='Unknown object "{}" of class "{}" at {}'
+                        .format(obj_ref.obj_name, obj_ref.cls.__name__, (line, col)),
+                line=line,
+                col=col,
+                err_type=UNKNOWN_OBJ_ERROR,
+                expected_obj_cls=obj_ref.cls)
 
         # If this object has attributes (created using a common rule)
         for obj, attr, crossref in parser._crossrefs:
@@ -509,5 +554,14 @@ def parse_tree_to_objgraph(parser, parse_tree):
         if parser.debug:
             parser.dprint("CALLING OBJECT PROCESSORS")
         call_obj_processors(model)
+    
+    # Cross-references for go-to definition language server support
+    # Already sorted based on ref_pos_start attr (required for binary search)
+    model._pos_crossref_list = pos_crossref_list
+
+    # Dict for storing rules where key is position of rule instance in text
+    # Sorted based on nested rules
+    model._pos_rule_dict = OrderedDict(sorted(pos_rule_dict.items(),
+                                    key=lambda x: x[0], reverse=True))
 
     return model
