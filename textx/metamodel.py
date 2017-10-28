@@ -12,10 +12,10 @@ import os
 from collections import OrderedDict
 from arpeggio import DebugPrinter
 from textx.six import add_metaclass
-from .textx import language_from_str, python_type, BASE_TYPE_NAMES, ID, BOOL,\
-    INT, FLOAT, STRING, NUMBER, BASETYPE, OBJECT
-from .const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, RULE_MATCH, \
-    RULE_ABSTRACT
+from textx.lang import language_from_str, python_type, BASE_TYPE_NAMES, ID, \
+    BOOL, INT, FLOAT, STRING, NUMBER, BASETYPE, OBJECT
+from textx.const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, \
+    RULE_MATCH, RULE_ABSTRACT
 
 
 __all__ = ['metamodel_from_str', 'metamodel_from_file']

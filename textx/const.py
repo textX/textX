@@ -18,8 +18,8 @@ def mult_lt(left, right):
 # Rule types
 # Common rules are rules that have direct or indirect assignments.
 RULE_COMMON = "common"
-# If the rule is ordered choice of other rules where there *MUST BE* assignments
-# down the reference tree that this rule is abstract.
+# If the rule is ordered choice of other rules where there *MUST BE*
+# assignments down the reference tree that this rule is abstract.
 RULE_ABSTRACT = "abstract"
 # If there is no direct or indirect assignments the rule is match rule.
 RULE_MATCH = "match"
