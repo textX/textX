@@ -4,11 +4,10 @@ import os
 import sys
 import codecs
 from setuptools import setup
-import textx
 
 NAME = 'textX'
 DESC = 'Meta-language for DSL implementation inspired by Xtext'
-VERSION = textx.__version__
+VERSION = "1.6.dev"
 AUTHOR = 'Igor R. Dejanovic'
 AUTHOR_EMAIL = 'igor DOT dejanovic AT gmail DOT com'
 LICENSE = 'MIT'
