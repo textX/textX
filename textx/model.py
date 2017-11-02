@@ -460,9 +460,9 @@ def parse_tree_to_objgraph(parser, parse_tree):
             if parser.debug:
                 parser.dprint("RESOLVING CLASS: {}"
                               .format(o.__class__.__name__))
-            if o in resolved_set:
+            if id(o) in resolved_set:
                 return
-            resolved_set.add(o)
+            resolved_set.add(id(o))
 
             # If this object has attributes (created using a common rule)
             if hasattr(o.__class__, "_tx_attrs"):
