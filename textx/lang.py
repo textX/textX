@@ -418,33 +418,34 @@ class TextXVisitor(PTNodeVisitor):
 
     def visit_textx_rule(self, node, children):
         if len(children) > 2:
-            rule_name, rule_params, rule = children
+            rule_name, rule_params, root_rule = children
         else:
-            rule_name, rule = children
+            rule_name, root_rule = children
             rule_params = {}
 
-        if rule.rule_name.startswith('__asgn') or\
-                ((isinstance(rule, Match) or isinstance(rule, RuleCrossRef))
+        if root_rule.rule_name.startswith('__asgn') or \
+                ((isinstance(root_rule, Match) or
+                  isinstance(root_rule, RuleCrossRef))
                  and rule_params):
             # If it is assignment node it must be kept because it could be
             # e.g. single assignment in the rule.
             # Also, handle a special case where rule consists only of a single
             # match or single rule reference and there are rule modifiers
             # defined.
-            rule = Sequence(nodes=[rule], rule_name=rule_name,
-                            root=True, **rule_params)
+            root_rule = Sequence(nodes=[root_rule], rule_name=rule_name,
+                                 root=True, **rule_params)
         else:
-            if not isinstance(rule, RuleCrossRef):
+            if not isinstance(root_rule, RuleCrossRef):
                 # Promote rule node to root node.
-                rule.rule_name = rule_name
-                rule.root = True
+                root_rule.rule_name = rule_name
+                root_rule.root = True
                 for param in rule_params:
-                    setattr(rule, param, rule_params[param])
+                    setattr(root_rule, param, rule_params[param])
 
         # Connect meta-class and the PEG rule
         cls = self.metamodel[rule_name]
-        cls._tx_peg_rule = rule
-        rule._tx_class = cls
+        cls._tx_peg_rule = root_rule
+        root_rule._tx_class = cls
 
         # Update end position for this rule.
         cls._tx_position_end = node.position_end
@@ -461,39 +462,42 @@ class TextXVisitor(PTNodeVisitor):
                     oc_branch_set = set()
                     _update_attr_multiplicities(on, oc_branch_set, mult)
             else:
+                if isinstance(rule, OneOrMore):
+                    mult = MULT_ONEORMORE
+                elif isinstance(rule, ZeroOrMore):
+                    if mult != MULT_ONEORMORE:
+                        mult = MULT_ZEROORMORE
 
-                for n in [x for x in rule.nodes
-                          if not isinstance(x, RuleCrossRef)]:
-
-                    m = mult
-                    if isinstance(n, OneOrMore):
-                        m = MULT_ONEORMORE
-                    elif isinstance(n, ZeroOrMore):
-                        if m != MULT_ONEORMORE:
-                            m = MULT_ZEROORMORE
-
-                    if n.rule_name.startswith('__asgn'):
-                        cls_attr = cls._tx_attrs[n._attr_name]
-                        if mult in [MULT_ZEROORMORE, MULT_ONEORMORE]:
-                            if mult_lt(cls_attr.mult, m):
-                                cls_attr.mult = m
-                        # If multiplicity is not "many" still we can have
-                        # "many" multiplicity if same attribute has been
-                        # assigned multiple times in the same OrderedChoice
+                if rule.rule_name.startswith('__asgn'):
+                    cls_attr = cls._tx_attrs[rule._attr_name]
+                    if mult in [MULT_ZEROORMORE, MULT_ONEORMORE]:
+                        if rule.rule_name == '__asgn_optional':
+                            raise TextXSemanticError(
+                                'Can\'t use bool assignment '
+                                'inside repetition in rule "{}" at {}.'
+                                .format(rule_name,
+                                        self.grammar_parser
+                                        .pos_to_linecol(node.position)))
+                        if mult_lt(cls_attr.mult, mult):
+                            cls_attr.mult = mult
+                    # If multiplicity is not "many" still we can have
+                    # "many" multiplicity if same attribute has been
+                    # assigned multiple times in the same OrderedChoice
+                    # branch.
+                    elif rule._attr_name in oc_branch_set:
+                        cls_attr.mult = MULT_ONEORMORE
+                    else:
+                        # Keep track of assignments in the current OC
                         # branch.
-                        elif n._attr_name in oc_branch_set:
-                            cls_attr.mult = MULT_ONEORMORE
-                        else:
-                            # Keep track of assignments in the current OC
-                            # branch.
-                            oc_branch_set.add(n._attr_name)
+                        oc_branch_set.add(rule._attr_name)
 
-                    elif not n.root:
-                        _update_attr_multiplicities(n, oc_branch_set, m)
+                if rule is root_rule or not rule.root:
+                    for n in rule.nodes:
+                        _update_attr_multiplicities(n, oc_branch_set, mult)
 
-        _update_attr_multiplicities(rule, set())
+        _update_attr_multiplicities(root_rule, set())
 
-        return rule
+        return root_rule
 
     def visit_rule_name(self, node, children):
         rule_name = str(node)

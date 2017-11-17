@@ -478,9 +478,8 @@ def parse_tree_to_objgraph(parser, parse_tree):
         """
         Depth-first model object processing.
         """
-
-        metaclass = type(model_obj)
-        if type(model_obj) not in PRIMITIVE_PYTHON_TYPES:
+        try:
+            metaclass = metamodel[model_obj.__class__.__name__]
             for metaattr in metaclass._tx_attrs.values():
                 # If attribute is containment reference go down
                 if metaattr.ref and metaattr.cont:
@@ -492,6 +491,8 @@ def parse_tree_to_objgraph(parser, parse_tree):
                                     call_obj_processors(obj)
                         else:
                             call_obj_processors(attr)
+        except KeyError:
+            metaclass = type(model_obj)
 
         obj_processor = metamodel.obj_processors.get(metaclass.__name__, None)
         if obj_processor:

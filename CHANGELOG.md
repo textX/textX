@@ -1,5 +1,10 @@
 # textX changelog
 
+* 2017-11-17 Release 1.5.2
+  - Fixing bug with assignments in repetition. Commit e918868.
+  - Fix in resolving of attributes. Commit 8d18073.
+  - More robust obj. processor call.
+
 * 2017-06-14 Release 1.5.1
   - Fixed issue #34 triggered with multiple assignments with the different types
     leading to errors in reference resolving.
