@@ -7,7 +7,7 @@ from setuptools import setup
 
 NAME = 'textX'
 DESC = 'Meta-language for DSL implementation inspired by Xtext'
-VERSION = "1.6.dev"
+VERSION = "1.6"
 AUTHOR = 'Igor R. Dejanovic'
 AUTHOR_EMAIL = 'igor DOT dejanovic AT gmail DOT com'
 LICENSE = 'MIT'

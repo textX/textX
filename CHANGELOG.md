@@ -1,5 +1,17 @@
 # textX changelog
 
+* 2017-11-18 Release 1.6
+  - Fix class masking for split grammar and rule overriden. Thanks aranega@GitHub!
+  - Simplifying metaclass handling. Using Python type system.
+  - Fixing base namespace construction.
+  - Rework of textX metaclass. Added a proper __repr__ for both instances and classes.
+  - Introduced _tx_fqn class attribute.
+  - Introduced six library to handle Py2/Py3 metaclass usage.
+  - Simplification. Changed recursive instance resolving for an iterative.
+    Thanks aranega@GitHub.
+  - Cleanup. Refactorings and code reorganization.
+  - textX api functions and classes are now available directly from `textx` module.
+
 * 2017-11-17 Release 1.5.2
   - Fixing bug with assignments in repetition. Commit e918868.
   - Fix in resolving of attributes. Commit 8d18073.
