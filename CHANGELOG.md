@@ -1,5 +1,8 @@
 # textX changelog
 
+* 2017-11-22 Release 1.6.1
+  - Fixing build for PyPI.
+
 * 2017-11-18 Release 1.6
   - Fix class masking for split grammar and rule overriden. Thanks aranega@GitHub!
   - Simplifying metaclass handling. Using Python type system.
