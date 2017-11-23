@@ -376,11 +376,12 @@ def test_float_variations():
     """
     meta = metamodel_from_str(grammar)
 
-    model = meta.model_from_str('3.5, .4, 5.0')
-    assert len(model.a) == 3
+    model = meta.model_from_str('3.5, .4, 5.0, 6.')
+    assert len(model.a) == 4
     assert type(model.a[0]) is float
     assert type(model.a[1]) is float
     assert type(model.a[2]) is float
+    assert type(model.a[3]) is float
 
     # Check scientific notation
     model = meta.model_from_str('1e-2')
