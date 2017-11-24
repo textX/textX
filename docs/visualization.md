@@ -24,7 +24,7 @@ example](https://github.com/igordejanovic/textX/tree/master/examples/Entity))
 do:
 
 ```python
-from textx.metamodel import metamodel_from_file
+from textx import metamodel_from_file
 from textx.export import metamodel_export
 
 entity_mm = metamodel_from_file('entity.tx')

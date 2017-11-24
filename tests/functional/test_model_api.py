@@ -3,8 +3,8 @@ Model query and navigation API.
 """
 from __future__ import unicode_literals
 import pytest  # noqa
-from textx.metamodel import metamodel_from_str
-from textx.model import children_of_type, parent_of_type, model_root
+from textx import metamodel_from_str, children_of_type, parent_of_type, \
+    model_root
 
 
 grammar = """

@@ -1,7 +1,7 @@
 from os import mkdir
 from os.path import exists, dirname, join
 import jinja2
-from textx.metamodel import metamodel_from_file
+from textx import metamodel_from_file
 
 this_folder = dirname(__file__)
 

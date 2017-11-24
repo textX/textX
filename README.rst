@@ -24,8 +24,7 @@ Quick intro
 
 .. code:: python
 
-    from textx.metamodel import metamodel_from_str
-    from textx.model import children_of_type
+    from textx import metamodel_from_str, children_of_type
 
     grammar = """
     Model: shapes*=Shape;

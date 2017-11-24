@@ -15,7 +15,7 @@ user](metamodel.md#custom-classes).
 A model is created from the input string using the `model_from_file` and `model_from_str`
 methods of the meta-model instance.
 
-    from textx.metamodel import metamodel_from_file
+    from textx import metamodel_from_file
 
     my_mm = metamodel_from_file('mygrammar.tx')
 

@@ -2,7 +2,7 @@
 Testing user class constructor call and parent reference.
 """
 import pytest  # noqa
-from textx.metamodel import metamodel_from_str
+from textx import metamodel_from_str
 
 
 # Second objects are children of First.
