@@ -1,5 +1,29 @@
 # textX changelog
 
+* 2018-02-13 (branch/scoping)
+  - added new function textx.get_model.children to search arbritrary children using a lambda predicate.
+  - remapped textx.model.get_children_of_type to the new children function (changed the logic, such that
+    the root node is also checked to be model object).
+  - added new metamodel function to register scope providers. Scope providers are callables, which return
+    the referenced object.
+    - added optional attribute "_tx_model_repository", see metamodel.py documentation
+    - added attribute "scope_provider" like "obj_processors" to organize scope providers
+    - added an optional argument to model_from_str and model_from_file: "pre_ref_resolution_callback": this
+      is required internally to prepare the loading of other model files.
+  - changed reference resolution in model.py
+    - moved default resolution to textx.scoping.py
+    - select the scope provider based on rule and rule-attribute (see scoping.py documentation)
+    - added a Postponed type to postpone the resolution
+    - introduced a multi-pass resolution (implemented at the end of parse_tree_to_objgraph; introduced new
+      helper argument, e.g., a new optional argument "is_this_the_main_model" and "pre_ref_resolution_callback"
+      (see metamodel.py above) to support reference resolution in the presence of different model files.
+  - added a new module textx.scoping, to provide some scope providers (e.g. a fully qualified name provider) - see scoping.py:
+    - full qualified names for reference names (e.g. package.package.class)
+    - global scope (model distributed over different files - loaded globally)
+    - import scope (model distributed over different files - loaded when imported)
+    - relative scopes (e.g. instance.method where method is defined for the class of the instance in a model of classes, methods and instances)
+    - selecting the metamodel based on a file pattern when loading models
+  - added tests (mostly scope related - some of them also test other stuff, like buildins)
 * 2017-11-22 Release 1.6.1
   - Fixing build for PyPI.
 

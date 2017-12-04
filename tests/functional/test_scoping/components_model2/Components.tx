@@ -1,0 +1,53 @@
+Model:
+        packages*=Package
+;
+
+Package:
+        'package' name=ID '{'
+        (
+        components+=Component
+        |
+        instances+=Instance
+        |
+        connections+=Connection
+        |
+        packages+=Package
+        )*
+        '}'
+;
+
+// A component defines something with in/out ports
+// A component can inherit form another component --> lookup with inheritance
+Component:
+    'component' name=ID ('extends' extends=[Component|FQN])? '{'
+        slots*=Slot
+    '}'
+;
+
+Slot: SlotIn|SlotOut;
+
+SlotIn:
+    'in' name=ID
+;
+SlotOut:
+    'out' name=ID
+;
+
+// An instance of a component can be connected to other instances
+// always with portout --> portin
+Instance:
+    'instance' name=ID ':' component=[Component|FQN] ;
+
+// A connection connects two instances
+// --> lookup of ports to corresponding component belonging to the instance
+// here (compared to compoennts_model1) we Postponed slots, since the objects are
+//   resolved later...
+Connection:
+    'connect'
+      from_port=[SlotOut|ID] 'from' from_inst=[Instance|ID]
+    '->'
+      to_port=[SlotIn|ID] 'from' to_inst=[Instance|ID]
+;
+
+FQN: ID+['.'];
+Comment: /\/\/.*$/;

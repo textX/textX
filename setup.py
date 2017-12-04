@@ -47,7 +47,7 @@ setup(
     license=LICENSE,
     url=URL,
     download_url=DOWNLOAD_URL,
-    packages=["textx", "textx.commands"],
+    packages=["textx", "textx.commands", "textx.scoping"],
     install_requires=["Arpeggio"],
     keywords="parser meta-language meta-model language DSL",
     entry_points={
