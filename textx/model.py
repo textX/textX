@@ -446,6 +446,8 @@ def parse_tree_to_objgraph(parser, parse_tree):
             print("**** detected import command: %s."%(model_file_name))
             # create a new metamodel (the existing seems not to be suited to be used recursively...
             my_metamodel = metamodel_from_file(model._tx_metamodel.file_name)
+            #NOT WORKING...:
+            #my_metamodel = model._tx_metamodel
             import_statement._imported_model = my_metamodel.model_from_file(model_file_name)
             print(" **** end of import command: %s." % (model_file_name))
 
