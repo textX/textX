@@ -403,7 +403,7 @@ Additionally, meta-model contains a parser that knows how to parse input
 strings. From parsed input (parse tree) meta-model will create a model.</p>
 <p>Meta-models are created from our grammar description, in this case
 <code>robot.tx</code> file. Open <code>robot.py</code> Python file and write following:</p>
-<pre><code class="python">from textx.metamodel import metamodel_from_file
+<pre><code class="python">from textx import metamodel_from_file
 robot_mm = metamodel_from_file('robot.tx')
 </code></pre>
 

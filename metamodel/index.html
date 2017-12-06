@@ -229,7 +229,7 @@
 instantiated while parsing the input. A meta-model is built from the grammar by
 the functions <code>metamodel_from_file</code> or <code>metamodel_from_str</code> in the
 <code>textx.metamodel</code> module.</p>
-<pre><code>from textx.metamodel import metamodel_from_file
+<pre><code>from textx import metamodel_from_file
 my_metamodel = metamodel_from_file('my_grammar.tx')
 </code></pre>
 <p>Each rule from the grammar will result in a Python class kept in the meta-model.
@@ -248,7 +248,7 @@ you will want to use your own classes instead. To do so use parameter <code>clas
 during the meta-model instantiation. This parameter is a list of your classes
 that should be named the same as the rules from the grammar which they
 represent.</p>
-<pre><code>from textx.metamodel import metamodel_from_str
+<pre><code>from textx import metamodel_from_str
 
 grammar = '''
 EntityModel:
@@ -320,7 +320,7 @@ can catch and handle this exception.</p>
 <h3 id="model-processors">Model processors<a class="headerlink" href="#model-processors" title="Permanent link">&para;</a></h3>
 <p>To register a model processor call <code>register_model_processor</code> on the meta-model
 instance.</p>
-<pre><code>from textx.metamodel import metamodel_from_file
+<pre><code>from textx import metamodel_from_file
 
 # Model processor is a callable that will accept meta-model and model as its
 # parameters.

@@ -75,10 +75,21 @@
     <li class="toctree-l2"><a href="#getting-started">Getting started</a></li>
     
 
+    <li class="toctree-l2"><a href="#discussion-and-help">Discussion and help</a></li>
+    
+
     <li class="toctree-l2"><a href="#projects-using-textx">Projects using textX</a></li>
     
 
     <li class="toctree-l2"><a href="#editoride-support">Editor/IDE support</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#visual-studio-code-support">Visual Studio Code support</a></li>
+        
+            <li><a class="toctree-l3" href="#other-editors">Other editors</a></li>
+        
+        </ul>
     
 
     <li class="toctree-l2"><a href="#citing-textx">Citing textX</a></li>
@@ -325,12 +336,21 @@ tested.</p>
 <p>For specific information read various <code>User Guide</code> sections.</p>
 <p>Also, you can
 check out <a href="https://github.com/igordejanovic/textX/tree/master/examples/">examples</a>.</p>
+<h2 id="discussion-and-help">Discussion and help<a class="headerlink" href="#discussion-and-help" title="Permanent link">&para;</a></h2>
+<p>For general discussion and help please
+join
+<a href="https://groups.google.com/forum/#!forum/textx-talk">the textX google group</a>.</p>
 <h2 id="projects-using-textx">Projects using textX<a class="headerlink" href="#projects-using-textx" title="Permanent link">&para;</a></h2>
 <p>Here is a non-complete list of projects using textX.</p>
 <ul>
 <li>
 <p>Open-source</p>
 <ul>
+<li><a href="https://github.com/pyecore/pyecore">pyecore</a> - ECore implementation in
+  Python. Vincent Aranega is doing a great work on integrating textX with
+  pyecore. The idea is that the integration eventually gets merged to the
+  main textX repo. For now, you can follow his
+  work <a href="https://github.com/aranega/textX">on his fork of textX</a>.</li>
 <li><a href="https://github.com/E2Music/pyTabs">pyTabs</a> - A Domain-Specific Language
   (DSL) for simplified music notation</li>
 <li><a href="https://github.com/kosanmil/applang">applang</a> - Textual DSL for
@@ -360,14 +380,30 @@ check out <a href="https://github.com/igordejanovic/textX/tree/master/examples/"
 <p>If you are using textX to build some cool stuff drop me a line at igor dot
 dejanovic at gmail. I would like to hear from you!</p>
 <h2 id="editoride-support">Editor/IDE support<a class="headerlink" href="#editoride-support" title="Permanent link">&para;</a></h2>
-<p>For a <a href="https://code.visualstudio.com/">Visual Studio Code</a> support check
-out <a href="https://github.com/danielkupco/viewX-vscode">viewX</a>, a plugin for building
-language visualizers. This is a first project in the serie of projects that will
-provide full support for textX based languages in VSC.</p>
-<p>If you are a vim editor user check out <a href="https://github.com/igordejanovic/textx.vim/">support for vim</a>.</p>
+<h3 id="visual-studio-code-support">Visual Studio Code support<a class="headerlink" href="#visual-studio-code-support" title="Permanent link">&para;</a></h3>
+<p>There is currently an ongoing effort to build tooling support
+around <a href="https://code.visualstudio.com/">Visual Studio Code</a>. The idea is to
+auto-generate VCS plugin with syntax highlighting, outline, InteliSense,
+navigation, visualization. The input for the generator would be your language
+grammar and additional information specified using various DSLs.</p>
+<p>You can follow the progress
+at <a href="https://github.com/textX-tools">the textX-tools GitHub organization</a>.</p>
+<p>Projects that are currently in progress are:
+- <a href="https://github.com/danielkupco/viewX-vscode">viewX</a> - creating visualizators
+  for textX languages
+- <a href="https://github.com/textX-tools/textX-languageserver">textX-languageserver</a> -
+  Language Server Protocol support for textX languages
+- <a href="https://github.com/textX-tools/textX-extensions">textX-extensions</a> - syntax
+  highlighting, code outline</p>
+<p>Stay tuned ;)</p>
+<h3 id="other-editors">Other editors<a class="headerlink" href="#other-editors" title="Permanent link">&para;</a></h3>
+<p>If you are a vim editor user check
+out <a href="https://github.com/igordejanovic/textx.vim/">support for vim</a>.</p>
 <p>For emacs there is <a href="https://github.com/novakboskov/textx-mode">textx-mode</a> which
 is also available in <a href="https://melpa.org/#/textx-mode">MELPA</a>.</p>
-<p>You can also check out <a href="https://github.com/igordejanovic/textX-ninja">textX-ninja project</a>.</p>
+<p>You can also check
+out <a href="https://github.com/igordejanovic/textX-ninja">textX-ninja project</a>. It is
+currently unmaintained.</p>
 <h2 id="citing-textx">Citing textX<a class="headerlink" href="#citing-textx" title="Permanent link">&para;</a></h2>
 <p>If you are using textX in your research project we would be very grateful if you
 cite our paper:</p>
@@ -438,5 +474,5 @@ Knowledge-Based Systems, 115, 1-4.</p>
 
 <!--
 MkDocs version : 0.16.3
-Build Date UTC : 2017-10-10 10:27:16
+Build Date UTC : 2017-12-06 09:32:23
 -->
