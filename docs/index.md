@@ -124,6 +124,13 @@ Also, you can
 check out [examples](https://github.com/igordejanovic/textX/tree/master/examples/).
 
 
+## Discussion and help
+
+For general discussion and help please
+join
+[the textX google group](https://groups.google.com/forum/#!forum/textx-talk).
+
+
 ## Projects using textX
 
 Here is a non-complete list of projects using textX.
