@@ -137,6 +137,11 @@ Here is a non-complete list of projects using textX.
 
 * Open-source
 
+    - [pyecore](https://github.com/pyecore/pyecore) - ECore implementation in
+      Python. Vincent Aranega is doing a great work on integrating textX with
+      pyecore. The idea is that the integration eventually gets merged to the
+      main textX repo. For now, you can follow his
+      work [on his fork of textX](https://github.com/aranega/textX).
     - [pyTabs](https://github.com/E2Music/pyTabs) - A Domain-Specific Language
       (DSL) for simplified music notation
     - [applang](https://github.com/kosanmil/applang) - Textual DSL for
