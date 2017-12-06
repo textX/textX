@@ -169,18 +169,39 @@ dejanovic at gmail. I would like to hear from you!
 
 ## Editor/IDE support
 
-For a [Visual Studio Code](https://code.visualstudio.com/) support check
-out [viewX](https://github.com/danielkupco/viewX-vscode), a plugin for building
-language visualizers. This is a first project in the serie of projects that will
-provide full support for textX based languages in VSC.
+### Visual Studio Code support
 
-If you are a vim editor user check out [support for vim](https://github.com/igordejanovic/textx.vim/).
+There is currently an ongoing effort to build tooling support
+around [Visual Studio Code](https://code.visualstudio.com/). The idea is to
+auto-generate VCS plugin with syntax highlighting, outline, InteliSense,
+navigation, visualization. The input for the generator would be your language
+grammar and additional information specified using various DSLs.
+
+You can follow the progress
+at [the textX-tools GitHub organization](https://github.com/textX-tools).
+
+Projects that are currently in progress are:
+- [viewX](https://github.com/danielkupco/viewX-vscode) - creating visualizators
+  for textX languages
+- [textX-languageserver](https://github.com/textX-tools/textX-languageserver) -
+  Language Server Protocol support for textX languages
+- [textX-extensions](https://github.com/textX-tools/textX-extensions) - syntax
+  highlighting, code outline
+
+Stay tuned ;)
+
+
+### Other editors
+
+If you are a vim editor user check
+out [support for vim](https://github.com/igordejanovic/textx.vim/).
 
 For emacs there is [textx-mode](https://github.com/novakboskov/textx-mode) which
 is also available in [MELPA](https://melpa.org/#/textx-mode).
 
-You can also check out [textX-ninja project](https://github.com/igordejanovic/textX-ninja).
-
+You can also check
+out [textX-ninja project](https://github.com/igordejanovic/textX-ninja). It is
+currently unmaintained.
 
 
 ## Citing textX
