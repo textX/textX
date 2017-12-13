@@ -123,6 +123,7 @@ class ObjCrossRef(object):
         self.obj_name = obj_name
         self.cls = cls
         self.position = position
+        print("#### object crossref [{}:{}]".format(obj_name,cls))
 
 
 def get_model_parser(top_rule, comments_model, **kwargs):
@@ -477,6 +478,15 @@ def parse_tree_to_objgraph(parser, parse_tree):
                         if result:
                             return result
                 elif cls._tx_type == RULE_COMMON:
+                    # TODO make this code exchangable
+                    # allow to know the current attribute (model location for namespace)
+                    # and to navigate through the whole model...
+                    # OR (with another scope provider) to make custom lookups in the model
+                    #
+                    # Scopeprovider
+                    # - needs: .current reference (in the model)
+                    #          .the model (?)
+                    # - provides: the resolved object or None
                     if id(cls) in parser._instances:
                         objs = parser._instances[id(cls)]
                         if obj_name in objs:
