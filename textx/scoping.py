@@ -4,7 +4,7 @@
 # Author: Pierre Bayerl
 # License: MIT License
 #######################################################################
-from textx.model import ObjCrossRef
+from textx.model import ObjCrossRef,model_root,children,metamodel
 
 def find_obj_fqn(p, fqn_name):
     """
@@ -47,7 +47,7 @@ def find_referenced_obj(p,name):
         p = p.parent
         ret = find_obj_fqn(p, name)
         if ret: return ret;
-    raise Exception("name '%s' not found.", name)
+    return None
 
 def scope_provider_fully_qualified_name(obj,attr,obj_ref):
     """
@@ -63,4 +63,39 @@ def scope_provider_fully_qualified_name(obj,attr,obj_ref):
     cls, obj_name = obj_ref.cls, obj_ref.obj_name
     ret = find_referenced_obj(obj,obj_name)
     return ret
+
+def scope_provider_fully_qualified_name_with_importURI(obj,attr,obj_ref):
+    """
+    like scope_provider_fully_qualified_name, but supporting Xtext-like
+    importURI attributes (w/o URInamespace)
+    :obj object corresponding a instance of an object (rule instance)
+    :attr the referencing attribute
+    :type obj_ref: ObjCrossRef to be resolved
+    :returns None or the referenced object
+    """
+    def _load_referenced_models(model):
+        # TODO do not analyze/load imports from imported models!
+        ret=[]
+        visited=[]
+        for obj in children(lambda x:hasattr(x,"importURI") and not x in visited,model):
+            visited.append(obj)
+            imported_model = metamodel(model).model_from_file(obj.importURI)
+            ret.append( imported_model )
+        return ret
+    assert type(obj_ref) is ObjCrossRef, type(obj_ref)
+    # 1) try to find object locally
+    ret = scope_provider_fully_qualified_name(obj,attr,obj_ref)
+    if ret: return ret
+    # 2) then lookup URIs...
+    model = model_root(obj)
+    # 2.1) do we already have loaded models (analysis)? No -> check/load them
+    cls, obj_name = obj_ref.cls, obj_ref.obj_name
+    if not("_tx_referenced_models" in dir(model)):
+        model._tx_referenced_models = _load_referenced_models(model)
+    referenced_models = model._tx_referenced_models
+    # 2.2) do we have loaded models?
+    for m in referenced_models:
+        ret = find_referenced_obj(m,obj_name)
+        if ret: return ret
+    return None
 

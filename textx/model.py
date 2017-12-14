@@ -64,34 +64,29 @@ def parent_of_type(typ, obj):
             return obj
 
 
-def children_of_type(typ, root):
+def children(decider, root):
     """
     Returns a list of all model elements of type 'typ' starting from model
     element 'root'. The search process will follow containment links only.
     Non-containing references shall not be followed.
 
     Args:
-        typ(str or python class): The type of the model object we are
-            looking for.
+        decider(obj): a functions returing True if the object is of interest.
         root (model object): Python model object which is the start of the
             search process.
     """
-
     collected = []
-
-    if type(typ) is not text:
-        typ = typ.__name__
 
     def follow(elem):
 
         if elem in collected:
             return
 
-        if elem.__class__.__name__ == typ:
-            collected.append(elem)
-
         # Use meta-model to search for all contained child elements.
         cls = elem.__class__
+
+        if hasattr(cls, '_tx_attrs') and decider(elem):
+            collected.append(elem)
 
         if hasattr(cls, '_tx_attrs'):
             for attr_name, attr in cls._tx_attrs.items():
@@ -109,6 +104,24 @@ def children_of_type(typ, root):
 
     follow(root)
     return collected
+
+def children_of_type(typ, root):
+    """
+    Returns a list of all model elements of type 'typ' starting from model
+    element 'root'. The search process will follow containment links only.
+    Non-containing references shall not be followed.
+
+    Args:
+        typ(str or python class): The type of the model object we are
+            looking for.
+        root (model object): Python model object which is the start of the
+            search process.
+    """
+
+    if type(typ) is not text:
+        typ = typ.__name__
+
+    return children(lambda x: elem.__class__.__name__ == typ,root)
 
 
 class ObjCrossRef(object):
@@ -478,35 +491,40 @@ def parse_tree_to_objgraph(parser, parse_tree):
                 line=line, col=col)
 
         # If this object has attributes (created using a common rule)
+        newcrossrefs=[]
         for obj, attr, crossref in parser._crossrefs:
-            attr_value = getattr(obj, attr.name)
-            attr_ref      = obj.__class__.__name__+"."+attr.name
-            attr_ref_alt1 = "*."+attr.name
-            attr_ref_alt2 = obj.__class__.__name__+".*"
-            attr_ref_alt3 = "*.*"
-            if attr_ref in metamodel.scope_provider:
-                if parser.debug:
-                    parser.dprint(" FOUND {}".format(attr_ref))
-                resolved = metamodel.scope_provider[attr_ref](obj,attr,crossref)
-            elif attr_ref_alt1 in metamodel.scope_provider:
-                if parser.debug:
-                    parser.dprint(" FOUND {}".format(attr_ref_alt1))
-                resolved = metamodel.scope_provider[attr_ref_alt1](obj, attr, crossref)
-            elif attr_ref_alt2 in metamodel.scope_provider:
-                if parser.debug:
-                    parser.dprint(" FOUND {}".format(attr_ref_alt2))
-                resolved = metamodel.scope_provider[attr_ref_alt2](obj, attr, crossref)
-            elif attr_ref_alt3 in metamodel.scope_provider:
-                if parser.debug:
-                    parser.dprint(" FOUND {}".format(attr_ref_alt3))
-                resolved = metamodel.scope_provider[attr_ref_alt3](obj, attr, crossref)
-            else:
-                resolved = _resolve_link_rule_ref(crossref)
-            if attr.mult in [MULT_ONEORMORE, MULT_ZEROORMORE]:
-                attr_value.append(resolved)
-            else:
-                setattr(obj, attr.name, resolved)
-        del parser._crossrefs[:]
+            if (model_root(obj) == model):
+                attr_value = getattr(obj, attr.name)
+                attr_ref      = obj.__class__.__name__+"."+attr.name
+                attr_ref_alt1 = "*."+attr.name
+                attr_ref_alt2 = obj.__class__.__name__+".*"
+                attr_ref_alt3 = "*.*"
+                if attr_ref in metamodel.scope_provider:
+                    if parser.debug:
+                        parser.dprint(" FOUND {}".format(attr_ref))
+                    resolved = metamodel.scope_provider[attr_ref](obj,attr,crossref)
+                elif attr_ref_alt1 in metamodel.scope_provider:
+                    if parser.debug:
+                        parser.dprint(" FOUND {}".format(attr_ref_alt1))
+                    resolved = metamodel.scope_provider[attr_ref_alt1](obj, attr, crossref)
+                elif attr_ref_alt2 in metamodel.scope_provider:
+                    if parser.debug:
+                        parser.dprint(" FOUND {}".format(attr_ref_alt2))
+                    resolved = metamodel.scope_provider[attr_ref_alt2](obj, attr, crossref)
+                elif attr_ref_alt3 in metamodel.scope_provider:
+                    if parser.debug:
+                        parser.dprint(" FOUND {}".format(attr_ref_alt3))
+                    resolved = metamodel.scope_provider[attr_ref_alt3](obj, attr, crossref)
+                else:
+                    resolved = _resolve_link_rule_ref(crossref)
+                if attr.mult in [MULT_ONEORMORE, MULT_ZEROORMORE]:
+                    attr_value.append(resolved)
+                else:
+                    setattr(obj, attr.name, resolved)
+            else: # crossref not in model
+                newcrossrefs.append( (obj, attr, crossref) )
+        parser._crossrefs = newcrossrefs; # TODO check / del vs. new list...
+        #del parser._crossrefs[:]
 
     def call_obj_processors(model_obj):
         """
