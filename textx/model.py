@@ -480,11 +480,26 @@ def parse_tree_to_objgraph(parser, parse_tree):
         # If this object has attributes (created using a common rule)
         for obj, attr, crossref in parser._crossrefs:
             attr_value = getattr(obj, attr.name)
-            attr_ref=obj.__class__.__name__+"."+attr.name
+            attr_ref      = obj.__class__.__name__+"."+attr.name
+            attr_ref_alt1 = "*."+attr.name
+            attr_ref_alt2 = obj.__class__.__name__+".*"
+            attr_ref_alt3 = "*.*"
             if attr_ref in metamodel.scope_provider:
                 if parser.debug:
                     parser.dprint(" FOUND {}".format(attr_ref))
                 resolved = metamodel.scope_provider[attr_ref](obj,attr,crossref)
+            elif attr_ref_alt1 in metamodel.scope_provider:
+                if parser.debug:
+                    parser.dprint(" FOUND {}".format(attr_ref_alt1))
+                resolved = metamodel.scope_provider[attr_ref_alt1](obj, attr, crossref)
+            elif attr_ref_alt2 in metamodel.scope_provider:
+                if parser.debug:
+                    parser.dprint(" FOUND {}".format(attr_ref_alt2))
+                resolved = metamodel.scope_provider[attr_ref_alt2](obj, attr, crossref)
+            elif attr_ref_alt3 in metamodel.scope_provider:
+                if parser.debug:
+                    parser.dprint(" FOUND {}".format(attr_ref_alt3))
+                resolved = metamodel.scope_provider[attr_ref_alt3](obj, attr, crossref)
             else:
                 resolved = _resolve_link_rule_ref(crossref)
             if attr.mult in [MULT_ONEORMORE, MULT_ZEROORMORE]:

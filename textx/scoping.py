@@ -4,7 +4,7 @@
 # Author: Pierre Bayerl
 # License: MIT License
 #######################################################################
-
+from textx.model import ObjCrossRef
 
 def find_obj_fqn(p, fqn_name):
     """
@@ -49,4 +49,18 @@ def find_referenced_obj(p,name):
         if ret: return ret;
     raise Exception("name '%s' not found.", name)
 
+def scope_provider_fully_qualified_name(obj,attr,obj_ref):
+    """
+    find a fully qualified name.
+    Use this callable as scope_provider in a meta-model:
+      my_metamodel.register_scope_provider({"*.*":scoping.scope_provider_fully_qualified_name})
+    :obj object corresponding a instance of an object (rule instance)
+    :attr the referencing attribute
+    :type obj_ref: ObjCrossRef to be resolved
+    :returns None or the referenced object
+    """
+    assert type(obj_ref) is ObjCrossRef, type(obj_ref)
+    cls, obj_name = obj_ref.cls, obj_ref.obj_name
+    ret = find_referenced_obj(obj,obj_name)
+    return ret
 
