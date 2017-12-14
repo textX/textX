@@ -7,6 +7,7 @@
 # License: MIT License
 #######################################################################
 
+
 import sys
 import codecs
 import traceback
@@ -123,7 +124,6 @@ class ObjCrossRef(object):
         self.obj_name = obj_name
         self.cls = cls
         self.position = position
-        print("#### object crossref [{}:{}]".format(obj_name,cls))
 
 
 def get_model_parser(top_rule, comments_model, **kwargs):
@@ -420,40 +420,6 @@ def parse_tree_to_objgraph(parser, parse_tree):
         """
         Resolves model references.
         """
-        # identify and load all remote models
-        # - find all objects recursively with an attribute "importURI"
-        # - ignore all attributes beginning with "_"
-        def _identify_imported_models(currentobj, depth=0, memory=set(),model=None, res=[]):
-            if not model: model = currentobj
-            if isinstance(currentobj, (list, tuple)):
-                for nextobj in currentobj:
-                    print(" "*depth+"[...]")
-                    _identify_imported_models(nextobj, depth + 1, memory,model, res)
-            else:
-                if not (currentobj in memory):
-                    memory.add(currentobj)
-                    if (dir(currentobj).__contains__("importURI")):
-                        res.append(currentobj)
-                    for attr in [a for a in dir(currentobj) if not a.startswith('__') and not a.startswith('_tx_') and not callable(getattr(currentobj,a))]:
-                        nextobj = getattr(currentobj,attr)
-                        print(" "*depth+"-"+attr+" ("+type(nextobj).__name__+")")
-                        _identify_imported_models(nextobj, depth+1, memory, model, res)
-            return res
-
-        basedir = os_path.dirname(parser.file_name)
-        res = _identify_imported_models(model)
-        for import_statement in res:
-            model_file_name = os_path.join(basedir, str(import_statement.importURI))
-            print("**** detected import command: %s."%(model_file_name))
-            # create a new metamodel (the existing seems not to be suited to be used recursively...
-            my_metamodel = metamodel_from_file(model._tx_metamodel.file_name)
-            #NOT WORKING...:
-            #my_metamodel = model._tx_metamodel
-            import_statement._imported_model = my_metamodel.model_from_file(model_file_name)
-            print(" **** end of import command: %s." % (model_file_name))
-
-        # TODO: Scoping and name-space rules.
-
         metamodel = parser.metamodel
 
         def _resolve_link_rule_ref(obj_ref):
@@ -466,6 +432,8 @@ def parse_tree_to_objgraph(parser, parse_tree):
             if parser.debug:
                 parser.dprint("Resolving obj crossref: {}:{}"
                               .format(obj_ref.cls, obj_ref.obj_name))
+            print("Resolving obj crossref: {}:{}"
+                          .format(obj_ref.cls, obj_ref.obj_name))
 
             def _inner_resolve_link_rule_ref(cls, obj_name):
                 """
@@ -512,7 +480,13 @@ def parse_tree_to_objgraph(parser, parse_tree):
         # If this object has attributes (created using a common rule)
         for obj, attr, crossref in parser._crossrefs:
             attr_value = getattr(obj, attr.name)
-            resolved = _resolve_link_rule_ref(crossref)
+            attr_ref=obj.__class__.__name__+"."+attr.name
+            if attr_ref in metamodel.scope_provider:
+                if parser.debug:
+                    parser.dprint(" FOUND {}".format(attr_ref))
+                resolved = metamodel.scope_provider[attr_ref](obj,attr,crossref)
+            else:
+                resolved = _resolve_link_rule_ref(crossref)
             if attr.mult in [MULT_ONEORMORE, MULT_ZEROORMORE]:
                 attr_value.append(resolved)
             else:

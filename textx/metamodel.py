@@ -55,7 +55,6 @@ class MetaAttr(object):
         self.bool_assignment = bool_assignment
         self.position = position
 
-
 class TextXMetaModel(DebugPrinter):
     """
     Meta-model contains all information about language abstract syntax.
@@ -137,6 +136,9 @@ class TextXMetaModel(DebugPrinter):
         # Registered object processors
         self.obj_processors = {}
 
+        # Registered scope provider
+        self.scope_provider = {}
+
         # Namespaces
         self.namespaces = {}
         self._namespace_stack = []
@@ -175,6 +177,9 @@ class TextXMetaModel(DebugPrinter):
         # Enter namespace for given file or None if metamodel is
         # constructed from string.
         self._enter_namespace(self._namespace_for_file_name(file_name))
+
+    def register_scope_provider(self, sp):
+        self.scope_provider = sp
 
     def _namespace_for_file_name(self, file_name):
         if file_name is None or self.root_path is None:
