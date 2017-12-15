@@ -62,7 +62,7 @@ def test_fully_qualified_name_ref():
     ''')
 
     #################################
-    # CODE GENERATION
+    # TEST MODEL
     #################################
 
     a = children(lambda x:hasattr(x,'name') and x.name=="rec", my_model)
