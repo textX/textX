@@ -5,6 +5,7 @@
 # License: MIT License
 #######################################################################
 from textx.model import ObjCrossRef,model_root,children,metamodel
+from textx.exceptions import TextXSemanticError
 
 def find_obj_fqn(p, fqn_name):
     """
@@ -49,7 +50,7 @@ def find_referenced_obj(p,name):
         if ret: return ret;
     return None
 
-def scope_provider_fully_qualified_name(obj,attr,obj_ref):
+def _scope_provider_fully_qualified_name(obj,attr,obj_ref):
     """
     find a fully qualified name.
     Use this callable as scope_provider in a meta-model:
@@ -63,6 +64,20 @@ def scope_provider_fully_qualified_name(obj,attr,obj_ref):
     cls, obj_name = obj_ref.cls, obj_ref.obj_name
     ret = find_referenced_obj(obj,obj_name)
     return ret
+
+def _raise_semantic_error(msg,obj,pos):
+    parser = model_root(obj)._tx_metamodel.parser
+    line, col = parser.pos_to_linecol(pos)
+    raise TextXSemanticError(
+        '{} at {}'
+        .format(msg, (line, col)),
+        line=line, col=col)
+
+def scope_provider_fully_qualified_name(obj,attr,obj_ref):
+    res = _scope_provider_fully_qualified_name(obj, attr, obj_ref)
+    if res: return res
+    _raise_semantic_error('Unknown object "{}"'.format(obj_ref.obj_name, obj_ref.cls.__name__), obj, obj_ref.position)
+
 
 def scope_provider_fully_qualified_name_with_importURI(obj,attr,obj_ref):
     """
@@ -84,7 +99,7 @@ def scope_provider_fully_qualified_name_with_importURI(obj,attr,obj_ref):
         return ret
     assert type(obj_ref) is ObjCrossRef, type(obj_ref)
     # 1) try to find object locally
-    ret = scope_provider_fully_qualified_name(obj,attr,obj_ref)
+    ret = _scope_provider_fully_qualified_name(obj,attr,obj_ref)
     if ret: return ret
     # 2) then lookup URIs...
     model = model_root(obj)
@@ -97,5 +112,5 @@ def scope_provider_fully_qualified_name_with_importURI(obj,attr,obj_ref):
     for m in referenced_models:
         ret = find_referenced_obj(m,obj_name)
         if ret: return ret
-    return None
+    _raise_semantic_error('Unknown object "{}"'.format(obj_ref.obj_name, obj_ref.cls.__name__), obj, obj_ref.position)
 
