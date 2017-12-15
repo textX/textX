@@ -121,7 +121,7 @@ def children_of_type(typ, root):
     if type(typ) is not text:
         typ = typ.__name__
 
-    return children(lambda x: elem.__class__.__name__ == typ,root)
+    return children(lambda x: x.__class__.__name__ == typ,root)
 
 
 class ObjCrossRef(object):
