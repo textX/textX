@@ -4,7 +4,7 @@
   - added new function textx.model.children to search arbritrary children using a lambda predicate.
   - remapped textx.model.children_of_type to the new children function (changed the logic, such that the root node is also checked to be model object).
   - added new metamodel function to register scope providers. Scope providers are callables, which return the referenced object.
-  - added a new module textx.scoping, to provide some scope providers (e.g. a fully qualified name provide)
+  - added a new module textx.scoping, to provide some scope providers (e.g. a fully qualified name provider)
 
 * 2017-11-22 Release 1.6.1
   - Fixing build for PyPI.
