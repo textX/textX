@@ -1,13 +1,13 @@
 package base {
     package system {
         interface socket {
-            types::int id;
-            types::int port;
+            types.int id;
+            types.int port;
         }
     }
     interface inout_sockets {
-        system::socket s1;
-        base::system::socket s2;
-        types::float speed;
+        system.socket s1;
+        base.system.socket s2;
+        types.float speed;
     }
 }

@@ -1,6 +1,6 @@
 package app {
     interface app1 {
-        base::inout_sockets s;
-        types::int userid;
+        base.inout_sockets s;
+        types.int userid;
     }
 }

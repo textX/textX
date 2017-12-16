@@ -189,6 +189,8 @@ def get_model_parser(top_rule, comments_model, **kwargs):
             model = self.get_model_from_str(model_str, file_name=file_name,
                                             debug=debug)
 
+            # reset the file: see "# Register filename of the model for later use (e.g. imports/scoping)."
+            # w/o this second assignment some tests fail (TBC)
             # Register filename of the model for later use.
             try:
                 model._tx_filename = file_name
@@ -213,7 +215,7 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                 self.parse(model_str, file_name=file_name)
                 # Transform parse tree to model. Skip root node which
                 # represents the whole file ending in EOF.
-                model = parse_tree_to_objgraph(self, self.parse_tree[0])
+                model = parse_tree_to_objgraph(self, self.parse_tree[0],file_name = file_name)
             finally:
                 if debug is not None:
                     self.debug = old_debug_state
@@ -229,7 +231,7 @@ def get_model_parser(top_rule, comments_model, **kwargs):
     return TextXModelParser(**kwargs)
 
 
-def parse_tree_to_objgraph(parser, parse_tree):
+def parse_tree_to_objgraph(parser, parse_tree, file_name=None):
     """
     Transforms parse_tree to object graph representing model in a
     new language.
@@ -551,6 +553,14 @@ def parse_tree_to_objgraph(parser, parse_tree):
             obj_processor(model_obj)
 
     model = process_node(parse_tree)
+
+    # Register filename of the model for later use (e.g. imports/scoping).
+    try:
+        model._tx_filename = file_name
+    except AttributeError:
+        # model is some primitive python type (e.g. str)
+        pass
+
     resolve_refs(model)
     assert not parser._inst_stack
 

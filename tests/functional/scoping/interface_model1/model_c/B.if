@@ -3,7 +3,7 @@ import "types.if"
 
 package b {
     interface B {
-        types::int x;
+        types.int x;
 	B self;
 	a.A other;
     }

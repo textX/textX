@@ -6,6 +6,7 @@
 #######################################################################
 from textx.model import ObjCrossRef,model_root,children,metamodel
 from textx.exceptions import TextXSemanticError
+from os.path import dirname,abspath
 
 def find_obj_fqn(p, fqn_name):
     """
@@ -94,7 +95,9 @@ def scope_provider_fully_qualified_name_with_importURI(obj,attr,obj_ref):
         visited=[]
         for obj in children(lambda x:hasattr(x,"importURI") and not x in visited,model):
             visited.append(obj)
-            imported_model = metamodel(model).model_from_file(obj.importURI)
+            # TODO add multiple lookup rules for file search
+            filename = abspath(dirname(model._tx_filename)+"/"+obj.importURI)
+            imported_model = metamodel(model).model_from_file(filename)
             ret.append( imported_model )
         return ret
     assert type(obj_ref) is ObjCrossRef, type(obj_ref)

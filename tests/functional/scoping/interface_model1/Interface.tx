@@ -6,11 +6,11 @@ Model:
 Package:
         'package' name=ID '{'
         (
-        interfaces*=Interface
+        interfaces+=Interface
         |
-        packages*=Package
+        packages+=Package
         |
-        raw_types*=RawType
+        raw_types+=RawType
         )*
         '}'
 ;
