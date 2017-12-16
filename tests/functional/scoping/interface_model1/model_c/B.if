@@ -1,0 +1,10 @@
+import "A.if"
+import "types.if"
+
+package b {
+    interface B {
+        types::int x;
+	B self;
+	a.A other;
+    }
+}

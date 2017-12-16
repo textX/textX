@@ -1,6 +1,3 @@
-import "base.if"
-import "types.if"
-
 package app {
     interface app1 {
         base::inout_sockets s;

@@ -1,0 +1,37 @@
+Model:
+        packages*=Package
+;
+
+Package:
+        'package' name=ID '{'
+        (
+        interfaces*=Interface
+        |
+        packages*=Package
+        |
+        raw_types*=RawType
+        )*
+        '}'
+;
+
+RawType:
+    'type' name=ID '{'
+    '}'
+;
+Interface:
+    'interface' name=ID '{'
+        attributes*=Attribute
+    '}'
+;
+
+Attribute: RawTypeAttribute|EmbeddedAttribute;
+
+RawTypeAttribute:
+        ref=[RawType|FQN] name=ID ';'
+;
+EmbeddedAttribute:
+        ref=[Interface|FQN] name=ID ';'
+;
+
+FQN: ID('.'ID)*;
+Comment: /\/\/.*$/;

@@ -1,5 +1,5 @@
 import "base.if"
-import "types.if"
+//error, missing import "types.if"
 
 package app {
     interface app1 {
