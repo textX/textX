@@ -476,21 +476,27 @@ class TextXMetaModel(DebugPrinter):
     def _current_namespace(self):
         return self.namespaces[self._namespace_stack[-1]]
 
-    def model_from_str(self, model_str, debug=None):
+    def model_from_str(self, model_str, debug=None, pre_ref_resolution_callback=None):
         """
         Instantiates model from the given string.
+        :param pre_ref_resolution_callback: called before references are resolved.
+               This can be useful to manage models distributed across files (scoping)
         """
-        model = self.parser.get_model_from_str(model_str, debug=debug)
+        model = self.parser.get_model_from_str(model_str, debug=debug,
+                                               pre_ref_resolution_callback = pre_ref_resolution_callback)
         for p in self._model_processors:
             p(model, self)
         return model
 
-    def model_from_file(self, file_name, encoding='utf-8', debug=None):
+    def model_from_file(self, file_name, encoding='utf-8', debug=None, pre_ref_resolution_callback=None):
         """
         Instantiates model from the given file.
+        :param pre_ref_resolution_callback: called before references are resolved.
+               This can be useful to manage models distributed across files (scoping)
         """
         model = self.parser.get_model_from_file(file_name,
-                                                encoding, debug=debug)
+                                                encoding, debug=debug,
+                                                pre_ref_resolution_callback=pre_ref_resolution_callback)
         for p in self._model_processors:
             p(model, self)
         return model

@@ -4,6 +4,8 @@
 # Author: Pierre Bayerl
 # License: MIT License
 #######################################################################
+from powerline.segments.vim import file_name
+
 from textx.model import ObjCrossRef,model_root,children,metamodel
 from textx.exceptions import TextXSemanticError
 from os.path import dirname,abspath
@@ -80,6 +82,81 @@ def scope_provider_fully_qualified_name(obj,attr,obj_ref):
     _raise_semantic_error('Unknown object "{}"'.format(obj_ref.obj_name, obj_ref.cls.__name__), obj, obj_ref.position)
 
 
+class ModelRepository:
+    """
+    This class has the responsibility to
+    hold a set of (model-identifiers, model) pairs
+    as dictionary.
+    In case of some scoping providers the model-identifier
+    is the absolute filename of the model.
+    """
+    def __init__(self):
+        self.filename_to_model={}
+    def has_model(self, filename):
+        return filename in self.filename_to_model.keys()
+
+class GlobalModelRepository:
+    """
+    This class has the responsability to
+    hold two ModelRepository objects:
+    - one for model-local visible models
+    - one for all models (globally, starting from
+      some root model).
+    The second ModelRepository "all_models" is to cache already
+    loaded models and to prevent to load one model
+    twice.
+
+    The class allows loading local models visible to
+    the current model. The current model is the model
+    which references this GlobalModelRepository as
+    attribute _tx_model_repository
+
+    When loading a new local model, the current
+    GlobalModelRepository forwards the embedded ModelRepository
+    "all_models" to the new GlobalModelRepository of the
+    next model. This is done using the pre_ref_resolution_callback
+    to set the neccesary information before resolving
+    the references in the new loaded model.
+    """
+    def __init__(self, all_models=None):
+        """
+        create a new repo for a model
+        :param model the model to be added to
+        :param global_repo: the repo of another (parent) model
+        """
+        self.local_models = ModelRepository() # used for current model
+        if all_models:
+            self.all_models = all_models;     # used to reuse already loaded models
+        else:
+            self.all_models = ModelRepository()
+
+    def load_model(self, model, filename):
+        """
+        add a new model to all releveant objects
+        :param filename: the new model source
+        :return: nothing
+        """
+        assert(model._tx_model_repository == self) # makes only sense if the correct model is used
+        if not self.local_models.has_model(filename):
+            myfilename = model._tx_filename
+            if (myfilename and not self.all_models.has_model(myfilename)):
+                # make current model visible
+                #print("INIT {}".format(myfilename))
+                self.all_models.filename_to_model[myfilename] = model
+            if self.all_models.has_model(filename):
+                newmodel = self.all_models.filename_to_model[filename]
+            else:
+                #print("LOADING {}".format(filename))
+                newmodel = metamodel(model).model_from_file(filename,
+                                                            pre_ref_resolution_callback=lambda other_model:self.pre_ref_resolution_callback(other_model,filename))
+                self.all_models.filename_to_model[filename] = newmodel
+            self.local_models.filename_to_model[filename] = newmodel
+
+    def pre_ref_resolution_callback(self,other_model,filename):
+        #print("PRE-CALLBACK{}".format(filename))
+        other_model._tx_model_repository=GlobalModelRepository(self.all_models)
+        self.all_models.filename_to_model[filename] = other_model
+
 def scope_provider_fully_qualified_name_with_importURI(obj,attr,obj_ref):
     """
     like scope_provider_fully_qualified_name, but supporting Xtext-like
@@ -91,28 +168,32 @@ def scope_provider_fully_qualified_name_with_importURI(obj,attr,obj_ref):
     """
     def _load_referenced_models(model):
         # TODO do not analyze/load imports from imported models!
-        ret=[]
         visited=[]
         for obj in children(lambda x:hasattr(x,"importURI") and not x in visited,model):
             visited.append(obj)
             # TODO add multiple lookup rules for file search
             filename = abspath(dirname(model._tx_filename)+"/"+obj.importURI)
-            imported_model = metamodel(model).model_from_file(filename)
-            ret.append( imported_model )
-        return ret
+            if not model._tx_model_repository.local_models.has_model(filename):
+                model._tx_model_repository.load_model(model, filename)
+
     assert type(obj_ref) is ObjCrossRef, type(obj_ref)
     # 1) try to find object locally
     ret = _scope_provider_fully_qualified_name(obj,attr,obj_ref)
     if ret: return ret
     # 2) then lookup URIs...
+    # TODO: raise error if lookup is not unique
     model = model_root(obj)
     # 2.1) do we already have loaded models (analysis)? No -> check/load them
     cls, obj_name = obj_ref.cls, obj_ref.obj_name
-    if not("_tx_referenced_models" in dir(model)):
-        model._tx_referenced_models = _load_referenced_models(model)
-    referenced_models = model._tx_referenced_models
+    if "_tx_model_repository" in dir(model):
+        model_repository = model._tx_model_repository
+    else:
+        model_repository = GlobalModelRepository()
+        model._tx_model_repository = model_repository
+    _load_referenced_models(model)
+
     # 2.2) do we have loaded models?
-    for m in referenced_models:
+    for m in model_repository.local_models.filename_to_model.values():
         ret = find_referenced_obj(m,obj_name)
         if ret: return ret
     _raise_semantic_error('Unknown object "{}"'.format(obj_ref.obj_name, obj_ref.cls.__name__), obj, obj_ref.position)

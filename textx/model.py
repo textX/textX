@@ -177,7 +177,7 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                 line, col = e.parser.pos_to_linecol(e.position)
                 raise TextXSyntaxError(text(e), line, col)
 
-        def get_model_from_file(self, file_name, encoding, debug):
+        def get_model_from_file(self, file_name, encoding, debug, pre_ref_resolution_callback=None):
             """
             Creates model from the parse tree from the previous parse call.
             If file_name is given file will be parsed before model
@@ -187,7 +187,7 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                 model_str = f.read()
 
             model = self.get_model_from_str(model_str, file_name=file_name,
-                                            debug=debug)
+                                            debug=debug,pre_ref_resolution_callback=pre_ref_resolution_callback)
 
             # reset the file: see "# Register filename of the model for later use (e.g. imports/scoping)."
             # w/o this second assignment some tests fail (TBC)
@@ -199,7 +199,7 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                 pass
             return model
 
-        def get_model_from_str(self, model_str, file_name=None, debug=None):
+        def get_model_from_str(self, model_str, file_name=None, debug=None, pre_ref_resolution_callback=None):
             """
             Parses given string and creates model object graph.
             """
@@ -215,7 +215,7 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                 self.parse(model_str, file_name=file_name)
                 # Transform parse tree to model. Skip root node which
                 # represents the whole file ending in EOF.
-                model = parse_tree_to_objgraph(self, self.parse_tree[0],file_name = file_name)
+                model = parse_tree_to_objgraph(self, self.parse_tree[0],file_name = file_name, pre_ref_resolution_callback = pre_ref_resolution_callback)
             finally:
                 if debug is not None:
                     self.debug = old_debug_state
@@ -231,7 +231,7 @@ def get_model_parser(top_rule, comments_model, **kwargs):
     return TextXModelParser(**kwargs)
 
 
-def parse_tree_to_objgraph(parser, parse_tree, file_name=None):
+def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolution_callback=None):
     """
     Transforms parse_tree to object graph representing model in a
     new language.
@@ -553,7 +553,6 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None):
             obj_processor(model_obj)
 
     model = process_node(parse_tree)
-
     # Register filename of the model for later use (e.g. imports/scoping).
     try:
         model._tx_filename = file_name
@@ -561,6 +560,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None):
         # model is some primitive python type (e.g. str)
         pass
 
+    if pre_ref_resolution_callback: pre_ref_resolution_callback(model)
     resolve_refs(model)
     assert not parser._inst_stack
 
