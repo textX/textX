@@ -7,19 +7,19 @@ package types {
 package base {
     package system {
         interface socket {
-            int id;
-            int port;
+            types::int id;
+            types::int port;
         }
     }
     interface inout_sockets {
         system::socket s1;
-        system::socket s2;
-        float speed;
+        base::system::socket s2;
+        types::float speed;
     }
 }
 package app {
     interface app1 {
         base::inout_sockets s;
-        int userid;
+        types::int userid;
     }
 }
