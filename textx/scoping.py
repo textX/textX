@@ -9,8 +9,39 @@ from powerline.segments.vim import file_name
 from textx.model import ObjCrossRef,model_root,children,metamodel
 from textx.exceptions import TextXSemanticError
 from os.path import dirname,abspath
+import glob
 
-def find_obj_fqn(p, fqn_name):
+"""
+This module defines scope providers to be used in conjunctions with a textx.metamodel meta model.
+
+Example grammar snippet:
+    MyAttribute:
+            ref=[MyInterface|FQN] name=ID ';'
+    ;
+
+The scope providers are python callables accepting obj,attr,obj_ref:
+ * obj     : the object representing a rule (e.g. "MyAttribute" in the example above
+ * attr    : a reference to the attribute "ref"
+ * obj_ref : a textx.model.ObjCrossRef - the reference to be resolved
+
+The scope provides return the referenced object (e.g. a "MyInterface" object in the example above 
+(or raise an Error - e.g. using _raise_semantic_error).
+
+The scope provides are registered to the metamodel:
+ * e.g., my_meta_model.register_scope_provider({"*.*":scoping.scope_provider_fully_qualified_name})
+ * or: my_meta_model.register_scope_provider({"MyAttribute.ref":scoping.scope_provider_fully_qualified_name})
+ * or: my_meta_model.register_scope_provider({"*.ref":scoping.scope_provider_fully_qualified_name})
+ * or: my_meta_model.register_scope_provider({"MyAttribute.*":scoping.scope_provider_fully_qualified_name})
+
+Scope providers shall be stateless or have unmodifiable state after construction: this means they should 
+allow to be reused for different models (created using the same meta model) without interacting with each other.
+This means, they must save their state in the corresponding model, if they need to store data (e.g., if
+they load additional models from files *during name resolution*, they are not allowed to store them inside
+the scope provider. Note: scope providers as normal functions (def <name>(...):..., not accessing global 
+data, are safe per se.
+"""
+
+def _find_obj_fqn(p, fqn_name):
     """
     find a named object based on a qualified name ("."-separated names) starting from object p.
     :param p: the container where to start the search
@@ -37,7 +68,7 @@ def find_obj_fqn(p, fqn_name):
             return None;
     return p;
 
-def find_referenced_obj(p,name):
+def _find_referenced_obj(p, name):
     """
     Search the fully qualified name starting at relative container p.
     If no result is found, the search is continued from p.parent until the model root is reached.
@@ -45,11 +76,11 @@ def find_referenced_obj(p,name):
     :param n: name to be found
     :return: None or the found object
     """
-    ret = find_obj_fqn(p, name)
+    ret = _find_obj_fqn(p, name)
     if ret: return ret;
     while hasattr(p, "parent"):
         p = p.parent
-        ret = find_obj_fqn(p, name)
+        ret = _find_obj_fqn(p, name)
         if ret: return ret;
     return None
 
@@ -65,7 +96,7 @@ def _scope_provider_fully_qualified_name(obj,attr,obj_ref):
     """
     assert type(obj_ref) is ObjCrossRef, type(obj_ref)
     cls, obj_name = obj_ref.cls, obj_ref.obj_name
-    ret = find_referenced_obj(obj,obj_name)
+    ret = _find_referenced_obj(obj, obj_name)
     return ret
 
 def _raise_semantic_error(msg,obj,pos):
@@ -130,27 +161,34 @@ class GlobalModelRepository:
         else:
             self.all_models = ModelRepository()
 
-    def load_model(self, model, filename):
+    def load_model(self, filename_pattern, model=None, mymetamodel=None):
         """
         add a new model to all releveant objects
         :param filename: the new model source
         :return: nothing
         """
-        assert(model._tx_model_repository == self) # makes only sense if the correct model is used
-        if not self.local_models.has_model(filename):
-            myfilename = model._tx_filename
-            if (myfilename and not self.all_models.has_model(myfilename)):
-                # make current model visible
-                #print("INIT {}".format(myfilename))
-                self.all_models.filename_to_model[myfilename] = model
-            if self.all_models.has_model(filename):
-                newmodel = self.all_models.filename_to_model[filename]
-            else:
-                #print("LOADING {}".format(filename))
-                newmodel = metamodel(model).model_from_file(filename,
-                                                            pre_ref_resolution_callback=lambda other_model:self.pre_ref_resolution_callback(other_model,filename))
-                self.all_models.filename_to_model[filename] = newmodel
-            self.local_models.filename_to_model[filename] = newmodel
+        assert(model or mymetamodel)
+        if not mymetamodel: mymetamodel = metamodel(model)
+        if model: self.update_model_in_repo_based_on_filename(model)
+        for filename in glob.glob(filename_pattern, recursive=True):
+            if not self.local_models.has_model(filename):
+                if self.all_models.has_model(filename):
+                    newmodel = self.all_models.filename_to_model[filename]
+                else:
+                    #print("LOADING {}".format(filename))
+                    newmodel = mymetamodel.model_from_file(filename,
+                                                                pre_ref_resolution_callback=lambda other_model:self.pre_ref_resolution_callback(other_model,filename))
+                    self.all_models.filename_to_model[filename] = newmodel
+                self.local_models.filename_to_model[filename] = newmodel
+
+    def update_model_in_repo_based_on_filename(self, model, replace=False):
+        assert (model._tx_model_repository == self)  # makes only sense if the correct model is used
+        myfilename = model._tx_filename
+        if (replace): assert(myfilename)
+        if (myfilename and (replace or not self.all_models.has_model(myfilename))):
+            # make current model visible
+            # print("INIT {}".format(myfilename))
+            self.all_models.filename_to_model[myfilename] = model
 
     def pre_ref_resolution_callback(self,other_model,filename):
         #print("PRE-CALLBACK{}".format(filename))
@@ -174,7 +212,7 @@ def scope_provider_fully_qualified_name_with_importURI(obj,attr,obj_ref):
             # TODO add multiple lookup rules for file search
             filename = abspath(dirname(model._tx_filename)+"/"+obj.importURI)
             if not model._tx_model_repository.local_models.has_model(filename):
-                model._tx_model_repository.load_model(model, filename)
+                model._tx_model_repository.load_model(filename, model=model)
 
     assert type(obj_ref) is ObjCrossRef, type(obj_ref)
     # 1) try to find object locally
@@ -191,10 +229,55 @@ def scope_provider_fully_qualified_name_with_importURI(obj,attr,obj_ref):
         model_repository = GlobalModelRepository()
         model._tx_model_repository = model_repository
     _load_referenced_models(model)
-
     # 2.2) do we have loaded models?
     for m in model_repository.local_models.filename_to_model.values():
-        ret = find_referenced_obj(m,obj_name)
+        ret = _find_referenced_obj(m, obj_name)
         if ret: return ret
     _raise_semantic_error('Unknown object "{}"'.format(obj_ref.obj_name, obj_ref.cls.__name__), obj, obj_ref.position)
 
+class Scope_provider_fully_qualified_name_with_global_repo:
+    """
+    Scope provider that allows to populate the set of models used for lookup before parsing models.
+    Usage:
+      * create metamodel
+      * create Scope_provider_fully_qualified_name_with_global_repo
+      * load models used for lookup into the scope provider
+    Then the scope provider is ready to be registered and used.
+
+    Note: You can also query/get models from the loaded set of models, instead reloading
+    them from files.
+    """
+    def __init__(self, mymetamodel=None, filename_pattern=None):
+        assert( (mymetamodel==None) == (filename_pattern==None) ) # either both or none
+        self.model_repository = GlobalModelRepository()
+        if filename_pattern: self.load_models(mymetamodel, filename_pattern)
+
+    def load_models(self, mymetamodel, filename_pattern):
+        """
+        load models into provider object - visible for all
+        :param mymetamodel: the metamodel to be used to load the models
+        :param filename_pattern: the pattern (e.g. file.myext or dir/**/*.myext)
+        :return:
+        """
+        self.model_repository.load_model(filename_pattern, mymetamodel=mymetamodel)
+
+    def __call__(self, obj,attr,obj_ref):
+        assert type(obj_ref) is ObjCrossRef, type(obj_ref)
+        # 1) try to find object locally
+        ret = _scope_provider_fully_qualified_name(obj, attr, obj_ref)
+        if ret: return ret
+        # 2) then lookup URIs...
+        # TODO: raise error if lookup is not unique
+        model = model_root(obj)
+        self.model_repository.update_model_in_repo_based_on_filename(model, replace=True)
+        # 2.2) do we have loaded models?
+        cls, obj_name = obj_ref.cls, obj_ref.obj_name
+        if "_tx_model_repository" in dir(model):
+            assert(self.model_repository == model._tx_model_repository)
+        else:
+            model._tx_model_repository = self.model_repository
+        for m in self.model_repository.local_models.filename_to_model.values():
+            ret = _find_referenced_obj(m, obj_name)
+            if ret: return ret
+        _raise_semantic_error('Unknown object "{}"'.format(obj_ref.obj_name, obj_ref.cls.__name__), obj,
+                              obj_ref.position)
