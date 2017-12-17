@@ -80,7 +80,7 @@ def test_model_with_imports():
     # END
     #################################
 
-def test_model_with_imports2():
+def test_model_with_imports_and_global_repo():
     #################################
     # META MODEL DEF
     #################################
@@ -159,7 +159,7 @@ def test_model_with_circular_imports():
     #################################
 
 
-def test_model_with_globalimports1():
+def test_model_with_globalimports_basic_test_with_single_model_file():
     #################################
     # META MODEL DEF
     #################################
@@ -193,7 +193,7 @@ def test_model_with_globalimports1():
     # END
     #################################
 
-def test_model_with_globalimports2():
+def test_model_with_globalimports_basic_test_with_single_model_file_and_with_global_repo():
     #################################
     # META MODEL DEF
     #################################
@@ -228,7 +228,7 @@ def test_model_with_globalimports2():
     # END
     #################################
 
-def test_model_with_globalimports3():
+def test_model_with_globalimports_basic_test_with_distributed_model():
     #################################
     # META MODEL DEF
     #################################
