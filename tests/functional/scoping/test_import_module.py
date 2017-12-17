@@ -55,6 +55,7 @@ def test_model_with_imports():
     #################################
 
     my_model = my_meta_model.model_from_file(abspath(dirname(__file__)) + "/interface_model1/model_b/app.if")
+    my_model2 = my_meta_model.model_from_file(abspath(dirname(__file__)) + "/interface_model1/model_b/app.if")
 
     #################################
     # TEST MODEL
@@ -67,11 +68,49 @@ def test_model_with_imports():
     # check that "s.s1" is a reference to the socket interface
     a  = _get_unique_named_object(inner_model, "socket")
     s1 = _get_unique_named_object(inner_model, "s1")
+    userid = _get_unique_named_object(my_model, "userid")
     assert( a == s1.ref )
+
+    userid2 = _get_unique_named_object(my_model2, "userid")
+    assert( userid != userid2 )
+    assert( userid.ref != userid2.ref )
+    assert( userid.ref.__class__.__name__ == "RawType" )
 
     #################################
     # END
     #################################
+
+def test_model_with_imports2():
+    #################################
+    # META MODEL DEF
+    #################################
+
+    my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/interface_model1/Interface.tx')
+    my_meta_model.enable_global_model_repository()
+    my_meta_model.register_scope_provider({"*.*":scoping.Scope_provider_fully_qualified_names_with_importURI()})
+
+    #################################
+    # MODEL PARSING
+    #################################
+
+    my_model = my_meta_model.model_from_file(abspath(dirname(__file__)) + "/interface_model1/model_b/app.if")
+    my_model2 = my_meta_model.model_from_file(abspath(dirname(__file__)) + "/interface_model1/model_b/app.if")
+
+    #################################
+    # TEST MODEL
+    #################################
+
+    userid = _get_unique_named_object(my_model, "userid")
+    userid2 = _get_unique_named_object(my_model2, "userid")
+    assert( userid == userid2 )
+    assert( userid.ref == userid2.ref )
+    assert( userid.ref.__class__.__name__ == "RawType" )
+
+
+    #################################
+    # END
+    #################################
+
 
 def test_model_with_circular_imports():
     #################################

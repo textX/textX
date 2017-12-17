@@ -182,8 +182,6 @@ class GlobalModelRepository:
     def update_model_in_repo_based_on_filename(self, model):
         from textx.model import metamodel
         assert (model._tx_model_repository == self)  # makes only sense if the correct model is used
-        if "_tx_model_repository" in dir(metamodel(model)):
-            assert(metamodel(model)._tx_model_repository == self)
         myfilename = model._tx_filename
         if (myfilename and (not self.all_models.has_model(myfilename))):
             # make current model visible
@@ -278,7 +276,7 @@ class Scope_provider_with_importURI:
             model._tx_model_repository.load_models_using_filepattern(filename_pattern, model=model)
 
     def __call__(self, parser, obj, attr, obj_ref):
-        from textx.model import ObjCrossRef, model_root
+        from textx.model import ObjCrossRef, model_root, metamodel
         assert type(obj_ref) is ObjCrossRef, type(obj_ref)
         # 1) try to find object locally
         ret = self.scope_provider(parser, obj, attr, obj_ref)
@@ -291,7 +289,10 @@ class Scope_provider_with_importURI:
         if "_tx_model_repository" in dir(model):
             model_repository = model._tx_model_repository
         else:
-            model_repository = GlobalModelRepository()
+            if "_tx_model_repository" in dir(metamodel(model)):
+                model_repository = GlobalModelRepository(metamodel(model._tx_model_repository.all_models))
+            else:
+                model_repository = GlobalModelRepository()
             model._tx_model_repository = model_repository
         self._load_referenced_models(model)
         # 2.2) do we have loaded models?
