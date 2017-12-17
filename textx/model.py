@@ -15,9 +15,7 @@ from arpeggio import Parser, Sequence, NoMatch, EOF, Terminal
 from textx.exceptions import TextXSyntaxError, TextXSemanticError
 from textx.const import MULT_OPTIONAL, MULT_ONE, MULT_ONEORMORE, \
     MULT_ZEROORMORE, RULE_COMMON, RULE_ABSTRACT, RULE_MATCH
-from textx.lang import PRIMITIVE_PYTHON_TYPES
-import os.path as os_path
-from textx.metamodel import metamodel_from_file
+from textx.scoping import scope_provider_plain_names
 
 if sys.version < '3':
     text = unicode  # noqa
@@ -437,57 +435,6 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolutio
         """
         metamodel = parser.metamodel
 
-        def _resolve_link_rule_ref(obj_ref):
-
-            if obj_ref is None:
-                return
-
-            assert type(obj_ref) is ObjCrossRef, type(obj_ref)
-
-            if parser.debug:
-                parser.dprint("Resolving obj crossref: {}:{}"
-                              .format(obj_ref.cls, obj_ref.obj_name))
-            print("Resolving obj crossref: {}:{}"
-                          .format(obj_ref.cls, obj_ref.obj_name))
-
-            def _inner_resolve_link_rule_ref(cls, obj_name):
-                """
-                Depth-first resolving of link rule reference.
-                """
-                if cls._tx_type is RULE_ABSTRACT:
-                    for inherited in cls._tx_inh_by:
-                        result = _inner_resolve_link_rule_ref(inherited,
-                                                              obj_name)
-                        if result:
-                            return result
-                elif cls._tx_type == RULE_COMMON:
-                    # TODO make this code exchangable
-                    # allow to know the current attribute (model location for namespace)
-                    # and to navigate through the whole model...
-                    # OR (with another scope provider) to make custom lookups in the model
-                    #
-                    # Scopeprovider
-                    # - needs: .current reference (in the model)
-                    #          .the model (?)
-                    # - provides: the resolved object or None
-                    if id(cls) in parser._instances:
-                        objs = parser._instances[id(cls)]
-                        if obj_name in objs:
-                            return objs[obj_name]
-
-            result = _inner_resolve_link_rule_ref(obj_ref.cls,
-                                                  obj_ref.obj_name)
-            if result:
-                return result
-
-            # As a fall-back search builtins if given
-            if metamodel.builtins:
-                if obj_ref.obj_name in metamodel.builtins:
-                    # TODO: Classes must match
-                    return metamodel.builtins[obj_ref.obj_name]
-
-            return None # error handled outside
-
         # If this object has attributes (created using a common rule)
         newcrossrefs=[]
         for obj, attr, crossref in parser._crossrefs:
@@ -500,21 +447,21 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolutio
                 if attr_ref in metamodel.scope_provider:
                     if parser.debug:
                         parser.dprint(" FOUND {}".format(attr_ref))
-                    resolved = metamodel.scope_provider[attr_ref](obj,attr,crossref)
+                    resolved = metamodel.scope_provider[attr_ref](parser, obj,attr,crossref)
                 elif attr_ref_alt1 in metamodel.scope_provider:
                     if parser.debug:
                         parser.dprint(" FOUND {}".format(attr_ref_alt1))
-                    resolved = metamodel.scope_provider[attr_ref_alt1](obj, attr, crossref)
+                    resolved = metamodel.scope_provider[attr_ref_alt1](parser, obj, attr, crossref)
                 elif attr_ref_alt2 in metamodel.scope_provider:
                     if parser.debug:
                         parser.dprint(" FOUND {}".format(attr_ref_alt2))
-                    resolved = metamodel.scope_provider[attr_ref_alt2](obj, attr, crossref)
+                    resolved = metamodel.scope_provider[attr_ref_alt2](parser, obj, attr, crossref)
                 elif attr_ref_alt3 in metamodel.scope_provider:
                     if parser.debug:
                         parser.dprint(" FOUND {}".format(attr_ref_alt3))
-                    resolved = metamodel.scope_provider[attr_ref_alt3](obj, attr, crossref)
+                    resolved = metamodel.scope_provider[attr_ref_alt3](parser, obj, attr, crossref)
                 else:
-                    resolved = _resolve_link_rule_ref(crossref)
+                    resolved = scope_provider_plain_names(parser, obj, attr, crossref)
 
                 if not resolved:
                     line, col = parser.pos_to_linecol(crossref.position)

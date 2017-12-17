@@ -6,8 +6,6 @@
 #######################################################################
 from powerline.segments.vim import file_name
 
-from textx.model import ObjCrossRef,model_root,children,metamodel
-from textx.exceptions import TextXSemanticError
 from os.path import dirname,abspath
 import glob
 
@@ -20,6 +18,7 @@ Example grammar snippet:
     ;
 
 The scope providers are python callables accepting obj,attr,obj_ref:
+ * parser  : the current parser
  * obj     : the object representing a rule (e.g. "MyAttribute" in the example above
  * attr    : a reference to the attribute "ref"
  * obj_ref : a textx.model.ObjCrossRef - the reference to be resolved
@@ -84,16 +83,18 @@ def _find_referenced_obj(p, name):
         if ret: return ret;
     return None
 
-def scope_provider_fully_qualified_name(obj,attr,obj_ref):
+def scope_provider_fully_qualified_name(parser,obj,attr,obj_ref):
     """
     find a fully qualified name.
     Use this callable as scope_provider in a meta-model:
       my_metamodel.register_scope_provider({"*.*":scoping.scope_provider_fully_qualified_name})
+    :param parser: the current parser (unused)
     :obj object corresponding a instance of an object (rule instance)
-    :attr the referencing attribute
-    :type obj_ref: ObjCrossRef to be resolved
+    :attr the referencing attribute (unused)
+    :param obj_ref: ObjCrossRef to be resolved
     :returns None or the referenced object
     """
+    from textx.model import ObjCrossRef
     assert type(obj_ref) is ObjCrossRef, type(obj_ref)
     cls, obj_name = obj_ref.cls, obj_ref.obj_name
     ret = _find_referenced_obj(obj, obj_name)
@@ -153,6 +154,7 @@ class GlobalModelRepository:
         :param filename: the new model source
         :return: nothing
         """
+        from textx.model import metamodel
         assert(model)
         self.update_model_in_repo_based_on_filename(model)
         for filename in glob.glob(filename_pattern, recursive=True):
@@ -176,19 +178,84 @@ class GlobalModelRepository:
             self.all_models.filename_to_model[myfilename] = model
 
     def pre_ref_resolution_callback(self,other_model,filename):
+        from textx.model import ObjCrossRef, metamodel
         #print("PRE-CALLBACK{}".format(filename))
         other_model._tx_model_repository=GlobalModelRepository(self.all_models)
         self.all_models.filename_to_model[filename] = other_model
 
-def scope_provider_fully_qualified_name_with_importURI(obj,attr,obj_ref):
+def scope_provider_plain_names(parser, obj, attr, obj_ref):
+    """
+    the default scope provider
+    :param parser: the current parser
+    :param obj: usuned
+    :param attr: unused
+    :param obj_ref: the cross reference to be resolved
+    """
+    from textx.const import RULE_COMMON, RULE_ABSTRACT
+    from textx.model import ObjCrossRef
+
+    if obj_ref is None:
+        return None # this is an error (see model.py: resolve_refs (TBC)
+
+    assert type(obj_ref) is ObjCrossRef, type(obj_ref)
+
+    if parser.debug:
+        parser.dprint("Resolving obj crossref: {}:{}"
+                      .format(obj_ref.cls, obj_ref.obj_name))
+    print("Resolving obj crossref: {}:{}"
+                  .format(obj_ref.cls, obj_ref.obj_name))
+
+    def _inner_resolve_link_rule_ref(cls, obj_name):
+        """
+        Depth-first resolving of link rule reference.
+        """
+        if cls._tx_type is RULE_ABSTRACT:
+            for inherited in cls._tx_inh_by:
+                result = _inner_resolve_link_rule_ref(inherited,
+                                                      obj_name)
+                if result:
+                    return result
+        elif cls._tx_type == RULE_COMMON:
+            # TODO make this code exchangable
+            # allow to know the current attribute (model location for namespace)
+            # and to navigate through the whole model...
+            # OR (with another scope provider) to make custom lookups in the model
+            #
+            # Scopeprovider
+            # - needs: .current reference (in the model)
+            #          .the model (?)
+            # - provides: the resolved object or None
+            if id(cls) in parser._instances:
+                objs = parser._instances[id(cls)]
+                if obj_name in objs:
+                    return objs[obj_name]
+
+    result = _inner_resolve_link_rule_ref(obj_ref.cls,
+                                          obj_ref.obj_name)
+    if result:
+        return result
+
+    # As a fall-back search builtins if given
+    metamodel = obj._tx_metamodel
+    if metamodel.builtins:
+        if obj_ref.obj_name in metamodel.builtins:
+            # TODO: Classes must match
+            return metamodel.builtins[obj_ref.obj_name]
+
+    return None # error handled outside
+
+
+def scope_provider_fully_qualified_name_with_importURI(parser,obj,attr,obj_ref):
     """
     like scope_provider_fully_qualified_name, but supporting Xtext-like
     importURI attributes (w/o URInamespace)
-    :obj object corresponding a instance of an object (rule instance)
-    :attr the referencing attribute
-    :type obj_ref: ObjCrossRef to be resolved
+    :param parser: the current parser (unused)
+    :param obj object corresponding a instance of an object (rule instance)
+    :param attr the referencing attribute
+    :param obj_ref: ObjCrossRef to be resolved
     :returns None or the referenced object
     """
+    from textx.model import ObjCrossRef, model_root, children
     def _load_referenced_models(model):
         visited=[]
         for obj in children(lambda x:hasattr(x,"importURI") and not x in visited,model):
@@ -199,7 +266,7 @@ def scope_provider_fully_qualified_name_with_importURI(obj,attr,obj_ref):
 
     assert type(obj_ref) is ObjCrossRef, type(obj_ref)
     # 1) try to find object locally
-    ret = scope_provider_fully_qualified_name(obj,attr,obj_ref)
+    ret = scope_provider_fully_qualified_name(parser, obj,attr,obj_ref)
     if ret: return ret
     # 2) then lookup URIs...
     # TODO: raise error if lookup is not unique
@@ -216,7 +283,7 @@ def scope_provider_fully_qualified_name_with_importURI(obj,attr,obj_ref):
     for m in model_repository.local_models.filename_to_model.values():
         ret = _find_referenced_obj(m, obj_name)
         if ret: return ret
-    _raise_semantic_error('Unknown object "{}"'.format(obj_ref.obj_name, obj_ref.cls.__name__), obj, obj_ref.position)
+    return None
 
 class Scope_provider_fully_qualified_name_with_global_repo:
     """
@@ -244,10 +311,11 @@ class Scope_provider_fully_qualified_name_with_global_repo:
         for filename_pattern in self.filename_pattern_list:
             model._tx_model_repository.load_model(filename_pattern, model=model)
 
-    def __call__(self, obj,attr,obj_ref):
+    def __call__(self, parser, obj, attr, obj_ref):
+        from textx.model import ObjCrossRef, model_root
         assert type(obj_ref) is ObjCrossRef, type(obj_ref)
         # 1) try to find object locally
-        ret = scope_provider_fully_qualified_name(obj, attr, obj_ref)
+        ret = scope_provider_fully_qualified_name(parser, obj, attr, obj_ref)
         if ret: return ret
         # 2) then lookup URIs...
         # TODO: raise error if lookup is not unique
@@ -264,5 +332,4 @@ class Scope_provider_fully_qualified_name_with_global_repo:
         for m in model_repository.local_models.filename_to_model.values():
             ret = _find_referenced_obj(m, obj_name)
             if ret: return ret
-        _raise_semantic_error('Unknown object "{}"'.format(obj_ref.obj_name, obj_ref.cls.__name__), obj,
-                              obj_ref.position)
+        return None
