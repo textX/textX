@@ -19,7 +19,7 @@ Example grammar snippet:
 
 The scope providers are python callables accepting obj,attr,obj_ref:
  * parser  : the current parser
- * obj     : the object representing a rule (e.g. "MyAttribute" in the example above
+ * obj     : the object representing the start of the search (e.g., a rule (e.g. "MyAttribute" in the example above, or the model)
  * attr    : a reference to the attribute "ref"
  * obj_ref : a textx.model.ObjCrossRef - the reference to be resolved
 
@@ -27,10 +27,10 @@ The scope provides return the referenced object (e.g. a "MyInterface" object in 
 (or raise an Error - e.g. using _raise_semantic_error).
 
 The scope provides are registered to the metamodel:
- * e.g., my_meta_model.register_scope_provider({"*.*":scoping.scope_provider_fully_qualified_name})
- * or: my_meta_model.register_scope_provider({"MyAttribute.ref":scoping.scope_provider_fully_qualified_name})
- * or: my_meta_model.register_scope_provider({"*.ref":scoping.scope_provider_fully_qualified_name})
- * or: my_meta_model.register_scope_provider({"MyAttribute.*":scoping.scope_provider_fully_qualified_name})
+ * e.g., my_meta_model.register_scope_provider({"*.*":scoping.scope_provider_fully_qualified_names})
+ * or: my_meta_model.register_scope_provider({"MyAttribute.ref":scoping.scope_provider_fully_qualified_names})
+ * or: my_meta_model.register_scope_provider({"*.ref":scoping.scope_provider_fully_qualified_names})
+ * or: my_meta_model.register_scope_provider({"MyAttribute.*":scoping.scope_provider_fully_qualified_names})
 
 Scope providers shall be stateless or have unmodifiable state after construction: this means they should 
 allow to be reused for different models (created using the same meta model) without interacting with each other.
@@ -85,11 +85,11 @@ def _find_referenced_obj(p, name):
         if ret: return ret;
     return None
 
-def scope_provider_fully_qualified_name(parser,obj,attr,obj_ref):
+def scope_provider_fully_qualified_names(parser,obj,attr,obj_ref):
     """
     find a fully qualified name.
     Use this callable as scope_provider in a meta-model:
-      my_metamodel.register_scope_provider({"*.*":scoping.scope_provider_fully_qualified_name})
+      my_metamodel.register_scope_provider({"*.*":scoping.scope_provider_fully_qualified_names})
     :param parser: the current parser (unused)
     :obj object corresponding a instance of an object (rule instance)
     :attr the referencing attribute (unused)
@@ -246,14 +246,15 @@ def scope_provider_plain_names(parser, obj, attr, obj_ref):
 
     return None # error handled outside
 
-class Scope_provider_fully_qualified_name_with_importURI:
+class Scope_provider_with_importURI:
     """
-    Scope provider like scope_provider_fully_qualified_name, but supporting Xtext-like
+    Scope provider like scope_provider_fully_qualified_names, but supporting Xtext-like
     importURI attributes (w/o URInamespace)
 
+    This class requried a "simple" scope provider, which is called internally.
     """
-    def __init__(self):
-        pass
+    def __init__(self, scope_provider):
+        self.scope_provider = scope_provider
 
     def _load_referenced_models(self, model):
         from textx.model import children
@@ -268,7 +269,7 @@ class Scope_provider_fully_qualified_name_with_importURI:
         from textx.model import ObjCrossRef, model_root
         assert type(obj_ref) is ObjCrossRef, type(obj_ref)
         # 1) try to find object locally
-        ret = scope_provider_fully_qualified_name(parser, obj, attr, obj_ref)
+        ret = self.scope_provider(parser, obj, attr, obj_ref)
         if ret: return ret
         # 2) then lookup URIs...
         # TODO: raise error if lookup is not unique
@@ -283,20 +284,29 @@ class Scope_provider_fully_qualified_name_with_importURI:
         self._load_referenced_models(model)
         # 2.2) do we have loaded models?
         for m in model_repository.local_models.filename_to_model.values():
-            ret = _find_referenced_obj(m, obj_name)
+            ret = self.scope_provider(parser, m, attr, obj_ref)
             if ret: return ret
         return None
 
-class Scope_provider_fully_qualified_name_with_global_repo:
+class Scope_provider_fully_qualified_names_with_importURI(Scope_provider_with_importURI):
+    def __init__(self):
+        Scope_provider_with_importURI.__init__(self, scope_provider_fully_qualified_names)
+
+class Scope_provider_plain_names_with_importURI(Scope_provider_with_importURI):
+    def __init__(self):
+        Scope_provider_with_importURI.__init__(self, scope_provider_plain_names)
+
+class Scope_provider_with_global_repo(Scope_provider_with_importURI):
     """
     Scope provider that allows to populate the set of models used for lookup before parsing models.
     Usage:
       * create metamodel
-      * create Scope_provider_fully_qualified_name_with_global_repo
+      * create Scope_provider_fully_qualified_names_with_global_repo
       * register models used for lookup into the scope provider
     Then the scope provider is ready to be registered and used.
     """
-    def __init__(self, filename_pattern=None):
+    def __init__(self, scope_provider, filename_pattern=None):
+        Scope_provider_with_importURI.__init__(self,scope_provider)
         self.filename_pattern_list=[]
         if filename_pattern: self.register_models(filename_pattern)
 
@@ -313,25 +323,10 @@ class Scope_provider_fully_qualified_name_with_global_repo:
         for filename_pattern in self.filename_pattern_list:
             model._tx_model_repository.load_model(filename_pattern, model=model)
 
-    def __call__(self, parser, obj, attr, obj_ref):
-        from textx.model import ObjCrossRef, model_root
-        assert type(obj_ref) is ObjCrossRef, type(obj_ref)
-        # 1) try to find object locally
-        ret = scope_provider_fully_qualified_name(parser, obj, attr, obj_ref)
-        if ret: return ret
-        # 2) then lookup URIs...
-        # TODO: raise error if lookup is not unique
-        model = model_root(obj)
-        # 2.1) do we already have loaded models (analysis)? No -> check/load them
-        cls, obj_name = obj_ref.cls, obj_ref.obj_name
-        if "_tx_model_repository" in dir(model):
-            model_repository = model._tx_model_repository
-        else:
-            model_repository = GlobalModelRepository()
-            model._tx_model_repository = model_repository
-        self._load_referenced_models(model)
-        # 2.2) do we have loaded models?
-        for m in model_repository.local_models.filename_to_model.values():
-            ret = _find_referenced_obj(m, obj_name)
-            if ret: return ret
-        return None
+class Scope_provider_fully_qualified_names_with_global_repo(Scope_provider_with_global_repo):
+    def __init__(self,filename_pattern=None):
+        Scope_provider_with_global_repo.__init__(self, scope_provider_fully_qualified_names, filename_pattern)
+
+class Scope_provider_plain_names_with_global_repo(Scope_provider_with_global_repo):
+    def __init__(self, filename_pattern=None):
+        Scope_provider_with_global_repo.__init__(self, scope_provider_plain_names, filename_pattern)
