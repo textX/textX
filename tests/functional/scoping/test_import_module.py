@@ -85,8 +85,8 @@ def test_model_with_imports_and_global_repo():
     # META MODEL DEF
     #################################
 
-    my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/interface_model1/Interface.tx')
-    my_meta_model.enable_global_model_repository()
+    my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/interface_model1/Interface.tx',
+                                        enable_global_model_repository=True)
     my_meta_model.register_scope_provider({"*.*":scoping.Scope_provider_fully_qualified_names_with_importURI()})
 
     #################################
@@ -198,8 +198,8 @@ def test_model_with_globalimports_basic_test_with_single_model_file_and_with_glo
     # META MODEL DEF
     #################################
 
-    my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/interface_model2/Interface.tx')
-    my_meta_model.enable_global_model_repository()
+    my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/interface_model2/Interface.tx',
+                                        enable_global_model_repository=True)
     my_meta_model.register_scope_provider({"*.*":scoping.Scope_provider_fully_qualified_names_with_global_repo(abspath(dirname(__file__)) + "/interface_model2/model_a/*.if")})
 
     #################################

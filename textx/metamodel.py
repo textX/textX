@@ -111,7 +111,7 @@ class TextXMetaModel(DebugPrinter):
     def __init__(self, file_name=None, classes=None, builtins=None,
                  match_filters=None, auto_init_attributes=True,
                  ignore_case=False, skipws=True, ws=None, autokwd=False,
-                 memoization=False, **kwargs):
+                 memoization=False,  **kwargs):
         super(TextXMetaModel, self).__init__(**kwargs)
 
         self.file_name = file_name
@@ -182,7 +182,10 @@ class TextXMetaModel(DebugPrinter):
         # constructed from string.
         self._enter_namespace(self._namespace_for_file_name(file_name))
 
-    def enable_global_model_repository(self):
+    def _enable_global_model_repository(self):
+        """
+        should be called before loading models
+        """
         from textx.scoping import GlobalModelRepository
         self._tx_model_repository = GlobalModelRepository()
 
@@ -549,36 +552,43 @@ class TextXMetaModel(DebugPrinter):
         self.obj_processors = obj_processors
 
 
-def metamodel_from_str(lang_desc, metamodel=None, **kwargs):
+def metamodel_from_str(lang_desc, metamodel=None, enable_global_model_repository = False, **kwargs):
     """
     Creates a new metamodel from the textX description given as a string.
 
     Args:
         lang_desc(str): A textX language description.
         metamodel(TextXMetaModel): A metamodel that should be used.
+        enable_global_model_repository: use global repo if true
         other params: See TextXMetaModel.
 
     """
+
     if not metamodel:
         metamodel = TextXMetaModel(**kwargs)
 
     language_from_str(lang_desc, metamodel)
 
+    if enable_global_model_repository: metamodel._enable_global_model_repository()
+
     return metamodel
 
 
-def metamodel_from_file(file_name, **kwargs):
+def metamodel_from_file(file_name, enable_global_model_repository = False, **kwargs):
     """
     Creates new metamodel from the given file.
 
     Args:
         file_name(str): The name of the file with textX language description.
+        enable_global_model_repository: use global repo if true
         other params: See metamodel_from_str.
     """
     with codecs.open(file_name, 'r', 'utf-8') as f:
         lang_desc = f.read()
 
     metamodel = metamodel_from_str(lang_desc=lang_desc,
-                                   file_name=file_name, **kwargs)
+                                   file_name=file_name,
+                                   enable_global_model_repository=enable_global_model_repository,
+                                   **kwargs)
 
     return metamodel
