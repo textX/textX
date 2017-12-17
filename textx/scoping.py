@@ -42,6 +42,7 @@ data, are safe per se.
 
 def _find_obj_fqn(p, fqn_name):
     """
+    Helper function:
     find a named object based on a qualified name ("."-separated names) starting from object p.
     :param p: the container where to start the search
     :param fqn_name: the "."-separated name
@@ -69,6 +70,7 @@ def _find_obj_fqn(p, fqn_name):
 
 def _find_referenced_obj(p, name):
     """
+    Helper function:
     Search the fully qualified name starting at relative container p.
     If no result is found, the search is continued from p.parent until the model root is reached.
     :param m: parent object
@@ -195,7 +197,7 @@ def scope_provider_plain_names(parser, obj, attr, obj_ref):
     from textx.model import ObjCrossRef
 
     if obj_ref is None:
-        return None # this is an error (see model.py: resolve_refs (TBC)
+        return None # this is an error (see model.py: resolve_refs (TODO check)
 
     assert type(obj_ref) is ObjCrossRef, type(obj_ref)
 
@@ -284,6 +286,46 @@ def scope_provider_fully_qualified_name_with_importURI(parser,obj,attr,obj_ref):
         ret = _find_referenced_obj(m, obj_name)
         if ret: return ret
     return None
+
+class Scope_provider_fully_qualified_name_with_importURI:
+    """
+    Scope provider like scope_provider_fully_qualified_name, but supporting Xtext-like
+    importURI attributes (w/o URInamespace)
+
+    """
+    def __init__(self):
+        pass
+
+    def _load_referenced_models(self, model):
+        visited=[]
+        for obj in children(lambda x:hasattr(x,"importURI") and not x in visited,model):
+            visited.append(obj)
+            # TODO add multiple lookup rules for file search
+            filename_pattern = abspath(dirname(model._tx_filename)+"/"+obj.importURI)
+            model._tx_model_repository.load_model(filename_pattern, model=model)
+
+    def __call__(self, parser, obj, attr, obj_ref):
+        from textx.model import ObjCrossRef, model_root
+        assert type(obj_ref) is ObjCrossRef, type(obj_ref)
+        # 1) try to find object locally
+        ret = scope_provider_fully_qualified_name(parser, obj, attr, obj_ref)
+        if ret: return ret
+        # 2) then lookup URIs...
+        # TODO: raise error if lookup is not unique
+        model = model_root(obj)
+        # 2.1) do we already have loaded models (analysis)? No -> check/load them
+        cls, obj_name = obj_ref.cls, obj_ref.obj_name
+        if "_tx_model_repository" in dir(model):
+            model_repository = model._tx_model_repository
+        else:
+            model_repository = GlobalModelRepository()
+            model._tx_model_repository = model_repository
+        self._load_referenced_models(model)
+        # 2.2) do we have loaded models?
+        for m in model_repository.local_models.filename_to_model.values():
+            ret = _find_referenced_obj(m, obj_name)
+            if ret: return ret
+        return None
 
 class Scope_provider_fully_qualified_name_with_global_repo:
     """
