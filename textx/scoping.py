@@ -161,37 +161,36 @@ class GlobalModelRepository:
         else:
             self.all_models = ModelRepository()
 
-    def load_model(self, filename_pattern, model=None, mymetamodel=None):
+    def load_model(self, filename_pattern, model):
         """
         add a new model to all releveant objects
         :param filename: the new model source
         :return: nothing
         """
-        assert(model or mymetamodel)
-        if not mymetamodel: mymetamodel = metamodel(model)
-        if model: self.update_model_in_repo_based_on_filename(model)
+        assert(model)
+        self.update_model_in_repo_based_on_filename(model)
         for filename in glob.glob(filename_pattern, recursive=True):
+            print("REQUESTING {}".format("filename"))
             if not self.local_models.has_model(filename):
                 if self.all_models.has_model(filename):
                     newmodel = self.all_models.filename_to_model[filename]
                 else:
-                    #print("LOADING {}".format(filename))
-                    newmodel = mymetamodel.model_from_file(filename,
+                    print("LOADING {}".format(filename))
+                    newmodel = metamodel(model).model_from_file(filename,
                                                                 pre_ref_resolution_callback=lambda other_model:self.pre_ref_resolution_callback(other_model,filename))
                     self.all_models.filename_to_model[filename] = newmodel
                 self.local_models.filename_to_model[filename] = newmodel
 
-    def update_model_in_repo_based_on_filename(self, model, replace=False):
+    def update_model_in_repo_based_on_filename(self, model):
         assert (model._tx_model_repository == self)  # makes only sense if the correct model is used
         myfilename = model._tx_filename
-        if (replace): assert(myfilename)
-        if (myfilename and (replace or not self.all_models.has_model(myfilename))):
+        if (myfilename and (not self.all_models.has_model(myfilename))):
             # make current model visible
             # print("INIT {}".format(myfilename))
             self.all_models.filename_to_model[myfilename] = model
 
     def pre_ref_resolution_callback(self,other_model,filename):
-        #print("PRE-CALLBACK{}".format(filename))
+        print("PRE-CALLBACK{}".format(filename))
         other_model._tx_model_repository=GlobalModelRepository(self.all_models)
         self.all_models.filename_to_model[filename] = other_model
 
@@ -205,14 +204,12 @@ def scope_provider_fully_qualified_name_with_importURI(obj,attr,obj_ref):
     :returns None or the referenced object
     """
     def _load_referenced_models(model):
-        # TODO do not analyze/load imports from imported models!
         visited=[]
         for obj in children(lambda x:hasattr(x,"importURI") and not x in visited,model):
             visited.append(obj)
             # TODO add multiple lookup rules for file search
-            filename = abspath(dirname(model._tx_filename)+"/"+obj.importURI)
-            if not model._tx_model_repository.local_models.has_model(filename):
-                model._tx_model_repository.load_model(filename, model=model)
+            filename_pattern = abspath(dirname(model._tx_filename)+"/"+obj.importURI)
+            model._tx_model_repository.load_model(filename_pattern, model=model)
 
     assert type(obj_ref) is ObjCrossRef, type(obj_ref)
     # 1) try to find object locally
@@ -241,25 +238,25 @@ class Scope_provider_fully_qualified_name_with_global_repo:
     Usage:
       * create metamodel
       * create Scope_provider_fully_qualified_name_with_global_repo
-      * load models used for lookup into the scope provider
+      * register models used for lookup into the scope provider
     Then the scope provider is ready to be registered and used.
-
-    Note: You can also query/get models from the loaded set of models, instead reloading
-    them from files.
     """
-    def __init__(self, mymetamodel=None, filename_pattern=None):
-        assert( (mymetamodel==None) == (filename_pattern==None) ) # either both or none
-        self.model_repository = GlobalModelRepository()
-        if filename_pattern: self.load_models(mymetamodel, filename_pattern)
+    def __init__(self, filename_pattern=None):
+        self.filename_pattern_list=[]
+        if filename_pattern: self.register_models(filename_pattern)
 
-    def load_models(self, mymetamodel, filename_pattern):
+    def register_models(self, filename_pattern):
         """
         load models into provider object - visible for all
         :param mymetamodel: the metamodel to be used to load the models
         :param filename_pattern: the pattern (e.g. file.myext or dir/**/*.myext)
-        :return:
+        :return: nothing
         """
-        self.model_repository.load_model(filename_pattern, mymetamodel=mymetamodel)
+        self.filename_pattern_list.append(filename_pattern)
+
+    def _load_referenced_models(self, model):
+        for filename_pattern in self.filename_pattern_list:
+            model._tx_model_repository.load_model(filename_pattern, model=model)
 
     def __call__(self, obj,attr,obj_ref):
         assert type(obj_ref) is ObjCrossRef, type(obj_ref)
@@ -269,14 +266,16 @@ class Scope_provider_fully_qualified_name_with_global_repo:
         # 2) then lookup URIs...
         # TODO: raise error if lookup is not unique
         model = model_root(obj)
-        self.model_repository.update_model_in_repo_based_on_filename(model, replace=True)
-        # 2.2) do we have loaded models?
+        # 2.1) do we already have loaded models (analysis)? No -> check/load them
         cls, obj_name = obj_ref.cls, obj_ref.obj_name
         if "_tx_model_repository" in dir(model):
-            assert(self.model_repository == model._tx_model_repository)
+            model_repository = model._tx_model_repository
         else:
-            model._tx_model_repository = self.model_repository
-        for m in self.model_repository.local_models.filename_to_model.values():
+            model_repository = GlobalModelRepository()
+            model._tx_model_repository = model_repository
+        self._load_referenced_models(model)
+        # 2.2) do we have loaded models?
+        for m in model_repository.local_models.filename_to_model.values():
             ret = _find_referenced_obj(m, obj_name)
             if ret: return ret
         _raise_semantic_error('Unknown object "{}"'.format(obj_ref.obj_name, obj_ref.cls.__name__), obj,
