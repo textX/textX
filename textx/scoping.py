@@ -247,7 +247,7 @@ class Scope_provider_fully_qualified_name_with_global_repo:
 
     def register_models(self, filename_pattern):
         """
-        load models into provider object - visible for all
+        register models into provider object - visible for all
         :param mymetamodel: the metamodel to be used to load the models
         :param filename_pattern: the pattern (e.g. file.myext or dir/**/*.myext)
         :return: nothing

@@ -125,14 +125,14 @@ def test_model_with_globalimports1():
     # META MODEL DEF
     #################################
 
-    my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/interface_model1/Interface.tx')
+    my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/interface_model2/Interface.tx')
     my_meta_model.register_scope_provider({"*.*":scoping.Scope_provider_fully_qualified_name_with_global_repo(abspath(dirname(__file__)) + "/interface_model2/model_a/*.if")})
 
     #################################
     # MODEL PARSING
     #################################
 
-    my_model = my_meta_model.model_from_file(abspath(dirname(__file__)) + "/interface_model1/model_a/all_in_one.if")
+    my_model = my_meta_model.model_from_file(abspath(dirname(__file__)) + "/interface_model2/model_a/all_in_one.if")
 
     #################################
     # TEST MODEL
