@@ -1,0 +1,25 @@
+package base {
+  component Start {
+    in output
+  }
+  component Middle {
+    in input
+    in output
+  }
+  component End {
+    in input
+  }
+}
+
+package usage {
+  instance start : base.Start
+  instance action1 : base.Middle
+  instance action2 : base.Middle
+  instance action3 : base.Middle
+  instance end : base.End
+
+  connect start.output   to action1.input
+  connect action1.output to action2.input
+  connect action2.output to action3.input
+  connect action3.output to end.input
+}
