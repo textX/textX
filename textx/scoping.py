@@ -246,47 +246,6 @@ def scope_provider_plain_names(parser, obj, attr, obj_ref):
 
     return None # error handled outside
 
-
-def scope_provider_fully_qualified_name_with_importURI(parser,obj,attr,obj_ref):
-    """
-    like scope_provider_fully_qualified_name, but supporting Xtext-like
-    importURI attributes (w/o URInamespace)
-    :param parser: the current parser (unused)
-    :param obj object corresponding a instance of an object (rule instance)
-    :param attr the referencing attribute
-    :param obj_ref: ObjCrossRef to be resolved
-    :returns None or the referenced object
-    """
-    from textx.model import ObjCrossRef, model_root, children
-    def _load_referenced_models(model):
-        visited=[]
-        for obj in children(lambda x:hasattr(x,"importURI") and not x in visited,model):
-            visited.append(obj)
-            # TODO add multiple lookup rules for file search
-            filename_pattern = abspath(dirname(model._tx_filename)+"/"+obj.importURI)
-            model._tx_model_repository.load_model(filename_pattern, model=model)
-
-    assert type(obj_ref) is ObjCrossRef, type(obj_ref)
-    # 1) try to find object locally
-    ret = scope_provider_fully_qualified_name(parser, obj,attr,obj_ref)
-    if ret: return ret
-    # 2) then lookup URIs...
-    # TODO: raise error if lookup is not unique
-    model = model_root(obj)
-    # 2.1) do we already have loaded models (analysis)? No -> check/load them
-    cls, obj_name = obj_ref.cls, obj_ref.obj_name
-    if "_tx_model_repository" in dir(model):
-        model_repository = model._tx_model_repository
-    else:
-        model_repository = GlobalModelRepository()
-        model._tx_model_repository = model_repository
-    _load_referenced_models(model)
-    # 2.2) do we have loaded models?
-    for m in model_repository.local_models.filename_to_model.values():
-        ret = _find_referenced_obj(m, obj_name)
-        if ret: return ret
-    return None
-
 class Scope_provider_fully_qualified_name_with_importURI:
     """
     Scope provider like scope_provider_fully_qualified_name, but supporting Xtext-like
@@ -297,6 +256,7 @@ class Scope_provider_fully_qualified_name_with_importURI:
         pass
 
     def _load_referenced_models(self, model):
+        from textx.model import children
         visited=[]
         for obj in children(lambda x:hasattr(x,"importURI") and not x in visited,model):
             visited.append(obj)
