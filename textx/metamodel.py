@@ -102,6 +102,10 @@ class TextXMetaModel(DebugPrinter):
         _imported_namespaces(dict): A mapping from namespace name to the list
             of references to imported namespaces. Used in searches for
             unqualified rules.
+        _tx_model_repository: optional global repository. Normally such objects are
+            owned by models only. However, if the models shall interact globally
+            (which means if two separately loaded models should interact), this
+            attribute must be set via "enable_global_model_repository()".
     """
 
     def __init__(self, file_name=None, classes=None, builtins=None,
@@ -177,6 +181,10 @@ class TextXMetaModel(DebugPrinter):
         # Enter namespace for given file or None if metamodel is
         # constructed from string.
         self._enter_namespace(self._namespace_for_file_name(file_name))
+
+    def enable_global_model_repository(self):
+        from textx.scoping import GlobalModelRepository
+        self._tx_model_repository = GlobalModelRepository()
 
     def register_scope_provider(self, sp):
         self.scope_provider = sp
@@ -494,9 +502,27 @@ class TextXMetaModel(DebugPrinter):
         :param pre_ref_resolution_callback: called before references are resolved.
                This can be useful to manage models distributed across files (scoping)
         """
-        model = self.parser.get_model_from_file(file_name,
-                                                encoding, debug=debug,
-                                                pre_ref_resolution_callback=pre_ref_resolution_callback)
+        model = None
+        callback = pre_ref_resolution_callback
+
+        if "_tx_model_repository" in dir(self):
+            if not callback:
+                def _pre_ref_resolution_callback(other_model):
+                    from textx.scoping import GlobalModelRepository
+                    filename = other_model._tx_filename
+                    assert(filename)
+                    # print("METAMODEL PRE-CALLBACK{}".format(filename))
+                    other_model._tx_model_repository = GlobalModelRepository(self._tx_model_repository.all_models)
+                    self._tx_model_repository.all_models.filename_to_model[filename] = other_model
+
+                callback = _pre_ref_resolution_callback
+            if self._tx_model_repository.all_models.has_model(file_name):
+                model = self._tx_model_repository.all_models.filename_to_model[file_name]
+        if not model:
+            model = self.parser.get_model_from_file(file_name,
+                                                    encoding, debug=debug,
+                                                    pre_ref_resolution_callback=callback)
+
         for p in self._model_processors:
             p(model, self)
         return model

@@ -24,7 +24,7 @@ The scope providers are python callables accepting obj,attr,obj_ref:
  * obj_ref : a textx.model.ObjCrossRef - the reference to be resolved
 
 The scope provides return the referenced object (e.g. a "MyInterface" object in the example above 
-(or raise an Error - e.g. using _raise_semantic_error).
+(or None if nothing is found).
 
 The scope provides are registered to the metamodel:
  * e.g., my_meta_model.register_scope_provider({"*.*":scoping.scope_provider_fully_qualified_names})
@@ -150,7 +150,7 @@ class GlobalModelRepository:
         else:
             self.all_models = ModelRepository()
 
-    def load_model(self, filename_pattern, model):
+    def load_models_using_filepattern(self, filename_pattern, model):
         """
         add a new model to all releveant objects
         :param filename: the new model source
@@ -160,28 +160,40 @@ class GlobalModelRepository:
         assert(model)
         self.update_model_in_repo_based_on_filename(model)
         for filename in glob.glob(filename_pattern, recursive=True):
-            #print("REQUESTING {}".format("filename"))
-            if not self.local_models.has_model(filename):
-                if self.all_models.has_model(filename):
-                    newmodel = self.all_models.filename_to_model[filename]
-                else:
-                    #print("LOADING {}".format(filename))
-                    newmodel = metamodel(model).model_from_file(filename,
-                                                                pre_ref_resolution_callback=lambda other_model:self.pre_ref_resolution_callback(other_model,filename))
-                    self.all_models.filename_to_model[filename] = newmodel
-                self.local_models.filename_to_model[filename] = newmodel
+            self.load_model(metamodel(model), filename)
+
+    def load_model(self, themetamodel, filename):
+        """
+        load a single model
+        :param filename: the new model source
+        :return: the model
+        """
+        if not self.local_models.has_model(filename):
+            if self.all_models.has_model(filename):
+                newmodel = self.all_models.filename_to_model[filename]
+            else:
+                #print("LOADING {}".format(filename))
+                newmodel = themetamodel.model_from_file(filename,
+                                                        pre_ref_resolution_callback=lambda other_model:self.pre_ref_resolution_callback(other_model))
+                self.all_models.filename_to_model[filename] = newmodel
+            self.local_models.filename_to_model[filename] = newmodel
+        return self.local_models.filename_to_model[filename]
 
     def update_model_in_repo_based_on_filename(self, model):
+        from textx.model import metamodel
         assert (model._tx_model_repository == self)  # makes only sense if the correct model is used
+        if "_tx_model_repository" in dir(metamodel(model)):
+            assert(metamodel(model)._tx_model_repository == self)
         myfilename = model._tx_filename
         if (myfilename and (not self.all_models.has_model(myfilename))):
             # make current model visible
             # print("INIT {}".format(myfilename))
             self.all_models.filename_to_model[myfilename] = model
 
-    def pre_ref_resolution_callback(self,other_model,filename):
-        from textx.model import ObjCrossRef, metamodel
+    def pre_ref_resolution_callback(self,other_model):
         #print("PRE-CALLBACK{}".format(filename))
+        filename = other_model._tx_filename
+        assert (filename)
         other_model._tx_model_repository=GlobalModelRepository(self.all_models)
         self.all_models.filename_to_model[filename] = other_model
 
@@ -263,7 +275,7 @@ class Scope_provider_with_importURI:
             visited.append(obj)
             # TODO add multiple lookup rules for file search
             filename_pattern = abspath(dirname(model._tx_filename)+"/"+obj.importURI)
-            model._tx_model_repository.load_model(filename_pattern, model=model)
+            model._tx_model_repository.load_models_using_filepattern(filename_pattern, model=model)
 
     def __call__(self, parser, obj, attr, obj_ref):
         from textx.model import ObjCrossRef, model_root
@@ -321,7 +333,7 @@ class Scope_provider_with_global_repo(Scope_provider_with_importURI):
 
     def _load_referenced_models(self, model):
         for filename_pattern in self.filename_pattern_list:
-            model._tx_model_repository.load_model(filename_pattern, model=model)
+            model._tx_model_repository.load_models_using_filepattern(filename_pattern, model=model)
 
 class Scope_provider_fully_qualified_names_with_global_repo(Scope_provider_with_global_repo):
     def __init__(self,filename_pattern=None):

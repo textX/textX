@@ -133,6 +133,7 @@ def test_model_with_globalimports1():
     #################################
 
     my_model = my_meta_model.model_from_file(abspath(dirname(__file__)) + "/interface_model2/model_a/all_in_one.if")
+    my_model2 = my_meta_model.model_from_file(abspath(dirname(__file__)) + "/interface_model2/model_a/all_in_one.if")
 
     #################################
     # TEST MODEL
@@ -146,11 +147,49 @@ def test_model_with_globalimports1():
     s1 = _get_unique_named_object(my_model, "s1")
     assert( a == s1.ref )
 
+    a2  = _get_unique_named_object(my_model2, "socket")
+    assert(a2 != a) # no global repository
+
     #################################
     # END
     #################################
 
 def test_model_with_globalimports2():
+    #################################
+    # META MODEL DEF
+    #################################
+
+    my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/interface_model2/Interface.tx')
+    my_meta_model.enable_global_model_repository()
+    my_meta_model.register_scope_provider({"*.*":scoping.Scope_provider_fully_qualified_names_with_global_repo(abspath(dirname(__file__)) + "/interface_model2/model_a/*.if")})
+
+    #################################
+    # MODEL PARSING
+    #################################
+
+    my_model = my_meta_model.model_from_file(abspath(dirname(__file__)) + "/interface_model2/model_a/all_in_one.if")
+    my_model2 = my_meta_model.model_from_file(abspath(dirname(__file__)) + "/interface_model2/model_a/all_in_one.if")
+
+    #################################
+    # TEST MODEL
+    #################################
+
+    # check that "socket" is an interface
+    _check_unique_named_object_has_class(my_model, "socket","Interface")
+
+    # check that "s.s1" is a reference to the socket interface
+    a  = _get_unique_named_object(my_model, "socket")
+    s1 = _get_unique_named_object(my_model, "s1")
+    assert( a == s1.ref )
+
+    a2  = _get_unique_named_object(my_model2, "socket")
+    assert(a2 == a) # no global repository
+
+    #################################
+    # END
+    #################################
+
+def test_model_with_globalimports3():
     #################################
     # META MODEL DEF
     #################################
