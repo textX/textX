@@ -31,17 +31,12 @@ def test_model_without_imports():
     #################################
 
     # check that "socket" is an interface
-    a = children(lambda x:hasattr(x,'name') and x.name=="socket", my_model)
-    assert(len(a)==1)
-    assert( "Interface" == a[0].__class__.__name__ )
+    _check_unique_named_object_has_class(my_model, "socket","Interface")
 
     # check that "s.s1" is a reference to the socket interface
-    b = children(lambda x:hasattr(x,'name') and x.name=="s", my_model)
-    assert(len(b)==1)
-    assert( "Interface" == b[0].ref.__class__.__name__ )
-    s1 = children(lambda x:hasattr(x,'name') and x.name=="s1", b[0].ref)
-    assert(len(s1)==1)
-    assert( a[0] == s1[0].ref )
+    a  = _get_unique_named_object(my_model, "socket")
+    s1 = _get_unique_named_object(my_model, "s1")
+    assert( a == s1.ref )
 
     #################################
     # END
@@ -66,17 +61,13 @@ def test_model_with_imports():
     #################################
 
     # check that "socket" is an interface
-    a = children(lambda x:hasattr(x,'name') and x.name=="socket", my_model._tx_model_repository.all_models.filename_to_model[abspath(dirname(__file__)) + "/interface_model1/model_b/base.if"])
-    assert(len(a)==1)
-    assert( "Interface" == a[0].__class__.__name__ )
+    inner_model = my_model._tx_model_repository.all_models.filename_to_model[abspath(dirname(__file__)) + "/interface_model1/model_b/base.if"];
+    _check_unique_named_object_has_class(inner_model,"socket","Interface")
 
     # check that "s.s1" is a reference to the socket interface
-    b = children(lambda x:hasattr(x,'name') and x.name=="s", my_model)
-    assert(len(b)==1)
-    assert( "Interface" == b[0].ref.__class__.__name__ )
-    s1 = children(lambda x:hasattr(x,'name') and x.name=="s1", b[0].ref)
-    assert(len(s1)==1)
-    assert( a[0] == s1[0].ref )
+    a  = _get_unique_named_object(inner_model, "socket")
+    s1 = _get_unique_named_object(inner_model, "s1")
+    assert( a == s1.ref )
 
     #################################
     # END
@@ -100,10 +91,8 @@ def test_model_with_circular_imports():
     # TEST MODEL
     #################################
 
-    A = children(lambda x:hasattr(x,'name') and x.name=="A", my_model)
-    assert(len(A)==1)
-    A=A[0]
-    assert( "Interface" == A.__class__.__name__ )
+    _check_unique_named_object_has_class(my_model, "A","Interface")
+    A  = _get_unique_named_object(my_model, "A")
 
     A_self = children(lambda x:hasattr(x,'name') and x.name=="self", A)
     assert(len(A_self)==1)

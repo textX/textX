@@ -170,12 +170,12 @@ class GlobalModelRepository:
         assert(model)
         self.update_model_in_repo_based_on_filename(model)
         for filename in glob.glob(filename_pattern, recursive=True):
-            print("REQUESTING {}".format("filename"))
+            #print("REQUESTING {}".format("filename"))
             if not self.local_models.has_model(filename):
                 if self.all_models.has_model(filename):
                     newmodel = self.all_models.filename_to_model[filename]
                 else:
-                    print("LOADING {}".format(filename))
+                    #print("LOADING {}".format(filename))
                     newmodel = metamodel(model).model_from_file(filename,
                                                                 pre_ref_resolution_callback=lambda other_model:self.pre_ref_resolution_callback(other_model,filename))
                     self.all_models.filename_to_model[filename] = newmodel
