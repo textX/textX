@@ -1,5 +1,4 @@
 from textx.metamodel import metamodel_from_file
-from textx.model import children
 import textx.scoping as scoping
 from os.path import dirname, abspath
 from tests.functional.scoping.test_import_module \

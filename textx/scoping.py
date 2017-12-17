@@ -7,7 +7,7 @@
 from powerline.segments.vim import file_name
 
 from os.path import dirname,abspath
-import glob
+import glob,os,errno
 
 """
 This module defines scope providers to be used in conjunctions with a textx.metamodel meta model.
@@ -161,7 +161,11 @@ class GlobalModelRepository:
         from textx.model import metamodel
         assert(model)
         self.update_model_in_repo_based_on_filename(model)
-        for filename in glob.glob(filename_pattern, recursive=True):
+        filenames = glob.glob(filename_pattern, recursive=True)
+        if len(filenames)==0:
+            raise FileNotFoundError(
+                errno.ENOENT, os.strerror(errno.ENOENT), filename_pattern)
+        for filename in filenames:
             self.load_model(metamodel(model), filename)
 
     def load_model(self, themetamodel, filename):
@@ -300,13 +304,10 @@ class ScopeProviderWithImportURI:
     def __call__(self, parser, obj, attr, obj_ref):
         from textx.model import ObjCrossRef, model_root, metamodel
         assert type(obj_ref) is ObjCrossRef, type(obj_ref)
-        # 1) try to find object locally
-        ret = self.scope_provider(parser, obj, attr, obj_ref)
-        if ret: return ret
-        # 2) then lookup URIs...
+        # 1) lookup URIs... (first, before looking locally - to detect file not founds and distant model errors...)
         # TODO: raise error if lookup is not unique
         model = model_root(obj)
-        # 2.1) do we already have loaded models (analysis)? No -> check/load them
+        # 1.1) do we already have loaded models (analysis)? No -> check/load them
         cls, obj_name = obj_ref.cls, obj_ref.obj_name
         if "_tx_model_repository" in dir(model):
             model_repository = model._tx_model_repository
@@ -317,7 +318,12 @@ class ScopeProviderWithImportURI:
                 model_repository = GlobalModelRepository()
             model._tx_model_repository = model_repository
         self._load_referenced_models(model)
-        # 2.2) do we have loaded models?
+
+        # 2) try to find object locally
+        ret = self.scope_provider(parser, obj, attr, obj_ref)
+        if ret: return ret
+
+        # 3) do we have loaded models?
         for m in model_repository.local_models.filename_to_model.values():
             ret = self.scope_provider(parser, m, attr, obj_ref)
             if ret: return ret

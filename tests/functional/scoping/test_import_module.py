@@ -2,11 +2,15 @@ from textx.metamodel import metamodel_from_file
 from textx.model import children
 import textx.scoping as scoping
 from os.path import dirname, abspath
+import textx.exceptions
+from pytest import raises
+
 
 def get_unique_named_object(root, name):
     a = children(lambda x:hasattr(x,'name') and x.name==name, root)
     assert(len(a)==1)
     return a[0]
+
 
 def _check_unique_named_object_has_class(root,name,class_name):
     assert(class_name == get_unique_named_object(root, name).__class__.__name__)
@@ -41,6 +45,7 @@ def test_model_without_imports():
     #################################
     # END
     #################################
+
 
 def test_model_with_imports():
     #################################
@@ -80,6 +85,30 @@ def test_model_with_imports():
     # END
     #################################
 
+
+def test_model_with_imports_and_errors():
+    #################################
+    # META MODEL DEF
+    #################################
+
+    my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/interface_model1/Interface.tx')
+    my_meta_model.register_scope_provider({"*.*":scoping.ScopeProviderFullyQualifiedNamesWithImportURI()})
+
+    #################################
+    # MODEL PARSING
+    #################################
+
+    with raises(textx.exceptions.TextXSemanticError, match=r'.*Unknown object.*types.int.*'):
+        my_model = my_meta_model.model_from_file(abspath(dirname(__file__)) + "/interface_model1/model_b/app_error1.if")
+
+    with raises(FileNotFoundError, match=r'.*file_not_found\.if.*'):
+        my_model = my_meta_model.model_from_file(abspath(dirname(__file__)) + "/interface_model1/model_b/app_error2.if")
+
+    #################################
+    # END
+    #################################
+
+
 def test_model_with_imports_and_global_repo():
     #################################
     # META MODEL DEF
@@ -105,7 +134,6 @@ def test_model_with_imports_and_global_repo():
     assert( userid == userid2 )
     assert( userid.ref == userid2.ref )
     assert( userid.ref.__class__.__name__ == "RawType" )
-
 
     #################################
     # END
