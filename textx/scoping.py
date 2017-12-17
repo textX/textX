@@ -42,18 +42,19 @@ data, are safe per se.
 We provide some standard scope providers:
  * scope_provider_plain_names: This is the default provider of textX.
  * scope_provider_fully_qualified_names: This is a provider similar to Java or Xtext name loopup.
- * Scope_provider_with_importURI: This a provider which allows to load additional modules for lookup. 
+ * ScopeProviderWithImportURI: This a provider which allows to load additional modules for lookup. 
    You need to define a rule with an attribute "importURI" as string (like in Xtext). This string is then used
    to load other models. Moreover, you need to provide another scope provider to manage the concrete lookup,
    e.g., the scope_provider_plain_names or the scope_provider_fully_qualified_names.
-  * Scope_provider_fully_qualified_names_with_importURI (decorated scope provider)
-  * Scope_provider_plain_names_with_importURI (decorated scope provider)
- * Scope_provider_with_global_repo: This is a provider where you initially need to specifiy the model files 
-   to be loaded and used for lookup. Like for Scope_provider_with_importURI you need to provide another scope 
+  * ScopeProviderFullyQualifiedNamesWithImportURI (decorated scope provider)
+  * ScopeProviderPlainNamesWithImportURI (decorated scope provider)
+ * ScopeProviderWithGlobalRepo: This is a provider where you initially need to specifiy the model files 
+   to be loaded and used for lookup. Like for ScopeProviderWithImportURI you need to provide another scope 
    provider for the constere loopup. 
-  * Scope_provider_fully_qualified_names_with_global_repo (decorated scope provider)
-  * Scope_provider_plain_names_with_global_repo (decorated scope provider)
+  * ScopeProviderFullyQualifiedNamesWithGlobalRepo (decorated scope provider)
+  * ScopeProviderPlainNamesWithGlobalRepo (decorated scope provider)
 """
+
 
 def _find_obj_fqn(p, fqn_name):
     """
@@ -83,6 +84,7 @@ def _find_obj_fqn(p, fqn_name):
             return None;
     return p;
 
+
 def _find_referenced_obj(p, name):
     """
     Helper function:
@@ -100,6 +102,7 @@ def _find_referenced_obj(p, name):
         if ret: return ret;
     return None
 
+
 class ModelRepository:
     """
     This class has the responsibility to
@@ -112,6 +115,7 @@ class ModelRepository:
         self.filename_to_model={}
     def has_model(self, filename):
         return filename in self.filename_to_model.keys()
+
 
 class GlobalModelRepository:
     """
@@ -193,6 +197,7 @@ class GlobalModelRepository:
         other_model._tx_model_repository=GlobalModelRepository(self.all_models)
         self.all_models.filename_to_model[filename] = other_model
 
+
 def scope_provider_plain_names(parser, obj, attr, obj_ref):
     """
     the default scope provider
@@ -254,6 +259,7 @@ def scope_provider_plain_names(parser, obj, attr, obj_ref):
 
     return None # error handled outside
 
+
 def scope_provider_fully_qualified_names(parser,obj,attr,obj_ref):
     """
     find a fully qualified name.
@@ -271,7 +277,8 @@ def scope_provider_fully_qualified_names(parser,obj,attr,obj_ref):
     ret = _find_referenced_obj(obj, obj_name)
     return ret
 
-class Scope_provider_with_importURI:
+
+class ScopeProviderWithImportURI:
     """
     Scope provider like scope_provider_fully_qualified_names, but supporting Xtext-like
     importURI attributes (w/o URInamespace)
@@ -316,25 +323,28 @@ class Scope_provider_with_importURI:
             if ret: return ret
         return None
 
-class Scope_provider_fully_qualified_names_with_importURI(Scope_provider_with_importURI):
-    def __init__(self):
-        Scope_provider_with_importURI.__init__(self, scope_provider_fully_qualified_names)
 
-class Scope_provider_plain_names_with_importURI(Scope_provider_with_importURI):
+class ScopeProviderFullyQualifiedNamesWithImportURI(ScopeProviderWithImportURI):
     def __init__(self):
-        Scope_provider_with_importURI.__init__(self, scope_provider_plain_names)
+        ScopeProviderWithImportURI.__init__(self, scope_provider_fully_qualified_names)
 
-class Scope_provider_with_global_repo(Scope_provider_with_importURI):
+
+class ScopeProviderPlainNamesWithImportURI(ScopeProviderWithImportURI):
+    def __init__(self):
+        ScopeProviderWithImportURI.__init__(self, scope_provider_plain_names)
+
+
+class ScopeProviderWithGlobalRepo(ScopeProviderWithImportURI):
     """
     Scope provider that allows to populate the set of models used for lookup before parsing models.
     Usage:
       * create metamodel
-      * create Scope_provider_fully_qualified_names_with_global_repo
+      * create ScopeProviderFullyQualifiedNamesWithGlobalRepo
       * register models used for lookup into the scope provider
     Then the scope provider is ready to be registered and used.
     """
     def __init__(self, scope_provider, filename_pattern=None):
-        Scope_provider_with_importURI.__init__(self,scope_provider)
+        ScopeProviderWithImportURI.__init__(self, scope_provider)
         self.filename_pattern_list=[]
         if filename_pattern: self.register_models(filename_pattern)
 
@@ -351,10 +361,12 @@ class Scope_provider_with_global_repo(Scope_provider_with_importURI):
         for filename_pattern in self.filename_pattern_list:
             model._tx_model_repository.load_models_using_filepattern(filename_pattern, model=model)
 
-class Scope_provider_fully_qualified_names_with_global_repo(Scope_provider_with_global_repo):
-    def __init__(self,filename_pattern=None):
-        Scope_provider_with_global_repo.__init__(self, scope_provider_fully_qualified_names, filename_pattern)
 
-class Scope_provider_plain_names_with_global_repo(Scope_provider_with_global_repo):
+class ScopeProviderFullyQualifiedNamesWithGlobalRepo(ScopeProviderWithGlobalRepo):
+    def __init__(self,filename_pattern=None):
+        ScopeProviderWithGlobalRepo.__init__(self, scope_provider_fully_qualified_names, filename_pattern)
+
+
+class ScopeProviderPlainNamesWithGlobalRepo(ScopeProviderWithGlobalRepo):
     def __init__(self, filename_pattern=None):
-        Scope_provider_with_global_repo.__init__(self, scope_provider_plain_names, filename_pattern)
+        ScopeProviderWithGlobalRepo.__init__(self, scope_provider_plain_names, filename_pattern)

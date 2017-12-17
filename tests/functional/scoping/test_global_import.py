@@ -11,7 +11,7 @@ def test_model_with_globalimports_basic_test_with_single_model_file():
     #################################
 
     my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/interface_model2/Interface.tx')
-    my_meta_model.register_scope_provider({"*.*":scoping.Scope_provider_fully_qualified_names_with_global_repo(abspath(dirname(__file__)) + "/interface_model2/model_a/*.if")})
+    my_meta_model.register_scope_provider({"*.*":scoping.ScopeProviderFullyQualifiedNamesWithGlobalRepo(abspath(dirname(__file__)) + "/interface_model2/model_a/*.if")})
 
     #################################
     # MODEL PARSING
@@ -46,7 +46,7 @@ def test_model_with_globalimports_basic_test_with_single_model_file_and_with_glo
 
     my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/interface_model2/Interface.tx',
                                         enable_global_model_repository=True)
-    my_meta_model.register_scope_provider({"*.*":scoping.Scope_provider_fully_qualified_names_with_global_repo(abspath(dirname(__file__)) + "/interface_model2/model_a/*.if")})
+    my_meta_model.register_scope_provider({"*.*":scoping.ScopeProviderFullyQualifiedNamesWithGlobalRepo(abspath(dirname(__file__)) + "/interface_model2/model_a/*.if")})
 
     #################################
     # MODEL PARSING
@@ -80,7 +80,7 @@ def test_model_with_globalimports_basic_test_with_distributed_model():
     #################################
 
     my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/interface_model2/Interface.tx')
-    my_meta_model.register_scope_provider({"*.*":scoping.Scope_provider_fully_qualified_names_with_global_repo(abspath(dirname(__file__)) + "/interface_model2/model_b/*.if")})
+    my_meta_model.register_scope_provider({"*.*":scoping.ScopeProviderFullyQualifiedNamesWithGlobalRepo(abspath(dirname(__file__)) + "/interface_model2/model_b/*.if")})
 
     #################################
     # MODEL PARSING

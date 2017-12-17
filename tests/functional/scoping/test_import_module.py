@@ -18,7 +18,7 @@ def test_model_without_imports():
     #################################
 
     my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/interface_model1/Interface.tx')
-    my_meta_model.register_scope_provider({"*.*":scoping.Scope_provider_fully_qualified_names_with_importURI()})
+    my_meta_model.register_scope_provider({"*.*":scoping.ScopeProviderFullyQualifiedNamesWithImportURI()})
 
     #################################
     # MODEL PARSING
@@ -48,7 +48,7 @@ def test_model_with_imports():
     #################################
 
     my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/interface_model1/Interface.tx')
-    my_meta_model.register_scope_provider({"*.*":scoping.Scope_provider_fully_qualified_names_with_importURI()})
+    my_meta_model.register_scope_provider({"*.*":scoping.ScopeProviderFullyQualifiedNamesWithImportURI()})
 
     #################################
     # MODEL PARSING
@@ -87,7 +87,7 @@ def test_model_with_imports_and_global_repo():
 
     my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/interface_model1/Interface.tx',
                                         enable_global_model_repository=True)
-    my_meta_model.register_scope_provider({"*.*":scoping.Scope_provider_fully_qualified_names_with_importURI()})
+    my_meta_model.register_scope_provider({"*.*":scoping.ScopeProviderFullyQualifiedNamesWithImportURI()})
 
     #################################
     # MODEL PARSING
@@ -118,7 +118,7 @@ def test_model_with_circular_imports():
     #################################
 
     my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/interface_model1/Interface.tx')
-    my_meta_model.register_scope_provider({"*.*":scoping.Scope_provider_fully_qualified_names_with_importURI()})
+    my_meta_model.register_scope_provider({"*.*":scoping.ScopeProviderFullyQualifiedNamesWithImportURI()})
 
     #################################
     # MODEL PARSING
