@@ -84,7 +84,7 @@ def _find_referenced_obj(p, name):
         if ret: return ret;
     return None
 
-def _scope_provider_fully_qualified_name(obj,attr,obj_ref):
+def scope_provider_fully_qualified_name(obj,attr,obj_ref):
     """
     find a fully qualified name.
     Use this callable as scope_provider in a meta-model:
@@ -98,20 +98,6 @@ def _scope_provider_fully_qualified_name(obj,attr,obj_ref):
     cls, obj_name = obj_ref.cls, obj_ref.obj_name
     ret = _find_referenced_obj(obj, obj_name)
     return ret
-
-def _raise_semantic_error(msg,obj,pos):
-    parser = model_root(obj)._tx_metamodel.parser
-    line, col = parser.pos_to_linecol(pos)
-    raise TextXSemanticError(
-        '{} at {}'
-        .format(msg, (line, col)),
-        line=line, col=col)
-
-def scope_provider_fully_qualified_name(obj,attr,obj_ref):
-    res = _scope_provider_fully_qualified_name(obj, attr, obj_ref)
-    if res: return res
-    _raise_semantic_error('Unknown object "{}"'.format(obj_ref.obj_name, obj_ref.cls.__name__), obj, obj_ref.position)
-
 
 class ModelRepository:
     """
@@ -190,7 +176,7 @@ class GlobalModelRepository:
             self.all_models.filename_to_model[myfilename] = model
 
     def pre_ref_resolution_callback(self,other_model,filename):
-        print("PRE-CALLBACK{}".format(filename))
+        #print("PRE-CALLBACK{}".format(filename))
         other_model._tx_model_repository=GlobalModelRepository(self.all_models)
         self.all_models.filename_to_model[filename] = other_model
 
@@ -213,7 +199,7 @@ def scope_provider_fully_qualified_name_with_importURI(obj,attr,obj_ref):
 
     assert type(obj_ref) is ObjCrossRef, type(obj_ref)
     # 1) try to find object locally
-    ret = _scope_provider_fully_qualified_name(obj,attr,obj_ref)
+    ret = scope_provider_fully_qualified_name(obj,attr,obj_ref)
     if ret: return ret
     # 2) then lookup URIs...
     # TODO: raise error if lookup is not unique
@@ -261,7 +247,7 @@ class Scope_provider_fully_qualified_name_with_global_repo:
     def __call__(self, obj,attr,obj_ref):
         assert type(obj_ref) is ObjCrossRef, type(obj_ref)
         # 1) try to find object locally
-        ret = _scope_provider_fully_qualified_name(obj, attr, obj_ref)
+        ret = scope_provider_fully_qualified_name(obj, attr, obj_ref)
         if ret: return ret
         # 2) then lookup URIs...
         # TODO: raise error if lookup is not unique

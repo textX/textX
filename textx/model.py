@@ -486,11 +486,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolutio
                     # TODO: Classes must match
                     return metamodel.builtins[obj_ref.obj_name]
 
-            line, col = parser.pos_to_linecol(obj_ref.position)
-            raise TextXSemanticError(
-                'Unknown object "{}" of class "{}" at {}'
-                .format(obj_ref.obj_name, obj_ref.cls.__name__, (line, col)),
-                line=line, col=col)
+            return None # error handled outside
 
         # If this object has attributes (created using a common rule)
         newcrossrefs=[]
@@ -519,6 +515,14 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolutio
                     resolved = metamodel.scope_provider[attr_ref_alt3](obj, attr, crossref)
                 else:
                     resolved = _resolve_link_rule_ref(crossref)
+
+                if not resolved:
+                    line, col = parser.pos_to_linecol(crossref.position)
+                    raise TextXSemanticError(
+                        'Unknown object "{}" of class "{}" at {}'
+                            .format(crossref.obj_name, crossref.cls.__name__, (line, col)),
+                        line=line, col=col)
+
                 if attr.mult in [MULT_ONEORMORE, MULT_ZEROORMORE]:
                     attr_value.append(resolved)
                 else:
