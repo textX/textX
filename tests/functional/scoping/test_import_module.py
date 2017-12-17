@@ -149,3 +149,34 @@ def test_model_with_globalimports1():
     #################################
     # END
     #################################
+
+def test_model_with_globalimports2():
+    #################################
+    # META MODEL DEF
+    #################################
+
+    my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/interface_model2/Interface.tx')
+    my_meta_model.register_scope_provider({"*.*":scoping.Scope_provider_fully_qualified_name_with_global_repo(abspath(dirname(__file__)) + "/interface_model2/model_b/*.if")})
+
+    #################################
+    # MODEL PARSING
+    #################################
+
+    my_model = my_meta_model.model_from_file(abspath(dirname(__file__)) + "/interface_model2/model_b/app.if")
+
+    #################################
+    # TEST MODEL
+    #################################
+
+    # check that "socket" is an interface
+    inner_model = my_model._tx_model_repository.all_models.filename_to_model[abspath(dirname(__file__)) + "/interface_model2/model_b/base.if"];
+    _check_unique_named_object_has_class(inner_model,"socket","Interface")
+
+    # check that "s.s1" is a reference to the socket interface
+    a  = _get_unique_named_object(inner_model, "socket")
+    s1 = _get_unique_named_object(inner_model, "s1")
+    assert( a == s1.ref )
+
+    #################################
+    # END
+    #################################
