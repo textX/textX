@@ -38,6 +38,21 @@ This means, they must save their state in the corresponding model, if they need 
 they load additional models from files *during name resolution*, they are not allowed to store them inside
 the scope provider. Note: scope providers as normal functions (def <name>(...):..., not accessing global 
 data, are safe per se.
+
+We provide some standard scope providers:
+ * scope_provider_plain_names: This is the default provider of textX.
+ * scope_provider_fully_qualified_names: This is a provider similar to Java or Xtext name loopup.
+ * Scope_provider_with_importURI: This a provider which allows to load additional modules for lookup. 
+   You need to define a rule with an attribute "importURI" as string (like in Xtext). This string is then used
+   to load other models. Moreover, you need to provide another scope provider to manage the concrete lookup,
+   e.g., the scope_provider_plain_names or the scope_provider_fully_qualified_names.
+  * Scope_provider_fully_qualified_names_with_importURI (decorated scope provider)
+  * Scope_provider_plain_names_with_importURI (decorated scope provider)
+ * Scope_provider_with_global_repo: This is a provider where you initially need to specifiy the model files 
+   to be loaded and used for lookup. Like for Scope_provider_with_importURI you need to provide another scope 
+   provider for the constere loopup. 
+  * Scope_provider_fully_qualified_names_with_global_repo (decorated scope provider)
+  * Scope_provider_plain_names_with_global_repo (decorated scope provider)
 """
 
 def _find_obj_fqn(p, fqn_name):
@@ -84,23 +99,6 @@ def _find_referenced_obj(p, name):
         ret = _find_obj_fqn(p, name)
         if ret: return ret;
     return None
-
-def scope_provider_fully_qualified_names(parser,obj,attr,obj_ref):
-    """
-    find a fully qualified name.
-    Use this callable as scope_provider in a meta-model:
-      my_metamodel.register_scope_provider({"*.*":scoping.scope_provider_fully_qualified_names})
-    :param parser: the current parser (unused)
-    :obj object corresponding a instance of an object (rule instance)
-    :attr the referencing attribute (unused)
-    :param obj_ref: ObjCrossRef to be resolved
-    :returns None or the referenced object
-    """
-    from textx.model import ObjCrossRef
-    assert type(obj_ref) is ObjCrossRef, type(obj_ref)
-    cls, obj_name = obj_ref.cls, obj_ref.obj_name
-    ret = _find_referenced_obj(obj, obj_name)
-    return ret
 
 class ModelRepository:
     """
@@ -255,6 +253,23 @@ def scope_provider_plain_names(parser, obj, attr, obj_ref):
             return metamodel.builtins[obj_ref.obj_name]
 
     return None # error handled outside
+
+def scope_provider_fully_qualified_names(parser,obj,attr,obj_ref):
+    """
+    find a fully qualified name.
+    Use this callable as scope_provider in a meta-model:
+      my_metamodel.register_scope_provider({"*.*":scoping.scope_provider_fully_qualified_names})
+    :param parser: the current parser (unused)
+    :obj object corresponding a instance of an object (rule instance)
+    :attr the referencing attribute (unused)
+    :param obj_ref: ObjCrossRef to be resolved
+    :returns None or the referenced object
+    """
+    from textx.model import ObjCrossRef
+    assert type(obj_ref) is ObjCrossRef, type(obj_ref)
+    cls, obj_name = obj_ref.cls, obj_ref.obj_name
+    ret = _find_referenced_obj(obj, obj_name)
+    return ret
 
 class Scope_provider_with_importURI:
     """

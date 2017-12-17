@@ -3,13 +3,13 @@ from textx.model import children
 import textx.scoping as scoping
 from os.path import dirname, abspath
 
-def _get_unique_named_object(root,name):
+def get_unique_named_object(root, name):
     a = children(lambda x:hasattr(x,'name') and x.name==name, root)
     assert(len(a)==1)
     return a[0]
 
 def _check_unique_named_object_has_class(root,name,class_name):
-    assert( class_name == _get_unique_named_object(root,name).__class__.__name__ )
+    assert(class_name == get_unique_named_object(root, name).__class__.__name__)
 
 
 def test_model_without_imports():
@@ -34,8 +34,8 @@ def test_model_without_imports():
     _check_unique_named_object_has_class(my_model, "socket","Interface")
 
     # check that "s.s1" is a reference to the socket interface
-    a  = _get_unique_named_object(my_model, "socket")
-    s1 = _get_unique_named_object(my_model, "s1")
+    a  = get_unique_named_object(my_model, "socket")
+    s1 = get_unique_named_object(my_model, "s1")
     assert( a == s1.ref )
 
     #################################
@@ -66,12 +66,12 @@ def test_model_with_imports():
     _check_unique_named_object_has_class(inner_model,"socket","Interface")
 
     # check that "s.s1" is a reference to the socket interface
-    a  = _get_unique_named_object(inner_model, "socket")
-    s1 = _get_unique_named_object(inner_model, "s1")
-    userid = _get_unique_named_object(my_model, "userid")
+    a  = get_unique_named_object(inner_model, "socket")
+    s1 = get_unique_named_object(inner_model, "s1")
+    userid = get_unique_named_object(my_model, "userid")
     assert( a == s1.ref )
 
-    userid2 = _get_unique_named_object(my_model2, "userid")
+    userid2 = get_unique_named_object(my_model2, "userid")
     assert( userid != userid2 )
     assert( userid.ref != userid2.ref )
     assert( userid.ref.__class__.__name__ == "RawType" )
@@ -100,8 +100,8 @@ def test_model_with_imports_and_global_repo():
     # TEST MODEL
     #################################
 
-    userid = _get_unique_named_object(my_model, "userid")
-    userid2 = _get_unique_named_object(my_model2, "userid")
+    userid = get_unique_named_object(my_model, "userid")
+    userid2 = get_unique_named_object(my_model2, "userid")
     assert( userid == userid2 )
     assert( userid.ref == userid2.ref )
     assert( userid.ref.__class__.__name__ == "RawType" )
@@ -131,7 +131,7 @@ def test_model_with_circular_imports():
     #################################
 
     _check_unique_named_object_has_class(my_model, "A","Interface")
-    A  = _get_unique_named_object(my_model, "A")
+    A  = get_unique_named_object(my_model, "A")
 
     A_self = children(lambda x:hasattr(x,'name') and x.name=="self", A)
     assert(len(A_self)==1)
@@ -153,107 +153,6 @@ def test_model_with_circular_imports():
     assert(A_self.ref  != A_other.ref)
     assert(A_other.ref == A_other_self.ref)
     assert(A_other.ref != A_other_other.ref)
-
-    #################################
-    # END
-    #################################
-
-
-def test_model_with_globalimports_basic_test_with_single_model_file():
-    #################################
-    # META MODEL DEF
-    #################################
-
-    my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/interface_model2/Interface.tx')
-    my_meta_model.register_scope_provider({"*.*":scoping.Scope_provider_fully_qualified_names_with_global_repo(abspath(dirname(__file__)) + "/interface_model2/model_a/*.if")})
-
-    #################################
-    # MODEL PARSING
-    #################################
-
-    my_model = my_meta_model.model_from_file(abspath(dirname(__file__)) + "/interface_model2/model_a/all_in_one.if")
-    my_model2 = my_meta_model.model_from_file(abspath(dirname(__file__)) + "/interface_model2/model_a/all_in_one.if")
-
-    #################################
-    # TEST MODEL
-    #################################
-
-    # check that "socket" is an interface
-    _check_unique_named_object_has_class(my_model, "socket","Interface")
-
-    # check that "s.s1" is a reference to the socket interface
-    a  = _get_unique_named_object(my_model, "socket")
-    s1 = _get_unique_named_object(my_model, "s1")
-    assert( a == s1.ref )
-
-    a2  = _get_unique_named_object(my_model2, "socket")
-    assert(a2 != a) # no global repository
-
-    #################################
-    # END
-    #################################
-
-def test_model_with_globalimports_basic_test_with_single_model_file_and_with_global_repo():
-    #################################
-    # META MODEL DEF
-    #################################
-
-    my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/interface_model2/Interface.tx',
-                                        enable_global_model_repository=True)
-    my_meta_model.register_scope_provider({"*.*":scoping.Scope_provider_fully_qualified_names_with_global_repo(abspath(dirname(__file__)) + "/interface_model2/model_a/*.if")})
-
-    #################################
-    # MODEL PARSING
-    #################################
-
-    my_model = my_meta_model.model_from_file(abspath(dirname(__file__)) + "/interface_model2/model_a/all_in_one.if")
-    my_model2 = my_meta_model.model_from_file(abspath(dirname(__file__)) + "/interface_model2/model_a/all_in_one.if")
-
-    #################################
-    # TEST MODEL
-    #################################
-
-    # check that "socket" is an interface
-    _check_unique_named_object_has_class(my_model, "socket","Interface")
-
-    # check that "s.s1" is a reference to the socket interface
-    a  = _get_unique_named_object(my_model, "socket")
-    s1 = _get_unique_named_object(my_model, "s1")
-    assert( a == s1.ref )
-
-    a2  = _get_unique_named_object(my_model2, "socket")
-    assert(a2 == a) # no global repository
-
-    #################################
-    # END
-    #################################
-
-def test_model_with_globalimports_basic_test_with_distributed_model():
-    #################################
-    # META MODEL DEF
-    #################################
-
-    my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/interface_model2/Interface.tx')
-    my_meta_model.register_scope_provider({"*.*":scoping.Scope_provider_fully_qualified_names_with_global_repo(abspath(dirname(__file__)) + "/interface_model2/model_b/*.if")})
-
-    #################################
-    # MODEL PARSING
-    #################################
-
-    my_model = my_meta_model.model_from_file(abspath(dirname(__file__)) + "/interface_model2/model_b/app.if")
-
-    #################################
-    # TEST MODEL
-    #################################
-
-    # check that "socket" is an interface
-    inner_model = my_model._tx_model_repository.all_models.filename_to_model[abspath(dirname(__file__)) + "/interface_model2/model_b/base.if"];
-    _check_unique_named_object_has_class(inner_model,"socket","Interface")
-
-    # check that "s.s1" is a reference to the socket interface
-    a  = _get_unique_named_object(inner_model, "socket")
-    s1 = _get_unique_named_object(inner_model, "s1")
-    assert( a == s1.ref )
 
     #################################
     # END
