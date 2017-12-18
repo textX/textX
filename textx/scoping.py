@@ -285,7 +285,15 @@ def scope_provider_fully_qualified_names(parser,obj,attr,obj_ref):
     assert type(obj_ref) is ObjCrossRef, type(obj_ref)
     cls, obj_name = obj_ref.cls, obj_ref.obj_name
     ret = _find_referenced_obj(obj, obj_name)
-    return ret
+    if ret: return ret
+
+    # As a fall-back search builtins if given
+    metamodel = obj._tx_metamodel
+    if metamodel.builtins:
+        if obj_ref.obj_name in metamodel.builtins:
+            # TODO: Classes must match
+            return metamodel.builtins[obj_ref.obj_name]
+    return None
 
 
 class ScopeProviderWithImportURI:
