@@ -4,10 +4,10 @@
 # Author: Pierre Bayerl
 # License: MIT License
 #######################################################################
-from powerline.segments.vim import file_name
 
 from os.path import dirname,abspath
 import glob,os,errno
+from textx.exceptions import TextXSemanticError
 
 """
 This module defines scope providers to be used in conjunctions with a textx.metamodel meta model.
@@ -58,6 +58,16 @@ We provide some standard scope providers:
 # -------------------------------------------------------------------------------------
 # Scope helper classes:
 # -------------------------------------------------------------------------------------
+
+
+class Postponed:
+    """
+    return an object of this class to postpone a reference resolution.
+    If you get circular dependencies in resolution logic, an error
+    is raised.
+    """
+    def __init__(self):
+        pass
 
 
 class ModelRepository:
@@ -390,3 +400,47 @@ class ScopeProviderFullyQualifiedNamesWithGlobalRepo(ScopeProviderWithGlobalRepo
 class ScopeProviderPlainNamesWithGlobalRepo(ScopeProviderWithGlobalRepo):
     def __init__(self, filename_pattern=None):
         ScopeProviderWithGlobalRepo.__init__(self, scope_provider_plain_names, filename_pattern)
+
+# --------------------------------------
+
+
+def find_named_and_typed_object_in_list(obj, field_name, desired_type, name):
+    if type(obj) is Postponed: return obj
+    lst = getattr(obj, field_name)
+    assert(type(lst) is list)
+    for res in lst:
+        if "name" in dir(res) and getattr(res,"name")==name:
+            if isinstance(res, desired_type):
+                return res
+            else:
+                raise TypeError("{} has type {} instead of {}.".format(name,type(res).__name__, desired_type.__name__))
+    return None #not found
+
+
+def get_referenced_object(obj, dot_separated_name):
+    names = dot_separated_name.split(".")
+    next_obj = getattr(obj, names[0])
+    if not next_obj: return Postponed()
+    if len(names)>1:
+        return get_referenced_object(next_obj,".".join(names[1:]))
+    return next_obj
+
+
+class ScopeProviderForSimpleRelativeNamedLookups:
+    def __init__(self,path_to_conatiner_object,name_of_list_of_named_objects):
+        self.path_to_conatiner_object = path_to_conatiner_object
+        self.name_of_list_of_named_objects = name_of_list_of_named_objects
+        self.postponed_counter=0;
+
+    def __call__(self, parser, obj, attr, obj_ref):
+        try:
+            res = find_named_and_typed_object_in_list(get_referenced_object(obj, self.path_to_conatiner_object),
+                                                       self.name_of_list_of_named_objects,
+                                                       obj_ref.cls,
+                                                       obj_ref.obj_name)
+            if type(res) is Postponed:
+                self.postponed_counter+=1;
+            return res
+        except TypeError as e:
+            line, col = parser.pos_to_linecol(obj_ref.position)
+            raise TextXSemanticError('{}'.format(str(e)), line=line, col=col)

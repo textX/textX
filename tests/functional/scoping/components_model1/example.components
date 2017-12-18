@@ -1,13 +1,13 @@
 package base {
   component Start {
-    in output
+    out output1
   }
   component Middle {
-    in input
-    in output
+    in input2
+    out output2
   }
   component End {
-    in input
+    in input3
   }
 }
 
@@ -18,8 +18,8 @@ package usage {
   instance action3 : base.Middle
   instance end : base.End
 
-  connect start.output   to action1.input
-  connect action1.output to action2.input
-  connect action2.output to action3.input
-  connect action3.output to end.input
+  connect start.output1   to action1.input2
+  connect action1.output2 to action2.input2
+  connect action2.output2 to action3.input2
+  connect action3.output2 to end.input3
 }

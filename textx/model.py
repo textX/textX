@@ -15,7 +15,7 @@ from arpeggio import Parser, Sequence, NoMatch, EOF, Terminal
 from textx.exceptions import TextXSyntaxError, TextXSemanticError
 from textx.const import MULT_OPTIONAL, MULT_ONE, MULT_ONEORMORE, \
     MULT_ZEROORMORE, RULE_COMMON, RULE_ABSTRACT, RULE_MATCH
-from textx.scoping import scope_provider_plain_names
+from textx.scoping import scope_provider_plain_names, Postponed
 
 if sys.version < '3':
     text = unicode  # noqa
@@ -436,47 +436,77 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolutio
         metamodel = parser.metamodel
 
         # If this object has attributes (created using a common rule)
-        newcrossrefs=[]
-        for obj, attr, crossref in parser._crossrefs:
-            if (model_root(obj) == model):
-                attr_value = getattr(obj, attr.name)
-                attr_ref      = obj.__class__.__name__+"."+attr.name
-                attr_ref_alt1 = "*."+attr.name
-                attr_ref_alt2 = obj.__class__.__name__+".*"
-                attr_ref_alt3 = "*.*"
-                if attr_ref in metamodel.scope_provider:
-                    if parser.debug:
-                        parser.dprint(" FOUND {}".format(attr_ref))
-                    resolved = metamodel.scope_provider[attr_ref](parser, obj,attr,crossref)
-                elif attr_ref_alt1 in metamodel.scope_provider:
-                    if parser.debug:
-                        parser.dprint(" FOUND {}".format(attr_ref_alt1))
-                    resolved = metamodel.scope_provider[attr_ref_alt1](parser, obj, attr, crossref)
-                elif attr_ref_alt2 in metamodel.scope_provider:
-                    if parser.debug:
-                        parser.dprint(" FOUND {}".format(attr_ref_alt2))
-                    resolved = metamodel.scope_provider[attr_ref_alt2](parser, obj, attr, crossref)
-                elif attr_ref_alt3 in metamodel.scope_provider:
-                    if parser.debug:
-                        parser.dprint(" FOUND {}".format(attr_ref_alt3))
-                    resolved = metamodel.scope_provider[attr_ref_alt3](parser, obj, attr, crossref)
-                else:
-                    resolved = scope_provider_plain_names(parser, obj, attr, crossref)
+        current_crossrefs = parser._crossrefs
+        new_crossrefs = []
+        while len(current_crossrefs)>0:
+            new_crossrefs=[]
+            delayed_crossrefs=[]
+            resolved_crossref_count=0
 
-                if not resolved:
-                    line, col = parser.pos_to_linecol(crossref.position)
-                    raise TextXSemanticError(
-                        'Unknown object "{}" of class "{}" at {}'
-                            .format(crossref.obj_name, crossref.cls.__name__, (line, col)),
-                        line=line, col=col)
+            # -------------------------
+            # start of resolve-loop
+            # -------------------------
+            for obj, attr, crossref in current_crossrefs:
+                if (model_root(obj) == model):
+                    attr_value = getattr(obj, attr.name)
+                    attr_ref      = obj.__class__.__name__+"."+attr.name
+                    attr_ref_alt1 = "*."+attr.name
+                    attr_ref_alt2 = obj.__class__.__name__+".*"
+                    attr_ref_alt3 = "*.*"
+                    if attr_ref in metamodel.scope_provider:
+                        if parser.debug:
+                            parser.dprint(" FOUND {}".format(attr_ref))
+                        resolved = metamodel.scope_provider[attr_ref](parser, obj,attr,crossref)
+                    elif attr_ref_alt1 in metamodel.scope_provider:
+                        if parser.debug:
+                            parser.dprint(" FOUND {}".format(attr_ref_alt1))
+                        resolved = metamodel.scope_provider[attr_ref_alt1](parser, obj, attr, crossref)
+                    elif attr_ref_alt2 in metamodel.scope_provider:
+                        if parser.debug:
+                            parser.dprint(" FOUND {}".format(attr_ref_alt2))
+                        resolved = metamodel.scope_provider[attr_ref_alt2](parser, obj, attr, crossref)
+                    elif attr_ref_alt3 in metamodel.scope_provider:
+                        if parser.debug:
+                            parser.dprint(" FOUND {}".format(attr_ref_alt3))
+                        resolved = metamodel.scope_provider[attr_ref_alt3](parser, obj, attr, crossref)
+                    else:
+                        resolved = scope_provider_plain_names(parser, obj, attr, crossref)
 
-                if attr.mult in [MULT_ONEORMORE, MULT_ZEROORMORE]:
-                    attr_value.append(resolved)
-                else:
-                    setattr(obj, attr.name, resolved)
-            else: # crossref not in model
-                newcrossrefs.append( (obj, attr, crossref) )
-        parser._crossrefs = newcrossrefs;
+                    if not resolved:
+                        line, col = parser.pos_to_linecol(crossref.position)
+                        raise TextXSemanticError(
+                            'Unknown object "{}" of class "{}" at {}'
+                                .format(crossref.obj_name, crossref.cls.__name__, (line, col)),
+                            line=line, col=col)
+
+                    if type(resolved) is Postponed:
+                        delayed_crossrefs.append( (obj, attr, crossref) )
+                        new_crossrefs.append( (obj, attr, crossref) )
+                    else:
+                        resolved_crossref_count+=1
+                        if attr.mult in [MULT_ONEORMORE, MULT_ZEROORMORE]:
+                            attr_value.append(resolved)
+                        else:
+                            setattr(obj, attr.name, resolved)
+                else: # crossref not in model
+                    new_crossrefs.append( (obj, attr, crossref) )
+            # -------------------------
+            # end of resolve-loop
+            # -------------------------
+            if len(delayed_crossrefs)>0 and resolved_crossref_count==0:
+                error_text = "Unresolvable cross references:"
+                for _, _, delayed in delayed_crossrefs:
+                    line, col = parser.pos_to_linecol(delayed.position)
+                    error_text += ' "{}" of class "{}" at {}'.format(delayed.obj_name, delayed.cls.__name__, (line, col))
+                raise TextXSemanticError(error_text, line=line, col=col)
+            # prepare for next loop (if required)
+            if len(delayed_crossrefs)>0:
+                current_crossrefs = new_crossrefs;
+            else:
+                current_crossrefs = [];
+        # store cross-refs from other models in the parser list (for later processing)
+        # this happens when other models are loaded while parsing one model.
+        parser._crossrefs = new_crossrefs;
 
     def call_obj_processors(model_obj):
         """
