@@ -426,6 +426,8 @@ def get_referenced_object(obj, dot_separated_name):
     return next_obj
 
 
+#TODO: optional "inheritance" (with/without inheritance) may be difficult to distinguish from unresolved (--> postponed)
+#maybe via lambdas + user logic...
 class ScopeProviderForSimpleRelativeNamedLookups:
     def __init__(self,path_to_conatiner_object,name_of_list_of_named_objects):
         self.path_to_conatiner_object = path_to_conatiner_object
