@@ -476,8 +476,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolutio
                     setattr(obj, attr.name, resolved)
             else: # crossref not in model
                 newcrossrefs.append( (obj, attr, crossref) )
-        parser._crossrefs = newcrossrefs; # TODO check / del vs. new list...
-        #del parser._crossrefs[:]
+        parser._crossrefs = newcrossrefs;
 
     def call_obj_processors(model_obj):
         """
