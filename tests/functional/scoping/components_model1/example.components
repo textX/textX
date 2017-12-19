@@ -1,13 +1,19 @@
+package interfaces {
+  interface B
+  interface C
+}
 package base {
+  interface A
+  interface D
   component Start {
-    out output1
+    out output1 (format A)
   }
   component Middle {
-    in input2
-    out output2
+    in input2 (format A,interfaces.B,interfaces.C)
+    out output2 (format interfaces.B,interfaces.C,D)
   }
   component End {
-    in input3
+    in input3 (format interfaces.B,interfaces.C,D)
   }
 }
 

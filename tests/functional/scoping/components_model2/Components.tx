@@ -44,9 +44,9 @@ Instance:
 //   resolved later...
 Connection:
     'connect'
-      from_port=[SlotOut|ID] 'from' from=[Instance|ID]
+      from_port=[SlotOut|ID] 'from' from_inst=[Instance|ID]
     '->'
-      to_port=[SlotIn|ID] 'from' to=[Instance|ID]
+      to_port=[SlotIn|ID] 'from' to_inst=[Instance|ID]
 ;
 
 FQN: ID('.'ID)*;
