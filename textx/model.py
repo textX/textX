@@ -439,75 +439,63 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolutio
         # If this object has attributes (created using a common rule)
         current_crossrefs = parser._crossrefs
         new_crossrefs = []
-        while len(current_crossrefs)>0:
-            new_crossrefs=[]
-            delayed_crossrefs=[]
-            resolved_crossref_count=0
+        delayed_crossrefs=[]
+        resolved_crossref_count=0
 
-            # -------------------------
-            # start of resolve-loop
-            # -------------------------
-            for obj, attr, crossref in current_crossrefs:
-                if (model_root(obj) == model):
-                    attr_value = getattr(obj, attr.name)
-                    attr_ref      = obj.__class__.__name__+"."+attr.name
-                    attr_ref_alt1 = "*."+attr.name
-                    attr_ref_alt2 = obj.__class__.__name__+".*"
-                    attr_ref_alt3 = "*.*"
-                    if attr_ref in metamodel.scope_provider:
-                        if parser.debug:
-                            parser.dprint(" FOUND {}".format(attr_ref))
-                        resolved = metamodel.scope_provider[attr_ref](parser, obj,attr,crossref)
-                    elif attr_ref_alt1 in metamodel.scope_provider:
-                        if parser.debug:
-                            parser.dprint(" FOUND {}".format(attr_ref_alt1))
-                        resolved = metamodel.scope_provider[attr_ref_alt1](parser, obj, attr, crossref)
-                    elif attr_ref_alt2 in metamodel.scope_provider:
-                        if parser.debug:
-                            parser.dprint(" FOUND {}".format(attr_ref_alt2))
-                        resolved = metamodel.scope_provider[attr_ref_alt2](parser, obj, attr, crossref)
-                    elif attr_ref_alt3 in metamodel.scope_provider:
-                        if parser.debug:
-                            parser.dprint(" FOUND {}".format(attr_ref_alt3))
-                        resolved = metamodel.scope_provider[attr_ref_alt3](parser, obj, attr, crossref)
-                    else:
-                        resolved = scope_provider_plain_names(parser, obj, attr, crossref)
+        # -------------------------
+        # start of resolve-loop
+        # -------------------------
+        for obj, attr, crossref in current_crossrefs:
+            if (model_root(obj) == model):
+                attr_value = getattr(obj, attr.name)
+                attr_ref      = obj.__class__.__name__+"."+attr.name
+                attr_ref_alt1 = "*."+attr.name
+                attr_ref_alt2 = obj.__class__.__name__+".*"
+                attr_ref_alt3 = "*.*"
+                if attr_ref in metamodel.scope_provider:
+                    if parser.debug:
+                        parser.dprint(" FOUND {}".format(attr_ref))
+                    resolved = metamodel.scope_provider[attr_ref](parser, obj,attr,crossref)
+                elif attr_ref_alt1 in metamodel.scope_provider:
+                    if parser.debug:
+                        parser.dprint(" FOUND {}".format(attr_ref_alt1))
+                    resolved = metamodel.scope_provider[attr_ref_alt1](parser, obj, attr, crossref)
+                elif attr_ref_alt2 in metamodel.scope_provider:
+                    if parser.debug:
+                        parser.dprint(" FOUND {}".format(attr_ref_alt2))
+                    resolved = metamodel.scope_provider[attr_ref_alt2](parser, obj, attr, crossref)
+                elif attr_ref_alt3 in metamodel.scope_provider:
+                    if parser.debug:
+                        parser.dprint(" FOUND {}".format(attr_ref_alt3))
+                    resolved = metamodel.scope_provider[attr_ref_alt3](parser, obj, attr, crossref)
+                else:
+                    resolved = scope_provider_plain_names(parser, obj, attr, crossref)
 
-                    if not resolved:
-                        line, col = parser.pos_to_linecol(crossref.position)
-                        raise TextXSemanticError(
-                            'Unknown object "{}" of class "{}" at {}'
-                                .format(crossref.obj_name, crossref.cls.__name__, (line, col)),
-                            line=line, col=col)
+                if not resolved:
+                    line, col = parser.pos_to_linecol(crossref.position)
+                    raise TextXSemanticError(
+                        'Unknown object "{}" of class "{}" at {}'
+                            .format(crossref.obj_name, crossref.cls.__name__, (line, col)),
+                        line=line, col=col)
 
-                    if type(resolved) is Postponed:
-                        delayed_crossrefs.append( (obj, attr, crossref) )
-                        new_crossrefs.append( (obj, attr, crossref) )
-                    else:
-                        resolved_crossref_count+=1
-                        if attr.mult in [MULT_ONEORMORE, MULT_ZEROORMORE]:
-                            attr_value.append(resolved)
-                        else:
-                            setattr(obj, attr.name, resolved)
-                else: # crossref not in model
+                if type(resolved) is Postponed:
+                    delayed_crossrefs.append( (obj, attr, crossref) )
                     new_crossrefs.append( (obj, attr, crossref) )
-            # -------------------------
-            # end of resolve-loop
-            # -------------------------
-            if len(delayed_crossrefs)>0 and resolved_crossref_count==0:
-                error_text = "Unresolvable cross references:"
-                for _, _, delayed in delayed_crossrefs:
-                    line, col = parser.pos_to_linecol(delayed.position)
-                    error_text += ' "{}" of class "{}" at {}'.format(delayed.obj_name, delayed.cls.__name__, (line, col))
-                raise TextXSemanticError(error_text, line=line, col=col)
-            # prepare for next loop (if required)
-            if len(delayed_crossrefs)>0:
-                current_crossrefs = new_crossrefs;
-            else:
-                current_crossrefs = [];
+                else:
+                    resolved_crossref_count+=1
+                    if attr.mult in [MULT_ONEORMORE, MULT_ZEROORMORE]:
+                        attr_value.append(resolved)
+                    else:
+                        setattr(obj, attr.name, resolved)
+            else: # crossref not in model
+                new_crossrefs.append( (obj, attr, crossref) )
+        # -------------------------
+        # end of resolve-loop
+        # -------------------------
         # store cross-refs from other models in the parser list (for later processing)
         # this happens when other models are loaded while parsing one model.
         parser._crossrefs = new_crossrefs;
+        return (resolved_crossref_count, delayed_crossrefs)
 
     def call_obj_processors(model_obj):
         """
@@ -549,7 +537,27 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolutio
             scope_provider.load_models(model)
 
     if is_this_the_main_model:
-        resolve_refs(model)
+        from textx.scoping import get_all_models_including_attached_models
+        models = get_all_models_including_attached_models(model);
+
+        resolved_count   = 1
+        unresolved_count = 1
+        while unresolved_count>0 and resolved_count>0:
+            resolved_count   = 0
+            unresolved_count = 0
+            #print("***RESOLVING {} models".format(len(models)))
+            for m in models:
+                resolved_count_for_this_model, delayed_crossrefs = resolve_refs(m)
+                resolved_count   += resolved_count_for_this_model
+                unresolved_count += len(delayed_crossrefs)
+        if (unresolved_count>0):
+            error_text = "Unresolvable cross references:"
+            for _, _, delayed in delayed_crossrefs:
+                line, col = parser.pos_to_linecol(delayed.position)
+                error_text += ' "{}" of class "{}" at {}'.format(delayed.obj_name, delayed.cls.__name__,
+                                                                 (line, col))
+            raise TextXSemanticError(error_text, line=line, col=col)
+
         assert not parser._inst_stack
 
         # We have model loaded and all link resolved
@@ -558,10 +566,6 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolutio
         if metamodel.obj_processors:
             if parser.debug:
                 parser.dprint("CALLING OBJECT PROCESSORS")
-            if (hasattr(model,"_tx_model_repository")):
-                models = model._tx_model_repository.all_models.filename_to_model.values()
-            else:
-                models = [model]
             for m in models:
                 call_obj_processors(m)
 

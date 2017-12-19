@@ -100,8 +100,8 @@ def test_model_with_local_scope_postponed():
     # MODEL PARSING
     #################################
 
-    my_model1 = my_meta_model1.model_from_file(abspath(dirname(__file__)) + "/components_model1/example.components")
-    my_model2 = my_meta_model2.model_from_file(abspath(dirname(__file__)) + "/components_model2/example.components")
+    _ = my_meta_model1.model_from_file(abspath(dirname(__file__)) + "/components_model1/example.components")
+    _ = my_meta_model2.model_from_file(abspath(dirname(__file__)) + "/components_model2/example.components")
 
     #################################
     # TEST MODEL

@@ -182,6 +182,16 @@ class ModelLoader:
     def load_models(self, model):
         pass
 
+
+def get_all_models_including_attached_models(model):
+    if (hasattr(model, "_tx_model_repository")):
+        models = list(model._tx_model_repository.all_models.filename_to_model.values())
+        if not model in models:
+            models.append(model)
+    else:
+        models = [model]
+    return models;
+
 # -------------------------------------------------------------------------------------
 # Scope providers:
 # -------------------------------------------------------------------------------------
