@@ -29,10 +29,10 @@ def test_model_with_globalimports_basic_test_with_single_model_file():
     # check that "s.s1" is a reference to the socket interface
     a  = get_unique_named_object(my_model, "socket")
     s1 = get_unique_named_object(my_model, "s1")
-    assert( a == s1.ref )
+    assert  a == s1.ref
 
     a2  = get_unique_named_object(my_model2, "socket")
-    assert(a2 != a) # no global repository
+    assert a2 != a # no global repository
 
     #################################
     # END
@@ -64,10 +64,10 @@ def test_model_with_globalimports_basic_test_with_single_model_file_and_with_glo
     # check that "s.s1" is a reference to the socket interface
     a  = get_unique_named_object(my_model, "socket")
     s1 = get_unique_named_object(my_model, "s1")
-    assert( a == s1.ref )
+    assert a == s1.ref
 
     a2  = get_unique_named_object(my_model2, "socket")
-    assert(a2 == a) # no global repository
+    assert a2 == a # no global repository
 
     #################################
     # END
@@ -98,7 +98,7 @@ def test_model_with_globalimports_basic_test_with_distributed_model():
     # check that "s.s1" is a reference to the socket interface
     a  = get_unique_named_object(inner_model, "socket")
     s1 = get_unique_named_object(inner_model, "s1")
-    assert( a == s1.ref )
+    assert a == s1.ref
 
     #################################
     # END

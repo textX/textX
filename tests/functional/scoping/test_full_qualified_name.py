@@ -66,28 +66,28 @@ def test_fully_qualified_name_ref():
     #################################
 
     a = children(lambda x:hasattr(x,'name') and x.name=="rec", my_model)
-    assert(len(a)==1)
-    assert(a[0].name=="rec")
-    assert(a[0].ref.__class__.__name__=="Class")
-    assert(a[0].ref.name=="C2")
+    assert len(a)==1
+    assert a[0].name=="rec"
+    assert a[0].ref.__class__.__name__=="Class"
+    assert a[0].ref.name=="C2"
 
     a = children(lambda x:hasattr(x,'name') and x.name=="p1", my_model)
-    assert(len(a)==1)
-    assert(a[0].name=="p1")
-    assert(a[0].ref.__class__.__name__=="Class")
-    assert(a[0].ref.name=="Part1")
+    assert len(a)==1
+    assert a[0].name=="p1"
+    assert a[0].ref.__class__.__name__=="Class"
+    assert a[0].ref.name=="Part1"
 
     a = children(lambda x:hasattr(x,'name') and x.name=="p2a", my_model)
-    assert(len(a)==1)
-    assert(a[0].name=="p2a")
-    assert(a[0].ref.__class__.__name__=="Class")
-    assert(a[0].ref.name=="Part2")
+    assert len(a)==1
+    assert a[0].name=="p2a"
+    assert a[0].ref.__class__.__name__=="Class"
+    assert a[0].ref.name=="Part2"
 
     a = children(lambda x:hasattr(x,'name') and x.name=="p2b", my_model)
-    assert(len(a)==1)
-    assert(a[0].name=="p2b")
-    assert(a[0].ref.__class__.__name__=="Class")
-    assert(a[0].ref.name=="Part2")
+    assert len(a)==1
+    assert a[0].name=="p2b"
+    assert a[0].ref.__class__.__name__=="Class"
+    assert a[0].ref.name=="Part2"
 
     ###########################
     # MODEL WITH ERROR

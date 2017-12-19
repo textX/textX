@@ -126,7 +126,7 @@ class GlobalModelRepository:
         :return: nothing
         """
         from textx.model import metamodel
-        assert(model)
+        assert model
         self.update_model_in_repo_based_on_filename(model)
         filenames = glob.glob(filename_pattern, recursive=True)
         if len(filenames)==0:
@@ -438,7 +438,7 @@ class ScopeProviderPlainNamesWithGlobalRepo(ScopeProviderWithGlobalRepo):
 def find_named_and_typed_object_in_list(obj, field_name, desired_type, name):
     if type(obj) is Postponed: return obj
     lst = getattr(obj, field_name)
-    assert(type(lst) is list)
+    assert type(lst) is list
     for res in lst:
         if "name" in dir(res) and getattr(res,"name")==name:
             if isinstance(res, desired_type):

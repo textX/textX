@@ -517,7 +517,7 @@ class TextXMetaModel(DebugPrinter):
                 def _pre_ref_resolution_callback(other_model):
                     from textx.scoping import GlobalModelRepository
                     filename = other_model._tx_filename
-                    assert(filename)
+                    assert filename
                     # print("METAMODEL PRE-CALLBACK{}".format(filename))
                     other_model._tx_model_repository = GlobalModelRepository(self._tx_model_repository.all_models)
                     self._tx_model_repository.all_models.filename_to_model[filename] = other_model
