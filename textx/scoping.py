@@ -146,8 +146,10 @@ class GlobalModelRepository:
                 newmodel = self.all_models.filename_to_model[filename]
             else:
                 #print("LOADING {}".format(filename))
-                newmodel = themetamodel.model_from_file(filename,
-                                                        pre_ref_resolution_callback=lambda other_model:self.pre_ref_resolution_callback(other_model))
+                #all models loaded here get their references resolved from the root model
+                newmodel = themetamodel.internal_model_from_file(filename,
+                                                        pre_ref_resolution_callback=lambda other_model:self.pre_ref_resolution_callback(other_model),
+                                                                 is_this_the_main_model=False)
                 self.all_models.filename_to_model[filename] = newmodel
             self.local_models.filename_to_model[filename] = newmodel
         return self.local_models.filename_to_model[filename]
@@ -168,6 +170,17 @@ class GlobalModelRepository:
         other_model._tx_model_repository=GlobalModelRepository(self.all_models)
         self.all_models.filename_to_model[filename] = other_model
 
+
+class ModelLoader:
+    """
+    This class is an interface to mark a scope provider as an additional model loader.
+    Such a scope provider is called
+    """
+    def __init__(self):
+        pass
+
+    def load_models(self, model):
+        pass
 
 # -------------------------------------------------------------------------------------
 # Scope providers:
@@ -306,7 +319,7 @@ def scope_provider_fully_qualified_names(parser,obj,attr,obj_ref):
     return None
 
 
-class ScopeProviderWithImportURI:
+class ScopeProviderWithImportURI(ModelLoader):
     """
     Scope provider like scope_provider_fully_qualified_names, but supporting Xtext-like
     importURI attributes (w/o URInamespace)
@@ -314,6 +327,7 @@ class ScopeProviderWithImportURI:
     This class requried a "simple" scope provider, which is called internally.
     """
     def __init__(self, scope_provider):
+        ModelLoader.__init__(self)
         self.scope_provider = scope_provider
 
     def _load_referenced_models(self, model):
@@ -325,16 +339,11 @@ class ScopeProviderWithImportURI:
             filename_pattern = abspath(dirname(model._tx_filename)+"/"+obj.importURI)
             model._tx_model_repository.load_models_using_filepattern(filename_pattern, model=model)
 
-    def __call__(self, parser, obj, attr, obj_ref):
-        from textx.model import ObjCrossRef, model_root, metamodel
-        assert type(obj_ref) is ObjCrossRef, type(obj_ref)
-        # 1) lookup URIs... (first, before looking locally - to detect file not founds and distant model errors...)
-        # TODO: raise error if lookup is not unique
-        model = model_root(obj)
-        # 1.1) do we already have loaded models (analysis)? No -> check/load them
-        cls, obj_name = obj_ref.cls, obj_ref.obj_name
+    def load_models(self, model):
+        from textx.model import metamodel
+        # do we already have loaded models (analysis)? No -> check/load them
         if "_tx_model_repository" in dir(model):
-            model_repository = model._tx_model_repository
+            pass
         else:
             if "_tx_model_repository" in dir(metamodel(model)):
                 model_repository = GlobalModelRepository(metamodel(model._tx_model_repository.all_models))
@@ -343,11 +352,23 @@ class ScopeProviderWithImportURI:
             model._tx_model_repository = model_repository
         self._load_referenced_models(model)
 
-        # 2) try to find object locally
+
+    def __call__(self, parser, obj, attr, obj_ref):
+        from textx.model import ObjCrossRef, model_root
+        assert type(obj_ref) is ObjCrossRef, type(obj_ref)
+        #cls, obj_name = obj_ref.cls, obj_ref.obj_name
+
+        # 1) lookup URIs... (first, before looking locally - to detect file not founds and distant model errors...)
+        # TODO: raise error if lookup is not unique
+
+        model = model_root(obj)
+        model_repository = model._tx_model_repository
+
+        # 1) try to find object locally
         ret = self.scope_provider(parser, obj, attr, obj_ref)
         if ret: return ret
 
-        # 3) do we have loaded models?
+        # 2) do we have loaded models?
         for m in model_repository.local_models.filename_to_model.values():
             ret = self.scope_provider(parser, m, attr, obj_ref)
             if ret: return ret

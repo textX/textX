@@ -175,7 +175,7 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                 line, col = e.parser.pos_to_linecol(e.position)
                 raise TextXSyntaxError(text(e), line, col)
 
-        def get_model_from_file(self, file_name, encoding, debug, pre_ref_resolution_callback=None):
+        def get_model_from_file(self, file_name, encoding, debug, pre_ref_resolution_callback=None, is_this_the_main_model=True):
             """
             Creates model from the parse tree from the previous parse call.
             If file_name is given file will be parsed before model
@@ -185,7 +185,8 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                 model_str = f.read()
 
             model = self.get_model_from_str(model_str, file_name=file_name,
-                                            debug=debug,pre_ref_resolution_callback=pre_ref_resolution_callback)
+                                            debug=debug,pre_ref_resolution_callback=pre_ref_resolution_callback,
+                                            is_this_the_main_model=is_this_the_main_model)
 
             # reset the file: see "# Register filename of the model for later use (e.g. imports/scoping)."
             # w/o this second assignment some tests fail (TBC)
@@ -197,7 +198,7 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                 pass
             return model
 
-        def get_model_from_str(self, model_str, file_name=None, debug=None, pre_ref_resolution_callback=None):
+        def get_model_from_str(self, model_str, file_name=None, debug=None, pre_ref_resolution_callback=None, is_this_the_main_model=True):
             """
             Parses given string and creates model object graph.
             """
@@ -213,7 +214,7 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                 self.parse(model_str, file_name=file_name)
                 # Transform parse tree to model. Skip root node which
                 # represents the whole file ending in EOF.
-                model = parse_tree_to_objgraph(self, self.parse_tree[0],file_name = file_name, pre_ref_resolution_callback = pre_ref_resolution_callback)
+                model = parse_tree_to_objgraph(self, self.parse_tree[0],file_name = file_name, pre_ref_resolution_callback = pre_ref_resolution_callback, is_this_the_main_model=is_this_the_main_model)
             finally:
                 if debug is not None:
                     self.debug = old_debug_state
@@ -229,7 +230,7 @@ def get_model_parser(top_rule, comments_model, **kwargs):
     return TextXModelParser(**kwargs)
 
 
-def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolution_callback=None):
+def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolution_callback=None, is_this_the_main_model=True):
     """
     Transforms parse_tree to object graph representing model in a
     new language.
@@ -541,15 +542,27 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolutio
         pass
 
     if pre_ref_resolution_callback: pre_ref_resolution_callback(model)
-    resolve_refs(model)
-    assert not parser._inst_stack
 
-    # We have model loaded and all link resolved
-    # So we shall do a depth-first call of object
-    # processors if any processor is defined.
-    if metamodel.obj_processors:
-        if parser.debug:
-            parser.dprint("CALLING OBJECT PROCESSORS")
-        call_obj_processors(model)
+    for scope_provider in metamodel.scope_provider.values():
+        from textx.scoping import ModelLoader
+        if isinstance(scope_provider, ModelLoader):
+            scope_provider.load_models(model)
+
+    if is_this_the_main_model:
+        resolve_refs(model)
+        assert not parser._inst_stack
+
+        # We have model loaded and all link resolved
+        # So we shall do a depth-first call of object
+        # processors if any processor is defined.
+        if metamodel.obj_processors:
+            if parser.debug:
+                parser.dprint("CALLING OBJECT PROCESSORS")
+            if (hasattr(model,"_tx_model_repository")):
+                models = model._tx_model_repository.all_models.filename_to_model.values()
+            else:
+                models = [model]
+            for m in models:
+                call_obj_processors(m)
 
     return model

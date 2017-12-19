@@ -499,7 +499,10 @@ class TextXMetaModel(DebugPrinter):
             p(model, self)
         return model
 
-    def model_from_file(self, file_name, encoding='utf-8', debug=None, pre_ref_resolution_callback=None):
+    def model_from_file(self, file_name, encoding='utf-8', debug=None):
+        return self.internal_model_from_file(file_name, encoding, debug)
+
+    def internal_model_from_file(self, file_name, encoding='utf-8', debug=None, pre_ref_resolution_callback=None, is_this_the_main_model=True):
         """
         Instantiates model from the given file.
         :param pre_ref_resolution_callback: called before references are resolved.
@@ -509,6 +512,7 @@ class TextXMetaModel(DebugPrinter):
         callback = pre_ref_resolution_callback
 
         if "_tx_model_repository" in dir(self):
+            # metamodel has a global repo
             if not callback:
                 def _pre_ref_resolution_callback(other_model):
                     from textx.scoping import GlobalModelRepository
@@ -521,10 +525,13 @@ class TextXMetaModel(DebugPrinter):
                 callback = _pre_ref_resolution_callback
             if self._tx_model_repository.all_models.has_model(file_name):
                 model = self._tx_model_repository.all_models.filename_to_model[file_name]
+
         if not model:
+            # model not present (from global repo) -> load it
             model = self.parser.get_model_from_file(file_name,
                                                     encoding, debug=debug,
-                                                    pre_ref_resolution_callback=callback)
+                                                    pre_ref_resolution_callback=callback,
+                                                    is_this_the_main_model=is_this_the_main_model)
 
         for p in self._model_processors:
             p(model, self)

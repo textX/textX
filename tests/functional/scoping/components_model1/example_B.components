@@ -1,0 +1,9 @@
+package b {
+    component B {
+        in i
+    }
+
+    instance mya : a.A
+    instance myb : B
+    connect mya.o to myb.i
+}
