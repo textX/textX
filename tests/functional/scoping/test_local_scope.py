@@ -39,8 +39,8 @@ def test_model_with_local_scope():
     my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/components_model1/Components.tx')
     my_meta_model.register_scope_provider({
         "*.*":scoping.scope_provider_fully_qualified_names,
-        "Connection.from_port":scoping.ScopeProviderForSimpleRelativeNamedLookups("from_inst.component","slots"),
-        "Connection.to_port":scoping.ScopeProviderForSimpleRelativeNamedLookups("to_inst.component","slots")
+        "Connection.from_port":scoping.ScopeProviderForSimpleRelativeNamedLookups("from_inst.component.slots"),
+        "Connection.to_port":scoping.ScopeProviderForSimpleRelativeNamedLookups("to_inst.component.slots")
     })
 
 
@@ -79,20 +79,20 @@ def test_model_with_local_scope_postponed():
     # META MODEL DEF
     #################################
 
-    sp1 = scoping.ScopeProviderForSimpleRelativeNamedLookups("from_inst.component","slots")
+    sp1 = scoping.ScopeProviderForSimpleRelativeNamedLookups("from_inst.component.slots")
     my_meta_model1 = metamodel_from_file(abspath(dirname(__file__)) + '/components_model1/Components.tx')
     my_meta_model1.register_scope_provider({
         "*.*":scoping.scope_provider_fully_qualified_names,
         "Connection.from_port":sp1,
-        "Connection.to_port":scoping.ScopeProviderForSimpleRelativeNamedLookups("to_inst.component","slots")
+        "Connection.to_port":scoping.ScopeProviderForSimpleRelativeNamedLookups("to_inst.component.slots")
     })
 
-    sp2 = scoping.ScopeProviderForSimpleRelativeNamedLookups("from_inst.component","slots")
+    sp2 = scoping.ScopeProviderForSimpleRelativeNamedLookups("from_inst.component.slots")
     my_meta_model2 = metamodel_from_file(abspath(dirname(__file__)) + '/components_model2/Components.tx')
     my_meta_model2.register_scope_provider({
         "*.*":scoping.scope_provider_fully_qualified_names,
         "Connection.from_port":sp2,
-        "Connection.to_port":scoping.ScopeProviderForSimpleRelativeNamedLookups("to_inst.component","slots")
+        "Connection.to_port":scoping.ScopeProviderForSimpleRelativeNamedLookups("to_inst.component.slots")
     })
 
 

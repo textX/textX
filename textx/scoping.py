@@ -432,45 +432,17 @@ class ScopeProviderPlainNamesWithGlobalRepo(ScopeProviderWithGlobalRepo):
     def __init__(self, filename_pattern=None):
         ScopeProviderWithGlobalRepo.__init__(self, scope_provider_plain_names, filename_pattern)
 
-# --------------------------------------
-
-
-def find_named_and_typed_object_in_list(obj, field_name, desired_type, name):
-    if type(obj) is Postponed: return obj
-    lst = getattr(obj, field_name)
-    assert type(lst) is list
-    for res in lst:
-        if "name" in dir(res) and getattr(res,"name")==name:
-            if isinstance(res, desired_type):
-                return res
-            else:
-                raise TypeError("{} has type {} instead of {}.".format(name,type(res).__name__, desired_type.__name__))
-    return None #not found
-
-
-def get_referenced_object(obj, dot_separated_name):
-    names = dot_separated_name.split(".")
-    next_obj = getattr(obj, names[0])
-    if not next_obj: return Postponed()
-    if len(names)>1:
-        return get_referenced_object(next_obj,".".join(names[1:]))
-    return next_obj
-
-
 #TODO: optional "inheritance" (with/without inheritance) may be difficult to distinguish from unresolved (--> postponed)
 #maybe via lambdas + user logic...
 class ScopeProviderForSimpleRelativeNamedLookups:
-    def __init__(self,path_to_conatiner_object,name_of_list_of_named_objects):
+    def __init__(self,path_to_conatiner_object):
         self.path_to_conatiner_object = path_to_conatiner_object
-        self.name_of_list_of_named_objects = name_of_list_of_named_objects
         self.postponed_counter=0;
 
     def __call__(self, parser, obj, attr, obj_ref):
+        from textx.scoping_tools import get_referenced_object
         try:
-            res = find_named_and_typed_object_in_list(get_referenced_object(obj, self.path_to_conatiner_object),
-                                                       self.name_of_list_of_named_objects,
-                                                       obj_ref.cls,
-                                                       obj_ref.obj_name)
+            res = get_referenced_object(obj, self.path_to_conatiner_object+"."+obj_ref.obj_name, obj_ref.cls)
             if type(res) is Postponed:
                 self.postponed_counter+=1;
             return res
