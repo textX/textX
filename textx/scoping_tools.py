@@ -6,6 +6,8 @@ def needs_to_be_resolved(parser, parent_obj,attr_name):
 
 def get_list_of_concatenated_objects(obj, dot_separated_name, parser, lst):
     """
+    TODO: need more testing
+    TODO: do we need to check the multiplicity information of the attribute (1..* etc.)
     get a list of the objects consisting of
     - obj
     - obj+"."+dot_separated_name
