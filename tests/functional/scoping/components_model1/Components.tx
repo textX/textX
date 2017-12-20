@@ -18,12 +18,12 @@ Package:
         '}'
 ;
 
-Interface: 'interface' name=ID ;
+Interface: 'interface' name=ID;
 
 // A component defines something with in/out ports
 // A component can inherit form another component --> lookup with inheritance
 Component:
-    'component' name=ID ('extends' extends=[Component|FQN])? '{'
+    'component' name=ID ('extends' extends+=[Component|FQN] ("," extends+=[Component|FQN])*)? '{'
         slots*=Slot
     '}'
 ;

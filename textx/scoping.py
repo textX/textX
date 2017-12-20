@@ -432,20 +432,41 @@ class ScopeProviderPlainNamesWithGlobalRepo(ScopeProviderWithGlobalRepo):
     def __init__(self, filename_pattern=None):
         ScopeProviderWithGlobalRepo.__init__(self, scope_provider_plain_names, filename_pattern)
 
-#TODO: optional "inheritance" (with/without inheritance) may be difficult to distinguish from unresolved (--> postponed)
-#maybe via lambdas + user logic...
 class ScopeProviderForSimpleRelativeNamedLookups:
     def __init__(self,path_to_conatiner_object):
-        self.path_to_conatiner_object = path_to_conatiner_object
-        self.postponed_counter=0;
+        self.path_to_container_object = path_to_conatiner_object
+        self.postponed_counter=0
 
     def __call__(self, parser, obj, attr, obj_ref):
         from textx.scoping_tools import get_referenced_object
         try:
-            res = get_referenced_object(None, obj, self.path_to_conatiner_object+"."+obj_ref.obj_name, parser, obj_ref.cls)
+            res = get_referenced_object(None, obj, self.path_to_container_object + "." + obj_ref.obj_name, parser, obj_ref.cls)
             if type(res) is Postponed:
-                self.postponed_counter+=1;
+                self.postponed_counter+=1
             return res
         except TypeError as e:
             line, col = parser.pos_to_linecol(obj_ref.position)
             raise TextXSemanticError('{}'.format(str(e)), line=line, col=col)
+
+class ScopeProviderForExtendableRelativeNamedLookups:
+    def __init__(self, path_to_definition_object,path_to_target,path_to_extension):
+        self.path_to_definition_object = path_to_definition_object
+        self.path_to_target=path_to_target
+        self.path_to_extension=path_to_extension
+        self.postponed_counter=0
+
+    def __call__(self, parser, obj, attr, obj_ref):
+        from textx.scoping_tools import get_referenced_object, get_list_of_concatenated_objects
+        try:
+            one_def_obj = get_referenced_object(None, obj, self.path_to_definition_object, parser)
+            def_obj_list = get_list_of_concatenated_objects(one_def_obj, self.path_to_extension, parser,[])
+            for def_obj in def_obj_list:
+                if type(def_obj) is Postponed:
+                    self.postponed_counter+=1
+                    return def_obj
+                res = get_referenced_object(None, def_obj, self.path_to_target + "." +obj_ref.obj_name, parser, obj_ref.cls)
+                if res: return res # may be Postponed
+            return None
+        except TypeError as e:
+            line, col = parser.pos_to_linecol(obj_ref.position)
+            raise TextXSemanticError('ScopeProviderForExtendableRelativeNamedLookups: {}'.format(str(e)), line=line, col=col)

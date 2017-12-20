@@ -43,7 +43,6 @@ def test_model_with_local_scope():
         "Connection.to_port":scoping.ScopeProviderForSimpleRelativeNamedLookups("to_inst.component.slots")
     })
 
-
     #################################
     # MODEL PARSING
     #################################
@@ -86,7 +85,6 @@ def test_model_with_local_scope_and_error():
         "Connection.to_port":scoping.ScopeProviderForSimpleRelativeNamedLookups("to_inst.component.slots")
     })
 
-
     #################################
     # MODEL PARSING
     #################################
@@ -97,6 +95,47 @@ def test_model_with_local_scope_and_error():
     #################################
     # END
     #################################
+
+
+def test_model_with_local_scope_and_inheritance1():
+    #################################
+    # META MODEL DEF
+    #################################
+
+    my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/components_model1/Components.tx')
+    my_meta_model.register_scope_provider({
+        "*.*":scoping.scope_provider_fully_qualified_names,
+        "Connection.from_port":scoping.ScopeProviderForExtendableRelativeNamedLookups("from_inst.component","slots","extends"),
+        "Connection.to_port":scoping.ScopeProviderForExtendableRelativeNamedLookups("to_inst.component","slots","extends")
+    })
+
+    #################################
+    # MODEL PARSING
+    #################################
+
+    my_model = my_meta_model.model_from_file(abspath(dirname(__file__)) + "/components_model1/example_inherit1.components")
+
+    #################################
+    # TEST MODEL
+    #################################
+
+    # test local refs
+    action1 = get_unique_named_object(my_model, "action1")
+    action2 = get_unique_named_object(my_model, "action2")
+    action3 = get_unique_named_object(my_model, "action3")
+    end     = get_unique_named_object(my_model, "end")
+    connections = children_of_type("Connection",my_model)
+    selected_connections_12 = list(filter(lambda x:x.from_inst==action1 and x.to_inst==action2, connections))
+    selected_connections_3e = list(filter(lambda x:x.from_inst==action3 and x.to_inst==end, connections))
+    assert len(selected_connections_12)==1
+    assert len(selected_connections_3e)==1
+
+    assert selected_connections_12[0].to_port is selected_connections_3e[0].to_port # output3 is same
+
+    #################################
+    # END
+    #################################
+
 
 def test_model_with_local_scope_postponed():
     #################################

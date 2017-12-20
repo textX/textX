@@ -4,8 +4,43 @@ def needs_to_be_resolved(parser, parent_obj,attr_name):
             return True
     return False
 
+def get_list_of_concatenated_objects(obj, dot_separated_name, parser, lst):
+    """
+    get a list of the objects consisting of
+    - obj
+    - obj+"."+dot_separated_name
+    - (obj+"."+dot_separated_name)+"."+dot_separated_name (called ercursively)
+    Note: lists are expanded
+    :param obj: the starting point
+    :param dot_separated_name: "the search path" (applied recursively)
+    :param parser: the parser (req. to determine if an object is Postponed)
+    :param lst: the initial list (e.g. [])
+    :return: the filled list
+    """
+    from textx.scoping import Postponed
+    if not obj: return lst
+    if obj in lst: return lst
+    lst.append(obj)
+    if type(obj) is Postponed:
+        return lst
+    ret = get_referenced_object(None, obj, dot_separated_name, parser)
+    if type(ret) is list:
+        for r in ret:
+            lst = get_list_of_concatenated_objects(r, dot_separated_name, parser, lst)
+    else:
+        lst = get_list_of_concatenated_objects(ret, dot_separated_name, parser, lst)
+    return lst
 
 def get_referenced_object(prev_obj, obj, dot_separated_name, parser, desired_type=None):
+    """
+    get objects based on a path
+    :param prev_obj: the object containing obj (req. is obj is a list)
+    :param obj: the current object
+    :param dot_separated_name: the attribute name "a.b.c.d" starting from obj
+    :param parser: the parser
+    :param desired_type: (optional)
+    :return: the object if found, None if not found or Postponed() if some postponed refs are found on the path
+    """
     from textx.scoping import Postponed
     assert prev_obj or not type(obj) is list
     names = dot_separated_name.split(".")
@@ -33,4 +68,6 @@ def get_referenced_object(prev_obj, obj, dot_separated_name, parser, desired_typ
             return None
     if len(names)>1:
         return get_referenced_object(obj, next_obj,".".join(names[1:]), parser, desired_type)
+    if type(next_obj) is list and needs_to_be_resolved(parser, obj,names[0]):
+        return Postponed()
     return next_obj
