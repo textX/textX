@@ -74,6 +74,30 @@ def test_model_with_local_scope():
     # END
     #################################
 
+def test_model_with_local_scope_and_error():
+    #################################
+    # META MODEL DEF
+    #################################
+
+    my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/components_model1/Components.tx')
+    my_meta_model.register_scope_provider({
+        "*.*":scoping.scope_provider_fully_qualified_names,
+        "Connection.from_port":scoping.ScopeProviderForSimpleRelativeNamedLookups("from_inst.component.slots"),
+        "Connection.to_port":scoping.ScopeProviderForSimpleRelativeNamedLookups("to_inst.component.slots")
+    })
+
+
+    #################################
+    # MODEL PARSING
+    #################################
+
+    with raises(textx.exceptions.TextXSemanticError, match=r'.*Unknown objec.*input1.*SlotIn.*'):
+        my_model = my_meta_model.model_from_file(abspath(dirname(__file__)) + "/components_model1/example_err1.components")
+
+    #################################
+    # END
+    #################################
+
 def test_model_with_local_scope_postponed():
     #################################
     # META MODEL DEF
