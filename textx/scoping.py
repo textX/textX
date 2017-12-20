@@ -442,7 +442,7 @@ class ScopeProviderForSimpleRelativeNamedLookups:
     def __call__(self, parser, obj, attr, obj_ref):
         from textx.scoping_tools import get_referenced_object
         try:
-            res = get_referenced_object(obj, self.path_to_conatiner_object+"."+obj_ref.obj_name, obj_ref.cls)
+            res = get_referenced_object(None, obj, self.path_to_conatiner_object+"."+obj_ref.obj_name, parser, obj_ref.cls)
             if type(res) is Postponed:
                 self.postponed_counter+=1;
             return res
