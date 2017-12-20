@@ -433,7 +433,20 @@ class ScopeProviderPlainNamesWithGlobalRepo(ScopeProviderWithGlobalRepo):
         ScopeProviderWithGlobalRepo.__init__(self, scope_provider_plain_names, filename_pattern)
 
 class ScopeProviderForSimpleRelativeNamedLookups:
+    """
+    allows to implement a class-method-instance-like scoping:
+     - define a class with methods
+     - define instances
+     - allow to define a scope where the instance references the methods
+    Note: The same as for classes/methods can be interpreted as components/slots...
+    """
     def __init__(self,path_to_conatiner_object):
+        """
+        Here, you specify the path from the instance to the methods:
+        The path is given in a dot-separated way: "classref.methods". Then a concrete method "f"
+        is searched as "classref.methods.f".
+        :param path_to_conatiner_object: This identifies (starting from the instance) how to find the methods.
+        """
         self.path_to_container_object = path_to_conatiner_object
         self.postponed_counter=0
 
@@ -449,6 +462,13 @@ class ScopeProviderForSimpleRelativeNamedLookups:
             raise TextXSemanticError('{}'.format(str(e)), line=line, col=col)
 
 class ScopeProviderForExtendableRelativeNamedLookups:
+    """
+    Similar as ScopeProviderForSimpleRelativeNamedLookups.
+    Here you specifiy separately
+    - how to find the class.
+    - how to find the methods (starting from a class).
+    - how to find inherited classes (starting from a class).
+    """
     def __init__(self, path_to_definition_object,path_to_target,path_to_extension):
         self.path_to_definition_object = path_to_definition_object
         self.path_to_target=path_to_target
