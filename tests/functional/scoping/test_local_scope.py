@@ -4,7 +4,7 @@ import textx.scoping as scoping
 from os.path import dirname, abspath
 import textx.exceptions
 from pytest import raises
-from tests.functional.scoping.test_import_module import get_unique_named_object
+from textx.scoping_tools import get_unique_named_object
 
 def test_postponed_resolution_error():
     #################################

@@ -4,6 +4,7 @@
 # Author: Pierre Bayerl
 # License: MIT License
 #######################################################################
+from textx import children
 
 def needs_to_be_resolved(parser, parent_obj,attr_name):
     for obj, attr, crossref in parser._crossrefs:
@@ -80,3 +81,26 @@ def get_referenced_object(prev_obj, obj, dot_separated_name, parser, desired_typ
     if type(next_obj) is list and needs_to_be_resolved(parser, obj,names[0]):
         return Postponed()
     return next_obj
+
+
+def get_unique_named_object(root, name):
+    """
+    retrieves a unqiue named object (no fully qualified name)
+    :param root: start of search
+    :param name: name of object
+    :return: the object (if not unique, raises an error)
+    """
+    a = children(lambda x:hasattr(x,'name') and x.name==name, root)
+    assert len(a)==1
+    return a[0]
+
+
+def check_unique_named_object_has_class(root, name, class_name):
+    """
+    checks the type (type name) of an unique named object (no fully qualified name)
+    :param root: start of search
+    :param name: name of object
+    :param class_name: the name of the type to be checked
+    :return: nothing (if not unique, raises an error)
+    """
+    assert class_name == get_unique_named_object(root, name).__class__.__name__

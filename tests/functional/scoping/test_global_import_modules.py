@@ -1,8 +1,8 @@
 from textx import metamodel_from_file
 import textx.scoping as scoping
 from os.path import dirname, abspath
-from tests.functional.scoping.test_import_module \
-    import get_unique_named_object, _check_unique_named_object_has_class
+from textx.scoping_tools \
+    import get_unique_named_object, check_unique_named_object_has_class
 
 def test_model_with_globalimports_basic_test_with_single_model_file():
     #################################
@@ -24,7 +24,7 @@ def test_model_with_globalimports_basic_test_with_single_model_file():
     #################################
 
     # check that "socket" is an interface
-    _check_unique_named_object_has_class(my_model, "socket","Interface")
+    check_unique_named_object_has_class(my_model, "socket", "Interface")
 
     # check that "s.s1" is a reference to the socket interface
     a  = get_unique_named_object(my_model, "socket")
@@ -59,7 +59,7 @@ def test_model_with_globalimports_basic_test_with_single_model_file_and_with_glo
     #################################
 
     # check that "socket" is an interface
-    _check_unique_named_object_has_class(my_model, "socket","Interface")
+    check_unique_named_object_has_class(my_model, "socket", "Interface")
 
     # check that "s.s1" is a reference to the socket interface
     a  = get_unique_named_object(my_model, "socket")
@@ -93,7 +93,7 @@ def test_model_with_globalimports_basic_test_with_distributed_model():
 
     # check that "socket" is an interface
     inner_model = my_model._tx_model_repository.all_models.filename_to_model[abspath(dirname(__file__)) + "/interface_model2/model_b/base.if"];
-    _check_unique_named_object_has_class(inner_model,"socket","Interface")
+    check_unique_named_object_has_class(inner_model, "socket", "Interface")
 
     # check that "s.s1" is a reference to the socket interface
     a  = get_unique_named_object(inner_model, "socket")

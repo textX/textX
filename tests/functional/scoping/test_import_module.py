@@ -4,16 +4,7 @@ import textx.scoping as scoping
 from os.path import dirname, abspath
 import textx.exceptions
 from pytest import raises
-
-
-def get_unique_named_object(root, name):
-    a = children(lambda x:hasattr(x,'name') and x.name==name, root)
-    assert len(a)==1
-    return a[0]
-
-
-def _check_unique_named_object_has_class(root,name,class_name):
-    assert class_name == get_unique_named_object(root, name).__class__.__name__
+from textx.scoping_tools import check_unique_named_object_has_class, get_unique_named_object
 
 
 def test_model_without_imports():
@@ -35,7 +26,7 @@ def test_model_without_imports():
     #################################
 
     # check that "socket" is an interface
-    _check_unique_named_object_has_class(my_model, "socket","Interface")
+    check_unique_named_object_has_class(my_model, "socket", "Interface")
 
     # check that "s.s1" is a reference to the socket interface
     a  = get_unique_named_object(my_model, "socket")
@@ -68,7 +59,7 @@ def test_model_with_imports():
 
     # check that "socket" is an interface
     inner_model = my_model._tx_model_repository.all_models.filename_to_model[abspath(dirname(__file__)) + "/interface_model1/model_b/base.if"];
-    _check_unique_named_object_has_class(inner_model,"socket","Interface")
+    check_unique_named_object_has_class(inner_model, "socket", "Interface")
 
     # check that "s.s1" is a reference to the socket interface
     a  = get_unique_named_object(inner_model, "socket")
@@ -158,7 +149,7 @@ def test_model_with_circular_imports():
     # TEST MODEL
     #################################
 
-    _check_unique_named_object_has_class(my_model, "A","Interface")
+    check_unique_named_object_has_class(my_model, "A", "Interface")
     A  = get_unique_named_object(my_model, "A")
 
     A_self = children(lambda x:hasattr(x,'name') and x.name=="self", A)

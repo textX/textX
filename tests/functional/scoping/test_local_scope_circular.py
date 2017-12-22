@@ -2,7 +2,7 @@ from textx import metamodel_from_file
 from textx import children_of_type
 import textx.scoping as scoping
 from os.path import dirname, abspath
-from tests.functional.scoping.test_import_module import get_unique_named_object
+from textx.scoping_tools import get_unique_named_object
 
 def test_model_with_local_scope_and_circular_ref_via_two_models():
     #################################
