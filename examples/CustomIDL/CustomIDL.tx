@@ -1,0 +1,34 @@
+Model:
+    imports+=Import*
+    packages+=Package+
+;
+Package:
+    "package" name=ID "{"
+    (
+    packages+=Package
+    |
+    structs+=Struct
+    |
+    types+=Type
+    )*
+    "}"
+;
+Type:
+    "type" name=ID
+;
+Struct:
+    "struct" name=ID "{"
+    attributes+=Attribute*
+    "}"
+;
+Attribute: ScalarAttribute|ArrayAttribute;
+ScalarAttribute:
+    "scalar" name=ID ":" type=[Type|FQN]
+;
+ArrayAttribute:
+    "array" name=ID ":" type=[Type|FQN] "[" (n0fixed=INT|n0dyn=[Attribute])"]"
+;
+Import:
+    importURI=STRING
+;
+FQN: ID("." ID)*;

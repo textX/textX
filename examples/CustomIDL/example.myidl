@@ -1,0 +1,14 @@
+package types {
+    type int
+    type float
+}
+package example {
+
+    struct A {
+        scalar a : types.int
+        scalar b : types.int
+        scalar c : types.float
+        array  d : types.float[5]
+    }
+
+}
