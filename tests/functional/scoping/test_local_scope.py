@@ -43,7 +43,7 @@ def test_model_with_local_scope():
     my_meta_model.register_scope_provider({
         "*.*":scoping.scope_provider_fully_qualified_names,
         "Connection.from_port":scoping.ScopeProviderForSimpleRelativeNamedLookups("from_inst.component.slots"),
-        "Connection.to_port":scoping.ScopeProviderForSimpleRelativeNamedLookups("to_inst.component.slots")
+        "Connection.to_port":scoping.ScopeProviderForSimpleRelativeNamedLookups("to_inst.component.slots"),
     })
 
     #################################
@@ -109,7 +109,7 @@ def test_model_with_local_scope_and_inheritance2():
     my_meta_model.register_scope_provider({
         "*.*":scoping.scope_provider_fully_qualified_names,
         "Connection.from_port":scoping.ScopeProviderForExtendableRelativeNamedLookups("from_inst.component","slots","extends"),
-        "Connection.to_port":scoping.ScopeProviderForExtendableRelativeNamedLookups("to_inst.component","slots","extends")
+        "Connection.to_port":scoping.ScopeProviderForExtendableRelativeNamedLookups("to_inst.component","slots","extends"),
     })
 
     #################################

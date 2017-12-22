@@ -7,15 +7,25 @@
 from textx import children
 
 def needs_to_be_resolved(parser, parent_obj,attr_name):
+    """
+    This function determines, if a reference (CrossReference) needs to be
+    resolved or not (while creating the model, while resolving references).
+    :param parser: the parser which provides the information required for this function.
+                   If it is None, False is returned.
+    :param parent_obj: the object containing the attribute to be resolved.
+    :param attr_name: the attribute identification object.
+    :return: True if the attribute needs to be resolved. Else False.
+             In case of lists of references, this function return true if any of the
+             references in the list needs to be resolved.
+    """
+    if not parser: return False
     for obj, attr, crossref in parser._crossrefs:
         if obj is parent_obj and attr_name==attr.name:
             return True
     return False
 
-def get_list_of_concatenated_objects(obj, dot_separated_name, parser, lst):
+def get_list_of_concatenated_objects(obj, dot_separated_name, parser=None, lst=None):
     """
-    TODO: need more testing
-    TODO: do we need to check the multiplicity information of the attribute (1..* etc.)
     get a list of the objects consisting of
     - obj
     - obj+"."+dot_separated_name
@@ -25,9 +35,10 @@ def get_list_of_concatenated_objects(obj, dot_separated_name, parser, lst):
     :param dot_separated_name: "the search path" (applied recursively)
     :param parser: the parser (req. to determine if an object is Postponed)
     :param lst: the initial list (e.g. [])
-    :return: the filled list
+    :return: the filled list (if one single object is requested, a list with one entry is returned).
     """
     from textx.scoping import Postponed
+    if lst is None: lst=[]
     if not obj: return lst
     if obj in lst: return lst
     lst.append(obj)
@@ -41,7 +52,7 @@ def get_list_of_concatenated_objects(obj, dot_separated_name, parser, lst):
         lst = get_list_of_concatenated_objects(ret, dot_separated_name, parser, lst)
     return lst
 
-def get_referenced_object(prev_obj, obj, dot_separated_name, parser, desired_type=None):
+def get_referenced_object(prev_obj, obj, dot_separated_name, parser=None, desired_type=None):
     """
     get objects based on a path
     :param prev_obj: the object containing obj (req. is obj is a list)
