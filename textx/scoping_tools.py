@@ -6,7 +6,8 @@
 #######################################################################
 from textx import children
 
-def needs_to_be_resolved(parser, parent_obj,attr_name):
+
+def needs_to_be_resolved(parser, parent_obj, attr_name):
     """
     This function determines, if a reference (CrossReference) needs to be
     resolved or not (while creating the model, while resolving references).
@@ -23,6 +24,7 @@ def needs_to_be_resolved(parser, parent_obj,attr_name):
         if obj is parent_obj and attr_name==attr.name:
             return True
     return False
+
 
 def get_list_of_concatenated_objects(obj, dot_separated_name, parser=None, lst=None):
     """
