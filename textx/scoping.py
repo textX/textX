@@ -37,7 +37,19 @@ allow to be reused for different models (created using the same meta model) with
 This means, they must save their state in the corresponding model, if they need to store data (e.g., if
 they load additional models from files *during name resolution*, they are not allowed to store them inside
 the scope provider. Note: scope providers as normal functions (def <name>(...):..., not accessing global 
-data, are safe per se.
+data, are safe per se. The reason to be stateless, is that no side effects (beside, e.g., loading other models)
+should incluence the name lookup.
+
+The state of model resolution should mainly consist of models already loaded. These models are stored in a 
+GlobalModelRepository class. This class (if required) is stored in the model. An included model loaded 
+from another including model "inhertits" the part of the GlobalModelRepository representing all loaded models. This
+is done to (a) cache already loaded models and (b) guarantee, that every referenced model element is instanciated
+exactly once. Even in the case of circular inclusions. 
+
+Two different models created using one single meta model (not using a scope provider, but by directly loading the 
+models from file) have different instances of the same model elements. If you need two such models to share their
+model element instances, you can specify this, while creating the meta model (enable_global_model_repository). Then,
+the meta model will store an own instance of a GlobalModelRepository as a base for all loaded models.
 
 Scope providers may return an object of type Postponed, if they depend on another event to happen first. This event is 
 typically the resolution of another reference. The resolution with pass multiple times of all references
