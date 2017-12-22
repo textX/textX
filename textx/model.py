@@ -538,7 +538,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolutio
 
     if is_this_the_main_model:
         from textx.scoping import get_all_models_including_attached_models
-        models = get_all_models_including_attached_models(model);
+        models = get_all_models_including_attached_models(model)
 
         resolved_count   = 1
         unresolved_count = 1

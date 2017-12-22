@@ -1,8 +1,8 @@
+from __future__ import unicode_literals
 from textx import metamodel_from_file
 import textx.scoping as scoping
 from os.path import dirname, abspath
-from textx.scoping_tools \
-    import get_unique_named_object, check_unique_named_object_has_class
+from textx.scoping_tools import get_unique_named_object, check_unique_named_object_has_class
 
 def test_model_with_globalimports_basic_test_with_single_model_file():
     #################################

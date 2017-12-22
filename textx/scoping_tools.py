@@ -68,6 +68,8 @@ def get_referenced_object(prev_obj, obj, dot_separated_name, parser, desired_typ
                 return Postponed()
             else:
                 return None
+    elif type(obj) is Postponed:
+        return Postponed()
     else:
         next_obj = getattr(obj, names[0])
     if not next_obj:

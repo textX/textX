@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from textx import metamodel_from_file
 from textx import children
 import textx.scoping as scoping
@@ -92,7 +93,7 @@ def test_model_with_imports_and_errors():
     with raises(textx.exceptions.TextXSemanticError, match=r'.*Unknown object.*types.int.*'):
         my_model = my_meta_model.model_from_file(abspath(dirname(__file__)) + "/interface_model1/model_b/app_error1.if")
 
-    with raises(FileNotFoundError, match=r'.*file_not_found\.if.*'):
+    with raises(IOError, match=r'.*file_not_found\.if.*'):
         my_model = my_meta_model.model_from_file(abspath(dirname(__file__)) + "/interface_model1/model_b/app_error2.if")
 
     #################################

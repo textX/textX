@@ -60,7 +60,7 @@ We provide some standard scope providers:
 # -------------------------------------------------------------------------------------
 
 
-class Postponed:
+class Postponed(object):
     """
     return an object of this class to postpone a reference resolution.
     If you get circular dependencies in resolution logic, an error
@@ -70,7 +70,7 @@ class Postponed:
         pass
 
 
-class ModelRepository:
+class ModelRepository(object):
     """
     This class has the responsibility to
     hold a set of (model-identifiers, model) pairs
@@ -84,7 +84,7 @@ class ModelRepository:
         return filename in self.filename_to_model.keys()
 
 
-class GlobalModelRepository:
+class GlobalModelRepository(object):
     """
     This class has the responsability to
     hold two ModelRepository objects:
@@ -130,7 +130,7 @@ class GlobalModelRepository:
         self.update_model_in_repo_based_on_filename(model)
         filenames = glob.glob(filename_pattern, **glob_args)
         if len(filenames)==0:
-            raise FileNotFoundError(
+            raise IOError(
                 errno.ENOENT, os.strerror(errno.ENOENT), filename_pattern)
         for filename in filenames:
             self.load_model(metamodel(model), filename)
@@ -171,7 +171,7 @@ class GlobalModelRepository:
         self.all_models.filename_to_model[filename] = other_model
 
 
-class ModelLoader:
+class ModelLoader(object):
     """
     This class is an interface to mark a scope provider as an additional model loader.
     Such a scope provider is called
@@ -290,7 +290,7 @@ def scope_provider_fully_qualified_names(parser,obj,attr,obj_ref):
                     if "name" in dir(obj) and obj.name == name: return obj;
             return None
 
-        for n in str.split(fqn_name, '.'):
+        for n in fqn_name.split('.'):
             obj = find_obj(p, n)
             if obj:
                 p = obj;
@@ -437,7 +437,7 @@ class ScopeProviderPlainNamesWithGlobalRepo(ScopeProviderWithGlobalRepo):
     def __init__(self, filename_pattern=None, glob_args=None):
         ScopeProviderWithGlobalRepo.__init__(self, scope_provider_plain_names, filename_pattern,glob_args=glob_args)
 
-class ScopeProviderForSimpleRelativeNamedLookups:
+class ScopeProviderForSimpleRelativeNamedLookups(object):
     """
     allows to implement a class-method-instance-like scoping:
      - define a class with methods
@@ -466,7 +466,7 @@ class ScopeProviderForSimpleRelativeNamedLookups:
             line, col = parser.pos_to_linecol(obj_ref.position)
             raise TextXSemanticError('{}'.format(str(e)), line=line, col=col)
 
-class ScopeProviderForExtendableRelativeNamedLookups:
+class ScopeProviderForExtendableRelativeNamedLookups(object):
     """
     Similar as ScopeProviderForSimpleRelativeNamedLookups.
     Here you specifiy separately

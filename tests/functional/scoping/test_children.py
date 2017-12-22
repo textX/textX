@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from textx import metamodel_from_str
 from textx import children, children_of_type
 import textx.scoping as scoping
