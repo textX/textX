@@ -29,6 +29,6 @@ ArrayAttribute:
     "array" name=ID ":" type=[Type|FQN] "[" (n0fixed=INT|n0dyn=[Attribute])"]"
 ;
 Import:
-    importURI=STRING
+    "import" importURI=STRING
 ;
 FQN: ID("." ID)*;
