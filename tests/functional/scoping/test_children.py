@@ -1,5 +1,5 @@
-from textx.metamodel import metamodel_from_str
-from textx.model import children, children_of_type
+from textx import metamodel_from_str
+from textx import children, children_of_type
 import textx.scoping as scoping
 from operator import eq
 import re

@@ -1,5 +1,5 @@
-from textx.metamodel import metamodel_from_str
-from textx.model import children
+from textx import metamodel_from_str
+from textx import children
 import textx.scoping as scoping
 import textx.exceptions
 from pytest import raises

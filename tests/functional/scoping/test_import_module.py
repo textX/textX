@@ -1,5 +1,5 @@
-from textx.metamodel import metamodel_from_file
-from textx.model import children
+from textx import metamodel_from_file
+from textx import children
 import textx.scoping as scoping
 from os.path import dirname, abspath
 import textx.exceptions
