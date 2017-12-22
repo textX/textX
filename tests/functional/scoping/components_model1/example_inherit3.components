@@ -1,0 +1,41 @@
+package base {
+  interface A
+  interface B
+  interface C
+
+  component Start {
+    out output1 (format A)
+  }
+  component BaseProc {
+    in input2 (format A)
+    out output2 (format B)
+  }
+  component ExtProc extends BaseProc {
+    out output2ex (format C)
+  }
+  component Plus {
+    out outputPlus (format B, C) // overwrite
+  }
+  component ExtProc2 extends Plus, ExtProc {
+    out output2 (format B, C) // overwrite
+  }
+  component End {
+    in input3 (format B)
+  }
+  component End2 {
+    in input3 (format C)
+  }
+}
+
+package usage {
+  instance start : base.Start
+  instance action1 : base.ExtProc2
+  instance end : base.End2
+  instance end2 : base.End2
+  instance end3 : base.End2
+
+  connect start.output1   to action1.input2
+  connect action1.output2ex to end.input3
+  connect action1.output2 to end2.input3
+  connect action1.outputPlus to end3.input3
+}

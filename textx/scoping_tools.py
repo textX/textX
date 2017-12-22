@@ -98,6 +98,25 @@ def get_referenced_object(prev_obj, obj, dot_separated_name, parser=None, desire
     return next_obj
 
 
+def get_referenced_object_as_list(prev_obj, obj, dot_separated_name, parser=None, desired_type=None):
+    """
+    same as get_referenced_object
+    :param prev_obj: see get_referenced_object
+    :param obj: see get_referenced_object
+    :param dot_separated_name: see get_referenced_object
+    :param parser: see get_referenced_object
+    :param desired_type: see get_referenced_object
+    :return: same as get_referenced_object, but always returns a list
+    """
+    res = get_referenced_object(prev_obj, obj, dot_separated_name, parser, desired_type)
+    if res is None:
+        return []
+    elif type(res) is list:
+        return res
+    else:
+        return [res]
+
+
 def get_unique_named_object(root, name):
     """
     retrieves a unqiue named object (no fully qualified name)
