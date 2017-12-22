@@ -1,3 +1,10 @@
+#######################################################################
+# Name: scoping.py
+# Purpose: Helper module for scoping support functions.
+# Author: Pierre Bayerl
+# License: MIT License
+#######################################################################
+
 def needs_to_be_resolved(parser, parent_obj,attr_name):
     for obj, attr, crossref in parser._crossrefs:
         if obj is parent_obj and attr_name==attr.name:
