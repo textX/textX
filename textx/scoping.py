@@ -39,6 +39,11 @@ they load additional models from files *during name resolution*, they are not al
 the scope provider. Note: scope providers as normal functions (def <name>(...):..., not accessing global 
 data, are safe per se.
 
+Scope providers may return an object of type Postponed, if they depend on another event to happen first. This event is 
+typically the resolution of another reference. The resolution with pass multiple times of all references
+to be resolved until all references are resolved or no process regarding the resolution is observed. In the
+latter case an error is raised.
+
 We provide some standard scope providers:
  * scope_provider_plain_names: This is the default provider of textX.
  * scope_provider_fully_qualified_names: This is a provider similar to Java or Xtext name loopup.
@@ -53,6 +58,12 @@ We provide some standard scope providers:
    provider for the constere loopup. 
   * ScopeProviderFullyQualifiedNamesWithGlobalRepo (decorated scope provider)
   * ScopeProviderPlainNamesWithGlobalRepo (decorated scope provider)
+ * ScopeProviderForSimpleRelativeNamedLookups: This is a scope provider to resolve relative lookups: 
+   e.g., model-methods of a model-instance, defined by the class associated with the model-instance. Typically, 
+   another reference (the reference to the model-class of a model-instance) is used to determine the concrete 
+   referenced object (e.g. the model-method, owned by a model-class).
+ * ScopeProviderForExtendableRelativeNamedLookups: The same as ScopeProviderForSimpleRelativeNamedLookups allowing
+   to model inheritance (see docu).
 """
 
 # -------------------------------------------------------------------------------------
