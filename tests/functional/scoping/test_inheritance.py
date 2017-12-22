@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 from textx import metamodel_from_file
 from textx import children_of_type
 import textx.scoping as scoping
-import textx.object_processors as processors
 
 from os.path import dirname, abspath
 import re
@@ -18,9 +17,6 @@ def test_inheritance_processor():
         "*.*": scoping.scope_provider_fully_qualified_names,
         "Connection.from_port": scoping.ScopeProviderForExtendableRelativeNamedLookups("from_inst.component","slots","extends"),
         "Connection.to_port": scoping.ScopeProviderForExtendableRelativeNamedLookups("to_inst.component","slots","extends"),
-    })
-    my_meta_model.register_obj_processors({
-        "Component": processors.InheritanceProcessor("extends")
     })
 
     #################################
@@ -46,10 +42,10 @@ def test_inheritance_processor():
     """
 
     def myformatter(compo):
-        if len(compo._tx_base_entities)==0:
+        if len(compo.extends)==0:
             return compo.name
         else:
-            return compo.name+"("+",".join(map(lambda x:myformatter(x), compo._tx_base_entities))+")"
+            return compo.name+"("+",".join(map(lambda x:myformatter(x), compo.extends))+")"
 
     res="\n\n"
     for c in components: # posisbly in future version, the order need to be normalized...
