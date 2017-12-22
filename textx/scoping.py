@@ -119,7 +119,7 @@ class GlobalModelRepository:
         else:
             self.all_models = ModelRepository()
 
-    def load_models_using_filepattern(self, filename_pattern, model):
+    def load_models_using_filepattern(self, filename_pattern, model, glob_args):
         """
         add a new model to all releveant objects
         :param filename: the new model source
@@ -128,7 +128,7 @@ class GlobalModelRepository:
         from textx.model import metamodel
         assert model
         self.update_model_in_repo_based_on_filename(model)
-        filenames = glob.glob(filename_pattern, recursive=True)
+        filenames = glob.glob(filename_pattern, **glob_args)
         if len(filenames)==0:
             raise FileNotFoundError(
                 errno.ENOENT, os.strerror(errno.ENOENT), filename_pattern)
@@ -336,9 +336,14 @@ class ScopeProviderWithImportURI(ModelLoader):
 
     This class requried a "simple" scope provider, which is called internally.
     """
-    def __init__(self, scope_provider):
+    def __init__(self, scope_provider, glob_args=None):
         ModelLoader.__init__(self)
         self.scope_provider = scope_provider
+        self.glob_args={}
+        if glob_args: self.set_glob_args(glob_args)
+
+    def set_glob_args(self, glob_args):
+        self.glob_args=glob_args
 
     def _load_referenced_models(self, model):
         from textx.model import children
@@ -347,7 +352,7 @@ class ScopeProviderWithImportURI(ModelLoader):
             visited.append(obj)
             # TODO add multiple lookup rules for file search
             filename_pattern = abspath(dirname(model._tx_filename)+"/"+obj.importURI)
-            model._tx_model_repository.load_models_using_filepattern(filename_pattern, model=model)
+            model._tx_model_repository.load_models_using_filepattern(filename_pattern, model=model, glob_args=self.glob_args)
 
     def load_models(self, model):
         from textx.model import metamodel
@@ -386,13 +391,13 @@ class ScopeProviderWithImportURI(ModelLoader):
 
 
 class ScopeProviderFullyQualifiedNamesWithImportURI(ScopeProviderWithImportURI):
-    def __init__(self):
-        ScopeProviderWithImportURI.__init__(self, scope_provider_fully_qualified_names)
+    def __init__(self, glob_args=None):
+        ScopeProviderWithImportURI.__init__(self, scope_provider_fully_qualified_names, glob_args=glob_args)
 
 
 class ScopeProviderPlainNamesWithImportURI(ScopeProviderWithImportURI):
-    def __init__(self):
-        ScopeProviderWithImportURI.__init__(self, scope_provider_plain_names)
+    def __init__(self, glob_args=None):
+        ScopeProviderWithImportURI.__init__(self, scope_provider_plain_names, glob_args=glob_args)
 
 
 class ScopeProviderWithGlobalRepo(ScopeProviderWithImportURI):
@@ -404,8 +409,8 @@ class ScopeProviderWithGlobalRepo(ScopeProviderWithImportURI):
       * register models used for lookup into the scope provider
     Then the scope provider is ready to be registered and used.
     """
-    def __init__(self, scope_provider, filename_pattern=None):
-        ScopeProviderWithImportURI.__init__(self, scope_provider)
+    def __init__(self, scope_provider, filename_pattern=None, glob_args=None):
+        ScopeProviderWithImportURI.__init__(self, scope_provider, glob_args=glob_args)
         self.filename_pattern_list=[]
         if filename_pattern: self.register_models(filename_pattern)
 
@@ -420,17 +425,17 @@ class ScopeProviderWithGlobalRepo(ScopeProviderWithImportURI):
 
     def _load_referenced_models(self, model):
         for filename_pattern in self.filename_pattern_list:
-            model._tx_model_repository.load_models_using_filepattern(filename_pattern, model=model)
+            model._tx_model_repository.load_models_using_filepattern(filename_pattern, model=model, glob_args=self.glob_args)
 
 
 class ScopeProviderFullyQualifiedNamesWithGlobalRepo(ScopeProviderWithGlobalRepo):
-    def __init__(self,filename_pattern=None):
-        ScopeProviderWithGlobalRepo.__init__(self, scope_provider_fully_qualified_names, filename_pattern)
+    def __init__(self,filename_pattern=None, glob_args=None):
+        ScopeProviderWithGlobalRepo.__init__(self, scope_provider_fully_qualified_names, filename_pattern, glob_args=glob_args)
 
 
 class ScopeProviderPlainNamesWithGlobalRepo(ScopeProviderWithGlobalRepo):
-    def __init__(self, filename_pattern=None):
-        ScopeProviderWithGlobalRepo.__init__(self, scope_provider_plain_names, filename_pattern)
+    def __init__(self, filename_pattern=None, glob_args=None):
+        ScopeProviderWithGlobalRepo.__init__(self, scope_provider_plain_names, filename_pattern,glob_args=glob_args)
 
 class ScopeProviderForSimpleRelativeNamedLookups:
     """
