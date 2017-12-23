@@ -4,13 +4,17 @@ import os
 import textx.scoping as scoping
 
 
-class FormulaBase(object):
+class CustomIdlBase(object):
     def __init__(self):
         pass
 
     def _init_xtextobj(self, **kwargs):
         for k in kwargs.keys():
             setattr(self, k, kwargs[k])
+
+class FormulaBase(CustomIdlBase):
+    def __init__(self):
+        super(CustomIdlBase, self).__init__()
 
     def render_formula(self):
         raise Exception("base class - not implmented")

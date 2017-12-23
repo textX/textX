@@ -4,6 +4,7 @@ Model:
 ;
 Package:
     "package" name=ID "{"
+    (target_namespace=TargetNamespace)?
     (
     packages+=Package
     |
@@ -12,6 +13,10 @@ Package:
     types+=Type
     )*
     "}"
+;
+
+TargetNamespace:
+    "target_namespace" name=STRING
 ;
 Type: RawType|Struct;
 RawType:

@@ -1,0 +1,4 @@
+package types {
+    type int
+    type float
+}

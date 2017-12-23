@@ -1,8 +1,7 @@
-package types {
-    type int
-    type float
-}
+import "types.myidl"
+
 package example {
+    target_namespace "project.example"
 
     struct Header {
         scalar proofword : types.int

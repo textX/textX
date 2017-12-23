@@ -5,7 +5,7 @@ template engine (http://jinja.pocoo.org/docs/dev/)
 
 from __future__ import unicode_literals
 import custom_idl
-from os import mkdir
+from os import mkdir,makedirs
 from os.path import dirname, join, exists
 import jinja2
 from textx import children_of_type
@@ -31,11 +31,33 @@ def main(debug=False):
     # Load Java template
     template = jinja_env.get_template('cpp_header.template')
 
+    def open_namespace(namespace):
+        res=""
+        for n in namespace.target_namespace.name.split("."):
+            res+="namespace {} {{\n".format(n)
+        return res
+    def close_namespace(namespace):
+        res=""
+        for n in namespace.target_namespace.name.split("."):
+            res+="}} // namespace {}\n".format(n)
+        return res
+    def path_to_file_name(struct):
+        filename = ""
+        if struct.parent.target_namespace:
+            filename = "/".join(struct.parent.target_namespace.name.split("."))
+        return filename
+
     for struct in children_of_type("Struct",idl_model):
         # For each entity generate java file
-        with open(join(srcgen_folder,
-                       "%s.h" % struct.name.capitalize()), 'w') as f:
-            f.write(template.render(struct=struct))
+        struct_folder = join(srcgen_folder, path_to_file_name(struct))
+        if not exists(struct_folder):
+            makedirs(struct_folder)
+        with open(join(struct_folder,
+                       "{}.h".format(struct.name)), 'w') as f:
+            f.write(template.render(struct=struct,
+                                    open_namespace=open_namespace,
+                                    close_namespace=close_namespace,
+                                    ))
 
 
 if __name__ == "__main__":
