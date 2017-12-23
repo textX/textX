@@ -4,25 +4,58 @@ import os
 import textx.scoping as scoping
 
 
-class Sum(object):
-    def __init__(self, **kwargs):
-        for k,v in kwargs.items():
-            setattr(self,k, v)
+class FormulaBase(object):
+    def __init__(self):
+        pass
 
-class Mul(object):
-    def __init__(self, **kwargs):
-        for k,v in kwargs.items():
-            setattr(self,k, v)
+    def _init_xtextobj(self, **kwargs):
+        for k in kwargs.keys():
+            setattr(self, k, kwargs[k])
 
-class Factor(object):
-    def __init__(self, **kwargs):
-        for k,v in kwargs.items():
-            setattr(self,k, v)
+    def render_formula(self):
+        raise Exception("base class - not implmented")
 
-class ScalarRef(object):
+class Sum(FormulaBase):
     def __init__(self, **kwargs):
-        for k,v in kwargs.items():
-            setattr(self,k, v)
+        super(FormulaBase,self).__init__()
+        self._init_xtextobj(**kwargs)
+
+    def render_formula(self):
+        return "+".join( map(lambda x:x.render_formula(), self.summands) )
+
+
+class Mul(FormulaBase):
+    def __init__(self, **kwargs):
+        super(FormulaBase, self).__init__()
+        self._init_xtextobj(**kwargs)
+
+    def render_formula(self):
+        return "*".join( map(lambda x:x.render_formula(), self.factors) )
+
+
+class Factor(FormulaBase):
+    def __init__(self, **kwargs):
+        super(FormulaBase, self).__init__()
+        self._init_xtextobj(**kwargs)
+
+    def render_formula(self):
+        if self.ref:
+            return self.ref.render_formula()
+        elif self.sum:
+            return "({})".format(self.sum.render_formula())
+        else:
+            return "{}".format(self.value)
+
+
+class ScalarRef(FormulaBase):
+    def __init__(self, **kwargs):
+        super(FormulaBase, self).__init__()
+        self._init_xtextobj(**kwargs)
+
+    def render_formula(self):
+        return ".".join(map(lambda x: x.name,
+                            filter(lambda x: x,
+                                   [self.ref0, self.ref1, self.ref2])))
 
 def get_meta_model(debug=False):
     this_folder = dirname(__file__)

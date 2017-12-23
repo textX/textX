@@ -16,7 +16,16 @@ package example {
         scalar b : types.int
         scalar c : types.float
         array  d : types.float[5]
-        array  e : types.int[3+4]
+        array  b1 : types.int[3+4]
+        array  b2 : types.int[(3+4)]
+        array  b3 : types.int[3+(4+5)]
+        array  b4 : types.int[(3+4)+5]
+        array  b5 : types.int[(3+4)+(5)]
+        array  c1 : types.int[3*4]
+        array  c2 : types.int[(3*4)]
+        array  c3 : types.int[3*(4*5)]
+        array  c4 : types.int[(3*4)*5]
+        array  c5 : types.int[(3*4)*(5)]
         array  e0 : types.int[3+n]
         array  e1 : types.int[n]
         array  e2 : types.int[header.N]
