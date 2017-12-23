@@ -13,7 +13,8 @@ Package:
     )*
     "}"
 ;
-Type:
+Type: RawType|Struct;
+RawType:
     "type" name=ID
 ;
 Struct:
@@ -22,13 +23,32 @@ Struct:
     "}"
 ;
 Attribute: ScalarAttribute|ArrayAttribute;
+
 ScalarAttribute:
     "scalar" name=ID ":" type=[Type|FQN]
 ;
 ArrayAttribute:
-    "array" name=ID ":" type=[Type|FQN] "[" (n0fixed=INT|n0dyn=[Attribute])"]"
+    "array" name=ID ":" type=[Type|FQN] "[" array_size=Sum "]"
 ;
+Sum:
+    (summands+=Mul ( "+" summands+=Mul )*)
+;
+Mul:
+    (factors+=Factor ( "*" factors+=Factor )*)
+    |
+    ("(" factors+=Factor ( "*" factors+=Factor )* ")")
+;
+Factor:
+    value=UINT | ref=ScalarRef | "(" sum=Sum ")"
+;
+
+ScalarRef:
+    ref0=[ScalarAttribute] ("." ref1=[ScalarAttribute] ("." ref2=[ScalarAttribute] )?)?
+;
+
 Import:
     "import" importURI=STRING
 ;
 FQN: ID("." ID)*;
+UINT: /\d+/ ;
+Comment: /\/\/.*$/;

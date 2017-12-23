@@ -5,7 +5,7 @@
 # License: MIT License
 #######################################################################
 from textx import children
-
+import re
 
 def needs_to_be_resolved(parser, parent_obj, attr_name):
     """
@@ -23,6 +23,15 @@ def needs_to_be_resolved(parser, parent_obj, attr_name):
     for obj, attr, crossref in parser._crossrefs:
         if obj is parent_obj and attr_name==attr.name:
             return True
+    return False
+
+
+def textx_isinstance(obj, obj_cls):
+    if isinstance(obj, obj_cls): return True
+    if "_tx_inh_by" in dir(obj_cls):
+        inh_by = getattr(obj_cls,"_tx_inh_by")
+        for cls in inh_by:
+            if (textx_isinstance(obj,cls)): return True
     return False
 
 
@@ -60,6 +69,8 @@ def get_referenced_object(prev_obj, obj, dot_separated_name, parser=None, desire
     :param prev_obj: the object containing obj (req. is obj is a list)
     :param obj: the current object
     :param dot_separated_name: the attribute name "a.b.c.d" starting from obj
+           Note: the attribute "parent(TYPE)" is a shortcut to jump to the parent of type "TYPE"
+           (exact match of type name).
     :param parser: the parser
     :param desired_type: (optional)
     :return: the object if found, None if not found or Postponed() if some postponed refs are found on the path
@@ -67,14 +78,24 @@ def get_referenced_object(prev_obj, obj, dot_separated_name, parser=None, desire
     from textx.scoping import Postponed
     assert prev_obj or not type(obj) is list
     names = dot_separated_name.split(".")
-    if type(obj) is list:
+    match=re.match(r'parent\((\w+)\)',names[0])
+    if match:
+        next_obj = obj
+        desired_parent_typename = match.group(1)
+        while type(next_obj).__name__ != desired_parent_typename and "parent" in dir(next_obj):
+            next_obj = next_obj.parent
+        if type(next_obj).__name__ != desired_parent_typename:
+            return None
+        else:
+            return get_referenced_object(None, next_obj, ".".join(names[1:]), parser, desired_type)
+    elif type(obj) is list:
         next_obj = None
         for res in obj:
             if "name" in dir(res) and getattr(res, "name") == names[0]:
-                if desired_type==None or isinstance(res, desired_type):
+                if desired_type==None or textx_isinstance(res, desired_type):
                     next_obj = res
                 else:
-                    raise TypeError("{} has type {} instead of {}.".format(name, type(res).__name__, desired_type.__name__))
+                    raise TypeError("{} has type {} instead of {}.".format(names[0], type(res).__name__, desired_type.__name__))
         if not next_obj:
             #if prev_obj needs to be resolved: return Postponed.
             if needs_to_be_resolved(parser, prev_obj,names[0]):

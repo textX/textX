@@ -10,7 +10,7 @@ struct {{struct.name}} {
         {% if "ArrayAttribute" in attribute.__class__.__name__ %}
             // -----------------------------
             // ARRAY {{ attribute.name }}
-            {{ attribute.type.name }} {{ attribute.name }} [...]
+            {{ attribute.type.name }} {{ attribute.name }} [ {{ render_formula(attribute.array_size) }} ]
         {% endif %}
     {% endfor %}
 

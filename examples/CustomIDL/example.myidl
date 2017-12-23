@@ -4,11 +4,30 @@ package types {
 }
 package example {
 
+    struct Header {
+        scalar proofword : types.int
+        scalar N : types.int
+        array info : types.int[10]
+    }
     struct A {
+        scalar header : Header
+        scalar n : types.int
         scalar a : types.int
         scalar b : types.int
         scalar c : types.float
         array  d : types.float[5]
+        array  e : types.int[3+4]
+        array  e0 : types.int[3+n]
+        array  e1 : types.int[n]
+        array  e2 : types.int[header.N]
+        array  e3 : types.int[3*4]
+        array  e4 : types.int[3*n]
+        array  e5 : types.int[3*header.N]
+        array  e6 : types.int[n*header.N]
+        array  e7 : types.int[3*n+3]
+        array  e8 : types.int[n+3*n]
+        array  e9 : types.int[(n+3)*n]
+        //array  err : types.int[header.info]
     }
 
 }
