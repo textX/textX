@@ -9,9 +9,10 @@ from entity_test import get_entity_mm
 import sys
 
 
-def main(filename, debug=False):
+def main(filename=None, debug=False):
     try:
         this_folder = dirname(__file__)
+        if not filename: filename = join(this_folder, 'example.myidl')
 
         entity_mm = get_entity_mm(debug)
 
@@ -58,11 +59,9 @@ def main(filename, debug=False):
 
 if __name__ == "__main__":
     if len(sys.argv)==1:
-        this_folder = dirname(__file__)
-        example = join(this_folder, 'example.myidl')
-        exit(main(example))
+        exit(main())
     elif len(sys.argv)==2:
         exit(main(sys.argv[1]))
     else:
-        print("usage: {} <model_file>".format(sys.argv[1])
+        print("usage: {} <model_file>".format(sys.argv[1]))
         exit(1)
