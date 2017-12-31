@@ -6,6 +6,7 @@ template engine (http://jinja.pocoo.org/docs/dev/)
 from __future__ import unicode_literals
 import custom_idl
 from os import mkdir,makedirs
+from shutil import copyfile
 from os.path import dirname, join, exists
 import jinja2
 from textx import children_of_type
@@ -21,6 +22,12 @@ def main(debug=False):
     srcgen_folder = join(this_folder, 'srcgen')
     if not exists(srcgen_folder):
         mkdir(srcgen_folder)
+
+    # attributes helper
+    attributes_folder = srcgen_folder+"/attributes"
+    if not exists(attributes_folder):
+        makedirs(attributes_folder)
+    copyfile(this_folder+"/attributes.h",attributes_folder+"/attributes.h")
 
     # Initialize template engine.
     jinja_env = jinja2.Environment(
@@ -47,6 +54,12 @@ def main(debug=False):
             filename = "/".join(struct.parent.target_namespace.name.split("."))
         return filename
 
+    def full_path_to_file_name(struct):
+        filename = ""
+        if struct.parent.target_namespace:
+            filename = "/".join(struct.parent.target_namespace.name.split("."))
+        return filename+"/"+struct.name+".h"
+
     for struct in children_of_type("Struct",idl_model):
         # For each entity generate java file
         struct_folder = join(srcgen_folder, path_to_file_name(struct))
@@ -57,6 +70,7 @@ def main(debug=False):
             f.write(template.render(struct=struct,
                                     open_namespace=open_namespace,
                                     close_namespace=close_namespace,
+                                    full_path_to_file_name=full_path_to_file_name,
                                     ))
 
 

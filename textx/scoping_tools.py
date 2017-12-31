@@ -63,6 +63,16 @@ def get_list_of_concatenated_objects(obj, dot_separated_name, parser=None, lst=N
         lst = get_list_of_concatenated_objects(ret, dot_separated_name, parser, lst)
     return lst
 
+
+def get_recursive_parent_with_typename(obj, desired_parent_typename):
+    while type(obj).__name__ != desired_parent_typename and "parent" in dir(obj):
+        obj = obj.parent
+    if type(obj).__name__ != desired_parent_typename:
+        return None
+    else:
+        return obj
+
+
 def get_referenced_object(prev_obj, obj, dot_separated_name, parser=None, desired_type=None):
     """
     get objects based on a path
@@ -82,12 +92,11 @@ def get_referenced_object(prev_obj, obj, dot_separated_name, parser=None, desire
     if match:
         next_obj = obj
         desired_parent_typename = match.group(1)
-        while type(next_obj).__name__ != desired_parent_typename and "parent" in dir(next_obj):
-            next_obj = next_obj.parent
-        if type(next_obj).__name__ != desired_parent_typename:
-            return None
-        else:
+        next_obj = get_recursive_parent_with_typename(next_obj, desired_parent_typename)
+        if next_obj:
             return get_referenced_object(None, next_obj, ".".join(names[1:]), parser, desired_type)
+        else:
+            return None
     elif type(obj) is list:
         next_obj = None
         for res in obj:
