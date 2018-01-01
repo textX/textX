@@ -50,6 +50,7 @@ package example {
         array  m2 : types.int[2][3][4]
         array  m3 : types.int[2][3][4][5]
         array  m4 : types.int[2][n]
+        array  m5 : example.Header[2][n]
     }
 
 }

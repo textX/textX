@@ -26,7 +26,7 @@ class {{struct.name}} {
     {% endif %}
     {% if "ArrayAttribute" in attribute.__class__.__name__ %}
         // -----------------------------
-        // FIXED SIZE: {{ attribute.has_fixed_size() }}
+        // array {{ attribute.name }} -- fixed size: {{ attribute.has_fixed_size() }}
         attributes::DynamicArrayAttribute<{{cpptool.fqn(attribute.type)}}, {{struct.name}}, 1> {{ attribute.name }} = { {
         {% for s in attribute.array_sizes %}
             [this](){ return {{ s.render_formula(separator="->",postfix=".value()")}} },
