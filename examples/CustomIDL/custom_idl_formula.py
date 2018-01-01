@@ -8,34 +8,45 @@ class FormulaBase(CustomIdlBase):
     def render_formula(self,**p):
         raise Exception("base class - not implmented")
 
-    def has_fixed_size(self,**p):
-        raise Exception("base class - not implmented")
+    def has_fixed_size(self):
+        return reduce(lambda x,y: x and y, map(lambda x: x.has_fixed_size(), self.parts), True)
+
+    def render_formula(self,**p):
+        if len(self.parts)==1:
+            return self.parts[0].render_formula(**p)
+        else:
+            return "("+self.operator.join( map(lambda x:x.render_formula(**p), self.parts) )+")"
 
 
 class Sum(FormulaBase):
     def __init__(self, **kwargs):
         super(FormulaBase,self).__init__()
         self._init_xtextobj(**kwargs)
+        self.operator = "+"
 
-    def render_formula(self,**p):
-        return "+".join( map(lambda x:x.render_formula(**p), self.summands) )
 
-    def has_fixed_size(self):
-        return reduce(lambda x,y: x and y, map(lambda x: x.has_fixed_size(), self.summands), True)
+class Dif(FormulaBase):
+    def __init__(self, **kwargs):
+        super(FormulaBase, self).__init__()
+        self._init_xtextobj(**kwargs)
+        self.operator = "-"
+
 
 class Mul(FormulaBase):
     def __init__(self, **kwargs):
         super(FormulaBase, self).__init__()
         self._init_xtextobj(**kwargs)
-
-    def render_formula(self,**p):
-        return "*".join( map(lambda x:x.render_formula(**p), self.factors) )
-
-    def has_fixed_size(self):
-        return reduce(lambda x,y: x and y, map(lambda x: x.has_fixed_size(), self.factors), True)
+        self.operator = "*"
 
 
-class Factor(FormulaBase):
+class Div(FormulaBase):
+    def __init__(self, **kwargs):
+        super(FormulaBase, self).__init__()
+        self._init_xtextobj(**kwargs)
+        self.operator = "/"
+
+
+class Val(FormulaBase):
     def __init__(self, **kwargs):
         super(FormulaBase, self).__init__()
         self._init_xtextobj(**kwargs)

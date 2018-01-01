@@ -3,6 +3,8 @@ from textx import metamodel_from_file, children_of_type, model_root
 import os
 import textx.scoping as scoping
 import textx.scoping_tools as scoping_tools
+from functools import reduce
+
 
 class CustomIdlBase(object):
     def __init__(self):
@@ -12,10 +14,12 @@ class CustomIdlBase(object):
         for k in kwargs.keys():
             setattr(self, k, kwargs[k])
 
+
 class RawType(CustomIdlBase):
     def __init__(self, **kwargs):
         super(CustomIdlBase, self).__init__()
         self._init_xtextobj(**kwargs)
+
 
 class Struct(CustomIdlBase):
     def __init__(self, **kwargs):
@@ -43,16 +47,20 @@ class ScalarAttribute(CustomIdlBase):
     def affects_size(self):
         struct = scoping_tools.get_recursive_parent_with_typename(self, "Struct")
         for a in filter(lambda x: type(x) is ArrayAttribute, struct.attributes):
-            for ref in children_of_type("ScalarRef", a.array_size):
-                if self is ref.ref0:
-                    return True
+            for s in a.array_sizes:
+                for ref in children_of_type("ScalarRef", s):
+                    if self is ref.ref0:
+                        return True
         return False
+
 
 class ArrayAttribute(CustomIdlBase):
     def __init__(self, **kwargs):
         super(CustomIdlBase, self).__init__()
         self._init_xtextobj(**kwargs)
 
+    def has_fixed_size(self):
+        return reduce( lambda x,y: x and y, map(lambda x: x.has_fixed_size(), self.array_sizes), True )
 
 def check_scalar_ref(scalar_ref):
     def myassert(ref):
@@ -66,11 +74,11 @@ def check_scalar_ref(scalar_ref):
 
 
 def get_meta_model(debug=False):
-    from custom_idl_formula import Sum, Mul, Factor, ScalarRef
+    from custom_idl_formula import Sum, Mul, Dif, Div, Val, ScalarRef
 
     this_folder = dirname(__file__)
     mm = metamodel_from_file( os.path.join(os.path.abspath(this_folder),'CustomIDL.tx'), debug=debug,
-                              classes=[Sum,Mul,Factor,ScalarRef,RawType,Struct,ArrayAttribute,ScalarAttribute])
+                              classes=[Sum,Mul,Dif,Div,Val,ScalarRef,RawType,Struct,ArrayAttribute,ScalarAttribute])
 
     mm.register_scope_provider({
         "*.*": scoping.ScopeProviderFullyQualifiedNamesWithImportURI(),

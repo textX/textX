@@ -42,17 +42,21 @@ ScalarAttribute:
     )?
 ;
 ArrayAttribute:
-    "array" name=ID ":" type=[Type|FQN] "[" array_size=Sum "]"
+    "array" name=ID ":" type=[Type|FQN] ("[" array_sizes+=Sum "]")+
 ;
 Sum:
-    (summands+=Mul ( "+" summands+=Mul )*)
+    (parts+=Dif ( "+" parts+=Dif )*)
+;
+Dif:
+    (parts+=Mul ( "-" parts+=Mul )*)
 ;
 Mul:
-    (factors+=Factor ( "*" factors+=Factor )*)
-    |
-    ("(" factors+=Factor ( "*" factors+=Factor )* ")")
+    (parts+=Div ( "*" parts+=Div )*)
 ;
-Factor:
+Div:
+    (parts+=Val ( "/" parts+=Val)*)
+;
+Val:
     value=UINT | ref=ScalarRef | "(" sum=Sum ")"
 ;
 
