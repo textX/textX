@@ -17,7 +17,6 @@ class {{struct.name}} {
 {% for attribute in struct.attributes %}
     {% if "ScalarAttribute" in attribute.__class__.__name__ %}
         // -----------------------------
-        // SCALAR {{ attribute.name }}
         // {{ attribute.type.name }} {{ attribute.name }} -- affects size: {{ attribute.affects_size() }}
         {% if attribute.affects_size() %}
         attributes::ReadOnlyAttribute<{{cpptool.fqn(attribute.type)}}, {{struct.name}}> {{attribute.name}}{{cpptool.default_value_init_code(attribute)}};
@@ -27,7 +26,6 @@ class {{struct.name}} {
     {% endif %}
     {% if "ArrayAttribute" in attribute.__class__.__name__ %}
         // -----------------------------
-        // ARRAY {{ attribute.name }}
         // FIXED SIZE: {{ attribute.has_fixed_size() }}
         attributes::DynamicArrayAttribute<{{cpptool.fqn(attribute.type)}}, {{struct.name}}, 1> {{ attribute.name }} = { {
         {% for s in attribute.array_sizes %}
