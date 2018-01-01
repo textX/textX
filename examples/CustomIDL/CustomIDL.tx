@@ -20,7 +20,12 @@ TargetNamespace:
 ;
 Type: RawType|Struct;
 RawType:
-    "type" name=ID
+    "type" name=ID "{"
+        (cpptype = CppType)?
+    "}"
+;
+CppType:
+    "C++" ":" type=STRING ("including" including=STRING)?
 ;
 Struct:
     "struct" name=ID "{"
@@ -30,7 +35,11 @@ Struct:
 Attribute: ScalarAttribute|ArrayAttribute;
 
 ScalarAttribute:
-    "scalar" name=ID ":" type=[Type|FQN]
+    "scalar" name=ID ":" type=[Type|FQN] (
+        "{"
+        ("default" "=" default_value=STRING)?
+        "}"
+    )?
 ;
 ArrayAttribute:
     "array" name=ID ":" type=[Type|FQN] "[" array_size=Sum "]"

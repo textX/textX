@@ -5,12 +5,12 @@ package example {
 
     struct Header {
         scalar proofword : types.int
-        scalar N : types.int
+        scalar N : types.int { default = "0x16" }
         array info : types.int[10]
     }
     struct A {
         scalar header : Header
-        scalar n : types.int
+        scalar n : types.int {default="5"}
         scalar a : types.int
         scalar b : types.int
         scalar c : types.float

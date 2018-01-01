@@ -1,4 +1,4 @@
 package types {
-    type int
-    type float
+    type int { C++: "int32_t" including '<cstdint>' }
+    type float { C++: "float" }
 }

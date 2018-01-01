@@ -5,10 +5,10 @@ class FormulaBase(CustomIdlBase):
     def __init__(self):
         super(CustomIdlBase, self).__init__()
 
-    def render_formula(self):
+    def render_formula(self,**p):
         raise Exception("base class - not implmented")
 
-    def has_fixed_size(self):
+    def has_fixed_size(self,**p):
         raise Exception("base class - not implmented")
 
 
@@ -17,8 +17,8 @@ class Sum(FormulaBase):
         super(FormulaBase,self).__init__()
         self._init_xtextobj(**kwargs)
 
-    def render_formula(self):
-        return "+".join( map(lambda x:x.render_formula(), self.summands) )
+    def render_formula(self,**p):
+        return "+".join( map(lambda x:x.render_formula(**p), self.summands) )
 
     def has_fixed_size(self):
         return reduce(lambda x,y: x and y, map(lambda x: x.has_fixed_size(), self.summands), True)
@@ -28,8 +28,8 @@ class Mul(FormulaBase):
         super(FormulaBase, self).__init__()
         self._init_xtextobj(**kwargs)
 
-    def render_formula(self):
-        return "*".join( map(lambda x:x.render_formula(), self.factors) )
+    def render_formula(self,**p):
+        return "*".join( map(lambda x:x.render_formula(**p), self.factors) )
 
     def has_fixed_size(self):
         return reduce(lambda x,y: x and y, map(lambda x: x.has_fixed_size(), self.factors), True)
@@ -40,11 +40,11 @@ class Factor(FormulaBase):
         super(FormulaBase, self).__init__()
         self._init_xtextobj(**kwargs)
 
-    def render_formula(self):
+    def render_formula(self,**p):
         if self.ref:
-            return self.ref.render_formula()
+            return self.ref.render_formula(**p)
         elif self.sum:
-            return "({})".format(self.sum.render_formula())
+            return "({})".format(self.sum.render_formula(**p))
         else:
             return "{}".format(self.value)
 
@@ -61,7 +61,7 @@ class ScalarRef(FormulaBase):
         super(FormulaBase, self).__init__()
         self._init_xtextobj(**kwargs)
 
-    def render_formula(self):
-        return ".".join(map(lambda x: x.name,
+    def render_formula(self,separator=".",postfix=""):
+        return separator.join(map(lambda x: x.name,
                             filter(lambda x: x,
-                                   [self.ref0, self.ref1, self.ref2])))
+                                   [self.ref0, self.ref1, self.ref2])))+postfix

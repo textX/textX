@@ -10,6 +10,7 @@ from shutil import copyfile
 from os.path import dirname, join, exists
 import jinja2
 from textx import children_of_type
+import custom_idl_cpptool as cpptool
 
 def main(debug=False):
 
@@ -38,39 +39,15 @@ def main(debug=False):
     # Load Java template
     template = jinja_env.get_template('cpp_header.template')
 
-    def open_namespace(namespace):
-        res=""
-        for n in namespace.target_namespace.name.split("."):
-            res+="namespace {} {{\n".format(n)
-        return res
-    def close_namespace(namespace):
-        res=""
-        for n in namespace.target_namespace.name.split("."):
-            res+="}} // namespace {}\n".format(n)
-        return res
-    def path_to_file_name(struct):
-        filename = ""
-        if struct.parent.target_namespace:
-            filename = "/".join(struct.parent.target_namespace.name.split("."))
-        return filename
-
-    def full_path_to_file_name(struct):
-        filename = ""
-        if struct.parent.target_namespace:
-            filename = "/".join(struct.parent.target_namespace.name.split("."))
-        return filename+"/"+struct.name+".h"
-
     for struct in children_of_type("Struct",idl_model):
         # For each entity generate java file
-        struct_folder = join(srcgen_folder, path_to_file_name(struct))
+        struct_folder = join(srcgen_folder, cpptool.path_to_file_name(struct))
         if not exists(struct_folder):
             makedirs(struct_folder)
         with open(join(struct_folder,
                        "{}.h".format(struct.name)), 'w') as f:
             f.write(template.render(struct=struct,
-                                    open_namespace=open_namespace,
-                                    close_namespace=close_namespace,
-                                    full_path_to_file_name=full_path_to_file_name,
+                                    cpptool = cpptool
                                     ))
 
 
