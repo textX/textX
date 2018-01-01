@@ -6,7 +6,13 @@ package example {
     struct Header {
         scalar proofword : types.int
         scalar N : types.int { default = "0x16" }
+        scalar k : types.int
         array info : types.int[10]
+    }
+    struct Data {
+        scalar header : Header
+        scalar n : types.int {default="5"}
+        array  a : types.float[header.N][n][2]
     }
     struct A {
         scalar header : Header

@@ -7,22 +7,27 @@ from __future__ import unicode_literals
 import custom_idl
 from os import mkdir,makedirs
 from shutil import copyfile
-from os.path import dirname, join, exists
+from os.path import dirname, join, exists, expanduser
 import jinja2
 from textx import children_of_type
 import custom_idl_cpptool as cpptool
 
-def main(debug=False):
+def main(model_file=None, srcgen_folder=None, debug=False):
 
     this_folder = dirname(__file__)
     mm = custom_idl.get_meta_model()
 
-    # Build Person model from person.ent file
-    idl_model = mm.model_from_file(join(this_folder, 'example.myidl'))
+    if not model_file:
+        model_file = join(this_folder, 'example.myidl')
 
-    srcgen_folder = join(this_folder, 'srcgen')
-    if not exists(srcgen_folder):
-        mkdir(srcgen_folder)
+    # Build Person model from person.ent file
+    idl_model = mm.model_from_file(model_file)
+
+    if not srcgen_folder:
+        srcgen_folder = join(this_folder, 'srcgen')
+        if not exists(srcgen_folder):
+            mkdir(srcgen_folder)
+    print("generating into {}".format(srcgen_folder))
 
     # attributes helper
     attributes_folder = srcgen_folder+"/attributes"
@@ -52,4 +57,12 @@ def main(debug=False):
 
 
 if __name__ == "__main__":
-    main()
+    import argparse
+    parser = argparse.ArgumentParser(description='generate code for the custom idl model.')
+    parser.add_argument('model_file', metavar='model_file', type=str,
+                        help='model filename')
+    parser.add_argument('--src-gen-folder', dest='srcgen', default="srcgen", type=str,
+                        help='folder where to generate the code')
+
+    args = parser.parse_args()
+    main(model_file=args.model_file, srcgen_folder=expanduser(args.srcgen))

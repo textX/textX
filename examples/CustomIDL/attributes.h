@@ -1,3 +1,6 @@
+#ifndef _ATTRIBUTES_ATTRIBUTES_H_
+#define _ATTRIBUTES_ATTRIBUTES_H_
+
 #include <iostream>
 #include <vector>
 #include <array>
@@ -169,3 +172,6 @@ protected:
 };
 
 }
+
+#endif // _ATTRIBUTES_ATTRIBUTES_H_
+

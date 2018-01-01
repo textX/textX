@@ -374,7 +374,10 @@ class ScopeProviderWithImportURI(ModelLoader):
         for obj in children(lambda x:hasattr(x,"importURI") and not x in visited,model):
             visited.append(obj)
             # TODO add multiple lookup rules for file search
-            filename_pattern = abspath(dirname(model._tx_filename)+"/"+obj.importURI)
+            basedir = dirname(model._tx_filename)
+            if len(basedir)>0:
+                basedir+="/"
+            filename_pattern = abspath(basedir+obj.importURI)
             model._tx_model_repository.load_models_using_filepattern(filename_pattern, model=model, glob_args=self.glob_args)
 
     def load_models(self, model):
