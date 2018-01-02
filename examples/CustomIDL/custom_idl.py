@@ -1,10 +1,10 @@
 from os.path import dirname
-from textx import metamodel_from_file, children_of_type, model_root
+from textx import metamodel_from_file, children_of_type
 import os
 import textx.scoping as scoping
 import textx.scoping_tools as scoping_tools
 from functools import reduce
-
+import custom_idl_object_processors as object_processors
 
 class CustomIdlBase(object):
     def __init__(self):
@@ -25,6 +25,23 @@ class Struct(CustomIdlBase):
     def __init__(self, **kwargs):
         super(CustomIdlBase, self).__init__()
         self._init_xtextobj(**kwargs)
+
+    def get_arrays_with_adjustable_dimensions(self):
+        result = []
+        for a in filter(lambda x: type(x) is ArrayAttribute, self.attributes):
+            if not a.has_fixed_size():
+                result.append(a)
+        return result
+
+    def get_attributes_which_affects_size(self):
+        result = []
+        for a in filter(lambda x: type(x) is ScalarAttribute, self.attributes):
+            if a.affects_size():
+                result.append(a)
+        return result
+
+    def has_adjustable_array_dimensions(self):
+        return len(self.get_arrays_with_adjustable_dimensions())>0
 
     def get_structs_of_attributes(self):
         result = set()
@@ -62,18 +79,8 @@ class ArrayAttribute(CustomIdlBase):
     def has_fixed_size(self):
         return reduce( lambda x,y: x and y, map(lambda x: x.has_fixed_size(), self.array_sizes), True )
 
-def check_scalar_ref(scalar_ref):
-    def myassert(ref):
-        assert ref.default_value, "{}: {}.{} needs to have a default value".format(model_root(ref)._tx_filename,ref.parent.name,ref.name)
-    if scalar_ref.ref2:
-        myassert(scalar_ref.ref2)
-    elif scalar_ref.ref1:
-        myassert(scalar_ref.ref1)
-    else:
-        myassert(scalar_ref.ref0)
 
-
-def get_meta_model(debug=False):
+def get_meta_model(debug=False,options=None):
     from custom_idl_formula import Sum, Mul, Dif, Div, Val, ScalarRef
 
     this_folder = dirname(__file__)
@@ -88,7 +95,8 @@ def get_meta_model(debug=False):
     })
 
     mm.register_obj_processors({
-        "ScalarRef": check_scalar_ref
+        "ScalarRef": object_processors.check_scalar_ref,
+        "RawType": object_processors.CheckRawTypes(options)
     })
 
     return mm

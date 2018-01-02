@@ -12,6 +12,7 @@ package example {
     struct Data {
         scalar header : Header
         scalar n : types.int {default="5"}
+        scalar x : types.float
         array  a : types.float[header.N][n][2]
     }
     struct A {
