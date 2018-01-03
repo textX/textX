@@ -15,6 +15,9 @@
 
 class {{struct.name}} {
 public:
+    // =======================================================
+    // Meta Data
+    // =======================================================
     struct AttributeMetaInfos {
     {% for attribute in struct.attributes %}
         struct {{attribute.name}} {
@@ -40,27 +43,34 @@ public:
     {% endfor %}
     }
 {% endif %}
+
+    // =======================================================
+    // Data
+    // =======================================================
 {% for attribute in struct.attributes %}
-    {% if "ScalarAttribute" in attribute.__class__.__name__ %}
-        // -----------------------------
-        // {{ attribute.type.name }} {{ attribute.name }} -- affects size: {{ attribute.affects_size() }}
-        {% if attribute.affects_size() %}
-        attributes::ReadOnlyAttribute<AttributeMetaInfos::{{attribute.name}}, {{cpptool.fqn(attribute.type)}}, {{struct.name}}> {{attribute.name}}{{cpptool.default_value_init_code(attribute)}};
-        {% else %}
-        attributes::Attribute<AttributeMetaInfos::{{attribute.name}}, {{cpptool.fqn(attribute.type)}}, {{struct.name}}> {{attribute.name}}{{cpptool.default_value_init_code(attribute)}};
-        {% endif %}
+{% if "ScalarAttribute" in attribute.__class__.__name__ %}
+    // -----------------------------
+    // {{ attribute.type.name }} {{ attribute.name }} -- affects size: {{ attribute.affects_size() }}
+    {% if attribute.affects_size() %}
+    attributes::ReadOnlyAttribute<AttributeMetaInfos::{{attribute.name}}, {{cpptool.fqn(attribute.type)}}, {{struct.name}}> {{attribute.name}}{{cpptool.default_value_init_code(attribute)}};
+    {% else %}
+    attributes::Attribute<AttributeMetaInfos::{{attribute.name}}, {{cpptool.fqn(attribute.type)}}, {{struct.name}}> {{attribute.name}}{{cpptool.default_value_init_code(attribute)}};
     {% endif %}
-    {% if "ArrayAttribute" in attribute.__class__.__name__ %}
-        // -----------------------------
-        // array {{ attribute.name }} -- fixed size: {{ attribute.has_fixed_size() }}
-        attributes::DynamicArrayAttribute<AttributeMetaInfos::{{attribute.name}}, {{cpptool.fqn(attribute.type)}}, {{struct.name}}, {{attribute.array_sizes|length}}> {{ attribute.name }} = { {
-        {% for s in attribute.array_sizes %}
-            [this](){ return {{ s.render_formula(separator="->",postfix=".value()")}}; } {{ "," if not loop.last }}
-        {% endfor %}
-        } };
-    {% endif %}
+{% endif %}
+{% if "ArrayAttribute" in attribute.__class__.__name__ %}
+    // -----------------------------
+    // array {{ attribute.name }} -- fixed size: {{ attribute.has_fixed_size() }}
+    attributes::DynamicArrayAttribute<AttributeMetaInfos::{{attribute.name}}, {{cpptool.fqn(attribute.type)}}, {{struct.name}}, {{attribute.array_sizes|length}}> {{ attribute.name }} = { {
+    {% for s in attribute.array_sizes %}
+        [this](){ return {{ s.render_formula(separator="->",postfix=".value()")}}; } {{ "," if not loop.last }}
+    {% endfor %}
+    } };
+{% endif %}
 {% endfor %}
 
+    // =======================================================
+    // Visitor stuff
+    // =======================================================
     /**
      * const visitor
      * @param visitor
