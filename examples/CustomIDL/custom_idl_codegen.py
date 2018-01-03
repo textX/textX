@@ -33,7 +33,8 @@ def main(model_file=None, srcgen_folder=None, debug=False):
     attributes_folder = srcgen_folder+"/attributes"
     if not exists(attributes_folder):
         makedirs(attributes_folder)
-    copyfile(this_folder+"/attributes.h",attributes_folder+"/attributes.h")
+    copyfile(this_folder+"/lib/attributes.h",attributes_folder+"/attributes.h")
+    copyfile(this_folder+"/lib/tools.h",attributes_folder+"/tools.h")
 
     # Initialize template engine.
     jinja_env = jinja2.Environment(

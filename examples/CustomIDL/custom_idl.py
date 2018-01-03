@@ -70,6 +70,9 @@ class ScalarAttribute(CustomIdlBase):
                         return True
         return False
 
+    def has_raw_type(self):
+        return type(self.type) is RawType
+
 
 class ArrayAttribute(CustomIdlBase):
     def __init__(self, **kwargs):
@@ -78,6 +81,9 @@ class ArrayAttribute(CustomIdlBase):
 
     def has_fixed_size(self):
         return reduce( lambda x,y: x and y, map(lambda x: x.has_fixed_size(), self.array_sizes), True )
+
+    def has_raw_type(self):
+        return type(self.type) is RawType
 
 
 def get_meta_model(debug=False,options=None):
