@@ -20,7 +20,7 @@ namespace attributes {
                 template<class MetaInfo, class Owner, class T>
                 void visitStructuredScalar(const Owner&, const T& value) {
                     Visitor visitor{out, identation+2,max_array_elems_per_line};
-                    out << std::string(identation, ' ') << MetaInfo::type_name() << " " << MetaInfo::name() << "= {\n";
+                    out << std::string(identation, ' ') << MetaInfo::type_name() << " " << MetaInfo::name() << " = {\n";
                     value.accept(visitor);
                     out << std::string(identation, ' ') << "}\n";
                 }
