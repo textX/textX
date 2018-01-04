@@ -36,7 +36,7 @@ Get help:
         $ python custom_idl_cpptool.py --help
 
 
-Run code generation:
+Run code generation for C++:
 
         $ python custom_idl_cpptool.py example.myidl --generate-cpp --src-gen-folder=~/Documents/target_folder_for_code
 
