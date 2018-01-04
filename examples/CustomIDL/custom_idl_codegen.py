@@ -4,7 +4,7 @@ template engine (http://jinja.pocoo.org/docs/dev/)
 """
 
 from __future__ import unicode_literals
-import custom_idl
+import custom_idl_metamodel
 from os import mkdir,makedirs
 from shutil import copyfile
 from os.path import dirname, join, exists, expanduser
@@ -15,7 +15,7 @@ import custom_idl_cpptool as cpptool
 def main(model_file=None, srcgen_folder=None, debug=False):
 
     this_folder = dirname(__file__)
-    mm = custom_idl.get_meta_model()
+    mm = custom_idl_metamodel.get_meta_model()
 
     if not model_file:
         model_file = join(this_folder, 'example.myidl')
@@ -33,12 +33,12 @@ def main(model_file=None, srcgen_folder=None, debug=False):
     attributes_folder = srcgen_folder+"/attributes"
     if not exists(attributes_folder):
         makedirs(attributes_folder)
-    copyfile(this_folder+"/lib/attributes.h",attributes_folder+"/attributes.h")
-    copyfile(this_folder+"/lib/tools.h",attributes_folder+"/tools.h")
+    copyfile(this_folder+"/support/attributes.h",attributes_folder+"/attributes.h")
+    copyfile(this_folder+"/support/tools.h",attributes_folder+"/tools.h")
 
     # Initialize template engine.
     jinja_env = jinja2.Environment(
-        loader=jinja2.FileSystemLoader(this_folder),
+        loader=jinja2.FileSystemLoader(this_folder+"/templates"),
         trim_blocks=True,
         lstrip_blocks=True)
 

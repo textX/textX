@@ -1,4 +1,4 @@
-from custom_idl import CustomIdlBase
+from custom_idl_metamodel import CustomIdlBase
 from functools import reduce
 
 class FormulaBase(CustomIdlBase):

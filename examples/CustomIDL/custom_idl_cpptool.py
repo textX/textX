@@ -1,4 +1,4 @@
-from custom_idl import Struct, RawType
+from custom_idl_metamodel import Struct, RawType
 from textx import model_root
 
 def open_namespace(namespace):
