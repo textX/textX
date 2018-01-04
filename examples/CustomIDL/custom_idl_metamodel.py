@@ -87,7 +87,7 @@ class ArrayAttribute(CustomIdlBase):
         return type(self.type) is RawType
 
 
-def get_meta_model(debug=False,options=None):
+def get_meta_model(debug=False,**options):
     from custom_idl_metamodel_formula import Sum, Mul, Dif, Div, Val, ScalarRef
 
     this_folder = dirname(__file__)

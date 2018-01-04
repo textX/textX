@@ -12,10 +12,10 @@ import jinja2
 from textx import children_of_type
 import custom_idl_cpptool as cpptool
 
-def main(model_file=None, srcgen_folder=None, debug=False):
+def main(model_file=None, srcgen_folder=None, debug=False, generate_cpp=True):
 
     this_folder = dirname(__file__)
-    mm = custom_idl_metamodel.get_meta_model()
+    mm = custom_idl_metamodel.get_meta_model(generate_cpp=generate_cpp)
 
     if not model_file:
         model_file = join(this_folder, 'example.myidl')
@@ -29,23 +29,25 @@ def main(model_file=None, srcgen_folder=None, debug=False):
             mkdir(srcgen_folder)
     print("generating into {}".format(srcgen_folder))
 
+    if generate_cpp:
+        generate_cpp_code(idl_model, srcgen_folder, this_folder)
+
+
+def generate_cpp_code(idl_model, srcgen_folder, this_folder):
     # attributes helper
-    attributes_folder = srcgen_folder+"/attributes"
+    attributes_folder = srcgen_folder + "/attributes"
     if not exists(attributes_folder):
         makedirs(attributes_folder)
-    copyfile(this_folder+"/support/attributes.h",attributes_folder+"/attributes.h")
-    copyfile(this_folder+"/support/tools.h",attributes_folder+"/tools.h")
-
+    copyfile(this_folder + "/support/attributes.h", attributes_folder + "/attributes.h")
+    copyfile(this_folder + "/support/tools.h", attributes_folder + "/tools.h")
     # Initialize template engine.
     jinja_env = jinja2.Environment(
-        loader=jinja2.FileSystemLoader(this_folder+"/templates"),
+        loader=jinja2.FileSystemLoader(this_folder + "/templates"),
         trim_blocks=True,
         lstrip_blocks=True)
-
     # Load Java template
     template = jinja_env.get_template('cpp_header.template')
-
-    for struct in children_of_type("Struct",idl_model):
+    for struct in children_of_type("Struct", idl_model):
         # For each entity generate java file
         struct_folder = join(srcgen_folder, cpptool.path_to_file_name(struct))
         if not exists(struct_folder):
@@ -53,7 +55,7 @@ def main(model_file=None, srcgen_folder=None, debug=False):
         with open(join(struct_folder,
                        "{}.h".format(struct.name)), 'w') as f:
             f.write(template.render(struct=struct,
-                                    cpptool = cpptool
+                                    cpptool=cpptool
                                     ))
 
 
@@ -64,6 +66,9 @@ if __name__ == "__main__":
                         help='model filename')
     parser.add_argument('--src-gen-folder', dest='srcgen', default="srcgen", type=str,
                         help='folder where to generate the code')
+    parser.add_argument('--generate-cpp', dest='generate_cpp', default=False,
+                        action='store_true', help='generate C++ code')
 
     args = parser.parse_args()
-    main(model_file=args.model_file, srcgen_folder=expanduser(args.srcgen))
+    main(model_file=args.model_file, srcgen_folder=expanduser(args.srcgen),
+         generate_cpp=args.generate_cpp)

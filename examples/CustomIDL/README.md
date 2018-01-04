@@ -38,5 +38,5 @@ Get help:
 
 Run code generation:
 
-        $ python custom_idl_cpptool.py example.myidl --src-gen-folder=~/Documents/target_folder_for_code
+        $ python custom_idl_cpptool.py example.myidl --generate-cpp --src-gen-folder=~/Documents/target_folder_for_code
 
