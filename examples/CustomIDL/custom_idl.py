@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from os.path import dirname
 from textx import metamodel_from_file, children_of_type
 import os
