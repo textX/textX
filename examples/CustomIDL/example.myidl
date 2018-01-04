@@ -13,7 +13,10 @@ package example {
         scalar header : Header
         scalar n : types.int {default="5"}
         scalar x : types.float
-        array  a : types.float[header.N][n][2]
+        array  a : types.float
+            [header.N:master_index]
+            [n:client_index]
+            [2:real_imag]
     }
     struct A {
         scalar header : Header
@@ -53,11 +56,11 @@ package example {
         array  f3 : types.int[3-(4-5)]
         array  f4 : types.int[(3-4)-5]
         array  f5 : types.int[(3-4)-(5)]
-        array  m1 : types.int[2][3]
-        array  m2 : types.int[2][3][4]
-        array  m3 : types.int[2][3][4][5]
-        array  m4 : types.int[2][n]
-        array  m5 : example.Header[2][n]
+        array  m1 : types.int[2:x][3:y]
+        array  m2 : types.int[2:x][3:y][4:z]
+        array  m3 : types.int[2:x][3:y][4:z][5:w]
+        array  m4 : types.int[2:x][n:y]
+        array  m5 : example.Header[2:x][n:y]
     }
 
 }

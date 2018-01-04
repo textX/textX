@@ -65,8 +65,8 @@ class ScalarAttribute(CustomIdlBase):
     def affects_size(self):
         struct = scoping_tools.get_recursive_parent_with_typename(self, "Struct")
         for a in filter(lambda x: type(x) is ArrayAttribute, struct.attributes):
-            for s in a.array_sizes:
-                for ref in children_of_type("ScalarRef", s):
+            for d in a.array_dimensions:
+                for ref in children_of_type("ScalarRef", d.array_size):
                     if self is ref.ref0:
                         return True
         return False
@@ -81,10 +81,21 @@ class ArrayAttribute(CustomIdlBase):
         self._init_xtextobj(**kwargs)
 
     def has_fixed_size(self):
-        return reduce( lambda x,y: x and y, map(lambda x: x.has_fixed_size(), self.array_sizes), True )
+        return reduce( lambda x,y: x and y, map(lambda x: x.array_size.has_fixed_size(), self.array_dimensions), True )
 
     def has_raw_type(self):
         return type(self.type) is RawType
+
+class ArrayDimension(CustomIdlBase):
+    def __init__(self, **kwargs):
+        super(CustomIdlBase, self).__init__()
+        self._init_xtextobj(**kwargs)
+
+    def get_array_index_name(self):
+        if self.array_index_name:
+            return self.array_index_name
+        else:
+            return "index"
 
 
 def get_meta_model(debug=False,**options):
@@ -92,7 +103,7 @@ def get_meta_model(debug=False,**options):
 
     this_folder = dirname(__file__)
     mm = metamodel_from_file( os.path.join(os.path.abspath(this_folder),'support/CustomIDL.tx'), debug=debug,
-                              classes=[Sum,Mul,Dif,Div,Val,ScalarRef,RawType,Struct,ArrayAttribute,ScalarAttribute])
+                              classes=[Sum,Mul,Dif,Div,Val,ScalarRef,RawType,Struct,ArrayAttribute,ScalarAttribute,ArrayDimension])
 
     mm.register_scope_provider({
         "*.*": scoping.ScopeProviderFullyQualifiedNamesWithImportURI(),
@@ -103,7 +114,8 @@ def get_meta_model(debug=False,**options):
 
     mm.register_obj_processors({
         "ScalarRef": object_processors.check_scalar_ref,
-        "RawType": object_processors.CheckRawTypes(options)
+        "RawType": object_processors.CheckRawTypes(options),
+        "ArrayDimension": object_processors.check_array_dimensions
     })
 
     return mm

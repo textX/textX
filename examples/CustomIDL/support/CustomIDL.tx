@@ -42,8 +42,13 @@ ScalarAttribute:
     )?
 ;
 ArrayAttribute:
-    "array" name=ID ":" type=[Type|FQN] ("[" array_sizes+=Sum "]")+
+    "array" name=ID ":" type=[Type|FQN] ("[" array_dimensions+=ArrayDimension "]")+
 ;
+ArrayDimension:
+    array_size=Sum
+    (":" array_index_name=ID)?
+;
+
 Sum:
     (parts+=Dif ( "+" parts+=Dif )*)
 ;

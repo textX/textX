@@ -18,14 +18,17 @@ public:
     // =======================================================
     // Meta Data
     // =======================================================
+    /** Meta info for attributes of {{ struct.name }} */
     struct AttributeMetaInfos {
     {% for attribute in struct.attributes %}
+        /** Meta info for {{ struct.name }}::{{attribute.name}} */
         struct {{attribute.name}} {
             static constexpr const char* name() { return "{{attribute.name}}"; }
             static constexpr const char* type_name() { return "{{attribute.type.name}}"; }
         };
     {% endfor %}
     };
+    /** Meta info for {{ struct.name }} */
     struct MetaInfo {
         static constexpr const char* type_name() { return "{{struct.name}}"; }
     };
@@ -49,8 +52,7 @@ public:
     // =======================================================
 {% for attribute in struct.attributes %}
 {% if "ScalarAttribute" in attribute.__class__.__name__ %}
-    // -----------------------------
-    // {{ attribute.type.name }} {{ attribute.name }} -- affects size: {{ attribute.affects_size() }}
+    /** scalar attribute {{ attribute.name }} -- affects size: {{ attribute.affects_size() }} */
     {% if attribute.affects_size() %}
     attributes::ReadOnlyAttribute<AttributeMetaInfos::{{attribute.name}}, {{cpptool.fqn(attribute.type)}}, {{struct.name}}> {{attribute.name}}{{cpptool.default_value_init_code(attribute)}};
     {% else %}
@@ -58,11 +60,15 @@ public:
     {% endif %}
 {% endif %}
 {% if "ArrayAttribute" in attribute.__class__.__name__ %}
-    // -----------------------------
-    // array {{ attribute.name }} -- fixed size: {{ attribute.has_fixed_size() }}
-    attributes::DynamicArrayAttribute<AttributeMetaInfos::{{attribute.name}}, {{cpptool.fqn(attribute.type)}}, {{struct.name}}, {{attribute.array_sizes|length}}> {{ attribute.name }} = { {
-    {% for s in attribute.array_sizes %}
-        [this](){ return {{ s.render_formula(separator="->",postfix=".value()")}}; } {{ "," if not loop.last }}
+    /** array attribute {{ attribute.name }} -- fixed size: {{ attribute.has_fixed_size() }}
+      * dimensions:
+    {% for d in attribute.array_dimensions %}
+      * - {{ d.get_array_index_name() }}
+    {% endfor %}
+      */
+    attributes::DynamicArrayAttribute<AttributeMetaInfos::{{attribute.name}}, {{cpptool.fqn(attribute.type)}}, {{struct.name}}, {{attribute.array_dimensions|length}}> {{ attribute.name }} = { {
+    {% for s in attribute.array_dimensions %}
+        [this](){ return {{ s.array_size.render_formula(separator="->",postfix=".value()")}}; } {{ "," if not loop.last }}
     {% endfor %}
     } };
 {% endif %}

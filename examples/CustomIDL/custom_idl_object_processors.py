@@ -10,6 +10,10 @@ def check_scalar_ref(scalar_ref):
     else:
         myassert(scalar_ref.ref0)
 
+def check_array_dimensions(array_dimension):
+    if len(array_dimension.parent.array_dimensions)>1:
+        assert array_dimension.array_index_name, "{}: array {} needs to have named dimensions: specify [SIZE:NAME]".format(model_root(array_dimension)._tx_filename,array_dimension.parent.name)
+
 class CheckRawTypes(object):
     def __init__(self,options):
         if options:
