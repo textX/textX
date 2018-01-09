@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 import os
 from os.path import dirname, join
 from textx.export import metamodel_export, model_export
-from custom_idl import get_meta_model
+from custom_idl_metamodel import get_meta_model
 
 this_folder = dirname(__file__)
 
