@@ -74,7 +74,92 @@ namespace attributes {
             structure.accept(visitor);
             out << "}\n";
         }
-        
+
+
+        namespace binary_write_support {
+            struct Visitor {
+                std::ostream &out;
+
+                template<class MetaInfo, class Owner, class T>
+                void visitRawTypeScalar(const Owner&, const T& value) {
+                    out.write( reinterpret_cast<const char*>( &value ), sizeof( T ) );
+                }
+
+                template<class MetaInfo, class Owner, class T>
+                void visitStructuredScalar(const Owner&, const T& value) {
+                    Visitor visitor{out};
+                    value.accept(visitor);
+                }
+
+                template<class MetaInfo, class Owner, class T>
+                void visitRawTypeArray(const Owner&, const T& value) {
+                    for (const auto &v: value) {
+                        out.write( reinterpret_cast<const char*>( &v ), sizeof( T ) );
+                    }
+                }
+
+                template<class MetaInfo, class Owner, class T>
+                void visitStructuredArray(const Owner&, const T& value) {
+                    Visitor visitor{out};
+                    for (const auto &v: value) {
+                        v.accept(visitor);
+                    }
+                }
+            };
+        }
+
+        /** binary write a structure.
+         * @param structure: a structure with attributes
+         */
+        template<class S>
+        void binary_write(const S& structure, std::ostream &out) {
+            //using MetaInfo = typename S::MetaInfo;
+            binary_write_support::Visitor visitor{out};
+            structure.accept(visitor);
+        }
+
+
+        namespace binary_read_support {
+            struct Visitor {
+                std::istream &inp;
+
+                template<class MetaInfo, class Owner, class T>
+                void visitRawTypeScalar(Owner&, T& value) {
+                    inp.read( reinterpret_cast<char*>( &value ), sizeof( T ) );
+                }
+
+                template<class MetaInfo, class Owner, class T>
+                void visitStructuredScalar(Owner&, T& value) {
+                    Visitor visitor{inp};
+                    value.accept(visitor);
+                }
+
+                template<class MetaInfo, class Owner, class T>
+                void visitRawTypeArray(Owner&, T& value) {
+                    for (auto &v: value) {
+                        inp.read( reinterpret_cast<char*>( &v ), sizeof( T ) );
+                    }
+                }
+
+                template<class MetaInfo, class Owner, class T>
+                void visitStructuredArray(Owner&, T& value) {
+                    Visitor visitor{inp};
+                    for (auto &v: value) {
+                        v.accept(visitor);
+                    }
+                }
+            };
+        }
+
+        /** binary read a structure.
+         * @param structure: a structure with attributes
+         */
+        template<class S>
+        void binary_read(S& structure, std::istream &inp) {
+            //using MetaInfo = typename S::MetaInfo;
+            binary_read_support::Visitor visitor{inp};
+            structure.accept(visitor);
+        }
         
     }
 }

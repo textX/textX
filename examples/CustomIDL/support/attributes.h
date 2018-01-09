@@ -32,6 +32,7 @@ public:
 protected:
     ReadOnlyAttribute& operator=(const value_type& v) { value_data=v; return *this; }    
     value_type* operator->() { return &value_data; }
+    value_type& value() { return value_data; }
 };
 
 template <class MetaInfo, class A, class Owner>
@@ -42,6 +43,7 @@ class Attribute : public ReadOnlyAttribute<MetaInfo, A, Owner> {
     using ReadOnlyAttribute<MetaInfo, A, Owner>::ReadOnlyAttribute;
     using ReadOnlyAttribute<MetaInfo, A, Owner>::operator=;
     using ReadOnlyAttribute<MetaInfo, A, Owner>::operator->;
+    using ReadOnlyAttribute<MetaInfo, A, Owner>::value;
 };
 
 template<size_t N>
