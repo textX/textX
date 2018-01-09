@@ -110,6 +110,7 @@ namespace attributes {
 
         /** binary write a structure.
          * @param structure: a structure with attributes
+         * @param out: output file
          */
         template<class S>
         void binary_write(const S& structure, std::ostream &out) {
@@ -153,6 +154,7 @@ namespace attributes {
 
         /** binary read a structure.
          * @param structure: a structure with attributes
+         * @param inp: input file
          */
         template<class S>
         void binary_read(S& structure, std::istream &inp) {
