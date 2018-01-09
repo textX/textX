@@ -7,16 +7,18 @@ package example {
         scalar proofword : types.int
         scalar N : types.int { default = "0x16" }
         scalar k : types.int
-        array info : types.int[10]
+        array info : types.float[10]
     }
     struct Data {
         scalar header : Header
         scalar n : types.int {default="5"}
         scalar x : types.float
-        array  a : types.float
+        array  a : types.UINT16
             [header.N:master_index]
             [n:client_index]
+            // [q:error_example] // error, to test interactively the object processor check_array_attribute
             [2:real_imag]
+        scalar q : types.int {default="5"}
     }
     struct A {
         scalar header : Header

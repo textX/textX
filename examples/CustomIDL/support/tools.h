@@ -7,6 +7,7 @@
 namespace attributes {
     namespace tools {
 
+        namespace pprint_support {
             struct Visitor {
                 std::ostream &out;
                 size_t identation=0;
@@ -31,7 +32,7 @@ namespace attributes {
                     size_t element_in_line_idx=0;
                     size_t line_idx=0;
                     if (value.size()>max_array_elems_per_line) {
-                            out << "\n" << std::string(identation, ' ');                        
+                            out << "\n" << std::string(identation, ' ');
                     }
                     for (const auto &v: value) {
                         if (line_idx>0 and element_in_line_idx==0) {
@@ -60,7 +61,8 @@ namespace attributes {
                     out << std::string(identation, ' ') << "]\n";
                 }
             };
-        
+        }
+
         /** Pretty prints a structure.
          * @param structure: a structure with attributes
          */
@@ -68,7 +70,7 @@ namespace attributes {
         void pprint(const S& structure, std::ostream &out = std::cout) {
             using MetaInfo = typename S::MetaInfo;
             out << MetaInfo::type_name() << " {\n";
-            Visitor visitor{out,2};
+            pprint_support::Visitor visitor{out,2};
             structure.accept(visitor);
             out << "}\n";
         }

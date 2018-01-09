@@ -1,12 +1,12 @@
 package types {
     type int { C++: "int32_t" including '<cstdint>' }
     type float { C++: "float" }
-    type UINT8  { C++: "uint8_t"  including '<cstdin>' }
-    type UINT16 { C++: "uint16_t" including '<cstdin>' }
-    type UINT32 { C++: "uint32_t" including '<cstdin>' }
-    type UINT64 { C++: "uint64_t" including '<cstdin>' }
-    type SINT8  { C++: "int8_t"  including '<cstdin>' }
-    type SINT16 { C++: "int16_t" including '<cstdin>' }
-    type SINT32 { C++: "int32_t" including '<cstdin>' }
-    type SINT64 { C++: "int64_t" including '<cstdin>' }
+    type UINT8  { C++: "uint8_t"  including '<cstdint>' }
+    type UINT16 { C++: "uint16_t" including '<cstdint>' }
+    type UINT32 { C++: "uint32_t" including '<cstdint>' }
+    type UINT64 { C++: "uint64_t" including '<cstdint>' }
+    type SINT8  { C++: "int8_t"  including '<cstdint>' }
+    type SINT16 { C++: "int16_t" including '<cstdint>' }
+    type SINT32 { C++: "int32_t" including '<cstdint>' }
+    type SINT64 { C++: "int64_t" including '<cstdint>' }
 }

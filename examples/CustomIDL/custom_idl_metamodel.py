@@ -115,7 +115,8 @@ def get_meta_model(debug=False,**options):
     mm.register_obj_processors({
         "ScalarRef": object_processors.check_scalar_ref,
         "RawType": object_processors.CheckRawTypes(options),
-        "ArrayDimension": object_processors.check_array_dimensions
+        "ArrayDimension": object_processors.check_array_dimensions,
+        "ArrayAttribute": object_processors.check_array_attribute
     })
 
     return mm

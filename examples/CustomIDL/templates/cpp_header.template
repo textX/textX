@@ -100,6 +100,32 @@ public:
     {% endif %}
 {% endfor %}
     }
+    /**
+     * init visitor
+     * @param visitor
+     */
+    template<class Visitor>
+    void accept(Visitor &visitor) {
+{% for attribute in struct.attributes %}
+    {% if "ScalarAttribute" in attribute.__class__.__name__ %}
+        {% if attribute.has_raw_type() %}
+        visitor.template visitRawTypeScalar<AttributeMetaInfos::{{attribute.name}}>( *this, {{attribute.name}}.value() );
+        {% else %}
+        visitor.template visitStructuredScalar<AttributeMetaInfos::{{attribute.name}}>( *this, {{attribute.name}}.value() );
+        {% endif %}
+    {% endif %}
+    {% if "ArrayAttribute" in attribute.__class__.__name__ %}
+        {% if not attribute.has_fixed_size() %}
+        {{ attribute.name }}.adjust_size();
+        {% endif %}
+        {% if attribute.has_raw_type() %}
+        visitor.template visitRawTypeArray<AttributeMetaInfos::{{attribute.name}}>( *this, {{attribute.name}}.value() );
+        {% else %}
+        visitor.template visitStructuredArray<AttributeMetaInfos::{{attribute.name}}>( *this, {{attribute.name}}.value() );
+        {% endif %}
+    {% endif %}
+{% endfor %}
+    }
 
 };
 
