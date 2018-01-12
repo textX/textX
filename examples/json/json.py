@@ -1,5 +1,5 @@
 from os.path import join, dirname
-from textx.metamodel import metamodel_from_file
+from textx import metamodel_from_file
 from textx.export import metamodel_export, model_export
 
 
@@ -13,16 +13,16 @@ def main(debug=False):
     model1 = json_mm.model_from_file(join(this_folder, 'example1.json'))
     model_export(model1, join(this_folder, 'example1.json.dot'))
 
-    model2 = json_mm.model_from_file(join(this_folder,'example2.json'))
+    model2 = json_mm.model_from_file(join(this_folder, 'example2.json'))
     model_export(model2, join(this_folder, 'example2.json.dot'))
 
-    model3 = json_mm.model_from_file(join(this_folder,'example3.json'))
+    model3 = json_mm.model_from_file(join(this_folder, 'example3.json'))
     model_export(model3, join(this_folder, 'example3.json.dot'))
 
-    model4 = json_mm.model_from_file(join(this_folder,'example4.json'))
+    model4 = json_mm.model_from_file(join(this_folder, 'example4.json'))
     model_export(model4, join(this_folder, 'example4.json.dot'))
 
-    model5 = json_mm.model_from_file(join(this_folder,'example5.json'))
+    model5 = json_mm.model_from_file(join(this_folder, 'example5.json'))
     model_export(model5, join(this_folder, 'example5.json.dot'))
 
 

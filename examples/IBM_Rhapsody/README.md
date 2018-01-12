@@ -15,7 +15,7 @@ To check and visualize meta-model and test model:
 Load from code:
 
 ```python
-from textx.metamodel import metamodel_from_file
+from textx import metamodel_from_file
 
 meta = metamodel_from_file('rhapsody.tx')
 model = meta.model_from_file('LightSwitch.rpy')

@@ -10,9 +10,9 @@
 from __future__ import unicode_literals
 from arpeggio import Match, OrderedChoice, Sequence, OneOrMore, ZeroOrMore,\
     Optional, SyntaxPredicate
-from .const import MULT_ZEROORMORE, MULT_ONEORMORE, MULT_ONE, RULE_ABSTRACT, \
-    RULE_COMMON, RULE_MATCH
-from .textx import PRIMITIVE_PYTHON_TYPES, BASE_TYPE_NAMES, ALL_TYPE_NAMES
+from textx.const import MULT_ZEROORMORE, MULT_ONEORMORE, MULT_ONE, \
+    RULE_ABSTRACT, RULE_COMMON, RULE_MATCH
+from textx.lang import PRIMITIVE_PYTHON_TYPES, BASE_TYPE_NAMES, ALL_TYPE_NAMES
 import codecs
 import sys
 if sys.version < '3':

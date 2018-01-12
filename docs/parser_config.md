@@ -6,7 +6,7 @@ Parser is by default case sensitive. For DSLs that should be case insensitive
 use `ignore_case` parameter of the meta-model constructor call.
 
 ```python
-from textx.metamodel import metamodel_from_file
+from textx import metamodel_from_file
 
 my_metamodel = metamodel_from_file('mygrammar.tx', ignore_case=True)
 ```
@@ -20,7 +20,7 @@ parameter in the constructor call. Also, what is a whitespace can be redefined b
 the `ws` string parameter.
 
 ```python
-from textx.metamodel import metamodel_from_file
+from textx import metamodel_from_file
 my_metamodel = metamodel_from_file('mygrammar.tx', skipws=False, ws='\s\n')
 ```
 
@@ -49,7 +49,7 @@ To enable this feature set parameter `autokwd` to `True` in the constructor
 call.
 
 ```python
-from textx.metamodel import metamodel_from_file
+from textx import metamodel_from_file
 my_metamodel = metamodel_from_file('mygrammar.tx', autokwd=True)
 ```
 
@@ -68,7 +68,7 @@ parsing is slow, try to enable memoization by setting `memoization` parameter to
 `True` during meta-model instantiation.
 
 ```python
-from textx.metamodel import metamodel_from_file
+from textx import metamodel_from_file
 my_metamodel = metamodel_from_file('mygrammar.tx', memoization=True)
 ```
 

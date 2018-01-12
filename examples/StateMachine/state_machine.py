@@ -1,6 +1,6 @@
 import sys
 from os.path import dirname, join
-from textx.metamodel import metamodel_from_file
+from textx import metamodel_from_file
 
 
 class StateMachine(object):

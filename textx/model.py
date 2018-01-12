@@ -3,7 +3,7 @@
 # Purpose: Model construction.
 # Author: Igor R. Dejanovic <igor DOT dejanovic AT gmail DOT com>
 # Copyright:
-#    (c) 2014 Igor R. Dejanovic <igor DOT dejanovic AT gmail DOT com>
+#    (c) 2014-2017 Igor R. Dejanovic <igor DOT dejanovic AT gmail DOT com>
 # License: MIT License
 #######################################################################
 
@@ -12,10 +12,11 @@ import codecs
 import traceback
 from collections import OrderedDict
 from arpeggio import Parser, Sequence, NoMatch, EOF, Terminal
-from .exceptions import TextXSyntaxError, TextXSemanticError
-from .const import MULT_OPTIONAL, MULT_ONE, MULT_ONEORMORE, MULT_ZEROORMORE, \
-    RULE_COMMON, RULE_ABSTRACT, RULE_MATCH, MULT_ASSIGN_ERROR, UNKNOWN_OBJ_ERROR
-from .textx import PRIMITIVE_PYTHON_TYPES
+from textx.exceptions import TextXSyntaxError, TextXSemanticError
+from textx.const import MULT_OPTIONAL, MULT_ONE, MULT_ONEORMORE, \
+    MULT_ZEROORMORE, RULE_COMMON, RULE_ABSTRACT, RULE_MATCH, \
+    MULT_ASSIGN_ERROR, UNKNOWN_OBJ_ERROR
+from textx.lang import PRIMITIVE_PYTHON_TYPES
 if sys.version < '3':
     text = unicode  # noqa
 else:
@@ -434,7 +435,6 @@ def parse_tree_to_objgraph(parser, parse_tree):
         """
         # TODO: Scoping and name-space rules.
 
-        resolved_set = set()
         metamodel = parser.metamodel
 
         def _resolve_link_rule_ref(obj_ref):
@@ -524,9 +524,8 @@ def parse_tree_to_objgraph(parser, parse_tree):
         """
         Depth-first model object processing.
         """
-
-        metaclass = type(model_obj)
-        if type(model_obj) not in PRIMITIVE_PYTHON_TYPES:
+        try:
+            metaclass = metamodel[model_obj.__class__.__name__]
             for metaattr in metaclass._tx_attrs.values():
                 # If attribute is containment reference go down
                 if metaattr.ref and metaattr.cont:
@@ -538,6 +537,8 @@ def parse_tree_to_objgraph(parser, parse_tree):
                                     call_obj_processors(obj)
                         else:
                             call_obj_processors(attr)
+        except KeyError:
+            metaclass = type(model_obj)
 
         obj_processor = metamodel.obj_processors.get(metaclass.__name__, None)
         if obj_processor:

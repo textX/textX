@@ -62,7 +62,7 @@ These are the steps to build a very basic Hello World - like language.
 4. To use your models from Python first create meta-model from textX language
    description (file `hello.py`):
 
-        from textx.metamodel import metamodel_from_file
+        from textx import metamodel_from_file
         hello_meta = metamodel_from_file('hello.tx')
 
 5. Than use meta-model to create models from textual description:

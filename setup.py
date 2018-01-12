@@ -4,11 +4,10 @@ import os
 import sys
 import codecs
 from setuptools import setup
-import textx
 
 NAME = 'textX'
 DESC = 'Meta-language for DSL implementation inspired by Xtext'
-VERSION = textx.__version__
+VERSION = "1.6.1"
 AUTHOR = 'Igor R. Dejanovic'
 AUTHOR_EMAIL = 'igor DOT dejanovic AT gmail DOT com'
 LICENSE = 'MIT'
@@ -37,20 +36,20 @@ if sys.argv[-1].startswith('publish'):
     sys.exit()
 
 setup(
-    name = NAME,
-    version = VERSION,
-    description = DESC,
-    long_description = README,
-    author = AUTHOR,
-    author_email = AUTHOR_EMAIL,
-    maintainer = AUTHOR,
-    maintainer_email = AUTHOR_EMAIL,
-    license = LICENSE,
-    url = URL,
-    download_url = DOWNLOAD_URL,
-    packages = ["textx", "textx.commands"],
-    install_requires = ["Arpeggio"],
-    keywords = "parser meta-language meta-model language DSL",
+    name=NAME,
+    version=VERSION,
+    description=DESC,
+    long_description=README,
+    author=AUTHOR,
+    author_email=AUTHOR_EMAIL,
+    maintainer=AUTHOR,
+    maintainer_email=AUTHOR_EMAIL,
+    license=LICENSE,
+    url=URL,
+    download_url=DOWNLOAD_URL,
+    packages=["textx", "textx.commands"],
+    install_requires=["Arpeggio"],
+    keywords="parser meta-language meta-model language DSL",
     entry_points={
         'console_scripts': [
             'textx = textx.commands.console:textx'
