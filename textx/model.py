@@ -556,13 +556,14 @@ def parse_tree_to_objgraph(parser, parse_tree):
             parser.dprint("CALLING OBJECT PROCESSORS")
         call_obj_processors(model)
     
-    # Cross-references for go-to definition language server support
-    # Already sorted based on ref_pos_start attr (required for binary search)
-    model._pos_crossref_list = pos_crossref_list
+    if type(model) not in PRIMITIVE_PYTHON_TYPES:
+        # Cross-references for go-to definition language server support
+        # Already sorted based on ref_pos_start attr (required for binary search)
+        model._pos_crossref_list = pos_crossref_list
 
-    # Dict for storing rules where key is position of rule instance in text
-    # Sorted based on nested rules
-    model._pos_rule_dict = OrderedDict(sorted(pos_rule_dict.items(),
+        # Dict for storing rules where key is position of rule instance in text
+        # Sorted based on nested rules
+        model._pos_rule_dict = OrderedDict(sorted(pos_rule_dict.items(),
                                     key=lambda x: x[0], reverse=True))
 
     return model
