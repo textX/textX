@@ -2,4 +2,25 @@
 
 class {{struct.name}}:
     def __init__(self):
-        pass
+{% for attribute in struct.attributes %}
+{% if "ScalarAttribute" in attribute.__class__.__name__ %}
+    """ scalar attribute {{ attribute.name }} -- affects size: {{ attribute.affects_size() }} """
+    {% if attribute.affects_size() %}
+    ReadOnlyAttribute {{attribute.name}} {{attribute.type.name}} {{pytool.default_value_init_code(attribute)}}
+    {% else %}
+    Attribute {{attribute.name}} {{attribute.type.name}} {{pytool.default_value_init_code(attribute)}}
+    {% endif %}
+{% endif %}
+{% if "ArrayAttribute" in attribute.__class__.__name__ %}
+    """ array attribute {{ attribute.name }} -- fixed size: {{ attribute.has_fixed_size() }}
+        dimensions:
+    {% for d in attribute.array_dimensions %}
+        - {{ d.get_array_index_name() }}
+    {% endfor %}
+    """
+    DynamicArrayAttribute {{attribute.type.name}} {{attribute.name}} x {{attribute.array_dimensions|length}}:
+    {% for s in attribute.array_dimensions %}
+        [this](){ return {{ s.array_size.render_formula(separator="->",postfix=".value()")}}; } {{ "," if not loop.last }}
+    {% endfor %}
+{% endif %}
+{% endfor %}

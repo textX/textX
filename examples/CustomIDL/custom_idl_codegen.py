@@ -11,6 +11,7 @@ from os.path import dirname, join, exists, expanduser
 import jinja2
 from textx import children_of_type
 import custom_idl_cpptool as cpptool
+import custom_idl_pytool as pytool
 
 def main(model_file=None, srcgen_folder=None, debug=False, generate_cpp=True, generate_python=True):
 
@@ -77,7 +78,7 @@ def generate_python_code(idl_model, srcgen_folder, this_folder):
         with open(join(struct_folder,
                        "{}.py".format(struct.name)), 'w') as f:
             f.write(template.render(struct=struct,
-                                    cpptool=cpptool
+                                    pytool=pytool
                                     ))
 
 
