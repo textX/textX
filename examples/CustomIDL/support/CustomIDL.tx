@@ -22,10 +22,14 @@ Type: RawType|Struct;
 RawType:
     "type" name=ID "{"
         (cpptype = CppType)?
+        (pythontype = PythonType)?
     "}"
 ;
 CppType:
     "C++" ":" type=STRING ("including" including=STRING)?
+;
+PythonType:
+    "python" ":" type=STRING ("from" from=STRING)?
 ;
 Struct:
     "struct" name=ID "{"

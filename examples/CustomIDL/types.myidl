@@ -1,12 +1,22 @@
 package types {
-    type int { C++: "int32_t" including '<cstdint>' }
-    type float { C++: "float" }
-    type UINT8  { C++: "uint8_t"  including '<cstdint>' }
-    type UINT16 { C++: "uint16_t" including '<cstdint>' }
-    type UINT32 { C++: "uint32_t" including '<cstdint>' }
-    type UINT64 { C++: "uint64_t" including '<cstdint>' }
-    type SINT8  { C++: "int8_t"  including '<cstdint>' }
-    type SINT16 { C++: "int16_t" including '<cstdint>' }
-    type SINT32 { C++: "int32_t" including '<cstdint>' }
-    type SINT64 { C++: "int64_t" including '<cstdint>' }
+    type int    {   C++:    "int32_t" including '<cstdint>'
+                    python: "int32" }
+    type float  {   C++:    "float"
+                    python: "float" }
+    type UINT8  {   C++:    "uint8_t"  including '<cstdint>'
+                    python: "uint8" }
+    type UINT16 {   C++:    "uint16_t" including '<cstdint>'
+                    python: "uint16" }
+    type UINT32 {   C++:    "uint32_t" including '<cstdint>'
+                    python: "uint32" }
+    type UINT64 {   C++:    "uint64_t" including '<cstdint>'
+                    python: "uint64" }
+    type SINT8  {   C++:    "int8_t"  including '<cstdint>'
+                    python: "int8" }
+    type SINT16 {   C++:    "int16_t" including '<cstdint>'
+                    python: "int16" }
+    type SINT32 {   C++:    "int32_t" including '<cstdint>'
+                    python: "int32" }
+    type SINT64 {   C++:    "int64_t" including '<cstdint>'
+                    python: "int64" }
 }
