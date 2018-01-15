@@ -3,7 +3,7 @@ from functools import reduce
 
 class FormulaBase(CustomIdlBase):
     def __init__(self):
-        super(CustomIdlBase, self).__init__()
+        super(FormulaBase, self).__init__()
 
     def render_formula(self,**p):
         raise Exception("base class - not implmented")
@@ -20,35 +20,35 @@ class FormulaBase(CustomIdlBase):
 
 class Sum(FormulaBase):
     def __init__(self, **kwargs):
-        super(FormulaBase,self).__init__()
+        super(Sum,self).__init__()
         self._init_xtextobj(**kwargs)
         self.operator = "+"
 
 
 class Dif(FormulaBase):
     def __init__(self, **kwargs):
-        super(FormulaBase, self).__init__()
+        super(Dif, self).__init__()
         self._init_xtextobj(**kwargs)
         self.operator = "-"
 
 
 class Mul(FormulaBase):
     def __init__(self, **kwargs):
-        super(FormulaBase, self).__init__()
+        super(Mul, self).__init__()
         self._init_xtextobj(**kwargs)
         self.operator = "*"
 
 
 class Div(FormulaBase):
     def __init__(self, **kwargs):
-        super(FormulaBase, self).__init__()
+        super(Div, self).__init__()
         self._init_xtextobj(**kwargs)
         self.operator = "/"
 
 
 class Val(FormulaBase):
     def __init__(self, **kwargs):
-        super(FormulaBase, self).__init__()
+        super(Val, self).__init__()
         self._init_xtextobj(**kwargs)
 
     def render_formula(self,**p):
@@ -69,10 +69,10 @@ class Val(FormulaBase):
 
 class ScalarRef(FormulaBase):
     def __init__(self, **kwargs):
-        super(FormulaBase, self).__init__()
+        super(ScalarRef, self).__init__()
         self._init_xtextobj(**kwargs)
 
-    def render_formula(self,separator=".",postfix=""):
-        return separator.join(map(lambda x: x.name,
+    def render_formula(self,separator=".",postfix="",prefix=""):
+        return prefix+separator.join(map(lambda x: x.name,
                             filter(lambda x: x,
                                    [self.ref0, self.ref1, self.ref2])))+postfix

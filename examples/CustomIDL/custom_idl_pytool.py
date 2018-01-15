@@ -14,6 +14,14 @@ def full_path_to_file_name(struct):
         filename = "/".join(struct.parent.target_namespace.name.split("."))
     return filename + "/" + struct.name + ".py"
 
+
+def the_package(struct):
+    if struct.parent.target_namespace:
+        return struct.parent.target_namespace.name + "." + struct.name
+    else:
+        return struct.name
+
+
 def typename(thetype):
     if type(thetype) is RawType:
         if thetype.pythontype.fromlib:
@@ -21,10 +29,7 @@ def typename(thetype):
         else:
             return thetype.pythontype.type
     else:
-        if thetype.parent.target_namespace:
-            return thetype.parent.target_namespace.name+"."+thetype.name
-        else:
-            return thetype.name
+        return the_package(thetype)+"."+thetype.name
 
 def default_value_init_code(attribute):
     if attribute.default_value:

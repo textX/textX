@@ -38,7 +38,7 @@ def main(model_file=None, srcgen_folder=None, debug=False, generate_cpp=True, ge
 
 def generate_cpp_code(idl_model, srcgen_folder, this_folder):
     # attributes helper
-    attributes_folder = srcgen_folder + "/attributes"
+    attributes_folder = join(srcgen_folder , "attributes")
     if not exists(attributes_folder):
         makedirs(attributes_folder)
     copyfile(this_folder + "/support/attributes.h", attributes_folder + "/attributes.h")
@@ -63,6 +63,13 @@ def generate_cpp_code(idl_model, srcgen_folder, this_folder):
 
 
 def generate_python_code(idl_model, srcgen_folder, this_folder):
+    # attributes helper
+    attributes_folder = join(srcgen_folder , "attributes")
+    if not exists(attributes_folder):
+        makedirs(attributes_folder)
+    copyfile(this_folder + "/support/attributes.py", attributes_folder + "/attributes.py")
+    with open(attributes_folder + "/__init__.py", 'w') as f:
+        f.write("")
     # Initialize template engine.
     jinja_env = jinja2.Environment(
         loader=jinja2.FileSystemLoader(this_folder + "/templates"),
@@ -72,9 +79,19 @@ def generate_python_code(idl_model, srcgen_folder, this_folder):
     template = jinja_env.get_template('python.template')
     for struct in children_of_type("Struct", idl_model):
         # For each entity generate java file
-        struct_folder = join(srcgen_folder, cpptool.path_to_file_name(struct))
+        struct_folder = join(srcgen_folder, pytool.path_to_file_name(struct))
         if not exists(struct_folder):
             makedirs(struct_folder)
+
+        if struct.parent.target_namespace:
+            parts = struct.parent.target_namespace.name.split(".")
+            dir = srcgen_folder
+            for part in parts:
+                dir = join(dir,part)
+                init_filename = join(dir,"__init__.py")
+                with open(init_filename, 'w') as f:
+                    f.write("")
+
         with open(join(struct_folder,
                        "{}.py".format(struct.name)), 'w') as f:
             f.write(template.render(struct=struct,

@@ -18,13 +18,13 @@ class CustomIdlBase(object):
 
 class RawType(CustomIdlBase):
     def __init__(self, **kwargs):
-        super(CustomIdlBase, self).__init__()
+        super(RawType, self).__init__()
         self._init_xtextobj(**kwargs)
 
 
 class Struct(CustomIdlBase):
     def __init__(self, **kwargs):
-        super(CustomIdlBase, self).__init__()
+        super(Struct, self).__init__()
         self._init_xtextobj(**kwargs)
 
     def get_arrays_with_adjustable_dimensions(self):
@@ -59,7 +59,7 @@ class Struct(CustomIdlBase):
 
 class ScalarAttribute(CustomIdlBase):
     def __init__(self, **kwargs):
-        super(CustomIdlBase, self).__init__()
+        super(ScalarAttribute, self).__init__()
         self._init_xtextobj(**kwargs)
 
     def affects_size(self):
@@ -77,7 +77,7 @@ class ScalarAttribute(CustomIdlBase):
 
 class ArrayAttribute(CustomIdlBase):
     def __init__(self, **kwargs):
-        super(CustomIdlBase, self).__init__()
+        super(ArrayAttribute, self).__init__()
         self._init_xtextobj(**kwargs)
 
     def has_fixed_size(self):
@@ -88,7 +88,7 @@ class ArrayAttribute(CustomIdlBase):
 
 class ArrayDimension(CustomIdlBase):
     def __init__(self, **kwargs):
-        super(CustomIdlBase, self).__init__()
+        super(ArrayDimension, self).__init__()
         self._init_xtextobj(**kwargs)
 
     def get_array_index_name(self):
