@@ -6,9 +6,9 @@ class {{struct.name}}:
 {% if "ScalarAttribute" in attribute.__class__.__name__ %}
     """ scalar attribute {{ attribute.name }} -- affects size: {{ attribute.affects_size() }} """
     {% if attribute.affects_size() %}
-    ReadOnlyAttribute {{attribute.name}} {{attribute.type.name}} {{pytool.default_value_init_code(attribute)}}
+    {{attribute.name}} = ReadOnlyAttribute( {{pytool.typename(attribute.type)}}, {{pytool.default_value_init_code(attribute)}} )
     {% else %}
-    Attribute {{attribute.name}} {{attribute.type.name}} {{pytool.default_value_init_code(attribute)}}
+    {{attribute.name}} = Attribute( {{pytool.typename(attribute.type)}}, {{pytool.default_value_init_code(attribute)}} )
     {% endif %}
 {% endif %}
 {% if "ArrayAttribute" in attribute.__class__.__name__ %}

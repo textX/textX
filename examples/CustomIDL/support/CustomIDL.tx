@@ -29,7 +29,7 @@ CppType:
     "C++" ":" type=STRING ("including" including=STRING)?
 ;
 PythonType:
-    "python" ":" type=STRING ("from" from=STRING)?
+    "python" ":" type=STRING ("from" fromlib=STRING)?
 ;
 Struct:
     "struct" name=ID "{"
