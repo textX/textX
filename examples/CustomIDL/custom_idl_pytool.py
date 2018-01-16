@@ -31,8 +31,14 @@ def typename(thetype):
     else:
         return the_package(thetype)+"."+thetype.name
 
-def default_value_init_code(attribute):
-    if attribute.default_value:
+def default_value_init_code(attribute,fixed_read_only=False):
+    if attribute.default_value and not(type(attribute.type) is Struct):
         return "{}".format(attribute.default_value)
     else:
-        return "{}()".format(typename(attribute.type))
+        if type(attribute.type) is Struct:
+            if fixed_read_only:
+                return "{}(True)".format(typename(attribute.type))
+            else:
+                return "{}(read_only)".format(typename(attribute.type))
+        else:
+            return "{}()".format(typename(attribute.type))
