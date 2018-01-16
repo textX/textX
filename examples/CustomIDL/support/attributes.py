@@ -11,6 +11,8 @@ class BaseStruct(object):
             print("0GET {}".format(item))
             if isinstance(ret, ScalarAttributeBase):
                 ret = ret._value
+            elif isinstance(ret, ArrayAttributeBase):
+                ret = ret._get_view()
         return ret
 
     def _activate_read_only(self):
@@ -46,6 +48,10 @@ class ScalarAttributeBase(object):
     def __init__(self):
         pass
 
+class ArrayAttributeBase(object):
+    def __init__(self):
+        pass
+
 class ReadOnlyAttribute(ScalarAttributeBase):
     def __init__(self, dtype, value, read_only=True):
         self.__dict__["_dtype"] = dtype
@@ -65,7 +71,7 @@ class ReadOnlyAttribute(ScalarAttributeBase):
         else:
             self._set_value(new_value)
 
-    #    def __get__(self, instance, owner):
+#    def __get__(self, instance, owner):
 #        print("FINAL GETTER getting value {}".format(self.__dict__["_value"]))
 #        return self.__dict__["_value"]
 
@@ -78,6 +84,8 @@ class ReadOnlyAttribute(ScalarAttributeBase):
             print("GET {}".format(item))
             if isinstance(ret, ScalarAttributeBase):
                 ret = ret._value
+            elif isinstance(ret, ArrayAttributeBase):
+                ret = ret._get_view()
         return ret
 
     def _set_value(self, new_value):
@@ -101,11 +109,13 @@ class ReadOnlyAttribute(ScalarAttributeBase):
             else:
                 raise Exception("unexpected: no attribute {} in {}".format(item, type(self._value)))
 
+
 class Attribute(ReadOnlyAttribute):
     def __init__(self, dtype, value):
         super(Attribute,self).__init__(dtype, value, False)
 
-class DynamicArrayAttribute(AttributeBase):
+
+class DynamicArrayAttribute(ArrayAttributeBase):
     def __init__(self, dtype, dimensions, read_only=False):
         self.__dict__["_dtype"] = dtype
         self.__dict__["_dimensions"]=dimensions
@@ -120,13 +130,13 @@ class DynamicArrayAttribute(AttributeBase):
 
     def _adjust_size(self):
         shape = list(map(lambda x:x(), self._dimensions))
-        self.__dict__["_value"] = np.array( shape, dtype = self._dtype )
+        self.__dict__["_value"] = np.empty( shape, dtype = self._dtype )
 
     def _get_view(self):
         return self._value.view()
 
 #    def __get__(self, instance, owner):
-#        return self._value
+#        return self._get_view()
 
 #    def __getattr__(self, item):
 #        return self._value[item]

@@ -21,6 +21,9 @@ package example {
         array  v : types.float
             [header.N:master_index]
             [n:client_index]
+        array  headers : Header
+            [header.N:master_index]
+            [n:client_index]
         scalar q : types.int {default="5"}
     }
     struct A {
