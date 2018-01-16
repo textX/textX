@@ -18,6 +18,9 @@ package example {
             [n:client_index]
             // [q:error_example] // error, to test interactively the object processor check_array_attribute
             [2:real_imag]
+        array  v : types.float
+            [header.N:master_index]
+            [n:client_index]
         scalar q : types.int {default="5"}
     }
     struct A {

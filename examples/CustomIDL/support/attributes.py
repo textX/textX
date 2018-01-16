@@ -110,17 +110,23 @@ class DynamicArrayAttribute(AttributeBase):
         self.__dict__["_dtype"] = dtype
         self.__dict__["_dimensions"]=dimensions
         self.__dict__["_read_only"] = read_only
-        self.adjust_size()
+        self._adjust_size()
 
     def _activate_read_only(self):
         self.__dict__["_read_only"]=True
+        if issubclass(self._dtype, BaseStruct): # TODO: TEST
+            for x in self._value:
+                x._activate_read_only();
 
-    def adjust_size(self):
+    def _adjust_size(self):
         shape = list(map(lambda x:x(), self._dimensions))
-        self._value = np.array( shape, dtype = self._dtype )
+        self.__dict__["_value"] = np.array( shape, dtype = self._dtype )
 
-    def __get__(self, instance, owner):
-        return self._value
+    def _get_view(self):
+        return self._value.view()
+
+#    def __get__(self, instance, owner):
+#        return self._value
 
 #    def __getattr__(self, item):
 #        return self._value[item]
