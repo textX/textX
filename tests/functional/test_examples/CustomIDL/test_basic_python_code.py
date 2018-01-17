@@ -122,6 +122,8 @@ package mypackage1 {
     simple.init(3)
     assert simple.a_ui16.shape == (3,)
 
+    #x.byteswap().tobytes()
+
     #################################
     # END
     #################################
