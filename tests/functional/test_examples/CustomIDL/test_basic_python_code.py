@@ -30,7 +30,11 @@ def test_basic_python_code():
     #################################
 
     this_folder = dirname(__file__)
-    if exists(os.path.join(this_folder,"mypackage1")): rmtree(os.path.join(this_folder,"mypackage1"))
+    # cleanup old generated code
+    if exists(os.path.join(this_folder,"mypackage1")):
+        rmtree(os.path.join(this_folder, "attributes"))
+        rmtree(os.path.join(this_folder,"mypackage1"))
+    # check that no old generated code is present
     assert not exists(os.path.join(this_folder,"mypackage1/test/Header.py"))
     assert not exists(os.path.join(this_folder,"mypackage1/test/Data.py"))
 
@@ -106,6 +110,7 @@ package mypackage1 {
     # END
     #################################
 
-    #rmtree(os.path.join(this_folder,"mypackage1"))
-    #assert not exists(os.path.join(this_folder,"mypackage1/test/Header.py"))
-    #assert not exists(os.path.join(this_folder,"mypackage1/test/Data.py"))
+    rmtree(os.path.join(this_folder,"mypackage1"))
+    rmtree(os.path.join(this_folder,"attributes"))
+    assert not exists(os.path.join(this_folder,"mypackage1/test/Header.py"))
+    assert not exists(os.path.join(this_folder,"mypackage1/test/Data.py"))
