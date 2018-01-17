@@ -37,6 +37,7 @@ def test_basic_python_code():
     # check that no old generated code is present
     assert not exists(os.path.join(this_folder,"mypackage1/test/Header.py"))
     assert not exists(os.path.join(this_folder,"mypackage1/test/Data.py"))
+    assert not exists(os.path.join(this_folder,"mypackage1/test/Simple.py"))
 
     codegen.codegen(srcgen_folder=this_folder,
                     generate_cpp=False,
@@ -75,6 +76,11 @@ package mypackage1 {
                             [header.N:master_index]
                             [n:client_index]
     }
+    struct Simple {
+        scalar n        : types.UINT16 {default="5"}
+        scalar x        : types.UINT16
+        array  a_ui16   : types.UINT16[n]
+    }
 }
 """)
 
@@ -85,13 +91,12 @@ package mypackage1 {
     # have the classes been created?
     assert exists(os.path.join(this_folder,"mypackage1/test/Header.py"))
     assert exists(os.path.join(this_folder,"mypackage1/test/Data.py"))
-
-    import sys
-    print(f"sys path == {sys.path}")
+    assert exists(os.path.join(this_folder,"mypackage1/test/Simple.py"))
 
     #use them:
     from mypackage1.test.Header import Header
     from mypackage1.test.Data import Data
+    from mypackage1.test.Simple import Simple
 
     header = Header()
     data = Data()
@@ -101,10 +106,21 @@ package mypackage1 {
 
     # disallowd acces (size controlling attribute)
     with raises(Exception, match=r'.*illegal access.*read only.*'):
-        data.header.N = 11
+        data.header.N = 12
 
-    # set size
-    #data.init(header, 33)
+    # set size (multiple times)
+    data.init(header, 33)
+    assert data.a_ui16.shape == (11,33,2)
+    header.N = 13
+    data.init(header, 33)
+    # check also linked sizes (more than one array with correlated sizes)
+    assert data.a_ui16.shape == (13,33,2)
+    assert data.a_f.shape == (13,33)
+    assert data.headers.shape == (13,33)
+
+    simple = Simple()
+    simple.init(3)
+    assert simple.a_ui16.shape == (3,)
 
     #################################
     # END
@@ -114,3 +130,4 @@ package mypackage1 {
     rmtree(os.path.join(this_folder,"attributes"))
     assert not exists(os.path.join(this_folder,"mypackage1/test/Header.py"))
     assert not exists(os.path.join(this_folder,"mypackage1/test/Data.py"))
+    assert not exists(os.path.join(this_folder,"mypackage1/test/Simple.py"))
