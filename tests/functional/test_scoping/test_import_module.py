@@ -7,7 +7,6 @@ import textx.exceptions
 from pytest import raises
 from textx.scoping_tools import check_unique_named_object_has_class, get_unique_named_object
 
-
 def test_model_without_imports():
     #################################
     # META MODEL DEF

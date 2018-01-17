@@ -13,17 +13,23 @@ from textx import children_of_type
 import custom_idl_cpptool as cpptool
 import custom_idl_pytool as pytool
 
-def main(model_file=None, srcgen_folder=None, debug=False, generate_cpp=True, generate_python=True):
+def codegen(model_file=None, srcgen_folder=None, model_string=None, debug=False, generate_cpp=True, generate_python=True):
 
     this_folder = dirname(__file__)
     mm = custom_idl_metamodel.get_meta_model(generate_cpp=generate_cpp, generate_python=generate_python)
 
-    if not model_file:
-        model_file = join(this_folder, 'example.myidl')
+    # parse and validate
 
-    # Build Person model from person.ent file
-    idl_model = mm.model_from_file(model_file)
+    if model_file and model_string:
+        raise Exception("illegal call with model string AND model file specified.")
+    elif not model_file and not model_string:
+        raise Exception("illegal call with no model string or model file specified.")
+    elif model_file:
+        idl_model = mm.model_from_file(model_file)
+    else: # model_string
+        idl_model = mm.model_from_str(model_string)
 
+    # generate ocde
     if not srcgen_folder:
         srcgen_folder = join(this_folder, 'srcgen')
         if not exists(srcgen_folder):
@@ -31,12 +37,12 @@ def main(model_file=None, srcgen_folder=None, debug=False, generate_cpp=True, ge
     print("generating into {}".format(srcgen_folder))
 
     if generate_cpp:
-        generate_cpp_code(idl_model, srcgen_folder, this_folder)
+        _generate_cpp_code(idl_model, srcgen_folder, this_folder)
     if generate_python:
-        generate_python_code(idl_model, srcgen_folder, this_folder)
+        _generate_python_code(idl_model, srcgen_folder, this_folder)
 
 
-def generate_cpp_code(idl_model, srcgen_folder, this_folder):
+def _generate_cpp_code(idl_model, srcgen_folder, this_folder):
     # attributes helper
     attributes_folder = join(srcgen_folder , "attributes")
     if not exists(attributes_folder):
@@ -62,7 +68,7 @@ def generate_cpp_code(idl_model, srcgen_folder, this_folder):
                                     ))
 
 
-def generate_python_code(idl_model, srcgen_folder, this_folder):
+def _generate_python_code(idl_model, srcgen_folder, this_folder):
     # attributes helper
     attributes_folder = join(srcgen_folder , "attributes")
     if not exists(attributes_folder):
@@ -112,5 +118,5 @@ if __name__ == "__main__":
                         action='store_true', help='generate python code')
 
     args = parser.parse_args()
-    main(model_file=args.model_file, srcgen_folder=expanduser(args.srcgen),
+    codegen(model_file=args.model_file, srcgen_folder=expanduser(args.srcgen),
          generate_cpp=args.generate_cpp, generate_python=args.generate_python)

@@ -8,7 +8,7 @@ class BaseStruct(object):
     def __getattribute__(self, item):
         ret = super(BaseStruct,self).__getattribute__(item)
         if not item.startswith("_"):
-            print("0GET {}".format(item))
+            #print("0GET {}".format(item))
             if isinstance(ret, ScalarAttributeBase):
                 ret = ret._value
             elif isinstance(ret, ArrayAttributeBase):
@@ -24,7 +24,7 @@ class BaseStruct(object):
 
 
     def _set_value(self, item, new_value):
-        print("internal 0SET VALUE {}".format(item))
+        #print("internal 0SET VALUE {}".format(item))
         if item in self.__dict__.keys():
             self.__dict__[item]._set_value( new_value )
         else:
@@ -32,7 +32,7 @@ class BaseStruct(object):
 
     def __setattr__(self, item, new_value):
         if self._read_only:
-            raise Exception("illegal acces to read only attribute")
+            raise Exception("illegal access to read only attribute")
         else:
             self._set_value(item, new_value)
 
@@ -64,7 +64,7 @@ class ReadOnlyAttribute(ScalarAttributeBase):
 
     def _set_value(self, new_value):
         if type(new_value) is type(self._value):
-            print("SETTER setting value {}".format(new_value))
+            #print("SETTER setting value {}".format(new_value))
             if isinstance(self._value, BaseStruct) and self._value._read_only:
                 self.__dict__["_value"] = copy(new_value)
                 self.__dict__["_value"]._activate_read_only()
@@ -75,7 +75,7 @@ class ReadOnlyAttribute(ScalarAttributeBase):
 
     def __set__(self, instance , new_value):
         if self._read_only:
-            raise Exception("illegal acces to read only attribute")
+            raise Exception("illegal access to read only attribute")
         else:
             self._set_value(new_value)
 
