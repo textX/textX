@@ -1,6 +1,5 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
-import custom_idl_codegen as codegen
 from os.path import dirname, exists
 from shutil import rmtree
 import os.path
@@ -24,6 +23,7 @@ def add_example_folder_to_path_based_on_local_folder():
 def test_basic_python_code():
 
     add_example_folder_to_path_based_on_local_folder()
+    import custom_idl_codegen as codegen
 
     #################################
     # Model definition and Code creation
