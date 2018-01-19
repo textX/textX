@@ -6,44 +6,54 @@ import os.path
 from pytest import raises
 import importlib
 
-def add_example_folder_to_path_based_on_local_folder():
-    """
-    add example code to path
-    """
-    import sys
-    this_folder = os.path.dirname(__file__)
-    folders = os.path.split(os.path.abspath(this_folder))
-    example_name = folders[-1]
-    example_dir = os.path.abspath(os.path.join(folders[0], "../../../examples/" + example_name))
-    print(example_dir)
-    sys.path.insert(0, example_dir)
-    sys.path.insert(0, this_folder)
-    print("added {} and {}".format(example_dir,this_folder))
+class add_path:
+    def __init__(self):
+        pass
+
+    def __enter__(self):
+        """
+        add example code to path
+        """
+        import sys
+        self.this_folder = os.path.dirname(__file__)
+        folders = os.path.split(os.path.abspath(self.this_folder))
+        example_name = folders[-1]
+        self.example_dir = os.path.abspath(os.path.join(folders[0], "../../../examples/" + example_name))
+        sys.path.insert(0, self.example_dir)
+        sys.path.insert(0, self.this_folder)
+        print("added {} and {}".format(self.example_dir, self.this_folder))
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        import sys
+        sys.path.remove(self.example_dir)
+        sys.path.remove(self.this_folder)
+        print("removed {} and {}".format(self.example_dir, self.this_folder))
+
 
 
 def test_basic_python_code():
 
-    add_example_folder_to_path_based_on_local_folder()
-    import custom_idl_codegen as codegen
+    with add_path():
+        import custom_idl_codegen as codegen
 
-    #################################
-    # Model definition and Code creation
-    #################################
+        #################################
+        # Model definition and Code creation
+        #################################
 
-    this_folder = dirname(__file__)
-    # cleanup old generated code
-    if exists(os.path.join(this_folder,"mypackage1")):
-        rmtree(os.path.join(this_folder, "attributes"))
-        rmtree(os.path.join(this_folder,"mypackage1"))
-    # check that no old generated code is present
-    assert not exists(os.path.join(this_folder,"mypackage1/test/Header.py"))
-    assert not exists(os.path.join(this_folder,"mypackage1/test/Data.py"))
-    assert not exists(os.path.join(this_folder,"mypackage1/test/Simple.py"))
+        this_folder = dirname(__file__)
+        # cleanup old generated code
+        if exists(os.path.join(this_folder,"mypackage1")):
+            rmtree(os.path.join(this_folder, "attributes"))
+            rmtree(os.path.join(this_folder,"mypackage1"))
+        # check that no old generated code is present
+        assert not exists(os.path.join(this_folder,"mypackage1/test/Header.py"))
+        assert not exists(os.path.join(this_folder,"mypackage1/test/Data.py"))
+        assert not exists(os.path.join(this_folder,"mypackage1/test/Simple.py"))
 
-    codegen.codegen(srcgen_folder=this_folder,
-                    generate_cpp=False,
-                    generate_python=True,
-                    model_string=
+        codegen.codegen(srcgen_folder=this_folder,
+                        generate_cpp=False,
+                        generate_python=True,
+                        model_string=
 """
 // model
 package types {
@@ -85,52 +95,52 @@ package mypackage1 {
 }
 """)
 
-    #################################
-    # Using the model classes
-    #################################
+        #################################
+        # Using the model classes
+        #################################
 
-    # have the classes been created?
-    assert exists(os.path.join(this_folder,"mypackage1/test/Header.py"))
-    assert exists(os.path.join(this_folder,"mypackage1/test/Data.py"))
-    assert exists(os.path.join(this_folder,"mypackage1/test/Simple.py"))
+        # have the classes been created?
+        assert exists(os.path.join(this_folder,"mypackage1/test/Header.py"))
+        assert exists(os.path.join(this_folder,"mypackage1/test/Data.py"))
+        assert exists(os.path.join(this_folder,"mypackage1/test/Simple.py"))
 
-    #use them:
-    HeaderLib = importlib.import_module("mypackage1.test.Header")
-    DataLib   = importlib.import_module("mypackage1.test.Data")
-    SimpleLib = importlib.import_module("mypackage1.test.Simple")
+        #use them:
+        HeaderLib = importlib.import_module("mypackage1.test.Header")
+        DataLib   = importlib.import_module("mypackage1.test.Data")
+        SimpleLib = importlib.import_module("mypackage1.test.Simple")
 
-    header = HeaderLib.Header()
-    data = DataLib.Data()
+        header = HeaderLib.Header()
+        data = DataLib.Data()
 
-    # alloed acces
-    header.N = 11
+        # alloed acces
+        header.N = 11
 
-    # disallowd acces (size controlling attribute)
-    with raises(Exception, match=r'.*illegal access.*read only.*'):
-        data.header.N = 12
+        # disallowd acces (size controlling attribute)
+        with raises(Exception, match=r'.*illegal access.*read only.*'):
+            data.header.N = 12
 
-    # set size (multiple times)
-    data.init(header, 33)
-    assert data.a_ui16.shape == (11,33,2)
-    header.N = 13
-    data.init(header, 33)
-    # check also linked sizes (more than one array with correlated sizes)
-    assert data.a_ui16.shape == (13,33,2)
-    assert data.a_f.shape == (13,33)
-    assert data.headers.shape == (13,33)
+        # set size (multiple times)
+        data.init(header, 33)
+        assert data.a_ui16.shape == (11,33,2)
+        header.N = 13
+        data.init(header, 33)
+        # check also linked sizes (more than one array with correlated sizes)
+        assert data.a_ui16.shape == (13,33,2)
+        assert data.a_f.shape == (13,33)
+        assert data.headers.shape == (13,33)
 
-    simple = SimpleLib.Simple()
-    simple.init(3)
-    assert simple.a_ui16.shape == (3,)
+        simple = SimpleLib.Simple()
+        simple.init(3)
+        assert simple.a_ui16.shape == (3,)
 
-    #x.byteswap().tobytes()
+        #x.byteswap().tobytes()
 
-    #################################
-    # END
-    #################################
+        #################################
+        # END
+        #################################
 
-    rmtree(os.path.join(this_folder,"mypackage1"))
-    rmtree(os.path.join(this_folder,"attributes"))
-    assert not exists(os.path.join(this_folder,"mypackage1/test/Header.py"))
-    assert not exists(os.path.join(this_folder,"mypackage1/test/Data.py"))
-    assert not exists(os.path.join(this_folder,"mypackage1/test/Simple.py"))
+        rmtree(os.path.join(this_folder,"mypackage1"))
+        rmtree(os.path.join(this_folder,"attributes"))
+        assert not exists(os.path.join(this_folder,"mypackage1/test/Header.py"))
+        assert not exists(os.path.join(this_folder,"mypackage1/test/Data.py"))
+        assert not exists(os.path.join(this_folder,"mypackage1/test/Simple.py"))
