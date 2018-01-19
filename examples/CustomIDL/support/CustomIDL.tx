@@ -23,6 +23,7 @@ RawType:
     "type" name=ID "{"
         (cpptype = CppType)?
         (pythontype = PythonType)?
+        (pythonconstructtype = PythonConstructType)?
     "}"
 ;
 CppType:
@@ -30,6 +31,9 @@ CppType:
 ;
 PythonType:
     "python" ":" type=STRING ("from" fromlib=STRING)?
+;
+PythonConstructType:
+    "python-construct" ":" type=STRING?
 ;
 Struct:
     "struct" name=ID "{"

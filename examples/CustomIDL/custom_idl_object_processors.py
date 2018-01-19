@@ -51,4 +51,7 @@ class CheckRawTypes(object):
         if "generate_python" in self.options.keys() and self.options["generate_python"]:
             if not rawtype.pythontype:
                 raise Exception("python type is required to generate python code for {} in {}".format(rawtype.name, model_root(rawtype)._tx_filename))
+        if "generate_python_construct" in self.options.keys() and self.options["generate_python_construct"]:
+            if not rawtype.pythonconstructtype:
+                raise Exception("python-construct type is required to generate python code for {} in {}".format(rawtype.name, model_root(rawtype)._tx_filename))
 
