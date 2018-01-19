@@ -4,6 +4,7 @@ from os.path import dirname, exists
 from shutil import rmtree
 import os.path
 from pytest import raises
+import importlib
 
 def add_example_folder_to_path_based_on_local_folder():
     """
@@ -17,7 +18,7 @@ def add_example_folder_to_path_based_on_local_folder():
     print(example_dir)
     sys.path.insert(0, example_dir)
     sys.path.insert(0, this_folder)
-    print(f"added {example_dir} and {this_folder}")
+    print("added {} and {}".format(example_dir,this_folder))
 
 
 def test_basic_python_code():
@@ -94,12 +95,12 @@ package mypackage1 {
     assert exists(os.path.join(this_folder,"mypackage1/test/Simple.py"))
 
     #use them:
-    from mypackage1.test.Header import Header
-    from mypackage1.test.Data import Data
-    from mypackage1.test.Simple import Simple
+    HeaderLib = importlib.import_module("mypackage1.test.Header")
+    DataLib   = importlib.import_module("mypackage1.test.Data")
+    SimpleLib = importlib.import_module("mypackage1.test.Simple")
 
-    header = Header()
-    data = Data()
+    header = HeaderLib.Header()
+    data = DataLib.Data()
 
     # alloed acces
     header.N = 11
@@ -118,7 +119,7 @@ package mypackage1 {
     assert data.a_f.shape == (13,33)
     assert data.headers.shape == (13,33)
 
-    simple = Simple()
+    simple = SimpleLib.Simple()
     simple.init(3)
     assert simple.a_ui16.shape == (3,)
 

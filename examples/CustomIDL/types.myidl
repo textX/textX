@@ -2,6 +2,7 @@ package types {
     type int {
         C++:    "int32_t" including '<cstdint>'
         python: "int"
+        python-construct: "int"
     }
     type float {
         C++:    "float"
