@@ -14,7 +14,7 @@ import support_cpp_code.custom_idl_cpptool as cpptool
 import support_python_code.custom_idl_pytool as pytool
 import support_python_construct_code.custom_idl_pyctool as pyctool
 
-def codegen(model_file=None, srcgen_folder=None, model_string=None, debug=False, generate_cpp=False, generate_python=False, generate_python_construct=True):
+def codegen(model_file=None, srcgen_folder=None, model_string=None, debug=False, generate_cpp=False, generate_python=False, generate_python_construct=False):
 
     this_folder = dirname(__file__)
     mm = custom_idl_metamodel.get_meta_model(

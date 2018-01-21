@@ -51,7 +51,6 @@ def test_basic_python_code():
         assert not exists(os.path.join(this_folder,"mypackage1/test/Simple.py"))
 
         codegen.codegen(srcgen_folder=this_folder,
-                        generate_cpp=False,
                         generate_python=True,
                         model_string=
 """
