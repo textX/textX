@@ -23,18 +23,19 @@ def the_package(struct):
 
 
 def typename(thetype):
+    # TODO: unlcear why "is RawType" fails here on travis... locally it seems to import properly. Maybe double imports.
     if type(thetype).__name__ == "RawType":
         if thetype.pythontype.fromlib:
             res = thetype.pythontype.fromlib+"."+thetype.pythontype.type
-            print("typename (rawtype) with lib: {}".format(res))
+            #print("typename (rawtype) with lib: {}".format(res))
             return res
         else:
             res = thetype.pythontype.type
-            print("typename (rawtype) w/o lib: {}".format(res))
+            #print("typename (rawtype) w/o lib: {}".format(res))
             return res
     else:
         res = the_package(thetype)+"."+thetype.name
-        print("typename (struct): {}".format(res))
+        #print("typename (struct): {}".format(res))
         return res
 
 def default_value_init_code(attribute,fixed_read_only=False):
