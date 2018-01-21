@@ -51,3 +51,42 @@ class {{struct.name}}(BaseStruct):
         self.__dict__["{{ attribute.name }}"]._adjust_size();
     {% endfor %}
 {% endif %}
+
+    def accept( self, visitor ):
+{% for attribute in struct.attributes %}
+    {% if "ScalarAttribute" in attribute.__class__.__name__ %}
+        {% if attribute.has_raw_type() %}
+        visitor.visitRawTypeScalar( self, "{{attribute.name}}" );
+        {% else %}
+        visitor.visitStructuredScalar( self, "self.{{attribute.name}}" );
+        {% endif %}
+    {% endif %}
+    {% if "ArrayAttribute" in attribute.__class__.__name__ %}
+        {% if attribute.has_raw_type() %}
+        visitor.visitRawTypeArray( self, "{{attribute.name}}" );
+        {% else %}
+        visitor.visitStructuredArray( self, "self.{{attribute.name}}" );
+        {% endif %}
+    {% endif %}
+{% endfor %}
+
+    def accept_and_init( self, visitor ):
+{% for attribute in struct.attributes %}
+    {% if "ScalarAttribute" in attribute.__class__.__name__ %}
+        {% if attribute.has_raw_type() %}
+        visitor.visitRawTypeScalar( self, "{{attribute.name}}" );
+        {% else %}
+        visitor.visitStructuredScalar( self, "self.{{attribute.name}}" );
+        {% endif %}
+    {% endif %}
+    {% if "ArrayAttribute" in attribute.__class__.__name__ %}
+        {% if not attribute.has_fixed_size() %}
+        self.__dict__["{{ attribute.name }}"]._adjust_size();
+        {% endif %}
+        {% if attribute.has_raw_type() %}
+        visitor.visitRawTypeArray( self, "{{attribute.name}}" );
+        {% else %}
+        visitor.visitStructuredArray( self, "self.{{attribute.name}}" );
+        {% endif %}
+    {% endif %}
+{% endfor %}

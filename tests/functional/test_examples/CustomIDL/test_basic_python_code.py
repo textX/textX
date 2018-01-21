@@ -30,7 +30,6 @@ class add_path:
         print("removed {} and {}".format(self.example_dir, self.this_folder))
 
 
-
 def test_basic_python_code():
 
     with add_path():

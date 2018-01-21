@@ -105,7 +105,7 @@ public:
      * @param visitor
      */
     template<class Visitor>
-    void accept(Visitor &visitor) {
+    void accept_and_init(Visitor &visitor) {
 {% for attribute in struct.attributes %}
     {% if "ScalarAttribute" in attribute.__class__.__name__ %}
         {% if attribute.has_raw_type() %}

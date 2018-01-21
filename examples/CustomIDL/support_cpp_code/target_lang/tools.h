@@ -132,7 +132,7 @@ namespace attributes {
                 template<class MetaInfo, class Owner, class T>
                 void visitStructuredScalar(Owner&, T& value) {
                     Visitor visitor{inp};
-                    value.accept(visitor);
+                    value.accept_and_init(visitor);
                 }
 
                 template<class MetaInfo, class Owner, class T>
@@ -146,7 +146,7 @@ namespace attributes {
                 void visitStructuredArray(Owner&, T& value) {
                     Visitor visitor{inp};
                     for (auto &v: value) {
-                        v.accept(visitor);
+                        v.accept_and_init(visitor);
                     }
                 }
             };
@@ -160,7 +160,7 @@ namespace attributes {
         void binary_read(S& structure, std::istream &inp) {
             //using MetaInfo = typename S::MetaInfo;
             binary_read_support::Visitor visitor{inp};
-            structure.accept(visitor);
+            structure.accept_and_init(visitor);
         }
         
     }
