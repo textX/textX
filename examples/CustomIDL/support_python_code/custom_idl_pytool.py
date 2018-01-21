@@ -25,11 +25,17 @@ def the_package(struct):
 def typename(thetype):
     if type(thetype) is RawType:
         if thetype.pythontype.fromlib:
-            return thetype.pythontype.fromlib+"."+thetype.pythontype.type
+            res = thetype.pythontype.fromlib+"."+thetype.pythontype.type
+            print("typename (rawtype) with lib: {}".format(res))
+            return res
         else:
-            return thetype.pythontype.type
+            res = thetype.pythontype.type
+            print("typename (rawtype) w/o lib: {}".format(res))
+            return res
     else:
-        return the_package(thetype)+"."+thetype.name
+        res = the_package(thetype)+"."+thetype.name
+        print("typename (struct): {}".format(res))
+        return res
 
 def default_value_init_code(attribute,fixed_read_only=False):
     if attribute.default_value and not(type(attribute.type) is Struct):
