@@ -1,5 +1,5 @@
 from custom_idl_metamodel import Struct, RawType
-from textx import model_root
+#from textx import model_root
 
 def path_to_file_name(struct):
     filename = ""
@@ -23,7 +23,7 @@ def the_package(struct):
 
 
 def typename(thetype):
-    if type(thetype) is RawType:
+    if type(thetype).__name__ == "RawType":
         if thetype.pythontype.fromlib:
             res = thetype.pythontype.fromlib+"."+thetype.pythontype.type
             print("typename (rawtype) with lib: {}".format(res))
