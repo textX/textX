@@ -102,7 +102,7 @@ def get_meta_model(debug=False,**options):
     from custom_idl_metamodel_formula import Sum, Mul, Dif, Div, Val, ScalarRef
 
     this_folder = dirname(__file__)
-    mm = metamodel_from_file( os.path.join(os.path.abspath(this_folder),'support/CustomIDL.tx'), debug=debug,
+    mm = metamodel_from_file( os.path.join(os.path.abspath(this_folder),'CustomIDL.tx'), debug=debug,
                               classes=[Sum,Mul,Dif,Div,Val,ScalarRef,RawType,Struct,ArrayAttribute,ScalarAttribute,ArrayDimension])
 
     mm.register_scope_provider({
