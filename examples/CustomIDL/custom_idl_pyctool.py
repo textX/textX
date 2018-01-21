@@ -21,9 +21,8 @@ def the_package(struct):
     else:
         return struct.name
 
-
 def typename(thetype):
     if type(thetype) is RawType:
         return thetype.pythontype.type
     else:
-        return the_package(thetype)+"."+thetype.name
+        return the_package(thetype)+".format"
