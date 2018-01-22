@@ -24,7 +24,8 @@ def the_package(struct):
 
 def typename(thetype):
     # TODO: unlcear why "is RawType" fails here on travis... locally it seems to import properly. Maybe double imports.
-    if type(thetype) == RawType:
+    print("typename ({}) with __name: '{}'".format(type(thetype),type(thetype).__name__))
+    if type(thetype) is RawType:
         if thetype.pythontype.fromlib:
             res = thetype.pythontype.fromlib+"."+thetype.pythontype.type
             #print("typename (rawtype) with lib: {}".format(res))
