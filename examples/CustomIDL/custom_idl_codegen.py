@@ -81,6 +81,7 @@ def _generate_python_code(idl_model, srcgen_folder, this_folder):
     if not exists(attributes_folder):
         makedirs(attributes_folder)
     copyfile(this_folder + "/support_python_code/target_lang/attributes.py", attributes_folder + "/attributes.py")
+    copyfile(this_folder + "/support_python_code/target_lang/tools.py", attributes_folder + "/tools.py")
     with open(attributes_folder + "/__init__.py", 'w') as f:
         f.write("")
     # Initialize template engine.

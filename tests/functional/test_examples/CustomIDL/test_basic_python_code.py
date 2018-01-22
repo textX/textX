@@ -5,6 +5,7 @@ from shutil import rmtree
 import os.path
 from pytest import raises
 import importlib
+import numpy as np
 
 class add_path:
     def __init__(self):
@@ -106,6 +107,7 @@ package mypackage1 {
         HeaderLib = importlib.import_module("mypackage1.test.Header")
         DataLib   = importlib.import_module("mypackage1.test.Data")
         SimpleLib = importlib.import_module("mypackage1.test.Simple")
+        toolLib = importlib.import_module("attributes.tools")
 
         header = HeaderLib.Header()
         data = DataLib.Data()
@@ -130,7 +132,15 @@ package mypackage1 {
         simple = SimpleLib.Simple()
         simple.init(3)
         assert simple.a_ui16.shape == (3,)
+        simple.a_ui16 = np.linspace(0,90,3, dtype=np.uint16)
 
+        simple_as_text = toolLib.pprint(simple)
+        assert simple_as_text == """Simple {
+  n = 3
+  x = 0
+  a_ui16[] = [ 0 45 90 ]
+}
+"""
         #x.byteswap().tobytes()
 
         #################################

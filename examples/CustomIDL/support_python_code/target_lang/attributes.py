@@ -15,6 +15,9 @@ class BaseStruct(object):
                 ret = ret._get_view()
         return ret
 
+    def __getattr__(self, item):
+        return self.__getattribute__(item)
+
     def _activate_read_only(self):
         self.__dict__["_read_only"]=True
         for key in self.__dict__:
@@ -97,6 +100,15 @@ class DynamicArrayAttribute(ArrayAttributeBase):
         if issubclass(self._dtype, BaseStruct): # TODO: TEST
             for x in self._value:
                 x._activate_read_only();
+
+    def _set_value(self, new_value):
+        if new_value.dtype is self.__dict__["_value"].dtype:
+            if new_value.size == self.__dict__["_value"].size: # shape??
+                self.__dict__["_value"] = new_value
+            else:
+                raise Exception("unexpected: wrong array size {}!={}".format(new_value.shape, self.__dict__["_value"].shape))
+        else:
+            raise Exception("unexpected: wrong array type {}!={}".format(new_value.dtype,self.__dict__["_value"].dtype))
 
     def _adjust_size(self):
         shape = list(map(lambda x:x(), self._dimensions))
