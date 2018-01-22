@@ -1,4 +1,3 @@
-from custom_idl_metamodel import Struct, RawType
 #from textx import model_root
 
 def path_to_file_name(struct):
@@ -23,6 +22,7 @@ def the_package(struct):
 
 
 def typename(thetype):
+    from custom_idl_metamodel import RawType
     # TODO: unlcear why "is RawType" fails here on travis... locally it seems to import properly. Maybe double imports.
     print("typename ({}) with __name: '{}'".format(type(thetype),type(thetype).__name__))
     if type(thetype) is RawType:
@@ -40,6 +40,7 @@ def typename(thetype):
         return res
 
 def default_value_init_code(attribute,fixed_read_only=False):
+    from custom_idl_metamodel import Struct
     if attribute.default_value and not(type(attribute.type) is Struct):
         return "{}".format(attribute.default_value)
     else:
