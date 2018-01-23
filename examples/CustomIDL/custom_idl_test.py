@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 import os
-from os.path import dirname, join
+from os.path import dirname, join, abspath
 from textx.export import metamodel_export, model_export
 from custom_idl_metamodel import get_meta_model
 
@@ -9,7 +9,7 @@ def main(debug=False):
     mm = get_meta_model(debug)
 
     # Export to .dot file for visualization
-    this_folder = dirname(__file__)
+    this_folder = dirname(abspath(__file__))
     dot_folder = join(this_folder, 'dotexport')
     if not os.path.exists(dot_folder):
         os.mkdir(dot_folder)

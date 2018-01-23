@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 import custom_idl_metamodel
 from os import mkdir,makedirs
 from shutil import copyfile
-from os.path import dirname, join, exists, expanduser
+from os.path import dirname, join, exists, expanduser, abspath
 import jinja2
 from textx import children_of_type
 import support_cpp_code.custom_idl_cpptool as cpptool
@@ -16,7 +16,7 @@ import support_python_construct_code.custom_idl_pyctool as pyctool
 
 def codegen(model_file=None, srcgen_folder=None, model_string=None, debug=False, generate_cpp=False, generate_python=False, generate_python_construct=False):
 
-    this_folder = dirname(__file__)
+    this_folder = dirname(abspath(__file__))
     mm = custom_idl_metamodel.get_meta_model(
         generate_cpp=generate_cpp,
         generate_python=generate_python,

@@ -1,5 +1,5 @@
 from __future__ import unicode_literals
-from os.path import dirname
+from os.path import dirname, abspath
 from textx import metamodel_from_file, children_of_type
 import os
 import textx.scoping as scoping
@@ -101,7 +101,7 @@ class ArrayDimension(CustomIdlBase):
 def get_meta_model(debug=False,**options):
     from custom_idl_metamodel_formula import Sum, Mul, Dif, Div, Val, ScalarRef
 
-    this_folder = dirname(__file__)
+    this_folder = dirname(abspath(__file__))
     mm = metamodel_from_file( os.path.join(os.path.abspath(this_folder),'CustomIDL.tx'), debug=debug,
                               classes=[Sum,Mul,Dif,Div,Val,ScalarRef,RawType,Struct,ArrayAttribute,ScalarAttribute,ArrayDimension])
 
