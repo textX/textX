@@ -1,3 +1,5 @@
+import struct
+
 def pprint(struct):
     class Visitor:
         def __init__(self, identation=0, max_array_elems_per_line=10):
@@ -5,13 +7,13 @@ def pprint(struct):
             self.max_array_elems_per_line = max_array_elems_per_line;
             self.return_text=""
 
-        def visitRawTypeScalar(self, struct, item):
+        def visitRawTypeScalar(self, struct, item, meta):
             self.return_text += " "*self.identation
             self.return_text += "{} = {}\n".format(item,struct.__getattr__(item))
 
-        def visitStructuredScalar(self, struct, item):
+        def visitStructuredScalar(self, struct, item, meta):
             self.return_text += " "*self.identation
-            self.return_text += "{} = {".format(item)
+            self.return_text += "{} = {".format(item, meta)
 
             inner_visitor = Visitor(self.identation+2,self.max_array_elems_per_line)
             struct.__getattr__(item).accept(inner_visitor)
@@ -20,7 +22,7 @@ def pprint(struct):
             self.return_text += " "*self.identation
             self.return_text += "}"
 
-        def visitRawTypeArray(self, struct, item):
+        def visitRawTypeArray(self, struct, item, meta):
             self.return_text += " "*self.identation
             self.return_text += "{}[] = [".format(item)
 
@@ -43,7 +45,7 @@ def pprint(struct):
 
             self.return_text += " ]\n"
 
-        def visitStructuredArray(self, struct, item):
+        def visitStructuredArray(self, struct, item, meta):
             self.return_text += " " * self.identation
             self.return_text += "{}[] = [".format(item)
 

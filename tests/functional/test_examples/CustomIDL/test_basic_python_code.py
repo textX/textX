@@ -56,10 +56,10 @@ def test_basic_python_code():
 """
 // model
 package types {
-    type int    {   python: "int"}
-    type float  {   python: "float" }
-    type UINT8  {   python: "uint8"  from 'numpy' }
-    type UINT16 {   python: "uint16" from 'numpy' }
+    type int    {   python: "int" with format "i" }
+    type float  {   python: "float" with format "f" }
+    type UINT8  {   python: "uint8"  from 'numpy' with format "B" }
+    type UINT16 {   python: "uint16" from 'numpy' with format "H" }
 }
 package mypackage1 {
     target_namespace "mypackage1.test"
@@ -135,7 +135,8 @@ package mypackage1 {
         simple.a_ui16 = np.linspace(0,90,3, dtype=np.uint16)
 
         simple_as_text = toolLib.pprint(simple)
-        assert simple_as_text == """Simple {
+        assert simple_as_text == \
+"""Simple {
   n = 3
   x = 0
   a_ui16[] = [ 0 45 90 ]

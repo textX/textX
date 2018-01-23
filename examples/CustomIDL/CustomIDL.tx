@@ -30,7 +30,7 @@ CppType:
     "C++" ":" type=STRING ("including" including=STRING)?
 ;
 PythonType:
-    "python" ":" type=STRING ("from" fromlib=STRING)?
+    "python" ":" type=STRING ("from" fromlib=STRING)? "with" "format" format=STRING
 ;
 PythonConstructType:
     "python-construct" ":" type=STRING?

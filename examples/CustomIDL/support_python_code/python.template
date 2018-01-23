@@ -16,12 +16,12 @@ class {{struct.name}}(BaseStruct):
 {% if "ScalarAttribute" in attribute.__class__.__name__ %}
         # scalar attribute {{ attribute.name }} -- affects size: {{ attribute.affects_size() }}
         {% if attribute.affects_size() %}
-        self.__dict__["{{attribute.name}}"] = ReadOnlyAttribute( {{pytool.typename(attribute.type)}}, {{pytool.default_value_init_code(attribute, True)}} )
+        self.__dict__["{{attribute.name}}"] = ReadOnlyAttribute( {{pytool.typename(attribute.type)}}, {{pytool.default_value_init_code(attribute, True)}}, {{pytool.get_meta_info(attribute)}} )
         {% else %}
         if read_only:
-            self.__dict__["{{attribute.name}}"] = ReadOnlyAttribute( {{pytool.typename(attribute.type)}}, {{pytool.default_value_init_code(attribute)}} )
+            self.__dict__["{{attribute.name}}"] = ReadOnlyAttribute( {{pytool.typename(attribute.type)}}, {{pytool.default_value_init_code(attribute)}}, {{pytool.get_meta_info(attribute)}} )
         else:
-            self.__dict__["{{attribute.name}}"] = Attribute( {{pytool.typename(attribute.type)}}, {{pytool.default_value_init_code(attribute)}} )
+            self.__dict__["{{attribute.name}}"] = Attribute( {{pytool.typename(attribute.type)}}, {{pytool.default_value_init_code(attribute)}}, {{pytool.get_meta_info(attribute)}} )
         {% endif %}
 {% endif %}
 {% if "ArrayAttribute" in attribute.__class__.__name__ %}
@@ -34,7 +34,7 @@ class {{struct.name}}(BaseStruct):
         {% for s in attribute.array_dimensions %}
             lambda: {{ s.array_size.render_formula(separator=".",postfix="",prefix="self.")}} {{ "," if not loop.last }}
         {% endfor %}
-        ])
+        ], {{pytool.get_meta_info(attribute)}})
 {% endif %}
 {% endfor %}
 
@@ -56,16 +56,16 @@ class {{struct.name}}(BaseStruct):
 {% for attribute in struct.attributes %}
     {% if "ScalarAttribute" in attribute.__class__.__name__ %}
         {% if attribute.has_raw_type() %}
-        visitor.visitRawTypeScalar( self, "{{attribute.name}}" );
+        visitor.visitRawTypeScalar( self, "{{attribute.name}}", self.__dict__["{{attribute.name}}"]._meta_info );
         {% else %}
-        visitor.visitStructuredScalar( self, "self.{{attribute.name}}" );
+        visitor.visitStructuredScalar( self, "self.{{attribute.name}}", self.__dict__["{{attribute.name}}"]._meta_info );
         {% endif %}
     {% endif %}
     {% if "ArrayAttribute" in attribute.__class__.__name__ %}
         {% if attribute.has_raw_type() %}
-        visitor.visitRawTypeArray( self, "{{attribute.name}}" );
+        visitor.visitRawTypeArray( self, "{{attribute.name}}", self.__dict__["{{attribute.name}}"]._meta_info );
         {% else %}
-        visitor.visitStructuredArray( self, "self.{{attribute.name}}" );
+        visitor.visitStructuredArray( self, "self.{{attribute.name}}", self.__dict__["{{attribute.name}}"]._meta_info );
         {% endif %}
     {% endif %}
 {% endfor %}
@@ -74,9 +74,9 @@ class {{struct.name}}(BaseStruct):
 {% for attribute in struct.attributes %}
     {% if "ScalarAttribute" in attribute.__class__.__name__ %}
         {% if attribute.has_raw_type() %}
-        visitor.visitRawTypeScalar( self, "{{attribute.name}}" );
+        visitor.visitRawTypeScalar( self, "{{attribute.name}}", self.__dict__["attribute.name"]._meta_info );
         {% else %}
-        visitor.visitStructuredScalar( self, "self.{{attribute.name}}" );
+        visitor.visitStructuredScalar( self, "self.{{attribute.name}}", self.__dict__["{{attribute.name}}"]._meta_info );
         {% endif %}
     {% endif %}
     {% if "ArrayAttribute" in attribute.__class__.__name__ %}
@@ -84,9 +84,9 @@ class {{struct.name}}(BaseStruct):
         self.__dict__["{{ attribute.name }}"]._adjust_size();
         {% endif %}
         {% if attribute.has_raw_type() %}
-        visitor.visitRawTypeArray( self, "{{attribute.name}}" );
+        visitor.visitRawTypeArray( self, "{{attribute.name}}", self.__dict__["{{attribute.name}}"]._meta_info );
         {% else %}
-        visitor.visitStructuredArray( self, "self.{{attribute.name}}" );
+        visitor.visitStructuredArray( self, "self.{{attribute.name}}" , self.__dict__["{{attribute.name}}"]._meta_info);
         {% endif %}
     {% endif %}
 {% endfor %}

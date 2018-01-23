@@ -53,10 +53,11 @@ class ArrayAttributeBase(object):
         pass
 
 class ReadOnlyAttribute(ScalarAttributeBase):
-    def __init__(self, dtype, value, read_only=True):
+    def __init__(self, dtype, value, meta_info, read_only=True):
         self.__dict__["_dtype"] = dtype
         self.__dict__["_value"] = value
         self.__dict__["_read_only"] = False
+        self.__dict__["_meta_info"] = meta_info
         if read_only:
             self._activate_read_only()
 
@@ -84,15 +85,16 @@ class ReadOnlyAttribute(ScalarAttributeBase):
 
 
 class Attribute(ReadOnlyAttribute):
-    def __init__(self, dtype, value):
-        super(Attribute,self).__init__(dtype, value, False)
+    def __init__(self, dtype, value, meta_info):
+        super(Attribute,self).__init__(dtype, value, meta_info, False)
 
 
 class DynamicArrayAttribute(ArrayAttributeBase):
-    def __init__(self, dtype, dimensions, read_only=False):
+    def __init__(self, dtype, dimensions, meta_info, read_only=False):
         self.__dict__["_dtype"] = dtype
         self.__dict__["_dimensions"]=dimensions
         self.__dict__["_read_only"] = read_only
+        self.__dict__["_meta_info"] = meta_info
         self._adjust_size()
 
     def _activate_read_only(self):

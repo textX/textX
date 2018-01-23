@@ -37,6 +37,14 @@ def typename(thetype):
         #print("typename (struct): {}".format(res))
         return res
 
+def get_meta_info(attribute):
+    from custom_idl_metamodel import RawType
+    thetype = attribute.type
+    if type(thetype) is RawType:
+        return {"model_type_name":thetype.name, "format":thetype.pythontype.format}
+    else:
+        return {"model_type_name":thetype.name}
+
 def default_value_init_code(attribute,fixed_read_only=False):
     from custom_idl_metamodel import Struct
     if attribute.default_value and not(type(attribute.type) is Struct):
