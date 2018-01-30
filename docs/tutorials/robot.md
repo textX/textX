@@ -225,7 +225,7 @@ Meta-models are created from our grammar description, in this case
 `robot.tx` file. Open `robot.py` Python file and write following:
 
 ```python
-from textx.metamodel import metamodel_from_file
+from textx import metamodel_from_file
 robot_mm = metamodel_from_file('robot.tx')
 ```
 

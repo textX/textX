@@ -302,7 +302,7 @@ Python console.
 Example ipython session:
 
 ```ipython
-In [1]: from textx.metamodel import metamodel_from_str
+In [1]: from textx import metamodel_from_str
 
 In [2]: mm = metamodel_from_str("""
 ...: Model: points+=Point;

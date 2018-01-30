@@ -2,9 +2,8 @@ from __future__ import unicode_literals
 import sys
 import pytest
 
-from textx.metamodel import metamodel_from_str
+from textx import metamodel_from_str, TextXSyntaxError
 from textx.lang import ALL_TYPE_NAMES
-from textx.exceptions import TextXSyntaxError
 from textx.const import RULE_MATCH, RULE_ABSTRACT, RULE_COMMON
 
 if sys.version < '3':
@@ -368,23 +367,24 @@ def test_float_int_number():
 
 def test_float_variations():
     """
-    Test different float formats.
+    Test different float formats and boundary anchoring.
     """
     grammar = """
-        Rule: a*=FLOAT[',']
+        Rule: a*=FLOAT[','] ',' some_id='7i'
         ;
     """
     meta = metamodel_from_str(grammar)
 
-    model = meta.model_from_str('3.5, .4, 5.0, 6.')
+    model = meta.model_from_str('3.5, .4, 5.0, 6., 7i')
     assert len(model.a) == 4
     assert type(model.a[0]) is float
     assert type(model.a[1]) is float
     assert type(model.a[2]) is float
     assert type(model.a[3]) is float
+    assert model.some_id == '7i'
 
     # Check scientific notation
-    model = meta.model_from_str('1e-2')
+    model = meta.model_from_str('1e-2, 7i')
     assert model.a[0] == 0.01
 
 

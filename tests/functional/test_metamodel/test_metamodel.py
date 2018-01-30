@@ -1,6 +1,6 @@
 import pytest  # noqa
 import os
-from textx.metamodel import metamodel_from_str, metamodel_from_file
+from textx import metamodel_from_str, metamodel_from_file
 
 grammar = """
 First:

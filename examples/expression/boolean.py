@@ -1,5 +1,5 @@
 from os.path import join, dirname
-from textx.metamodel import metamodel_from_str
+from textx import metamodel_from_str
 from textx.export import metamodel_export, model_export
 
 grammar = '''

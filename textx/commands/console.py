@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 import sys
 import argparse
-from textx.metamodel import metamodel_from_file
+from textx import metamodel_from_file, TextXError
 from textx.export import metamodel_export, model_export
-from textx.exceptions import TextXError
 
 
 def textx():

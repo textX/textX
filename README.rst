@@ -24,8 +24,7 @@ Quick intro
 
 .. code:: python
 
-    from textx.metamodel import metamodel_from_str
-    from textx.model import children_of_type
+    from textx import metamodel_from_str, children_of_type
 
     grammar = """
     Model: shapes*=Shape;
@@ -102,6 +101,14 @@ Docs and tutorials
 ==================
 
 The full documentation with tutorials is available at http://igordejanovic.net/textX/
+
+
+Discussion and help
+===================
+
+For general discussion and help please join [the textX google
+group](https://groups.google.com/forum/#!forum/textx-talk).
+
 
 License
 =======

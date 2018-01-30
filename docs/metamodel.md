@@ -5,7 +5,7 @@ instantiated while parsing the input. A meta-model is built from the grammar by
 the functions `metamodel_from_file` or `metamodel_from_str` in the
 `textx.metamodel` module.
 
-    from textx.metamodel import metamodel_from_file
+    from textx import metamodel_from_file
     my_metamodel = metamodel_from_file('my_grammar.tx')
 
 Each rule from the grammar will result in a Python class kept in the meta-model.
@@ -30,7 +30,7 @@ during the meta-model instantiation. This parameter is a list of your classes
 that should be named the same as the rules from the grammar which they
 represent.
 
-    from textx.metamodel import metamodel_from_str
+    from textx import metamodel_from_str
 
     grammar = '''
     EntityModel:
@@ -112,7 +112,7 @@ can catch and handle this exception.
 To register a model processor call `register_model_processor` on the meta-model
 instance.
 
-    from textx.metamodel import metamodel_from_file
+    from textx import metamodel_from_file
 
     # Model processor is a callable that will accept meta-model and model as its
     # parameters.

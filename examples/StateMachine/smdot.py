@@ -4,7 +4,7 @@ Export state machine models to dot.
 import codecs
 import sys
 from os.path import dirname, join
-from textx.metamodel import metamodel_from_file
+from textx import metamodel_from_file
 if sys.version < '3':
     text = unicode
 else:
@@ -23,6 +23,7 @@ HEADER = '''
 
 
 '''
+
 
 def sm_to_dot(model):
     """

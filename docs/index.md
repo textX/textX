@@ -124,12 +124,24 @@ Also, you can
 check out [examples](https://github.com/igordejanovic/textX/tree/master/examples/).
 
 
+## Discussion and help
+
+For general discussion and help please
+join
+[the textX google group](https://groups.google.com/forum/#!forum/textx-talk).
+
+
 ## Projects using textX
 
 Here is a non-complete list of projects using textX.
 
 * Open-source
 
+    - [pyecore](https://github.com/pyecore/pyecore) - ECore implementation in
+      Python. Vincent Aranega is doing a great work on integrating textX with
+      pyecore. The idea is that the integration eventually gets merged to the
+      main textX repo. For now, you can follow his
+      work [on his fork of textX](https://github.com/aranega/textX).
     - [pyTabs](https://github.com/E2Music/pyTabs) - A Domain-Specific Language
       (DSL) for simplified music notation
     - [applang](https://github.com/kosanmil/applang) - Textual DSL for
@@ -157,18 +169,39 @@ dejanovic at gmail. I would like to hear from you!
 
 ## Editor/IDE support
 
-For a [Visual Studio Code](https://code.visualstudio.com/) support check
-out [viewX](https://github.com/danielkupco/viewX-vscode), a plugin for building
-language visualizers. This is a first project in the serie of projects that will
-provide full support for textX based languages in VSC.
+### Visual Studio Code support
 
-If you are a vim editor user check out [support for vim](https://github.com/igordejanovic/textx.vim/).
+There is currently an ongoing effort to build tooling support
+around [Visual Studio Code](https://code.visualstudio.com/). The idea is to
+auto-generate VCS plugin with syntax highlighting, outline, InteliSense,
+navigation, visualization. The input for the generator would be your language
+grammar and additional information specified using various DSLs.
+
+You can follow the progress
+at [the textX-tools GitHub organization](https://github.com/textX-tools).
+
+Projects that are currently in progress are:
+- [viewX](https://github.com/danielkupco/viewX-vscode) - creating visualizators
+  for textX languages
+- [textX-languageserver](https://github.com/textX-tools/textX-languageserver) -
+  Language Server Protocol support for textX languages
+- [textX-extensions](https://github.com/textX-tools/textX-extensions) - syntax
+  highlighting, code outline
+
+Stay tuned ;)
+
+
+### Other editors
+
+If you are a vim editor user check
+out [support for vim](https://github.com/igordejanovic/textx.vim/).
 
 For emacs there is [textx-mode](https://github.com/novakboskov/textx-mode) which
 is also available in [MELPA](https://melpa.org/#/textx-mode).
 
-You can also check out [textX-ninja project](https://github.com/igordejanovic/textX-ninja).
-
+You can also check
+out [textX-ninja project](https://github.com/igordejanovic/textX-ninja). It is
+currently unmaintained.
 
 
 ## Citing textX
