@@ -89,7 +89,7 @@ def comment_block():        return _(r'/\*(.|\n)*?\*/')
 ID          = _(r'[^\d\W]\w*\b', rule_name='ID', root=True)
 BOOL        = _(r'(True|true|False|false|0|1)\b', rule_name='BOOL', root=True)
 INT         = _(r'[-+]?[0-9]+\b', rule_name='INT', root=True)
-FLOAT       = _(r'[+-]?(\d+(\.\d*)?|\.\b\d+)([eE][+-]?\d+)?(?<=[\w\.])(?![\w\.])',
+FLOAT       = _(r'[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?(?<=[\w\.])(?![\w\.])',
                 'FLOAT', root=True)
 STRING      = _(r'("(\\"|[^"])*")|(\'(\\\'|[^\'])*\')', 'STRING', root=True)
 NUMBER      = OrderedChoice(nodes=[FLOAT, INT], rule_name='NUMBER', root=True)
