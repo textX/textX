@@ -78,10 +78,33 @@ We provide some standard scope providers:
    to model inheritance (see docu).
 """
 
+class MetaModelProvider(object):
+    """
+    This class has the responsability to provide a meta model
+    for a given file to be loaded.
+    This is a global ressource (no objects, just this class).
+    """
+    _pattern_to_metamodel={} # pattern:metamodel
+
+    @staticmethod
+    def add_metamodel(pattern, the_metamodel):
+        MetaModelProvider._pattern_to_metamodel[pattern] = the_metamodel
+
+    @staticmethod
+    def get_metamodel(parent_model, filename):
+        from textx.model import metamodel
+        import fnmatch
+        for p,mm in MetaModelProvider._pattern_to_metamodel.items():
+            if fnmatch.fnmatch(filename,p):
+                #print("loading model {} with special mm".format(filename));
+                return mm
+        #print("loading model {} with present mm".format(filename))
+        return metamodel(parent_model)
+
+
 # -------------------------------------------------------------------------------------
 # Scope helper classes:
 # -------------------------------------------------------------------------------------
-
 
 class Postponed(object):
     """
@@ -156,11 +179,12 @@ class GlobalModelRepository(object):
             raise IOError(
                 errno.ENOENT, os.strerror(errno.ENOENT), filename_pattern)
         for filename in filenames:
-            self.load_model(metamodel(model), filename)
+            self.load_model( MetaModelProvider.get_metamodel(model, filename) , filename)
 
     def load_model(self, themetamodel, filename):
         """
         load a single model
+        :rtype: the loaded model
         :param filename: the new model source
         :return: the model
         """

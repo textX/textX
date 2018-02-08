@@ -147,6 +147,29 @@ def get_referenced_object_as_list(prev_obj, obj, dot_separated_name, parser=None
         return [res]
 
 
+def get_unique_named_object_in_all_models(root, name):
+    """
+    retrieves a unqiue named object (no fully qualified name)
+    :param root: start of search (if root is a model all known models are searched as well)
+    :param name: name of object
+    :return: the object (if not unique, raises an error)
+    """
+    if hasattr(root,'_tx_model_repository'):
+        src=list(root._tx_model_repository.local_models.filename_to_model.values())
+        if not root in src:
+            src.append(root)
+    else:
+        src=[root]
+
+    a = []
+    for m in src:
+        print("analyzing {}".format(m._tx_filename))
+        a = a+children(lambda x:hasattr(x,'name') and x.name==name, m)
+
+    assert len(a)==1
+    return a[0]
+
+
 def get_unique_named_object(root, name):
     """
     retrieves a unqiue named object (no fully qualified name)
@@ -157,7 +180,6 @@ def get_unique_named_object(root, name):
     a = children(lambda x:hasattr(x,'name') and x.name==name, root)
     assert len(a)==1
     return a[0]
-
 
 def check_unique_named_object_has_class(root, name, class_name):
     """
