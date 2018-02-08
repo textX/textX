@@ -3,6 +3,7 @@ from textx import metamodel_from_file
 import textx.scoping as scoping
 from os.path import dirname, abspath
 from textx.scoping_tools import get_unique_named_object_in_all_models
+from pytest import raises
 
 def test_metamodel_provder_basic_test():
     #################################
@@ -23,6 +24,8 @@ def test_metamodel_provder_basic_test():
 
     scoping.MetaModelProvider.add_metamodel("*.components", mm_components)
     scoping.MetaModelProvider.add_metamodel("*.users", mm_users)
+    with raises(Exception, match=r'.*pattern.*already registered.*'):
+        scoping.MetaModelProvider.add_metamodel("*.users", mm_users)
 
     #################################
     # MODEL PARSING

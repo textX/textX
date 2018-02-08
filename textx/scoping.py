@@ -88,7 +88,13 @@ class MetaModelProvider(object):
 
     @staticmethod
     def add_metamodel(pattern, the_metamodel):
+        if MetaModelProvider.knows(pattern):
+            raise Exception("pattern {} already registered".format(pattern))
         MetaModelProvider._pattern_to_metamodel[pattern] = the_metamodel
+
+    @staticmethod
+    def knows(pattern):
+        return pattern in MetaModelProvider._pattern_to_metamodel.keys()
 
     @staticmethod
     def get_metamodel(parent_model, filename):
