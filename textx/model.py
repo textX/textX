@@ -22,10 +22,11 @@ if sys.version < '3':
 else:
     text = str
 
-__all__ = ['children_of_type', 'parent_of_type', 'model_root', 'metamodel']
+__all__ = ['get_children_of_type', 'get_parent_of_type', 'get_model',
+           'get_metamodel']
 
 
-def model_root(obj):
+def get_model(obj):
     """
     Finds model root element for the given object.
     """
@@ -35,14 +36,14 @@ def model_root(obj):
     return p
 
 
-def metamodel(obj):
+def get_metamodel(obj):
     """
     Returns metamodel of the given object's model.
     """
-    return model_root(obj)._tx_metamodel
+    return get_model(obj)._tx_metamodel
 
 
-def parent_of_type(typ, obj):
+def get_parent_of_type(typ, obj):
     """
     Finds first object up the parent chain of the given type.
     If no parent of the given type exists None is returned.
@@ -62,7 +63,7 @@ def parent_of_type(typ, obj):
             return obj
 
 
-def children_of_type(typ, root):
+def get_children_of_type(typ, root):
     """
     Returns a list of all model elements of type 'typ' starting from model
     element 'root'. The search process will follow containment links only.
