@@ -1,5 +1,5 @@
 from textx import metamodel_from_str
-from textx import children
+from textx import get_children
 import textx.scoping as scoping
 import textx.exceptions
 from pytest import raises
@@ -65,25 +65,25 @@ def test_fully_qualified_name_ref():
     # TEST MODEL
     #################################
 
-    a = children(lambda x:hasattr(x,'name') and x.name=="rec", my_model)
+    a = get_children(lambda x:hasattr(x,'name') and x.name=="rec", my_model)
     assert len(a)==1
     assert a[0].name=="rec"
     assert a[0].ref.__class__.__name__=="Class"
     assert a[0].ref.name=="C2"
 
-    a = children(lambda x:hasattr(x,'name') and x.name=="p1", my_model)
+    a = get_children(lambda x:hasattr(x,'name') and x.name=="p1", my_model)
     assert len(a)==1
     assert a[0].name=="p1"
     assert a[0].ref.__class__.__name__=="Class"
     assert a[0].ref.name=="Part1"
 
-    a = children(lambda x:hasattr(x,'name') and x.name=="p2a", my_model)
+    a = get_children(lambda x:hasattr(x,'name') and x.name=="p2a", my_model)
     assert len(a)==1
     assert a[0].name=="p2a"
     assert a[0].ref.__class__.__name__=="Class"
     assert a[0].ref.name=="Part2"
 
-    a = children(lambda x:hasattr(x,'name') and x.name=="p2b", my_model)
+    a = get_children(lambda x:hasattr(x,'name') and x.name=="p2b", my_model)
     assert len(a)==1
     assert a[0].name=="p2b"
     assert a[0].ref.__class__.__name__=="Class"

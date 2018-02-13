@@ -98,14 +98,14 @@ class MetaModelProvider(object):
 
     @staticmethod
     def get_metamodel(parent_model, filename):
-        from textx.model import metamodel
+        from textx.model import get_metamodel
         import fnmatch
         for p,mm in MetaModelProvider._pattern_to_metamodel.items():
             if fnmatch.fnmatch(filename,p):
                 #print("loading model {} with special mm".format(filename));
                 return mm
         #print("loading model {} with present mm".format(filename))
-        return metamodel(parent_model)
+        return get_metamodel(parent_model)
 
 
 # -------------------------------------------------------------------------------------
@@ -177,7 +177,6 @@ class GlobalModelRepository(object):
         :param filename: the new model source
         :return: nothing
         """
-        from textx.model import metamodel
         assert model
         self.update_model_in_repo_based_on_filename(model)
         filenames = glob.glob(filename_pattern, **glob_args)
@@ -208,7 +207,6 @@ class GlobalModelRepository(object):
         return self.local_models.filename_to_model[filename]
 
     def update_model_in_repo_based_on_filename(self, model):
-        from textx.model import metamodel
         assert (model._tx_model_repository == self)  # makes only sense if the correct model is used
         myfilename = model._tx_filename
         if (myfilename and (not self.all_models.has_model(myfilename))):
@@ -371,15 +369,10 @@ def scope_provider_fully_qualified_names(parser,obj,attr,obj_ref):
     assert type(obj_ref) is ObjCrossRef, type(obj_ref)
     cls, obj_name = obj_ref.cls, obj_ref.obj_name
     ret = _find_referenced_obj(obj, obj_name)
-    if ret: return ret
-
-    # As a fall-back search builtins if given
-    metamodel = obj._tx_metamodel
-    if metamodel.builtins:
-        if obj_ref.obj_name in metamodel.builtins:
-            # TODO: Classes must match
-            return metamodel.builtins[obj_ref.obj_name]
-    return None
+    if ret:
+        return ret
+    else:
+        return None
 
 
 class ScopeProviderWithImportURI(ModelLoader):
@@ -399,9 +392,9 @@ class ScopeProviderWithImportURI(ModelLoader):
         self.glob_args=glob_args
 
     def _load_referenced_models(self, model):
-        from textx.model import children
+        from textx.model import get_children
         visited=[]
-        for obj in children(lambda x:hasattr(x,"importURI") and not x in visited,model):
+        for obj in get_children(lambda x:hasattr(x,"importURI") and not x in visited,model):
             visited.append(obj)
             # TODO add multiple lookup rules for file search
             basedir = dirname(model._tx_filename)
@@ -411,13 +404,13 @@ class ScopeProviderWithImportURI(ModelLoader):
             model._tx_model_repository.load_models_using_filepattern(filename_pattern, model=model, glob_args=self.glob_args)
 
     def load_models(self, model):
-        from textx.model import metamodel
+        from textx.model import get_metamodel
         # do we already have loaded models (analysis)? No -> check/load them
         if "_tx_model_repository" in dir(model):
             pass
         else:
-            if "_tx_model_repository" in dir(metamodel(model)):
-                model_repository = GlobalModelRepository(metamodel(model._tx_model_repository.all_models))
+            if "_tx_model_repository" in dir(get_metamodel(model)):
+                model_repository = GlobalModelRepository(get_metamodel(model._tx_model_repository.all_models))
             else:
                 model_repository = GlobalModelRepository()
             model._tx_model_repository = model_repository
@@ -425,14 +418,14 @@ class ScopeProviderWithImportURI(ModelLoader):
 
 
     def __call__(self, parser, obj, attr, obj_ref):
-        from textx.model import ObjCrossRef, model_root
+        from textx.model import ObjCrossRef, get_model
         assert type(obj_ref) is ObjCrossRef, type(obj_ref)
         #cls, obj_name = obj_ref.cls, obj_ref.obj_name
 
         # 1) lookup URIs... (first, before looking locally - to detect file not founds and distant model errors...)
         # TODO: raise error if lookup is not unique
 
-        model = model_root(obj)
+        model = get_model(obj)
         model_repository = model._tx_model_repository
 
         # 1) try to find object locally

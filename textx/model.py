@@ -122,7 +122,7 @@ def get_children_of_type(typ, root):
     if type(typ) is not text:
         typ = typ.__name__
 
-    return children(lambda x: x.__class__.__name__ == typ,root)
+    return get_children(lambda x: x.__class__.__name__ == typ,root)
 
 
 class ObjCrossRef(object):
@@ -484,7 +484,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolutio
         # start of resolve-loop
         # -------------------------
         for obj, attr, crossref in current_crossrefs:
-            if (model_root(obj) == model):
+            if (get_model(obj) == model):
                 attr_value = getattr(obj, attr.name)
                 attr_ref      = obj.__class__.__name__+"."+attr.name
                 attr_ref_alt1 = "*."+attr.name

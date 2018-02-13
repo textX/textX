@@ -4,7 +4,7 @@
 # Author: Pierre Bayerl
 # License: MIT License
 #######################################################################
-from textx import children
+from textx import get_children
 import re
 
 def needs_to_be_resolved(parser, parent_obj, attr_name):
@@ -164,7 +164,7 @@ def get_unique_named_object_in_all_models(root, name):
     a = []
     for m in src:
         print("analyzing {}".format(m._tx_filename))
-        a = a+children(lambda x:hasattr(x,'name') and x.name==name, m)
+        a = a+get_children(lambda x:hasattr(x,'name') and x.name==name, m)
 
     assert len(a)==1
     return a[0]
@@ -177,7 +177,7 @@ def get_unique_named_object(root, name):
     :param name: name of object
     :return: the object (if not unique, raises an error)
     """
-    a = children(lambda x:hasattr(x,'name') and x.name==name, root)
+    a = get_children(lambda x:hasattr(x,'name') and x.name==name, root)
     assert len(a)==1
     return a[0]
 

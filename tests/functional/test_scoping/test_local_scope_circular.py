@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 from textx import metamodel_from_file
-from textx import children_of_type
+from textx import get_children_of_type
 import textx.scoping as scoping
 from os.path import dirname, abspath
 from textx.scoping_tools import get_unique_named_object
@@ -37,8 +37,8 @@ def test_model_with_local_scope_and_circular_ref_via_two_models():
     assert a_my_a.component == b_my_a.component # same component "class"
     assert a_my_b.component == b_my_b.component # same component "class"
 
-    a_connections = children_of_type("Connection",my_modelA)
-    b_connections = children_of_type("Connection",my_modelB)
+    a_connections = get_children_of_type("Connection",my_modelA)
+    b_connections = get_children_of_type("Connection",my_modelB)
 
     a_connection = list(filter(lambda x:x.from_inst==a_my_a and x.to_inst==a_my_b, a_connections))
     b_connection = list(filter(lambda x:x.from_inst==b_my_a and x.to_inst==b_my_b, b_connections))

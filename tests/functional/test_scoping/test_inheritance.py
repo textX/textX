@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
 from textx import metamodel_from_file
-from textx import children_of_type
+from textx import get_children_of_type
 import textx.scoping as scoping
 
 from os.path import dirname, abspath
@@ -29,7 +29,7 @@ def test_inheritance_processor():
     # TEST MODEL
     #################################
 
-    components = children_of_type("Component", my_model)
+    components = get_children_of_type("Component", my_model)
 
     expected="""
         Start

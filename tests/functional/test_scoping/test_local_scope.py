@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
 from textx import metamodel_from_file
-from textx import children_of_type
+from textx import get_children_of_type
 import textx.scoping as scoping
 from textx.scoping_tools import get_unique_named_object
 
@@ -59,7 +59,7 @@ def test_model_with_local_scope():
     # test local refs
     action2 = get_unique_named_object(my_model, "action2")
     action3 = get_unique_named_object(my_model, "action3")
-    connections = children_of_type("Connection",my_model)
+    connections = get_children_of_type("Connection",my_model)
     selected_connections = list(filter(lambda x:x.from_inst==action2 and x.to_inst==action3, connections))
     assert len(selected_connections)==1
 
@@ -127,7 +127,7 @@ def test_model_with_local_scope_and_inheritance2():
     action2 = get_unique_named_object(my_model, "action2")
     action3 = get_unique_named_object(my_model, "action3")
     end     = get_unique_named_object(my_model, "end")
-    connections = children_of_type("Connection",my_model)
+    connections = get_children_of_type("Connection",my_model)
     selected_connections_12 = list(filter(lambda x:x.from_inst==action1 and x.to_inst==action2, connections))
     selected_connections_3e = list(filter(lambda x:x.from_inst==action3 and x.to_inst==end, connections))
     assert len(selected_connections_12)==1
@@ -149,7 +149,7 @@ def test_model_with_local_scope_and_inheritance2():
     action2 = get_unique_named_object(my_model, "action2")
     action3 = get_unique_named_object(my_model, "action3")
     end     = get_unique_named_object(my_model, "end")
-    connections = children_of_type("Connection",my_model)
+    connections = get_children_of_type("Connection",my_model)
     selected_connections_12 = list(filter(lambda x:x.from_inst==action1 and x.to_inst==action2, connections))
     selected_connections_3e = list(filter(lambda x:x.from_inst==action3 and x.to_inst==end, connections))
     assert len(selected_connections_12)==1

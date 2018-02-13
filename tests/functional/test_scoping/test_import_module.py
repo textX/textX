@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 from textx import metamodel_from_file
-from textx import children
+from textx import get_children
 import textx.scoping as scoping
 from os.path import dirname, abspath
 import textx.exceptions
@@ -152,19 +152,19 @@ def test_model_with_circular_imports():
     check_unique_named_object_has_class(my_model, "A", "Interface")
     A  = get_unique_named_object(my_model, "A")
 
-    A_self = children(lambda x:hasattr(x,'name') and x.name=="self", A)
+    A_self = get_children(lambda x:hasattr(x,'name') and x.name=="self", A)
     assert len(A_self)==1
     A_self=A_self[0]
 
-    A_other = children(lambda x:hasattr(x,'name') and x.name=="other", A)
+    A_other = get_children(lambda x:hasattr(x,'name') and x.name=="other", A)
     assert len(A_other)==1
     A_other=A_other[0]
 
-    A_other_self = children(lambda x:hasattr(x,'name') and x.name=="self", A_other.ref)
+    A_other_self = get_children(lambda x:hasattr(x,'name') and x.name=="self", A_other.ref)
     assert len(A_other_self)==1
     A_other_self=A_other_self[0]
 
-    A_other_other = children(lambda x:hasattr(x,'name') and x.name=="other", A_other.ref)
+    A_other_other = get_children(lambda x:hasattr(x,'name') and x.name=="other", A_other.ref)
     assert len(A_other_other)==1
     A_other_other=A_other_other[0]
 

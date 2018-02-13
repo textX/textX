@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 from textx import metamodel_from_str
-from textx import children, children_of_type
+from textx import get_children, get_children_of_type
 import textx.scoping as scoping
 from operator import eq
 import re
@@ -66,7 +66,7 @@ def test_fully_qualified_name_ref():
     # TEST 
     #################################
 
-    res = children_of_type("Class", my_model)
+    res = get_children_of_type("Class", my_model)
     res.sort(key=lambda x: x.name)
     assert len(res)==3
     assert all(map(eq, map(lambda x:x.name, res), ["C2","Part1","Part2"]))
@@ -74,14 +74,14 @@ def test_fully_qualified_name_ref():
     for x in res:
         assert x.__class__.__name__ == "Class"
     
-    res = children_of_type("Attribute", my_model)
+    res = get_children_of_type("Attribute", my_model)
     res.sort(key=lambda x: x.name)
     assert len(res)==4
     assert all(map(eq, map(lambda x:x.name, res), ["p1","p2a","p2b","rec"]))
     for x in res:
         assert x.__class__.__name__ == "Attribute"
 
-    res = children(lambda x:hasattr(x,"name") and re.match(".*2.*", x.name), my_model)
+    res = get_children(lambda x:hasattr(x,"name") and re.match(".*2.*", x.name), my_model)
     res.sort(key=lambda x: x.name)
     assert len(res)==5
     assert all(map(eq, map(lambda x:x.name, res), ["C2","P2","Part2","p2a","p2b"]))
