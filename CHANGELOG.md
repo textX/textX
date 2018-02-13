@@ -23,6 +23,7 @@
     - import scope (model distributed over different files - loaded when imported)
     - relative scopes (e.g. instance.method where method is defined for the class of the instance in a model of classes, methods and instances)
     - selecting the metamodel based on a file pattern when loading models
+  - added tests (mostly scope related - some of them also test other stuff, like buildins)
 * 2017-11-22 Release 1.6.1
   - Fixing build for PyPI.
 
