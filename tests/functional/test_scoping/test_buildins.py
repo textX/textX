@@ -1,5 +1,4 @@
 from textx import metamodel_from_str
-from textx import get_children
 import textx.scoping as scoping
 import textx.exceptions
 from pytest import raises
@@ -24,6 +23,15 @@ class Thing(object):
 
 
 def test_buildins():
+    """
+    This test is used to check if a model with buildins works correctly.
+    The test uses no special scoping.
+
+    The test loads
+    - one model w/o buildins
+    - one model with buildins
+    - one model with unknown references (errors)
+    """
     #################################
     # META MODEL DEF
     #################################
@@ -38,21 +46,21 @@ def test_buildins():
     # MODEL PARSING
     #################################
 
-    my_model = my_metamodel.model_from_str('''
+    _ = my_metamodel.model_from_str('''
     thing A {}
     thing B {}
     thing C {A B}
     ''')
 
 
-    my_model = my_metamodel.model_from_str('''
+    _ = my_metamodel.model_from_str('''
     thing A {}
     thing B {}
     thing C {A B OneThing OtherThing}
     ''')
 
     with raises(textx.exceptions.TextXSemanticError, match=r'.*Unknown object.*UnknownPart.*'):
-        my_model = my_metamodel.model_from_str('''
+        _ = my_metamodel.model_from_str('''
         thing A {}
         thing B {}
         thing C {A B OneThing OtherThing UnknownPart}
@@ -63,6 +71,16 @@ def test_buildins():
     #################################
 
 def test_buildins_fully_qualified_name():
+    """
+    This test is used to check if a model with buildins works correctly.
+    The test uses full quialified name scoping (to check that exchanging the
+    scope provider globally does not harm the buildins-feature.
+
+    The test loads
+    - one model w/o buildins
+    - one model with buildins
+    - one model with unknown references (errors)
+    """
     #################################
     # META MODEL DEF
     #################################
@@ -78,21 +96,21 @@ def test_buildins_fully_qualified_name():
     # MODEL PARSING
     #################################
 
-    my_model = my_metamodel.model_from_str('''
+    _ = my_metamodel.model_from_str('''
     thing A {}
     thing B {}
     thing C {A B}
     ''')
 
 
-    my_model = my_metamodel.model_from_str('''
+    _ = my_metamodel.model_from_str('''
     thing A {}
     thing B {}
     thing C {A B OneThing OtherThing}
     ''')
 
     with raises(textx.exceptions.TextXSemanticError, match=r'.*Unknown object.*UnknownPart.*'):
-        my_model = my_metamodel.model_from_str('''
+        _ = my_metamodel.model_from_str('''
         thing A {}
         thing B {}
         thing C {A B OneThing OtherThing UnknownPart}
