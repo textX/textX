@@ -55,6 +55,7 @@ class MetaAttr(object):
         self.bool_assignment = bool_assignment
         self.position = position
 
+
 class TextXMetaModel(DebugPrinter):
     """
     Meta-model contains all information about language abstract syntax.
@@ -80,6 +81,8 @@ class TextXMetaModel(DebugPrinter):
             boundaries. Default is False.
         memoization(bool): If memoization should be used (a.k.a. packrat
             parsing). Default is False.
+        textx_tools_support(bool): If True, additional properties will be
+            added to model. Default is False.
         debug(bool): Should debug messages be printed.
         builtins(dict): A dict of named object used in linking phase.
             References to named objects not defined in the model will be
@@ -111,7 +114,7 @@ class TextXMetaModel(DebugPrinter):
     def __init__(self, file_name=None, classes=None, builtins=None,
                  match_filters=None, auto_init_attributes=True,
                  ignore_case=False, skipws=True, ws=None, autokwd=False,
-                 memoization=False,  **kwargs):
+                 memoization=False, textx_tools_support=False, **kwargs):
         super(TextXMetaModel, self).__init__(**kwargs)
 
         self.file_name = file_name
@@ -133,6 +136,7 @@ class TextXMetaModel(DebugPrinter):
         self.ws = ws
         self.autokwd = autokwd
         self.memoization = memoization
+        self.textx_tools_support = textx_tools_support
 
         # Registered model processors
         self._model_processors = []

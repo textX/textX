@@ -24,7 +24,7 @@ Quick intro
 
 .. code:: python
 
-    from textx import metamodel_from_str, children_of_type
+    from textx import metamodel_from_str, get_children_of_type
 
     grammar = """
     Model: shapes*=Shape;
@@ -65,7 +65,7 @@ Quick intro
     # Line: from=18,89 to=78,65
 
     # Collect all points starting from the root of the model
-    points = children_of_type("Point", model)
+    points = get_children_of_type("Point", model)
     for point in points:
         print('Point: {}'.format(_(point)))
 

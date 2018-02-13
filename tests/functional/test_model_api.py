@@ -3,8 +3,8 @@ Model query and navigation API.
 """
 from __future__ import unicode_literals
 import pytest  # noqa
-from textx import metamodel_from_str, children_of_type, parent_of_type, \
-    model_root
+from textx import metamodel_from_str, get_children_of_type, \
+    get_parent_of_type, get_model
 
 
 grammar = """
@@ -31,40 +31,40 @@ model_str = """
 """
 
 
-def test_children_of_type():
+def test_get_children_of_type():
 
     metamodel = metamodel_from_str(grammar)
     model = metamodel.model_from_str(model_str)
 
-    thirds = children_of_type('Third', model)
+    thirds = get_children_of_type('Third', model)
     assert len(thirds) == 5
     assert set(['first', 'second', 'third', 'one', 'two']) \
         == set([a.x for a in thirds])
 
     # Test search in the part of the model
-    thirds = children_of_type("Third", model.a[1])
+    thirds = get_children_of_type("Third", model.a[1])
     assert len(thirds) == 1
     assert 'two' == list(thirds)[0].x
 
 
-def test_parent_of_type():
+def test_get_parent_of_type():
 
     metamodel = metamodel_from_str(grammar)
     model = metamodel.model_from_str(model_str)
 
     t = model.a[0].y
-    s = parent_of_type('Second', t)
+    s = get_parent_of_type('Second', t)
     assert s.__class__.__name__ == 'Second'
     assert s.x[0] == 23
-    f = parent_of_type('First', t)
+    f = get_parent_of_type('First', t)
     assert f.__class__.__name__ == 'First'
     assert f is model
 
 
-def test_model_root():
+def test_get_model():
 
     metamodel = metamodel_from_str(grammar)
     model = metamodel.model_from_str(model_str)
 
     t = model.a[0].y
-    assert model_root(t) is model
+    assert get_model(t) is model

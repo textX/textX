@@ -7,14 +7,16 @@
 # License: MIT License
 #######################################################################
 
-
 import sys
 import codecs
 import traceback
+from collections import OrderedDict
 from arpeggio import Parser, Sequence, NoMatch, EOF, Terminal
 from textx.exceptions import TextXSyntaxError, TextXSemanticError
 from textx.const import MULT_OPTIONAL, MULT_ONE, MULT_ONEORMORE, \
-    MULT_ZEROORMORE, RULE_COMMON, RULE_ABSTRACT, RULE_MATCH
+    MULT_ZEROORMORE, RULE_COMMON, RULE_ABSTRACT, RULE_MATCH, \
+    MULT_ASSIGN_ERROR, UNKNOWN_OBJ_ERROR
+from textx.lang import PRIMITIVE_PYTHON_TYPES
 from textx.scoping import scope_provider_plain_names, Postponed
 
 if sys.version < '3':
@@ -22,10 +24,11 @@ if sys.version < '3':
 else:
     text = str
 
-__all__ = ['children_of_type', 'parent_of_type', 'model_root', 'metamodel']
+__all__ = ['get_children_of_type', 'get_parent_of_type', 'get_model',
+           'get_metamodel']
 
 
-def model_root(obj):
+def get_model(obj):
     """
     Finds model root element for the given object.
     """
@@ -35,14 +38,14 @@ def model_root(obj):
     return p
 
 
-def metamodel(obj):
+def get_metamodel(obj):
     """
     Returns metamodel of the given object's model.
     """
-    return model_root(obj)._tx_metamodel
+    return get_model(obj)._tx_metamodel
 
 
-def parent_of_type(typ, obj):
+def get_parent_of_type(typ, obj):
     """
     Finds first object up the parent chain of the given type.
     If no parent of the given type exists None is returned.
@@ -62,7 +65,7 @@ def parent_of_type(typ, obj):
             return obj
 
 
-def children(decider, root):
+def get_children(decider, root):
     """
     Returns a list of all model elements of type 'typ' starting from model
     element 'root'. The search process will follow containment links only.
@@ -103,7 +106,7 @@ def children(decider, root):
     follow(root)
     return collected
 
-def children_of_type(typ, root):
+def get_children_of_type(typ, root):
     """
     Returns a list of all model elements of type 'typ' starting from model
     element 'root'. The search process will follow containment links only.
@@ -135,6 +138,26 @@ class ObjCrossRef(object):
         self.obj_name = obj_name
         self.cls = cls
         self.position = position
+
+
+class RefRulePosition(object):
+    """
+    Used for "go to definition" support in textx-languageserver
+
+    Attributes:
+        name(str): A name of the target object.
+        ref_pos_start(int): Reference starting position
+        ref_pos_end(int): Reference ending position
+        def_pos_start(int): Starting position of referenced object
+        def_pos_end(int): Ending position of referenced object
+    """
+    def __init__(self, name, ref_pos_start, ref_pos_end,
+                 def_pos_start, def_pos_end):
+        self.name = name
+        self.ref_pos_start = ref_pos_start
+        self.ref_pos_end = ref_pos_end
+        self.def_pos_start = def_pos_start
+        self.def_pos_end = def_pos_end
 
 
 def get_model_parser(top_rule, comments_model, **kwargs):
@@ -173,7 +196,10 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                 return self.parser_model.parse(self)
             except NoMatch as e:
                 line, col = e.parser.pos_to_linecol(e.position)
-                raise TextXSyntaxError(text(e), line, col)
+                raise TextXSyntaxError(message=text(e),
+                                       line=line,
+                                       col=col,
+                                       expected_rules=e.rules)
 
         def get_model_from_file(self, file_name, encoding, debug, pre_ref_resolution_callback=None, is_this_the_main_model=True):
             """
@@ -237,6 +263,10 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolutio
     """
 
     metamodel = parser.metamodel
+
+    if metamodel.textx_tools_support:
+        pos_rule_dict = {}
+        pos_crossref_list = []
 
     def process_match(nt):
         """
@@ -383,9 +413,10 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolutio
                 attr_value = getattr(obj_attr, txa_attr_name)
                 if attr_value and type(attr_value) is not list:
                     raise TextXSemanticError(
-                        "Multiple assignments to attribute {} at {}"
-                        .format(attr_name,
-                                parser.pos_to_linecol(node.position)))
+                        message="Multiple assignments to attribute {} at {}"
+                                .format(attr_name,
+                                        parser.pos_to_linecol(node.position)),
+                        err_type=MULT_ASSIGN_ERROR)
 
                 # Convert tree bellow assignment to proper value
                 value = process_node(node[0])
@@ -403,6 +434,8 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolutio
                     setattr(obj_attr, txa_attr_name, value)
 
             elif op in ['list', 'oneormore', 'zeroormore']:
+                pos_index = 0
+                positions = [n.position for n in node if n.rule_name != 'sep']
                 for n in node:
                     # If the node is separator skip
                     if n.rule_name != 'sep':
@@ -427,6 +460,11 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolutio
             else:
                 # This shouldn't happen
                 assert False
+
+        # Collect rules for textx-tools
+        if inst and metamodel.textx_tools_support:
+            pos = (inst._tx_position, inst._tx_position_end)
+            pos_rule_dict[pos] = inst
 
         return inst
 
@@ -471,7 +509,35 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolutio
                 else:
                     resolved = scope_provider_plain_names(parser, obj, attr, crossref)
 
+                # Collect cross-references for textx-tools
+                if resolved and not type(resolved) is Postponed:
+                    if metamodel.textx_tools_support:
+                        pos_crossref_list.append(
+                            RefRulePosition(name=crossref.obj_name,
+                                            ref_pos_start=crossref.position,
+                                            ref_pos_end=crossref.position +
+                                                        len(resolved.name),
+                                            def_pos_start=resolved._tx_position,
+                                            def_pos_end=resolved._tx_position_end))
+
                 if not resolved:
+                    # As a fall-back search builtins if given
+                    if metamodel.builtins:
+                        if crossref.obj_name in metamodel.builtins:
+                            # TODO: Classes must match
+                            resolved = metamodel.builtins[crossref.obj_name]
+
+                if not resolved:
+                    line, col = parser.pos_to_linecol(crossref.position)
+                    raise TextXSemanticError(
+                        message='Unknown object "{}" of class "{}" at {}'
+                            .format(crossref.obj_name, crossref.cls.__name__,
+                                    (line, col)),
+                        line=line,
+                        col=col,
+                        err_type=UNKNOWN_OBJ_ERROR,
+                        expected_obj_cls=crossref.cls)
+
                     line, col = parser.pos_to_linecol(crossref.position)
                     raise TextXSemanticError(
                         'Unknown object "{}" of class "{}" at {}'
@@ -494,7 +560,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolutio
         # -------------------------
         # store cross-refs from other models in the parser list (for later processing)
         # this happens when other models are loaded while parsing one model.
-        parser._crossrefs = new_crossrefs;
+        parser._crossrefs = new_crossrefs
         return (resolved_crossref_count, delayed_crossrefs)
 
     def call_obj_processors(model_obj):
@@ -568,5 +634,17 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolutio
                 parser.dprint("CALLING OBJECT PROCESSORS")
             for m in models:
                 call_obj_processors(m)
+
+    if metamodel.textx_tools_support \
+       and type(model) not in PRIMITIVE_PYTHON_TYPES:
+        # Cross-references for go-to definition language server support
+        # Already sorted based on ref_pos_start attr
+        # (required for binary search)
+        model._pos_crossref_list = pos_crossref_list
+
+        # Dict for storing rules where key is position of rule instance in text
+        # Sorted based on nested rules
+        model._pos_rule_dict = OrderedDict(sorted(pos_rule_dict.items(),
+                                           key=lambda x: x[0], reverse=True))
 
     return model

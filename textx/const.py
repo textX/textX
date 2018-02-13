@@ -23,3 +23,8 @@ RULE_COMMON = "common"
 RULE_ABSTRACT = "abstract"
 # If there is no direct or indirect assignments the rule is match rule.
 RULE_MATCH = "match"
+
+
+# TextXSemanticError types
+MULT_ASSIGN_ERROR = "Multiple assignments"
+UNKNOWN_OBJ_ERROR = "Unknown object"

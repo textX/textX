@@ -73,18 +73,18 @@ Where `person.ent` file might contain this:
 
 Functions given in this section can be imported from `textx.model` module.
 
-### `model_root(obj)`
+### `get_model(obj)`
 
 `obj (model object)`
 
 Finds the root of the model following `parent` references.
 
 
-### `metamodel(obj)`
+### `get_metamodel(obj)`
 
 Returns metamodel for the model given `obj` belongs to.
 
-### `parent_of_type(typ, obj)`
+### `get_parent_of_type(typ, obj)`
 
 - `typ (str or class)`: the name of type of the type itself of the model object
 searched for.
@@ -93,7 +93,7 @@ searched for.
 Finds first object up the parent chain of the given type. If no parent of the
 given type exists `None` is returned.
 
-### `children_of_type(typ, root)`
+### `get_children_of_type(typ, root)`
 
 - `typ (str or python class)`: The type of the model object we are looking for.
 - `root (model object)`: Python model object which is the start of the search
