@@ -82,7 +82,23 @@ class MetaModelProvider(object):
     """
     This class has the responsability to provide a meta model
     for a given file to be loaded.
-    This is a global ressource (no objects, just this class).
+    This is a global resource (no objects, just this class).
+
+    You can register meta model instances for given file patterns.
+    If no pattern matches, the same meta model as for the underlying
+    model is utilized.
+
+    Example:
+
+        # create meta models
+
+        mm_components   = metamodel_from_file('Components.tx')
+        mm_users        = metamodel_from_file('Users.tx')
+
+        # register meta models
+
+        scoping.MetaModelProvider.add_metamodel("*.components", mm_components)
+        scoping.MetaModelProvider.add_metamodel("*.users", mm_users)
     """
     _pattern_to_metamodel={} # pattern:metamodel
 
