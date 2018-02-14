@@ -24,7 +24,7 @@ The scope providers are python callables accepting obj,attr,obj_ref:
  * obj_ref : a textx.model.ObjCrossRef - the reference to be resolved
 
 The scope provides return the referenced object (e.g. a "MyInterface" object in the example above 
-(or None if nothing is found).
+(or None if nothing is found; or a Postponed object, see below).
 
 The scope provides are registered to the metamodel:
  * e.g., my_meta_model.register_scope_provider({"*.*":scoping.scope_provider_fully_qualified_names})
@@ -42,7 +42,7 @@ should incluence the name lookup.
 
 The state of model resolution should mainly consist of models already loaded. These models are stored in a 
 GlobalModelRepository class. This class (if required) is stored in the model. An included model loaded 
-from another including model "inhertits" the part of the GlobalModelRepository representing all loaded models. This
+from another including model "inherits" the part of the GlobalModelRepository representing all loaded models. This
 is done to (a) cache already loaded models and (b) guarantee, that every referenced model element is instantiated
 exactly once. Even in the case of circular inclusions. 
 
@@ -52,8 +52,8 @@ model element instances, you can specify this, while creating the meta model (en
 the meta model will store an own instance of a GlobalModelRepository as a base for all loaded models.
 
 Scope providers may return an object of type Postponed, if they depend on another event to happen first. This event is 
-typically the resolution of another reference. The resolution with pass multiple times of all references
-to be resolved until all references are resolved or no process regarding the resolution is observed. In the
+typically the resolution of another reference. The resolution process will repeat multiple times over all unresolved references
+to be resolved until all references are resolved or no progress regarding the resolution is observed. In the
 latter case an error is raised. The control flow responsability of the resolution process is allocated to the 
 model.py module.
 
@@ -79,7 +79,7 @@ We provide some standard scope providers:
    to model inheritance (see docu).
 
 In addition, there is also global data stored in the class "scoping.MetaModelProvider": Here, you can register 
-meta models associated to files patterms. Thus, you can control which meta model to use when loading a file in 
+meta models associated to files patterns. Thus, you can control which meta model to use when loading a file in 
 a scope provider using the "ImportURI"-feature (e.g. ScopeProviderFullyQualifiedNamesWithImportURI). If no file
 pattern matches, the meta model of the current model is utilized.
 """
