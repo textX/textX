@@ -322,13 +322,6 @@ def scope_provider_plain_names(parser, obj, attr, obj_ref):
     if result:
         return result
 
-    # As a fall-back search builtins if given
-    metamodel = obj._tx_metamodel
-    if metamodel.builtins:
-        if obj_ref.obj_name in metamodel.builtins:
-            # TODO: Classes must match
-            return metamodel.builtins[obj_ref.obj_name]
-
     return None # error handled outside
 
 
