@@ -487,28 +487,19 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolutio
         for obj, attr, crossref in current_crossrefs:
             if (get_model(obj) == model):
                 attr_value = getattr(obj, attr.name)
-                attr_ref      = obj.__class__.__name__+"."+attr.name
-                attr_ref_alt1 = "*."+attr.name
-                attr_ref_alt2 = obj.__class__.__name__+".*"
-                attr_ref_alt3 = "*.*"
-                if attr_ref in metamodel.scope_provider:
-                    if parser.debug:
-                        parser.dprint(" FOUND {}".format(attr_ref))
-                    resolved = metamodel.scope_provider[attr_ref](parser, obj,attr,crossref)
-                elif attr_ref_alt1 in metamodel.scope_provider:
-                    if parser.debug:
-                        parser.dprint(" FOUND {}".format(attr_ref_alt1))
-                    resolved = metamodel.scope_provider[attr_ref_alt1](parser, obj, attr, crossref)
-                elif attr_ref_alt2 in metamodel.scope_provider:
-                    if parser.debug:
-                        parser.dprint(" FOUND {}".format(attr_ref_alt2))
-                    resolved = metamodel.scope_provider[attr_ref_alt2](parser, obj, attr, crossref)
-                elif attr_ref_alt3 in metamodel.scope_provider:
-                    if parser.debug:
-                        parser.dprint(" FOUND {}".format(attr_ref_alt3))
-                    resolved = metamodel.scope_provider[attr_ref_alt3](parser, obj, attr, crossref)
+                attr_refs = [obj.__class__.__name__+"." + attr.name,
+                             "*." + attr.name, obj.__class__.__name__+".*",
+                             "*.*"]
+                for attr_ref in attr_refs:
+                    if attr_ref in metamodel.scope_provider:
+                        if parser.debug:
+                            parser.dprint(" FOUND {}".format(attr_ref))
+                        resolved = metamodel.scope_provider[attr_ref](
+                            parser, obj, attr, crossref)
+                        break
                 else:
-                    resolved = scope_provider_plain_names(parser, obj, attr, crossref)
+                    resolved = scope_provider_plain_names(parser, obj, attr,
+                                                          crossref)
 
                 # Collect cross-references for textx-tools
                 if resolved and not type(resolved) is Postponed:
