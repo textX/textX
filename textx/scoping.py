@@ -223,7 +223,7 @@ class GlobalModelRepository(object):
                 #all models loaded here get their references resolved from the root model
                 newmodel = themetamodel.internal_model_from_file(filename,
                                                         pre_ref_resolution_callback=lambda other_model:self.pre_ref_resolution_callback(other_model),
-                                                                 is_this_the_main_model=False)
+                                                                 is_main_model=False)
                 self.all_models.filename_to_model[filename] = newmodel
             self.local_models.filename_to_model[filename] = newmodel
         return self.local_models.filename_to_model[filename]

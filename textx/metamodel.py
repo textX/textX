@@ -506,7 +506,7 @@ class TextXMetaModel(DebugPrinter):
     def model_from_file(self, file_name, encoding='utf-8', debug=None):
         return self.internal_model_from_file(file_name, encoding, debug)
 
-    def internal_model_from_file(self, file_name, encoding='utf-8', debug=None, pre_ref_resolution_callback=None, is_this_the_main_model=True):
+    def internal_model_from_file(self, file_name, encoding='utf-8', debug=None, pre_ref_resolution_callback=None, is_main_model=True):
         """
         Instantiates model from the given file.
         :param pre_ref_resolution_callback: called before references are resolved.
@@ -535,7 +535,7 @@ class TextXMetaModel(DebugPrinter):
             model = self.parser.get_model_from_file(file_name,
                                                     encoding, debug=debug,
                                                     pre_ref_resolution_callback=callback,
-                                                    is_this_the_main_model=is_this_the_main_model)
+                                                    is_main_model=is_main_model)
 
         for p in self._model_processors:
             p(model, self)

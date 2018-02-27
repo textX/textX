@@ -201,7 +201,7 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                                        col=col,
                                        expected_rules=e.rules)
 
-        def get_model_from_file(self, file_name, encoding, debug, pre_ref_resolution_callback=None, is_this_the_main_model=True):
+        def get_model_from_file(self, file_name, encoding, debug, pre_ref_resolution_callback=None, is_main_model=True):
             """
             Creates model from the parse tree from the previous parse call.
             If file_name is given file will be parsed before model
@@ -212,7 +212,7 @@ def get_model_parser(top_rule, comments_model, **kwargs):
 
             model = self.get_model_from_str(model_str, file_name=file_name,
                                             debug=debug,pre_ref_resolution_callback=pre_ref_resolution_callback,
-                                            is_this_the_main_model=is_this_the_main_model)
+                                            is_main_model=is_main_model)
 
             # reset the file: see "# Register filename of the model for later use (e.g. imports/scoping)."
             # w/o this second assignment some tests fail (TBC)
@@ -224,7 +224,7 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                 pass
             return model
 
-        def get_model_from_str(self, model_str, file_name=None, debug=None, pre_ref_resolution_callback=None, is_this_the_main_model=True):
+        def get_model_from_str(self, model_str, file_name=None, debug=None, pre_ref_resolution_callback=None, is_main_model=True):
             """
             Parses given string and creates model object graph.
             """
@@ -240,7 +240,7 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                 self.parse(model_str, file_name=file_name)
                 # Transform parse tree to model. Skip root node which
                 # represents the whole file ending in EOF.
-                model = parse_tree_to_objgraph(self, self.parse_tree[0],file_name = file_name, pre_ref_resolution_callback = pre_ref_resolution_callback, is_this_the_main_model=is_this_the_main_model)
+                model = parse_tree_to_objgraph(self, self.parse_tree[0],file_name = file_name, pre_ref_resolution_callback = pre_ref_resolution_callback, is_main_model=is_main_model)
             finally:
                 if debug is not None:
                     self.debug = old_debug_state
@@ -256,7 +256,7 @@ def get_model_parser(top_rule, comments_model, **kwargs):
     return TextXModelParser(**kwargs)
 
 
-def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolution_callback=None, is_this_the_main_model=True):
+def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolution_callback=None, is_main_model=True):
     """
     Transforms parse_tree to object graph representing model in a
     new language.
@@ -602,7 +602,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolutio
         if isinstance(scope_provider, ModelLoader):
             scope_provider.load_models(model)
 
-    if is_this_the_main_model:
+    if is_main_model:
         from textx.scoping import get_all_models_including_attached_models
         models = get_all_models_including_attached_models(model)
 
