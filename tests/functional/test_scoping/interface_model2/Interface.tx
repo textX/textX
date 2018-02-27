@@ -33,5 +33,5 @@ EmbeddedAttribute:
         ref=[Interface|FQN] name=ID ';'
 ;
 
-FQN: ID('.'ID)*;
+FQN: ID+['.'];
 Comment: /\/\/.*$/;

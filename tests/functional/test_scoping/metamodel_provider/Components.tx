@@ -54,5 +54,5 @@ Connection:
       to_inst=[Instance|ID] '.' to_port=[SlotIn|ID]
 ;
 
-FQN: ID('.'ID)*;
+FQN: ID+['.'];
 Comment: /\/\/.*$/;
