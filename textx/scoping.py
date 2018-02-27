@@ -169,9 +169,9 @@ class GlobalModelRepository(object):
     """
     This class has the responsability to
     hold two ModelRepository objects:
-    - one for model-local visible models
-    - one for all models (globally, starting from
-      some root model).
+        * one for model-local visible models
+        * one for all models (globally, starting from
+          some root model).
     The second ModelRepository "all_models" is to cache already
     loaded models and to prevent to load one model
     twice.
