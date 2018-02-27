@@ -106,6 +106,7 @@ def get_children(decider, root):
     follow(root)
     return collected
 
+
 def get_children_of_type(typ, root):
     """
     Returns a list of all model elements of type 'typ' starting from model
@@ -122,7 +123,7 @@ def get_children_of_type(typ, root):
     if type(typ) is not text:
         typ = typ.__name__
 
-    return get_children(lambda x: x.__class__.__name__ == typ,root)
+    return get_children(lambda x: x.__class__.__name__ == typ, root)
 
 
 class ObjCrossRef(object):
@@ -211,7 +212,7 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                 model_str = f.read()
 
             model = self.get_model_from_str(model_str, file_name=file_name,
-                                            debug=debug,pre_ref_resolution_callback=pre_ref_resolution_callback,
+                                            debug=debug, pre_ref_resolution_callback=pre_ref_resolution_callback,
                                             is_main_model=is_main_model)
 
             # reset the file: see "# Register filename of the model for later use (e.g. imports/scoping)."
@@ -224,7 +225,8 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                 pass
             return model
 
-        def get_model_from_str(self, model_str, file_name=None, debug=None, pre_ref_resolution_callback=None, is_main_model=True):
+        def get_model_from_str(self, model_str, file_name=None, debug=None, pre_ref_resolution_callback=None,
+                               is_main_model=True):
             """
             Parses given string and creates model object graph.
             """
@@ -240,7 +242,9 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                 self.parse(model_str, file_name=file_name)
                 # Transform parse tree to model. Skip root node which
                 # represents the whole file ending in EOF.
-                model = parse_tree_to_objgraph(self, self.parse_tree[0],file_name = file_name, pre_ref_resolution_callback = pre_ref_resolution_callback, is_main_model=is_main_model)
+                model = parse_tree_to_objgraph(self, self.parse_tree[0], file_name=file_name,
+                                               pre_ref_resolution_callback=pre_ref_resolution_callback,
+                                               is_main_model=is_main_model)
             finally:
                 if debug is not None:
                     self.debug = old_debug_state
@@ -478,8 +482,8 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolutio
 
         current_crossrefs = parser._crossrefs
         new_crossrefs = []
-        delayed_crossrefs=[]
-        resolved_crossref_count=0
+        delayed_crossrefs = []
+        resolved_crossref_count = 0
 
         # -------------------------
         # start of resolve-loop
@@ -507,8 +511,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolutio
                         pos_crossref_list.append(
                             RefRulePosition(name=crossref.obj_name,
                                             ref_pos_start=crossref.position,
-                                            ref_pos_end=crossref.position +
-                                                        len(resolved.name),
+                                            ref_pos_end=crossref.position + len(resolved.name),
                                             def_pos_start=resolved._tx_position,
                                             def_pos_end=resolved._tx_position_end))
 
@@ -522,25 +525,21 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolutio
                 if not resolved:
                     line, col = parser.pos_to_linecol(crossref.position)
                     raise TextXSemanticError(
-                        message='Unknown object "{}" of class "{}" at {}'
-                            .format(crossref.obj_name, crossref.cls.__name__,
-                                    (line, col)),
-                        line=line,
-                        col=col,
-                        err_type=UNKNOWN_OBJ_ERROR,
-                        expected_obj_cls=crossref.cls)
+                        message='Unknown object "{}" of class "{}" at {}'.format(
+                            crossref.obj_name, crossref.cls.__name__, (line, col)), line=line, col=col,
+                        err_type=UNKNOWN_OBJ_ERROR, expected_obj_cls=crossref.cls)
 
                 if type(resolved) is Postponed:
-                    delayed_crossrefs.append( (obj, attr, crossref) )
-                    new_crossrefs.append( (obj, attr, crossref) )
+                    delayed_crossrefs.append((obj, attr, crossref))
+                    new_crossrefs.append((obj, attr, crossref))
                 else:
-                    resolved_crossref_count+=1
+                    resolved_crossref_count += 1
                     if attr.mult in [MULT_ONEORMORE, MULT_ZEROORMORE]:
                         attr_value.append(resolved)
                     else:
                         setattr(obj, attr.name, resolved)
-            else: # crossref not in model
-                new_crossrefs.append( (obj, attr, crossref) )
+            else:  # crossref not in model
+                new_crossrefs.append((obj, attr, crossref))
         # -------------------------
         # end of resolve-loop
         # -------------------------
@@ -581,7 +580,8 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolutio
         # model is some primitive python type (e.g. str)
         pass
 
-    if pre_ref_resolution_callback: pre_ref_resolution_callback(model)
+    if pre_ref_resolution_callback:
+        pre_ref_resolution_callback(model)
 
     for scope_provider in metamodel.scope_provider.values():
         from textx.scoping import ModelLoader
@@ -592,17 +592,17 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolutio
         from textx.scoping import get_all_models_including_attached_models
         models = get_all_models_including_attached_models(model)
 
-        resolved_count   = 1
+        resolved_count = 1
         unresolved_count = 1
-        while unresolved_count>0 and resolved_count>0:
-            resolved_count   = 0
+        while unresolved_count > 0 and resolved_count > 0:
+            resolved_count = 0
             unresolved_count = 0
-            #print("***RESOLVING {} models".format(len(models)))
+            # print("***RESOLVING {} models".format(len(models)))
             for m in models:
                 resolved_count_for_this_model, delayed_crossrefs = resolve_refs(m)
-                resolved_count   += resolved_count_for_this_model
+                resolved_count += resolved_count_for_this_model
                 unresolved_count += len(delayed_crossrefs)
-        if (unresolved_count>0):
+        if (unresolved_count > 0):
             error_text = "Unresolvable cross references:"
             for _, _, delayed in delayed_crossrefs:
                 line, col = parser.pos_to_linecol(delayed.position)
