@@ -498,7 +498,7 @@ class TextXMetaModel(DebugPrinter):
                This can be useful to manage models distributed across files (scoping)
         """
         model = self.parser.get_model_from_str(model_str, debug=debug,
-                                               pre_ref_resolution_callback = pre_ref_resolution_callback)
+                                               pre_ref_resolution_callback=pre_ref_resolution_callback)
         for p in self._model_processors:
             p(model, self)
         return model
@@ -506,7 +506,8 @@ class TextXMetaModel(DebugPrinter):
     def model_from_file(self, file_name, encoding='utf-8', debug=None):
         return self.internal_model_from_file(file_name, encoding, debug)
 
-    def internal_model_from_file(self, file_name, encoding='utf-8', debug=None, pre_ref_resolution_callback=None, is_main_model=True):
+    def internal_model_from_file(self, file_name, encoding='utf-8', debug=None, pre_ref_resolution_callback=None,
+                                 is_main_model=True):
         """
         Instantiates model from the given file.
         :param pre_ref_resolution_callback: called before references are resolved.
@@ -563,7 +564,7 @@ class TextXMetaModel(DebugPrinter):
         self.obj_processors = obj_processors
 
 
-def metamodel_from_str(lang_desc, metamodel=None, enable_global_model_repository = False, **kwargs):
+def metamodel_from_str(lang_desc, metamodel=None, enable_global_model_repository=False, **kwargs):
     """
     Creates a new metamodel from the textX description given as a string.
 
@@ -580,12 +581,13 @@ def metamodel_from_str(lang_desc, metamodel=None, enable_global_model_repository
 
     language_from_str(lang_desc, metamodel)
 
-    if enable_global_model_repository: metamodel._enable_global_model_repository()
+    if enable_global_model_repository:
+        metamodel._enable_global_model_repository()
 
     return metamodel
 
 
-def metamodel_from_file(file_name, enable_global_model_repository = False, **kwargs):
+def metamodel_from_file(file_name, enable_global_model_repository=False, **kwargs):
     """
     Creates new metamodel from the given file.
 
