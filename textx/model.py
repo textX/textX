@@ -72,7 +72,7 @@ def get_children(decider, root):
     Non-containing references shall not be followed.
 
     Args:
-        decider(obj): a functions returing True if the object is of interest.
+        decider(obj): a callable returning True if the object is of interest.
         root (model object): Python model object which is the start of the
             search process.
     """
