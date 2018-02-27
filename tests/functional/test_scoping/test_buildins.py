@@ -5,7 +5,7 @@ from pytest import raises
 
 metamodel_str = '''
 Model:
-	things*=Thing+
+	things+=Thing
 ;
 
 Thing:
