@@ -28,7 +28,7 @@ def needs_to_be_resolved(parser, parent_obj, attr_name):
 
 def textx_isinstance(obj, obj_cls):
     if isinstance(obj, obj_cls): return True
-    if "_tx_inh_by" in dir(obj_cls):
+    if hasattr(obj_cls, "_tx_inh_by"):
         inh_by = getattr(obj_cls,"_tx_inh_by")
         for cls in inh_by:
             if (textx_isinstance(obj,cls)): return True
@@ -65,7 +65,7 @@ def get_list_of_concatenated_objects(obj, dot_separated_name, parser=None, lst=N
 
 
 def get_recursive_parent_with_typename(obj, desired_parent_typename):
-    while type(obj).__name__ != desired_parent_typename and "parent" in dir(obj):
+    while type(obj).__name__ != desired_parent_typename and hasattr(obj, "parent"):
         obj = obj.parent
     if type(obj).__name__ != desired_parent_typename:
         return None
@@ -100,7 +100,7 @@ def get_referenced_object(prev_obj, obj, dot_separated_name, parser=None, desire
     elif type(obj) is list:
         next_obj = None
         for res in obj:
-            if "name" in dir(res) and getattr(res, "name") == names[0]:
+            if hasattr(res, "name") and getattr(res, "name") == names[0]:
                 if desired_type==None or textx_isinstance(res, desired_type):
                     next_obj = res
                 else:

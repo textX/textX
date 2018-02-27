@@ -515,7 +515,7 @@ class TextXMetaModel(DebugPrinter):
         model = None
         callback = pre_ref_resolution_callback
 
-        if "_tx_model_repository" in dir(self):
+        if hasattr(self, "_tx_model_repository"):
             # metamodel has a global repo
             if not callback:
                 def _pre_ref_resolution_callback(other_model):

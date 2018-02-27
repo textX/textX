@@ -345,15 +345,15 @@ def scope_provider_fully_qualified_names(parser,obj,attr,obj_ref):
         :return: the object or None
         """
         def find_obj(parent, name):
-            for attr in [a for a in dir(parent) if not a.startswith('__')
-                                                   and not a.startswith('_tx_')
-                                                   and not callable(getattr(parent, a))]:
+            for attr in [a for a in parent.__dict__ if not a.startswith('__')
+                                                    and not a.startswith('_tx_')
+                                                    and not callable(getattr(parent, a))]:
                 obj = getattr(parent, attr)
                 if isinstance(obj, (list, tuple)):
                     for innerobj in obj:
-                        if "name" in dir(innerobj) and innerobj.name == name: return innerobj;
+                        if hasattr(innerobj,"name") and innerobj.name == name: return innerobj;
                 else:
-                    if "name" in dir(obj) and obj.name == name: return obj;
+                    if hasattr(obj, "name") and obj.name == name: return obj;
             return None
 
         for n in fqn_name.split('.'):
@@ -421,10 +421,10 @@ class ScopeProviderWithImportURI(ModelLoader):
     def load_models(self, model):
         from textx.model import get_metamodel
         # do we already have loaded models (analysis)? No -> check/load them
-        if "_tx_model_repository" in dir(model):
+        if hasattr(model, "_tx_model_repository"):
             pass
         else:
-            if "_tx_model_repository" in dir(get_metamodel(model)):
+            if hasattr(get_metamodel(model), "_tx_model_repository"):
                 model_repository = GlobalModelRepository(get_metamodel(model._tx_model_repository.all_models))
             else:
                 model_repository = GlobalModelRepository()
