@@ -451,6 +451,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolutio
                                                 position=node[0].position)
                             parser._crossrefs.append((obj_attr, metaattr,
                                                       value))
+                            pos_index += 1
                             continue
 
                         if not hasattr(obj_attr, txa_attr_name) or \
