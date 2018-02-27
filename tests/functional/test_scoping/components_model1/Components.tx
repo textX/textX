@@ -23,7 +23,7 @@ Interface: 'interface' name=ID;
 // A component defines something with in/out ports
 // A component can inherit form another component --> lookup with inheritance
 Component:
-    'component' name=ID ('extends' extends+=[Component|FQN] ("," extends+=[Component|FQN])*)? '{'
+    'component' name=ID ('extends' extends+=[Component|FQN][','])? '{'
         slots*=Slot
     '}'
 ;
@@ -32,11 +32,11 @@ Slot: SlotIn|SlotOut;
 
 SlotIn:
     'in' name=ID
-    ('(''''format' formats+=[Interface|FQN] ("," formats+=[Interface|FQN])* ')')?
+    ('(''''format' formats+=[Interface|FQN][','] ')')?
 ;
 SlotOut:
     'out' name=ID
-    ('(' '''format' formats+=[Interface|FQN] ("," formats+=[Interface|FQN])* ')')?
+    ('(' '''format' formats+=[Interface|FQN][','] ')')?
 ;
 
 // An instance of a component can be connected to other instances
