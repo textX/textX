@@ -10,7 +10,7 @@ Model:
 
 Thing:
 	'thing' name=ID '{'
-	inner*=[Thing]*
+	inner*=[Thing]
 	'}'
 ;
     '''
