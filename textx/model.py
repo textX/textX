@@ -474,7 +474,6 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolutio
         """
         metamodel = parser.metamodel
 
-        # If this object has attributes (created using a common rule)
         current_crossrefs = parser._crossrefs
         new_crossrefs = []
         delayed_crossrefs=[]
