@@ -448,7 +448,8 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolutio
                             # create ObjCrossRef
                             value = ObjCrossRef(obj_name=value,
                                                 cls=metaattr.cls,
-                                                position=node[0].position)
+                                                position=positions[pos_index])
+
                             parser._crossrefs.append((obj_attr, metaattr,
                                                       value))
                             pos_index += 1
