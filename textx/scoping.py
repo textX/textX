@@ -5,8 +5,10 @@
 # License: MIT License
 #######################################################################
 
-from os.path import dirname,abspath
-import glob,os,errno
+from os.path import dirname, abspath
+import glob
+import os
+import errno
 from textx.exceptions import TextXSemanticError
 
 """
@@ -19,7 +21,8 @@ Example grammar snippet:
 
 The scope providers are python callables accepting obj,attr,obj_ref:
  * parser  : the current parser
- * obj     : the object representing the start of the search (e.g., a rule (e.g. "MyAttribute" in the example above, or the model)
+ * obj     : the object representing the start of the search (e.g., a rule (e.g. "MyAttribute" in the example above, 
+             or the model)
  * attr    : a reference to the attribute "ref"
  * obj_ref : a textx.model.ObjCrossRef - the reference to be resolved
 
@@ -52,8 +55,8 @@ model element instances, you can specify this, while creating the meta model (en
 the meta model will store an own instance of a GlobalModelRepository as a base for all loaded models.
 
 Scope providers may return an object of type Postponed, if they depend on another event to happen first. This event is 
-typically the resolution of another reference. The resolution process will repeat multiple times over all unresolved references
-to be resolved until all references are resolved or no progress regarding the resolution is observed. In the
+typically the resolution of another reference. The resolution process will repeat multiple times over all unresolved 
+references to be resolved until all references are resolved or no progress regarding the resolution is observed. In the
 latter case an error is raised. The control flow responsability of the resolution process is allocated to the 
 model.py module.
 
@@ -84,6 +87,7 @@ a scope provider using the "ImportURI"-feature (e.g. ScopeProviderFullyQualified
 pattern matches, the meta model of the current model is utilized.
 """
 
+
 class MetaModelProvider(object):
     """
     This class has the responsability to provide a meta model
@@ -106,7 +110,7 @@ class MetaModelProvider(object):
         scoping.MetaModelProvider.add_metamodel("*.components", mm_components)
         scoping.MetaModelProvider.add_metamodel("*.users", mm_users)
     """
-    _pattern_to_metamodel={} # pattern:metamodel
+    _pattern_to_metamodel = {}  # pattern:metamodel
 
     @staticmethod
     def add_metamodel(pattern, the_metamodel):
@@ -122,11 +126,11 @@ class MetaModelProvider(object):
     def get_metamodel(parent_model, filename):
         from textx.model import get_metamodel
         import fnmatch
-        for p,mm in MetaModelProvider._pattern_to_metamodel.items():
-            if fnmatch.fnmatch(filename,p):
-                #print("loading model {} with special mm".format(filename));
+        for p, mm in MetaModelProvider._pattern_to_metamodel.items():
+            if fnmatch.fnmatch(filename, p):
+                # print("loading model {} with special mm".format(filename));
                 return mm
-        #print("loading model {} with present mm".format(filename))
+        # print("loading model {} with present mm".format(filename))
         return get_metamodel(parent_model)
 
 
@@ -140,6 +144,7 @@ class Postponed(object):
     If you get circular dependencies in resolution logic, an error
     is raised.
     """
+
     def __init__(self):
         pass
 
@@ -152,8 +157,10 @@ class ModelRepository(object):
     In case of some scoping providers the model-identifier
     is the absolute filename of the model.
     """
+
     def __init__(self):
-        self.filename_to_model={}
+        self.filename_to_model = {}
+
     def has_model(self, filename):
         return filename in self.filename_to_model.keys()
 
@@ -181,15 +188,16 @@ class GlobalModelRepository(object):
     to set the neccesary information before resolving
     the references in the new loaded model.
     """
+
     def __init__(self, all_models=None):
         """
         create a new repo for a model
         :param model the model to be added to
         :param global_repo: the repo of another (parent) model
         """
-        self.local_models = ModelRepository() # used for current model
+        self.local_models = ModelRepository()  # used for current model
         if all_models:
-            self.all_models = all_models;     # used to reuse already loaded models
+            self.all_models = all_models  # used to reuse already loaded models
         else:
             self.all_models = ModelRepository()
 
@@ -202,11 +210,11 @@ class GlobalModelRepository(object):
         assert model
         self.update_model_in_repo_based_on_filename(model)
         filenames = glob.glob(filename_pattern, **glob_args)
-        if len(filenames)==0:
+        if len(filenames) == 0:
             raise IOError(
                 errno.ENOENT, os.strerror(errno.ENOENT), filename_pattern)
         for filename in filenames:
-            self.load_model( MetaModelProvider.get_metamodel(model, filename) , filename)
+            self.load_model(MetaModelProvider.get_metamodel(model, filename), filename)
 
     def load_model(self, themetamodel, filename):
         """
@@ -219,11 +227,11 @@ class GlobalModelRepository(object):
             if self.all_models.has_model(filename):
                 newmodel = self.all_models.filename_to_model[filename]
             else:
-                #print("LOADING {}".format(filename))
-                #all models loaded here get their references resolved from the root model
-                newmodel = themetamodel.internal_model_from_file(filename,
-                                                        pre_ref_resolution_callback=lambda other_model:self.pre_ref_resolution_callback(other_model),
-                                                                 is_main_model=False)
+                # print("LOADING {}".format(filename))
+                # all models loaded here get their references resolved from the root model
+                newmodel = themetamodel.internal_model_from_file(
+                    filename, pre_ref_resolution_callback=lambda
+                    other_model: self.pre_ref_resolution_callback(other_model), is_main_model=False)
                 self.all_models.filename_to_model[filename] = newmodel
             self.local_models.filename_to_model[filename] = newmodel
         return self.local_models.filename_to_model[filename]
@@ -236,11 +244,11 @@ class GlobalModelRepository(object):
             # print("INIT {}".format(myfilename))
             self.all_models.filename_to_model[myfilename] = model
 
-    def pre_ref_resolution_callback(self,other_model):
-        #print("PRE-CALLBACK{}".format(filename))
+    def pre_ref_resolution_callback(self, other_model):
+        # print("PRE-CALLBACK{}".format(filename))
         filename = other_model._tx_filename
         assert (filename)
-        other_model._tx_model_repository=GlobalModelRepository(self.all_models)
+        other_model._tx_model_repository = GlobalModelRepository(self.all_models)
         self.all_models.filename_to_model[filename] = other_model
 
 
@@ -249,6 +257,7 @@ class ModelLoader(object):
     This class is an interface to mark a scope provider as an additional model loader.
     Such a scope provider is called
     """
+
     def __init__(self):
         pass
 
@@ -259,11 +268,12 @@ class ModelLoader(object):
 def get_all_models_including_attached_models(model):
     if (hasattr(model, "_tx_model_repository")):
         models = list(model._tx_model_repository.all_models.filename_to_model.values())
-        if not model in models:
+        if model not in models:
             models.append(model)
     else:
         models = [model]
-    return models;
+    return models
+
 
 # -------------------------------------------------------------------------------------
 # Scope providers:
@@ -282,7 +292,7 @@ def scope_provider_plain_names(parser, obj, attr, obj_ref):
     from textx.model import ObjCrossRef
 
     if obj_ref is None:
-        return None # this is an error (see model.py: resolve_refs (TODO check)
+        return None  # this is an error (see model.py: resolve_refs (TODO check)
 
     assert type(obj_ref) is ObjCrossRef, type(obj_ref)
 
@@ -290,7 +300,7 @@ def scope_provider_plain_names(parser, obj, attr, obj_ref):
         parser.dprint("Resolving obj crossref: {}:{}"
                       .format(obj_ref.cls, obj_ref.obj_name))
     print("Resolving obj crossref: {}:{}"
-                  .format(obj_ref.cls, obj_ref.obj_name))
+          .format(obj_ref.cls, obj_ref.obj_name))
 
     def _inner_resolve_link_rule_ref(cls, obj_name):
         """
@@ -322,10 +332,10 @@ def scope_provider_plain_names(parser, obj, attr, obj_ref):
     if result:
         return result
 
-    return None # error handled outside
+    return None  # error handled outside
 
 
-def scope_provider_fully_qualified_names(parser,obj,attr,obj_ref):
+def scope_provider_fully_qualified_names(parser, obj, attr, obj_ref):
     """
     find a fully qualified name.
     Use this callable as scope_provider in a meta-model:
@@ -336,6 +346,7 @@ def scope_provider_fully_qualified_names(parser,obj,attr,obj_ref):
     :param obj_ref: ObjCrossRef to be resolved
     :returns None or the referenced object
     """
+
     def _find_obj_fqn(p, fqn_name):
         """
         Helper function:
@@ -344,25 +355,28 @@ def scope_provider_fully_qualified_names(parser,obj,attr,obj_ref):
         :param fqn_name: the "."-separated name
         :return: the object or None
         """
+
         def find_obj(parent, name):
-            for attr in [a for a in parent.__dict__ if not a.startswith('__')
-                                                    and not a.startswith('_tx_')
-                                                    and not callable(getattr(parent, a))]:
+            for attr in [a for a in parent.__dict__
+                         if not a.startswith('__') and not a.startswith('_tx_') and not callable(getattr(parent, a))]:
                 obj = getattr(parent, attr)
                 if isinstance(obj, (list, tuple)):
                     for innerobj in obj:
-                        if hasattr(innerobj,"name") and innerobj.name == name: return innerobj;
+                        if hasattr(innerobj, "name") and innerobj.name == name:
+                            return innerobj
                 else:
-                    if hasattr(obj, "name") and obj.name == name: return obj;
+                    if hasattr(obj, "name") and obj.name == name:
+                        return obj
             return None
 
         for n in fqn_name.split('.'):
             obj = find_obj(p, n)
             if obj:
-                p = obj;
+                p = obj
             else:
-                return None;
-        return p;
+                return None
+        return p
+
     def _find_referenced_obj(p, name):
         """
         Helper function:
@@ -373,11 +387,13 @@ def scope_provider_fully_qualified_names(parser,obj,attr,obj_ref):
         :return: None or the found object
         """
         ret = _find_obj_fqn(p, name)
-        if ret: return ret;
+        if ret:
+            return ret
         while hasattr(p, "parent"):
             p = p.parent
             ret = _find_obj_fqn(p, name)
-            if ret: return ret;
+            if ret:
+                return ret
         return None
 
     from textx.model import ObjCrossRef
@@ -397,26 +413,29 @@ class ScopeProviderWithImportURI(ModelLoader):
 
     This class requried a "simple" scope provider, which is called internally.
     """
+
     def __init__(self, scope_provider, glob_args=None):
         ModelLoader.__init__(self)
         self.scope_provider = scope_provider
-        self.glob_args={}
-        if glob_args: self.set_glob_args(glob_args)
+        self.glob_args = {}
+        if glob_args:
+            self.set_glob_args(glob_args)
 
     def set_glob_args(self, glob_args):
-        self.glob_args=glob_args
+        self.glob_args = glob_args
 
     def _load_referenced_models(self, model):
         from textx.model import get_children
-        visited=[]
-        for obj in get_children(lambda x:hasattr(x,"importURI") and not x in visited,model):
+        visited = []
+        for obj in get_children(lambda x: hasattr(x, "importURI") and x not in visited, model):
             visited.append(obj)
             # TODO add multiple lookup rules for file search
             basedir = dirname(model._tx_filename)
-            if len(basedir)>0:
-                basedir+="/"
-            filename_pattern = abspath(basedir+obj.importURI)
-            model._tx_model_repository.load_models_using_filepattern(filename_pattern, model=model, glob_args=self.glob_args)
+            if len(basedir) > 0:
+                basedir += "/"
+            filename_pattern = abspath(basedir + obj.importURI)
+            model._tx_model_repository.load_models_using_filepattern(filename_pattern, model=model,
+                                                                     glob_args=self.glob_args)
 
     def load_models(self, model):
         from textx.model import get_metamodel
@@ -431,11 +450,10 @@ class ScopeProviderWithImportURI(ModelLoader):
             model._tx_model_repository = model_repository
         self._load_referenced_models(model)
 
-
     def __call__(self, parser, obj, attr, obj_ref):
         from textx.model import ObjCrossRef, get_model
         assert type(obj_ref) is ObjCrossRef, type(obj_ref)
-        #cls, obj_name = obj_ref.cls, obj_ref.obj_name
+        # cls, obj_name = obj_ref.cls, obj_ref.obj_name
 
         # 1) lookup URIs... (first, before looking locally - to detect file not founds and distant model errors...)
         # TODO: raise error if lookup is not unique
@@ -445,12 +463,14 @@ class ScopeProviderWithImportURI(ModelLoader):
 
         # 1) try to find object locally
         ret = self.scope_provider(parser, obj, attr, obj_ref)
-        if ret: return ret
+        if ret:
+            return ret
 
         # 2) do we have loaded models?
         for m in model_repository.local_models.filename_to_model.values():
             ret = self.scope_provider(parser, m, attr, obj_ref)
-            if ret: return ret
+            if ret:
+                return ret
         return None
 
 
@@ -473,10 +493,12 @@ class ScopeProviderWithGlobalRepo(ScopeProviderWithImportURI):
       * register models used for lookup into the scope provider
     Then the scope provider is ready to be registered and used.
     """
+
     def __init__(self, scope_provider, filename_pattern=None, glob_args=None):
         ScopeProviderWithImportURI.__init__(self, scope_provider, glob_args=glob_args)
-        self.filename_pattern_list=[]
-        if filename_pattern: self.register_models(filename_pattern)
+        self.filename_pattern_list = []
+        if filename_pattern:
+            self.register_models(filename_pattern)
 
     def register_models(self, filename_pattern):
         """
@@ -489,17 +511,20 @@ class ScopeProviderWithGlobalRepo(ScopeProviderWithImportURI):
 
     def _load_referenced_models(self, model):
         for filename_pattern in self.filename_pattern_list:
-            model._tx_model_repository.load_models_using_filepattern(filename_pattern, model=model, glob_args=self.glob_args)
+            model._tx_model_repository.load_models_using_filepattern(filename_pattern, model=model,
+                                                                     glob_args=self.glob_args)
 
 
 class ScopeProviderFullyQualifiedNamesWithGlobalRepo(ScopeProviderWithGlobalRepo):
-    def __init__(self,filename_pattern=None, glob_args=None):
-        ScopeProviderWithGlobalRepo.__init__(self, scope_provider_fully_qualified_names, filename_pattern, glob_args=glob_args)
+    def __init__(self, filename_pattern=None, glob_args=None):
+        ScopeProviderWithGlobalRepo.__init__(self, scope_provider_fully_qualified_names, filename_pattern,
+                                             glob_args=glob_args)
 
 
 class ScopeProviderPlainNamesWithGlobalRepo(ScopeProviderWithGlobalRepo):
     def __init__(self, filename_pattern=None, glob_args=None):
-        ScopeProviderWithGlobalRepo.__init__(self, scope_provider_plain_names, filename_pattern,glob_args=glob_args)
+        ScopeProviderWithGlobalRepo.__init__(self, scope_provider_plain_names, filename_pattern, glob_args=glob_args)
+
 
 class ScopeProviderForSimpleRelativeNamedLookups(object):
     """
@@ -509,7 +534,8 @@ class ScopeProviderForSimpleRelativeNamedLookups(object):
      - allow to define a scope where the instance references the methods
     Note: The same as for classes/methods can be interpreted as components/slots...
     """
-    def __init__(self,path_to_conatiner_object):
+
+    def __init__(self, path_to_conatiner_object):
         """
         Here, you specify the path from the instance to the methods:
         The path is given in a dot-separated way: "classref.methods". Then a concrete method "f"
@@ -517,18 +543,20 @@ class ScopeProviderForSimpleRelativeNamedLookups(object):
         :param path_to_conatiner_object: This identifies (starting from the instance) how to find the methods.
         """
         self.path_to_container_object = path_to_conatiner_object
-        self.postponed_counter=0
+        self.postponed_counter = 0
 
     def __call__(self, parser, obj, attr, obj_ref):
         from textx.scoping_tools import get_referenced_object
         try:
-            res = get_referenced_object(None, obj, self.path_to_container_object + "." + obj_ref.obj_name, parser, obj_ref.cls)
+            res = get_referenced_object(None, obj, self.path_to_container_object + "." + obj_ref.obj_name, parser,
+                                        obj_ref.cls)
             if type(res) is Postponed:
-                self.postponed_counter+=1
+                self.postponed_counter += 1
             return res
         except TypeError as e:
             line, col = parser.pos_to_linecol(obj_ref.position)
             raise TextXSemanticError('{}'.format(str(e)), line=line, col=col)
+
 
 class ScopeProviderForExtendableRelativeNamedLookups(object):
     """
@@ -538,24 +566,28 @@ class ScopeProviderForExtendableRelativeNamedLookups(object):
     - how to find the methods (starting from a class).
     - how to find inherited classes (starting from a class).
     """
-    def __init__(self, path_to_definition_object,path_to_target,path_to_extension):
+
+    def __init__(self, path_to_definition_object, path_to_target, path_to_extension):
         self.path_to_definition_object = path_to_definition_object
-        self.path_to_target=path_to_target
-        self.path_to_extension=path_to_extension
-        self.postponed_counter=0
+        self.path_to_target = path_to_target
+        self.path_to_extension = path_to_extension
+        self.postponed_counter = 0
 
     def __call__(self, parser, obj, attr, obj_ref):
         from textx.scoping_tools import get_referenced_object, get_list_of_concatenated_objects
         try:
             one_def_obj = get_referenced_object(None, obj, self.path_to_definition_object, parser)
-            def_obj_list = get_list_of_concatenated_objects(one_def_obj, self.path_to_extension, parser,[])
+            def_obj_list = get_list_of_concatenated_objects(one_def_obj, self.path_to_extension, parser, [])
             for def_obj in def_obj_list:
                 if type(def_obj) is Postponed:
-                    self.postponed_counter+=1
+                    self.postponed_counter += 1
                     return def_obj
-                res = get_referenced_object(None, def_obj, self.path_to_target + "." +obj_ref.obj_name, parser, obj_ref.cls)
-                if res: return res # may be Postponed
+                res = get_referenced_object(None, def_obj, self.path_to_target + "." + obj_ref.obj_name, parser,
+                                            obj_ref.cls)
+                if res:
+                    return res  # may be Postponed
             return None
         except TypeError as e:
             line, col = parser.pos_to_linecol(obj_ref.position)
-            raise TextXSemanticError('ScopeProviderForExtendableRelativeNamedLookups: {}'.format(str(e)), line=line, col=col)
+            raise TextXSemanticError('ScopeProviderForExtendableRelativeNamedLookups: {}'.format(str(e)), line=line,
+                                     col=col)

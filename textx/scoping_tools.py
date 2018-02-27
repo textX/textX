@@ -7,6 +7,7 @@
 from textx import get_children
 import re
 
+
 def needs_to_be_resolved(parser, parent_obj, attr_name):
     """
     This function determines, if a reference (CrossReference) needs to be
@@ -19,19 +20,22 @@ def needs_to_be_resolved(parser, parent_obj, attr_name):
              In case of lists of references, this function return true if any of the
              references in the list needs to be resolved.
     """
-    if not parser: return False
+    if not parser:
+        return False
     for obj, attr, crossref in parser._crossrefs:
-        if obj is parent_obj and attr_name==attr.name:
+        if obj is parent_obj and attr_name == attr.name:
             return True
     return False
 
 
 def textx_isinstance(obj, obj_cls):
-    if isinstance(obj, obj_cls): return True
+    if isinstance(obj, obj_cls):
+        return True
     if hasattr(obj_cls, "_tx_inh_by"):
-        inh_by = getattr(obj_cls,"_tx_inh_by")
+        inh_by = getattr(obj_cls, "_tx_inh_by")
         for cls in inh_by:
-            if (textx_isinstance(obj,cls)): return True
+            if (textx_isinstance(obj, cls)):
+                return True
     return False
 
 
@@ -49,9 +53,12 @@ def get_list_of_concatenated_objects(obj, dot_separated_name, parser=None, lst=N
     :return: the filled list (if one single object is requested, a list with one entry is returned).
     """
     from textx.scoping import Postponed
-    if lst is None: lst=[]
-    if not obj: return lst
-    if obj in lst: return lst
+    if lst is None:
+        lst = []
+    if not obj:
+        return lst
+    if obj in lst:
+        return lst
     lst.append(obj)
     if type(obj) is Postponed:
         return lst
@@ -88,7 +95,7 @@ def get_referenced_object(prev_obj, obj, dot_separated_name, parser=None, desire
     from textx.scoping import Postponed
     assert prev_obj or not type(obj) is list
     names = dot_separated_name.split(".")
-    match=re.match(r'parent\((\w+)\)',names[0])
+    match = re.match(r'parent\((\w+)\)', names[0])
     if match:
         next_obj = obj
         desired_parent_typename = match.group(1)
@@ -101,13 +108,14 @@ def get_referenced_object(prev_obj, obj, dot_separated_name, parser=None, desire
         next_obj = None
         for res in obj:
             if hasattr(res, "name") and getattr(res, "name") == names[0]:
-                if desired_type==None or textx_isinstance(res, desired_type):
+                if desired_type is None or textx_isinstance(res, desired_type):
                     next_obj = res
                 else:
-                    raise TypeError("{} has type {} instead of {}.".format(names[0], type(res).__name__, desired_type.__name__))
+                    raise TypeError(
+                        "{} has type {} instead of {}.".format(names[0], type(res).__name__, desired_type.__name__))
         if not next_obj:
-            #if prev_obj needs to be resolved: return Postponed.
-            if needs_to_be_resolved(parser, prev_obj,names[0]):
+            # if prev_obj needs to be resolved: return Postponed.
+            if needs_to_be_resolved(parser, prev_obj, names[0]):
                 return Postponed()
             else:
                 return None
@@ -116,14 +124,14 @@ def get_referenced_object(prev_obj, obj, dot_separated_name, parser=None, desire
     else:
         next_obj = getattr(obj, names[0])
     if not next_obj:
-        #if obj in in crossref return Postponed, else None
+        # if obj in in crossref return Postponed, else None
         if needs_to_be_resolved(parser, obj, names[0]):
             return Postponed()
         else:
             return None
-    if len(names)>1:
-        return get_referenced_object(obj, next_obj,".".join(names[1:]), parser, desired_type)
-    if type(next_obj) is list and needs_to_be_resolved(parser, obj,names[0]):
+    if len(names) > 1:
+        return get_referenced_object(obj, next_obj, ".".join(names[1:]), parser, desired_type)
+    if type(next_obj) is list and needs_to_be_resolved(parser, obj, names[0]):
         return Postponed()
     return next_obj
 
@@ -154,19 +162,19 @@ def get_unique_named_object_in_all_models(root, name):
     :param name: name of object
     :return: the object (if not unique, raises an error)
     """
-    if hasattr(root,'_tx_model_repository'):
-        src=list(root._tx_model_repository.local_models.filename_to_model.values())
-        if not root in src:
+    if hasattr(root, '_tx_model_repository'):
+        src = list(root._tx_model_repository.local_models.filename_to_model.values())
+        if root not in src:
             src.append(root)
     else:
-        src=[root]
+        src = [root]
 
     a = []
     for m in src:
         print("analyzing {}".format(m._tx_filename))
-        a = a+get_children(lambda x:hasattr(x,'name') and x.name==name, m)
+        a = a + get_children(lambda x: hasattr(x, 'name') and x.name == name, m)
 
-    assert len(a)==1
+    assert len(a) == 1
     return a[0]
 
 
@@ -177,9 +185,10 @@ def get_unique_named_object(root, name):
     :param name: name of object
     :return: the object (if not unique, raises an error)
     """
-    a = get_children(lambda x:hasattr(x,'name') and x.name==name, root)
-    assert len(a)==1
+    a = get_children(lambda x: hasattr(x, 'name') and x.name == name, root)
+    assert len(a) == 1
     return a[0]
+
 
 def check_unique_named_object_has_class(root, name, class_name):
     """

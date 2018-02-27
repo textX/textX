@@ -7,6 +7,7 @@ import textx.scoping as scoping
 from os.path import dirname, abspath
 import re
 
+
 def test_inheritance_processor():
     #################################
     # META MODEL DEF
@@ -15,15 +16,18 @@ def test_inheritance_processor():
     my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/components_model1/Components.tx')
     my_meta_model.register_scope_provider({
         "*.*": scoping.scope_provider_fully_qualified_names,
-        "Connection.from_port": scoping.ScopeProviderForExtendableRelativeNamedLookups("from_inst.component","slots","extends"),
-        "Connection.to_port": scoping.ScopeProviderForExtendableRelativeNamedLookups("to_inst.component","slots","extends"),
+        "Connection.from_port": scoping.ScopeProviderForExtendableRelativeNamedLookups("from_inst.component", "slots",
+                                                                                       "extends"),
+        "Connection.to_port": scoping.ScopeProviderForExtendableRelativeNamedLookups("to_inst.component", "slots",
+                                                                                     "extends"),
     })
 
     #################################
     # MODEL PARSING
     #################################
 
-    my_model = my_meta_model.model_from_file(abspath(dirname(__file__)) + "/components_model1/example_inherit3.components")
+    my_model = my_meta_model.model_from_file(
+        abspath(dirname(__file__)) + "/components_model1/example_inherit3.components")
 
     #################################
     # TEST MODEL
@@ -31,7 +35,7 @@ def test_inheritance_processor():
 
     components = get_children_of_type("Component", my_model)
 
-    expected="""
+    expected = """
         Start
         BaseProc
         ExtProc(BaseProc)
@@ -42,17 +46,17 @@ def test_inheritance_processor():
     """
 
     def myformatter(compo):
-        if len(compo.extends)==0:
+        if len(compo.extends) == 0:
             return compo.name
         else:
-            return compo.name+"("+",".join(map(lambda x:myformatter(x), compo.extends))+")"
+            return compo.name + "(" + ",".join(map(lambda x: myformatter(x), compo.extends)) + ")"
 
-    res="\n\n"
-    for c in components: # posisbly in future version, the order need to be normalized...
-        res += myformatter(c)+"\n"
+    res = "\n\n"
+    for c in components:  # posisbly in future version, the order need to be normalized...
+        res += myformatter(c) + "\n"
 
     print(res)
-    assert re.sub(r'\s*',"",expected) == re.sub(r'\s*',"",res)
+    assert re.sub(r'\s*', "", expected) == re.sub(r'\s*', "", res)
 
     #################################
     # END

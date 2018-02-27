@@ -7,13 +7,14 @@ import textx.exceptions
 from pytest import raises
 from textx.scoping_tools import check_unique_named_object_has_class, get_unique_named_object
 
+
 def test_model_without_imports():
     #################################
     # META MODEL DEF
     #################################
 
     my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/interface_model1/Interface.tx')
-    my_meta_model.register_scope_provider({"*.*":scoping.ScopeProviderFullyQualifiedNamesWithImportURI()})
+    my_meta_model.register_scope_provider({"*.*": scoping.ScopeProviderFullyQualifiedNamesWithImportURI()})
 
     #################################
     # MODEL PARSING
@@ -29,7 +30,7 @@ def test_model_without_imports():
     check_unique_named_object_has_class(my_model, "socket", "Interface")
 
     # check that "s.s1" is a reference to the socket interface
-    a  = get_unique_named_object(my_model, "socket")
+    a = get_unique_named_object(my_model, "socket")
     s1 = get_unique_named_object(my_model, "s1")
     assert a == s1.ref
 
@@ -44,7 +45,7 @@ def test_model_with_imports():
     #################################
 
     my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/interface_model1/Interface.tx')
-    my_meta_model.register_scope_provider({"*.*":scoping.ScopeProviderFullyQualifiedNamesWithImportURI()})
+    my_meta_model.register_scope_provider({"*.*": scoping.ScopeProviderFullyQualifiedNamesWithImportURI()})
 
     #################################
     # MODEL PARSING
@@ -58,11 +59,12 @@ def test_model_with_imports():
     #################################
 
     # check that "socket" is an interface
-    inner_model = my_model._tx_model_repository.all_models.filename_to_model[abspath(dirname(__file__)) + "/interface_model1/model_b/base.if"];
+    inner_model = my_model._tx_model_repository.all_models.filename_to_model[
+        abspath(dirname(__file__)) + "/interface_model1/model_b/base.if"]
     check_unique_named_object_has_class(inner_model, "socket", "Interface")
 
     # check that "s.s1" is a reference to the socket interface
-    a  = get_unique_named_object(inner_model, "socket")
+    a = get_unique_named_object(inner_model, "socket")
     s1 = get_unique_named_object(inner_model, "s1")
     userid = get_unique_named_object(my_model, "userid")
     assert a == s1.ref
@@ -83,7 +85,7 @@ def test_model_with_imports_and_errors():
     #################################
 
     my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/interface_model1/Interface.tx')
-    my_meta_model.register_scope_provider({"*.*":scoping.ScopeProviderFullyQualifiedNamesWithImportURI()})
+    my_meta_model.register_scope_provider({"*.*": scoping.ScopeProviderFullyQualifiedNamesWithImportURI()})
 
     #################################
     # MODEL PARSING
@@ -107,7 +109,7 @@ def test_model_with_imports_and_global_repo():
 
     my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/interface_model1/Interface.tx',
                                         enable_global_model_repository=True)
-    my_meta_model.register_scope_provider({"*.*":scoping.ScopeProviderFullyQualifiedNamesWithImportURI()})
+    my_meta_model.register_scope_provider({"*.*": scoping.ScopeProviderFullyQualifiedNamesWithImportURI()})
 
     #################################
     # MODEL PARSING
@@ -137,7 +139,7 @@ def test_model_with_circular_imports():
     #################################
 
     my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/interface_model1/Interface.tx')
-    my_meta_model.register_scope_provider({"*.*":scoping.ScopeProviderFullyQualifiedNamesWithImportURI()})
+    my_meta_model.register_scope_provider({"*.*": scoping.ScopeProviderFullyQualifiedNamesWithImportURI()})
 
     #################################
     # MODEL PARSING
@@ -150,26 +152,26 @@ def test_model_with_circular_imports():
     #################################
 
     check_unique_named_object_has_class(my_model, "A", "Interface")
-    A  = get_unique_named_object(my_model, "A")
+    A = get_unique_named_object(my_model, "A")
 
-    A_self = get_children(lambda x:hasattr(x,'name') and x.name=="self", A)
-    assert len(A_self)==1
-    A_self=A_self[0]
+    A_self = get_children(lambda x: hasattr(x, 'name') and x.name == "self", A)
+    assert len(A_self) == 1
+    A_self = A_self[0]
 
-    A_other = get_children(lambda x:hasattr(x,'name') and x.name=="other", A)
-    assert len(A_other)==1
-    A_other=A_other[0]
+    A_other = get_children(lambda x: hasattr(x, 'name') and x.name == "other", A)
+    assert len(A_other) == 1
+    A_other = A_other[0]
 
-    A_other_self = get_children(lambda x:hasattr(x,'name') and x.name=="self", A_other.ref)
-    assert len(A_other_self)==1
-    A_other_self=A_other_self[0]
+    A_other_self = get_children(lambda x: hasattr(x, 'name') and x.name == "self", A_other.ref)
+    assert len(A_other_self) == 1
+    A_other_self = A_other_self[0]
 
-    A_other_other = get_children(lambda x:hasattr(x,'name') and x.name=="other", A_other.ref)
-    assert len(A_other_other)==1
-    A_other_other=A_other_other[0]
+    A_other_other = get_children(lambda x: hasattr(x, 'name') and x.name == "other", A_other.ref)
+    assert len(A_other_other) == 1
+    A_other_other = A_other_other[0]
 
-    assert A_self.ref  == A_other_other.ref
-    assert A_self.ref  != A_other.ref
+    assert A_self.ref == A_other_other.ref
+    assert A_self.ref != A_other.ref
     assert A_other.ref == A_other_self.ref
     assert A_other.ref != A_other_other.ref
 

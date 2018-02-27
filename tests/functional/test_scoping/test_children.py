@@ -7,13 +7,13 @@ import re
 
 metamodel_str = '''
 Model:
-	packages*=Package
+    packages*=Package
 ;
-	
+
 Package:
-	'package' name=ID '{'
-	classes*=Class
-	'}'
+    'package' name=ID '{'
+    classes*=Class
+    '}'
 ;
 
 Class:
@@ -31,6 +31,7 @@ RefClass: ref=FQN;
 FQN: ID('.'ID)*;
     '''
 
+
 def test_fully_qualified_name_ref():
     #################################
     # META MODEL DEF
@@ -38,8 +39,7 @@ def test_fully_qualified_name_ref():
 
     my_metamodel = metamodel_from_str(metamodel_str)
 
-
-    my_metamodel.register_scope_provider({"*.*":scoping.scope_provider_fully_qualified_names})
+    my_metamodel.register_scope_provider({"*.*": scoping.scope_provider_fully_qualified_names})
 
     #################################
     # MODEL PARSING
@@ -68,25 +68,24 @@ def test_fully_qualified_name_ref():
 
     res = get_children_of_type("Class", my_model)
     res.sort(key=lambda x: x.name)
-    assert len(res)==3
-    assert all(map(eq, map(lambda x:x.name, res), ["C2","Part1","Part2"]))
-    assert not all(map(eq, map(lambda x:x.name, res), ["Part1","Part2","C2"]))
+    assert len(res) == 3
+    assert all(map(eq, map(lambda x: x.name, res), ["C2", "Part1", "Part2"]))
+    assert not all(map(eq, map(lambda x: x.name, res), ["Part1", "Part2", "C2"]))
     for x in res:
         assert x.__class__.__name__ == "Class"
-    
+
     res = get_children_of_type("Attribute", my_model)
     res.sort(key=lambda x: x.name)
-    assert len(res)==4
-    assert all(map(eq, map(lambda x:x.name, res), ["p1","p2a","p2b","rec"]))
+    assert len(res) == 4
+    assert all(map(eq, map(lambda x: x.name, res), ["p1", "p2a", "p2b", "rec"]))
     for x in res:
         assert x.__class__.__name__ == "Attribute"
 
-    res = get_children(lambda x:hasattr(x,"name") and re.match(".*2.*", x.name), my_model)
+    res = get_children(lambda x: hasattr(x, "name") and re.match(".*2.*", x.name), my_model)
     res.sort(key=lambda x: x.name)
-    assert len(res)==5
-    assert all(map(eq, map(lambda x:x.name, res), ["C2","P2","Part2","p2a","p2b"]))
+    assert len(res) == 5
+    assert all(map(eq, map(lambda x: x.name, res), ["C2", "P2", "Part2", "p2a", "p2b"]))
 
     #################################
     # END
     #################################
-

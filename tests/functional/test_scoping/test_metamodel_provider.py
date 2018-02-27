@@ -5,6 +5,7 @@ from os.path import dirname, abspath
 from textx.scoping_tools import get_unique_named_object_in_all_models
 from pytest import raises
 
+
 def test_metamodel_provder_basic_test():
     #################################
     # META MODEL DEF
@@ -12,14 +13,14 @@ def test_metamodel_provder_basic_test():
 
     mm_components = metamodel_from_file(abspath(dirname(__file__)) + '/metamodel_provider/Components.tx')
     mm_components.register_scope_provider({
-        "*.*":scoping.ScopeProviderFullyQualifiedNamesWithImportURI(),
-        "Connection.from_port":scoping.ScopeProviderForSimpleRelativeNamedLookups("from_inst.component.slots"),
-        "Connection.to_port":scoping.ScopeProviderForSimpleRelativeNamedLookups("to_inst.component.slots"),
+        "*.*": scoping.ScopeProviderFullyQualifiedNamesWithImportURI(),
+        "Connection.from_port": scoping.ScopeProviderForSimpleRelativeNamedLookups("from_inst.component.slots"),
+        "Connection.to_port": scoping.ScopeProviderForSimpleRelativeNamedLookups("to_inst.component.slots"),
     })
 
     mm_users = metamodel_from_file(abspath(dirname(__file__)) + '/metamodel_provider/Users.tx')
     mm_users.register_scope_provider({
-        "*.*":scoping.ScopeProviderFullyQualifiedNamesWithImportURI(),
+        "*.*": scoping.ScopeProviderFullyQualifiedNamesWithImportURI(),
     })
 
     scoping.MetaModelProvider.add_metamodel("*.components", mm_components)

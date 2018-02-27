@@ -6,13 +6,13 @@ from pytest import raises
 
 metamodel_str = '''
 Model:
-	packages*=Package
+    packages*=Package
 ;
-	
+
 Package:
-	'package' name=ID '{'
-	classes*=Class
-	'}'
+    'package' name=ID '{'
+    classes*=Class
+    '}'
 ;
 
 Class:
@@ -28,7 +28,8 @@ Attribute:
 RefClass: ref=FQN;
 
 FQN: ID('.'ID)*;
-    '''
+'''
+
 
 def test_fully_qualified_name_ref():
     #################################
@@ -37,8 +38,7 @@ def test_fully_qualified_name_ref():
 
     my_metamodel = metamodel_from_str(metamodel_str)
 
-
-    my_metamodel.register_scope_provider({"*.*":scoping.scope_provider_fully_qualified_names})
+    my_metamodel.register_scope_provider({"*.*": scoping.scope_provider_fully_qualified_names})
 
     #################################
     # MODEL PARSING
@@ -65,29 +65,29 @@ def test_fully_qualified_name_ref():
     # TEST MODEL
     #################################
 
-    a = get_children(lambda x:hasattr(x,'name') and x.name=="rec", my_model)
-    assert len(a)==1
-    assert a[0].name=="rec"
-    assert a[0].ref.__class__.__name__=="Class"
-    assert a[0].ref.name=="C2"
+    a = get_children(lambda x: hasattr(x, 'name') and x.name == "rec", my_model)
+    assert len(a) == 1
+    assert a[0].name == "rec"
+    assert a[0].ref.__class__.__name__ == "Class"
+    assert a[0].ref.name == "C2"
 
-    a = get_children(lambda x:hasattr(x,'name') and x.name=="p1", my_model)
-    assert len(a)==1
-    assert a[0].name=="p1"
-    assert a[0].ref.__class__.__name__=="Class"
-    assert a[0].ref.name=="Part1"
+    a = get_children(lambda x: hasattr(x, 'name') and x.name == "p1", my_model)
+    assert len(a) == 1
+    assert a[0].name == "p1"
+    assert a[0].ref.__class__.__name__ == "Class"
+    assert a[0].ref.name == "Part1"
 
-    a = get_children(lambda x:hasattr(x,'name') and x.name=="p2a", my_model)
-    assert len(a)==1
-    assert a[0].name=="p2a"
-    assert a[0].ref.__class__.__name__=="Class"
-    assert a[0].ref.name=="Part2"
+    a = get_children(lambda x: hasattr(x, 'name') and x.name == "p2a", my_model)
+    assert len(a) == 1
+    assert a[0].name == "p2a"
+    assert a[0].ref.__class__.__name__ == "Class"
+    assert a[0].ref.name == "Part2"
 
-    a = get_children(lambda x:hasattr(x,'name') and x.name=="p2b", my_model)
-    assert len(a)==1
-    assert a[0].name=="p2b"
-    assert a[0].ref.__class__.__name__=="Class"
-    assert a[0].ref.name=="Part2"
+    a = get_children(lambda x: hasattr(x, 'name') and x.name == "p2b", my_model)
+    assert len(a) == 1
+    assert a[0].name == "p2b"
+    assert a[0].ref.__class__.__name__ == "Class"
+    assert a[0].ref.name == "Part2"
 
     ###########################
     # MODEL WITH ERROR
@@ -108,4 +108,3 @@ def test_fully_qualified_name_ref():
     #################################
     # END
     #################################
-

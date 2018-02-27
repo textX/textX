@@ -5,15 +5,15 @@ from pytest import raises
 
 metamodel_str = '''
 Model:
-	things+=Thing
+    things+=Thing
 ;
 
 Thing:
-	'thing' name=ID '{'
-	inner*=[Thing]
-	'}'
+    'thing' name=ID '{'
+    inner*=[Thing]
+    '}'
 ;
-    '''
+'''
 
 
 class Thing(object):
@@ -40,7 +40,7 @@ def test_buildins():
         'OneThing': Thing(name="OneThing"),
         'OtherThing': Thing(name="OtherThing")
     }
-    my_metamodel = metamodel_from_str(metamodel_str, classes=[Thing],builtins=type_builtins)
+    my_metamodel = metamodel_from_str(metamodel_str, classes=[Thing], builtins=type_builtins)
 
     #################################
     # MODEL PARSING
@@ -51,7 +51,6 @@ def test_buildins():
     thing B {}
     thing C {A B}
     ''')
-
 
     _ = my_metamodel.model_from_str('''
     thing A {}
@@ -69,6 +68,7 @@ def test_buildins():
     #################################
     # END
     #################################
+
 
 def test_buildins_fully_qualified_name():
     """
@@ -89,7 +89,7 @@ def test_buildins_fully_qualified_name():
         'OneThing': Thing(name="OneThing"),
         'OtherThing': Thing(name="OtherThing")
     }
-    my_metamodel = metamodel_from_str(metamodel_str, classes=[Thing],builtins=type_builtins)
+    my_metamodel = metamodel_from_str(metamodel_str, classes=[Thing], builtins=type_builtins)
     my_metamodel.register_scope_provider({"*.*": scoping.scope_provider_fully_qualified_names})
 
     #################################
@@ -101,7 +101,6 @@ def test_buildins_fully_qualified_name():
     thing B {}
     thing C {A B}
     ''')
-
 
     _ = my_metamodel.model_from_str('''
     thing A {}
