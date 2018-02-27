@@ -92,10 +92,10 @@ def test_model_with_imports_and_errors():
     #################################
 
     with raises(textx.exceptions.TextXSemanticError, match=r'.*Unknown object.*types.int.*'):
-        my_model = my_meta_model.model_from_file(abspath(dirname(__file__)) + "/interface_model1/model_b/app_error1.if")
+        _ = my_meta_model.model_from_file(abspath(dirname(__file__)) + "/interface_model1/model_b/app_error1.if")
 
     with raises(IOError, match=r'.*file_not_found\.if.*'):
-        my_model = my_meta_model.model_from_file(abspath(dirname(__file__)) + "/interface_model1/model_b/app_error2.if")
+        _ = my_meta_model.model_from_file(abspath(dirname(__file__)) + "/interface_model1/model_b/app_error2.if")
 
     #################################
     # END
@@ -152,28 +152,28 @@ def test_model_with_circular_imports():
     #################################
 
     check_unique_named_object_has_class(my_model, "A", "Interface")
-    A = get_unique_named_object(my_model, "A")
+    a = get_unique_named_object(my_model, "A")
 
-    A_self = get_children(lambda x: hasattr(x, 'name') and x.name == "self", A)
-    assert len(A_self) == 1
-    A_self = A_self[0]
+    a_self = get_children(lambda x: hasattr(x, 'name') and x.name == "self", a)
+    assert len(a_self) == 1
+    a_self = a_self[0]
 
-    A_other = get_children(lambda x: hasattr(x, 'name') and x.name == "other", A)
-    assert len(A_other) == 1
-    A_other = A_other[0]
+    a_other = get_children(lambda x: hasattr(x, 'name') and x.name == "other", a)
+    assert len(a_other) == 1
+    a_other = a_other[0]
 
-    A_other_self = get_children(lambda x: hasattr(x, 'name') and x.name == "self", A_other.ref)
-    assert len(A_other_self) == 1
-    A_other_self = A_other_self[0]
+    a_other_self = get_children(lambda x: hasattr(x, 'name') and x.name == "self", a_other.ref)
+    assert len(a_other_self) == 1
+    a_other_self = a_other_self[0]
 
-    A_other_other = get_children(lambda x: hasattr(x, 'name') and x.name == "other", A_other.ref)
-    assert len(A_other_other) == 1
-    A_other_other = A_other_other[0]
+    a_other_other = get_children(lambda x: hasattr(x, 'name') and x.name == "other", a_other.ref)
+    assert len(a_other_other) == 1
+    a_other_other = a_other_other[0]
 
-    assert A_self.ref == A_other_other.ref
-    assert A_self.ref != A_other.ref
-    assert A_other.ref == A_other_self.ref
-    assert A_other.ref != A_other_other.ref
+    assert a_self.ref == a_other_other.ref
+    assert a_self.ref != a_other.ref
+    assert a_other.ref == a_other_self.ref
+    assert a_other.ref != a_other_other.ref
 
     #################################
     # END

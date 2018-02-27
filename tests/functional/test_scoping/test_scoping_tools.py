@@ -34,9 +34,9 @@ def test_get_referenced_object():
     action2b = get_unique_named_object(my_model, "action2")
     assert action2a is action2b
 
-    Middle_a = get_referenced_object(None, my_model, "packages.base.components.Middle")
-    Middle_b = get_unique_named_object(my_model, "Middle")
-    assert Middle_a is Middle_b
+    middle_a = get_referenced_object(None, my_model, "packages.base.components.Middle")
+    middle_b = get_unique_named_object(my_model, "Middle")
+    assert middle_a is middle_b
 
 
 def test_get_list_of_concatenated_objects():
@@ -67,21 +67,21 @@ def test_get_list_of_concatenated_objects():
     #################################
 
     # test extends A,B
-    Start = get_unique_named_object(my_model1, "Start")
-    Middle = get_unique_named_object(my_model1, "Middle")
-    End = get_unique_named_object(my_model1, "End")
-    inherited_classes = get_list_of_concatenated_objects(Middle, "extends")
+    start = get_unique_named_object(my_model1, "Start")
+    middle = get_unique_named_object(my_model1, "Middle")
+    end = get_unique_named_object(my_model1, "End")
+    inherited_classes = get_list_of_concatenated_objects(middle, "extends")
     assert len(inherited_classes) == 3
-    assert inherited_classes[0] is Middle
-    assert inherited_classes[1] is Start
-    assert inherited_classes[2] is End
+    assert inherited_classes[0] is middle
+    assert inherited_classes[1] is start
+    assert inherited_classes[2] is end
 
     # test extends A extends B
-    Start = get_unique_named_object(my_model2, "Start")
-    Middle = get_unique_named_object(my_model2, "Middle")
-    End = get_unique_named_object(my_model2, "End")
-    inherited_classes = get_list_of_concatenated_objects(Middle, "extends")
+    start = get_unique_named_object(my_model2, "Start")
+    middle = get_unique_named_object(my_model2, "Middle")
+    end = get_unique_named_object(my_model2, "End")
+    inherited_classes = get_list_of_concatenated_objects(middle, "extends")
     assert len(inherited_classes) == 3
-    assert inherited_classes[0] is Middle
-    assert inherited_classes[1] is Start
-    assert inherited_classes[2] is End
+    assert inherited_classes[0] is middle
+    assert inherited_classes[1] is start
+    assert inherited_classes[2] is end
