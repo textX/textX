@@ -1,4 +1,4 @@
-# textX scoping
+# textX Scoping
 
 ## Motivation and Introduction to Scoping
 
