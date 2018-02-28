@@ -12,13 +12,18 @@ def needs_to_be_resolved(parser, parent_obj, attr_name):
     """
     This function determines, if a reference (CrossReference) needs to be
     resolved or not (while creating the model, while resolving references).
-    :param parser: the parser which provides the information required for this function.
+
+    Args:
+        parser: the parser which provides the information required for this function.
                    If it is None, False is returned.
-    :param parent_obj: the object containing the attribute to be resolved.
-    :param attr_name: the attribute identification object.
-    :return: True if the attribute needs to be resolved. Else False.
-             In case of lists of references, this function return true if any of the
-             references in the list needs to be resolved.
+        parent_obj: the object containing the attribute to be resolved.
+        attr_name: the attribute identification object.
+
+    Returns:
+        True if the attribute needs to be resolved. Else False.
+        In case of lists of references, this function return true if any of the
+        references in the list needs to be resolved.
+
     """
     if not parser:
         return False
@@ -46,11 +51,15 @@ def get_list_of_concatenated_objects(obj, dot_separated_name, parser=None, lst=N
     - obj+"."+dot_separated_name
     - (obj+"."+dot_separated_name)+"."+dot_separated_name (called ercursively)
     Note: lists are expanded
-    :param obj: the starting point
-    :param dot_separated_name: "the search path" (applied recursively)
-    :param parser: the parser (req. to determine if an object is Postponed)
-    :param lst: the initial list (e.g. [])
-    :return: the filled list (if one single object is requested, a list with one entry is returned).
+
+    Args:
+        obj: the starting point
+        dot_separated_name: "the search path" (applied recursively)
+        parser: the parser (req. to determine if an object is Postponed)
+        lst: the initial list (e.g. [])
+
+    Returns:
+        the filled list (if one single object is requested, a list with one entry is returned).
     """
     from textx.scoping import Postponed
     if lst is None:
@@ -83,14 +92,18 @@ def get_recursive_parent_with_typename(obj, desired_parent_typename):
 def get_referenced_object(prev_obj, obj, dot_separated_name, parser=None, desired_type=None):
     """
     get objects based on a path
-    :param prev_obj: the object containing obj (req. is obj is a list)
-    :param obj: the current object
-    :param dot_separated_name: the attribute name "a.b.c.d" starting from obj
+
+    Args:
+        prev_obj: the object containing obj (req. is obj is a list)
+        obj: the current object
+        dot_separated_name: the attribute name "a.b.c.d" starting from obj
            Note: the attribute "parent(TYPE)" is a shortcut to jump to the parent of type "TYPE"
            (exact match of type name).
-    :param parser: the parser
-    :param desired_type: (optional)
-    :return: the object if found, None if not found or Postponed() if some postponed refs are found on the path
+        parser: the parser
+        desired_type: (optional)
+
+    Returns:
+        the object if found, None if not found or Postponed() if some postponed refs are found on the path
     """
     from textx.scoping import Postponed
     assert prev_obj or not type(obj) is list
@@ -139,12 +152,16 @@ def get_referenced_object(prev_obj, obj, dot_separated_name, parser=None, desire
 def get_referenced_object_as_list(prev_obj, obj, dot_separated_name, parser=None, desired_type=None):
     """
     same as get_referenced_object
-    :param prev_obj: see get_referenced_object
-    :param obj: see get_referenced_object
-    :param dot_separated_name: see get_referenced_object
-    :param parser: see get_referenced_object
-    :param desired_type: see get_referenced_object
-    :return: same as get_referenced_object, but always returns a list
+
+    Args:
+        prev_obj: see get_referenced_object
+        obj: see get_referenced_object
+        dot_separated_name: see get_referenced_object
+        parser: see get_referenced_object
+        desired_type: see get_referenced_object
+
+    Returns:
+        same as get_referenced_object, but always returns a list
     """
     res = get_referenced_object(prev_obj, obj, dot_separated_name, parser, desired_type)
     if res is None:
@@ -158,9 +175,13 @@ def get_referenced_object_as_list(prev_obj, obj, dot_separated_name, parser=None
 def get_unique_named_object_in_all_models(root, name):
     """
     retrieves a unqiue named object (no fully qualified name)
-    :param root: start of search (if root is a model all known models are searched as well)
-    :param name: name of object
-    :return: the object (if not unique, raises an error)
+
+    Args:
+        root: start of search (if root is a model all known models are searched as well)
+        name: name of object
+
+    Returns:
+        the object (if not unique, raises an error)
     """
     if hasattr(root, '_tx_model_repository'):
         src = list(root._tx_model_repository.local_models.filename_to_model.values())
@@ -181,9 +202,13 @@ def get_unique_named_object_in_all_models(root, name):
 def get_unique_named_object(root, name):
     """
     retrieves a unqiue named object (no fully qualified name)
-    :param root: start of search
-    :param name: name of object
-    :return: the object (if not unique, raises an error)
+
+    Args:
+        root: start of search
+        name: name of object
+
+    Returns:
+        the object (if not unique, raises an error)
     """
     a = get_children(lambda x: hasattr(x, 'name') and x.name == name, root)
     assert len(a) == 1
@@ -193,9 +218,13 @@ def get_unique_named_object(root, name):
 def check_unique_named_object_has_class(root, name, class_name):
     """
     checks the type (type name) of an unique named object (no fully qualified name)
-    :param root: start of search
-    :param name: name of object
-    :param class_name: the name of the type to be checked
-    :return: nothing (if not unique, raises an error)
+
+    Args:
+        root: start of search
+        name: name of object
+        class_name: the name of the type to be checked
+
+    Returns:
+        nothing (if not unique, raises an error)
     """
     assert class_name == get_unique_named_object(root, name).__class__.__name__
