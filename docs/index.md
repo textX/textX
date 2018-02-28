@@ -75,6 +75,9 @@ tutorial](tutorials/state_machine.md).
     imported where needed. See [Grammar
     modularization](grammar.md#grammar-modularization).
 
+* **Scope Providers**
+
+    Scope Providers allow different types of scoping. See [Scoping](scoping.md).
 
 * **Meta-model/model visualization**
 
