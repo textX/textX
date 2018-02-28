@@ -415,8 +415,6 @@ def parse_tree_to_objgraph(parser, parse_tree):
                     setattr(obj_attr, txa_attr_name, value)
 
             elif op in ['list', 'oneormore', 'zeroormore']:
-                pos_index = 0
-                positions = [n.position for n in node if n.rule_name != 'sep']
                 for n in node:
                     # If the node is separator skip
                     if n.rule_name != 'sep':
@@ -427,13 +425,13 @@ def parse_tree_to_objgraph(parser, parse_tree):
                         if metaattr.ref and not metaattr.cont:
                             # If this is non-containing reference
                             # create ObjCrossRef
+
                             value = ObjCrossRef(obj_name=value,
                                                 cls=metaattr.cls,
-                                                position=positions[pos_index])
+                                                position=n.position)
 
                             parser._crossrefs.append((obj_attr, metaattr,
                                                       value))
-                            pos_index += 1
                             continue
 
                         if not hasattr(obj_attr, txa_attr_name) or \
