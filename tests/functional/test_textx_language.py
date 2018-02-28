@@ -370,20 +370,21 @@ def test_float_variations():
     Test different float formats and boundary anchoring.
     """
     grammar = """
-        Rule: a*=FLOAT[','] ',' some_id='5i'
+        Rule: a*=FLOAT[','] ',' some_id='7i'
         ;
     """
     meta = metamodel_from_str(grammar)
 
-    model = meta.model_from_str('3.5, .4, 5.0, 5i')
-    assert len(model.a) == 3
+    model = meta.model_from_str('3.5, .4, 5.0, 6., 7i')
+    assert len(model.a) == 4
     assert type(model.a[0]) is float
     assert type(model.a[1]) is float
     assert type(model.a[2]) is float
-    assert model.some_id == '5i'
+    assert type(model.a[3]) is float
+    assert model.some_id == '7i'
 
     # Check scientific notation
-    model = meta.model_from_str('1e-2, 5i')
+    model = meta.model_from_str('1e-2, 7i')
     assert model.a[0] == 0.01
 
 

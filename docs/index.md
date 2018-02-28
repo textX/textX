@@ -181,6 +181,7 @@ You can follow the progress
 at [the textX-tools GitHub organization](https://github.com/textX-tools).
 
 Projects that are currently in progress are:
+
 - [viewX](https://github.com/danielkupco/viewX-vscode) - creating visualizators
   for textX languages
 - [textX-languageserver](https://github.com/textX-tools/textX-languageserver) -
