@@ -495,7 +495,7 @@ class ScopeProviderForExtendableRelativeNamedLookups(object):
     Here you specifiy separately
     - how to find the class.
     - how to find the methods (starting from a class).
-    - how to find inherited classes (starting from a class).
+    - how to find inherited/chained classes (starting from a class).
     """
 
     def __init__(self, path_to_definition_object, path_to_target, path_to_extension):
