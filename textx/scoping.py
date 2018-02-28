@@ -123,8 +123,8 @@ class GlobalModelRepository(object):
     def __init__(self, all_models=None):
         """
         create a new repo for a model
-        :param model the model to be added to
-        :param global_repo: the repo of another (parent) model
+        Args:
+            all_models: models to be added to this new repository.
         """
         self.local_models = ModelRepository()  # used for current model
         if all_models:
@@ -135,8 +135,14 @@ class GlobalModelRepository(object):
     def load_models_using_filepattern(self, filename_pattern, model, glob_args):
         """
         add a new model to all releveant objects
-        :param filename: the new model source
-        :return: nothing
+
+        Args:
+            filename_pattern: models to be loaded
+            model: model holding the loaded models in its _tx_model_repository field.
+            glob_args: arguments passed to the glob.glob function.
+
+        Returns:
+            nothing
         """
         assert model
         self.update_model_in_repo_based_on_filename(model)
@@ -150,10 +156,15 @@ class GlobalModelRepository(object):
     def load_model(self, themetamodel, filename):
         """
         load a single model
-        :rtype: the loaded model
-        :param filename: the new model source
-        :return: the model
+
+        Args:
+            themetamodel: the metamodel used to load the model
+            filename: the model to be loaded (if not cached)
+
+        Returns:
+            the loaded/cached model
         """
+
         if not self.local_models.has_model(filename):
             if self.all_models.has_model(filename):
                 newmodel = self.all_models.filename_to_model[filename]
@@ -176,6 +187,15 @@ class GlobalModelRepository(object):
             self.all_models.filename_to_model[myfilename] = model
 
     def pre_ref_resolution_callback(self, other_model):
+        """
+        (internal: used to store a model after parsing into the repository)
+
+        Args:
+            other_model: the parsed model
+
+        Returns:
+            nothing
+        """
         # print("PRE-CALLBACK{}".format(filename))
         filename = other_model._tx_filename
         assert (filename)
@@ -197,6 +217,15 @@ class ModelLoader(object):
 
 
 def get_all_models_including_attached_models(model):
+    """
+    get a list of all models stored within a model (including the owning model).
+
+    Args:
+        model: the owning model
+
+    Returns:
+        a list of all models
+    """
     if (hasattr(model, "_tx_model_repository")):
         models = list(model._tx_model_repository.all_models.filename_to_model.values())
         if model not in models:
@@ -214,10 +243,15 @@ def get_all_models_including_attached_models(model):
 def scope_provider_plain_names(parser, obj, attr, obj_ref):
     """
     the default scope provider
-    :param parser: the current parser
-    :param obj: usuned
-    :param attr: unused
-    :param obj_ref: the cross reference to be resolved
+
+    Args:
+        parser: the current parser
+        obj: unused
+        attr: unused
+        obj_ref: the cross reference to be resolved
+
+    Returns:
+        the resolved reference or None
     """
     from textx.const import RULE_COMMON, RULE_ABSTRACT
     from textx.model import ObjCrossRef
@@ -282,9 +316,13 @@ def scope_provider_fully_qualified_names(parser, obj, attr, obj_ref):
         """
         Helper function:
         find a named object based on a qualified name ("."-separated names) starting from object p.
-        :param p: the container where to start the search
-        :param fqn_name: the "."-separated name
-        :return: the object or None
+
+        Args:
+            p: the container where to start the search
+            fqn_name: the "."-separated name
+
+        Returns:
+            the object or None
         """
 
         def find_obj(parent, name):
@@ -313,9 +351,13 @@ def scope_provider_fully_qualified_names(parser, obj, attr, obj_ref):
         Helper function:
         Search the fully qualified name starting at relative container p.
         If no result is found, the search is continued from p.parent until the model root is reached.
-        :param m: parent object
-        :param n: name to be found
-        :return: None or the found object
+
+        Args:
+            p: parent object
+            name: name to be found
+
+        Returns:
+            None or the found object
         """
         ret = _find_obj_fqn(p, name)
         if ret:
@@ -434,9 +476,13 @@ class ScopeProviderWithGlobalRepo(ScopeProviderWithImportURI):
     def register_models(self, filename_pattern):
         """
         register models into provider object - visible for all
-        :param mymetamodel: the metamodel to be used to load the models
-        :param filename_pattern: the pattern (e.g. file.myext or dir/**/*.myext)
-        :return: nothing
+
+        Args:
+            mymetamodel: the metamodel to be used to load the models
+            filename_pattern: the pattern (e.g. file.myext or dir/**/*.myext)
+
+        Returns:
+            nothing
         """
         self.filename_pattern_list.append(filename_pattern)
 
@@ -471,7 +517,9 @@ class ScopeProviderForSimpleRelativeNamedLookups(object):
         Here, you specify the path from the instance to the methods:
         The path is given in a dot-separated way: "classref.methods". Then a concrete method "f"
         is searched as "classref.methods.f".
-        :param path_to_conatiner_object: This identifies (starting from the instance) how to find the methods.
+
+        Args:
+            path_to_conatiner_object: This identifies (starting from the instance) how to find the methods.
         """
         self.path_to_container_object = path_to_conatiner_object
         self.postponed_counter = 0
