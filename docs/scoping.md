@@ -23,11 +23,45 @@ and instances of classes).
 
 The scope providers are registered to the metamodel and can be bound to specific parts of rules:
 
- * e.g., my_meta_model.register_scope_provider({"*.*":scoping.scope_provider_fully_qualified_names})
+ * e.g., my_meta_model.register_scope_provider({"\*.\*":scoping.scope_provider_fully_qualified_names})
  * or: my_meta_model.register_scope_provider({"MyAttribute.ref":scoping.scope_provider_fully_qualified_names})
- * or: my_meta_model.register_scope_provider({"*.ref":scoping.scope_provider_fully_qualified_names})
+ * or: my_meta_model.register_scope_provider({"\*.ref":scoping.scope_provider_fully_qualified_names})
  * or: my_meta_model.register_scope_provider({"MyAttribute.*":scoping.scope_provider_fully_qualified_names})
 
+Example (from tests/test_scoping/test_local_scope.py):
+
+    # Grammar snippet (Components.tx)
+    Component:
+        'component' name=ID ('extends' extends+=[Component|FQN][','])? '{'
+            slots*=Slot
+        '}'
+    ;
+    # ...
+    Instance:
+        'instance' name=ID ':' component=[Component|FQN] ;
+    Connection:
+        'connect'
+          from_inst=[Instance|ID] '.' from_port=[SlotOut|ID]
+        'to'
+          to_inst=[Instance|ID] '.' to_port=[SlotIn|ID]
+    ;
+
+    # Python snippet
+    my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/components_model1/Components.tx')
+    my_meta_model.register_scope_provider({
+        "*.*": scoping.scope_provider_fully_qualified_names,
+        "Connection.from_port": scoping.ScopeProviderForSimpleRelativeNamedLookups("from_inst.component.slots"),
+        "Connection.to_port": scoping.ScopeProviderForSimpleRelativeNamedLookups("to_inst.component.slots")
+    })
+
+
+This example selects the fully qualified name provider as default provider ("\*.\*").
+Moreover, for special attributes of a "Connection" a relative name lookup is specified: Here the
+"path" from the rule "Connection" containing the attribute of interrest (e.g. "Connection.from_port") to
+the referenced element is specified (the slot contained in "from_inst.component.slots").
+Since this attribute is a list, the list is searched to find the referenced name.
+
+Note: special rule selections (e.g., "Connection.from_port") are preferred to wildcard selection (e.e, "\*.\*").
 
 ### Scope Providers defined in Module "scoping.py"
 
@@ -86,6 +120,7 @@ Examples see tests/test_scoping/test_metamodel_provider.py.
 ## Technical aspects and implementation details
 
 The scope providers are python callables accepting obj,attr,obj_ref:
+
  * parser  : the current parser
  * obj     : the object representing the start of the search (e.g., a rule (e.g. "MyAttribute" in the example above,
              or the model)
