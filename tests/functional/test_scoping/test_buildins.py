@@ -1,5 +1,5 @@
 from textx import metamodel_from_str
-import textx.scoping as scoping
+import textx.scoping.providers as scoping_providers
 import textx.exceptions
 from pytest import raises
 
@@ -90,7 +90,7 @@ def test_buildins_fully_qualified_name():
         'OtherThing': Thing(name="OtherThing")
     }
     my_metamodel = metamodel_from_str(metamodel_str, classes=[Thing], builtins=type_builtins)
-    my_metamodel.register_scope_providers({"*.*": scoping.scope_provider_fully_qualified_names})
+    my_metamodel.register_scope_providers({"*.*": scoping_providers.scope_provider_fully_qualified_names})
 
     #################################
     # MODEL PARSING

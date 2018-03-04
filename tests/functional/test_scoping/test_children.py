@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 from textx import metamodel_from_str
 from textx import get_children, get_children_of_type
-import textx.scoping as scoping
+import textx.scoping.providers as scoping_providers
 from operator import eq
 import re
 
@@ -39,7 +39,7 @@ def test_fully_qualified_name_ref():
 
     my_metamodel = metamodel_from_str(metamodel_str)
 
-    my_metamodel.register_scope_providers({"*.*": scoping.scope_provider_fully_qualified_names})
+    my_metamodel.register_scope_providers({"*.*": scoping_providers.scope_provider_fully_qualified_names})
 
     #################################
     # MODEL PARSING

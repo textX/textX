@@ -1,9 +1,9 @@
 from __future__ import unicode_literals
 from textx import metamodel_from_file
 from textx import get_children_of_type
-import textx.scoping as scoping
+import textx.scoping.providers as scoping_providers
 from os.path import dirname, abspath
-from textx.scoping_tools import get_unique_named_object
+from textx.scoping.tools import get_unique_named_object
 
 
 def test_model_with_local_scope_and_circular_ref_via_two_models():
@@ -13,12 +13,12 @@ def test_model_with_local_scope_and_circular_ref_via_two_models():
 
     my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/components_model1/Components.tx',
                                         global_repository=True)
-    global_scope = scoping.ScopeProviderFullyQualifiedNamesWithGlobalRepo(
+    global_scope = scoping_providers.ScopeProviderFullyQualifiedNamesWithGlobalRepo(
         abspath(dirname(__file__)) + "/components_model1/example_?.components")
     my_meta_model.register_scope_providers({
         "*.*": global_scope,
-        "Connection.from_port": scoping.ScopeProviderForSimpleRelativeNamedLookups("from_inst.component.slots"),
-        "Connection.to_port": scoping.ScopeProviderForSimpleRelativeNamedLookups("to_inst.component.slots")
+        "Connection.from_port": scoping_providers.ScopeProviderForSimpleRelativeNamedLookups("from_inst.component.slots"),
+        "Connection.to_port": scoping_providers.ScopeProviderForSimpleRelativeNamedLookups("to_inst.component.slots")
     })
 
     #################################

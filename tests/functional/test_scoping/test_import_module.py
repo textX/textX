@@ -1,11 +1,11 @@
 from __future__ import unicode_literals
 from textx import metamodel_from_file
 from textx import get_children
-import textx.scoping as scoping
+import textx.scoping.providers as scoping_providers
 from os.path import dirname, abspath
 import textx.exceptions
 from pytest import raises
-from textx.scoping_tools import check_unique_named_object_has_class, get_unique_named_object
+from textx.scoping.tools import check_unique_named_object_has_class, get_unique_named_object
 
 
 def test_model_without_imports():
@@ -14,7 +14,7 @@ def test_model_without_imports():
     #################################
 
     my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/interface_model1/Interface.tx')
-    my_meta_model.register_scope_providers({"*.*": scoping.ScopeProviderFullyQualifiedNamesWithImportURI()})
+    my_meta_model.register_scope_providers({"*.*": scoping_providers.ScopeProviderFullyQualifiedNamesWithImportURI()})
 
     #################################
     # MODEL PARSING
@@ -45,7 +45,7 @@ def test_model_with_imports():
     #################################
 
     my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/interface_model1/Interface.tx')
-    my_meta_model.register_scope_providers({"*.*": scoping.ScopeProviderFullyQualifiedNamesWithImportURI()})
+    my_meta_model.register_scope_providers({"*.*": scoping_providers.ScopeProviderFullyQualifiedNamesWithImportURI()})
 
     #################################
     # MODEL PARSING
@@ -85,7 +85,7 @@ def test_model_with_imports_and_errors():
     #################################
 
     my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/interface_model1/Interface.tx')
-    my_meta_model.register_scope_providers({"*.*": scoping.ScopeProviderFullyQualifiedNamesWithImportURI()})
+    my_meta_model.register_scope_providers({"*.*": scoping_providers.ScopeProviderFullyQualifiedNamesWithImportURI()})
 
     #################################
     # MODEL PARSING
@@ -109,7 +109,7 @@ def test_model_with_imports_and_global_repo():
 
     my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/interface_model1/Interface.tx',
                                         global_repository=True)
-    my_meta_model.register_scope_providers({"*.*": scoping.ScopeProviderFullyQualifiedNamesWithImportURI()})
+    my_meta_model.register_scope_providers({"*.*": scoping_providers.ScopeProviderFullyQualifiedNamesWithImportURI()})
 
     #################################
     # MODEL PARSING
@@ -139,7 +139,7 @@ def test_model_with_circular_imports():
     #################################
 
     my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/interface_model1/Interface.tx')
-    my_meta_model.register_scope_providers({"*.*": scoping.ScopeProviderFullyQualifiedNamesWithImportURI()})
+    my_meta_model.register_scope_providers({"*.*": scoping_providers.ScopeProviderFullyQualifiedNamesWithImportURI()})
 
     #################################
     # MODEL PARSING

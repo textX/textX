@@ -17,7 +17,8 @@ from textx.const import MULT_OPTIONAL, MULT_ONE, MULT_ONEORMORE, \
     MULT_ZEROORMORE, RULE_COMMON, RULE_ABSTRACT, RULE_MATCH, \
     MULT_ASSIGN_ERROR, UNKNOWN_OBJ_ERROR
 from textx.lang import PRIMITIVE_PYTHON_TYPES
-from textx.scoping import scope_provider_plain_names, Postponed
+from textx.scoping import Postponed
+from textx.scoping.providers import scope_provider_plain_names
 
 if sys.version < '3':
     text = unicode  # noqa
