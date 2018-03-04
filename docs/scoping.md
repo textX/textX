@@ -98,7 +98,7 @@ We provide some standard scope providers:
 Two different models created using one single meta model (not using a scope provider like ScopeProviderWithGlobalRepo,
 but by directly loading the models from file) have different instances of the same model elements. If you need two
 such models to share their model element instances, you can specify this, while creating the meta model
-(enable_global_model_repository). Then, the meta model will store an own instance of a GlobalModelRepository as a
+(global_repository=True). Then, the meta model will store an own instance of a GlobalModelRepository as a
 base for all loaded models.
 
 Model elements in models including other parts of the model (possibly circular) have unique model
