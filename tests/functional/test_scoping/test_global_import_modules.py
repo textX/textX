@@ -2,24 +2,29 @@ from __future__ import unicode_literals
 from textx import metamodel_from_file
 import textx.scoping.providers as scoping_providers
 from os.path import dirname, abspath
-from textx.scoping.tools import get_unique_named_object, check_unique_named_object_has_class
+from textx.scoping.tools import get_unique_named_object, \
+    check_unique_named_object_has_class
 
 
-def test_model_with_globalimports_basic_test_with_single_model_file():
+def test_globalimports_basic_test_with_single_model_file():
     #################################
     # META MODEL DEF
     #################################
 
-    my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/interface_model2/Interface.tx')
-    my_meta_model.register_scope_providers({"*.*": scoping_providers.FQNGlobalRepo(
-        abspath(dirname(__file__)) + "/interface_model2/model_a/*.if")})
+    my_meta_model = metamodel_from_file(
+        abspath(dirname(__file__)) + '/interface_model2/Interface.tx')
+    my_meta_model.register_scope_providers(
+        {"*.*": scoping_providers.FQNGlobalRepo(
+            abspath(dirname(__file__)) + "/interface_model2/model_a/*.if")})
 
     #################################
     # MODEL PARSING
     #################################
 
-    my_model = my_meta_model.model_from_file(abspath(dirname(__file__)) + "/interface_model2/model_a/all_in_one.if")
-    my_model2 = my_meta_model.model_from_file(abspath(dirname(__file__)) + "/interface_model2/model_a/all_in_one.if")
+    my_model = my_meta_model.model_from_file(
+        abspath(dirname(__file__)) + "/interface_model2/model_a/all_in_one.if")
+    my_model2 = my_meta_model.model_from_file(
+        abspath(dirname(__file__)) + "/interface_model2/model_a/all_in_one.if")
 
     #################################
     # TEST MODEL
@@ -41,22 +46,26 @@ def test_model_with_globalimports_basic_test_with_single_model_file():
     #################################
 
 
-def test_model_with_globalimports_basic_test_with_single_model_file_and_with_global_repo():
+def test_globalimports_basic_test_with_single_model_file_and_global_repo():
     #################################
     # META MODEL DEF
     #################################
 
-    my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/interface_model2/Interface.tx',
-                                        global_repository=True)
-    my_meta_model.register_scope_providers({"*.*": scoping_providers.FQNGlobalRepo(
-        abspath(dirname(__file__)) + "/interface_model2/model_a/*.if")})
+    my_meta_model = metamodel_from_file(
+        abspath(dirname(__file__)) + '/interface_model2/Interface.tx',
+        global_repository=True)
+    my_meta_model.register_scope_providers(
+        {"*.*": scoping_providers.FQNGlobalRepo(
+            abspath(dirname(__file__)) + "/interface_model2/model_a/*.if")})
 
     #################################
     # MODEL PARSING
     #################################
 
-    my_model = my_meta_model.model_from_file(abspath(dirname(__file__)) + "/interface_model2/model_a/all_in_one.if")
-    my_model2 = my_meta_model.model_from_file(abspath(dirname(__file__)) + "/interface_model2/model_a/all_in_one.if")
+    my_model = my_meta_model.model_from_file(
+        abspath(dirname(__file__)) + "/interface_model2/model_a/all_in_one.if")
+    my_model2 = my_meta_model.model_from_file(
+        abspath(dirname(__file__)) + "/interface_model2/model_a/all_in_one.if")
 
     #################################
     # TEST MODEL
@@ -78,20 +87,23 @@ def test_model_with_globalimports_basic_test_with_single_model_file_and_with_glo
     #################################
 
 
-def test_model_with_globalimports_basic_test_with_distributed_model():
+def test_globalimports_basic_test_with_distributed_model():
     #################################
     # META MODEL DEF
     #################################
 
-    my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/interface_model2/Interface.tx')
-    my_meta_model.register_scope_providers({"*.*": scoping_providers.FQNGlobalRepo(
-        abspath(dirname(__file__)) + "/interface_model2/model_b/*.if")})
+    my_meta_model = metamodel_from_file(
+        abspath(dirname(__file__)) + '/interface_model2/Interface.tx')
+    my_meta_model.register_scope_providers(
+        {"*.*": scoping_providers.FQNGlobalRepo(
+            abspath(dirname(__file__)) + "/interface_model2/model_b/*.if")})
 
     #################################
     # MODEL PARSING
     #################################
 
-    my_model = my_meta_model.model_from_file(abspath(dirname(__file__)) + "/interface_model2/model_b/app.if")
+    my_model = my_meta_model.model_from_file(
+        abspath(dirname(__file__)) + "/interface_model2/model_b/app.if")
 
     #################################
     # TEST MODEL

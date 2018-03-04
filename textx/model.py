@@ -136,6 +136,7 @@ class ObjCrossRef(object):
         cls(TextXClass): The target object class.
         position(int): A position in the input string of this cross-ref.
     """
+
     def __init__(self, obj_name, cls, position):
         self.obj_name = obj_name
         self.cls = cls
@@ -153,6 +154,7 @@ class RefRulePosition(object):
         def_pos_start(int): Starting position of referenced object
         def_pos_end(int): Ending position of referenced object
     """
+
     def __init__(self, name, ref_pos_start, ref_pos_end,
                  def_pos_start, def_pos_end):
         self.name = name
@@ -173,6 +175,7 @@ def get_model_parser(top_rule, comments_model, **kwargs):
         Semantic actions for this parser will construct object
         graph representing model on the given language.
         """
+
         def __init__(self, *args, **kwargs):
             super(TextXModelParser, self).__init__(*args, **kwargs)
 
@@ -203,7 +206,9 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                                        col=col,
                                        expected_rules=e.rules)
 
-        def get_model_from_file(self, file_name, encoding, debug, pre_ref_resolution_callback=None, is_main_model=True):
+        def get_model_from_file(self, file_name, encoding, debug,
+                                pre_ref_resolution_callback=None,
+                                is_main_model=True):
             """
             Creates model from the parse tree from the previous parse call.
             If file_name is given file will be parsed before model
@@ -212,11 +217,13 @@ def get_model_parser(top_rule, comments_model, **kwargs):
             with codecs.open(file_name, 'r', encoding) as f:
                 model_str = f.read()
 
-            model = self.get_model_from_str(model_str, file_name=file_name,
-                                            debug=debug, pre_ref_resolution_callback=pre_ref_resolution_callback,
-                                            is_main_model=is_main_model)
+            model = self.get_model_from_str(
+                model_str, file_name=file_name, debug=debug,
+                pre_ref_resolution_callback=pre_ref_resolution_callback,
+                is_main_model=is_main_model)
 
-            # reset the file: see "# Register filename of the model for later use (e.g. imports/scoping)."
+            # reset the file: see "# Register filename of the model for later
+            # use (e.g. imports/scoping)."
             # w/o this second assignment some tests fail (TBC)
             # Register filename of the model for later use.
             try:
@@ -226,7 +233,8 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                 pass
             return model
 
-        def get_model_from_str(self, model_str, file_name=None, debug=None, pre_ref_resolution_callback=None,
+        def get_model_from_str(self, model_str, file_name=None, debug=None,
+                               pre_ref_resolution_callback=None,
                                is_main_model=True):
             """
             Parses given string and creates model object graph.
@@ -243,9 +251,10 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                 self.parse(model_str, file_name=file_name)
                 # Transform parse tree to model. Skip root node which
                 # represents the whole file ending in EOF.
-                model = parse_tree_to_objgraph(self, self.parse_tree[0], file_name=file_name,
-                                               pre_ref_resolution_callback=pre_ref_resolution_callback,
-                                               is_main_model=is_main_model)
+                model = parse_tree_to_objgraph(
+                    self, self.parse_tree[0], file_name=file_name,
+                    pre_ref_resolution_callback=pre_ref_resolution_callback,
+                    is_main_model=is_main_model)
             finally:
                 if debug is not None:
                     self.debug = old_debug_state
@@ -261,7 +270,9 @@ def get_model_parser(top_rule, comments_model, **kwargs):
     return TextXModelParser(**kwargs)
 
 
-def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolution_callback=None, is_main_model=True):
+def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
+                           pre_ref_resolution_callback=None,
+                           is_main_model=True):
     """
     Transforms parse_tree to object graph representing model in a
     new language.
@@ -293,7 +304,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolutio
         if isinstance(node, Terminal):
             return metamodel.convert(node.value, node.rule_name)
 
-        assert node.rule.root,\
+        assert node.rule.root, \
             "Not a root node: {}".format(node.rule.rule_name)
         # If this node is created by some root rule
         # create metaclass instance.
@@ -417,10 +428,10 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolutio
             elif op == 'plain':
                 attr_value = getattr(obj_attr, txa_attr_name)
                 if attr_value and type(attr_value) is not list:
+                    fmt = "Multiple assignments to attribute {} at {}"
                     raise TextXSemanticError(
-                        message="Multiple assignments to attribute {} at {}"
-                                .format(attr_name,
-                                        parser.pos_to_linecol(node.position)),
+                        message=fmt.format(
+                            attr_name, parser.pos_to_linecol(node.position)),
                         err_type=MULT_ASSIGN_ERROR)
 
                 # Convert tree bellow assignment to proper value
@@ -491,8 +502,8 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolutio
         for obj, attr, crossref in current_crossrefs:
             if (get_model(obj) == model):
                 attr_value = getattr(obj, attr.name)
-                attr_refs = [obj.__class__.__name__+"." + attr.name,
-                             "*." + attr.name, obj.__class__.__name__+".*",
+                attr_refs = [obj.__class__.__name__ + "." + attr.name,
+                             "*." + attr.name, obj.__class__.__name__ + ".*",
                              "*.*"]
                 for attr_ref in attr_refs:
                     if attr_ref in metamodel.scope_provider:
@@ -508,11 +519,12 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolutio
                 if resolved and not type(resolved) is Postponed:
                     if metamodel.textx_tools_support:
                         pos_crossref_list.append(
-                            RefRulePosition(name=crossref.obj_name,
-                                            ref_pos_start=crossref.position,
-                                            ref_pos_end=crossref.position + len(resolved.name),
-                                            def_pos_start=resolved._tx_position,
-                                            def_pos_end=resolved._tx_position_end))
+                            RefRulePosition(
+                                name=crossref.obj_name,
+                                ref_pos_start=crossref.position,
+                                ref_pos_end=crossref.position + len(resolved.name),
+                                def_pos_start=resolved._tx_position,
+                                def_pos_end=resolved._tx_position_end))
 
                 if not resolved:
                     # As a fall-back search builtins if given
@@ -524,9 +536,12 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolutio
                 if not resolved:
                     line, col = parser.pos_to_linecol(crossref.position)
                     raise TextXSemanticError(
-                        message='Unknown object "{}" of class "{}" at {}'.format(
-                            crossref.obj_name, crossref.cls.__name__, (line, col)), line=line, col=col,
-                        err_type=UNKNOWN_OBJ_ERROR, expected_obj_cls=crossref.cls)
+                        message=
+                        'Unknown object "{}" of class "{}" at {}'.format(
+                            crossref.obj_name, crossref.cls.__name__,
+                            (line, col)),
+                        line=line, col=col, err_type=UNKNOWN_OBJ_ERROR,
+                        expected_obj_cls=crossref.cls)
 
                 if type(resolved) is Postponed:
                     delayed_crossrefs.append((obj, attr, crossref))
@@ -542,8 +557,9 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolutio
         # -------------------------
         # end of resolve-loop
         # -------------------------
-        # store cross-refs from other models in the parser list (for later processing)
-        # this happens when other models are loaded while parsing one model.
+        # store cross-refs from other models in the parser list (for later
+        # processing) this happens when other models are loaded while parsing
+        # one model.
         parser._crossrefs = new_crossrefs
         return (resolved_crossref_count, delayed_crossrefs)
 
@@ -598,15 +614,16 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolutio
             unresolved_count = 0
             # print("***RESOLVING {} models".format(len(models)))
             for m in models:
-                resolved_count_for_this_model, delayed_crossrefs = resolve_refs(m)
+                resolved_count_for_this_model, delayed_crossrefs = \
+                    resolve_refs(m)
                 resolved_count += resolved_count_for_this_model
                 unresolved_count += len(delayed_crossrefs)
         if (unresolved_count > 0):
             error_text = "Unresolvable cross references:"
             for _, _, delayed in delayed_crossrefs:
                 line, col = parser.pos_to_linecol(delayed.position)
-                error_text += ' "{}" of class "{}" at {}'.format(delayed.obj_name, delayed.cls.__name__,
-                                                                 (line, col))
+                error_text += ' "{}" of class "{}" at {}'.format(
+                    delayed.obj_name, delayed.cls.__name__, (line, col))
             raise TextXSemanticError(error_text, line=line, col=col)
 
         assert not parser._inst_stack
@@ -621,7 +638,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolutio
                 call_obj_processors(m)
 
     if metamodel.textx_tools_support \
-       and type(model) not in PRIMITIVE_PYTHON_TYPES:
+            and type(model) not in PRIMITIVE_PYTHON_TYPES:
         # Cross-references for go-to definition language server support
         # Already sorted based on ref_pos_start attr
         # (required for binary search)
@@ -630,6 +647,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolutio
         # Dict for storing rules where key is position of rule instance in text
         # Sorted based on nested rules
         model._pos_rule_dict = OrderedDict(sorted(pos_rule_dict.items(),
-                                           key=lambda x: x[0], reverse=True))
+                                                  key=lambda x: x[0],
+                                                  reverse=True))
 
     return model

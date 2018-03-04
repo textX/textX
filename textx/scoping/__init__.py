@@ -123,13 +123,15 @@ class GlobalModelRepository(object):
         else:
             self.all_models = ModelRepository()
 
-    def load_models_using_filepattern(self, filename_pattern, model, glob_args):
+    def load_models_using_filepattern(
+            self, filename_pattern, model, glob_args):
         """
         add a new model to all releveant objects
 
         Args:
             filename_pattern: models to be loaded
-            model: model holding the loaded models in its _tx_model_repository field.
+            model: model holding the loaded models in its _tx_model_repository
+                   field.
             glob_args: arguments passed to the glob.glob function.
 
         Returns:
@@ -142,7 +144,8 @@ class GlobalModelRepository(object):
             raise IOError(
                 errno.ENOENT, os.strerror(errno.ENOENT), filename_pattern)
         for filename in filenames:
-            self.load_model(MetaModelProvider.get_metamodel(model, filename), filename)
+            self.load_model(MetaModelProvider.get_metamodel(model, filename),
+                            filename)
 
     def load_model(self, themetamodel, filename):
         """
@@ -161,16 +164,19 @@ class GlobalModelRepository(object):
                 newmodel = self.all_models.filename_to_model[filename]
             else:
                 # print("LOADING {}".format(filename))
-                # all models loaded here get their references resolved from the root model
+                # all models loaded here get their references resolved from the
+                # root model
                 newmodel = themetamodel.internal_model_from_file(
                     filename, pre_ref_resolution_callback=lambda
-                    other_model: self.pre_ref_resolution_callback(other_model), is_main_model=False)
+                    other_model: self.pre_ref_resolution_callback(other_model),
+                    is_main_model=False)
                 self.all_models.filename_to_model[filename] = newmodel
             self.local_models.filename_to_model[filename] = newmodel
         return self.local_models.filename_to_model[filename]
 
     def update_model_in_repo_based_on_filename(self, model):
-        assert (model._tx_model_repository == self)  # makes only sense if the correct model is used
+        # makes only sense if the correct model is used
+        assert (model._tx_model_repository == self)
         myfilename = model._tx_filename
         if (myfilename and (not self.all_models.has_model(myfilename))):
             # make current model visible
@@ -190,14 +196,15 @@ class GlobalModelRepository(object):
         # print("PRE-CALLBACK{}".format(filename))
         filename = other_model._tx_filename
         assert (filename)
-        other_model._tx_model_repository = GlobalModelRepository(self.all_models)
+        other_model._tx_model_repository = \
+            GlobalModelRepository(self.all_models)
         self.all_models.filename_to_model[filename] = other_model
 
 
 class ModelLoader(object):
     """
-    This class is an interface to mark a scope provider as an additional model loader.
-    Such a scope provider is called
+    This class is an interface to mark a scope provider as an additional model
+    loader.
     """
 
     def __init__(self):
@@ -209,7 +216,8 @@ class ModelLoader(object):
 
 def get_all_models_including_attached_models(model):
     """
-    get a list of all models stored within a model (including the owning model).
+    get a list of all models stored within a model
+    (including the owning model).
 
     Args:
         model: the owning model
@@ -218,7 +226,8 @@ def get_all_models_including_attached_models(model):
         a list of all models
     """
     if (hasattr(model, "_tx_model_repository")):
-        models = list(model._tx_model_repository.all_models.filename_to_model.values())
+        models = list(
+            model._tx_model_repository.all_models.filename_to_model.values())
         if model not in models:
             models.append(model)
     else:

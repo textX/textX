@@ -12,14 +12,18 @@ def test_metamodel_provder_basic_test():
     # META MODEL DEF
     #################################
 
-    mm_components = metamodel_from_file(abspath(dirname(__file__)) + '/metamodel_provider/Components.tx')
+    mm_components = metamodel_from_file(
+        abspath(dirname(__file__)) + '/metamodel_provider/Components.tx')
     mm_components.register_scope_providers({
         "*.*": scoping_providers.FQNImportURI(),
-        "Connection.from_port": scoping_providers.RelativeName("from_inst.component.slots"),
-        "Connection.to_port": scoping_providers.RelativeName("to_inst.component.slots"),
+        "Connection.from_port":
+            scoping_providers.RelativeName("from_inst.component.slots"),
+        "Connection.to_port":
+            scoping_providers.RelativeName("to_inst.component.slots"),
     })
 
-    mm_users = metamodel_from_file(abspath(dirname(__file__)) + '/metamodel_provider/Users.tx')
+    mm_users = metamodel_from_file(
+        abspath(dirname(__file__)) + '/metamodel_provider/Users.tx')
     mm_users.register_scope_providers({
         "*.*": scoping_providers.FQNImportURI(),
     })
@@ -33,7 +37,8 @@ def test_metamodel_provder_basic_test():
     # MODEL PARSING
     #################################
 
-    my_model = mm_users.model_from_file(abspath(dirname(__file__)) + "/metamodel_provider/example.users")
+    my_model = mm_users.model_from_file(
+        abspath(dirname(__file__)) + "/metamodel_provider/example.users")
 
     #################################
     # TEST MODEL

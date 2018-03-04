@@ -10,7 +10,8 @@ from textx.exceptions import TextXSemanticError
 import textx.scoping as scoping
 
 """
-This module defines scope providers to be used in conjunctions with a textx.metamodel meta model.
+This module defines scope providers to be used in conjunctions with a 
+textx.metamodel meta model.
 
 See docs/scoping.md
 
@@ -21,6 +22,7 @@ class PlainName(object):
     """
     plain name scope provider
     """
+
     def __init__(self):
         super(PlainName).__init__()
 
@@ -41,7 +43,7 @@ class PlainName(object):
         from textx.model import ObjCrossRef
 
         if obj_ref is None:
-            return None  # this is an error (see model.py: resolve_refs (TODO check)
+            return None  # an error! (see model.py: resolve_refs (TODO check)
 
         assert type(obj_ref) is ObjCrossRef, type(obj_ref)
 
@@ -63,9 +65,10 @@ class PlainName(object):
                         return result
             elif cls._tx_type == RULE_COMMON:
                 # TODO make this code exchangable
-                # allow to know the current attribute (model location for namespace)
-                # and to navigate through the whole model...
-                # OR (with another scope provider) to make custom lookups in the model
+                # allow to know the current attribute (model location for
+                # namespace) and to navigate through the whole model...
+                # OR (with another scope provider) to make custom lookups in
+                # the model
                 #
                 # Scopeprovider
                 # - needs: .current reference (in the model)
@@ -88,6 +91,7 @@ class FQN(object):
     """
     fully qualified name scope provider
     """
+
     def __init__(self):
         super(FQN).__init__()
 
@@ -95,7 +99,8 @@ class FQN(object):
         """
         find a fully qualified name.
         Use this callable as scope_provider in a meta-model:
-          my_metamodel.register_scope_provider({"*.*":textx.scoping.providers.FQN})
+          my_metamodel.register_scope_provider(
+            {"*.*":textx.scoping.providers.FQN})
         :param parser: the current parser (unused)
         :obj object corresponding a instance of an object (rule instance)
         :attr the referencing attribute (unused)
@@ -106,7 +111,8 @@ class FQN(object):
         def _find_obj_fqn(p, fqn_name):
             """
             Helper function:
-            find a named object based on a qualified name ("."-separated names) starting from object p.
+            find a named object based on a qualified name ("."-separated
+            names) starting from object p.
 
             Args:
                 p: the container where to start the search
@@ -117,12 +123,15 @@ class FQN(object):
             """
 
             def find_obj(parent, name):
-                for attr in [a for a in parent.__dict__
-                             if not a.startswith('__') and not a.startswith('_tx_') and not callable(getattr(parent, a))]:
+                for attr in [a for a in parent.__dict__ if
+                             not a.startswith('__') and not
+                             a.startswith('_tx_') and not
+                             callable(getattr(parent, a))]:
                     obj = getattr(parent, attr)
                     if isinstance(obj, (list, tuple)):
                         for innerobj in obj:
-                            if hasattr(innerobj, "name") and innerobj.name == name:
+                            if hasattr(innerobj, "name") \
+                                    and innerobj.name == name:
                                 return innerobj
                     else:
                         if hasattr(obj, "name") and obj.name == name:
@@ -141,7 +150,8 @@ class FQN(object):
             """
             Helper function:
             Search the fully qualified name starting at relative container p.
-            If no result is found, the search is continued from p.parent until the model root is reached.
+            If no result is found, the search is continued from p.parent until
+            the model root is reached.
 
             Args:
                 p: parent object
@@ -172,8 +182,9 @@ class FQN(object):
 
 class ImportURI(scoping.ModelLoader):
     """
-    Scope provider supporting Xtext-like importURI attributes (w/o URInamespace)
-    This class requries another scope provider, which is called internally.
+    Scope provider supporting Xtext-like importURI attributes (w/o
+    URInamespace). This class requries another scope provider, which is
+    called internally.
     """
 
     def __init__(self, scope_provider, glob_args=None):
@@ -190,15 +201,16 @@ class ImportURI(scoping.ModelLoader):
     def _load_referenced_models(self, model):
         from textx.model import get_children
         visited = []
-        for obj in get_children(lambda x: hasattr(x, "importURI") and x not in visited, model):
+        for obj in get_children(
+                lambda x: hasattr(x, "importURI") and x not in visited, model):
             visited.append(obj)
             # TODO add multiple lookup rules for file search
             basedir = dirname(model._tx_filename)
             if len(basedir) > 0:
                 basedir += "/"
             filename_pattern = abspath(basedir + obj.importURI)
-            model._tx_model_repository.load_models_using_filepattern(filename_pattern, model=model,
-                                                                     glob_args=self.glob_args)
+            model._tx_model_repository.load_models_using_filepattern(
+                filename_pattern, model=model, glob_args=self.glob_args)
 
     def load_models(self, model):
         from textx.model import get_metamodel
@@ -208,7 +220,8 @@ class ImportURI(scoping.ModelLoader):
             pass
         else:
             if hasattr(get_metamodel(model), "_tx_model_repository"):
-                model_repository = GlobalModelRepository(get_metamodel(model._tx_model_repository.all_models))
+                model_repository = GlobalModelRepository(get_metamodel(
+                    model._tx_model_repository.all_models))
             else:
                 model_repository = GlobalModelRepository()
             model._tx_model_repository = model_repository
@@ -219,7 +232,8 @@ class ImportURI(scoping.ModelLoader):
         assert type(obj_ref) is ObjCrossRef, type(obj_ref)
         # cls, obj_name = obj_ref.cls, obj_ref.obj_name
 
-        # 1) lookup URIs... (first, before looking locally - to detect file not founds and distant model errors...)
+        # 1) lookup URIs... (first, before looking locally - to detect file
+        #    not founds and distant model errors...)
         # TODO: raise error if lookup is not unique
 
         model = get_model(obj)
@@ -242,6 +256,7 @@ class FQNImportURI(ImportURI):
     """
     scope provider with ImportURI and FQN
     """
+
     def __init__(self, glob_args=None):
         ImportURI.__init__(self, FQN(), glob_args=glob_args)
 
@@ -250,13 +265,16 @@ class PlainNameImportURI(ImportURI):
     """
     scope provider with ImportURI and PlainName names
     """
+
     def __init__(self, glob_args=None):
         ImportURI.__init__(self, PlainName(), glob_args=glob_args)
 
 
 class GlobalRepo(ImportURI):
     """
-    Scope provider that allows to populate the set of models used for lookup before parsing models.
+    Scope provider that allows to populate the set of models used for lookup
+    before parsing models.
+
     Usage:
       * create metamodel
       * create FQNGlobalRepo
@@ -285,14 +303,15 @@ class GlobalRepo(ImportURI):
 
     def _load_referenced_models(self, model):
         for filename_pattern in self.filename_pattern_list:
-            model._tx_model_repository.load_models_using_filepattern(filename_pattern, model=model,
-                                                                     glob_args=self.glob_args)
+            model._tx_model_repository.load_models_using_filepattern(
+                filename_pattern, model=model, glob_args=self.glob_args)
 
 
 class FQNGlobalRepo(GlobalRepo):
     """
     scope provider with FQN and global repo
     """
+
     def __init__(self, filename_pattern=None, glob_args=None):
         GlobalRepo.__init__(self, FQN(), filename_pattern,
                             glob_args=glob_args)
@@ -302,8 +321,10 @@ class PlainNameGlobalRepo(GlobalRepo):
     """
     scope provider with PlainName names and global repo
     """
+
     def __init__(self, filename_pattern=None, glob_args=None):
-        GlobalRepo.__init__(self, PlainName(), filename_pattern, glob_args=glob_args)
+        GlobalRepo.__init__(
+            self, PlainName(), filename_pattern, glob_args=glob_args)
 
 
 class RelativeName(object):
@@ -312,17 +333,19 @@ class RelativeName(object):
      - define a class with methods
      - define instances
      - allow to define a scope where the instance references the methods
-    Note: The same as for classes/methods can be interpreted as components/slots...
+    Note: The same as for classes/methods can be interpreted as
+    components/slots...
     """
 
     def __init__(self, path_to_conatiner_object):
         """
         Here, you specify the path from the instance to the methods:
-        The path is given in a dot-separated way: "classref.methods". Then a concrete method "f"
-        is searched as "classref.methods.f".
+        The path is given in a dot-separated way: "classref.methods". Then a
+        concrete method "f" is searched as "classref.methods.f".
 
         Args:
-            path_to_conatiner_object: This identifies (starting from the instance) how to find the methods.
+            path_to_conatiner_object: This identifies (starting from the
+            instance) how to find the methods.
         """
         self.path_to_container_object = path_to_conatiner_object
         self.postponed_counter = 0
@@ -331,8 +354,10 @@ class RelativeName(object):
         from textx.scoping.tools import get_referenced_object
         from textx.scoping import Postponed
         try:
-            res = get_referenced_object(None, obj, self.path_to_container_object + "." + obj_ref.obj_name, parser,
-                                        obj_ref.cls)
+            res = get_referenced_object(
+                None, obj,
+                self.path_to_container_object + "." + obj_ref.obj_name,
+                parser, obj_ref.cls)
             if type(res) is Postponed:
                 self.postponed_counter += 1
             return res
@@ -350,28 +375,34 @@ class ExtRelativeName(object):
     - how to find inherited/chained classes (starting from a class).
     """
 
-    def __init__(self, path_to_definition_object, path_to_target, path_to_extension):
+    def __init__(self, path_to_definition_object, path_to_target,
+                 path_to_extension):
         self.path_to_definition_object = path_to_definition_object
         self.path_to_target = path_to_target
         self.path_to_extension = path_to_extension
         self.postponed_counter = 0
 
     def __call__(self, parser, obj, attr, obj_ref):
-        from textx.scoping.tools import get_referenced_object, get_list_of_concatenated_objects
+        from textx.scoping.tools import get_referenced_object, \
+            get_list_of_concatenated_objects
         from textx.scoping import Postponed
         try:
-            one_def_obj = get_referenced_object(None, obj, self.path_to_definition_object, parser)
-            def_obj_list = get_list_of_concatenated_objects(one_def_obj, self.path_to_extension, parser, [])
+            one_def_obj = get_referenced_object(
+                None, obj, self.path_to_definition_object, parser)
+            def_obj_list = get_list_of_concatenated_objects(
+                one_def_obj, self.path_to_extension, parser, [])
             for def_obj in def_obj_list:
                 if type(def_obj) is Postponed:
                     self.postponed_counter += 1
                     return def_obj
-                res = get_referenced_object(None, def_obj, self.path_to_target + "." + obj_ref.obj_name, parser,
-                                            obj_ref.cls)
+                res = get_referenced_object(
+                    None, def_obj,
+                    self.path_to_target + "." + obj_ref.obj_name, parser,
+                    obj_ref.cls)
                 if res:
                     return res  # may be Postponed
             return None
         except TypeError as e:
             line, col = parser.pos_to_linecol(obj_ref.position)
-            raise TextXSemanticError('ExtRelativeName: {}'.format(str(e)), line=line,
-                                     col=col)
+            raise TextXSemanticError(
+                'ExtRelativeName: {}'.format(str(e)), line=line, col=col)

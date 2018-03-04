@@ -14,12 +14,14 @@ def needs_to_be_resolved(parser, parent_obj, attr_name):
     resolved or not (while creating the model, while resolving references).
 
     Args:
-        parser: the parser which provides the information required for this function.
-                   If it is None, False is returned.
+        parser: the parser which provides the information required for this
+                function.
+                If it is None, False is returned.
         parent_obj: the object containing the attribute to be resolved.
         attr_name: the attribute identification object.
 
     Returns:
+        If the parser is None, False is returned.
         True if the attribute needs to be resolved. Else False.
         In case of lists of references, this function return true if any of the
         references in the list needs to be resolved.
@@ -44,7 +46,8 @@ def textx_isinstance(obj, obj_cls):
     return False
 
 
-def get_list_of_concatenated_objects(obj, dot_separated_name, parser=None, lst=None):
+def get_list_of_concatenated_objects(obj, dot_separated_name, parser=None,
+                                     lst=None):
     """
     get a list of the objects consisting of
     - obj
@@ -59,7 +62,8 @@ def get_list_of_concatenated_objects(obj, dot_separated_name, parser=None, lst=N
         lst: the initial list (e.g. [])
 
     Returns:
-        the filled list (if one single object is requested, a list with one entry is returned).
+        the filled list (if one single object is requested, a list with one
+        entry is returned).
     """
     from textx.scoping import Postponed
     if lst is None:
@@ -74,14 +78,17 @@ def get_list_of_concatenated_objects(obj, dot_separated_name, parser=None, lst=N
     ret = get_referenced_object(None, obj, dot_separated_name, parser)
     if type(ret) is list:
         for r in ret:
-            lst = get_list_of_concatenated_objects(r, dot_separated_name, parser, lst)
+            lst = get_list_of_concatenated_objects(r, dot_separated_name,
+                                                   parser, lst)
     else:
-        lst = get_list_of_concatenated_objects(ret, dot_separated_name, parser, lst)
+        lst = get_list_of_concatenated_objects(ret, dot_separated_name, parser,
+                                               lst)
     return lst
 
 
 def get_recursive_parent_with_typename(obj, desired_parent_typename):
-    while type(obj).__name__ != desired_parent_typename and hasattr(obj, "parent"):
+    while type(obj).__name__ != desired_parent_typename and hasattr(obj,
+                                                                    "parent"):
         obj = obj.parent
     if type(obj).__name__ != desired_parent_typename:
         return None
@@ -89,7 +96,8 @@ def get_recursive_parent_with_typename(obj, desired_parent_typename):
         return obj
 
 
-def get_referenced_object(prev_obj, obj, dot_separated_name, parser=None, desired_type=None):
+def get_referenced_object(prev_obj, obj, dot_separated_name, parser=None,
+                          desired_type=None):
     """
     get objects based on a path
 
@@ -97,13 +105,14 @@ def get_referenced_object(prev_obj, obj, dot_separated_name, parser=None, desire
         prev_obj: the object containing obj (req. is obj is a list)
         obj: the current object
         dot_separated_name: the attribute name "a.b.c.d" starting from obj
-           Note: the attribute "parent(TYPE)" is a shortcut to jump to the parent of type "TYPE"
-           (exact match of type name).
+           Note: the attribute "parent(TYPE)" is a shortcut to jump to the
+           parent of type "TYPE" (exact match of type name).
         parser: the parser
         desired_type: (optional)
 
     Returns:
-        the object if found, None if not found or Postponed() if some postponed refs are found on the path
+        the object if found, None if not found or Postponed() if some postponed
+        refs are found on the path
     """
     from textx.scoping import Postponed
     assert prev_obj or not type(obj) is list
@@ -112,9 +121,11 @@ def get_referenced_object(prev_obj, obj, dot_separated_name, parser=None, desire
     if match:
         next_obj = obj
         desired_parent_typename = match.group(1)
-        next_obj = get_recursive_parent_with_typename(next_obj, desired_parent_typename)
+        next_obj = get_recursive_parent_with_typename(next_obj,
+                                                      desired_parent_typename)
         if next_obj:
-            return get_referenced_object(None, next_obj, ".".join(names[1:]), parser, desired_type)
+            return get_referenced_object(None, next_obj, ".".join(names[1:]),
+                                         parser, desired_type)
         else:
             return None
     elif type(obj) is list:
@@ -125,7 +136,9 @@ def get_referenced_object(prev_obj, obj, dot_separated_name, parser=None, desire
                     next_obj = res
                 else:
                     raise TypeError(
-                        "{} has type {} instead of {}.".format(names[0], type(res).__name__, desired_type.__name__))
+                        "{} has type {} instead of {}.".format(
+                            names[0], type(res).__name__,
+                            desired_type.__name__))
         if not next_obj:
             # if prev_obj needs to be resolved: return Postponed.
             if needs_to_be_resolved(parser, prev_obj, names[0]):
@@ -143,13 +156,15 @@ def get_referenced_object(prev_obj, obj, dot_separated_name, parser=None, desire
         else:
             return None
     if len(names) > 1:
-        return get_referenced_object(obj, next_obj, ".".join(names[1:]), parser, desired_type)
+        return get_referenced_object(obj, next_obj, ".".join(
+            names[1:]), parser, desired_type)
     if type(next_obj) is list and needs_to_be_resolved(parser, obj, names[0]):
         return Postponed()
     return next_obj
 
 
-def get_referenced_object_as_list(prev_obj, obj, dot_separated_name, parser=None, desired_type=None):
+def get_referenced_object_as_list(
+        prev_obj, obj, dot_separated_name, parser=None, desired_type=None):
     """
     same as get_referenced_object
 
@@ -163,7 +178,8 @@ def get_referenced_object_as_list(prev_obj, obj, dot_separated_name, parser=None
     Returns:
         same as get_referenced_object, but always returns a list
     """
-    res = get_referenced_object(prev_obj, obj, dot_separated_name, parser, desired_type)
+    res = get_referenced_object(prev_obj, obj, dot_separated_name, parser,
+                                desired_type)
     if res is None:
         return []
     elif type(res) is list:
@@ -177,14 +193,16 @@ def get_unique_named_object_in_all_models(root, name):
     retrieves a unqiue named object (no fully qualified name)
 
     Args:
-        root: start of search (if root is a model all known models are searched as well)
+        root: start of search (if root is a model all known models are searched
+              as well)
         name: name of object
 
     Returns:
         the object (if not unique, raises an error)
     """
     if hasattr(root, '_tx_model_repository'):
-        src = list(root._tx_model_repository.local_models.filename_to_model.values())
+        src = list(
+            root._tx_model_repository.local_models.filename_to_model.values())
         if root not in src:
             src.append(root)
     else:
@@ -193,7 +211,8 @@ def get_unique_named_object_in_all_models(root, name):
     a = []
     for m in src:
         print("analyzing {}".format(m._tx_filename))
-        a = a + get_children(lambda x: hasattr(x, 'name') and x.name == name, m)
+        a = a + get_children(
+            lambda x: hasattr(x, 'name') and x.name == name, m)
 
     assert len(a) == 1
     return a[0]
@@ -217,7 +236,8 @@ def get_unique_named_object(root, name):
 
 def check_unique_named_object_has_class(root, name, class_name):
     """
-    checks the type (type name) of an unique named object (no fully qualified name)
+    checks the type (type name) of an unique named object (no fully qualified
+    name)
 
     Args:
         root: start of search

@@ -65,25 +65,29 @@ def test_fully_qualified_name_ref():
     # TEST MODEL
     #################################
 
-    a = get_children(lambda x: hasattr(x, 'name') and x.name == "rec", my_model)
+    a = get_children(lambda x: hasattr(x, 'name') and x.name == "rec",
+                     my_model)
     assert len(a) == 1
     assert a[0].name == "rec"
     assert a[0].ref.__class__.__name__ == "Class"
     assert a[0].ref.name == "C2"
 
-    a = get_children(lambda x: hasattr(x, 'name') and x.name == "p1", my_model)
+    a = get_children(lambda x: hasattr(x, 'name') and x.name == "p1",
+                     my_model)
     assert len(a) == 1
     assert a[0].name == "p1"
     assert a[0].ref.__class__.__name__ == "Class"
     assert a[0].ref.name == "Part1"
 
-    a = get_children(lambda x: hasattr(x, 'name') and x.name == "p2a", my_model)
+    a = get_children(lambda x: hasattr(x, 'name') and x.name == "p2a",
+                     my_model)
     assert len(a) == 1
     assert a[0].name == "p2a"
     assert a[0].ref.__class__.__name__ == "Class"
     assert a[0].ref.name == "Part2"
 
-    a = get_children(lambda x: hasattr(x, 'name') and x.name == "p2b", my_model)
+    a = get_children(lambda x: hasattr(x, 'name') and x.name == "p2b",
+                     my_model)
     assert len(a) == 1
     assert a[0].name == "p2b"
     assert a[0].ref.__class__.__name__ == "Class"
@@ -92,7 +96,8 @@ def test_fully_qualified_name_ref():
     ###########################
     # MODEL WITH ERROR
     ############################
-    with raises(textx.exceptions.TextXSemanticError, match=r'.*Unknown object.*Part1.*'):
+    with raises(textx.exceptions.TextXSemanticError,
+                match=r'.*Unknown object.*Part1.*'):
         my_model2 = my_metamodel.model_from_str('''
         package P1 {
             class Part1 {
