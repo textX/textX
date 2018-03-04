@@ -193,7 +193,7 @@ class TextXMetaModel(DebugPrinter):
         from textx.scoping import GlobalModelRepository
         self._tx_model_repository = GlobalModelRepository()
 
-    def register_scope_provider(self, sp):
+    def register_scope_providers(self, sp):
         self.scope_provider = sp
 
     def _namespace_for_file_name(self, file_name):

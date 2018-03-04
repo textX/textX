@@ -12,14 +12,14 @@ def test_metamodel_provder_basic_test():
     #################################
 
     mm_components = metamodel_from_file(abspath(dirname(__file__)) + '/metamodel_provider/Components.tx')
-    mm_components.register_scope_provider({
+    mm_components.register_scope_providers({
         "*.*": scoping.ScopeProviderFullyQualifiedNamesWithImportURI(),
         "Connection.from_port": scoping.ScopeProviderForSimpleRelativeNamedLookups("from_inst.component.slots"),
         "Connection.to_port": scoping.ScopeProviderForSimpleRelativeNamedLookups("to_inst.component.slots"),
     })
 
     mm_users = metamodel_from_file(abspath(dirname(__file__)) + '/metamodel_provider/Users.tx')
-    mm_users.register_scope_provider({
+    mm_users.register_scope_providers({
         "*.*": scoping.ScopeProviderFullyQualifiedNamesWithImportURI(),
     })
 

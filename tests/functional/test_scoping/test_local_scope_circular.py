@@ -15,7 +15,7 @@ def test_model_with_local_scope_and_circular_ref_via_two_models():
                                         enable_global_model_repository=True)
     global_scope = scoping.ScopeProviderFullyQualifiedNamesWithGlobalRepo(
         abspath(dirname(__file__)) + "/components_model1/example_?.components")
-    my_meta_model.register_scope_provider({
+    my_meta_model.register_scope_providers({
         "*.*": global_scope,
         "Connection.from_port": scoping.ScopeProviderForSimpleRelativeNamedLookups("from_inst.component.slots"),
         "Connection.to_port": scoping.ScopeProviderForSimpleRelativeNamedLookups("to_inst.component.slots")

@@ -11,7 +11,7 @@ def test_get_referenced_object():
     #################################
 
     my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/components_model1/Components.tx')
-    my_meta_model.register_scope_provider({
+    my_meta_model.register_scope_providers({
         "*.*": scoping.scope_provider_fully_qualified_names,
         "Connection.from_port": scoping.ScopeProviderForExtendableRelativeNamedLookups("from_inst.component", "slots",
                                                                                        "extends"),
@@ -45,7 +45,7 @@ def test_get_list_of_concatenated_objects():
     #################################
 
     my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/components_model1/Components.tx')
-    my_meta_model.register_scope_provider({
+    my_meta_model.register_scope_providers({
         "*.*": scoping.scope_provider_fully_qualified_names,
         "Connection.from_port": scoping.ScopeProviderForExtendableRelativeNamedLookups("from_inst.component", "slots",
                                                                                        "extends"),
