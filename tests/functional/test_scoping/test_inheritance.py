@@ -15,10 +15,10 @@ def test_inheritance_processor():
 
     my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/components_model1/Components.tx')
     my_meta_model.register_scope_providers({
-        "*.*": scoping_providers.scope_provider_fully_qualified_names,
-        "Connection.from_port": scoping_providers.ScopeProviderForExtendableRelativeNamedLookups("from_inst.component", "slots",
+        "*.*": scoping_providers.FQN(),
+        "Connection.from_port": scoping_providers.ExtRelativeName("from_inst.component", "slots",
                                                                                        "extends"),
-        "Connection.to_port": scoping_providers.ScopeProviderForExtendableRelativeNamedLookups("to_inst.component", "slots",
+        "Connection.to_port": scoping_providers.ExtRelativeName("to_inst.component", "slots",
                                                                                      "extends"),
     })
 

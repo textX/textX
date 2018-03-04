@@ -18,7 +18,7 @@ from textx.const import MULT_OPTIONAL, MULT_ONE, MULT_ONEORMORE, \
     MULT_ASSIGN_ERROR, UNKNOWN_OBJ_ERROR
 from textx.lang import PRIMITIVE_PYTHON_TYPES
 from textx.scoping import Postponed
-from textx.scoping.providers import scope_provider_plain_names
+from textx.scoping.providers import PlainName as DefaultScopeProvider
 
 if sys.version < '3':
     text = unicode  # noqa
@@ -487,6 +487,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolutio
         # -------------------------
         # start of resolve-loop
         # -------------------------
+        default_scope = DefaultScopeProvider()
         for obj, attr, crossref in current_crossrefs:
             if (get_model(obj) == model):
                 attr_value = getattr(obj, attr.name)
@@ -501,8 +502,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None, pre_ref_resolutio
                             parser, obj, attr, crossref)
                         break
                 else:
-                    resolved = scope_provider_plain_names(parser, obj, attr,
-                                                          crossref)
+                    resolved = default_scope(parser, obj, attr, crossref)
 
                 # Collect cross-references for textx-tools
                 if resolved and not type(resolved) is Postponed:

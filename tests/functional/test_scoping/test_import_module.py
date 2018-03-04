@@ -14,7 +14,7 @@ def test_model_without_imports():
     #################################
 
     my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/interface_model1/Interface.tx')
-    my_meta_model.register_scope_providers({"*.*": scoping_providers.ScopeProviderFullyQualifiedNamesWithImportURI()})
+    my_meta_model.register_scope_providers({"*.*": scoping_providers.FQNImportURI()})
 
     #################################
     # MODEL PARSING
@@ -45,7 +45,7 @@ def test_model_with_imports():
     #################################
 
     my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/interface_model1/Interface.tx')
-    my_meta_model.register_scope_providers({"*.*": scoping_providers.ScopeProviderFullyQualifiedNamesWithImportURI()})
+    my_meta_model.register_scope_providers({"*.*": scoping_providers.FQNImportURI()})
 
     #################################
     # MODEL PARSING
@@ -85,7 +85,7 @@ def test_model_with_imports_and_errors():
     #################################
 
     my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/interface_model1/Interface.tx')
-    my_meta_model.register_scope_providers({"*.*": scoping_providers.ScopeProviderFullyQualifiedNamesWithImportURI()})
+    my_meta_model.register_scope_providers({"*.*": scoping_providers.FQNImportURI()})
 
     #################################
     # MODEL PARSING
@@ -109,7 +109,7 @@ def test_model_with_imports_and_global_repo():
 
     my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/interface_model1/Interface.tx',
                                         global_repository=True)
-    my_meta_model.register_scope_providers({"*.*": scoping_providers.ScopeProviderFullyQualifiedNamesWithImportURI()})
+    my_meta_model.register_scope_providers({"*.*": scoping_providers.FQNImportURI()})
 
     #################################
     # MODEL PARSING
@@ -139,7 +139,7 @@ def test_model_with_circular_imports():
     #################################
 
     my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/interface_model1/Interface.tx')
-    my_meta_model.register_scope_providers({"*.*": scoping_providers.ScopeProviderFullyQualifiedNamesWithImportURI()})
+    my_meta_model.register_scope_providers({"*.*": scoping_providers.FQNImportURI()})
 
     #################################
     # MODEL PARSING

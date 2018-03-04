@@ -23,10 +23,10 @@ and instances of classes).
 
 The scope providers are registered to the metamodel and can be bound to specific parts of rules:
 
- * e.g., my_meta_model.register_scope_provider({"\*.\*":scoping.providers.scope_provider_fully_qualified_names})
- * or: my_meta_model.register_scope_provider({"MyAttribute.ref":scoping.providers.scope_provider_fully_qualified_names})
- * or: my_meta_model.register_scope_provider({"\*.ref":scoping.providers.scope_provider_fully_qualified_names})
- * or: my_meta_model.register_scope_provider({"MyAttribute.*":scoping.providers.scope_provider_fully_qualified_names})
+ * e.g., my_meta_model.register_scope_provider({"\*.\*":         scoping.providers.FQN()})
+ * or: my_meta_model.register_scope_provider({"MyAttribute.ref": scoping.providers.FQN()})
+ * or: my_meta_model.register_scope_provider({"\*.ref":          scoping.providers.FQN()})
+ * or: my_meta_model.register_scope_provider({"MyAttribute.*":   scoping.providers.FQN()})
 
 Example (from tests/test_scoping/test_local_scope.py):
 
@@ -48,10 +48,10 @@ Example (from tests/test_scoping/test_local_scope.py):
 
     # Python snippet
     my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/components_model1/Components.tx')
-    my_meta_model.register_scope_provider({
-        "*.*": scoping_providers.scope_provider_fully_qualified_names,
-        "Connection.from_port": scoping_providers.ScopeProviderForSimpleRelativeNamedLookups("from_inst.component.slots"),
-        "Connection.to_port": scoping_providers.ScopeProviderForSimpleRelativeNamedLookups("to_inst.component.slots")
+    my_meta_model.register_scope_providers({
+        "*.*": scoping_providers.FQN(),
+        "Connection.from_port": scoping_providers.RelativeName("from_inst.component.slots"),
+        "Connection.to_port": scoping_providers.RelativeName("to_inst.component.slots"),
     })
 
 
@@ -67,35 +67,35 @@ Note: special rule selections (e.g., "Connection.from_port") are preferred to wi
 
 We provide some standard scope providers:
 
- * scope_provider_plain_names: This is the **default provider** of textX.
- * scope_provider_fully_qualified_names: This is a **provider similar to Java or Xtext name loopup**.
+ * textx.scoping.providers.PlainName: This is the **default provider** of textX.
+ * textx.scoping.providers.FQN: This is a **provider similar to Java or Xtext name loopup**.
    Example: see tests/test_scoping/test_full_qualified_name.py.
- * ScopeProviderWithImportURI: This a provider which **allows to load additional modules** for lookup.
+ * textx.scoping.providers.ImportURI: This a provider which **allows to load additional modules** for lookup.
    You need to define a rule with an attribute "importURI" as string (like in Xtext). This string is then used
    to load other models. Moreover, you need to provide another scope provider to manage the concrete lookup,
    e.g., the scope_provider_plain_names or the scope_provider_fully_qualified_names.
    Example: see tests/test_scoping/test_import_module.py.
-    - ScopeProviderFullyQualifiedNamesWithImportURI (decorated scope provider)
-    - ScopeProviderPlainNamesWithImportURI (decorated scope provider)
- * ScopeProviderWithGlobalRepo: This is a provider where **you initially need to specifiy the model files
-   to be loaded and used for lookup**. Like for ScopeProviderWithImportURI you need to provide another scope
+    - FQNImportURI (decorated scope provider)
+    - PlainNameImportURI (decorated scope provider)
+ * textx.scoping.providers.GlobalRepo: This is a provider where **you initially need to specifiy the model files
+   to be loaded and used for lookup**. Like for ImportURI you need to provide another scope
    provider for the constere loopup.
    Example: see tests/test_scoping/test_global_import_modules.py.
-    - ScopeProviderFullyQualifiedNamesWithGlobalRepo (decorated scope provider)
-    - ScopeProviderPlainNamesWithGlobalRepo (decorated scope provider)
- * ScopeProviderForSimpleRelativeNamedLookups: This is a scope provider to **resolve relative lookups**:
+    - textx.scoping.providers.FQNGlobalRepo (decorated scope provider)
+    - textx.scoping.providers.PlainNameGlobalRepo (decorated scope provider)
+ * textx.scoping.providers.RelativeName: This is a scope provider to **resolve relative lookups**:
    e.g., model-methods of a model-instance, defined by the class associated with the model-instance. Typically,
    another reference (the reference to the model-class of a model-instance) is used to determine the concrete
    referenced object (e.g. the model-method, owned by a model-class).
    Example: see tests/test_scoping/test_local_scope.py.
- * ScopeProviderForExtendableRelativeNamedLookups: The same as ScopeProviderForSimpleRelativeNamedLookups **allowing
+ * textx.scoping.providers.ExtRelativeName: The same as RelativeName **allowing
    to model inheritance or chained lookups**.
    Example: see tests/test_scoping/test_local_scope.py.
 
 
 ### Note on Uniqueness of Model Elements
 
-Two different models created using one single meta model (not using a scope provider like ScopeProviderWithGlobalRepo,
+Two different models created using one single meta model (not using a scope provider like GlobalRepo,
 but by directly loading the models from file) have different instances of the same model elements. If you need two
 such models to share their model element instances, you can specify this, while creating the meta model
 (global_repository=True). Then, the meta model will store an own instance of a GlobalModelRepository as a
@@ -111,7 +111,7 @@ Examples see tests/test_scoping/test_import_module.py.
 
 In addition, there is also global data stored in the class "textx.scoping.MetaModelProvider": Here, you can register
 meta models associated to files patterns. Thus, you can control which meta model to use when loading a file in
-a scope provider using the "ImportURI"-feature (e.g. ScopeProviderFullyQualifiedNamesWithImportURI). If no file
+a scope provider using the "ImportURI"-feature (e.g. FQNImportURI). If no file
 pattern matches, the meta model of the current model is utilized.
 
 Examples see tests/test_scoping/test_metamodel_provider.py.

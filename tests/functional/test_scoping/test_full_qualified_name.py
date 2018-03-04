@@ -38,7 +38,7 @@ def test_fully_qualified_name_ref():
 
     my_metamodel = metamodel_from_str(metamodel_str)
 
-    my_metamodel.register_scope_providers({"*.*": scoping_providers.scope_provider_fully_qualified_names})
+    my_metamodel.register_scope_providers({"*.*": scoping_providers.FQN()})
 
     #################################
     # MODEL PARSING

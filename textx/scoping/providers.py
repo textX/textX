@@ -17,151 +17,163 @@ See docs/scoping.md
 """
 
 
-def scope_provider_plain_names(parser, obj, attr, obj_ref):
+class PlainName(object):
     """
-    the default scope provider
-
-    Args:
-        parser: the current parser
-        obj: unused
-        attr: unused
-        obj_ref: the cross reference to be resolved
-
-    Returns:
-        the resolved reference or None
+    plain name scope provider
     """
-    from textx.const import RULE_COMMON, RULE_ABSTRACT
-    from textx.model import ObjCrossRef
+    def __init__(self):
+        super(PlainName).__init__()
 
-    if obj_ref is None:
-        return None  # this is an error (see model.py: resolve_refs (TODO check)
-
-    assert type(obj_ref) is ObjCrossRef, type(obj_ref)
-
-    if parser.debug:
-        parser.dprint("Resolving obj crossref: {}:{}"
-                      .format(obj_ref.cls, obj_ref.obj_name))
-    print("Resolving obj crossref: {}:{}"
-          .format(obj_ref.cls, obj_ref.obj_name))
-
-    def _inner_resolve_link_rule_ref(cls, obj_name):
+    def __call__(self, parser, obj, attr, obj_ref):
         """
-        Depth-first resolving of link rule reference.
-        """
-        if cls._tx_type is RULE_ABSTRACT:
-            for inherited in cls._tx_inh_by:
-                result = _inner_resolve_link_rule_ref(inherited,
-                                                      obj_name)
-                if result:
-                    return result
-        elif cls._tx_type == RULE_COMMON:
-            # TODO make this code exchangable
-            # allow to know the current attribute (model location for namespace)
-            # and to navigate through the whole model...
-            # OR (with another scope provider) to make custom lookups in the model
-            #
-            # Scopeprovider
-            # - needs: .current reference (in the model)
-            #          .the model (?)
-            # - provides: the resolved object or None
-            if id(cls) in parser._instances:
-                objs = parser._instances[id(cls)]
-                if obj_name in objs:
-                    return objs[obj_name]
-
-    result = _inner_resolve_link_rule_ref(obj_ref.cls,
-                                          obj_ref.obj_name)
-    if result:
-        return result
-
-    return None  # error handled outside
-
-
-def scope_provider_fully_qualified_names(parser, obj, attr, obj_ref):
-    """
-    find a fully qualified name.
-    Use this callable as scope_provider in a meta-model:
-      my_metamodel.register_scope_provider({"*.*":scoping.scope_provider_fully_qualified_names})
-    :param parser: the current parser (unused)
-    :obj object corresponding a instance of an object (rule instance)
-    :attr the referencing attribute (unused)
-    :param obj_ref: ObjCrossRef to be resolved
-    :returns None or the referenced object
-    """
-
-    def _find_obj_fqn(p, fqn_name):
-        """
-        Helper function:
-        find a named object based on a qualified name ("."-separated names) starting from object p.
+        the default scope provider
 
         Args:
-            p: the container where to start the search
-            fqn_name: the "."-separated name
+            parser: the current parser
+            obj: unused
+            attr: unused
+            obj_ref: the cross reference to be resolved
 
         Returns:
-            the object or None
+            the resolved reference or None
+        """
+        from textx.const import RULE_COMMON, RULE_ABSTRACT
+        from textx.model import ObjCrossRef
+
+        if obj_ref is None:
+            return None  # this is an error (see model.py: resolve_refs (TODO check)
+
+        assert type(obj_ref) is ObjCrossRef, type(obj_ref)
+
+        if parser.debug:
+            parser.dprint("Resolving obj crossref: {}:{}"
+                          .format(obj_ref.cls, obj_ref.obj_name))
+        print("Resolving obj crossref: {}:{}"
+              .format(obj_ref.cls, obj_ref.obj_name))
+
+        def _inner_resolve_link_rule_ref(cls, obj_name):
+            """
+            Depth-first resolving of link rule reference.
+            """
+            if cls._tx_type is RULE_ABSTRACT:
+                for inherited in cls._tx_inh_by:
+                    result = _inner_resolve_link_rule_ref(inherited,
+                                                          obj_name)
+                    if result:
+                        return result
+            elif cls._tx_type == RULE_COMMON:
+                # TODO make this code exchangable
+                # allow to know the current attribute (model location for namespace)
+                # and to navigate through the whole model...
+                # OR (with another scope provider) to make custom lookups in the model
+                #
+                # Scopeprovider
+                # - needs: .current reference (in the model)
+                #          .the model (?)
+                # - provides: the resolved object or None
+                if id(cls) in parser._instances:
+                    objs = parser._instances[id(cls)]
+                    if obj_name in objs:
+                        return objs[obj_name]
+
+        result = _inner_resolve_link_rule_ref(obj_ref.cls,
+                                              obj_ref.obj_name)
+        if result:
+            return result
+
+        return None  # error handled outside
+
+
+class FQN(object):
+    """
+    fully qualified name scope provider
+    """
+    def __init__(self):
+        super(FQN).__init__()
+
+    def __call__(self, parser, obj, attr, obj_ref):
+        """
+        find a fully qualified name.
+        Use this callable as scope_provider in a meta-model:
+          my_metamodel.register_scope_provider({"*.*":textx.scoping.providers.FQN})
+        :param parser: the current parser (unused)
+        :obj object corresponding a instance of an object (rule instance)
+        :attr the referencing attribute (unused)
+        :param obj_ref: ObjCrossRef to be resolved
+        :returns None or the referenced object
         """
 
-        def find_obj(parent, name):
-            for attr in [a for a in parent.__dict__
-                         if not a.startswith('__') and not a.startswith('_tx_') and not callable(getattr(parent, a))]:
-                obj = getattr(parent, attr)
-                if isinstance(obj, (list, tuple)):
-                    for innerobj in obj:
-                        if hasattr(innerobj, "name") and innerobj.name == name:
-                            return innerobj
-                else:
-                    if hasattr(obj, "name") and obj.name == name:
-                        return obj
-            return None
+        def _find_obj_fqn(p, fqn_name):
+            """
+            Helper function:
+            find a named object based on a qualified name ("."-separated names) starting from object p.
 
-        for n in fqn_name.split('.'):
-            obj = find_obj(p, n)
-            if obj:
-                p = obj
-            else:
+            Args:
+                p: the container where to start the search
+                fqn_name: the "."-separated name
+
+            Returns:
+                the object or None
+            """
+
+            def find_obj(parent, name):
+                for attr in [a for a in parent.__dict__
+                             if not a.startswith('__') and not a.startswith('_tx_') and not callable(getattr(parent, a))]:
+                    obj = getattr(parent, attr)
+                    if isinstance(obj, (list, tuple)):
+                        for innerobj in obj:
+                            if hasattr(innerobj, "name") and innerobj.name == name:
+                                return innerobj
+                    else:
+                        if hasattr(obj, "name") and obj.name == name:
+                            return obj
                 return None
-        return p
 
-    def _find_referenced_obj(p, name):
-        """
-        Helper function:
-        Search the fully qualified name starting at relative container p.
-        If no result is found, the search is continued from p.parent until the model root is reached.
+            for n in fqn_name.split('.'):
+                obj = find_obj(p, n)
+                if obj:
+                    p = obj
+                else:
+                    return None
+            return p
 
-        Args:
-            p: parent object
-            name: name to be found
+        def _find_referenced_obj(p, name):
+            """
+            Helper function:
+            Search the fully qualified name starting at relative container p.
+            If no result is found, the search is continued from p.parent until the model root is reached.
 
-        Returns:
-            None or the found object
-        """
-        ret = _find_obj_fqn(p, name)
-        if ret:
-            return ret
-        while hasattr(p, "parent"):
-            p = p.parent
+            Args:
+                p: parent object
+                name: name to be found
+
+            Returns:
+                None or the found object
+            """
             ret = _find_obj_fqn(p, name)
             if ret:
                 return ret
-        return None
+            while hasattr(p, "parent"):
+                p = p.parent
+                ret = _find_obj_fqn(p, name)
+                if ret:
+                    return ret
+            return None
 
-    from textx.model import ObjCrossRef
-    assert type(obj_ref) is ObjCrossRef, type(obj_ref)
-    cls, obj_name = obj_ref.cls, obj_ref.obj_name
-    ret = _find_referenced_obj(obj, obj_name)
-    if ret:
-        return ret
-    else:
-        return None
+        from textx.model import ObjCrossRef
+        assert type(obj_ref) is ObjCrossRef, type(obj_ref)
+        cls, obj_name = obj_ref.cls, obj_ref.obj_name
+        ret = _find_referenced_obj(obj, obj_name)
+        if ret:
+            return ret
+        else:
+            return None
 
 
-class ScopeProviderWithImportURI(scoping.ModelLoader):
+class ImportURI(scoping.ModelLoader):
     """
-    Scope provider like scope_provider_fully_qualified_names, but supporting Xtext-like
-    importURI attributes (w/o URInamespace)
-
-    This class requried a "simple" scope provider, which is called internally.
+    Scope provider supporting Xtext-like importURI attributes (w/o URInamespace)
+    This class requries another scope provider, which is called internally.
     """
 
     def __init__(self, scope_provider, glob_args=None):
@@ -226,28 +238,34 @@ class ScopeProviderWithImportURI(scoping.ModelLoader):
         return None
 
 
-class ScopeProviderFullyQualifiedNamesWithImportURI(ScopeProviderWithImportURI):
+class FQNImportURI(ImportURI):
+    """
+    scope provider with ImportURI and FQN
+    """
     def __init__(self, glob_args=None):
-        ScopeProviderWithImportURI.__init__(self, scope_provider_fully_qualified_names, glob_args=glob_args)
+        ImportURI.__init__(self, FQN(), glob_args=glob_args)
 
 
-class ScopeProviderPlainNamesWithImportURI(ScopeProviderWithImportURI):
+class PlainNameImportURI(ImportURI):
+    """
+    scope provider with ImportURI and PlainName names
+    """
     def __init__(self, glob_args=None):
-        ScopeProviderWithImportURI.__init__(self, scope_provider_plain_names, glob_args=glob_args)
+        ImportURI.__init__(self, PlainName(), glob_args=glob_args)
 
 
-class ScopeProviderWithGlobalRepo(ScopeProviderWithImportURI):
+class GlobalRepo(ImportURI):
     """
     Scope provider that allows to populate the set of models used for lookup before parsing models.
     Usage:
       * create metamodel
-      * create ScopeProviderFullyQualifiedNamesWithGlobalRepo
+      * create FQNGlobalRepo
       * register models used for lookup into the scope provider
     Then the scope provider is ready to be registered and used.
     """
 
     def __init__(self, scope_provider, filename_pattern=None, glob_args=None):
-        ScopeProviderWithImportURI.__init__(self, scope_provider, glob_args=glob_args)
+        ImportURI.__init__(self, scope_provider, glob_args=glob_args)
         self.filename_pattern_list = []
         if filename_pattern:
             self.register_models(filename_pattern)
@@ -271,18 +289,24 @@ class ScopeProviderWithGlobalRepo(ScopeProviderWithImportURI):
                                                                      glob_args=self.glob_args)
 
 
-class ScopeProviderFullyQualifiedNamesWithGlobalRepo(ScopeProviderWithGlobalRepo):
+class FQNGlobalRepo(GlobalRepo):
+    """
+    scope provider with FQN and global repo
+    """
     def __init__(self, filename_pattern=None, glob_args=None):
-        ScopeProviderWithGlobalRepo.__init__(self, scope_provider_fully_qualified_names, filename_pattern,
-                                             glob_args=glob_args)
+        GlobalRepo.__init__(self, FQN(), filename_pattern,
+                            glob_args=glob_args)
 
 
-class ScopeProviderPlainNamesWithGlobalRepo(ScopeProviderWithGlobalRepo):
+class PlainNameGlobalRepo(GlobalRepo):
+    """
+    scope provider with PlainName names and global repo
+    """
     def __init__(self, filename_pattern=None, glob_args=None):
-        ScopeProviderWithGlobalRepo.__init__(self, scope_provider_plain_names, filename_pattern, glob_args=glob_args)
+        GlobalRepo.__init__(self, PlainName(), filename_pattern, glob_args=glob_args)
 
 
-class ScopeProviderForSimpleRelativeNamedLookups(object):
+class RelativeName(object):
     """
     allows to implement a class-method-instance-like scoping:
      - define a class with methods
@@ -317,9 +341,9 @@ class ScopeProviderForSimpleRelativeNamedLookups(object):
             raise TextXSemanticError('{}'.format(str(e)), line=line, col=col)
 
 
-class ScopeProviderForExtendableRelativeNamedLookups(object):
+class ExtRelativeName(object):
     """
-    Similar as ScopeProviderForSimpleRelativeNamedLookups.
+    Similar as RelativeName.
     Here you specifiy separately
     - how to find the class.
     - how to find the methods (starting from a class).
@@ -349,5 +373,5 @@ class ScopeProviderForExtendableRelativeNamedLookups(object):
             return None
         except TypeError as e:
             line, col = parser.pos_to_linecol(obj_ref.position)
-            raise TextXSemanticError('ScopeProviderForExtendableRelativeNamedLookups: {}'.format(str(e)), line=line,
+            raise TextXSemanticError('ExtRelativeName: {}'.format(str(e)), line=line,
                                      col=col)

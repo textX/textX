@@ -11,7 +11,7 @@ def test_model_with_globalimports_basic_test_with_single_model_file():
     #################################
 
     my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/interface_model2/Interface.tx')
-    my_meta_model.register_scope_providers({"*.*": scoping_providers.ScopeProviderFullyQualifiedNamesWithGlobalRepo(
+    my_meta_model.register_scope_providers({"*.*": scoping_providers.FQNGlobalRepo(
         abspath(dirname(__file__)) + "/interface_model2/model_a/*.if")})
 
     #################################
@@ -48,7 +48,7 @@ def test_model_with_globalimports_basic_test_with_single_model_file_and_with_glo
 
     my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/interface_model2/Interface.tx',
                                         global_repository=True)
-    my_meta_model.register_scope_providers({"*.*": scoping_providers.ScopeProviderFullyQualifiedNamesWithGlobalRepo(
+    my_meta_model.register_scope_providers({"*.*": scoping_providers.FQNGlobalRepo(
         abspath(dirname(__file__)) + "/interface_model2/model_a/*.if")})
 
     #################################
@@ -84,7 +84,7 @@ def test_model_with_globalimports_basic_test_with_distributed_model():
     #################################
 
     my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/interface_model2/Interface.tx')
-    my_meta_model.register_scope_providers({"*.*": scoping_providers.ScopeProviderFullyQualifiedNamesWithGlobalRepo(
+    my_meta_model.register_scope_providers({"*.*": scoping_providers.FQNGlobalRepo(
         abspath(dirname(__file__)) + "/interface_model2/model_b/*.if")})
 
     #################################

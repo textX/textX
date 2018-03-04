@@ -13,12 +13,12 @@ def test_model_with_local_scope_and_circular_ref_via_two_models():
 
     my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/components_model1/Components.tx',
                                         global_repository=True)
-    global_scope = scoping_providers.ScopeProviderFullyQualifiedNamesWithGlobalRepo(
+    global_scope = scoping_providers.FQNGlobalRepo(
         abspath(dirname(__file__)) + "/components_model1/example_?.components")
     my_meta_model.register_scope_providers({
         "*.*": global_scope,
-        "Connection.from_port": scoping_providers.ScopeProviderForSimpleRelativeNamedLookups("from_inst.component.slots"),
-        "Connection.to_port": scoping_providers.ScopeProviderForSimpleRelativeNamedLookups("to_inst.component.slots")
+        "Connection.from_port": scoping_providers.RelativeName("from_inst.component.slots"),
+        "Connection.to_port": scoping_providers.RelativeName("to_inst.component.slots")
     })
 
     #################################

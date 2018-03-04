@@ -24,7 +24,7 @@ def test_postponed_resolution_error():
 
     my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/components_model1/Components.tx')
     my_meta_model.register_scope_providers({
-        "*.*": scoping_providers.scope_provider_fully_qualified_names,
+        "*.*": scoping_providers.FQN(),
         "Connection.from_port": from_port,
         "Connection.to_port": to_port
     })
@@ -44,9 +44,9 @@ def test_model_with_local_scope():
 
     my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/components_model1/Components.tx')
     my_meta_model.register_scope_providers({
-        "*.*": scoping_providers.scope_provider_fully_qualified_names,
-        "Connection.from_port": scoping_providers.ScopeProviderForSimpleRelativeNamedLookups("from_inst.component.slots"),
-        "Connection.to_port": scoping_providers.ScopeProviderForSimpleRelativeNamedLookups("to_inst.component.slots"),
+        "*.*": scoping_providers.FQN(),
+        "Connection.from_port": scoping_providers.RelativeName("from_inst.component.slots"),
+        "Connection.to_port": scoping_providers.RelativeName("to_inst.component.slots"),
     })
 
     #################################
@@ -87,9 +87,9 @@ def test_model_with_local_scope_and_error():
 
     my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/components_model1/Components.tx')
     my_meta_model.register_scope_providers({
-        "*.*": scoping_providers.scope_provider_fully_qualified_names,
-        "Connection.from_port": scoping_providers.ScopeProviderForSimpleRelativeNamedLookups("from_inst.component.slots"),
-        "Connection.to_port": scoping_providers.ScopeProviderForSimpleRelativeNamedLookups("to_inst.component.slots")
+        "*.*": scoping_providers.FQN(),
+        "Connection.from_port": scoping_providers.RelativeName("from_inst.component.slots"),
+        "Connection.to_port": scoping_providers.RelativeName("to_inst.component.slots")
     })
 
     #################################
@@ -112,10 +112,10 @@ def test_model_with_local_scope_and_inheritance2():
 
     my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/components_model1/Components.tx')
     my_meta_model.register_scope_providers({
-        "*.*": scoping_providers.scope_provider_fully_qualified_names,
-        "Connection.from_port": scoping_providers.ScopeProviderForExtendableRelativeNamedLookups("from_inst.component", "slots",
+        "*.*": scoping_providers.FQN(),
+        "Connection.from_port": scoping_providers.ExtRelativeName("from_inst.component", "slots",
                                                                                        "extends"),
-        "Connection.to_port": scoping_providers.ScopeProviderForExtendableRelativeNamedLookups("to_inst.component", "slots",
+        "Connection.to_port": scoping_providers.ExtRelativeName("to_inst.component", "slots",
                                                                                      "extends"),
     })
 
@@ -175,20 +175,20 @@ def test_model_with_local_scope_postponed():
     # META MODEL DEF
     #################################
 
-    sp1 = scoping_providers.ScopeProviderForSimpleRelativeNamedLookups("from_inst.component.slots")
+    sp1 = scoping_providers.RelativeName("from_inst.component.slots")
     my_meta_model1 = metamodel_from_file(abspath(dirname(__file__)) + '/components_model1/Components.tx')
     my_meta_model1.register_scope_providers({
-        "*.*": scoping_providers.scope_provider_fully_qualified_names,
+        "*.*": scoping_providers.FQN(),
         "Connection.from_port": sp1,
-        "Connection.to_port": scoping_providers.ScopeProviderForSimpleRelativeNamedLookups("to_inst.component.slots")
+        "Connection.to_port": scoping_providers.RelativeName("to_inst.component.slots")
     })
 
-    sp2 = scoping_providers.ScopeProviderForSimpleRelativeNamedLookups("from_inst.component.slots")
+    sp2 = scoping_providers.RelativeName("from_inst.component.slots")
     my_meta_model2 = metamodel_from_file(abspath(dirname(__file__)) + '/components_model2/Components.tx')
     my_meta_model2.register_scope_providers({
-        "*.*": scoping_providers.scope_provider_fully_qualified_names,
+        "*.*": scoping_providers.FQN(),
         "Connection.from_port": sp2,
-        "Connection.to_port": scoping_providers.ScopeProviderForSimpleRelativeNamedLookups("to_inst.component.slots")
+        "Connection.to_port": scoping_providers.RelativeName("to_inst.component.slots")
     })
 
     #################################
