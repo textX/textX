@@ -23,10 +23,10 @@ and instances of classes).
 
 The scope providers are registered to the metamodel and can be bound to specific parts of rules:
 
- * e.g., my_meta_model.register_scope_provider({"\*.\*":scoping.scope_provider_fully_qualified_names})
- * or: my_meta_model.register_scope_provider({"MyAttribute.ref":scoping.scope_provider_fully_qualified_names})
- * or: my_meta_model.register_scope_provider({"\*.ref":scoping.scope_provider_fully_qualified_names})
- * or: my_meta_model.register_scope_provider({"MyAttribute.*":scoping.scope_provider_fully_qualified_names})
+ * e.g., my_meta_model.register_scope_provider({"\*.\*":scoping.providers.scope_provider_fully_qualified_names})
+ * or: my_meta_model.register_scope_provider({"MyAttribute.ref":scoping.providers.scope_provider_fully_qualified_names})
+ * or: my_meta_model.register_scope_provider({"\*.ref":scoping.providers.scope_provider_fully_qualified_names})
+ * or: my_meta_model.register_scope_provider({"MyAttribute.*":scoping.providers.scope_provider_fully_qualified_names})
 
 Example (from tests/test_scoping/test_local_scope.py):
 
@@ -49,9 +49,9 @@ Example (from tests/test_scoping/test_local_scope.py):
     # Python snippet
     my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/components_model1/Components.tx')
     my_meta_model.register_scope_provider({
-        "*.*": scoping.scope_provider_fully_qualified_names,
-        "Connection.from_port": scoping.ScopeProviderForSimpleRelativeNamedLookups("from_inst.component.slots"),
-        "Connection.to_port": scoping.ScopeProviderForSimpleRelativeNamedLookups("to_inst.component.slots")
+        "*.*": scoping_providers.scope_provider_fully_qualified_names,
+        "Connection.from_port": scoping_providers.ScopeProviderForSimpleRelativeNamedLookups("from_inst.component.slots"),
+        "Connection.to_port": scoping_providers.ScopeProviderForSimpleRelativeNamedLookups("to_inst.component.slots")
     })
 
 
@@ -63,7 +63,7 @@ Since this attribute is a list, the list is searched to find the referenced name
 
 Note: special rule selections (e.g., "Connection.from_port") are preferred to wildcard selection (e.e, "\*.\*").
 
-### Scope Providers defined in Module "scoping.py"
+### Scope Providers defined in Module "textx.scoping.providers"
 
 We provide some standard scope providers:
 
@@ -109,7 +109,7 @@ Examples see tests/test_scoping/test_import_module.py.
 
 ### Combining Metamodels
 
-In addition, there is also global data stored in the class "scoping.MetaModelProvider": Here, you can register
+In addition, there is also global data stored in the class "textx.scoping.MetaModelProvider": Here, you can register
 meta models associated to files patterns. Thus, you can control which meta model to use when loading a file in
 a scope provider using the "ImportURI"-feature (e.g. ScopeProviderFullyQualifiedNamesWithImportURI). If no file
 pattern matches, the meta model of the current model is utilized.

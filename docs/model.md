@@ -165,5 +165,5 @@ used in `__repr__` of auto-generated Python classes.
 
 The model may have a model repository (initiated by some scope provider or by
 the metamodel). This object is responsible to provide and cache other model
-instances (see scoping.py).
+instances (see textx.scoping.providers).
 
