@@ -108,7 +108,7 @@ def test_model_with_imports_and_global_repo():
     #################################
 
     my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/interface_model1/Interface.tx',
-                                        enable_global_model_repository=True)
+                                        global_repository=True)
     my_meta_model.register_scope_providers({"*.*": scoping.ScopeProviderFullyQualifiedNamesWithImportURI()})
 
     #################################

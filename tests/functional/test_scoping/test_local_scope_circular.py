@@ -12,7 +12,7 @@ def test_model_with_local_scope_and_circular_ref_via_two_models():
     #################################
 
     my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/components_model1/Components.tx',
-                                        enable_global_model_repository=True)
+                                        global_repository=True)
     global_scope = scoping.ScopeProviderFullyQualifiedNamesWithGlobalRepo(
         abspath(dirname(__file__)) + "/components_model1/example_?.components")
     my_meta_model.register_scope_providers({

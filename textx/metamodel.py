@@ -108,13 +108,20 @@ class TextXMetaModel(DebugPrinter):
         _tx_model_repository: optional global repository. Normally such objects are
             owned by models only. However, if the models shall interact globally
             (which means if two separately loaded models should interact), this
-            attribute must be set via "enable_global_model_repository()".
+            attribute must be set via an optional constructor parameter
+            "global_repository=True".
     """
 
     def __init__(self, file_name=None, classes=None, builtins=None,
                  match_filters=None, auto_init_attributes=True,
                  ignore_case=False, skipws=True, ws=None, autokwd=False,
                  memoization=False, textx_tools_support=False, **kwargs):
+        # evaluate optional parameter "global_repository"
+        global_repository = kwargs.pop("global_repository", False)
+        if global_repository:
+            from textx.scoping import GlobalModelRepository
+            self._tx_model_repository = GlobalModelRepository()
+
         super(TextXMetaModel, self).__init__(**kwargs)
 
         self.file_name = file_name
@@ -185,13 +192,6 @@ class TextXMetaModel(DebugPrinter):
         # Enter namespace for given file or None if metamodel is
         # constructed from string.
         self._enter_namespace(self._namespace_for_file_name(file_name))
-
-    def _enable_global_model_repository(self):
-        """
-        should be called before loading models
-        """
-        from textx.scoping import GlobalModelRepository
-        self._tx_model_repository = GlobalModelRepository()
 
     def register_scope_providers(self, sp):
         self.scope_provider = sp
@@ -564,14 +564,13 @@ class TextXMetaModel(DebugPrinter):
         self.obj_processors = obj_processors
 
 
-def metamodel_from_str(lang_desc, metamodel=None, enable_global_model_repository=False, **kwargs):
+def metamodel_from_str(lang_desc, metamodel=None, **kwargs):
     """
     Creates a new metamodel from the textX description given as a string.
 
     Args:
         lang_desc(str): A textX language description.
         metamodel(TextXMetaModel): A metamodel that should be used.
-        enable_global_model_repository: use global repo if true
         other params: See TextXMetaModel.
 
     """
@@ -581,19 +580,15 @@ def metamodel_from_str(lang_desc, metamodel=None, enable_global_model_repository
 
     language_from_str(lang_desc, metamodel)
 
-    if enable_global_model_repository:
-        metamodel._enable_global_model_repository()
-
     return metamodel
 
 
-def metamodel_from_file(file_name, enable_global_model_repository=False, **kwargs):
+def metamodel_from_file(file_name, **kwargs):
     """
     Creates new metamodel from the given file.
 
     Args:
         file_name(str): The name of the file with textX language description.
-        enable_global_model_repository: use global repo if true
         other params: See metamodel_from_str.
     """
     with codecs.open(file_name, 'r', 'utf-8') as f:
@@ -601,7 +596,6 @@ def metamodel_from_file(file_name, enable_global_model_repository=False, **kwarg
 
     metamodel = metamodel_from_str(lang_desc=lang_desc,
                                    file_name=file_name,
-                                   enable_global_model_repository=enable_global_model_repository,
                                    **kwargs)
 
     return metamodel

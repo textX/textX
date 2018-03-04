@@ -47,7 +47,7 @@ def test_model_with_globalimports_basic_test_with_single_model_file_and_with_glo
     #################################
 
     my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/interface_model2/Interface.tx',
-                                        enable_global_model_repository=True)
+                                        global_repository=True)
     my_meta_model.register_scope_providers({"*.*": scoping.ScopeProviderFullyQualifiedNamesWithGlobalRepo(
         abspath(dirname(__file__)) + "/interface_model2/model_a/*.if")})
 
