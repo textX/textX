@@ -24,7 +24,7 @@ class PlainName(object):
     """
 
     def __init__(self):
-        super(PlainName).__init__()
+        pass;
 
     def __call__(self, parser, obj, attr, obj_ref):
         """
@@ -93,7 +93,7 @@ class FQN(object):
     """
 
     def __init__(self):
-        super(FQN).__init__()
+        pass;
 
     def __call__(self, parser, obj, attr, obj_ref):
         """
