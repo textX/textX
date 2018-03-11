@@ -32,11 +32,11 @@ Slot: SlotIn|SlotOut;
 
 SlotIn:
     'in' name=ID
-    ('(''''format' formats+=[Interface|FQN][','] ')')?
+    ('(' 'format' formats+=[Interface|FQN][','] ')')?
 ;
 SlotOut:
     'out' name=ID
-    ('(' '''format' formats+=[Interface|FQN][','] ')')?
+    ('(' 'format' formats+=[Interface|FQN][','] ')')?
 ;
 
 // An instance of a component can be connected to other instances
