@@ -134,7 +134,7 @@ Examples see tests/test_scoping/test_metamodel_provider.py.
 
 ## Technical aspects and implementation details
 
-The scope providers are python callables accepting obj,attr,obj_ref:
+The scope providers are python callables accepting parser,obj,attr,obj_ref:
 
  * parser  : the current parser
  * obj     : the object representing the start of the search (e.g., a rule
