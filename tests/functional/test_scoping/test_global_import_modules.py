@@ -80,7 +80,7 @@ def test_globalimports_basic_test_with_single_model_file_and_global_repo():
     assert a == s1.ref
 
     a2 = get_unique_named_object(my_model2, "socket")
-    assert a2 == a  # no global repository
+    assert a2 == a  # with global repository
 
     #################################
     # END
