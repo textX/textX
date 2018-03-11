@@ -222,15 +222,6 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                 pre_ref_resolution_callback=pre_ref_resolution_callback,
                 is_main_model=is_main_model)
 
-            # reset the file: see "# Register filename of the model for later
-            # use (e.g. imports/scoping)."
-            # w/o this second assignment some tests fail (TBC)
-            # Register filename of the model for later use.
-            try:
-                model._tx_filename = file_name
-            except AttributeError:
-                # model is some primitive python type (e.g. str)
-                pass
             return model
 
         def get_model_from_str(self, model_str, file_name=None, debug=None,
@@ -260,7 +251,6 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                     self.debug = old_debug_state
 
             try:
-                model._tx_filename = None
                 model._tx_metamodel = self.metamodel
             except AttributeError:
                 # model is some primitive python type (e.g. str)
