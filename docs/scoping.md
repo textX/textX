@@ -23,10 +23,10 @@ and instances of classes).
 
 The scope providers are registered to the metamodel and can be bound to specific parts of rules:
 
- * e.g., my_meta_model.register_scope_provider({"\*.\*":         scoping.providers.FQN()})
- * or: my_meta_model.register_scope_provider({"MyAttribute.ref": scoping.providers.FQN()})
- * or: my_meta_model.register_scope_provider({"\*.ref":          scoping.providers.FQN()})
- * or: my_meta_model.register_scope_provider({"MyAttribute.*":   scoping.providers.FQN()})
+ * e.g., my_meta_model.register_scope_providers({"\*.\*":         scoping.providers.FQN()})
+ * or: my_meta_model.register_scope_providers({"MyAttribute.ref": scoping.providers.FQN()})
+ * or: my_meta_model.register_scope_providers({"\*.ref":          scoping.providers.FQN()})
+ * or: my_meta_model.register_scope_providers({"MyAttribute.*":   scoping.providers.FQN()})
 
 Example (from tests/test_scoping/test_local_scope.py):
 
