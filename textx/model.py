@@ -506,10 +506,10 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                              "*." + attr.name, obj.__class__.__name__ + ".*",
                              "*.*"]
                 for attr_ref in attr_refs:
-                    if attr_ref in metamodel.scope_provider:
+                    if attr_ref in metamodel.scope_providers:
                         if parser.debug:
                             parser.dprint(" FOUND {}".format(attr_ref))
-                        resolved = metamodel.scope_provider[attr_ref](
+                        resolved = metamodel.scope_providers[attr_ref](
                             parser, obj, attr, crossref)
                         break
                 else:
@@ -598,7 +598,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
     if pre_ref_resolution_callback:
         pre_ref_resolution_callback(model)
 
-    for scope_provider in metamodel.scope_provider.values():
+    for scope_provider in metamodel.scope_providers.values():
         from textx.scoping import ModelLoader
         if isinstance(scope_provider, ModelLoader):
             scope_provider.load_models(model)

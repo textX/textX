@@ -152,7 +152,7 @@ class TextXMetaModel(DebugPrinter):
         self.obj_processors = {}
 
         # Registered scope provider
-        self.scope_provider = {}
+        self.scope_providers = {}
 
         # Namespaces
         self.namespaces = {}
@@ -194,7 +194,7 @@ class TextXMetaModel(DebugPrinter):
         self._enter_namespace(self._namespace_for_file_name(file_name))
 
     def register_scope_providers(self, sp):
-        self.scope_provider = sp
+        self.scope_providers = sp
 
     def _namespace_for_file_name(self, file_name):
         if file_name is None or self.root_path is None:
