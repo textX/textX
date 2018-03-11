@@ -337,17 +337,17 @@ class RelativeName(object):
     components/slots...
     """
 
-    def __init__(self, path_to_conatiner_object):
+    def __init__(self, path_to_container_object):
         """
         Here, you specify the path from the instance to the methods:
         The path is given in a dot-separated way: "classref.methods". Then a
         concrete method "f" is searched as "classref.methods.f".
 
         Args:
-            path_to_conatiner_object: This identifies (starting from the
+            path_to_container_object: This identifies (starting from the
             instance) how to find the methods.
         """
-        self.path_to_container_object = path_to_conatiner_object
+        self.path_to_container_object = path_to_container_object
         self.postponed_counter = 0
 
     def __call__(self, parser, obj, attr, obj_ref):
