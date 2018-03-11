@@ -36,6 +36,7 @@ Example (from tests/test_scoping/test_local_scope.py):
             slots*=Slot
         '}'
     ;
+    Slot: SlotIn|SlotOut;
     # ...
     Instance:
         'instance' name=ID ':' component=[Component|FQN] ;
@@ -55,13 +56,18 @@ Example (from tests/test_scoping/test_local_scope.py):
     })
 
 
-This example selects the fully qualified name provider as default provider ("\*.\*").
-Moreover, for special attributes of a "Connection" a relative name lookup is specified: Here the
-"path" from the rule "Connection" containing the attribute of interrest (e.g. "Connection.from_port") to
-the referenced element is specified (the slot contained in "from_inst.component.slots").
-Since this attribute is a list, the list is searched to find the referenced name.
+This example selects the fully qualified name provider
+as default provider ("\*.\*"). Moreover, for special attributes of
+a "Connection" a relative name lookup is specified: Here the "path" from the
+rule "Connection" containing the attribute of interest
+(e.g. "Connection.from_port") to the referenced element is specified
+(the slot contained in "from_inst.component.slots").
+Since this attribute is a list, the list is searched to find
+the referenced name.
 
-Note: special rule selections (e.g., "Connection.from_port") are preferred to wildcard selection (e.e, "\*.\*").
+!!! note
+    Special rule selections (e.g., "Connection.from_port") are preferred
+    to wildcard selection (e.e, "\*.\*").
 
 ### Scope Providers defined in Module "textx.scoping.providers"
 
@@ -146,10 +152,13 @@ construction: this means they should allow to be reused for different models
 This means, they must save their state in the corresponding model, if they
 need to store data (e.g., if they load additional models from files *during
 name resolution*, they are not allowed to store them inside the scope
-provider. Note: scope providers as normal functions (def <name>(...):..., not
-accessing global data, are safe per se. The reason to be stateless, is that
-no side effects (beside, e.g., loading other models) should incluence the
-name lookup.
+provider.
+
+!!! note
+    Scope providers as normal functions (def <name>(...):..., not
+    accessing global data, are safe per se. The reason to be stateless, is that
+    no side effects (beside, e.g., loading other models) should incluence the
+    name lookup.
 
 The state of model resolution should mainly consist of models already loaded.
 These models are stored in a GlobalModelRepository class. This class (if
