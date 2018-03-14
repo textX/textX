@@ -8,7 +8,7 @@ def test_comments_skipws_optimization():
 
     grammar = r'''
     file:
-        lines*=cascading
+        lines*=cascading /\s*/
     ;
 
     Comment:
@@ -24,9 +24,9 @@ def test_comments_skipws_optimization():
     ;
 
     line[noskipws]:
-    /\s*/-
+    /\s*/ /\s*/
     (modifier=ID space &ID)? keyword=ID
-    /\s*/-
+    /\s*/ /\s*/
     ;
 
     group:
@@ -55,3 +55,24 @@ def test_comments_skipws_optimization():
     assert group.entries[1].modifier == ''
     assert group.entries[2].keyword == 'TWO'
     assert group.entries[2].modifier == ''
+
+    model_str = r'''
+    group
+    {  # this should work
+        ZERO
+        ONE
+        TWO
+    }
+    '''
+    model = mm.model_from_str(model_str)
+
+    model_str = r'''
+    group
+    {
+        ZERO
+        ONE
+        TWO
+    } # this should work also
+
+    '''
+    model = mm.model_from_str(model_str)
