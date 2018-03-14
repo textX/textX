@@ -1,0 +1,12 @@
+import Components
+
+Model:
+    imports+=Import+
+    users+=User+
+;
+
+User:
+    "user" name=ID "uses" instance=[Instance|FQN]
+;
+
+Import: 'import' importURI=STRING;

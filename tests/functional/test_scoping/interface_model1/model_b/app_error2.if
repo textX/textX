@@ -1,0 +1,10 @@
+import "base.if"
+import "types.if"
+import "file_not_found.if" // error
+
+package app {
+    interface app1 {
+        base.inout_sockets s;
+        types.int userid;
+    }
+}

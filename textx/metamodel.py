@@ -105,12 +105,23 @@ class TextXMetaModel(DebugPrinter):
         _imported_namespaces(dict): A mapping from namespace name to the list
             of references to imported namespaces. Used in searches for
             unqualified rules.
+        _tx_model_repository: optional global repository. Normally such
+            objects are owned by models only. However, if the models shall
+            interact globally (which means if two separately loaded models
+            should interact), this attribute must be set via an optional
+            constructor parameter "global_repository=True".
     """
 
     def __init__(self, file_name=None, classes=None, builtins=None,
                  match_filters=None, auto_init_attributes=True,
                  ignore_case=False, skipws=True, ws=None, autokwd=False,
                  memoization=False, textx_tools_support=False, **kwargs):
+        # evaluate optional parameter "global_repository"
+        global_repository = kwargs.pop("global_repository", False)
+        if global_repository:
+            from textx.scoping import GlobalModelRepository
+            self._tx_model_repository = GlobalModelRepository()
+
         super(TextXMetaModel, self).__init__(**kwargs)
 
         self.file_name = file_name
@@ -139,6 +150,9 @@ class TextXMetaModel(DebugPrinter):
 
         # Registered object processors
         self.obj_processors = {}
+
+        # Registered scope provider
+        self.scope_providers = {}
 
         # Namespaces
         self.namespaces = {}
@@ -178,6 +192,9 @@ class TextXMetaModel(DebugPrinter):
         # Enter namespace for given file or None if metamodel is
         # constructed from string.
         self._enter_namespace(self._namespace_for_file_name(file_name))
+
+    def register_scope_providers(self, sp):
+        self.scope_providers = sp
 
     def _namespace_for_file_name(self, file_name):
         if file_name is None or self.root_path is None:
@@ -474,21 +491,61 @@ class TextXMetaModel(DebugPrinter):
     def _current_namespace(self):
         return self.namespaces[self._namespace_stack[-1]]
 
-    def model_from_str(self, model_str, debug=None):
+    def model_from_str(self, model_str, debug=None,
+                       pre_ref_resolution_callback=None):
         """
         Instantiates model from the given string.
+        :param pre_ref_resolution_callback: called before references are
+               resolved. This can be useful to manage models distributed
+               across files (scoping)
         """
-        model = self.parser.get_model_from_str(model_str, debug=debug)
+        model = self.parser.get_model_from_str(
+            model_str, debug=debug,
+            pre_ref_resolution_callback=pre_ref_resolution_callback)
         for p in self._model_processors:
             p(model, self)
         return model
 
     def model_from_file(self, file_name, encoding='utf-8', debug=None):
+        return self.internal_model_from_file(file_name, encoding, debug)
+
+    def internal_model_from_file(
+            self, file_name, encoding='utf-8', debug=None,
+            pre_ref_resolution_callback=None, is_main_model=True):
         """
         Instantiates model from the given file.
+        :param pre_ref_resolution_callback: called before references are
+               resolved. This can be useful to manage models distributed
+               across files (scoping)
         """
-        model = self.parser.get_model_from_file(file_name,
-                                                encoding, debug=debug)
+        model = None
+        callback = pre_ref_resolution_callback
+
+        if hasattr(self, "_tx_model_repository"):
+            # metamodel has a global repo
+            if not callback:
+                def _pre_ref_resolution_callback(other_model):
+                    from textx.scoping import GlobalModelRepository
+                    filename = other_model._tx_filename
+                    assert filename
+                    # print("METAMODEL PRE-CALLBACK{}".format(filename))
+                    other_model._tx_model_repository = GlobalModelRepository(
+                        self._tx_model_repository.all_models)
+                    self._tx_model_repository.all_models\
+                        .filename_to_model[filename] = other_model
+
+                callback = _pre_ref_resolution_callback
+            if self._tx_model_repository.all_models.has_model(file_name):
+                model = self._tx_model_repository.all_models\
+                    .filename_to_model[file_name]
+
+        if not model:
+            # model not present (from global repo) -> load it
+            model = self.parser.get_model_from_file(
+                file_name, encoding, debug=debug,
+                pre_ref_resolution_callback=callback,
+                is_main_model=is_main_model)
+
         for p in self._model_processors:
             p(model, self)
         return model
@@ -525,6 +582,7 @@ def metamodel_from_str(lang_desc, metamodel=None, **kwargs):
         other params: See TextXMetaModel.
 
     """
+
     if not metamodel:
         metamodel = TextXMetaModel(**kwargs)
 
@@ -545,6 +603,7 @@ def metamodel_from_file(file_name, **kwargs):
         lang_desc = f.read()
 
     metamodel = metamodel_from_str(lang_desc=lang_desc,
-                                   file_name=file_name, **kwargs)
+                                   file_name=file_name,
+                                   **kwargs)
 
     return metamodel
