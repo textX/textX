@@ -1,0 +1,3 @@
+import Base
+
+Model: ingredientTypes+=IngredientType+;

@@ -1,0 +1,15 @@
+Recipe:
+    ingredients+=Ingredient+
+;
+
+Ingredient: "-" count=POS_FLOAT unit=[Unit] type=[IngredientType];
+
+IngredientType: "ingredient" name=ID ("inherits" "from" extends=[IngredientType])? "{"
+    units+=Unit*
+"}"
+;
+
+Unit: "unit" weight=POS_FLOAT name=ID;
+
+POS_FLOAT: UINT("."UINT)?;
+UINT: /\d+/;
