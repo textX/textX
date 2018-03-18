@@ -53,7 +53,10 @@ class MetaModelProvider(object):
                 # print("loading model {} with special mm".format(filename));
                 return mm
         # print("loading model {} with present mm".format(filename))
-        return get_metamodel(parent_model)
+        if parent_model:
+            return get_metamodel(parent_model)
+        else:
+            raise Exception("unexpected: no meta model found for {}".format(filename));
 
 
 # -------------------------------------------------------------------------------------
@@ -131,28 +134,35 @@ class GlobalModelRepository(object):
         Args:
             filename_pattern: models to be loaded
             model: model holding the loaded models in its _tx_model_repository
-                   field.
+                   field (may be None).
             glob_args: arguments passed to the glob.glob function.
 
         Returns:
             nothing
         """
-        assert model
-        self.update_model_in_repo_based_on_filename(model)
+        from textx import get_metamodel
+        if (model):
+            self.update_model_in_repo_based_on_filename(model)
         filenames = glob.glob(filename_pattern, **glob_args)
         if len(filenames) == 0:
             raise IOError(
                 errno.ENOENT, os.strerror(errno.ENOENT), filename_pattern)
         for filename in filenames:
-            self.load_model(MetaModelProvider.get_metamodel(model, filename),
-                            filename)
+            the_metamodel = MetaModelProvider.get_metamodel(model, filename)
+            if not model or (model and get_metamodel(model)!=the_metamodel):
+                is_main_model = True
+                # print("metamodel change {} from {}".format(
+                #    filename,str(model)))
+            else:
+                is_main_model = False
+            self.load_model(the_metamodel, filename, is_main_model)
 
-    def load_model(self, themetamodel, filename):
+    def load_model(self, the_metamodel, filename, is_main_model):
         """
         load a single model
 
         Args:
-            themetamodel: the metamodel used to load the model
+            the_metamodel: the metamodel used to load the model
             filename: the model to be loaded (if not cached)
 
         Returns:
@@ -161,17 +171,17 @@ class GlobalModelRepository(object):
 
         if not self.local_models.has_model(filename):
             if self.all_models.has_model(filename):
-                newmodel = self.all_models.filename_to_model[filename]
+                new_model = self.all_models.filename_to_model[filename]
             else:
                 # print("LOADING {}".format(filename))
                 # all models loaded here get their references resolved from the
                 # root model
-                newmodel = themetamodel.internal_model_from_file(
+                new_model = the_metamodel.internal_model_from_file(
                     filename, pre_ref_resolution_callback=lambda
                     other_model: self.pre_ref_resolution_callback(other_model),
-                    is_main_model=False)
-                self.all_models.filename_to_model[filename] = newmodel
-            self.local_models.filename_to_model[filename] = newmodel
+                    is_main_model=is_main_model)
+                self.all_models.filename_to_model[filename] = new_model
+            self.local_models.filename_to_model[filename] = new_model
         return self.local_models.filename_to_model[filename]
 
     def update_model_in_repo_based_on_filename(self, model):

@@ -36,8 +36,21 @@ def needs_to_be_resolved(parser, parent_obj, attr_name):
 
 
 def textx_isinstance(obj, obj_cls):
+    """
+    This function determines, if a textx object is an instance of a
+     textx class.
+    Args:
+        obj: the object to be analyzed
+        obj_cls: the class to be checked
+
+    Returns:
+        True if obj is an instance of obj_cls.
+    """
     if isinstance(obj, obj_cls):
         return True
+    if hasattr(obj_cls, "_tx_fqn") and hasattr(obj, "_tx_fqn"):
+        if getattr(obj_cls, "_tx_fqn") == getattr(obj_cls, "_tx_fqn"):
+            return True
     if hasattr(obj_cls, "_tx_inh_by"):
         inh_by = getattr(obj_cls, "_tx_inh_by")
         for cls in inh_by:

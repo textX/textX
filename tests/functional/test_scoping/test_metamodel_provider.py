@@ -7,7 +7,7 @@ from textx.scoping.tools import get_unique_named_object_in_all_models
 from pytest import raises
 
 
-def test_metamodel_provder_basic_test():
+def test_metamodel_provider_basic_test():
     #################################
     # META MODEL DEF
     #################################

@@ -23,7 +23,15 @@ class PlainName(object):
     plain name scope provider
     """
 
-    def __init__(self):
+    def __init__(self, multi_metamodel_support=True):
+        """
+        the default scope provider constructor
+
+        Args:
+            multi_metamodel_support: enable a AST based search, instead
+            of using the parser._instances
+        """
+        self.multi_metamodel_support=multi_metamodel_support
         pass;
 
     def __call__(self, parser, obj, attr, obj_ref):
@@ -32,7 +40,7 @@ class PlainName(object):
 
         Args:
             parser: the current parser
-            obj: unused
+            obj: unused (used for multi_metamodel_support)
             attr: unused
             obj_ref: the cross reference to be resolved
 
@@ -50,8 +58,6 @@ class PlainName(object):
         if parser.debug:
             parser.dprint("Resolving obj crossref: {}:{}"
                           .format(obj_ref.cls, obj_ref.obj_name))
-        print("Resolving obj crossref: {}:{}"
-              .format(obj_ref.cls, obj_ref.obj_name))
 
         def _inner_resolve_link_rule_ref(cls, obj_name):
             """
@@ -79,8 +85,25 @@ class PlainName(object):
                     if obj_name in objs:
                         return objs[obj_name]
 
-        result = _inner_resolve_link_rule_ref(obj_ref.cls,
-                                              obj_ref.obj_name)
+        if self.multi_metamodel_support:
+            from textx import get_model, get_children
+            from textx.scoping.tools import textx_isinstance
+            result_lst = get_children(
+                lambda x:hasattr(x,"name") and x.name==obj_ref.obj_name
+                and textx_isinstance(x,obj_ref.cls),
+                get_model(obj))
+            if len(result_lst)==1:
+                result = result_lst[0]
+            elif len(result_lst)>1:
+                line, col = parser.pos_to_linecol(obj_ref.position)
+                raise TextXSemanticError(
+                    "name {} is not unique.".format(obj_ref.obj_name),
+                    line=line, col=col)
+            else:
+                result=None
+        else:
+            result = _inner_resolve_link_rule_ref(obj_ref.cls,
+                                                  obj_ref.obj_name)
         if result:
             return result
 
@@ -305,6 +328,29 @@ class GlobalRepo(ImportURI):
         for filename_pattern in self.filename_pattern_list:
             model._tx_model_repository.load_models_using_filepattern(
                 filename_pattern, model=model, glob_args=self.glob_args)
+
+    def load_models_in_model_repo(self,global_model_repo=None):
+        """
+        load all registered models.
+        Normally this is done automatically while
+        reference resolution of one loaded model.
+
+        However, if you wich to load all models
+        you can call this and get a model repository.
+
+        The metamodels must be identifiable via the MetaModelProvider.
+
+        Returns:
+            a GlobalModelRepository with the loaded models
+        """
+        import textx.scoping
+        if not global_model_repo:
+            global_model_repo = textx.scoping.GlobalModelRepository()
+        for filename_pattern in self.filename_pattern_list:
+            global_model_repo.load_models_using_filepattern(
+                filename_pattern, model=None, glob_args=self.glob_args
+            )
+        return global_model_repo
 
 
 class FQNGlobalRepo(GlobalRepo):
