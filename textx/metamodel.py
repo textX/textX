@@ -109,7 +109,8 @@ class TextXMetaModel(DebugPrinter):
             objects are owned by models only. However, if the models shall
             interact globally (which means if two separately loaded models
             should interact), this attribute must be set via an optional
-            constructor parameter "global_repository=True".
+            constructor parameter "global_repository=True" or
+            "global_repository=GlobalModelRepository()".
     """
 
     def __init__(self, file_name=None, classes=None, builtins=None,
@@ -120,7 +121,10 @@ class TextXMetaModel(DebugPrinter):
         global_repository = kwargs.pop("global_repository", False)
         if global_repository:
             from textx.scoping import GlobalModelRepository
-            self._tx_model_repository = GlobalModelRepository()
+            if isinstance(global_repository, GlobalModelRepository):
+                self._tx_model_repository = global_repository
+            else:
+                self._tx_model_repository = GlobalModelRepository()
 
         super(TextXMetaModel, self).__init__(**kwargs)
 
