@@ -98,7 +98,7 @@ class PlainName(object):
                 line, col = parser.pos_to_linecol(obj_ref.position)
                 raise TextXSemanticError(
                     "name {} is not unique.".format(obj_ref.obj_name),
-                    line=line, col=col)
+                    line=line, col=col, filename=get_model(obj)._tx_filename)
             else:
                 result=None
         else:

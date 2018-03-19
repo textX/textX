@@ -1,0 +1,10 @@
+#1
+package P1 { #2
+    class Part1 { #3
+    } #4
+} #5
+package P2 { #6
+    class C2 { #7
+        attr Part1 p1; #8
+    }
+}

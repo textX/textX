@@ -212,7 +212,7 @@ def test_plain_name_ref_with_muli_metamodel_support():
     # MODEL WITH ERROR (double entries)
     ############################
     with raises(textx.exceptions.TextXSemanticError,
-                match=r'.*name Part1 is not unique.*'):
+                match=r'.*None:10:\d+: error: name Part1 is not unique.*'):
         my_model2 = my_metamodel.model_from_str('''
         package P1 {
             class Part1 {

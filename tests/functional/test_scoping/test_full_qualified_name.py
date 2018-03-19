@@ -3,6 +3,7 @@ from textx import get_children
 import textx.scoping.providers as scoping_providers
 import textx.exceptions
 from pytest import raises
+from os.path import dirname
 
 metamodel_str = '''
 Model:
@@ -26,7 +27,7 @@ Attribute:
 ;
 
 RefClass: ref=FQN;
-
+Comment: /#.*/;
 FQN: ID('.'ID)*;
 '''
 
@@ -97,18 +98,24 @@ def test_fully_qualified_name_ref():
     # MODEL WITH ERROR
     ############################
     with raises(textx.exceptions.TextXSemanticError,
-                match=r'.*Unknown object.*Part1.*'):
-        my_model2 = my_metamodel.model_from_str('''
-        package P1 {
-            class Part1 {
-            }
-        }
-        package P2 {
-            class C2 {
-                attr Part1 p1;
+                match=r'None:8:.*: error.*Unknown object.*Part1.*'):
+        _ = my_metamodel.model_from_str(''' #1
+        package P1 { #2
+            class Part1 { #3
+            } #4
+        } #5
+        package P2 { #6
+            class C2 { #7
+                attr Part1 p1; #8
             }
         }
         ''')
+
+    with raises(textx.exceptions.TextXSemanticError,
+                match=r'.*test_fully_qualified_name_test_error.model:8:\d+:'
+                        ' error.*Unknown object.*Part1.*'):
+        _ = my_metamodel.model_from_file(
+            dirname(__file__)+"/test_fully_qualified_name_test_error.model")
 
     #################################
     # END

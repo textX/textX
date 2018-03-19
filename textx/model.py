@@ -527,11 +527,11 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                     line, col = parser.pos_to_linecol(crossref.position)
                     raise TextXSemanticError(
                         message=
-                        'Unknown object "{}" of class "{}" at {}'.format(
-                            crossref.obj_name, crossref.cls.__name__,
-                            (line, col)),
+                        'Unknown object "{}" of class "{}"'.format(
+                            crossref.obj_name, crossref.cls.__name__),
                         line=line, col=col, err_type=UNKNOWN_OBJ_ERROR,
-                        expected_obj_cls=crossref.cls)
+                        expected_obj_cls=crossref.cls,
+                        filename=model._tx_filename)
 
                 if type(resolved) is Postponed:
                     delayed_crossrefs.append((obj, attr, crossref))
