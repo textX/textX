@@ -24,11 +24,15 @@ def test_metamodel_provider_advanced_test():
         return mm
 
     global_repo = scoping_providers.PlainNameGlobalRepo()
-    global_repo.register_models(this_folder + "/metamodel_provider2/*.recipe")
-    global_repo.register_models(this_folder + "/metamodel_provider2/*.ingredient")
+    global_repo.register_models(
+        this_folder + "/metamodel_provider2/*.recipe")
+    global_repo.register_models(
+        this_folder + "/metamodel_provider2/*.ingredient")
 
-    i_mm = get_meta_model(global_repo,this_folder + "/metamodel_provider2/Ingredient.tx")
-    r_mm = get_meta_model(global_repo,this_folder + "/metamodel_provider2/Recipe.tx")
+    i_mm = get_meta_model(
+        global_repo,this_folder + "/metamodel_provider2/Ingredient.tx")
+    r_mm = get_meta_model(
+        global_repo,this_folder + "/metamodel_provider2/Recipe.tx")
 
     scoping.MetaModelProvider.add_metamodel("*.recipe", r_mm)
     scoping.MetaModelProvider.add_metamodel("*.ingredient", i_mm)

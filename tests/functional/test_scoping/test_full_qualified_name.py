@@ -115,7 +115,7 @@ def test_fully_qualified_name_ref():
                 match=r'.*test_fully_qualified_name_test_error.model:8:\d+:'
                         ' error.*Unknown object.*Part1.*'):
         _ = my_metamodel.model_from_file(
-            dirname(__file__)+"/test_fully_qualified_name_test_error.model")
+            dirname(__file__)+"/misc/test_fully_qualified_name_test_error.model")
 
     #################################
     # END

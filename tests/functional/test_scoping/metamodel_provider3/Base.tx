@@ -1,0 +1,3 @@
+Cls: "class" name=ID;
+Obj: "obj" name=ID ":" ref=[Cls];
+Import: 'import' importURI=STRING;

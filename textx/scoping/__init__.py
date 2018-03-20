@@ -41,6 +41,10 @@ class MetaModelProvider(object):
         MetaModelProvider._pattern_to_metamodel[pattern] = the_metamodel
 
     @staticmethod
+    def clear():
+        MetaModelProvider._pattern_to_metamodel = {}
+
+    @staticmethod
     def knows(pattern):
         return pattern in MetaModelProvider._pattern_to_metamodel.keys()
 
@@ -173,7 +177,7 @@ class GlobalModelRepository(object):
             if self.all_models.has_model(filename):
                 new_model = self.all_models.filename_to_model[filename]
             else:
-                # print("LOADING {}".format(filename))
+                print("LOADING {}".format(filename))
                 # all models loaded here get their references resolved from the
                 # root model
                 new_model = the_metamodel.internal_model_from_file(
@@ -181,6 +185,7 @@ class GlobalModelRepository(object):
                     other_model: self.pre_ref_resolution_callback(other_model),
                     is_main_model=is_main_model)
                 self.all_models.filename_to_model[filename] = new_model
+            print("Adding {}".format(filename))
             self.local_models.filename_to_model[filename] = new_model
         return self.local_models.filename_to_model[filename]
 
