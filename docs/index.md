@@ -154,6 +154,7 @@ Here is a non-complete list of projects using textX.
     - [ppci](http://ppci.readthedocs.io/en/latest/index.html) - Pure python
       compiler infrastructure. 
     - [Expremigen](https://github.com/shimpe/expremigen) -  Expressive midi generation
+    - [fanalyse](https://github.com/azag0/fanalyse) - Fortran code parser/analyser
 
 * Commercial
 
