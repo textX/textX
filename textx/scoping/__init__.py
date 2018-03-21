@@ -131,9 +131,9 @@ class GlobalModelRepository(object):
             self.all_models = ModelRepository()
 
     def load_models_using_filepattern(
-            self, filename_pattern, model, glob_args):
+            self, filename_pattern, model, glob_args, is_main_model=False):
         """
-        add a new model to all releveant objects
+        add a new model to all relevant objects
 
         Args:
             filename_pattern: models to be loaded
@@ -153,12 +153,6 @@ class GlobalModelRepository(object):
                 errno.ENOENT, os.strerror(errno.ENOENT), filename_pattern)
         for filename in filenames:
             the_metamodel = MetaModelProvider.get_metamodel(model, filename)
-            if not model or (model and get_metamodel(model)!=the_metamodel):
-                is_main_model = True
-                # print("metamodel change {} from {}".format(
-                #    filename,str(model)))
-            else:
-                is_main_model = False
             self.load_model(the_metamodel, filename, is_main_model)
 
     def load_model(self, the_metamodel, filename, is_main_model):
@@ -177,7 +171,7 @@ class GlobalModelRepository(object):
             if self.all_models.has_model(filename):
                 new_model = self.all_models.filename_to_model[filename]
             else:
-                print("LOADING {}".format(filename))
+                # print("LOADING {}".format(filename))
                 # all models loaded here get their references resolved from the
                 # root model
                 new_model = the_metamodel.internal_model_from_file(
@@ -185,7 +179,7 @@ class GlobalModelRepository(object):
                     other_model: self.pre_ref_resolution_callback(other_model),
                     is_main_model=is_main_model)
                 self.all_models.filename_to_model[filename] = new_model
-            print("Adding {}".format(filename))
+            # print("ADDING {}".format(filename))
             self.local_models.filename_to_model[filename] = new_model
         return self.local_models.filename_to_model[filename]
 

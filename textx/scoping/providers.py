@@ -331,7 +331,8 @@ class GlobalRepo(ImportURI):
 
     def load_models_in_model_repo(self,global_model_repo=None):
         """
-        load all registered models.
+        load all registered models (called explicitly from
+        the user and not as an automatic activity).
         Normally this is done automatically while
         reference resolution of one loaded model.
 
@@ -348,7 +349,8 @@ class GlobalRepo(ImportURI):
             global_model_repo = textx.scoping.GlobalModelRepository()
         for filename_pattern in self.filename_pattern_list:
             global_model_repo.load_models_using_filepattern(
-                filename_pattern, model=None, glob_args=self.glob_args
+                filename_pattern, model=None, glob_args=self.glob_args,
+                is_main_model=True
             )
         return global_model_repo
 
@@ -433,10 +435,12 @@ class ExtRelativeName(object):
             get_list_of_concatenated_objects
         from textx.scoping import Postponed
         try:
+            print("DEBUG: ExtRelativeName.__call__(...{})".format(obj_ref.obj_name))
             one_def_obj = get_referenced_object(
                 None, obj, self.path_to_definition_object, parser)
             def_obj_list = get_list_of_concatenated_objects(
                 one_def_obj, self.path_to_extension, parser, [])
+            print("DEBUG: {}".format(def_obj_list))
             for def_obj in def_obj_list:
                 if type(def_obj) is Postponed:
                     self.postponed_counter += 1

@@ -503,7 +503,7 @@ class TextXMetaModel(DebugPrinter):
                resolved. This can be useful to manage models distributed
                across files (scoping)
         """
-        model = self.parser.get_model_from_str(
+        model = self.parser.clone().get_model_from_str(
             model_str, debug=debug,
             pre_ref_resolution_callback=pre_ref_resolution_callback)
         for p in self._model_processors:
