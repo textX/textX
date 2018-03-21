@@ -22,11 +22,11 @@ def test_metamodel_provider_advanced_test3_global():
 
     global_repo_provider = scoping_providers.PlainNameGlobalRepo()
     global_repo_provider.register_models(
-        this_folder + "/metamodel_provider3/*.a")
+        this_folder + "/metamodel_provider3/circular/*.a")
     global_repo_provider.register_models(
-        this_folder + "/metamodel_provider3/*.b")
+        this_folder + "/metamodel_provider3/circular/*.b")
     global_repo_provider.register_models(
-        this_folder + "/metamodel_provider3/*.c")
+        this_folder + "/metamodel_provider3/circular/*.c")
 
     a_mm = get_meta_model(
         global_repo_provider,this_folder + "/metamodel_provider3/A.tx")
@@ -101,7 +101,7 @@ def test_metamodel_provider_advanced_test3_import():
     # MODEL PARSING
     #################################
 
-    m = a_mm.model_from_file(this_folder + "/metamodel_provider3/model_a.a")
+    m = a_mm.model_from_file(this_folder + "/metamodel_provider3/circular/model_a.a")
     model_repo = m._tx_model_repo.all_models
 
     #################################

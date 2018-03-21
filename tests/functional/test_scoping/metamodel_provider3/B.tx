@@ -5,4 +5,5 @@ Model:
     imports+=Import*
     cls+=Cls*
     obj+=Obj*
+    call+=Call*
 ;
