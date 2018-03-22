@@ -198,8 +198,8 @@ def get_model_parser(top_rule, comments_model, **kwargs):
 
         def clone(self):
             """
-            Responsability: create a clone in order to parse a separate file.
-            It must be psosible thar more than one clone exist in parallel,
+            Responsibility: create a clone in order to parse a separate file.
+            It must be possible that more than one clone exist in parallel,
             without being influenced by other parser clones.
 
             Returns:

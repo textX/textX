@@ -23,7 +23,7 @@
       This may involve multiple meta models.
     - Then all references are resolved in one loop.
     - Finally the helper objects (ReferenceResolver) are purged.
-  - The MetaModelProvider has a clear method now (useful for tests).
+  - The MetaModelProvider has a clear-method now (useful for tests).
   - Added tests.
   - TODO: Not all raised exceptions include the model file.
 
