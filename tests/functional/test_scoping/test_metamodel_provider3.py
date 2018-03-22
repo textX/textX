@@ -118,7 +118,7 @@ def test_metamodel_provider_advanced_test3_import():
     # print(lst)
     assert len(lst) == 3
 
-    # check some references to be resolved (!=None)
+    # check all references to be resolved (!=None)
     for a in lst:
         assert a.ref != None
 
@@ -174,7 +174,69 @@ def test_metamodel_provider_advanced_test3_inheritance():
         return lst
 
     lst = get_all(model_repo, "Call")
-#    assert len(lst) == 0
+    assert len(lst) > 0
+
+    # check all references to be resolved (!=None)
+    for a in lst:
+        assert a.method != None
+
+    #################################
+    # END
+    #################################
+    scoping.MetaModelProvider.clear()
+
+def test_metamodel_provider_advanced_test3_inheritance2():
+    #################################
+    # META MODEL DEF
+    #################################
+    this_folder = dirname(abspath(__file__))
+
+    def get_meta_model(provider, grammar_file_name):
+        mm = metamodel_from_file(join(this_folder, grammar_file_name),
+                                 debug=False)
+        mm.register_scope_providers({
+            "*.*": provider,
+            "Call.method": scoping_providers.ExtRelativeName("obj.ref","methods","extends")
+        })
+        return mm
+
+    import_lookup_provider = scoping_providers.FQNImportURI()
+
+    a_mm = get_meta_model(
+        import_lookup_provider,this_folder + "/metamodel_provider3/A.tx")
+    b_mm = get_meta_model(
+        import_lookup_provider,this_folder + "/metamodel_provider3/B.tx")
+    c_mm = get_meta_model(
+        import_lookup_provider,this_folder + "/metamodel_provider3/C.tx")
+
+    scoping.MetaModelProvider.clear()
+    scoping.MetaModelProvider.add_metamodel("*.a", a_mm)
+    scoping.MetaModelProvider.add_metamodel("*.b", b_mm)
+    scoping.MetaModelProvider.add_metamodel("*.c", c_mm)
+
+    #################################
+    # MODEL PARSING
+    #################################
+
+    m = a_mm.model_from_file(this_folder + "/metamodel_provider3/inheritance2/model_a.a")
+    model_repo = m._tx_model_repository.all_models
+
+    #################################
+    # TEST MODEL
+    #################################
+
+    def get_all(model_repo, what):
+        lst = []
+        for m in model_repo.filename_to_model.values():
+            lst = lst + get_children_of_type(what, m)
+        return lst
+
+    lst = get_all(model_repo, "Call")
+    assert len(lst) > 0
+
+    # check all references to be resolved (!=None)
+    for a in lst:
+        assert a.method != None
 
     #################################
     # END
