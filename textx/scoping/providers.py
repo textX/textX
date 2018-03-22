@@ -436,9 +436,10 @@ class ExtRelativeName(object):
         from textx.scoping.tools import get_referenced_object, \
             get_list_of_concatenated_objects
         from textx.scoping import Postponed
+        from textx import get_model
         try:
             # print("DEBUG: ExtRelativeName.__call__(...{})".
-                  format(obj_ref.obj_name))
+            #      format(obj_ref.obj_name))
             one_def_obj = get_referenced_object(
                 None, obj, self.path_to_definition_object)
             def_obj_list = get_list_of_concatenated_objects(
