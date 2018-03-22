@@ -558,13 +558,13 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
         while unresolved_count > 0 and resolved_count > 0:
             resolved_count = 0
             unresolved_count = 0
-            print("***RESOLVING {} models".format(len(models)))
+            # print("***RESOLVING {} models".format(len(models)))
             for m in models:
                 resolved_count_for_this_model, delayed_crossrefs = \
                     m._tx_reference_resolver.resolve_one_step()
                 resolved_count += resolved_count_for_this_model
                 unresolved_count += len(delayed_crossrefs)
-            print("DEBUG: delayed #:{} unresolved #:{}".format(unresolved_count,unresolved_count))
+            # print("DEBUG: delayed #:{} unresolved #:{}".format(unresolved_count,unresolved_count))
         if (unresolved_count > 0):
             error_text = "Unresolvable cross references:"
 

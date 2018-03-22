@@ -437,13 +437,13 @@ class ExtRelativeName(object):
             get_list_of_concatenated_objects
         from textx.scoping import Postponed
         try:
-            print("DEBUG: ExtRelativeName.__call__(...{})".
+            # print("DEBUG: ExtRelativeName.__call__(...{})".
                   format(obj_ref.obj_name))
             one_def_obj = get_referenced_object(
                 None, obj, self.path_to_definition_object)
             def_obj_list = get_list_of_concatenated_objects(
                 one_def_obj, self.path_to_extension, [])
-            print("DEBUG: {}".format(def_obj_list))
+            # print("DEBUG: {}".format(def_obj_list))
             for def_obj in def_obj_list:
                 if type(def_obj) is Postponed:
                     self.postponed_counter += 1
