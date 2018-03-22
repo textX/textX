@@ -1,4 +1,31 @@
 # textX changelog
+* 2018-03-22 (scoping, multi file resolution bugfix)
+  - PROBLEM: Sharing one parser object to parse multiple files lead to
+    problems:
+    - Code location mapping was wrong (mixed up; e.g., visible in exception)
+    - Code resolution was not working in some cases (caused by erroneous
+      decisions about cross references based on the shared parser).
+  - The plain scope provider was changed to be independent of the parser
+     (TODO: TBC, if ok, some code can be removed).
+  - exceptions where adapted to include a file name (makes errors more
+     visible)
+     (TODO: TBC, if __str__ is desired; unclear why encode(utf8) was used)
+  - The metamodel now allows to specify a global model repository. With this
+    you can now share models across metamodels (before you could only do this
+    within one metamodel or language).
+  - The metamodel clones the parser when parsing a model file. The meta model
+     holds one parser, which is clone for every model to be parsed.
+  - TextXModelParser now has a clone method.
+    (TBC: is the clone ok: see responsibility of the method)
+  - model.py: the resolution loop logic now mostly moved to a separate object
+    ReferenceResolver, which holds the parser.
+    - The reference resolver are build from all model files affected (loaded).
+      This may involve multiple meta models.
+    - Then all references are resolved in one loop.
+    - Finally the helper objects (ReferenceResolver) are purged.
+  - The MetaModelProvider has a clear method now (useful for tests).
+  - Added tests.
+  - TODO: Not all raised exceptions include the model file.
 
 * 2018-02-13 (branch/scoping)
   - added new function textx.get_model.children to search arbritrary children using a lambda predicate.
