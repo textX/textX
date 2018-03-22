@@ -206,14 +206,14 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                 A clone of this parser
             """
             import copy
-            the_clone = copy.copy(self) # shallow copy
+            the_clone = copy.copy(self)  # shallow copy
 
             # create new objects for parse-dependent data
             the_clone._inst_stack = []
             the_clone._instances = {}
             the_clone._crossrefs = []
 
-            #TODO self.memoization = memoization
+            # TODO self.memoization = memoization
             the_clone.comments = []
             the_clone.comment_positions = {}
             the_clone.sem_actions = {}
@@ -498,7 +498,6 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
 
         return inst
 
-
     def call_obj_processors(model_obj):
         """
         Depth-first model object processing.
@@ -545,13 +544,12 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
         model._tx_reference_resolver = ReferenceResolver(
             parser, model, pos_crossref_list)
 
-
     if is_main_model:
         from textx.scoping import get_all_models_including_attached_models
         models = get_all_models_including_attached_models(model)
         # filter out all models w/o resolver:
         models = list(filter(
-            lambda x: hasattr(x,"_tx_reference_resolver"), models))
+            lambda x: hasattr(x, "_tx_reference_resolver"), models))
 
         resolved_count = 1
         unresolved_count = 1
@@ -564,7 +562,8 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                     m._tx_reference_resolver.resolve_one_step()
                 resolved_count += resolved_count_for_this_model
                 unresolved_count += len(delayed_crossrefs)
-            # print("DEBUG: delayed #:{} unresolved #:{}".format(unresolved_count,unresolved_count))
+            # print("DEBUG: delayed #:{} unresolved #:{}".
+            #      format(unresolved_count,unresolved_count))
         if (unresolved_count > 0):
             error_text = "Unresolvable cross references:"
 
@@ -586,7 +585,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
 
         # final check that everything went ok
         for m in models:
-            assert 0==len(get_children_of_type(Postponed.__class__, m))
+            assert 0 == len(get_children_of_type(Postponed.__class__, m))
 
         # We have model loaded and all link resolved
         # So we shall do a depth-first call of object
@@ -617,10 +616,11 @@ class ReferenceResolver:
     Responsability: store current model state before reference resolving.
     When all models are parsed, start resolving all references in a loop.
     """
+
     def __init__(self, parser, model, pos_crossref_list):
         self.parser = parser
         self.model = model
-        self.pos_crossref_list = pos_crossref_list # tool support
+        self.pos_crossref_list = pos_crossref_list  # tool support
         self.delayed_crossrefs = []
 
     def has_unresolved_crossrefs(self, obj, attr_name=None):
@@ -633,15 +633,14 @@ class ReferenceResolver:
             True (has unresolved crossrefs) or False (else)
         """
         if get_model(obj) != self.model:
-            return get_model(obj).\
+            return get_model(obj). \
                 _tx_reference_resolver.has_unresolved_crossrefs(obj)
         else:
             for crossref_obj, attr, crossref in self.parser._crossrefs:
                 if crossref_obj is obj:
-                    if (not attr_name) or attr_name==attr.name:
+                    if (not attr_name) or attr_name == attr.name:
                         return True
             return False
-
 
     def resolve_one_step(self):
         """
@@ -650,7 +649,8 @@ class ReferenceResolver:
         metamodel = self.parser.metamodel
 
         current_crossrefs = self.parser._crossrefs
-        # print("DEBUG: Current crossrefs #: {}".format(len(current_crossrefs)))
+        # print("DEBUG: Current crossrefs #: {}".
+        #      format(len(current_crossrefs)))
         new_crossrefs = []
         self.delayed_crossrefs = []
         resolved_crossref_count = 0
@@ -682,7 +682,8 @@ class ReferenceResolver:
                             RefRulePosition(
                                 name=crossref.obj_name,
                                 ref_pos_start=crossref.position,
-                                ref_pos_end=crossref.position + len(resolved.name),
+                                ref_pos_end=crossref.position + len(
+                                    resolved.name),
                                 def_pos_start=resolved._tx_position,
                                 def_pos_end=resolved._tx_position_end))
 

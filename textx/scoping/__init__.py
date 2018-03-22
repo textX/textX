@@ -60,7 +60,8 @@ class MetaModelProvider(object):
         if parent_model:
             return get_metamodel(parent_model)
         else:
-            raise Exception("unexpected: no meta model found for {}".format(filename));
+            raise Exception(
+                "unexpected: no meta model found for {}".format(filename))
 
 
 # -------------------------------------------------------------------------------------

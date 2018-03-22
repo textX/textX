@@ -31,8 +31,8 @@ class PlainName(object):
             multi_metamodel_support: enable a AST based search, instead
             of using the parser._instances
         """
-        self.multi_metamodel_support=multi_metamodel_support
-        pass;
+        self.multi_metamodel_support = multi_metamodel_support
+        pass
 
     def __call__(self, parser, obj, attr, obj_ref):
         """
@@ -89,18 +89,18 @@ class PlainName(object):
             from textx import get_model, get_children
             from textx.scoping.tools import textx_isinstance
             result_lst = get_children(
-                lambda x:hasattr(x,"name") and x.name==obj_ref.obj_name
-                and textx_isinstance(x,obj_ref.cls),
-                get_model(obj))
-            if len(result_lst)==1:
+                lambda x:
+                hasattr(x, "name") and x.name == obj_ref.obj_name
+                and textx_isinstance(x, obj_ref.cls), get_model(obj))
+            if len(result_lst) == 1:
                 result = result_lst[0]
-            elif len(result_lst)>1:
+            elif len(result_lst) > 1:
                 line, col = parser.pos_to_linecol(obj_ref.position)
                 raise TextXSemanticError(
                     "name {} is not unique.".format(obj_ref.obj_name),
                     line=line, col=col, filename=get_model(obj)._tx_filename)
             else:
-                result=None
+                result = None
         else:
             result = _inner_resolve_link_rule_ref(obj_ref.cls,
                                                   obj_ref.obj_name)
@@ -116,7 +116,7 @@ class FQN(object):
     """
 
     def __init__(self):
-        pass;
+        pass
 
     def __call__(self, parser, obj, attr, obj_ref):
         """
@@ -329,7 +329,7 @@ class GlobalRepo(ImportURI):
             model._tx_model_repository.load_models_using_filepattern(
                 filename_pattern, model=model, glob_args=self.glob_args)
 
-    def load_models_in_model_repo(self,global_model_repo=None):
+    def load_models_in_model_repo(self, global_model_repo=None):
         """
         load all registered models (called explicitly from
         the user and not as an automatic activity).
@@ -460,4 +460,4 @@ class ExtRelativeName(object):
             line, col = parser.pos_to_linecol(obj_ref.position)
             raise TextXSemanticError(
                 'ExtRelativeName: {}'.format(str(e)), line=line, col=col,
-                filename = get_model(obj)._tx_filename)
+                filename=get_model(obj)._tx_filename)

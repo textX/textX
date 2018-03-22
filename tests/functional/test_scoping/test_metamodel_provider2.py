@@ -6,6 +6,7 @@ from os.path import dirname, abspath, join
 from textx.scoping.tools import get_unique_named_object_in_all_models
 from pytest import raises
 
+
 def test_metamodel_provider_advanced_test():
     #################################
     # META MODEL DEF
@@ -30,9 +31,9 @@ def test_metamodel_provider_advanced_test():
         this_folder + "/metamodel_provider2/*.ingredient")
 
     i_mm = get_meta_model(
-        global_repo,this_folder + "/metamodel_provider2/Ingredient.tx")
+        global_repo, this_folder + "/metamodel_provider2/Ingredient.tx")
     r_mm = get_meta_model(
-        global_repo,this_folder + "/metamodel_provider2/Recipe.tx")
+        global_repo, this_folder + "/metamodel_provider2/Recipe.tx")
 
     scoping.MetaModelProvider.add_metamodel("*.recipe", r_mm)
     scoping.MetaModelProvider.add_metamodel("*.ingredient", i_mm)
@@ -60,8 +61,8 @@ def test_metamodel_provider_advanced_test():
     assert len(lst_r) == 2
 
     # check some references to be resolved (!=None)
-    assert lst_r[0].ingredients[0].type != None
-    assert lst_r[0].ingredients[0].unit != None
+    assert lst_r[0].ingredients[0].type
+    assert lst_r[0].ingredients[0].unit
 
     #################################
     # END

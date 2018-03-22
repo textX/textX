@@ -25,8 +25,8 @@ def needs_to_be_resolved(parent_obj, attr_name):
         function always returns False.
 
     """
-    if hasattr( get_model(parent_obj), "_tx_reference_resolver"):
-        return get_model(parent_obj)._tx_reference_resolver.\
+    if hasattr(get_model(parent_obj), "_tx_reference_resolver"):
+        return get_model(parent_obj)._tx_reference_resolver. \
             has_unresolved_crossrefs(parent_obj, attr_name)
     else:
         return False
@@ -87,7 +87,7 @@ def get_list_of_concatenated_objects(obj, dot_separated_name,
     ret = get_referenced_object(None, obj, dot_separated_name)
     if type(ret) is list:
         for r in ret:
-            lst = get_list_of_concatenated_objects(r, dot_separated_name,lst)
+            lst = get_list_of_concatenated_objects(r, dot_separated_name, lst)
     else:
         lst = get_list_of_concatenated_objects(ret, dot_separated_name, lst)
     return lst
