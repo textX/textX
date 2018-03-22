@@ -401,17 +401,19 @@ class RelativeName(object):
     def __call__(self, parser, obj, attr, obj_ref):
         from textx.scoping.tools import get_referenced_object
         from textx.scoping import Postponed
+        from textx import get_model
         try:
             res = get_referenced_object(
                 None, obj,
                 self.path_to_container_object + "." + obj_ref.obj_name,
-                parser, obj_ref.cls)
+                obj_ref.cls)
             if type(res) is Postponed:
                 self.postponed_counter += 1
             return res
         except TypeError as e:
             line, col = parser.pos_to_linecol(obj_ref.position)
-            raise TextXSemanticError('{}'.format(str(e)), line=line, col=col)
+            raise TextXSemanticError('{}'.format(str(e)), line=line, col=col,
+                                     filename=get_model(obj)._tx_filename)
 
 
 class ExtRelativeName(object):
@@ -435,11 +437,12 @@ class ExtRelativeName(object):
             get_list_of_concatenated_objects
         from textx.scoping import Postponed
         try:
-            print("DEBUG: ExtRelativeName.__call__(...{})".format(obj_ref.obj_name))
+            print("DEBUG: ExtRelativeName.__call__(...{})".
+                  format(obj_ref.obj_name))
             one_def_obj = get_referenced_object(
-                None, obj, self.path_to_definition_object, parser)
+                None, obj, self.path_to_definition_object)
             def_obj_list = get_list_of_concatenated_objects(
-                one_def_obj, self.path_to_extension, parser, [])
+                one_def_obj, self.path_to_extension, [])
             print("DEBUG: {}".format(def_obj_list))
             for def_obj in def_obj_list:
                 if type(def_obj) is Postponed:
@@ -447,7 +450,7 @@ class ExtRelativeName(object):
                     return def_obj
                 res = get_referenced_object(
                     None, def_obj,
-                    self.path_to_target + "." + obj_ref.obj_name, parser,
+                    self.path_to_target + "." + obj_ref.obj_name,
                     obj_ref.cls)
                 if res:
                     return res  # may be Postponed
@@ -455,4 +458,5 @@ class ExtRelativeName(object):
         except TypeError as e:
             line, col = parser.pos_to_linecol(obj_ref.position)
             raise TextXSemanticError(
-                'ExtRelativeName: {}'.format(str(e)), line=line, col=col)
+                'ExtRelativeName: {}'.format(str(e)), line=line, col=col,
+                filename = get_model(obj)._tx_filename)

@@ -1,5 +1,5 @@
 Cls: "class" name=ID (
-( "extends" extends=[Cls])?
+( "extends" extends+=[Cls]+)?
 "{"
 methods+=Method*
 "}"

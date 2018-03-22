@@ -545,6 +545,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
         model._tx_reference_resolver = ReferenceResolver(
             parser, model, pos_crossref_list)
 
+
     if is_main_model:
         from textx.scoping import get_all_models_including_attached_models
         models = get_all_models_including_attached_models(model)
@@ -579,6 +580,14 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
             # TODO: what does this check?
             assert not m._tx_reference_resolver.parser._inst_stack
 
+        # cleanup
+        for m in models:
+            del m._tx_reference_resolver
+
+        # final check that everything went ok
+        for m in models:
+            assert 0==len(get_children_of_type(Postponed.__class__, m))
+
         # We have model loaded and all link resolved
         # So we shall do a depth-first call of object
         # processors if any processor is defined.
@@ -600,7 +609,6 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
         model._pos_rule_dict = OrderedDict(sorted(pos_rule_dict.items(),
                                                   key=lambda x: x[0],
                                                   reverse=True))
-
     return model
 
 
@@ -614,6 +622,26 @@ class ReferenceResolver:
         self.model = model
         self.pos_crossref_list = pos_crossref_list # tool support
         self.delayed_crossrefs = []
+
+    def has_unresolved_crossrefs(self, obj, attr_name=None):
+        """
+        Args:
+            obj: has this object unresolved crossrefs in its fields
+            (non recursively)
+
+        Returns:
+            True (has unresolved crossrefs) or False (else)
+        """
+        if get_model(obj) != self.model:
+            return get_model(obj).\
+                _tx_reference_resolver.has_unresolved_crossrefs(obj)
+        else:
+            for crossref_obj, attr, crossref in self.parser._crossrefs:
+                if crossref_obj is obj:
+                    if (not attr_name) or attr_name==attr.name:
+                        return True
+            return False
+
 
     def resolve_one_step(self):
         """

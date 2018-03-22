@@ -4,35 +4,32 @@
 # Author: Pierre Bayerl
 # License: MIT License
 #######################################################################
-from textx import get_children
+from textx import get_children, get_model
 import re
 
 
-def needs_to_be_resolved(parser, parent_obj, attr_name):
+def needs_to_be_resolved(parent_obj, attr_name):
     """
     This function determines, if a reference (CrossReference) needs to be
     resolved or not (while creating the model, while resolving references).
 
     Args:
-        parser: the parser which provides the information required for this
-                function.
-                If it is None, False is returned.
         parent_obj: the object containing the attribute to be resolved.
         attr_name: the attribute identification object.
 
     Returns:
-        If the parser is None, False is returned.
         True if the attribute needs to be resolved. Else False.
         In case of lists of references, this function return true if any of the
         references in the list needs to be resolved.
+        Note: outside the model building process (from_file or from_str) this
+        function always returns False.
 
     """
-    if not parser:
+    if hasattr( get_model(parent_obj), "_tx_reference_resolver"):
+        return get_model(parent_obj)._tx_reference_resolver.\
+            has_unresolved_crossrefs(parent_obj, attr_name)
+    else:
         return False
-    for obj, attr, crossref in parser._crossrefs:
-        if obj is parent_obj and attr_name == attr.name:
-            return True
-    return False
 
 
 def textx_isinstance(obj, obj_cls):
@@ -59,7 +56,7 @@ def textx_isinstance(obj, obj_cls):
     return False
 
 
-def get_list_of_concatenated_objects(obj, dot_separated_name, parser=None,
+def get_list_of_concatenated_objects(obj, dot_separated_name,
                                      lst=None):
     """
     get a list of the objects consisting of
@@ -71,7 +68,6 @@ def get_list_of_concatenated_objects(obj, dot_separated_name, parser=None,
     Args:
         obj: the starting point
         dot_separated_name: "the search path" (applied recursively)
-        parser: the parser (req. to determine if an object is Postponed)
         lst: the initial list (e.g. [])
 
     Returns:
@@ -88,14 +84,12 @@ def get_list_of_concatenated_objects(obj, dot_separated_name, parser=None,
     lst.append(obj)
     if type(obj) is Postponed:
         return lst
-    ret = get_referenced_object(None, obj, dot_separated_name, parser)
+    ret = get_referenced_object(None, obj, dot_separated_name)
     if type(ret) is list:
         for r in ret:
-            lst = get_list_of_concatenated_objects(r, dot_separated_name,
-                                                   parser, lst)
+            lst = get_list_of_concatenated_objects(r, dot_separated_name,lst)
     else:
-        lst = get_list_of_concatenated_objects(ret, dot_separated_name, parser,
-                                               lst)
+        lst = get_list_of_concatenated_objects(ret, dot_separated_name, lst)
     return lst
 
 
@@ -109,7 +103,7 @@ def get_recursive_parent_with_typename(obj, desired_parent_typename):
         return obj
 
 
-def get_referenced_object(prev_obj, obj, dot_separated_name, parser=None,
+def get_referenced_object(prev_obj, obj, dot_separated_name,
                           desired_type=None):
     """
     get objects based on a path
@@ -120,7 +114,6 @@ def get_referenced_object(prev_obj, obj, dot_separated_name, parser=None,
         dot_separated_name: the attribute name "a.b.c.d" starting from obj
            Note: the attribute "parent(TYPE)" is a shortcut to jump to the
            parent of type "TYPE" (exact match of type name).
-        parser: the parser
         desired_type: (optional)
 
     Returns:
@@ -138,7 +131,7 @@ def get_referenced_object(prev_obj, obj, dot_separated_name, parser=None,
                                                       desired_parent_typename)
         if next_obj:
             return get_referenced_object(None, next_obj, ".".join(names[1:]),
-                                         parser, desired_type)
+                                         desired_type)
         else:
             return None
     elif type(obj) is list:
@@ -154,7 +147,7 @@ def get_referenced_object(prev_obj, obj, dot_separated_name, parser=None,
                             desired_type.__name__))
         if not next_obj:
             # if prev_obj needs to be resolved: return Postponed.
-            if needs_to_be_resolved(parser, prev_obj, names[0]):
+            if needs_to_be_resolved(prev_obj, names[0]):
                 return Postponed()
             else:
                 return None
@@ -164,20 +157,20 @@ def get_referenced_object(prev_obj, obj, dot_separated_name, parser=None,
         next_obj = getattr(obj, names[0])
     if not next_obj:
         # if obj in in crossref return Postponed, else None
-        if needs_to_be_resolved(parser, obj, names[0]):
+        if needs_to_be_resolved(obj, names[0]):
             return Postponed()
         else:
             return None
     if len(names) > 1:
         return get_referenced_object(obj, next_obj, ".".join(
-            names[1:]), parser, desired_type)
-    if type(next_obj) is list and needs_to_be_resolved(parser, obj, names[0]):
+            names[1:]), desired_type)
+    if type(next_obj) is list and needs_to_be_resolved(obj, names[0]):
         return Postponed()
     return next_obj
 
 
 def get_referenced_object_as_list(
-        prev_obj, obj, dot_separated_name, parser=None, desired_type=None):
+        prev_obj, obj, dot_separated_name, desired_type=None):
     """
     same as get_referenced_object
 
@@ -185,13 +178,12 @@ def get_referenced_object_as_list(
         prev_obj: see get_referenced_object
         obj: see get_referenced_object
         dot_separated_name: see get_referenced_object
-        parser: see get_referenced_object
         desired_type: see get_referenced_object
 
     Returns:
         same as get_referenced_object, but always returns a list
     """
-    res = get_referenced_object(prev_obj, obj, dot_separated_name, parser,
+    res = get_referenced_object(prev_obj, obj, dot_separated_name,
                                 desired_type)
     if res is None:
         return []
