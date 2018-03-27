@@ -16,10 +16,10 @@ def test_postponed_resolution_error():
     # META MODEL DEF
     #################################
 
-    def from_port(parser, obj, attr, obj_ref):
+    def from_port(obj, attr, obj_ref):
         return scoping.Postponed()
 
-    def to_port(parser, obj, attr, obj_ref):
+    def to_port(obj, attr, obj_ref):
         return scoping.Postponed()
 
     my_meta_model = metamodel_from_file(

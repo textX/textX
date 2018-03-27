@@ -142,6 +142,11 @@ This attribute exists only on the root of the model. If the model is loaded
 from a file, this attribute will be the full path of the source file. If the
 model is created from a string this attribute will be `None`.
 
+### _tx_parser
+
+This attribute represents the concrete parser instance used for this model
+(the parser of the _tx_metamodel is only a blueprint for the parser).
+
 ### _tx_metamodel
 
 This attribute exists only on the root of the model. It is a reference to the

@@ -249,6 +249,12 @@ def test_metamodel_provider_advanced_test3_inheritance2():
     for a in lst:
         assert a.method
 
+    # check that all models have different parsers
+    parsers = list(
+        map(lambda x:x._tx_parser, model_repo.filename_to_model.values()))
+    assert 4==len(parsers) #  4 files -> 4 parsers
+    assert 4==len(set(parsers)) # 4 different parsers
+
     #################################
     # END
     #################################

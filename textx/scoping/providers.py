@@ -34,12 +34,11 @@ class PlainName(object):
         self.multi_metamodel_support = multi_metamodel_support
         pass
 
-    def __call__(self, parser, obj, attr, obj_ref):
+    def __call__(self, obj, attr, obj_ref):
         """
         the default scope provider
 
         Args:
-            parser: the current parser
             obj: unused (used for multi_metamodel_support)
             attr: unused
             obj_ref: the cross reference to be resolved
@@ -49,14 +48,15 @@ class PlainName(object):
         """
         from textx.const import RULE_COMMON, RULE_ABSTRACT
         from textx.model import ObjCrossRef
+        from textx.scoping.tools import get_parser
 
         if obj_ref is None:
             return None  # an error! (see model.py: resolve_refs (TODO check)
 
         assert type(obj_ref) is ObjCrossRef, type(obj_ref)
 
-        if parser.debug:
-            parser.dprint("Resolving obj crossref: {}:{}"
+        if get_parser(obj).debug:
+            get_parser(obj).dprint("Resolving obj crossref: {}:{}"
                           .format(obj_ref.cls, obj_ref.obj_name))
 
         def _inner_resolve_link_rule_ref(cls, obj_name):
@@ -80,8 +80,8 @@ class PlainName(object):
                 # - needs: .current reference (in the model)
                 #          .the model (?)
                 # - provides: the resolved object or None
-                if id(cls) in parser._instances:
-                    objs = parser._instances[id(cls)]
+                if id(cls) in get_parser(obj)._instances:
+                    objs = get_parser(obj)._instances[id(cls)]
                     if obj_name in objs:
                         return objs[obj_name]
 
@@ -95,7 +95,7 @@ class PlainName(object):
             if len(result_lst) == 1:
                 result = result_lst[0]
             elif len(result_lst) > 1:
-                line, col = parser.pos_to_linecol(obj_ref.position)
+                line, col = get_parser(obj).pos_to_linecol(obj_ref.position)
                 raise TextXSemanticError(
                     "name {} is not unique.".format(obj_ref.obj_name),
                     line=line, col=col, filename=get_model(obj)._tx_filename)
@@ -118,17 +118,19 @@ class FQN(object):
     def __init__(self):
         pass
 
-    def __call__(self, parser, obj, attr, obj_ref):
+    def __call__(self, obj, attr, obj_ref):
         """
         find a fully qualified name.
         Use this callable as scope_provider in a meta-model:
           my_metamodel.register_scope_provider(
             {"*.*":textx.scoping.providers.FQN})
-        :param parser: the current parser (unused)
-        :obj object corresponding a instance of an object (rule instance)
-        :attr the referencing attribute (unused)
-        :param obj_ref: ObjCrossRef to be resolved
-        :returns None or the referenced object
+
+        Args:
+            obj: object corresponding a instance of an object (rule instance)
+            attr: the referencing attribute (unused)
+            obj_ref: ObjCrossRef to be resolved
+
+        Returns: None or the referenced object
         """
 
         def _find_obj_fqn(p, fqn_name):
@@ -250,7 +252,7 @@ class ImportURI(scoping.ModelLoader):
             model._tx_model_repository = model_repository
         self._load_referenced_models(model)
 
-    def __call__(self, parser, obj, attr, obj_ref):
+    def __call__(self, obj, attr, obj_ref):
         from textx.model import ObjCrossRef, get_model
         assert type(obj_ref) is ObjCrossRef, type(obj_ref)
         # cls, obj_name = obj_ref.cls, obj_ref.obj_name
@@ -263,13 +265,13 @@ class ImportURI(scoping.ModelLoader):
         model_repository = model._tx_model_repository
 
         # 1) try to find object locally
-        ret = self.scope_provider(parser, obj, attr, obj_ref)
+        ret = self.scope_provider(obj, attr, obj_ref)
         if ret:
             return ret
 
         # 2) do we have loaded models?
         for m in model_repository.local_models.filename_to_model.values():
-            ret = self.scope_provider(parser, m, attr, obj_ref)
+            ret = self.scope_provider(m, attr, obj_ref)
             if ret:
                 return ret
         return None
@@ -398,7 +400,7 @@ class RelativeName(object):
         self.path_to_container_object = path_to_container_object
         self.postponed_counter = 0
 
-    def __call__(self, parser, obj, attr, obj_ref):
+    def __call__(self, obj, attr, obj_ref):
         from textx.scoping.tools import get_referenced_object
         from textx.scoping import Postponed
         from textx import get_model
@@ -411,7 +413,8 @@ class RelativeName(object):
                 self.postponed_counter += 1
             return res
         except TypeError as e:
-            line, col = parser.pos_to_linecol(obj_ref.position)
+            from textx.scoping.tools import get_parser
+            line, col = get_parser(obj).pos_to_linecol(obj_ref.position)
             raise TextXSemanticError('{}'.format(str(e)), line=line, col=col,
                                      filename=get_model(obj)._tx_filename)
 
@@ -432,7 +435,7 @@ class ExtRelativeName(object):
         self.path_to_extension = path_to_extension
         self.postponed_counter = 0
 
-    def __call__(self, parser, obj, attr, obj_ref):
+    def __call__(self, obj, attr, obj_ref):
         from textx.scoping.tools import get_referenced_object, \
             get_list_of_concatenated_objects
         from textx.scoping import Postponed
@@ -457,7 +460,8 @@ class ExtRelativeName(object):
                     return res  # may be Postponed
             return None
         except TypeError as e:
-            line, col = parser.pos_to_linecol(obj_ref.position)
+            from textx.scoping.tools import get_parser
+            line, col = get_parser(obj).pos_to_linecol(obj_ref.position)
             raise TextXSemanticError(
                 'ExtRelativeName: {}'.format(str(e)), line=line, col=col,
                 filename=get_model(obj)._tx_filename)

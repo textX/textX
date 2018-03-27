@@ -545,7 +545,7 @@ class TextXMetaModel(DebugPrinter):
 
         if not model:
             # model not present (from global repo) -> load it
-            model = self.parser.get_model_from_file(
+            model = self.parser.clone().get_model_from_file(
                 file_name, encoding, debug=debug,
                 pre_ref_resolution_callback=callback,
                 is_main_model=is_main_model)

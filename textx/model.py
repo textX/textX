@@ -199,7 +199,7 @@ def get_model_parser(top_rule, comments_model, **kwargs):
         def clone(self):
             """
             Responsibility: create a clone in order to parse a separate file.
-            It must be possible that more than one clone exist in parallel,
+            It must Kbe possible that more than one clone exist in parallel,
             without being influenced by other parser clones.
 
             Returns:
@@ -543,6 +543,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
     if not is_primitive_type:
         model._tx_reference_resolver = ReferenceResolver(
             parser, model, pos_crossref_list)
+        model._tx_parser = parser
 
     if is_main_model:
         from textx.scoping import get_all_models_including_attached_models
@@ -670,10 +671,10 @@ class ReferenceResolver:
                         if self.parser.debug:
                             self.parser.dprint(" FOUND {}".format(attr_ref))
                         resolved = metamodel.scope_providers[attr_ref](
-                            self.parser, obj, attr, crossref)
+                            obj, attr, crossref)
                         break
                 else:
-                    resolved = default_scope(self.parser, obj, attr, crossref)
+                    resolved = default_scope(obj, attr, crossref)
 
                 # Collect cross-references for textx-tools
                 if resolved and not type(resolved) is Postponed:
