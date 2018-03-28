@@ -171,7 +171,8 @@ def test_metamodel_provider_advanced_test3_inheritance():
     model_repo = m._tx_model_repository.all_models
 
     #################################
-    # TEST MODEL
+    # TEST MODEL (dependencies from one file to the other and back again)
+    # - checks all references are resolved
     #################################
 
     def get_all(model_repo, what):
@@ -233,7 +234,9 @@ def test_metamodel_provider_advanced_test3_inheritance2():
     model_repo = m._tx_model_repository.all_models
 
     #################################
-    # TEST MODEL
+    # TEST MODEL (inheritance)
+    # - check all references are resolved
+    # - check all models have an own parser
     #################################
 
     def get_all(model_repo, what):
@@ -301,7 +304,9 @@ def test_metamodel_provider_advanced_test3_diamond():
     model_repo = m._tx_model_repository.all_models
 
     #################################
-    # TEST MODEL
+    # TEST MODEL (inheritance, diamond include structure)
+    # - check all references are resolved
+    # - check all models have an own parser
     #################################
 
     def get_all(model_repo, what):
