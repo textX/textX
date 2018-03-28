@@ -5,6 +5,7 @@ class A1 {
 }
 class A2 extends B1 {
   method a2
+  method a2_very_long_name
 }
 class A3 extends B2 {
   method a3

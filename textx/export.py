@@ -149,77 +149,121 @@ def metamodel_export(metamodel, file_name):
         f.write("\n}\n")
 
 
-def model_export(model, file_name):
+def model_export(model, file_name, repo=None):
+    """
+    Args:
+        model: the model to be exported (may be None if repo is not None)
+        file_name: the output file name
+        repo: the model repo (alternative to model input) to be exported
+
+    Returns:
+        Nothing
+    """
+    with codecs.open(file_name, 'w', encoding="utf-8") as f:
+        model_export_to_file(f, model, repo)
+
+
+def model_export_to_file(f, model=None, repo=None):
+    """
+    Args:
+        f: the file object to be used as output.
+        model: the model to be exported (alternative to repo)
+        repo: the repo to be exported (alternative to model)
+
+    Returns:
+        Nothing
+    """
+    if not model and not repo:
+        raise Exception("specity either a model or a repo")
+    if model and repo:
+        raise Exception("specity either a model or a repo")
 
     processed_set = set()
+    f.write(HEADER)
 
-    with codecs.open(file_name, 'w', encoding="utf-8") as f:
-        f.write(HEADER)
+    def _export(obj):
 
-        def _export(obj):
+        if obj is None or obj in processed_set or type(obj) \
+                in PRIMITIVE_PYTHON_TYPES:
+            return
 
-            if obj is None or obj in processed_set or type(obj) \
-                    in PRIMITIVE_PYTHON_TYPES:
-                return
+        processed_set.add(obj)
 
-            processed_set.add(obj)
+        attrs = ""
+        obj_cls = obj.__class__
+        name = ""
+        for attr_name, attr in obj_cls._tx_attrs.items():
 
-            attrs = ""
-            obj_cls = obj.__class__
-            name = ""
-            for attr_name, attr in obj_cls._tx_attrs.items():
+            attr_value = getattr(obj, attr_name)
 
-                attr_value = getattr(obj, attr_name)
+            endmark = 'arrowtail=diamond dir=both' if attr.cont else ""
+            required = "+" if attr.mult in \
+                [MULT_ONE, MULT_ONEORMORE] else ""
 
-                endmark = 'arrowtail=diamond dir=both' if attr.cont else ""
-                required = "+" if attr.mult in \
-                    [MULT_ONE, MULT_ONEORMORE] else ""
-
-                if attr.mult in [MULT_ONEORMORE, MULT_ZEROORMORE]:
-                    if all([type(x) in PRIMITIVE_PYTHON_TYPES
-                            for x in attr_value]):
-                        attrs += "{}{}:list=[".format(required, attr_name)
-                        attrs += ",".join([dot_repr(x) for x in attr_value])
-                        attrs += "]\\l"
-                    else:
-                        for idx, list_obj in enumerate(attr_value):
-                            if list_obj is not None:
-                                if type(list_obj) in PRIMITIVE_PYTHON_TYPES:
-                                    f.write(
-                                        '{} -> "{}:{}" [label="{}:{}" {}]\n'
-                                        .format(id(obj), list_obj,
-                                                type(list_obj).__name__,
-                                                attr_name, idx, endmark))
-                                else:
-                                    f.write('{} -> {} [label="{}:{}" {}]\n'
-                                            .format(id(obj), id(list_obj),
-                                                    attr_name, idx, endmark))
-                                    _export(list_obj)
+            if attr.mult in [MULT_ONEORMORE, MULT_ZEROORMORE]:
+                if all([type(x) in PRIMITIVE_PYTHON_TYPES
+                        for x in attr_value]):
+                    attrs += "{}{}:list=[".format(required, attr_name)
+                    attrs += ",".join([dot_repr(x) for x in attr_value])
+                    attrs += "]\\l"
                 else:
+                    for idx, list_obj in enumerate(attr_value):
+                        if list_obj is not None:
+                            if type(list_obj) in PRIMITIVE_PYTHON_TYPES:
+                                f.write(
+                                    '{} -> "{}:{}" [label="{}:{}" {}]\n'
+                                    .format(id(obj), list_obj,
+                                            type(list_obj).__name__,
+                                            attr_name, idx, endmark))
+                            else:
+                                f.write('{} -> {} [label="{}:{}" {}]\n'
+                                        .format(id(obj), id(list_obj),
+                                                attr_name, idx, endmark))
+                                _export(list_obj)
+            else:
 
-                    # Plain attributes
-                    if type(attr_value) is text and attr_name != 'name':
-                        attr_value = dot_repr(attr_value)
+                # Plain attributes
+                if type(attr_value) is text and attr_name != 'name':
+                    attr_value = dot_repr(attr_value)
 
-                    if type(attr_value) in PRIMITIVE_PYTHON_TYPES:
-                        if attr_name == 'name':
-                            name = attr_value
-                        else:
-                            attrs += "{}{}:{}={}\\l".format(
-                                required, attr_name, type(attr_value)
-                                .__name__, attr_value)
+                if type(attr_value) in PRIMITIVE_PYTHON_TYPES:
+                    if attr_name == 'name':
+                        name = attr_value
                     else:
-                        # Object references
-                        if attr_value is not None:
-                            f.write('{} -> {} [label="{}" {}]\n'.format(
-                                id(obj), id(attr_value),
-                                attr_name, endmark))
-                            _export(attr_value)
+                        attrs += "{}{}:{}={}\\l".format(
+                            required, attr_name, type(attr_value)
+                            .__name__, attr_value)
+                else:
+                    # Object references
+                    if attr_value is not None:
+                        f.write('{} -> {} [label="{}" {}]\n'.format(
+                            id(obj), id(attr_value),
+                            attr_name, endmark))
+                        _export(attr_value)
 
-            name = "{}:{}".format(name, obj_cls.__name__)
+        name = "{}:{}".format(name, obj_cls.__name__)
 
-            f.write('{}[label="{{{}|{}}}"]\n'.format(id(obj), name, attrs))
+        f.write('{}[label="{{{}|{}}}"]\n'.format(id(obj), name, attrs))
 
+    def _export_subgraph(m):
+        from textx import get_children
+        f.write('subgraph "cluster_{}" {{\n'.format(m._tx_filename))
+        f.write('''
+        penwidth=2.0
+        color=darkorange4;
+        label = "{}";
+                    '''.format(m._tx_filename))
+        for obj in get_children(lambda _: True, m):
+            f.write('{};\n'.format(id(obj)))
+        f.write('\n}\n')
+
+    if repo or hasattr(model, "_tx_model_repository"):
+        if not repo:
+            repo = model._tx_model_repository.all_models
+        for m in repo.filename_to_model.values():
+            _export_subgraph(m)
+            _export(m)
+    else:
         _export(model)
 
-        f.write('\n}\n')
+    f.write('\n}\n')
