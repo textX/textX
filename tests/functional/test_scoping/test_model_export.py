@@ -7,6 +7,13 @@ import io
 import textx.export as export
 
 def test_model_export():
+    """
+    This test checks that the export function (to graphdotviz)
+    works with a model distributed across different files.
+    It is checked that all filenames are included in the output
+    and that some elements from every model file are incuded in the
+    output.
+    """
     #################################
     # META MODEL DEF
     #################################

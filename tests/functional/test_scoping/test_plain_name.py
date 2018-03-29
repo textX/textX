@@ -28,6 +28,9 @@ Attribute:
 
 
 def test_plain_name_ref():
+    """
+    Basic test for PlainName (good case and bad case)
+    """
     #################################
     # META MODEL DEF
     #################################
@@ -129,6 +132,10 @@ def test_plain_name_ref():
     #################################
 
 def test_plain_name_ref_with_muli_metamodel_support():
+    """
+    Basic test for PlainName with multi metamodel support.
+    It is also checked that the referred objects must have a unique name.
+    """
     #################################
     # META MODEL DEF
     #################################

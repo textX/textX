@@ -32,7 +32,10 @@ FQN: ID('.'ID)*;
     '''
 
 
-def test_fully_qualified_name_ref():
+def test_children():
+    """
+    This test checks the get_children function
+    """
     #################################
     # META MODEL DEF
     #################################

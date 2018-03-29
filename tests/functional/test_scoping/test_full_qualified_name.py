@@ -33,6 +33,9 @@ FQN: ID('.'ID)*;
 
 
 def test_fully_qualified_name_ref():
+    """
+    This is a basic test for the FQN (positive and negative test).
+    """
     #################################
     # META MODEL DEF
     #################################

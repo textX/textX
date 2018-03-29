@@ -10,6 +10,9 @@ from textx.scoping.tools import check_unique_named_object_has_class, \
 
 
 def test_model_without_imports():
+    """
+    Basic test for FQNImportURI (with a model not using imports)
+    """
     #################################
     # META MODEL DEF
     #################################
@@ -44,6 +47,9 @@ def test_model_without_imports():
 
 
 def test_model_with_imports():
+    """
+    Basic test for FQNImportURI (good case)
+    """
     #################################
     # META MODEL DEF
     #################################
@@ -88,6 +94,9 @@ def test_model_with_imports():
 
 
 def test_model_with_imports_and_errors():
+    """
+    Basic test for FQNImportURI (bad case)
+    """
     #################################
     # META MODEL DEF
     #################################
@@ -118,6 +127,9 @@ def test_model_with_imports_and_errors():
 
 
 def test_model_with_imports_and_global_repo():
+    """
+    Basic test for FQNImportURI + global_repository
+    """
     #################################
     # META MODEL DEF
     #################################
@@ -153,6 +165,9 @@ def test_model_with_imports_and_global_repo():
 
 
 def test_model_with_circular_imports():
+    """
+    Basic test for FQNImportURI + circular imports
+    """
     #################################
     # META MODEL DEF
     #################################

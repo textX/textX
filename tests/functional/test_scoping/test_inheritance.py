@@ -9,6 +9,9 @@ import re
 
 
 def test_inheritance_processor():
+    """
+    Basic test for ExtRelativeName (using an inheritance example)
+    """
     #################################
     # META MODEL DEF
     #################################

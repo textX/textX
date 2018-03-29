@@ -8,6 +8,14 @@ from pytest import raises
 
 
 def test_metamodel_provider_advanced_test3_global():
+    """
+    Advanced test for ExtRelativeName and PlainNameGlobalRepo.
+
+    Here we have a global model repository shared between
+    different meta models.
+
+    The meta models interact (refer to each other, different directions).
+    """
     #################################
     # META MODEL DEF
     #################################
@@ -72,6 +80,14 @@ def test_metamodel_provider_advanced_test3_global():
 
 
 def test_metamodel_provider_advanced_test3_import():
+    """
+    Advanced test for ExtRelativeName and PlainNameImportURI.
+
+    Here we have a global model repository shared between
+    different meta models.
+
+    The meta models interact (refer to each other, different directions).
+    """
     #################################
     # META MODEL DEF
     #################################
@@ -132,6 +148,17 @@ def test_metamodel_provider_advanced_test3_import():
 
 
 def test_metamodel_provider_advanced_test3_inheritance():
+    """
+    Advanced test for ExtRelativeName and FQNImportURI.
+
+    Here we have a global model repository shared between
+    different meta models.
+
+    The meta models interact (refer to each other, different directions,
+    A inherits from B, the B from A, etc.).
+
+    It is checked that all relevant references are resolved.
+    """
     #################################
     # META MODEL DEF
     #################################
@@ -195,6 +222,10 @@ def test_metamodel_provider_advanced_test3_inheritance():
 
 
 def test_metamodel_provider_advanced_test3_inheritance2():
+    """
+    More complicated model (see test above). It is also checked that
+    the parsers are correctly cloned.
+    """
     #################################
     # META MODEL DEF
     #################################
@@ -265,6 +296,11 @@ def test_metamodel_provider_advanced_test3_inheritance2():
 
 
 def test_metamodel_provider_advanced_test3_diamond():
+    """
+    More complicated model (see test above): here we have a
+    diamond shared dependency. It is also checked that
+    the parsers are correctly cloned.
+    """
     #################################
     # META MODEL DEF
     #################################

@@ -7,6 +7,11 @@ from textx.scoping.tools import get_unique_named_object_in_all_models
 from pytest import raises
 
 def test_exception_from_included_model():
+    """
+    This test checks that an error induced by an included model
+    (thrown via an object processor) is (a) thrown and (b) indicates the
+    correct model location (file, line and col).
+    """
     #################################
     # META MODEL DEF
     #################################

@@ -12,6 +12,11 @@ from pytest import raises
 
 
 def test_postponed_resolution_error():
+    """
+    This test checks that an unresolvable scopre provider induces an exception.
+    This is checked by using a scope provider which always returns a postponed
+    object.
+    """
     #################################
     # META MODEL DEF
     #################################
@@ -42,6 +47,9 @@ def test_postponed_resolution_error():
 
 
 def test_model_with_local_scope():
+    """
+    This is a basic test for the FQN scope provider (good case).
+    """
     #################################
     # META MODEL DEF
     #################################
@@ -91,6 +99,9 @@ def test_model_with_local_scope():
 
 
 def test_model_with_local_scope_and_error():
+    """
+    This is a basic test for the FQN scope provider (bad case).
+    """
     #################################
     # META MODEL DEF
     #################################
@@ -121,6 +132,9 @@ def test_model_with_local_scope_and_error():
 
 
 def test_model_with_local_scope_and_inheritance2():
+    """
+    This is a more complicated test for the FQN scope provider.
+    """
     #################################
     # META MODEL DEF
     #################################
@@ -203,6 +217,18 @@ def test_model_with_local_scope_and_inheritance2():
 
 
 def test_model_with_local_scope_postponed():
+    """
+    This is a test for the FQN scope provider which checks that
+    the scope resolution is postponed at an intermediate stage.
+
+    This must be the case, since the order of object references is
+    exchanged in two differernt metamodels. This, we argue that (in the
+    absence of an additional sorting mechanisms) in one of both
+    cases the required reference to the "from_instance" must be unresolved
+    in the first resolution pass.
+
+    The check is done using white box information (postponed_counter).
+    """
     #################################
     # META MODEL DEF
     #################################

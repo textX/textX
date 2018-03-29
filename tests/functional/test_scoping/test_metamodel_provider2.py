@@ -8,6 +8,14 @@ from pytest import raises
 
 
 def test_metamodel_provider_advanced_test():
+    """
+    Advanced test for ExtRelativeName and PlainNameGlobalRepo.
+
+    Here we have a global model repository shared between
+    different meta models.
+
+    The meta models interact (refer to each other; one direction).
+    """
     #################################
     # META MODEL DEF
     #################################

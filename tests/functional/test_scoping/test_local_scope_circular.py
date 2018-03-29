@@ -7,6 +7,9 @@ from textx.scoping.tools import get_unique_named_object
 
 
 def test_model_with_local_scope_and_circular_ref_via_two_models():
+    """
+    Test for FQNGlobalRepo + circular references.
+    """
     #################################
     # META MODEL DEF
     #################################

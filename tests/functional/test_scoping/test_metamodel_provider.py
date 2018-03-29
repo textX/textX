@@ -8,6 +8,13 @@ from pytest import raises
 
 
 def test_metamodel_provider_basic_test():
+    """
+    This test checks that the global MetaModel Provider
+    works (basic function): It is checked that no filename patterns
+    are used twice. It is checked that the correct metamodel
+    is used to load a model (by loading a model constellation using
+    two metamodels).
+    """
     #################################
     # META MODEL DEF
     #################################
