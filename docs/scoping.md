@@ -84,6 +84,9 @@ We provide some standard scope providers:
    Xtext). This string is then used to load other models. Moreover, you need
    to provide another scope provider to manage the concrete lookup, e.g., the
    scope_provider_plain_names or the scope_provider_fully_qualified_names.
+   Model objects formed by the rules with an "importURI" attribute get an
+   additional attribute "_tx_loaded_models" which is a list of the loaded
+   models by this rule instance.
    Example: see tests/test_scoping/test_import_module.py.
     - FQNImportURI (decorated scope provider)
     - PlainNameImportURI (decorated scope provider)

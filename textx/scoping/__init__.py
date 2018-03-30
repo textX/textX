@@ -143,7 +143,7 @@ class GlobalModelRepository(object):
             glob_args: arguments passed to the glob.glob function.
 
         Returns:
-            nothing
+            the list of loaded models
         """
         from textx import get_metamodel
         if (model):
@@ -152,9 +152,12 @@ class GlobalModelRepository(object):
         if len(filenames) == 0:
             raise IOError(
                 errno.ENOENT, os.strerror(errno.ENOENT), filename_pattern)
+        loaded_models = []
         for filename in filenames:
             the_metamodel = MetaModelProvider.get_metamodel(model, filename)
-            self.load_model(the_metamodel, filename, is_main_model)
+            loaded_models.append(
+                self.load_model(the_metamodel, filename, is_main_model))
+        return loaded_models
 
     def load_model(self, the_metamodel, filename, is_main_model):
         """

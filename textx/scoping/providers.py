@@ -210,6 +210,10 @@ class ImportURI(scoping.ModelLoader):
     Scope provider supporting Xtext-like importURI attributes (w/o
     URInamespace). This class requries another scope provider, which is
     called internally.
+
+    Adds the loaded models to the importURI-objects: Thus, a model element
+    used to import another model references all loaded models with this
+    command in an attribute _tx_loaded_models (list of models).
     """
 
     def __init__(self, scope_provider, glob_args=None):
@@ -234,8 +238,9 @@ class ImportURI(scoping.ModelLoader):
             if len(basedir) > 0:
                 basedir += "/"
             filename_pattern = abspath(basedir + obj.importURI)
-            model._tx_model_repository.load_models_using_filepattern(
-                filename_pattern, model=model, glob_args=self.glob_args)
+            obj._tx_loaded_models = \
+                model._tx_model_repository.load_models_using_filepattern(
+                    filename_pattern, model=model, glob_args=self.glob_args)
 
     def load_models(self, model):
         from textx.model import get_metamodel
