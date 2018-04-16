@@ -4,7 +4,7 @@
     
     <url>
      <loc>/</loc>
-     <lastmod>2018-02-11</lastmod>
+     <lastmod>2018-04-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
     
@@ -13,49 +13,55 @@
         
     <url>
      <loc>/grammar/</loc>
-     <lastmod>2018-02-11</lastmod>
+     <lastmod>2018-04-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/metamodel/</loc>
-     <lastmod>2018-02-11</lastmod>
+     <lastmod>2018-04-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/model/</loc>
-     <lastmod>2018-02-11</lastmod>
+     <lastmod>2018-04-16</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>/scoping/</loc>
+     <lastmod>2018-04-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/parser_config/</loc>
-     <lastmod>2018-02-11</lastmod>
+     <lastmod>2018-04-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/visualization/</loc>
-     <lastmod>2018-02-11</lastmod>
+     <lastmod>2018-04-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/error_handling/</loc>
-     <lastmod>2018-02-11</lastmod>
+     <lastmod>2018-04-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/debugging/</loc>
-     <lastmod>2018-02-11</lastmod>
+     <lastmod>2018-04-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/textx_command/</loc>
-     <lastmod>2018-02-11</lastmod>
+     <lastmod>2018-04-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
@@ -65,31 +71,31 @@
         
     <url>
      <loc>/tutorials/hello_world/</loc>
-     <lastmod>2018-02-11</lastmod>
+     <lastmod>2018-04-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/tutorials/robot/</loc>
-     <lastmod>2018-02-11</lastmod>
+     <lastmod>2018-04-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/tutorials/entity/</loc>
-     <lastmod>2018-02-11</lastmod>
+     <lastmod>2018-04-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/tutorials/state_machine/</loc>
-     <lastmod>2018-02-11</lastmod>
+     <lastmod>2018-04-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/tutorials/toylanguage/</loc>
-     <lastmod>2018-02-11</lastmod>
+     <lastmod>2018-04-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
@@ -99,25 +105,25 @@
         
     <url>
      <loc>/about/comparison/</loc>
-     <lastmod>2018-02-11</lastmod>
+     <lastmod>2018-04-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/about/discuss/</loc>
-     <lastmod>2018-02-11</lastmod>
+     <lastmod>2018-04-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/about/contributing/</loc>
-     <lastmod>2018-02-11</lastmod>
+     <lastmod>2018-04-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/about/license/</loc>
-     <lastmod>2018-02-11</lastmod>
+     <lastmod>2018-04-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
@@ -127,7 +133,7 @@
         
     <url>
      <loc>/whatsnew/release_1_5/</loc>
-     <lastmod>2018-02-11</lastmod>
+     <lastmod>2018-04-16</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
