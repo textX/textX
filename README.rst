@@ -106,8 +106,7 @@ The full documentation with tutorials is available at http://igordejanovic.net/t
 Discussion and help
 ===================
 
-For general discussion and help please join [the textX google
-group](https://groups.google.com/forum/#!forum/textx-talk).
+For bug report, general discussion and help please use `GitHub issue tracker <https://github.com/igordejanovic/textX/issues>`_.
 
 
 License

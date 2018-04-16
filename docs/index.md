@@ -130,8 +130,7 @@ check out [examples](https://github.com/igordejanovic/textX/tree/master/examples
 ## Discussion and help
 
 For general discussion and help please
-join
-[the textX google group](https://groups.google.com/forum/#!forum/textx-talk).
+use [GitHub issue tracker](https://github.com/igordejanovic/textX/issues).
 
 
 ## Projects using textX
