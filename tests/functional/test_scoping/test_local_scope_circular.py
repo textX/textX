@@ -1,8 +1,10 @@
 from __future__ import unicode_literals
-from textx import metamodel_from_file
-from textx import get_children_of_type
-import textx.scoping.providers as scoping_providers
+
 from os.path import dirname, abspath
+
+import textx.scoping.providers as scoping_providers
+from textx import get_children_of_type
+from textx import metamodel_from_file
 from textx.scoping.tools import get_unique_named_object
 
 

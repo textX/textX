@@ -1,8 +1,9 @@
-from textx import metamodel_from_str
-from textx import get_children
-import textx.scoping.providers as scoping_providers
-import textx.exceptions
 from pytest import raises
+
+import textx.exceptions
+import textx.scoping.providers as scoping_providers
+from textx import get_children
+from textx import metamodel_from_str
 
 metamodel_str = '''
 Model:

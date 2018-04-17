@@ -1,9 +1,10 @@
-from textx import metamodel_from_file
+from os.path import dirname, abspath
+
 import textx.scoping.providers as scoping_providers
-from textx.scoping.tools import get_unique_named_object
+from textx import metamodel_from_file
 from textx.scoping.tools import get_referenced_object, \
     get_list_of_concatenated_objects
-from os.path import dirname, abspath
+from textx.scoping.tools import get_unique_named_object
 
 
 def test_get_referenced_object():

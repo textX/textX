@@ -1,10 +1,12 @@
 from __future__ import unicode_literals
-from textx import metamodel_from_file, get_children_of_type
-import textx.scoping.providers as scoping_providers
-import textx.scoping as scoping
-from os.path import dirname, abspath, join
+
 import io
+from os.path import dirname, abspath, join
+
 import textx.export as export
+import textx.scoping as scoping
+import textx.scoping.providers as scoping_providers
+from textx import metamodel_from_file
 
 
 def test_model_export():

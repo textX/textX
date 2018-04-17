@@ -1,10 +1,10 @@
 from __future__ import unicode_literals
-from textx import metamodel_from_file, get_children_of_type
-import textx.scoping.providers as scoping_providers
-import textx.scoping as scoping
+
 from os.path import dirname, abspath, join
-from textx.scoping.tools import get_unique_named_object_in_all_models
-from pytest import raises
+
+import textx.scoping as scoping
+import textx.scoping.providers as scoping_providers
+from textx import metamodel_from_file, get_children_of_type
 
 
 def test_metamodel_provider_advanced_test3_global():

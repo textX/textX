@@ -1,10 +1,13 @@
 from __future__ import unicode_literals
-from textx import metamodel_from_file
-from textx import get_children, get_children_of_type
-import textx.scoping.providers as scoping_providers
+
 from os.path import dirname, abspath
-import textx.exceptions
+
 from pytest import raises
+
+import textx.exceptions
+import textx.scoping.providers as scoping_providers
+from textx import get_children, get_children_of_type
+from textx import metamodel_from_file
 from textx.scoping.tools import check_unique_named_object_has_class, \
     get_unique_named_object
 
