@@ -6,6 +6,7 @@ from os.path import dirname, abspath, join
 import io
 import textx.export as export
 
+
 def test_model_export():
     """
     This test checks that the export function (to graphdotviz)
@@ -54,7 +55,7 @@ def test_model_export():
     out_file = io.StringIO()
     # export.model_export(
     #    None, "debug_test.dot", m._tx_model_repository.all_models )
-    export.model_export_to_file( out_file, m )
+    export.model_export_to_file(out_file, m)
     text = out_file.getvalue()
 
     print(text)

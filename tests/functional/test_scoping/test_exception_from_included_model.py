@@ -1,10 +1,13 @@
 from __future__ import unicode_literals
-from textx import metamodel_from_file, get_children_of_type
-import textx.scoping.providers as scoping_providers
-import textx.scoping as scoping
+
 from os.path import dirname, abspath, join
-from textx.scoping.tools import get_unique_named_object_in_all_models
+
 from pytest import raises
+
+import textx.scoping as scoping
+import textx.scoping.providers as scoping_providers
+from textx import metamodel_from_file
+
 
 def test_exception_from_included_model():
     """
@@ -26,13 +29,15 @@ def test_exception_from_included_model():
                                                              "methods",
                                                              "extends")
         })
+
         def my_processor(m):
             from textx.exceptions import TextXSemanticError
             from textx.scoping.tools import get_location
-            if m.name=="d1":
+            if m.name == "d1":
                 raise TextXSemanticError("d1 triggers artifical error",
                                          **get_location(m))
-        mm.register_obj_processors({"Method":my_processor})
+
+        mm.register_obj_processors({"Method": my_processor})
         return mm
 
     import_lookup_provider = scoping_providers.FQNImportURI()

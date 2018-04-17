@@ -189,9 +189,9 @@ def test_model_with_circular_imports():
     #################################
 
     imports = get_children_of_type("Import", my_model)
-    assert len(imports)>0
+    assert len(imports) > 0
     for i in imports:
-        assert 1==len(i._tx_loaded_models)  # one file / load import
+        assert 1 == len(i._tx_loaded_models)  # one file / load import
         assert i.importURI in i._tx_loaded_models[0]._tx_filename
 
     check_unique_named_object_has_class(my_model, "A", "Interface")
@@ -225,6 +225,7 @@ def test_model_with_circular_imports():
     # END
     #################################
 
+
 def test_model_with_multi_import():
     """
     Basic test for FQNImportURI + multi imports (import "*.if")
@@ -251,7 +252,7 @@ def test_model_with_multi_import():
     #################################
 
     imports = get_children_of_type("Import", my_model)
-    assert 1==len(imports)
+    assert 1 == len(imports)
     i = imports[0]
-    assert 4==len(i._tx_loaded_models)  # 4 files
-    assert 4==len(set(i._tx_loaded_models))  # 4 different files
+    assert 4 == len(i._tx_loaded_models)  # 4 files
+    assert 4 == len(set(i._tx_loaded_models))  # 4 different files

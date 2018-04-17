@@ -57,7 +57,7 @@ class PlainName(object):
 
         if get_parser(obj).debug:
             get_parser(obj).dprint("Resolving obj crossref: {}:{}"
-                          .format(obj_ref.cls, obj_ref.obj_name))
+                                   .format(obj_ref.cls, obj_ref.obj_name))
 
         def _inner_resolve_link_rule_ref(cls, obj_name):
             """

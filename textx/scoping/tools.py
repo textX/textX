@@ -92,6 +92,7 @@ def get_list_of_concatenated_objects(obj, dot_separated_name,
         lst = get_list_of_concatenated_objects(ret, dot_separated_name, lst)
     return lst
 
+
 def get_location(model_obj):
     """
     Args:
@@ -104,8 +105,8 @@ def get_location(model_obj):
     """
     the_model = get_model(model_obj)
     line, col = the_model._tx_parser.pos_to_linecol(
-        model_obj._tx_position )
-    return {"line":line, "col":col, "filename":the_model._tx_filename }
+        model_obj._tx_position)
+    return {"line": line, "col": col, "filename": the_model._tx_filename}
 
 
 def get_parser(model_obj):
@@ -118,6 +119,7 @@ def get_parser(model_obj):
     """
     the_model = get_model(model_obj)
     return the_model._tx_parser
+
 
 def get_recursive_parent_with_typename(obj, desired_parent_typename):
     while type(obj).__name__ != desired_parent_typename and hasattr(obj,

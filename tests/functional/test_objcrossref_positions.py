@@ -21,6 +21,7 @@ first Test2
 second Test1, Test2
 """
 
+
 def test_objcrossref_positions():
     # get positions from string
     # definition positions
