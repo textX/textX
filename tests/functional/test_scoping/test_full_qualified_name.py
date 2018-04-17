@@ -26,7 +26,6 @@ Attribute:
         'attr' ref=[Class|FQN] name=ID ';'
 ;
 
-RefClass: ref=FQN;
 Comment: /#.*/;
 FQN: ID('.'ID)*;
 '''
