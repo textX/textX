@@ -101,6 +101,10 @@
                 </li>
                 <li class="">
                     
+    <a class="" href="../multimetamodel/">Multi meta-model</a>
+                </li>
+                <li class="">
+                    
     <a class="" href="../parser_config/">Parser configuration</a>
                 </li>
                 <li class="">
@@ -229,23 +233,26 @@
         ref=[MyInterface|FQN] name=ID ';'
 ;
 </code></pre>
-<p>The scope provider is responsible for the reference resolution of such a reference.</p>
-<p>The default behavior (default scope provider) is looking for the referenced name globally.
-Other scope providers will take namespaces into account, support references to parts of
-the model stored in different files or even models defined by other metamodels
-(imported into the current metamodel). Moreover, scope providers exist allowing to reference
-model elements relative to other referenced model elements: This can be a referenced method
-defined in a referenced class of an instance (with a metamodel defining classes, methods
-and instances of classes).</p>
+<p>The scope provider is responsible for the reference resolution of such a
+reference.</p>
+<p>The default behavior (default scope provider) is looking for the referenced name
+globally. Other scope providers will take namespaces into account, support
+references to parts of the model stored in different files or even models
+defined by other metamodels (imported into the current metamodel). Moreover,
+scope providers exist allowing to reference model elements relative to other
+referenced model elements: This can be a referenced method defined in a
+referenced class of an instance (with a meta-model defining classes, methods and
+instances of classes).</p>
 <h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
-<p>The scope providers are registered to the metamodel and can be bound to specific parts of rules:</p>
+<p>The scope providers are registered to the metamodel and can be bound to specific
+parts of rules:</p>
 <ul>
-<li>e.g., my_meta_model.register_scope_providers({"*.*":         scoping.providers.FQN()})</li>
-<li>or: my_meta_model.register_scope_providers({"MyAttribute.ref": scoping.providers.FQN()})</li>
-<li>or: my_meta_model.register_scope_providers({"*.ref":          scoping.providers.FQN()})</li>
-<li>or: my_meta_model.register_scope_providers({"MyAttribute.*":   scoping.providers.FQN()})</li>
+<li>e.g., <code>my_meta_model.register_scope_providers({"*.*": scoping.providers.FQN()})</code></li>
+<li>or: <code>my_meta_model.register_scope_providers({"MyAttribute.ref": scoping.providers.FQN()})</code></li>
+<li>or: <code>my_meta_model.register_scope_providers({"*.ref": scoping.providers.FQN()})</code></li>
+<li>or: <code>my_meta_model.register_scope_providers({"MyAttribute.*": scoping.providers.FQN()})</code></li>
 </ul>
-<p>Example (from tests/test_scoping/test_local_scope.py):</p>
+<p>Example (from <a href="https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_local_scope.py">tests/test_scoping/test_local_scope.py</a>):</p>
 <pre><code># Grammar snippet (Components.tx)
 Component:
     'component' name=ID ('extends' extends+=[Component|FQN][','])? '{'
@@ -271,115 +278,110 @@ my_meta_model.register_scope_providers({
     "Connection.to_port": scoping_providers.RelativeName("to_inst.component.slots"),
 })
 </code></pre>
-<p>This example selects the fully qualified name provider
-as default provider ("*.*"). Moreover, for special attributes of
-a "Connection" a relative name lookup is specified: Here the "path" from the
-rule "Connection" containing the attribute of interest
-(e.g. "Connection.from_port") to the referenced element is specified
-(the slot contained in "from_inst.component.slots").
-Since this attribute is a list, the list is searched to find
-the referenced name.</p>
+<p>This example selects the fully qualified name provider as default provider
+(<code>"*.*"</code>). Moreover, for special attributes of a <code>Connection</code> a relative name
+lookup is specified: Here the <code>path</code> from the rule <code>Connection</code> containing the
+attribute of interest (e.g. <code>Connection.from_port</code>) to the referenced element is
+specified (the slot contained in <code>from_inst.component.slots</code>). Since this
+attribute is a list, the list is searched to find the referenced name.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Special rule selections (e.g., "Connection.from_port") are preferred
-to wildcard selection (e.e, "*.*").</p>
+<p>Special rule selections (e.g., <code>Connection.from_port</code>) are preferred
+to wildcard selection (e.e, <code>"*.*"</code>).</p>
 </div>
 <h3 id="scope-providers-defined-in-module-textxscopingproviders">Scope Providers defined in Module "textx.scoping.providers"<a class="headerlink" href="#scope-providers-defined-in-module-textxscopingproviders" title="Permanent link">&para;</a></h3>
 <p>We provide some standard scope providers:</p>
 <ul>
-<li>textx.scoping.providers.PlainName: This is the <strong>default provider</strong> of
+<li><code>textx.scoping.providers.PlainName</code>: This is the <strong>default provider</strong> of
    textX.</li>
-<li>textx.scoping.providers.FQN: This is a <strong>provider similar to Java or Xtext
+<li><code>textx.scoping.providers.FQN</code>: This is a <strong>provider similar to Java or Xtext
    name loopup</strong>.
-   Example: see tests/test_scoping/test_full_qualified_name.py.</li>
-<li>textx.scoping.providers.ImportURI: This a provider which <strong>allows to load
+   Example: see <a href="https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_full_qualified_name.py">tests/test_scoping/test_full_qualified_name.py</a>.</li>
+<li><code>textx.scoping.providers.ImportURI</code>: This a provider which <strong>allows to load
    additional modules</strong> for lookup.
-   You need to define a rule with an attribute "importURI" as string (like in
+   You need to define a rule with an attribute <code>importURI</code> as string (like in
    Xtext). This string is then used to load other models. Moreover, you need
    to provide another scope provider to manage the concrete lookup, e.g., the
-   scope_provider_plain_names or the scope_provider_fully_qualified_names.
-   Example: see tests/test_scoping/test_import_module.py.<ul>
-<li>FQNImportURI (decorated scope provider)</li>
-<li>PlainNameImportURI (decorated scope provider)</li>
+   <code>scope_provider_plain_names</code> or the <code>scope_provider_fully_qualified_names</code>.
+   Model objects formed by the rules with an <code>importURI</code> attribute get an
+   additional attribute <code>_tx_loaded_models</code> which is a list of the loaded
+   models by this rule instance.
+   Example: see <a href="https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_import_module.py">tests/test_scoping/test_import_module.py</a>.<ul>
+<li><code>FQNImportURI</code> (decorated scope provider)</li>
+<li><code>PlainNameImportURI</code> (decorated scope provider)</li>
 </ul>
 </li>
-<li>textx.scoping.providers.GlobalRepo: This is a provider where <strong>you initially
+<li><code>textx.scoping.providers.GlobalRepo</code>: This is a provider where <strong>you initially
    need to specifiy the model files to be loaded and used for lookup</strong>. Like
-   for ImportURI you need to provide another scope provider for the constere
-   loopup.
-   Example: see tests/test_scoping/test_global_import_modules.py.<ul>
-<li>textx.scoping.providers.FQNGlobalRepo (decorated scope provider)</li>
-<li>textx.scoping.providers.PlainNameGlobalRepo (decorated scope provider)</li>
+   for <code>ImportURI</code> you need to provide another scope provider for the concrete
+   lookup.
+   Example: see <a href="https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_global_import_modules.py">tests/test_scoping/test_global_import_modules.py</a>.<ul>
+<li><code>textx.scoping.providers.FQNGlobalRepo</code> (decorated scope provider)</li>
+<li><code>textx.scoping.providers.PlainNameGlobalRepo</code> (decorated scope provider)</li>
 </ul>
 </li>
-<li>textx.scoping.providers.RelativeName: This is a scope provider to <strong>resolve
+<li><code>textx.scoping.providers.RelativeName</code>: This is a scope provider to <strong>resolve
    relative lookups</strong>: e.g., model-methods of a model-instance, defined by the
    class associated with the model-instance. Typically, another reference (the
    reference to the model-class of a model-instance) is used to determine the
    concrete referenced object (e.g. the model-method, owned by a model-class).
-   Example: see tests/test_scoping/test_local_scope.py.</li>
-<li>textx.scoping.providers.ExtRelativeName: The same as RelativeName <strong>allowing
+   Example: see <a href="https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_local_scope.py">tests/test_scoping/test_local_scope.py</a>.</li>
+<li><code>textx.scoping.providers.ExtRelativeName</code>: The same as <code>RelativeName</code> <strong>allowing
    to model inheritance or chained lookups</strong>.
-   Example: see tests/test_scoping/test_local_scope.py.</li>
+   Example: see <a href="https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_local_scope.py">tests/test_scoping/test_local_scope.py</a>.</li>
 </ul>
 <h3 id="note-on-uniqueness-of-model-elements">Note on Uniqueness of Model Elements<a class="headerlink" href="#note-on-uniqueness-of-model-elements" title="Permanent link">&para;</a></h3>
 <p>Two different models created using one single meta model (not using a scope
-provider like GlobalRepo, but by directly loading the models from file) have
+provider like <code>GlobalRepo</code>, but by directly loading the models from file) have
 different instances of the same model elements. If you need two such models to
 share their model element instances, you can specify this, while creating the
-meta model (global_repository=True). Then, the meta model will store an own
-instance of a GlobalModelRepository as a base for all loaded models.</p>
-<p>Model elements in models including other parts of the model (possibly
-circular) have unique model elements (no double instances).</p>
-<p>Examples see tests/test_scoping/test_import_module.py.</p>
-<h3 id="combining-metamodels">Combining Metamodels<a class="headerlink" href="#combining-metamodels" title="Permanent link">&para;</a></h3>
-<p>In addition, there is also global data stored in the class
-"textx.scoping.MetaModelProvider": Here, you can register meta models
-associated to files patterns. Thus, you can control which meta model to use
-when loading a file in a scope provider using the "ImportURI"-feature (e.g.,
-FQNImportURI). If no file pattern matches, the meta model of the current model
-is utilized.</p>
-<p>Examples see tests/test_scoping/test_metamodel_provider.py.</p>
+meta model (<code>global_repository=True</code>). Then, the meta model will store an own
+instance of a <code>GlobalModelRepository</code> as a base for all loaded models.</p>
+<p>Model elements in models including other parts of the model (possibly circular)
+have unique model elements (no double instances).</p>
+<p>Examples see <a href="https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_import_module.py">tests/test_scoping/test_import_module.py</a>.</p>
 <h2 id="technical-aspects-and-implementation-details">Technical aspects and implementation details<a class="headerlink" href="#technical-aspects-and-implementation-details" title="Permanent link">&para;</a></h2>
-<p>The scope providers are python callables accepting parser,obj,attr,obj_ref:</p>
+<p>The scope providers are python callables accepting <code>obj, attr, obj_ref</code>:</p>
 <ul>
-<li>parser  : the current parser</li>
-<li>obj     : the object representing the start of the search (e.g., a rule
-             (e.g. "MyAttribute" in the example above, or the model)</li>
-<li>attr    : a reference to the attribute "ref"</li>
-<li>obj_ref : a textx.model.ObjCrossRef - the reference to be resolved</li>
+<li><code>obj</code>     : the object representing the start of the search (e.g., a rule
+             (e.g. <code>MyAttribute</code> in the example above, or the model)</li>
+<li><code>attr</code>    : a reference to the attribute <code>ref</code></li>
+<li><code>obj_ref</code> : a <code>textx.model.ObjCrossRef</code> - the reference to be resolved</li>
 </ul>
-<p>The scope provides return the referenced object (e.g. a "MyInterface" object
-in the example illustrated in the "Motivation and Introduction" above (or None
-if nothing is found; or a Postponed object, see below).</p>
+<p>The scope provides return the referenced object (e.g. a <code>MyInterface</code> object in
+the example illustrated in the <code>Motivation and Introduction</code> above (or <code>None</code> if
+nothing is found; or a <code>Postponed</code> object, see below).</p>
 <p>Scope providers shall be stateless or have unmodifiable state after
 construction: this means they should allow to be reused for different models
-(created using the same meta model) without interacting with each other.
-This means, they must save their state in the corresponding model, if they
-need to store data (e.g., if they load additional models from files <em>during
-name resolution</em>, they are not allowed to store them inside the scope
-provider.</p>
+(created using the same meta-model) without interacting with each other. This
+means, they must save their state in the corresponding model, if they need to
+store data (e.g., if they load additional models from files <em>during name
+resolution</em>, they are not allowed to store them inside the scope provider.</p>
+<p>Models with references being resolved have a temporary attribute
+<code>_tx_reference_resolver</code> of type <code>ReferenceResolver</code>. This object can be used to
+resolve the object. It contains information, such as the parser in charge for
+the model (file) being processed.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Scope providers as normal functions (def <name>(...):..., not
+<p>Scope providers as normal functions (<code>def &lt;name&gt;(...):...</code>), not
 accessing global data, are safe per se. The reason to be stateless, is that
-no side effects (beside, e.g., loading other models) should incluence the
+no side effects (beside, e.g., loading other models) should influence the
 name lookup.</p>
 </div>
 <p>The state of model resolution should mainly consist of models already loaded.
-These models are stored in a GlobalModelRepository class. This class (if
+These models are stored in a <code>GlobalModelRepository</code> class. This class (if
 required) is stored in the model. An included model loaded from another
-including model "inherits" the part of the GlobalModelRepository representing
+including model "inherits" the part of the <code>GlobalModelRepository</code> representing
 all loaded models. This is done to (a) cache already loaded models and (b)
 guarantee, that every referenced model element is instantiated exactly once.
 Even in the case of circular inclusions.</p>
-<p>Scope providers may return an object of type Postponed, if they depend on
-another event to happen first. This event is typically the resolution of
-another reference. The resolution process will repeat multiple times over
-all unresolved references to be resolved until all references are resolved or
-no progress regarding the resolution is observed. In the latter case an error
-is raised. The control flow responsability of the resolution process is
-allocated to the model.py module.</p>
+<p>Scope providers may return an object of type <code>Postponed</code>, if they depend on
+another event to happen first. This event is typically the resolution of another
+reference. The resolution process will repeat multiple times over all unresolved
+references to be resolved until all references are resolved or no progress
+regarding the resolution is observed. In the latter case an error is raised. The
+control flow responsibility of the resolution process is allocated to the
+<code>model.py</code> module.</p>
               
             </div>
           </div>
@@ -387,7 +389,7 @@ allocated to the model.py module.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../parser_config/" class="btn btn-neutral float-right" title="Parser configuration">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../multimetamodel/" class="btn btn-neutral float-right" title="Multi meta-model">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
         <a href="../model/" class="btn btn-neutral" title="Model"><span class="icon icon-circle-arrow-left"></span> Previous</a>
@@ -423,7 +425,7 @@ allocated to the model.py module.</p>
         <span><a href="../model/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../parser_config/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../multimetamodel/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>
