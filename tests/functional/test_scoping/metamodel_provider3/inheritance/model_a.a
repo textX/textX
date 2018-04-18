@@ -1,0 +1,49 @@
+A:
+import "model_b.b"
+class A1 {
+  method a1
+}
+class A2 extends B1 {
+  method a2
+  method a2_very_long_name
+}
+class A3 extends B2 {
+  method a3
+}
+class A4 extends B3 {
+  method a4
+}
+
+class A5 extends A4 {
+  method a5
+}
+
+class A extends A1 {
+  method a
+}
+
+obj my_obj:B6
+obj my_obj2:A
+obj my_obj3:A5
+
+call the_call2_a:  my_obj2.a
+call the_call2_a1: my_obj2.a1
+
+call the_call3_a5: my_obj3.a5
+call the_call3_a4: my_obj3.a4
+call the_call3_a4: my_obj3.b3
+
+call the_call_b6: my_obj.b6
+call the_call_b5: my_obj.b5
+call the_call_b4: my_obj.b4
+call the_call_b3: my_obj.b3
+call the_call_b2: my_obj.b2
+call the_call_b1: my_obj.b1
+
+call the_call_a1: my_obj.a1
+call the_call_a2: my_obj.a2
+call the_call_a3: my_obj.a3
+call the_call_a4: my_obj.a4
+
+
+call the_call3_a4: my_obj3.a3

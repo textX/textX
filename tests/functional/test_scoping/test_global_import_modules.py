@@ -1,12 +1,19 @@
 from __future__ import unicode_literals
-from textx import metamodel_from_file
-import textx.scoping.providers as scoping_providers
+
 from os.path import dirname, abspath
+
+import textx.scoping.providers as scoping_providers
+from textx import metamodel_from_file
 from textx.scoping.tools import get_unique_named_object, \
     check_unique_named_object_has_class
 
 
 def test_globalimports_basic_test_with_single_model_file():
+    """
+    Basic test for the FQNGlobalRepo.
+    Tests that two metamodels create different objects for the
+    same input.
+    """
     #################################
     # META MODEL DEF
     #################################
@@ -47,6 +54,11 @@ def test_globalimports_basic_test_with_single_model_file():
 
 
 def test_globalimports_basic_test_with_single_model_file_and_global_repo():
+    """
+    Basic test for the FQNGlobalRepo + global_repository.
+    Tests that two metamodels create the same objects for the
+    same input (when global_repository is used).
+    """
     #################################
     # META MODEL DEF
     #################################
@@ -88,6 +100,11 @@ def test_globalimports_basic_test_with_single_model_file_and_global_repo():
 
 
 def test_globalimports_basic_test_with_distributed_model():
+    """
+    Basic test for the FQNGlobalRepo.
+    Tests that a reference points to the expected (python) object
+    located in the model.
+    """
     #################################
     # META MODEL DEF
     #################################

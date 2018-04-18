@@ -1,15 +1,21 @@
 from __future__ import unicode_literals
-from textx import metamodel_from_file
-from textx import get_children
-import textx.scoping.providers as scoping_providers
+
 from os.path import dirname, abspath
-import textx.exceptions
+
 from pytest import raises
+
+import textx.exceptions
+import textx.scoping.providers as scoping_providers
+from textx import get_children, get_children_of_type
+from textx import metamodel_from_file
 from textx.scoping.tools import check_unique_named_object_has_class, \
     get_unique_named_object
 
 
 def test_model_without_imports():
+    """
+    Basic test for FQNImportURI (with a model not using imports)
+    """
     #################################
     # META MODEL DEF
     #################################
@@ -44,6 +50,9 @@ def test_model_without_imports():
 
 
 def test_model_with_imports():
+    """
+    Basic test for FQNImportURI (good case)
+    """
     #################################
     # META MODEL DEF
     #################################
@@ -88,6 +97,9 @@ def test_model_with_imports():
 
 
 def test_model_with_imports_and_errors():
+    """
+    Basic test for FQNImportURI (bad case)
+    """
     #################################
     # META MODEL DEF
     #################################
@@ -118,6 +130,9 @@ def test_model_with_imports_and_errors():
 
 
 def test_model_with_imports_and_global_repo():
+    """
+    Basic test for FQNImportURI + global_repository
+    """
     #################################
     # META MODEL DEF
     #################################
@@ -153,6 +168,9 @@ def test_model_with_imports_and_global_repo():
 
 
 def test_model_with_circular_imports():
+    """
+    Basic test for FQNImportURI + circular imports
+    """
     #################################
     # META MODEL DEF
     #################################
@@ -172,6 +190,12 @@ def test_model_with_circular_imports():
     #################################
     # TEST MODEL
     #################################
+
+    imports = get_children_of_type("Import", my_model)
+    assert len(imports) > 0
+    for i in imports:
+        assert 1 == len(i._tx_loaded_models)  # one file / load import
+        assert i.importURI in i._tx_loaded_models[0]._tx_filename
 
     check_unique_named_object_has_class(my_model, "A", "Interface")
     a = get_unique_named_object(my_model, "A")
@@ -203,3 +227,35 @@ def test_model_with_circular_imports():
     #################################
     # END
     #################################
+
+
+def test_model_with_multi_import():
+    """
+    Basic test for FQNImportURI + multi imports (import "*.if")
+    """
+    #################################
+    # META MODEL DEF
+    #################################
+
+    my_meta_model = metamodel_from_file(
+        abspath(dirname(__file__)) + '/interface_model1/Interface.tx')
+    my_meta_model.register_scope_providers(
+        {"*.*": scoping_providers.FQNImportURI()})
+
+    #################################
+    # MODEL PARSING
+    #################################
+
+    my_model = my_meta_model.model_from_file(
+        abspath(dirname(__file__)) +
+        "/interface_model1/model_c/A_multi_import.if")
+
+    #################################
+    # TEST MODEL
+    #################################
+
+    imports = get_children_of_type("Import", my_model)
+    assert 1 == len(imports)
+    i = imports[0]
+    assert 4 == len(i._tx_loaded_models)  # 4 files
+    assert 4 == len(set(i._tx_loaded_models))  # 4 different files

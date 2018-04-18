@@ -1,8 +1,11 @@
-from textx import metamodel_from_str
-from textx import get_children
-import textx.scoping.providers as scoping_providers
-import textx.exceptions
+from os.path import dirname
+
 from pytest import raises
+
+import textx.exceptions
+import textx.scoping.providers as scoping_providers
+from textx import get_children
+from textx import metamodel_from_str
 
 metamodel_str = '''
 Model:
@@ -25,13 +28,15 @@ Attribute:
         'attr' ref=[Class|FQN] name=ID ';'
 ;
 
-RefClass: ref=FQN;
-
+Comment: /#.*/;
 FQN: ID('.'ID)*;
 '''
 
 
 def test_fully_qualified_name_ref():
+    """
+    This is a basic test for the FQN (positive and negative test).
+    """
     #################################
     # META MODEL DEF
     #################################
@@ -97,18 +102,25 @@ def test_fully_qualified_name_ref():
     # MODEL WITH ERROR
     ############################
     with raises(textx.exceptions.TextXSemanticError,
-                match=r'.*Unknown object.*Part1.*'):
-        my_model2 = my_metamodel.model_from_str('''
-        package P1 {
-            class Part1 {
-            }
-        }
-        package P2 {
-            class C2 {
-                attr Part1 p1;
+                match=r'None:8:.*: error.*Unknown object.*Part1.*'):
+        _ = my_metamodel.model_from_str(''' #1
+        package P1 { #2
+            class Part1 { #3
+            } #4
+        } #5
+        package P2 { #6
+            class C2 { #7
+                attr Part1 p1; #8
             }
         }
         ''')
+
+    with raises(textx.exceptions.TextXSemanticError,
+                match=r'.*test_fully_qualified_name_test_error.model:8:\d+:'
+                      ' error.*Unknown object.*Part1.*'):
+        _ = my_metamodel.model_from_file(
+            dirname(__file__) +
+            "/misc/test_fully_qualified_name_test_error.model")
 
     #################################
     # END

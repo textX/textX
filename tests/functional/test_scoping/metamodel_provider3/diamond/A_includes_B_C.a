@@ -1,0 +1,10 @@
+A:
+import "B_includes_D.b"
+import "C_includes_D.c"
+
+class A extends B,C {
+}
+obj a:A
+call calld: a.d
+call callc: a.c
+call callb: a.b

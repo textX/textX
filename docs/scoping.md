@@ -84,6 +84,9 @@ We provide some standard scope providers:
    Xtext). This string is then used to load other models. Moreover, you need
    to provide another scope provider to manage the concrete lookup, e.g., the
    scope_provider_plain_names or the scope_provider_fully_qualified_names.
+   Model objects formed by the rules with an "importURI" attribute get an
+   additional attribute "_tx_loaded_models" which is a list of the loaded
+   models by this rule instance.
    Example: see tests/test_scoping/test_import_module.py.
     - FQNImportURI (decorated scope provider)
     - PlainNameImportURI (decorated scope provider)
@@ -134,9 +137,8 @@ Examples see tests/test_scoping/test_metamodel_provider.py.
 
 ## Technical aspects and implementation details
 
-The scope providers are python callables accepting parser,obj,attr,obj_ref:
+The scope providers are python callables accepting obj,attr,obj_ref:
 
- * parser  : the current parser
  * obj     : the object representing the start of the search (e.g., a rule
              (e.g. "MyAttribute" in the example above, or the model)
  * attr    : a reference to the attribute "ref"
@@ -153,6 +155,11 @@ This means, they must save their state in the corresponding model, if they
 need to store data (e.g., if they load additional models from files *during
 name resolution*, they are not allowed to store them inside the scope
 provider.
+
+Models with references being resolved have a temporary attribute
+_tx_reference_resolver of type ReferenceResolver. This object can be used
+to resolve the object. It contains information, such as the parser in cahrge
+for the model (file) being processed.
 
 !!! note
     Scope providers as normal functions (def <name>(...):..., not

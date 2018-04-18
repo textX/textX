@@ -1,0 +1,9 @@
+import Base
+
+Model:
+    "B"  ":"
+    imports+=Import*
+    cls+=Cls*
+    obj+=Obj*
+    call+=Call*
+;

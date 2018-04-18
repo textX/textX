@@ -1,0 +1,13 @@
+Cls: "class" name=ID (
+    ( "extends" extends+=[Cls][','])?
+    "{"
+        methods+=Method*
+    "}"
+    )?;
+
+Method: "method" name=ID;
+Obj: "obj" name=ID ":" ref=[Cls];
+Call: "call" name=ID ":" obj=[Obj] "." method=[Method];
+
+Import: 'import' importURI=STRING;
+Comment: /\/\/.*/;

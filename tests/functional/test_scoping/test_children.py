@@ -1,9 +1,11 @@
 from __future__ import unicode_literals
-from textx import metamodel_from_str
-from textx import get_children, get_children_of_type
-import textx.scoping.providers as scoping_providers
-from operator import eq
+
 import re
+from operator import eq
+
+import textx.scoping.providers as scoping_providers
+from textx import get_children, get_children_of_type
+from textx import metamodel_from_str
 
 metamodel_str = '''
 Model:
@@ -26,13 +28,14 @@ Attribute:
         'attr' ref=[Class|FQN] name=ID ';'
 ;
 
-RefClass: ref=FQN;
-
 FQN: ID('.'ID)*;
     '''
 
 
-def test_fully_qualified_name_ref():
+def test_children():
+    """
+    This test checks the get_children function
+    """
     #################################
     # META MODEL DEF
     #################################

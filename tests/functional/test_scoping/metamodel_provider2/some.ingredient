@@ -1,0 +1,10 @@
+ingredient Eggs {
+    unit 1 Piece
+    unit 1 Pieces
+}
+
+ingredient Milk {
+    unit 1000 ml
+    unit 1 l
+    unit 1000 g
+}

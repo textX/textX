@@ -196,6 +196,30 @@ def get_model_parser(top_rule, comments_model, **kwargs):
             # Contained elements are tuples: (instance, metaattr, cross-ref)
             self._crossrefs = []
 
+        def clone(self):
+            """
+            Responsibility: create a clone in order to parse a separate file.
+            It must Kbe possible that more than one clone exist in parallel,
+            without being influenced by other parser clones.
+
+            Returns:
+                A clone of this parser
+            """
+            import copy
+            the_clone = copy.copy(self)  # shallow copy
+
+            # create new objects for parse-dependent data
+            the_clone._inst_stack = []
+            the_clone._instances = {}
+            the_clone._crossrefs = []
+
+            # TODO self.memoization = memoization
+            the_clone.comments = []
+            the_clone.comment_positions = {}
+            the_clone.sem_actions = {}
+
+            return the_clone
+
         def _parse(self):
             try:
                 return self.parser_model.parse(self)
@@ -272,7 +296,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
 
     if metamodel.textx_tools_support:
         pos_rule_dict = {}
-        pos_crossref_list = []
+    pos_crossref_list = []
 
     def process_match(nt):
         """
@@ -474,85 +498,6 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
 
         return inst
 
-    def resolve_refs(model):
-        """
-        Resolves model references.
-        """
-        metamodel = parser.metamodel
-
-        current_crossrefs = parser._crossrefs
-        new_crossrefs = []
-        delayed_crossrefs = []
-        resolved_crossref_count = 0
-
-        # -------------------------
-        # start of resolve-loop
-        # -------------------------
-        default_scope = DefaultScopeProvider()
-        for obj, attr, crossref in current_crossrefs:
-            if (get_model(obj) == model):
-                attr_value = getattr(obj, attr.name)
-                attr_refs = [obj.__class__.__name__ + "." + attr.name,
-                             "*." + attr.name, obj.__class__.__name__ + ".*",
-                             "*.*"]
-                for attr_ref in attr_refs:
-                    if attr_ref in metamodel.scope_providers:
-                        if parser.debug:
-                            parser.dprint(" FOUND {}".format(attr_ref))
-                        resolved = metamodel.scope_providers[attr_ref](
-                            parser, obj, attr, crossref)
-                        break
-                else:
-                    resolved = default_scope(parser, obj, attr, crossref)
-
-                # Collect cross-references for textx-tools
-                if resolved and not type(resolved) is Postponed:
-                    if metamodel.textx_tools_support:
-                        pos_crossref_list.append(
-                            RefRulePosition(
-                                name=crossref.obj_name,
-                                ref_pos_start=crossref.position,
-                                ref_pos_end=crossref.position + len(resolved.name),
-                                def_pos_start=resolved._tx_position,
-                                def_pos_end=resolved._tx_position_end))
-
-                if not resolved:
-                    # As a fall-back search builtins if given
-                    if metamodel.builtins:
-                        if crossref.obj_name in metamodel.builtins:
-                            # TODO: Classes must match
-                            resolved = metamodel.builtins[crossref.obj_name]
-
-                if not resolved:
-                    line, col = parser.pos_to_linecol(crossref.position)
-                    raise TextXSemanticError(
-                        message=
-                        'Unknown object "{}" of class "{}" at {}'.format(
-                            crossref.obj_name, crossref.cls.__name__,
-                            (line, col)),
-                        line=line, col=col, err_type=UNKNOWN_OBJ_ERROR,
-                        expected_obj_cls=crossref.cls)
-
-                if type(resolved) is Postponed:
-                    delayed_crossrefs.append((obj, attr, crossref))
-                    new_crossrefs.append((obj, attr, crossref))
-                else:
-                    resolved_crossref_count += 1
-                    if attr.mult in [MULT_ONEORMORE, MULT_ZEROORMORE]:
-                        attr_value.append(resolved)
-                    else:
-                        setattr(obj, attr.name, resolved)
-            else:  # crossref not in model
-                new_crossrefs.append((obj, attr, crossref))
-        # -------------------------
-        # end of resolve-loop
-        # -------------------------
-        # store cross-refs from other models in the parser list (for later
-        # processing) this happens when other models are loaded while parsing
-        # one model.
-        parser._crossrefs = new_crossrefs
-        return (resolved_crossref_count, delayed_crossrefs)
-
     def call_obj_processors(model_obj):
         """
         Depth-first model object processing.
@@ -579,10 +524,12 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
 
     model = process_node(parse_tree)
     # Register filename of the model for later use (e.g. imports/scoping).
+    is_primitive_type = False
     try:
         model._tx_filename = file_name
     except AttributeError:
         # model is some primitive python type (e.g. str)
+        is_primitive_type = True
         pass
 
     if pre_ref_resolution_callback:
@@ -593,9 +540,17 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
         if isinstance(scope_provider, ModelLoader):
             scope_provider.load_models(model)
 
+    if not is_primitive_type:
+        model._tx_reference_resolver = ReferenceResolver(
+            parser, model, pos_crossref_list)
+        model._tx_parser = parser
+
     if is_main_model:
         from textx.scoping import get_all_models_including_attached_models
         models = get_all_models_including_attached_models(model)
+        # filter out all models w/o resolver:
+        models = list(filter(
+            lambda x: hasattr(x, "_tx_reference_resolver"), models))
 
         resolved_count = 1
         unresolved_count = 1
@@ -605,18 +560,33 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
             # print("***RESOLVING {} models".format(len(models)))
             for m in models:
                 resolved_count_for_this_model, delayed_crossrefs = \
-                    resolve_refs(m)
+                    m._tx_reference_resolver.resolve_one_step()
                 resolved_count += resolved_count_for_this_model
                 unresolved_count += len(delayed_crossrefs)
+            # print("DEBUG: delayed #:{} unresolved #:{}".
+            #      format(unresolved_count,unresolved_count))
         if (unresolved_count > 0):
             error_text = "Unresolvable cross references:"
-            for _, _, delayed in delayed_crossrefs:
-                line, col = parser.pos_to_linecol(delayed.position)
-                error_text += ' "{}" of class "{}" at {}'.format(
-                    delayed.obj_name, delayed.cls.__name__, (line, col))
+
+            for m in models:
+                for _, _, delayed \
+                        in m._tx_reference_resolver.delayed_crossrefs:
+                    line, col = parser.pos_to_linecol(delayed.position)
+                    error_text += ' "{}" of class "{}" at {}'.format(
+                        delayed.obj_name, delayed.cls.__name__, (line, col))
             raise TextXSemanticError(error_text, line=line, col=col)
 
-        assert not parser._inst_stack
+        for m in models:
+            # TODO: what does this check?
+            assert not m._tx_reference_resolver.parser._inst_stack
+
+        # cleanup
+        for m in models:
+            del m._tx_reference_resolver
+
+        # final check that everything went ok
+        for m in models:
+            assert 0 == len(get_children_of_type(Postponed.__class__, m))
 
         # We have model loaded and all link resolved
         # So we shall do a depth-first call of object
@@ -639,5 +609,118 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
         model._pos_rule_dict = OrderedDict(sorted(pos_rule_dict.items(),
                                                   key=lambda x: x[0],
                                                   reverse=True))
-
     return model
+
+
+class ReferenceResolver:
+    """
+    Responsability: store current model state before reference resolving.
+    When all models are parsed, start resolving all references in a loop.
+    """
+
+    def __init__(self, parser, model, pos_crossref_list):
+        self.parser = parser
+        self.model = model
+        self.pos_crossref_list = pos_crossref_list  # tool support
+        self.delayed_crossrefs = []
+
+    def has_unresolved_crossrefs(self, obj, attr_name=None):
+        """
+        Args:
+            obj: has this object unresolved crossrefs in its fields
+            (non recursively)
+
+        Returns:
+            True (has unresolved crossrefs) or False (else)
+        """
+        if get_model(obj) != self.model:
+            return get_model(obj). \
+                _tx_reference_resolver.has_unresolved_crossrefs(obj)
+        else:
+            for crossref_obj, attr, crossref in self.parser._crossrefs:
+                if crossref_obj is obj:
+                    if (not attr_name) or attr_name == attr.name:
+                        return True
+            return False
+
+    def resolve_one_step(self):
+        """
+        Resolves model references.
+        """
+        metamodel = self.parser.metamodel
+
+        current_crossrefs = self.parser._crossrefs
+        # print("DEBUG: Current crossrefs #: {}".
+        #      format(len(current_crossrefs)))
+        new_crossrefs = []
+        self.delayed_crossrefs = []
+        resolved_crossref_count = 0
+
+        # -------------------------
+        # start of resolve-loop
+        # -------------------------
+        default_scope = DefaultScopeProvider()
+        for obj, attr, crossref in current_crossrefs:
+            if (get_model(obj) == self.model):
+                attr_value = getattr(obj, attr.name)
+                attr_refs = [obj.__class__.__name__ + "." + attr.name,
+                             "*." + attr.name, obj.__class__.__name__ + ".*",
+                             "*.*"]
+                for attr_ref in attr_refs:
+                    if attr_ref in metamodel.scope_providers:
+                        if self.parser.debug:
+                            self.parser.dprint(" FOUND {}".format(attr_ref))
+                        resolved = metamodel.scope_providers[attr_ref](
+                            obj, attr, crossref)
+                        break
+                else:
+                    resolved = default_scope(obj, attr, crossref)
+
+                # Collect cross-references for textx-tools
+                if resolved and not type(resolved) is Postponed:
+                    if metamodel.textx_tools_support:
+                        self.pos_crossref_list.append(
+                            RefRulePosition(
+                                name=crossref.obj_name,
+                                ref_pos_start=crossref.position,
+                                ref_pos_end=crossref.position + len(
+                                    resolved.name),
+                                def_pos_start=resolved._tx_position,
+                                def_pos_end=resolved._tx_position_end))
+
+                if not resolved:
+                    # As a fall-back search builtins if given
+                    if metamodel.builtins:
+                        if crossref.obj_name in metamodel.builtins:
+                            # TODO: Classes must match
+                            resolved = metamodel.builtins[crossref.obj_name]
+
+                if not resolved:
+                    line, col = self.parser.pos_to_linecol(crossref.position)
+                    raise TextXSemanticError(
+                        message=
+                        'Unknown object "{}" of class "{}"'.format(
+                            crossref.obj_name, crossref.cls.__name__),
+                        line=line, col=col, err_type=UNKNOWN_OBJ_ERROR,
+                        expected_obj_cls=crossref.cls,
+                        filename=self.model._tx_filename)
+
+                if type(resolved) is Postponed:
+                    self.delayed_crossrefs.append((obj, attr, crossref))
+                    new_crossrefs.append((obj, attr, crossref))
+                else:
+                    resolved_crossref_count += 1
+                    if attr.mult in [MULT_ONEORMORE, MULT_ZEROORMORE]:
+                        attr_value.append(resolved)
+                    else:
+                        setattr(obj, attr.name, resolved)
+            else:  # crossref not in model
+                new_crossrefs.append((obj, attr, crossref))
+        # -------------------------
+        # end of resolve-loop
+        # -------------------------
+        # store cross-refs from other models in the parser list (for later
+        # processing)
+        self.parser._crossrefs = new_crossrefs
+        # print("DEBUG: Next crossrefs #: {}".format(len(new_crossrefs)))
+        return (resolved_crossref_count, self.delayed_crossrefs)
