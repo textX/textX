@@ -60,7 +60,7 @@ ability to import a component model file).
     ;
 
     User:
-        "user" name=ID "uses" instance=[Instance|FQN]
+        "user" name=ID "uses" instance=[Instance|FQN] // Instance, FQN from other grammar
     ;
 
     Import: 'import' importURI=STRING;
