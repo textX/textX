@@ -66,8 +66,8 @@ ability to import a component model file).
     Import: 'import' importURI=STRING;
 
 
-The MetaModelProvider utilized to allocate the file extension to the
-corresponding meta model:
+The global MetaModelProvider class is utilized to allocate the file
+extension to the corresponding meta model:
 
         scoping.MetaModelProvider.add_metamodel("*.components", mm_components)
         scoping.MetaModelProvider.add_metamodel("*.users", mm_users)
@@ -78,4 +78,42 @@ model:
     import "example.components"
     user pi uses usage.action1
 
-## Concluding
+
+## Use Case: referening non-textx meta-models/models
+
+You can reference an arbitrary python object using the OBJECT rule (see:
+test_reference_to_buildin_attribute.py)
+
+    Access:
+        'access' name=ID pyobj=[OBJECT] ('.' pyattr=[OBJECT])?
+
+
+In this case the references objecct is a python dictionary (pyobj)
+and the entry of such a dictionary (pyattr). A custom scope provider
+is used to achive this mapping:
+
+    def my_scope_provider(obj, attr, attr_ref):
+        pyobj = obj.pyobj
+        if attr_ref.obj_name in pyobj:
+            return pyobj[attr_ref.obj_name]
+        else:
+            raise Exception("{} not found".format(attr_ref.obj_name))
+
+
+The scope provider is linked to the "pyattr" attribute of the rule "Access":
+
+    my_metamodel.register_scope_providers({
+        "Access.pyattr": my_scope_provider,
+    })
+
+
+With this we can reference non textx data elements from within our language.
+This can be used to, e.g., use a non-textx AST object and reference it from
+a textx model.
+
+## Conclusion
+
+We provide a pragmatic way to define meta-models using other meta models.
+Mostly, we focus on textx meta-models using other textx meta-models. But
+scope providers may be used to also link a textx meta model to an arbitrary
+non-textx data structure.
