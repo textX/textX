@@ -122,19 +122,6 @@ circular) have unique model elements (no double instances).
 
 Examples see tests/test_scoping/test_import_module.py.
 
-
-### Combining Metamodels
-
-In addition, there is also global data stored in the class
-"textx.scoping.MetaModelProvider": Here, you can register meta models
-associated to files patterns. Thus, you can control which meta model to use
-when loading a file in a scope provider using the "ImportURI"-feature (e.g.,
-FQNImportURI). If no file pattern matches, the meta model of the current model
-is utilized.
-
-Examples see tests/test_scoping/test_metamodel_provider.py.
-
-
 ## Technical aspects and implementation details
 
 The scope providers are python callables accepting obj,attr,obj_ref:

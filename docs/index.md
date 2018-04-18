@@ -79,6 +79,13 @@ tutorial](tutorials/state_machine.md).
 
     Scope Providers allow different types of scoping. See [Scoping](scoping.md).
 
+* **Multi-meta-model support**
+
+    Different meta-models can be combined. Typically some of these meta-models
+    extend other meta-models (grammar modularization) and reference each other.
+    Special scope providers support file-extension-based allocation of model
+    files to meta models. See [Multi meta-model support](multimetamodel.md)
+
 * **Meta-model/model visualization**
 
     Both meta-model and parsed models can be visulized using

@@ -37,7 +37,7 @@ def test_reference_to_buildin_attribute():
             raise Exception("{} not found".format(attr_ref.obj_name))
 
     # create meta model
-    my_metamodel = metamodel_from_str(metamodel_str, classes=[object],
+    my_metamodel = metamodel_from_str(metamodel_str,
                                       builtins={
                                           'foreign_model': foreign_model})
     my_metamodel.register_scope_providers({
