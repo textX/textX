@@ -115,6 +115,25 @@ With this, we can reference non-textx data elements from within our language.
 This can be used to, e.g., use a non-textx AST object and reference it from
 a textx model.
 
+
+### Referening non-textx meta-models/models with a json file
+
+In test_reference_to_nontextx_attribute.py we also demonstrate how such
+an external model can be loaded with our own language (using a json file
+as external model).
+
+    import "test_reference_to_nontextx_attribute/othermodel.json" as data
+    access A1 data.name
+    access A2 data.gender
+
+Weher the json file "othermodel.json" consists of:
+
+    {
+      "name": "pierre",
+      "gender": "male"
+    }
+
+
 ## Conclusion
 
 We provide a pragmatic way to define meta-models using other meta models.
