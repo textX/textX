@@ -88,9 +88,9 @@ test_reference_to_buildin_attribute.py)
         'access' name=ID pyobj=[OBJECT] ('.' pyattr=[OBJECT])?
 
 
-In this case the references objecct is a python dictionary (pyobj)
+In this case the referenced object is a python dictionary (pyobj)
 and the entry of such a dictionary (pyattr). A custom scope provider
-is used to achive this mapping:
+is used to achieve this mapping:
 
     def my_scope_provider(obj, attr, attr_ref):
         pyobj = obj.pyobj
