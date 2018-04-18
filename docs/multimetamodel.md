@@ -79,7 +79,7 @@ model:
     user pi uses usage.action1
 
 
-## Use Case: referening non-textx meta-models/models
+## Use Case: referencing non-textx meta-models/models
 
 You can reference an arbitrary python object using the OBJECT rule (see:
 test_reference_to_buildin_attribute.py)
@@ -116,7 +116,7 @@ This can be used to, e.g., use a non-textx AST object and reference it from
 a textx model.
 
 
-### Referening non-textx meta-models/models with a json file
+### Referencing non-textx meta-models/models with a json file
 
 In test_reference_to_nontextx_attribute.py we also demonstrate how such
 an external model can be loaded with our own language (using a json file
