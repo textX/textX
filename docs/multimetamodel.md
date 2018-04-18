@@ -89,8 +89,12 @@ test_reference_to_buildin_attribute.py)
 
 
 In this case the referenced object is a python dictionary (pyobj)
-and the entry of such a dictionary (pyattr). A custom scope provider
-is used to achieve this mapping:
+and the entry of such a dictionary (pyattr). An example model will look like:
+
+    access AccessName1 foreign_model.name_of_entry
+
+
+A custom scope provider is used to achieve this mapping:
 
     def my_scope_provider(obj, attr, attr_ref):
         pyobj = obj.pyobj
@@ -107,7 +111,7 @@ The scope provider is linked to the "pyattr" attribute of the rule "Access":
     })
 
 
-With this we can reference non textx data elements from within our language.
+With this, we can reference non-textx data elements from within our language.
 This can be used to, e.g., use a non-textx AST object and reference it from
 a textx model.
 
