@@ -390,8 +390,10 @@ class TextXVisitor(PTNodeVisitor):
                             or attr.cls._tx_type == RULE_MATCH:
                         attr.ref = False
                         attr.cont = True
+                        attr.is_base_type = True
                     else:
                         attr.ref = True
+                        attr.is_base_type = False
 
                     if grammar_parser.debug:
                         grammar_parser.dprint(

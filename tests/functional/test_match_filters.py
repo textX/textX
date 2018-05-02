@@ -28,7 +28,8 @@ def test_match_filter_simple_match_rule():
         'MyFloat': lambda x: float(x)
     }
     print('filters')
-    mm = metamodel_from_str(grammar, match_filters=filters)
+    mm = metamodel_from_str(grammar)
+    mm.register_obj_processors(filters)
     m = mm.model_from_str(model)
 
     assert type(m.a) is float
@@ -54,7 +55,8 @@ def test_match_filter_sequence_match_rule():
     filters = {
         'MyFixedInt': lambda x: int(x)
     }
-    mm = metamodel_from_str(grammar, match_filters=filters)
+    mm = metamodel_from_str(grammar)
+    mm.register_obj_processors(filters)
     m = mm.model_from_str(model)
 
     assert type(m.i) is int
@@ -70,7 +72,8 @@ def test_base_filter_override():
     filters = {
         'INT': lambda x: float(x)
     }
-    mm = metamodel_from_str(grammar, match_filters=filters)
+    mm = metamodel_from_str(grammar)
+    mm.register_obj_processors(filters)
     m = mm.model_from_str('begin 34 end')
 
     assert type(m.i) is float

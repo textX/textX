@@ -83,3 +83,31 @@ def test_object_processors():
     for s in first.seconds:
         assert hasattr(s, '_second_called')
     assert call_order == [2, 2, 2, 1]
+
+
+def test_object_processor_replace_object():
+    """
+    Test that what is returned from object processor is value used in the
+    output model.
+    """
+    def second_obj_processor(second):
+        return second.sec / 2
+
+    def string_obj_processor(mystr):
+        return "[{}]".format(mystr)
+
+    obj_processors = {
+        'Second': second_obj_processor,
+        'STRING': string_obj_processor,
+        }
+
+    metamodel = metamodel_from_str(grammar)
+    metamodel.register_obj_processors(obj_processors)
+
+    model_str = 'first 34 45 7 A 45 65 B true C "dfdf"'
+    first = metamodel.model_from_str(model_str)
+
+    assert len(first.seconds) == 3
+    assert first.seconds[0] == 17
+
+    assert first.c == '[dfdf]'

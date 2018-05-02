@@ -498,29 +498,37 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
 
         return inst
 
-    def call_obj_processors(model_obj):
+    def call_obj_processors(model_obj, metaclass=None):
         """
         Depth-first model object processing.
         """
         try:
-            metaclass = metamodel[model_obj.__class__.__name__]
-            for metaattr in metaclass._tx_attrs.values():
-                # If attribute is containment reference go down
-                if metaattr.ref and metaattr.cont:
-                    attr = getattr(model_obj, metaattr.name)
-                    if attr:
-                        if metaattr.mult != MULT_ONE:
-                            for obj in attr:
-                                if obj:
-                                    call_obj_processors(obj)
-                        else:
-                            call_obj_processors(attr)
+            if metaclass is None:
+                metaclass = metamodel[model_obj.__class__.__name__]
         except KeyError:
-            metaclass = type(model_obj)
+            raise TextXSemanticError(
+                'Unknown meta-class "{}".'
+                .format(model.obj.__class__.__name__))
+        for metaattr in metaclass._tx_attrs.values():
+            # If attribute is base type or containment reference go down
+            if metaattr.is_base_type or (metaattr.ref and metaattr.cont):
+                attr = getattr(model_obj, metaattr.name)
+                if attr:
+                    if metaattr.mult != MULT_ONE:
+                        for idx, obj in enumerate(attr):
+                            if obj:
+                                result = call_obj_processors(obj,
+                                                             metaattr.cls)
+                                if result is not None:
+                                    attr[idx] = result
+                    else:
+                        result = call_obj_processors(attr, metaattr.cls)
+                        if result is not None:
+                            setattr(model_obj, metaattr.name, result)
 
         obj_processor = metamodel.obj_processors.get(metaclass.__name__, None)
         if obj_processor:
-            obj_processor(model_obj)
+            return obj_processor(model_obj)
 
     model = process_node(parse_tree)
     # Register filename of the model for later use (e.g. imports/scoping).
