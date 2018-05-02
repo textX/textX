@@ -21,14 +21,6 @@ from textx.const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, \
 __all__ = ['metamodel_from_str', 'metamodel_from_file']
 
 
-BASE_FILTERS = {
-    'BOOL': lambda x: x == '1' or x.lower() == 'true',
-    'INT': lambda x: int(x),
-    'FLOAT': lambda x: float(x),
-    'STRING': lambda x: x[1:-1].replace(r'\"', r'"').replace(r"\'", "'")
-}
-
-
 class MetaAttr(object):
     """
     A metaclass for attribute description.
@@ -89,8 +81,6 @@ class TextXMetaModel(DebugPrinter):
             searched here.
         classes(list of classes): A list of user supplied classes to use
             instead of the dynamically created.
-        match_filters(dict of callables): Callables keyed by match rule names
-            used to transform strings matched by match rules.
         obj_processors(dict): A dict of user supplied object processors keyed
             by rule/class name (may be a fully qualified name).
         rootcls(TextXClass): A language class that is a root of the metamodel.
@@ -114,9 +104,9 @@ class TextXMetaModel(DebugPrinter):
     """
 
     def __init__(self, file_name=None, classes=None, builtins=None,
-                 match_filters=None, auto_init_attributes=True,
-                 ignore_case=False, skipws=True, ws=None, autokwd=False,
-                 memoization=False, textx_tools_support=False, **kwargs):
+                 auto_init_attributes=True, ignore_case=False, skipws=True,
+                 ws=None, autokwd=False, memoization=False,
+                 textx_tools_support=False, **kwargs):
         # evaluate optional parameter "global_repository"
         global_repository = kwargs.pop("global_repository", False)
         if global_repository:
@@ -138,8 +128,6 @@ class TextXMetaModel(DebugPrinter):
         if classes:
             for c in classes:
                 self.user_classes[c.__name__] = c
-
-        self.match_filters = match_filters if match_filters else {}
 
         self.auto_init_attributes = auto_init_attributes
         self.ignore_case = ignore_case
@@ -428,16 +416,6 @@ class TextXMetaModel(DebugPrinter):
         textX rules.
         """
         # TODO: Implement complex textX validations.
-
-    def convert(self, value, _type):
-        """
-        Convert instances of textx types and rules to python base types and
-        user types using registered match filters.
-        """
-        return self.match_filters.get(
-            _type,
-            BASE_FILTERS.get(_type, lambda x: x)
-        )(value)
 
     def __getitem__(self, name):
         """

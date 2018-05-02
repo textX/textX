@@ -14,8 +14,8 @@ from collections import OrderedDict
 from arpeggio import Parser, Sequence, NoMatch, EOF, Terminal
 from textx.exceptions import TextXSyntaxError, TextXSemanticError
 from textx.const import MULT_OPTIONAL, MULT_ONE, MULT_ONEORMORE, \
-    MULT_ZEROORMORE, RULE_COMMON, RULE_ABSTRACT, RULE_MATCH, \
-    MULT_ASSIGN_ERROR, UNKNOWN_OBJ_ERROR
+    MULT_ZEROORMORE, RULE_ABSTRACT, RULE_MATCH, MULT_ASSIGN_ERROR, \
+    UNKNOWN_OBJ_ERROR
 from textx.lang import PRIMITIVE_PYTHON_TYPES
 from textx.scoping import Postponed
 from textx.scoping.providers import PlainName as DefaultScopeProvider
@@ -125,6 +125,19 @@ def get_children_of_type(typ, root):
         typ = typ.__name__
 
     return get_children(lambda x: x.__class__.__name__ == typ, root)
+
+
+def convert(value, _type):
+    """
+    Convert instances of textx types to python types.
+    """
+    return {
+            'BOOL': lambda x: x == '1' or x.lower() == 'true',
+            'INT': lambda x: int(x),
+            'FLOAT': lambda x: float(x),
+            'STRING': lambda x: x[1:-1].replace(r'\"',
+                                                r'"').replace(r"\'", "'"),
+            }.get(_type, lambda x: x)(value)
 
 
 class ObjCrossRef(object):
@@ -303,20 +316,18 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
         Process subtree for match rules.
         """
         if isinstance(nt, Terminal):
-            return metamodel.convert(nt.value, nt.rule_name)
+            return convert(nt.value, nt.rule_name)
         else:
             # If RHS of assignment is NonTerminal it is a product of
             # complex match rule. Convert nodes to text and do the join.
             if len(nt) > 1:
-                return metamodel.convert(
-                    "".join([text(process_match(n)) for n in nt]),
-                    nt.rule_name)
+                return "".join([text(process_match(n)) for n in nt])
             else:
                 return process_match(nt[0])
 
     def process_node(node):
         if isinstance(node, Terminal):
-            return metamodel.convert(node.value, node.rule_name)
+            return convert(node.value, node.rule_name)
 
         assert node.rule.root, \
             "Not a root node: {}".format(node.rule.rule_name)
@@ -706,8 +717,7 @@ class ReferenceResolver:
                 if not resolved:
                     line, col = self.parser.pos_to_linecol(crossref.position)
                     raise TextXSemanticError(
-                        message=
-                        'Unknown object "{}" of class "{}"'.format(
+                        message='Unknown object "{}" of class "{}"'.format(
                             crossref.obj_name, crossref.cls.__name__),
                         line=line, col=col, err_type=UNKNOWN_OBJ_ERROR,
                         expected_obj_cls=crossref.cls,
