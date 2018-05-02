@@ -13,12 +13,12 @@ else:
 grammar = '''
 Calc: assignments*=Assignment expression=Expression;
 Assignment: variable=ID '=' expression=Expression ';';
-Expression: left=Term (op=PlusOrMinus right=Expression)?;
+Expression: operands=Term (operators=PlusOrMinus operands=Term)*;
 PlusOrMinus: '+' | '-';
-Term: left=Factor (op=MulOrDiv right=Expression)?;
+Term: operands=Factor (operators=MulOrDiv operands=Factor)*;
 MulOrDiv: '*' | '/' ;
 Factor: (sign=PlusOrMinus)?  op=Operand;
-Operand: op=NUMBER | op=ID | ('(' op=Expression ')');
+Operand: op_num=NUMBER | op_id=ID | ('(' op_expr=Expression ')');
 '''
 
 # Global variable namespace
@@ -26,7 +26,6 @@ namespace = {}
 
 
 def assignment_action(assignment):
-    import pudb;pudb.set_trace()
     namespace[assignment.variable] = assignment.expression
 
 
@@ -35,23 +34,25 @@ def calc_action(calc):
 
 
 def expression_action(expression):
-    import pudb;pudb.set_trace()
-    if expression.op == '+':
-        return expression.left + expression.right
-    elif expression.op == '-':
-        return expression.left - expression.right
-    else:
-        return expression.left
+    ret = expression.operands[0]
+    for operator, operand in zip(expression.operators,
+                                 expression.operands[1:]):
+        if operator == '+':
+            ret += operand
+        else:
+            ret -= operand
+    return ret
 
 
 def term_action(term):
-    import pudb;pudb.set_trace()
-    if term.op == '*':
-        return term.left * term.right
-    elif term.op == '/':
-        return term.left / term.right
-    else:
-        return term.left
+    ret = term.operands[0]
+    for operator, operand in zip(term.operators,
+                                 term.operands[1:]):
+        if operator == '*':
+            ret *= operand
+        else:
+            ret /= operand
+    return ret
 
 
 def factor_action(factor):
@@ -60,15 +61,16 @@ def factor_action(factor):
 
 
 def operand_action(operand):
-    op = operand.op
-    if type(op) is text:
-        if op in namespace:
-            return namespace[op]
+    if operand.op_num is not None:
+        return operand.op_num
+    elif operand.op_id:
+        if operand.op_id in namespace:
+            return namespace[operand.op_id]
         else:
             raise Exception('Unknown variable "{}" at position {}'
-                            .format(op, operand._tx_position))
+                            .format(operand.op_id, operand._tx_position))
     else:
-        return op
+        return operand.op_expr
 
 
 def main(debug=False):
@@ -82,7 +84,8 @@ def main(debug=False):
         'Operand': operand_action
     }
 
-    calc_mm = metamodel_from_str(grammar, debug=debug)
+    calc_mm = metamodel_from_str(grammar, auto_init_attributes=False,
+                                 debug=debug)
     calc_mm.register_obj_processors(processors)
 
     input_expr = '''
@@ -91,7 +94,8 @@ def main(debug=False):
         -(4-1)*a+(2+4.67)+b*5.89/(.2+7)
     '''
 
-    result = calc_mm.model_from_str(input_expr)
+    calc = calc_mm.model_from_str(input_expr)
+    result = calc.expression
 
     assert (result - 6.93805555) < 0.0001
     print("Result is", result)
