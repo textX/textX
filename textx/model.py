@@ -520,12 +520,14 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
             raise TextXSemanticError(
                 'Unknown meta-class "{}".'
                 .format(model.obj.__class__.__name__))
+
+        many = [MULT_ONEORMORE, MULT_ZEROORMORE]
         for metaattr in metaclass._tx_attrs.values():
             # If attribute is base type or containment reference go down
             if metaattr.is_base_type or (metaattr.ref and metaattr.cont):
                 attr = getattr(model_obj, metaattr.name)
                 if attr:
-                    if metaattr.mult != MULT_ONE:
+                    if metaattr.mult in many:
                         for idx, obj in enumerate(attr):
                             if obj:
                                 result = call_obj_processors(obj,

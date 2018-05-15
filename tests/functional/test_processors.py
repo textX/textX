@@ -15,7 +15,7 @@ grammar = """
 First:
     'first' seconds+=Second
     ('A' a+=INT)?
-    ('B' b=BOOL)?
+    ('B' b?=BOOL)?
     ('C' c=STRING)?
 ;
 
