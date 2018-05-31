@@ -1,56 +1,78 @@
 # textX changelog
-* 2018-03-22 (scoping, multi file resolution bugfix)
-  - PROBLEM: Sharing one parser object to parse multiple files lead to
-    problems:
-    - Code location mapping was wrong (mixed up; e.g., visible in exception)
-    - Code resolution was not working in some cases (caused by erroneous
-      decisions about cross references based on the shared parser).
-  - The plain scope provider was changed to be independent of the parser
-     (TODO: TBC, if ok, some code can be removed).
-  - exceptions where adapted to include a file name (makes errors more
-     visible)
-     (TODO: TBC, if __str__ is desired; unclear why encode(utf8) was used)
-  - The metamodel now allows to specify a global model repository. With this
-    you can now share models across metamodels (before you could only do this
-    within one metamodel or language).
-  - The metamodel clones the parser when parsing a model file. The meta model
-     holds one parser, which is clone for every model to be parsed.
-  - TextXModelParser now has a clone method.
-    (TBC: is the clone ok: see responsibility of the method)
-  - model.py: the resolution loop logic now mostly moved to a separate object
-    ReferenceResolver, which holds the parser.
-    - The reference resolver are build from all model files affected (loaded).
-      This may involve multiple meta models.
-    - Then all references are resolved in one loop.
-    - Finally the helper objects (ReferenceResolver) are purged.
-  - The MetaModelProvider has a clear-method now (useful for tests).
-  - Added tests.
-  - TODO: Not all raised exceptions include the model file.
 
-* 2018-02-13 (branch/scoping)
-  - added new function textx.get_model.children to search arbritrary children using a lambda predicate.
-  - remapped textx.model.get_children_of_type to the new children function (changed the logic, such that
-    the root node is also checked to be model object).
-  - added new metamodel function to register scope providers. Scope providers are callables, which return
-    the referenced object.
-    - added optional attribute "_tx_model_repository", see metamodel.py documentation
-    - added attribute "scope_provider" like "obj_processors" to organize scope providers
-    - added an optional argument to model_from_str and model_from_file: "pre_ref_resolution_callback": this
-      is required internally to prepare the loading of other model files.
-  - changed reference resolution in model.py
-    - moved default resolution to textx.scoping.py
-    - select the scope provider based on rule and rule-attribute (see scoping.py documentation)
-    - added a Postponed type to postpone the resolution
-    - introduced a multi-pass resolution (implemented at the end of parse_tree_to_objgraph; introduced new
-      helper argument, e.g., a new optional argument "is_this_the_main_model" and "pre_ref_resolution_callback"
-      (see metamodel.py above) to support reference resolution in the presence of different model files.
-  - added a new module textx.scoping, to provide some scope providers (e.g. a fully qualified name provider) - see scoping.py:
-    - full qualified names for reference names (e.g. package.package.class)
-    - global scope (model distributed over different files - loaded globally)
-    - import scope (model distributed over different files - loaded when imported)
-    - relative scopes (e.g. instance.method where method is defined for the class of the instance in a model of classes, methods and instances)
-    - selecting the metamodel based on a file pattern when loading models
-  - added tests (mostly scope related - some of them also test other stuff, like buildins)
+* 2018-05-31 Release 1.7.0
+
+  - A major feature of this release is multi-(meta-)model support with
+    configurable resolving techniques. Thanks Pierre Bayerl (goto40@GitHub)! 
+    
+    The docs sections are [here](http://www.igordejanovic.net/textX/scoping/)
+    and [here](http://www.igordejanovic.net/textX/multimetamodel/).
+
+    Details follow:
+    - added new function textx.get_model.children to search arbritrary children
+      using a lambda predicate.
+    - remapped textx.model.get_children_of_type to the new children function
+    (changed the logic, such that the root node is also checked to be model
+    object).
+    - added new metamodel function to register scope providers. Scope providers
+    are callables, which return the referenced object.
+    - added optional attribute "_tx_model_repository", see metamodel.py
+      documentation
+    - added attribute "scope_provider" like "obj_processors" to organize scope
+      providers
+    - added an optional argument to model_from_str and model_from_file:
+      "pre_ref_resolution_callback": this is required internally to prepare the
+      loading of other model files.
+    - changed reference resolution in model.py
+      - moved default resolution to textx.scoping.py
+      - select the scope provider based on rule and rule-attribute (see
+        scoping.py documentation)
+      - added a Postponed type to postpone the resolution
+      - introduced a multi-pass resolution (implemented at the end of
+        parse_tree_to_objgraph; introduced new helper argument, e.g., a new
+        optional argument "is_this_the_main_model" and
+        "pre_ref_resolution_callback" (see metamodel.py above) to support
+        reference resolution in the presence of different model files.
+    - added a new module textx.scoping, to provide some scope providers (e.g. a
+      fully qualified name provider) - see scoping.py:
+      - full qualified names for reference names (e.g. package.package.class)
+      - global scope (model distributed over different files - loaded globally)
+      - import scope (model distributed over different files - loaded when
+        imported)
+      - relative scopes (e.g. instance.method where method is defined for the
+        class of the instance in a model of classes, methods and instances)
+      - selecting the metamodel based on a file pattern when loading models
+    - added tests (mostly scope related - some of them also test other stuff,
+      like buildins)
+    - exceptions where adapted to include a file name (makes errors more
+      visible)
+    - The metamodel now allows to specify a global model repository. With this
+      you can now share models across metamodels (before you could only do this
+      within one metamodel or language).
+    - The metamodel clones the parser when parsing a model file. The meta model
+      holds one parser, which is clone for every model to be parsed.
+    - TextXModelParser now has a clone method.
+      (TBC: is the clone ok: see responsibility of the method)
+    - model.py: the resolution loop logic now mostly moved to a separate object
+      ReferenceResolver, which holds the parser.
+      - The reference resolver are build from all model files affected (loaded).
+        This may involve multiple meta models.
+      - Then all references are resolved in one loop.
+      - Finally the helper objects (ReferenceResolver) are purged.
+    - The MetaModelProvider has a clear-method now (useful for tests).
+    - Added tests.
+
+  - Backward incompatible change: match filters and object processors unified.
+    Now there are only object processors but they are called for any type of
+    rule and the returned value if exists is used instead of the original
+    object. See [the
+    docs](http://www.igordejanovic.net/textX/metamodel/#object-processors). In
+    order to migrate your match filters just register them as object processors.
+
+  - Fixing FLOAT regex. Thanks Boris Marin (borismarin@GitHub)!
+  - Fixing position info on obj cross ref. Thanks Daniel Elero (danixeee@GitHub)!
+
+  
 * 2017-11-22 Release 1.6.1
   - Fixing build for PyPI.
 

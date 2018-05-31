@@ -41,7 +41,7 @@ setup(
     description='Meta-language for DSL implementation inspired by Xtext',
     long_description=README,
     author='Igor R. Dejanovic',
-    author_email='igor DOT dejanovic AT gmail DOT com',
+    author_email='igor.dejanovic@gmail.com',
     license='MIT',
     url='https://github.com/igordejanovic/textX',
     download_url='https://github.com/igordejanovic/textX/archive/v%s.tar.gz'
