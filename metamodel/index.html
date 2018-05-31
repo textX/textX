@@ -88,7 +88,7 @@
         
             <li><a class="toctree-l4" href="#built-in-objects">Built-in objects</a></li>
         
-            <li><a class="toctree-l4" href="#match-filters">Match filters</a></li>
+            <li><a class="toctree-l4" href="#creating-your-own-base-type">Creating your own base type</a></li>
         
             <li><a class="toctree-l4" href="#auto-initialization-of-the-attributes">Auto-initialization of the attributes</a></li>
         
@@ -348,9 +348,8 @@ my_metamodel.register_model_processor(check_some_semantics)
 my_metamodel.model_from_file('some_model.ext')
 </code></pre>
 <h3 id="object-processors">Object processors<a class="headerlink" href="#object-processors" title="Permanent link">&para;</a></h3>
-<p>The purpose of the object processors is the same as of the model processors, but
-they are called as soon as the particular object is recognized in the input
-string. They are registered per class/rule.</p>
+<p>The purpose of the object processors is to validate or alter the object being
+constructed. They are registered per class/rule.</p>
 <p>Let's do some additional checks for the above Entity DSL example.</p>
 <pre><code>def entity_obj_processor(entity):
   '''
@@ -390,6 +389,13 @@ entity_mm.model_from_file('my_entity_model.ent')
 <p>For another example of the usage of an object processor that modifies the
 objects, see object processor
 <code>move_command_processor</code> <a href="../tutorials/robot/">robot example</a>.</p>
+<p>If object processor returns a value that value will be used instead of the
+original object. This can be used to implement e.g. expression evaluators or
+on-the-fly model interpretation. For more information</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For more information please take a look at <a href="https://github.com/igordejanovic/textX/blob/master/tests/functional/test_processors.py">the tests</a>.</p>
+</div>
 <h2 id="built-in-objects">Built-in objects<a class="headerlink" href="#built-in-objects" title="Permanent link">&para;</a></h2>
 <p>Often, you will need objects that should be a part of each model and you do not
 want users to specify them in every model they create. The most notable example
@@ -418,13 +424,13 @@ See <a href="../model/">model</a>
 and
 <a href="https://github.com/igordejanovic/textX/tree/master/examples/Entity">Entitiy</a>
 example for more.</p>
-<h2 id="match-filters">Match filters<a class="headerlink" href="#match-filters" title="Permanent link">&para;</a></h2>
+<h2 id="creating-your-own-base-type">Creating your own base type<a class="headerlink" href="#creating-your-own-base-type" title="Permanent link">&para;</a></h2>
 <p><a href="../grammar/#rule-types">Match rules</a> by default return Python <code>string</code> type.
 Built-in match rules (i.e. <code>BASETYPEs</code>) on the other hand return Python base
 types.</p>
-<p>Match filters are a dict of callables that is registered on metamodel and that
-will get called with the string matched by the match rule. Whatever is returned
-by the filter will be used in place of the matched string.</p>
+<p>You can use object processors to create your type by specifying match rule in
+the grammar and object processor for that rule that will create an object of a
+proper Python type.</p>
 <p>Example:</p>
 <pre><code>Model:
   'begin' some_number=MyFloat 'end'
@@ -436,8 +442,9 @@ MyFloat:
 
 <p>In this example <code>MyFloat</code> rule is a match rule and by default will return Python
 <code>string</code>, so attribute <code>some_number</code> will be of <code>string</code> type. To change that,
-register match filter for <code>MyFloat</code> rule:</p>
-<pre><code>mm = metamodel_from_str(grammar, match_filters={'MyFloat': lambda x: float(x)})
+register object processor for <code>MyFloat</code> rule:</p>
+<pre><code>mm = metamodel_from_str(grammar)
+mm.register_obj_processors({'MyFloat': lambda x: float(x)}))
 </code></pre>
 
 <p>Now, <code>MyFloat</code> will always be converted to Python <code>float</code> type.</p>
@@ -447,12 +454,13 @@ register match filter for <code>MyFloat</code> rule:</p>
 ;
 </code></pre>
 
-<pre><code>mm = metamodel_from_str(grammar, match_filters={'INT': lambda x: float(x)})
+<pre><code>mm = metamodel_from_str(grammar)
+mm.register_obj_processors({'INT': lambda x: float(x)}))
 </code></pre>
 
 <p>In this example we use built-in rule <code>INT</code> that returns Python <code>int</code> type.
-Registering filter with the key <code>INT</code> we can change default behaviour and
-convert what is matched by this rule to some other object (<code>float</code> in this
+Registering object processor with the key <code>INT</code> we can change default behaviour
+and convert what is matched by this rule to some other object (<code>float</code> in this
 case).</p>
 <h2 id="auto-initialization-of-the-attributes">Auto-initialization of the attributes<a class="headerlink" href="#auto-initialization-of-the-attributes" title="Permanent link">&para;</a></h2>
 <p>Each object that is recognized in the input string will be instantiated and its
