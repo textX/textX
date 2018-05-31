@@ -14,8 +14,8 @@ from collections import OrderedDict
 from arpeggio import Parser, Sequence, NoMatch, EOF, Terminal
 from textx.exceptions import TextXSyntaxError, TextXSemanticError
 from textx.const import MULT_OPTIONAL, MULT_ONE, MULT_ONEORMORE, \
-    MULT_ZEROORMORE, RULE_COMMON, RULE_ABSTRACT, RULE_MATCH, \
-    MULT_ASSIGN_ERROR, UNKNOWN_OBJ_ERROR
+    MULT_ZEROORMORE, RULE_ABSTRACT, RULE_MATCH, MULT_ASSIGN_ERROR, \
+    UNKNOWN_OBJ_ERROR
 from textx.lang import PRIMITIVE_PYTHON_TYPES
 from textx.scoping import Postponed
 from textx.scoping.providers import PlainName as DefaultScopeProvider
@@ -125,6 +125,19 @@ def get_children_of_type(typ, root):
         typ = typ.__name__
 
     return get_children(lambda x: x.__class__.__name__ == typ, root)
+
+
+def convert(value, _type):
+    """
+    Convert instances of textx types to python types.
+    """
+    return {
+            'BOOL': lambda x: x == '1' or x.lower() == 'true',
+            'INT': lambda x: int(x),
+            'FLOAT': lambda x: float(x),
+            'STRING': lambda x: x[1:-1].replace(r'\"',
+                                                r'"').replace(r"\'", "'"),
+            }.get(_type, lambda x: x)(value)
 
 
 class ObjCrossRef(object):
@@ -303,20 +316,18 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
         Process subtree for match rules.
         """
         if isinstance(nt, Terminal):
-            return metamodel.convert(nt.value, nt.rule_name)
+            return convert(nt.value, nt.rule_name)
         else:
             # If RHS of assignment is NonTerminal it is a product of
             # complex match rule. Convert nodes to text and do the join.
             if len(nt) > 1:
-                return metamodel.convert(
-                    "".join([text(process_match(n)) for n in nt]),
-                    nt.rule_name)
+                return "".join([text(process_match(n)) for n in nt])
             else:
                 return process_match(nt[0])
 
     def process_node(node):
         if isinstance(node, Terminal):
-            return metamodel.convert(node.value, node.rule_name)
+            return convert(node.value, node.rule_name)
 
         assert node.rule.root, \
             "Not a root node: {}".format(node.rule.rule_name)
@@ -498,29 +509,39 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
 
         return inst
 
-    def call_obj_processors(model_obj):
+    def call_obj_processors(model_obj, metaclass=None):
         """
         Depth-first model object processing.
         """
         try:
-            metaclass = metamodel[model_obj.__class__.__name__]
-            for metaattr in metaclass._tx_attrs.values():
-                # If attribute is containment reference go down
-                if metaattr.ref and metaattr.cont:
-                    attr = getattr(model_obj, metaattr.name)
-                    if attr:
-                        if metaattr.mult != MULT_ONE:
-                            for obj in attr:
-                                if obj:
-                                    call_obj_processors(obj)
-                        else:
-                            call_obj_processors(attr)
+            if metaclass is None:
+                metaclass = metamodel[model_obj.__class__.__name__]
         except KeyError:
-            metaclass = type(model_obj)
+            raise TextXSemanticError(
+                'Unknown meta-class "{}".'
+                .format(model.obj.__class__.__name__))
+
+        many = [MULT_ONEORMORE, MULT_ZEROORMORE]
+        for metaattr in metaclass._tx_attrs.values():
+            # If attribute is base type or containment reference go down
+            if metaattr.is_base_type or (metaattr.ref and metaattr.cont):
+                attr = getattr(model_obj, metaattr.name)
+                if attr:
+                    if metaattr.mult in many:
+                        for idx, obj in enumerate(attr):
+                            if obj:
+                                result = call_obj_processors(obj,
+                                                             metaattr.cls)
+                                if result is not None:
+                                    attr[idx] = result
+                    else:
+                        result = call_obj_processors(attr, metaattr.cls)
+                        if result is not None:
+                            setattr(model_obj, metaattr.name, result)
 
         obj_processor = metamodel.obj_processors.get(metaclass.__name__, None)
         if obj_processor:
-            obj_processor(model_obj)
+            return obj_processor(model_obj)
 
     model = process_node(parse_tree)
     # Register filename of the model for later use (e.g. imports/scoping).
@@ -698,8 +719,7 @@ class ReferenceResolver:
                 if not resolved:
                     line, col = self.parser.pos_to_linecol(crossref.position)
                     raise TextXSemanticError(
-                        message=
-                        'Unknown object "{}" of class "{}"'.format(
+                        message='Unknown object "{}" of class "{}"'.format(
                             crossref.obj_name, crossref.cls.__name__),
                         line=line, col=col, err_type=UNKNOWN_OBJ_ERROR,
                         expected_obj_cls=crossref.cls,

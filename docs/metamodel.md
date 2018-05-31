@@ -134,9 +134,8 @@ instance.
 
 ### Object processors
 
-The purpose of the object processors is the same as of the model processors, but
-they are called as soon as the particular object is recognized in the input
-string. They are registered per class/rule.
+The purpose of the object processors is to validate or alter the object being
+constructed. They are registered per class/rule.
 
 Let's do some additional checks for the above Entity DSL example.
 
@@ -180,6 +179,14 @@ For another example of the usage of an object processor that modifies the
 objects, see object processor
 `move_command_processor` [robot example](tutorials/robot.md).
 
+If object processor returns a value that value will be used instead of the
+original object. This can be used to implement e.g. expression evaluators or
+on-the-fly model interpretation. For more information
+
+!!! note
+    For more information please take a look at [the tests](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_processors.py).
+
+
 ## Built-in objects
 
 Often, you will need objects that should be a part of each model and you do not
@@ -213,15 +220,15 @@ and
 example for more.
 
 
-## Match filters
+## Creating your own base type
 
 [Match rules](grammar.md#rule-types) by default return Python `string` type.
 Built-in match rules (i.e. `BASETYPEs`) on the other hand return Python base
 types.
 
-Match filters are a dict of callables that is registered on metamodel and that
-will get called with the string matched by the match rule. Whatever is returned
-by the filter will be used in place of the matched string.
+You can use object processors to create your type by specifying match rule in
+the grammar and object processor for that rule that will create an object of a
+proper Python type.
 
 Example:
 
@@ -236,10 +243,11 @@ MyFloat:
 
 In this example `MyFloat` rule is a match rule and by default will return Python
 `string`, so attribute `some_number` will be of `string` type. To change that,
-register match filter for `MyFloat` rule:
+register object processor for `MyFloat` rule:
 
 ```
-mm = metamodel_from_str(grammar, match_filters={'MyFloat': lambda x: float(x)})
+mm = metamodel_from_str(grammar)
+mm.register_obj_processors({'MyFloat': lambda x: float(x)}))
 ```
 
 Now, `MyFloat` will always be converted to Python `float` type.
@@ -253,12 +261,13 @@ Model:
 ```
 
 ```
-mm = metamodel_from_str(grammar, match_filters={'INT': lambda x: float(x)})
+mm = metamodel_from_str(grammar)
+mm.register_obj_processors({'INT': lambda x: float(x)}))
 ```
 
 In this example we use built-in rule `INT` that returns Python `int` type.
-Registering filter with the key `INT` we can change default behaviour and
-convert what is matched by this rule to some other object (`float` in this
+Registering object processor with the key `INT` we can change default behaviour
+and convert what is matched by this rule to some other object (`float` in this
 case).
 
 
