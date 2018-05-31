@@ -5,15 +5,15 @@ import sys
 import codecs
 from setuptools import setup
 
-NAME = 'textX'
-DESC = 'Meta-language for DSL implementation inspired by Xtext'
-VERSION = "1.6.1"
-AUTHOR = 'Igor R. Dejanovic'
-AUTHOR_EMAIL = 'igor DOT dejanovic AT gmail DOT com'
-LICENSE = 'MIT'
-URL = 'https://github.com/igordejanovic/textX'
-DOWNLOAD_URL = 'https://github.com/igordejanovic/textX/archive/v%s.tar.gz' \
-    % VERSION
+VERSIONFILE = "textx/__init__.py"
+VERSION = None
+for line in open(VERSIONFILE, "r").readlines():
+    if line.startswith('__version__'):
+        VERSION = line.split('"')[1]
+
+if not VERSION:
+    raise RuntimeError('No version defined in textx.__init__.py')
+
 README = codecs.open(os.path.join(os.path.dirname(__file__), 'README.rst'),
                      'r', encoding='utf-8').read()
 
@@ -36,19 +36,21 @@ if sys.argv[-1].startswith('publish'):
     sys.exit()
 
 setup(
-    name=NAME,
+    name='textX',
     version=VERSION,
-    description=DESC,
+    description='Meta-language for DSL implementation inspired by Xtext',
     long_description=README,
-    author=AUTHOR,
-    author_email=AUTHOR_EMAIL,
-    maintainer=AUTHOR,
-    maintainer_email=AUTHOR_EMAIL,
-    license=LICENSE,
-    url=URL,
-    download_url=DOWNLOAD_URL,
+    author='Igor R. Dejanovic',
+    author_email='igor DOT dejanovic AT gmail DOT com',
+    license='MIT',
+    url='https://github.com/igordejanovic/textX',
+    download_url='https://github.com/igordejanovic/textX/archive/v%s.tar.gz'
+        % VERSION,
     packages=["textx", "textx.commands", "textx.scoping"],
     install_requires=["Arpeggio"],
+    tests_require=[
+        'pytest',
+    ],
     keywords="parser meta-language meta-model language DSL",
     entry_points={
         'console_scripts': [
