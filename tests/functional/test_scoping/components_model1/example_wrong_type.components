@@ -1,0 +1,17 @@
+package base {
+  interface A
+  component Start {
+    out output1 (format A)
+  }
+  component End {
+    in input1 (format A)
+    out wrong_port (format A)
+  }
+}
+
+package usage {
+  instance start : base.Start
+  instance end : base.End
+
+  connect start.output1 to end.wrong_port
+}
