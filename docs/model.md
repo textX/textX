@@ -145,7 +145,10 @@ model is created from a string this attribute will be `None`.
 ### _tx_parser
 
 This attribute represents the concrete parser instance used for this model
-(the parser of the _tx_metamodel is only a blueprint for the parser).
+(the attribute _parser of the _tx_metamodel is only a blueprint for the
+parser of each model instance and cannot be used, e.g., to determine model
+element positions in a file. Use the _tx_parser attribute of the model
+instead).
 
 ### _tx_metamodel
 

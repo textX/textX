@@ -481,7 +481,7 @@ class TextXMetaModel(DebugPrinter):
                resolved. This can be useful to manage models distributed
                across files (scoping)
         """
-        model = self.parser.clone().get_model_from_str(
+        model = self._parser.clone().get_model_from_str(
             model_str, debug=debug,
             pre_ref_resolution_callback=pre_ref_resolution_callback)
         for p in self._model_processors:
@@ -523,7 +523,7 @@ class TextXMetaModel(DebugPrinter):
 
         if not model:
             # model not present (from global repo) -> load it
-            model = self.parser.clone().get_model_from_file(
+            model = self._parser.clone().get_model_from_file(
                 file_name, encoding, debug=debug,
                 pre_ref_resolution_callback=callback,
                 is_main_model=is_main_model)
