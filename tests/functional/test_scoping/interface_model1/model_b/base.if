@@ -7,8 +7,8 @@ package base {
         }
     }
     interface inout_sockets {
-        system.socket s1;
-        base.system.socket s2;
+        -> system.socket s1;
+        -> base.system.socket s2;
         types.float speed;
     }
 }

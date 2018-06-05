@@ -31,7 +31,7 @@ RawTypeAttribute:
         ref=[RawType|FQN] name=ID ';'
 ;
 EmbeddedAttribute:
-        ref=[Interface|FQN] name=ID ';'
+        '->' ref=[Interface|FQN] name=ID ';'
 ;
 
 FQN: ID+['.'];

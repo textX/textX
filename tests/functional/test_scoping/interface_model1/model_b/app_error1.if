@@ -3,7 +3,7 @@ import "base.if"
 
 package app {
     interface app1 {
-        base.inout_sockets s;
+        -> base.inout_sockets s;
         types.int userid;
     }
 }

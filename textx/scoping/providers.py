@@ -133,7 +133,7 @@ class FQN(object):
         Returns: None or the referenced object
         """
 
-        def _find_obj_fqn(p, fqn_name):
+        def _find_obj_fqn(p, fqn_name, cls):
             """
             Helper function:
             find a named object based on a qualified name ("."-separated
@@ -169,9 +169,14 @@ class FQN(object):
                     p = obj
                 else:
                     return None
-            return p
 
-        def _find_referenced_obj(p, name):
+            from textx.scoping.tools import textx_isinstance
+            if textx_isinstance(obj, cls):
+                return p
+            else:
+                return None
+
+        def _find_referenced_obj(p, name, cls):
             """
             Helper function:
             Search the fully qualified name starting at relative container p.
@@ -185,20 +190,20 @@ class FQN(object):
             Returns:
                 None or the found object
             """
-            ret = _find_obj_fqn(p, name)
+            ret = _find_obj_fqn(p, name, cls)
             if ret:
                 return ret
             while hasattr(p, "parent"):
                 p = p.parent
-                ret = _find_obj_fqn(p, name)
+                ret = _find_obj_fqn(p, name, cls)
                 if ret:
                     return ret
             return None
 
         from textx.model import ObjCrossRef
         assert type(obj_ref) is ObjCrossRef, type(obj_ref)
-        cls, obj_name = obj_ref.cls, obj_ref.obj_name
-        ret = _find_referenced_obj(obj, obj_name)
+        obj_cls, obj_name = obj_ref.cls, obj_ref.obj_name
+        ret = _find_referenced_obj(obj, obj_name, obj_cls)
         if ret:
             return ret
         else:
