@@ -46,7 +46,7 @@ def textx_isinstance(obj, obj_cls):
     if isinstance(obj, obj_cls):
         return True
     if hasattr(obj_cls, "_tx_fqn") and hasattr(obj, "_tx_fqn"):
-        if getattr(obj_cls, "_tx_fqn") == getattr(obj_cls, "_tx_fqn"):
+        if getattr(obj_cls, "_tx_fqn") == getattr(obj, "_tx_fqn"):
             return True
     if hasattr(obj_cls, "_tx_inh_by"):
         inh_by = getattr(obj_cls, "_tx_inh_by")

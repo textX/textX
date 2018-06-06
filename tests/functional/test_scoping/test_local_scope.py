@@ -49,7 +49,7 @@ def test_postponed_resolution_error():
 
 def test_model_with_local_scope():
     """
-    This is a basic test for the FQN scope provider (good case).
+    This is a basic test for the local scope provider (good case).
     """
     #################################
     # META MODEL DEF
@@ -101,7 +101,7 @@ def test_model_with_local_scope():
 
 def test_model_with_local_scope_and_error():
     """
-    This is a basic test for the FQN scope provider (bad case).
+    This is a basic test for the local scope provider (bad case).
     """
     #################################
     # META MODEL DEF
@@ -134,7 +134,7 @@ def test_model_with_local_scope_and_error():
 
 def test_model_with_local_scope_and_inheritance2():
     """
-    This is a more complicated test for the FQN scope provider.
+    This is a more complicated test for the local scope provider.
     """
     #################################
     # META MODEL DEF
@@ -219,7 +219,7 @@ def test_model_with_local_scope_and_inheritance2():
 
 def test_model_with_local_scope_postponed():
     """
-    This is a test for the FQN scope provider which checks that
+    This is a test for the local scope provider which checks that
     the scope resolution is postponed at an intermediate stage.
 
     This must be the case, since the order of object references is
@@ -272,3 +272,31 @@ def test_model_with_local_scope_postponed():
     #################################
     # END
     #################################
+
+def test_model_with_local_scope_wrong_type():
+    """
+    This is a basic test for the local scope provider
+    (basd case with wrong type).
+    """
+    #################################
+    # META MODEL DEF
+    #################################
+
+    my_meta_model = metamodel_from_file(
+        abspath(dirname(__file__)) + '/components_model1/Components.tx')
+    my_meta_model.register_scope_providers({
+        "*.*": scoping_providers.FQN(),
+        "Connection.from_port":
+            scoping_providers.RelativeName("from_inst.component.slots"),
+        "Connection.to_port":
+            scoping_providers.RelativeName("to_inst.component.slots"),
+    })
+
+    #################################
+    # MODEL PARSING
+    #################################
+
+    with raises(textx.exceptions.TextXSemanticError,
+                match=r'.*wrong_port.*'):
+        _ = my_meta_model.model_from_file(
+            abspath(dirname(__file__)) + "/components_model1/example_wrong_type.components")

@@ -4,7 +4,7 @@ import "types.if"
 package a {
     interface A {
         types.int x;
-	A self;    // this "self" variable must be the same as "other" of "B"
-	b.B other; // this "other" variable must be the same as "self" of "B"
+	    -> A self;    // this "self" variable must be the same as "other" of "B"
+	    -> b.B other; // this "other" variable must be the same as "self" of "B"
     }
 }

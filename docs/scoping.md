@@ -135,9 +135,12 @@ The scope providers are python callables accepting `obj, attr, obj_ref`:
  * `attr`    : a reference to the attribute `ref`
  * `obj_ref` : a `textx.model.ObjCrossRef` - the reference to be resolved
 
-The scope provides return the referenced object (e.g. a `MyInterface` object in
+The scope provider return the referenced object (e.g. a `MyInterface` object in
 the example illustrated in the `Motivation and Introduction` above (or `None` if
 nothing is found; or a `Postponed` object, see below).
+
+The scope provider is responsible to check the type and throw a
+TextXSemanticError if the type is not ok.
 
 Scope providers shall be stateless or have unmodifiable state after
 construction: this means they should allow to be reused for different models

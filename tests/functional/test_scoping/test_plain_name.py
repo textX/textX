@@ -238,3 +238,41 @@ def test_plain_name_ref_with_muli_metamodel_support():
     #################################
     # END
     #################################
+
+def test_plain_name_ref_type_error():
+    """
+    Basic test for PlainName (bad case with wrong type).
+    This test checks that a reference with correct name
+    and wrong type is not found.
+    """
+    #################################
+    # META MODEL DEF
+    #################################
+
+    my_metamodel = metamodel_from_str(metamodel_str)
+
+    my_metamodel.register_scope_providers({"*.*": scoping_providers.PlainName(
+        multi_metamodel_support=False)})
+
+    #################################
+    # MODEL PARSING AND TEST
+    #################################
+
+    with raises(textx.exceptions.TextXSemanticError,
+                match=r'.*p1.*'):
+        _ = my_metamodel.model_from_str('''
+        package P1 {
+            class Part1 {
+            }
+        }
+        package P2 {
+            class Part2 {
+                attr C2 rec;
+            }
+            class C2 {
+                attr Part1 p1;
+                attr Part2 p2a;
+                attr p1 p2b;
+            }
+        }
+        ''')

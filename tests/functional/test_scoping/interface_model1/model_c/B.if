@@ -4,7 +4,7 @@ import "types.if"
 package b {
     interface B {
         types.int x;
-	B self;
-	a.A other;
+	    -> B self;
+	    -> a.A other;
     }
 }
