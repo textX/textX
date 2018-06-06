@@ -247,6 +247,8 @@ to <a href="../model/">model</a>.</p>
 <code>model_from_str</code> methods of the meta-model object:</p>
 <pre><code>my_model = my_metamodel.model_from_file('some_input.md')
 </code></pre>
+<p>When parsing a model file or string a new parser is cloned for each model.
+This parser can be accessed via the model attribute <code>_tx_parser</code>.</p>
 <h2 id="custom-classes">Custom classes<a class="headerlink" href="#custom-classes" title="Permanent link">&para;</a></h2>
 <p>For each grammar rule a Python class with the same name is created dynamically.
 These classes are instantiated during the parsing of the input string/file to

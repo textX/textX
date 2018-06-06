@@ -348,9 +348,11 @@ have unique model elements (no double instances).</p>
 <li><code>attr</code>    : a reference to the attribute <code>ref</code></li>
 <li><code>obj_ref</code> : a <code>textx.model.ObjCrossRef</code> - the reference to be resolved</li>
 </ul>
-<p>The scope provides return the referenced object (e.g. a <code>MyInterface</code> object in
+<p>The scope provider return the referenced object (e.g. a <code>MyInterface</code> object in
 the example illustrated in the <code>Motivation and Introduction</code> above (or <code>None</code> if
 nothing is found; or a <code>Postponed</code> object, see below).</p>
+<p>The scope provider is responsible to check the type and throw a
+TextXSemanticError if the type is not ok.</p>
 <p>Scope providers shall be stateless or have unmodifiable state after
 construction: this means they should allow to be reused for different models
 (created using the same meta-model) without interacting with each other. This

@@ -319,11 +319,11 @@ object has been matched by the parser. Each object from the model object graph
 has this attribute.</p>
 <p>This is an absolute position in the input stream. To convert it to line/column
 format use <code>pos_to_linecol</code> method of the parser.</p>
-<pre><code class="python">line, col = entity_mm.parser.pos_to_linecol(
+<pre><code class="python">line, col = entity_model._tx_parser.pos_to_linecol(
     person_model.entities[0]._tx_position)
 </code></pre>
 
-<p>Where <code>entity_mm</code> is a meta-model of the language.</p>
+<p>Where <code>entity_model</code> is a model constructed by textX.</p>
 <p>Previous example will give the line/column position of the first entity.</p>
 <p><code>_tx_position_end</code> is the position in the input stream where the object ends.
 This position is one char past the last char belonging to the object. Thus,
@@ -333,17 +333,14 @@ This position is one char past the last char belonging to the object. Thus,
 from a file, this attribute will be the full path of the source file. If the
 model is created from a string this attribute will be <code>None</code>.</p>
 <h3 id="_tx_parser">_tx_parser<a class="headerlink" href="#_tx_parser" title="Permanent link">&para;</a></h3>
-<p>This attribute represents the concrete parser instance used for this model
-(the parser of the _tx_metamodel is only a blueprint for the parser).</p>
+<p>This attribute represents the concrete parser instance used for the model
+(the attribute <code>_parser</code> of the <code>_tx_metamodel</code> is only a blueprint for the
+parser of each model instance and cannot be used, e.g., to determine model
+element positions in a file. Use the <code>_tx_parser</code> attribute of the model
+instead).</p>
 <h3 id="_tx_metamodel">_tx_metamodel<a class="headerlink" href="#_tx_metamodel" title="Permanent link">&para;</a></h3>
 <p>This attribute exists only on the root of the model. It is a reference to the
 meta-model object used for creating the model.</p>
-<p>This attribute can be useful to access the parser given the reference to the
-model.</p>
-<pre><code class="python">parser = model._tx_metamodel.parser
-line, col = parser.pos_to_linecol(some_model_object)
-</code></pre>
-
 <h3 id="_tx_fqn">_tx_fqn<a class="headerlink" href="#_tx_fqn" title="Permanent link">&para;</a></h3>
 <p>Is the fully qualified name of the grammar rule/Python class in regard to the
 import path of the grammar file where the rule is defined. This attribute is
