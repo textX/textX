@@ -198,7 +198,8 @@ class TextXVisitor(PTNodeVisitor):
                                         ws=self.metamodel.ws,
                                         autokwd=self.metamodel.autokwd,
                                         memoization=self.metamodel.memoization,
-                                        debug=self.metamodel.debug)
+                                        debug=self.metamodel.debug,
+                                        file=self.metamodel.file)
 
         model_parser.metamodel = self.metamodel
 
@@ -889,7 +890,8 @@ def language_from_str(language_def, metamodel):
                               ignore_case=False,
                               reduce_tree=False,
                               memoization=metamodel.memoization,
-                              debug=metamodel.debug)
+                              debug=metamodel.debug,
+                              file=metamodel.file)
 
         # Cache it for subsequent calls
         textX_parsers[metamodel.debug] = parser

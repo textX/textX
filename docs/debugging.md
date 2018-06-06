@@ -59,3 +59,7 @@ This command renders parse trees and parser models of both textX and your
 language to dot files. Also, a meta-model and model of the language will be
 rendered if parsed correctly.
 
+!!! note
+    By default all debug messages will be printed to stdout. You can provide
+    `file` parameter to `metamodel_from_file/str` to specify file-like object
+    where all messages should go.
