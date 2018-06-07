@@ -93,6 +93,7 @@ We provide some standard scope providers:
    Example: see [tests/test_scoping/test_import_module.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_import_module.py).
     - `FQNImportURI` (decorated scope provider)
     - `PlainNameImportURI` (decorated scope provider)
+
    You can use ***globbing*** (import "*.data") with the ImportURI feature.
    This is implemented via the python "glob" module. Arguments can be passed to
    the glob.glob function (glob_args), e.g., to enable recursive globbing.
