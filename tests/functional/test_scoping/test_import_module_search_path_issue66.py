@@ -23,7 +23,7 @@ def test_model_with_imports_and_search_path_bad_case1():
     # MODEL PARSING
     #################################
 
-    with raises(FileNotFoundError, match=r'.*lib.*tasks.*'):
+    with raises(IOError, match=r'.*lib.*tasks.*'):
         _ = my_meta_model.model_from_file(
             abspath(dirname(__file__)) + "/issue66/assembly_car1.prog")
 
@@ -82,7 +82,7 @@ def test_model_with_imports_and_search_path_bad_case2a():
     # MODEL PARSING
     #################################
 
-    with raises(FileNotFoundError, match=r'.*position\.tasks.*'):
+    with raises(IOError, match=r'.*position\.tasks.*'):
         _ = my_meta_model.model_from_file(
             abspath(dirname(__file__)) + "/issue66/assembly_car1.prog")
 
@@ -112,7 +112,7 @@ def test_model_with_imports_and_search_path_bad_case2b():
     # MODEL PARSING
     #################################
 
-    with raises(FileNotFoundError, match=r'.*assembly\.tasks.*'):
+    with raises(IOError, match=r'.*assembly\.tasks.*'):
         _ = my_meta_model.model_from_file(
             abspath(dirname(__file__)) + "/issue66/assembly_car1.prog")
 
@@ -168,7 +168,7 @@ def test_model_with_imports_and_search_path_bad_case_search_and_glob2():
     # MODEL PARSING
     #################################
 
-    with raises(FileNotFoundError, match=r'.*assembly\.\*.*'):
+    with raises(IOError, match=r'.*assembly\.\*.*'):
         _ = my_meta_model.model_from_file(
             abspath(dirname(__file__)) + "/issue66/assembly_car2.prog")
 
