@@ -257,10 +257,12 @@ class ImportURI(scoping.ModelLoader):
             visited.append(obj)
             if self.search_path is not None:
                 # search_path based i/o:
+                my_search_path = \
+                    [dirname(model._tx_filename)] + self.search_path
                 loaded_model = \
                     model._tx_model_repository.load_model_using_search_path(
                         obj.importURI, model=model,
-                        search_path=self.search_path)
+                        search_path=my_search_path)
                 obj._tx_loaded_models = [loaded_model]
 
             else:
