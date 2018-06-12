@@ -327,7 +327,16 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
 
     def process_node(node):
         if isinstance(node, Terminal):
-            return convert(node.value, node.rule_name)
+            from arpeggio import RegExMatch, __version__
+            print (__version__)
+            if isinstance(node.rule, RegExMatch):
+                if node.rule.regex.groups > 0:
+                    value = "".join([node.extra_value.group(k+1) for k in range(node.rule.regex.groups)])
+                    return convert(value, node.rule_name)
+                else:
+                    return convert(node.value, node.rule_name)
+            else:
+                return convert(node.value, node.rule_name)
 
         assert node.rule.root, \
             "Not a root node: {}".format(node.rule.rule_name)
