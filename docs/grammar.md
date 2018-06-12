@@ -120,6 +120,28 @@ There are two types of match expressions:
   For more information on Regular Expression in Python see [Regular Expression
   HOWTO](https://docs.python.org/3/howto/regex.html).
 
+  When the metamodel has the option replace_regexp_with_groups enabled
+  (replace_regexp_with_groups=True), then a regular expression with exactly
+  one group is replaced by the group. This can be used to define multiline
+  strings to be stored in the model without the surrounding limiters:
+
+        Model: 'data' '=' data=/(?ms)\"{3}(.*?)\"{3}/;
+
+  An example model could be
+
+        data = """
+        This is a multiline
+        text!
+        """
+
+  When creating a metamodel with this grammar and the option
+  replace_regexp_with_groups enabled, a multlline string delimited with '"""'
+  is accepted: "(?ms)" activates the multiline option and the "dot matches
+  everything" option. "\"{3}" matches the delimited '"""'. The pattern
+  '"(.*?)" is a non-greedy variant of "get anything".
+
+        metamodel = metamodel_from_str(grammar, replace_regexp_with_groups=True)
+
 
 ### Sequence
 
