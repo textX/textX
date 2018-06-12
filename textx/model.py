@@ -329,9 +329,10 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
         if isinstance(node, Terminal):
             from arpeggio import RegExMatch, __version__
             print (__version__)
-            if isinstance(node.rule, RegExMatch):
-                if node.rule.regex.groups > 0:
-                    value = "".join([node.extra_value.group(k+1) for k in range(node.rule.regex.groups)])
+            if metamodel.replace_regexp_with_groups and \
+                    isinstance(node.rule, RegExMatch):
+                if node.rule.regex.groups == 1:
+                    value = node.extra_value.group(1)
                     return convert(value, node.rule_name)
                 else:
                     return convert(node.value, node.rule_name)
