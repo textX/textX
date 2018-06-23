@@ -540,6 +540,8 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                             setattr(model_obj, metaattr.name, result)
 
         obj_processor = metamodel.obj_processors.get(metaclass.__name__, None)
+        if obj_processor is None:
+            obj_processor = metamodel.obj_processors.get(model_obj.__class__.__name__, None)
         if obj_processor:
             return obj_processor(model_obj)
 

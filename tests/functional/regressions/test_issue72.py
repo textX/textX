@@ -82,12 +82,12 @@ def test_issue72():
 
     OuterObject.counter = 0
     InnerObject.counter = 0
-    parse_lola(grammar2, test_str)
+    _ = parse_lola(grammar2, test_str)
     assert OuterObject.counter==1
     assert InnerObject.counter==2
 
     OuterObject.counter = 0
     InnerObject.counter = 0
-    parse_lola(grammar1, test_str)
+    _ = parse_lola(grammar1, test_str)
     assert OuterObject.counter==1
     assert InnerObject.counter==2  # fails (issue 72)
