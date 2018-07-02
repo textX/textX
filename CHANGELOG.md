@@ -1,10 +1,19 @@
 # textX changelog
 
+* 2018-07-02 Release 1.7.1
+
+   - Fixed bug with obj. processor call.
+     https://github.com/igordejanovic/textX/issues/72
+   - Fixed bug with `pos_to_linecol` in the context of multi-file models.
+     https://github.com/igordejanovic/textX/issues/67
+   - More tests.
+   - Thanks goto40@GitHub for the above fixes/tests.
+
 * 2018-05-31 Release 1.7.0
 
   - A major feature of this release is multi-(meta-)model support with
-    configurable resolving techniques. Thanks Pierre Bayerl (goto40@GitHub)! 
-    
+    configurable resolving techniques. Thanks Pierre Bayerl (goto40@GitHub)!
+
     The docs sections are [here](http://www.igordejanovic.net/textX/scoping/)
     and [here](http://www.igordejanovic.net/textX/multimetamodel/).
 
@@ -72,7 +81,7 @@
   - Fixing FLOAT regex. Thanks Boris Marin (borismarin@GitHub)!
   - Fixing position info on obj cross ref. Thanks Daniel Elero (danixeee@GitHub)!
 
-  
+
 * 2017-11-22 Release 1.6.1
   - Fixing build for PyPI.
 
@@ -125,7 +134,7 @@
 
 * 2016-05-31 Release 1.4
   - Significant performance improvements done in Arpeggio (see issue #22).
-  - Fixed wrong rule type detection and infinite recursion in dot export for 
+  - Fixed wrong rule type detection and infinite recursion in dot export for
     recursive match rules (issues #23 and #25).
   - Added new performance tests to keep track of both speed and memory
     consumption.
