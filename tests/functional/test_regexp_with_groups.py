@@ -12,13 +12,14 @@ else:
     text = str
 
 grammar = """
-Model:
-    'data' '=' data=/\"(?ms){3}(.*)?\"{3}/
+Model: entries += Entry;
+Entry:
+    'data' '=' data=/\"(?ms){3}(.*?)\"{3}/
 ;
 """
 grammar2 = """
 Model:
-    'data' '=' data=/\"(?ms){3}(.*)?\"{3}\s*\-(\w+)\-/
+    'data' '=' data=/\"(?ms){3}(.*?)\"{3}\s*\-(\w+)\-/
 ;
 """
 
@@ -36,9 +37,9 @@ def test_regexp_with_groups_deactivated():
     metamodel = metamodel_from_str(grammar)
     m = metamodel.model_from_str(model_str)
 
-    assert '"""' in m.data  # """ is not removed
-    assert 'This' in m.data  # This and text in model
-    assert 'text!' in m.data  # This and text in model
+    assert '"""' in m.entries[0].data  # """ is not removed
+    assert 'This' in m.entries[0].data  # This and text in model
+    assert 'text!' in m.entries[0].data  # This and text in model
 
 def test_regexp_with_groups_activated():
     """
@@ -49,14 +50,15 @@ def test_regexp_with_groups_activated():
     This is a multiline
     text!
     """
+    data="""second text"""
     '''
 
     metamodel = metamodel_from_str(grammar, replace_regexp_with_groups=True)
     m = metamodel.model_from_str(model_str)
 
-    assert '"""' not in m.data  # """ is not removed
-    assert 'This' in m.data  # This and text in model
-    assert 'text!' in m.data  # This and text in model
+    assert '"""' not in m.entries[0].data  # """ is not removed
+    assert 'This' in m.entries[0].data  # This and text in model
+    assert 'text!' in m.entries[0].data  # This and text in model
 
 def test_regexp_with_groups_activated2():
     """
