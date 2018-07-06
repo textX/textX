@@ -1,11 +1,33 @@
+from __future__ import unicode_literals
 from os.path import dirname, abspath
 
 import textx.scoping.providers as scoping_providers
-from textx import metamodel_from_file
+from textx import metamodel_from_file, metamodel_from_str
 from textx.scoping.tools import get_referenced_object, \
     get_list_of_concatenated_objects
 from textx.scoping.tools import get_unique_named_object
+from textx.scoping.tools import textx_isinstance
+from textx import get_children_of_type
 
+def test_textx_isinstace():
+    grammar=\
+    '''
+    Model: a=A;
+    A: B;
+    B: C;
+    C: x=ID;
+    '''
+    my_meta_model = metamodel_from_str(grammar)
+    A = my_meta_model['A']
+    B = my_meta_model['B']
+    C = my_meta_model['C']
+    my_model = my_meta_model.model_from_str("c")
+    c = get_children_of_type("C", my_model);
+    assert len(c)==1
+    c=c[0]
+    assert textx_isinstance(c,C)
+    assert textx_isinstance(c,B)
+    assert textx_isinstance(c,A)
 
 def test_get_referenced_object():
     #################################

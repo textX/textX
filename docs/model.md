@@ -123,11 +123,11 @@ This is an absolute position in the input stream. To convert it to line/column
 format use `pos_to_linecol` method of the parser.
 
 ```python
-line, col = entity_mm.parser.pos_to_linecol(
+line, col = entity_model._tx_parser.pos_to_linecol(
     person_model.entities[0]._tx_position)
 ```
 
-Where `entity_mm` is a meta-model of the language.
+Where `entity_model` is a model constructed by textX.
 
 Previous example will give the line/column position of the first entity.
 
@@ -144,10 +144,10 @@ model is created from a string this attribute will be `None`.
 
 ### _tx_parser
 
-This attribute represents the concrete parser instance used for this model
-(the attribute _parser of the _tx_metamodel is only a blueprint for the
+This attribute represents the concrete parser instance used for the model
+(the attribute `_parser` of the `_tx_metamodel` is only a blueprint for the
 parser of each model instance and cannot be used, e.g., to determine model
-element positions in a file. Use the _tx_parser attribute of the model
+element positions in a file. Use the `_tx_parser` attribute of the model
 instead).
 
 ### _tx_metamodel
@@ -155,13 +155,6 @@ instead).
 This attribute exists only on the root of the model. It is a reference to the
 meta-model object used for creating the model.
 
-This attribute can be useful to access the parser given the reference to the
-model.
-
-```python
-parser = model._tx_metamodel.parser
-line, col = parser.pos_to_linecol(some_model_object)
-```
 
 ### _tx_fqn
 

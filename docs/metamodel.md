@@ -18,7 +18,7 @@ Parsing the input and creating the model is done by `model_from_file` and
     my_model = my_metamodel.model_from_file('some_input.md')
 
 When parsing a model file or string a new parser is cloned for each model.
-This parser can be accessed via the model attribute _tx_parser.
+This parser can be accessed via the model attribute `_tx_parser`.
 
 
 ## Custom classes
