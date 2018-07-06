@@ -74,6 +74,11 @@ def test_metamodel_provider_advanced_test3_global():
         assert a.ref
 
     # check meta classes
+    assert a_mm["Cls"]._tx_fqn == b_mm["Cls"]._tx_fqn
+    #fails:
+    #assert a_mm["Cls"] == b_mm["Cls"]
+
+    # more checks
     from textx.scoping.tools import textx_isinstance
     for a in lst:
         assert textx_isinstance(a, a_mm["Obj"])
