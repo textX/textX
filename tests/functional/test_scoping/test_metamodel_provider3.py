@@ -73,6 +73,15 @@ def test_metamodel_provider_advanced_test3_global():
     for a in lst:
         assert a.ref
 
+    # check meta classes
+    from textx.scoping.tools import textx_isinstance
+    for a in lst:
+        assert textx_isinstance(a, a_mm["Obj"])
+        assert textx_isinstance(a, b_mm["Obj"])
+        assert textx_isinstance(a, c_mm["Obj"])
+        #fails for some:
+        #assert isinstance(a, a_mm["Obj"])
+
     #################################
     # END
     #################################
