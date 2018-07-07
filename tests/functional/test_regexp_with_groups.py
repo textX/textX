@@ -53,7 +53,7 @@ def test_regexp_with_groups_activated():
     data="""second text"""
     '''
 
-    metamodel = metamodel_from_str(grammar, replace_regexp_with_groups=True)
+    metamodel = metamodel_from_str(grammar, use_regexp_group=True)
     m = metamodel.model_from_str(model_str)
 
     assert '"""' not in m.entries[0].data  # """ is not removed
@@ -67,7 +67,7 @@ def test_regexp_with_groups_activated2():
     """
     model_str = '''data = """This is a multiline"""-ExtraInfo-'''
 
-    metamodel = metamodel_from_str(grammar2, replace_regexp_with_groups=True)
+    metamodel = metamodel_from_str(grammar2, use_regexp_group=True)
     m = metamodel.model_from_str(model_str)
 
     assert '"""This is a multiline"""-ExtraInfo-' == m.data

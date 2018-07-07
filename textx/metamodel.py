@@ -101,14 +101,14 @@ class TextXMetaModel(DebugPrinter):
             should interact), this attribute must be set via an optional
             constructor parameter "global_repository=True" or
             "global_repository=GlobalModelRepository()".
-        replace_regexp_with_groups (bool): if True, regexp terminals are
+        use_regexp_group (bool): if True, regexp terminals are
             replaced with the group value, if they have exactly one group.
     """
 
     def __init__(self, file_name=None, classes=None, builtins=None,
                  auto_init_attributes=True, ignore_case=False, skipws=True,
                  ws=None, autokwd=False, memoization=False,
-                 textx_tools_support=False, replace_regexp_with_groups=False, **kwargs):
+                 textx_tools_support=False, use_regexp_group=False, **kwargs):
         # evaluate optional parameter "global_repository"
         global_repository = kwargs.pop("global_repository", False)
         if global_repository:
@@ -138,7 +138,7 @@ class TextXMetaModel(DebugPrinter):
         self.autokwd = autokwd
         self.memoization = memoization
         self.textx_tools_support = textx_tools_support
-        self.replace_regexp_with_groups = replace_regexp_with_groups
+        self.use_regexp_group = use_regexp_group
 
         # Registered model processors
         self._model_processors = []
