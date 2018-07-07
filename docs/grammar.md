@@ -135,7 +135,7 @@ There are two types of match expressions:
         """
 
   When creating a metamodel with this grammar and the option
-  use_regexp_group enabled, a multlline string delimited with '"""'
+  use_regexp_group enabled, a multiline string delimited with '"""'
   is accepted: "(?ms)" activates the multiline option and the "dot matches
   everything" option. "\"{3}" matches the delimited '"""'. The pattern
   '"(.*?)" is a non-greedy variant of "get anything".
