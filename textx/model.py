@@ -331,7 +331,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
             if metamodel.use_regexp_group and \
                     isinstance(node.rule, RegExMatch):
                 if node.rule.regex.groups == 1:
-                    value = node.extra_value.group(1)
+                    value = node.extra_info.group(1)
                     return convert(value, node.rule_name)
                 else:
                     return convert(node.value, node.rule_name)
