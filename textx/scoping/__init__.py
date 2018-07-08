@@ -8,6 +8,7 @@
 import glob
 import os
 import errno
+from os.path import join, exists
 
 
 class MetaModelProvider(object):
@@ -145,7 +146,6 @@ class GlobalModelRepository(object):
         Returns:
             the list of loaded models
         """
-        from textx import get_metamodel
         if (model):
             self.update_model_in_repo_based_on_filename(model)
         filenames = glob.glob(filename_pattern, **glob_args)
@@ -158,6 +158,35 @@ class GlobalModelRepository(object):
             loaded_models.append(
                 self.load_model(the_metamodel, filename, is_main_model))
         return loaded_models
+
+    def load_model_using_search_path(
+            self, filename, model, search_path, is_main_model=False):
+        """
+        add a new model to all relevant objects
+
+        Args:
+            filename: models to be loaded
+            model: model holding the loaded models in its _tx_model_repository
+                   field (may be None).
+            search_path: list of search directories.
+
+        Returns:
+            the loaded model
+        """
+        if (model):
+            self.update_model_in_repo_based_on_filename(model)
+        for the_path in search_path:
+            full_filename = join(the_path, filename)
+            # print(full_filename)
+            if exists(full_filename):
+                the_metamodel = \
+                    MetaModelProvider.get_metamodel(model, full_filename)
+                return self.load_model(the_metamodel,
+                                       full_filename,
+                                       is_main_model)
+
+        raise IOError(
+            errno.ENOENT, os.strerror(errno.ENOENT), filename)
 
     def load_model(self, the_metamodel, filename, is_main_model):
         """

@@ -221,11 +221,28 @@ class ImportURI(scoping.ModelLoader):
     command in an attribute _tx_loaded_models (list of models).
     """
 
-    def __init__(self, scope_provider, glob_args=None):
+    def __init__(self, scope_provider, glob_args=None, search_path=None):
+        """
+        Creates a new ImportURI Provider.
+        Args:
+            scope_provider: The underlying scope provider to be used to locate
+                mode items
+            glob_args: arguments for the glob module (you can load model
+                elements using globbing. With this arg you can enable, e.g.,
+                recursion while globbing. This option is irrelevant when
+                using a search path.
+            search_path: a list with path strings used to find files. Without
+                this information (None), the current model file location
+                indicates where to search files.
+        """
         from textx.scoping import ModelLoader
         ModelLoader.__init__(self)
         self.scope_provider = scope_provider
+        if (glob_args is not None) and (search_path is not None):
+            raise Exception("you cannot use globbing together with a "
+                            "search path")
         self.glob_args = {}
+        self.search_path = search_path
         if glob_args:
             self.set_glob_args(glob_args)
 
@@ -238,14 +255,25 @@ class ImportURI(scoping.ModelLoader):
         for obj in get_children(
                 lambda x: hasattr(x, "importURI") and x not in visited, model):
             visited.append(obj)
-            # TODO add multiple lookup rules for file search
-            basedir = dirname(model._tx_filename)
-            if len(basedir) > 0:
-                basedir += "/"
-            filename_pattern = abspath(basedir + obj.importURI)
-            obj._tx_loaded_models = \
-                model._tx_model_repository.load_models_using_filepattern(
-                    filename_pattern, model=model, glob_args=self.glob_args)
+            if self.search_path is not None:
+                # search_path based i/o:
+                my_search_path = \
+                    [dirname(model._tx_filename)] + self.search_path
+                loaded_model = \
+                    model._tx_model_repository.load_model_using_search_path(
+                        obj.importURI, model=model,
+                        search_path=my_search_path)
+                obj._tx_loaded_models = [loaded_model]
+
+            else:
+                # globing based i/o:
+                basedir = dirname(model._tx_filename)
+                if len(basedir) > 0:
+                    basedir += "/"
+                filename_pattern = abspath(basedir + obj.importURI)
+                obj._tx_loaded_models = \
+                    model._tx_model_repository.load_models_using_filepattern(
+                        filename_pattern, model=model, glob_args=self.glob_args)
 
     def load_models(self, model):
         from textx.model import get_metamodel
@@ -292,8 +320,9 @@ class FQNImportURI(ImportURI):
     scope provider with ImportURI and FQN
     """
 
-    def __init__(self, glob_args=None):
-        ImportURI.__init__(self, FQN(), glob_args=glob_args)
+    def __init__(self, glob_args=None, search_path=None):
+        ImportURI.__init__(self, FQN(), glob_args=glob_args,
+                           search_path=search_path)
 
 
 class PlainNameImportURI(ImportURI):
@@ -301,8 +330,9 @@ class PlainNameImportURI(ImportURI):
     scope provider with ImportURI and PlainName names
     """
 
-    def __init__(self, glob_args=None):
-        ImportURI.__init__(self, PlainName(), glob_args=glob_args)
+    def __init__(self, glob_args=None, search_path=None):
+        ImportURI.__init__(self, PlainName(), glob_args=glob_args,
+                           search_path=search_path)
 
 
 class GlobalRepo(ImportURI):

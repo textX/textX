@@ -1,0 +1,12 @@
+import "mylib/assembly.tasks"
+import "mylib/position.tasks"
+skills{
+    skill PEG_IN_THE_HOLE_1 {
+       type = PEG_IN_THE_HOLE
+       properties {max_wrench : 10}
+    }
+    skill PUT_OBJ_1 {
+       type = PUT_OBJ
+       properties {max_wrench : 10}
+    }
+}

@@ -1,0 +1,17 @@
+Model:
+    (
+    imports*=Import
+    'skills' '{'  skills+=Skill '}'
+    )|
+    (skill_types+=SkillType)
+;
+
+Skill: 'skill' name=ID '{'
+    'type' '=' type=[SkillType]
+    ('properties' '{' properties+=Property '}')?
+'}'
+;
+
+SkillType: 'skill_type' name=ID;
+Property:  name=ID ':' value=BASETYPE ;
+Import: 'import' importURI=STRING;
