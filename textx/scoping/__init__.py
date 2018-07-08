@@ -146,7 +146,6 @@ class GlobalModelRepository(object):
         Returns:
             the list of loaded models
         """
-        #from textx import get_metamodel
         if (model):
             self.update_model_in_repo_based_on_filename(model)
         filenames = glob.glob(filename_pattern, **glob_args)
@@ -174,7 +173,6 @@ class GlobalModelRepository(object):
         Returns:
             the loaded model
         """
-        #from textx import get_metamodel
         if (model):
             self.update_model_in_repo_based_on_filename(model)
         for the_path in search_path:
