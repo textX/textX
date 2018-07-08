@@ -1,4 +1,4 @@
-Copyright (c) 2014 Igor R. Dejanović <igor DOT dejanovic AT gmail DOT com>
+Copyright (c) 2014-2018 Igor R. Dejanović <igor DOT dejanovic AT gmail DOT com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
