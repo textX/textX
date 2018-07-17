@@ -364,12 +364,14 @@ class TextXVisitor(PTNodeVisitor):
 
             to_resolve = cls
             if isinstance(cls, ClassCrossRef):
-                if cls.cls_name not in metamodel:
+                referenced_cls = \
+                    metamodel.get_metaclass_for_references(cls.cls_name)
+                if referenced_cls is None:
                     line, col = grammar_parser.pos_to_linecol(cls.position)
                     raise TextXSemanticError(
                         'Unknown class/rule "{}" at {}.'
                         .format(cls.cls_name, (line, col)), line, col)
-                cls = metamodel[cls.cls_name]
+                cls = referenced_cls
             resolved_classes[to_resolve] = cls
 
             if cls._tx_type == RULE_ABSTRACT:

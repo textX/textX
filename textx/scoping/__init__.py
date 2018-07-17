@@ -187,14 +187,36 @@ class GlobalModelRepository(object):
             self.local_models.filename_to_model[filename] = new_model
         return self.local_models.filename_to_model[filename]
 
+    def add_model(self, model):
+        filename =self.update_model_in_repo_based_on_filename(model)
+        self.local_models.filename_to_model[filename] = model
+
     def update_model_in_repo_based_on_filename(self, model):
+        """ Adds a model to the repo (not initially visible)
+        Args:
+            model: the model to be added. If the model
+            has no filename, a name is invented
+        Returns: the filename of the model added to the repo
+        """
         # makes only sense if the correct model is used
-        assert (model._tx_model_repository == self)
-        myfilename = model._tx_filename
-        if (myfilename and (not self.all_models.has_model(myfilename))):
-            # make current model visible
-            # print("INIT {}".format(myfilename))
+        if (hasattr(model, "_tx_model_repository")):
+            assert (model._tx_model_repository.all_models is self.all_models)
+
+        if model._tx_filename is None:
+            for fn in self.all_models.filename_to_model:
+                if self.all_models.filename_to_model[fn] == model:
+                    return fn
+            i=0
+            while self.all_models.has_model("anonymous{}".format(i)):
+                i+=1
+            myfilename = "anonymous{}".format(i)
             self.all_models.filename_to_model[myfilename] = model
+        else:
+            myfilename = model._tx_filename
+            if (not self.all_models.has_model(myfilename)):
+                self.all_models.filename_to_model[myfilename] = model
+        return myfilename
+
 
     def pre_ref_resolution_callback(self, other_model):
         """
