@@ -147,7 +147,7 @@ class GlobalModelRepository(object):
         """
         from textx import get_metamodel
         if (model):
-            self.update_model_in_repo_based_on_filename(model)
+            self._update_model_in_repo_based_on_filename(model)
         filenames = glob.glob(filename_pattern, **glob_args)
         if len(filenames) == 0:
             raise IOError(
@@ -187,11 +187,11 @@ class GlobalModelRepository(object):
             self.local_models.filename_to_model[filename] = new_model
         return self.local_models.filename_to_model[filename]
 
-    def add_model(self, model):
-        filename =self.update_model_in_repo_based_on_filename(model)
+    def _add_model(self, model):
+        filename =self._update_model_in_repo_based_on_filename(model)
         self.local_models.filename_to_model[filename] = model
 
-    def update_model_in_repo_based_on_filename(self, model):
+    def _update_model_in_repo_based_on_filename(self, model):
         """ Adds a model to the repo (not initially visible)
         Args:
             model: the model to be added. If the model

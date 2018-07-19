@@ -342,9 +342,15 @@ class GlobalRepo(ImportURI):
             model._tx_model_repository.load_models_using_filepattern(
                 filename_pattern, model=model, glob_args=self.glob_args)
         for m in self.models_to_be_added_directly:
-            model._tx_model_repository.add_model(m)
+            model._tx_model_repository._add_model(m)
 
     def add_model(self, model):
+        """
+        Adds a model directly. Useful when combining models
+        pasred from a string (instead of a file).
+        Args:
+            model: the model to be added later.
+        """
         self.models_to_be_added_directly.append(model)
 
     def load_models_in_model_repo(self, global_model_repo=None):
