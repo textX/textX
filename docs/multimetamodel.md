@@ -9,7 +9,39 @@ which meta model to use when loading a file in a scope provider using the
 `PlainNameGlobalRepo`). If no file pattern matches, the meta model of the current
 model is utilized.
 
-Simple examples see [tests/test_scoping/test_metamodel_provider*.py](https://github.com/igordejanovic/textX/tree/master/tests/functional/test_scoping).
+
+There are different ways to combine meta models: **(1)** a meta model can use 
+another meta model to compose its own structures (extending a meta model) 
+or **(2)** a meta model can reference elements from another meta model.
+
+**Extending an existing meta model** can be realized in TextX by defining 
+a grammar extending an existing grammar. All user classes, scope providers 
+and processors must be manually added to the new meta model. Such extended 
+meta models can also reference elements of models created with the original 
+meta model. Although the meta classes corresponding to inherited rules are 
+redefined by the extending meta model, scope providers match the object 
+types correctly. This is implemented by comparing the types by their name 
+(see textx.scoping.tool.textx_isinstance). Simple examples: see 
+[tests/test_scoping/test_metamodel_provider*.py](https://github.com/igordejanovic/textX/tree/master/tests/functional/test_scoping).
+
+
+**Referencing elements from another meta model** can be achieved without 
+having the original grammar, nor any other details like scope providers, etc. 
+Such references can, thus, be enabled while having access only to the 
+meta model object of the meta model to be referenced. This object may 
+originate from a library installed on the system (without sources, like 
+the grammar). The meta model to be referenced is passed to the referencing 
+meta model while constructing it. The referencing grammar can then reference 
+the types (rules) of the referenced meta model. Rule lookup takes care of 
+choosing the correct types. Simple examples: see 
+[tests/test_metamodel/test_multi_metamodel_refs.py](https://github.com/igordejanovic/textX/tree/master/tests/test_metamodel/test_multi_metamodel_refs.py).
+
+
+Thus, when designing a domain model (e.g., from the software test domain) to 
+reference elements of another domain model (e.g., from the 
+interface/communication domain), the second possibility (referencing) 
+is probably a cleaner way to achieve the task than the first possibility 
+(extending).
 
 
 ## Use Case: Recipes and Ingredients with global model sharing
@@ -143,4 +175,5 @@ Where the json file `othermodel.json` consists of:
 We provide a pragmatic way to define meta-models using other meta models.
 Mostly, we focus on textx meta-models using other textx meta-models. But scope
 providers may be used to also link a textx meta model to an arbitrary non-textx
-data structure.
+data structure (see
+[test_reference_to_nontextx_attribute.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_reference_to_nontextx_attribute.py)). 
