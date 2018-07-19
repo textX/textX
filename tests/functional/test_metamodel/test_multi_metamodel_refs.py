@@ -79,9 +79,9 @@ def test_multi_metamodel_references_with_importURI():
     # This is useful, especially with circular includes or diamond shaped
     # includes. Without such a repo, you might get double instantiations of
     # model elements.
-    # However, if B includes A, but A not B, both meta modela might have
+    # However, if B includes A, but A not B, both meta models might have
     # global repos on their own (global between model files of the same
-    # meta model --> global_repositoy=True).
+    # meta model --> global_repository=True).
     global_repo = scoping.GlobalModelRepository()
 
     # Create two meta models with the global repo.

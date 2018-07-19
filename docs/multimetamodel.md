@@ -61,9 +61,9 @@ of type A (from "grammarA"). It also allows importing other model files.
 
 
 In our case B models may include A models, but A models cannot include B
-models. This, there is no need to habe a shared repositoy between both meta 
+models. This, there is no need to have a shared repository between both meta 
 models. A global repository within each meta model is enough 
-(global_repositoy=True). Here, we create two meta models, where
+(global_repository=True). Here, we create two meta models, where
 the second meta model allows referencing the first one
 (**referenced_metamodels=[mm_A]**).
 
