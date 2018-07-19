@@ -44,6 +44,46 @@ is probably a cleaner way to achieve the task than the first possibility
 (extending).
 
 
+## Use Case: meta model referencing another meta model
+
+We have two grammars (grammar A nd B). "grammarA" defines named elements of 
+type A:
+
+    Model: a+=A;
+    A:'A' name=ID;
+
+"GrammarBWithImportURI" defines named elements of type B referencing elements
+of type A (from "grammarA"). It also allows importing other model files.
+
+    Model: imports+=Import b+=B;
+    B:'B' name=ID '->' a=[A];
+    Import: 'import' importURI=STRING;
+
+
+In our case B models may include A models, but A models cannot include B
+models. This, there is no need to habe a shared repositoy between both meta 
+models. A global repository within each meta model is enough 
+(global_repositoy=True). Here, we create two meta models, where
+the second meta model allows referencing the first one
+(**referenced_metamodels=[mm_A]**).
+
+    mm_A = metamodel_from_str(grammarA, global_repository=True)
+    mm_B = metamodel_from_str(grammarBWithImport, global_repository=True,
+                              referenced_metamodels=[mm_A])
+
+Then we define a default scope provider supporting the importURI-feature:
+
+    mm_B.register_scope_providers({"*.*": scoping_providers.FQNImportURI()})
+
+and we map file endings to the meta models:
+
+    scoping.MetaModelProvider.add_metamodel("*.a", mm_A)
+    scoping.MetaModelProvider.add_metamodel("*.b", mm_B)
+
+Full example: see 
+[tests/test_metamodel/test_multi_metamodel_refs.py](https://github.com/igordejanovic/textX/tree/master/tests/test_metamodel/test_multi_metamodel_refs.py).
+
+
 ## Use Case: Recipes and Ingredients with global model sharing
 
 In this use case we define recipes (food preparation) including a list of
@@ -77,8 +117,7 @@ model elements among both meta models:
     scoping.MetaModelProvider.add_metamodel("*.ingredient", i_mm)
 
 
-
-## Use Case: meta-model sharing with the ImportURI-feature
+## Use Case: meta model sharing with the ImportURI-feature
 
 In this use case we have a given meta model to define components and instances
 of components. A second model is added to define users to use instances of such

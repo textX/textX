@@ -198,10 +198,6 @@ class GlobalModelRepository(object):
             has no filename, a name is invented
         Returns: the filename of the model added to the repo
         """
-        # makes only sense if the correct model is used
-        if (hasattr(model, "_tx_model_repository")):
-            assert (model._tx_model_repository.all_models is self.all_models)
-
         if model._tx_filename is None:
             for fn in self.all_models.filename_to_model:
                 if self.all_models.filename_to_model[fn] == model:
