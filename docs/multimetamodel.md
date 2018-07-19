@@ -80,7 +80,7 @@ and we map file endings to the meta models:
     scoping.MetaModelProvider.add_metamodel("*.a", mm_A)
     scoping.MetaModelProvider.add_metamodel("*.b", mm_B)
 
-Full example: see 
+Full example (with a globally shared repository): see 
 [tests/test_metamodel/test_multi_metamodel_refs.py](https://github.com/igordejanovic/textX/tree/master/tests/test_metamodel/test_multi_metamodel_refs.py).
 
 
