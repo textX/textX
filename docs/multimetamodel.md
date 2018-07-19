@@ -214,5 +214,4 @@ Where the json file `othermodel.json` consists of:
 We provide a pragmatic way to define meta-models using other meta models.
 Mostly, we focus on textx meta-models using other textx meta-models. But scope
 providers may be used to also link a textx meta model to an arbitrary non-textx
-data structure (see
-[test_reference_to_nontextx_attribute.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_reference_to_nontextx_attribute.py)). 
+data structure. 
