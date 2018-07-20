@@ -9,9 +9,10 @@ from textx.scoping.tools import get_unique_named_object
 from textx.scoping.tools import textx_isinstance
 from textx import get_children_of_type
 
+
 def test_textx_isinstace():
-    grammar=\
-    '''
+    grammar = \
+        '''
     Model: a=A;
     A: B;
     B: C;
@@ -22,12 +23,13 @@ def test_textx_isinstace():
     B = my_meta_model['B']
     C = my_meta_model['C']
     my_model = my_meta_model.model_from_str("c")
-    c = get_children_of_type("C", my_model);
-    assert len(c)==1
-    c=c[0]
-    assert textx_isinstance(c,C)
-    assert textx_isinstance(c,B)
-    assert textx_isinstance(c,A)
+    c = get_children_of_type("C", my_model)
+    assert len(c) == 1
+    c = c[0]
+    assert textx_isinstance(c, C)
+    assert textx_isinstance(c, B)
+    assert textx_isinstance(c, A)
+
 
 def test_get_referenced_object():
     #################################

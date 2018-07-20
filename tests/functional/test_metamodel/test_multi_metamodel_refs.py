@@ -21,8 +21,8 @@ B:'B' name=ID '->' a=[A];
 Import: 'import' importURI=STRING;
 """
 
-def test_multi_metamodel_references():
 
+def test_multi_metamodel_references1():
     global_repo = scoping.GlobalModelRepository()
     mm_A = metamodel_from_str(grammarA, global_repository=global_repo)
     mm_B = metamodel_from_str(grammarB, global_repository=global_repo,
@@ -32,7 +32,6 @@ def test_multi_metamodel_references():
     mm_B.register_scope_providers({"*.*": global_repo_provider})
     mm_A.register_scope_providers({"*.*": global_repo_provider})
 
-
     mA = mm_A.model_from_str('''
     A a1 A a2 A a3
     ''')
@@ -48,8 +47,8 @@ def test_multi_metamodel_references():
         B b1 -> a1 B b2 -> a2 B b3 -> UNKNOWN
         ''')
 
-def test_multi_metamodel_references():
 
+def test_multi_metamodel_references2():
     mm_A = metamodel_from_str(grammarA)
     mm_B = metamodel_from_str(grammarB,
                               referenced_metamodels=[mm_A])
@@ -57,7 +56,6 @@ def test_multi_metamodel_references():
     global_repo_provider = scoping_providers.PlainNameGlobalRepo()
     mm_B.register_scope_providers({"*.*": global_repo_provider})
 
-
     mA = mm_A.model_from_str('''
     A a1 A a2 A a3
     ''')
@@ -73,8 +71,8 @@ def test_multi_metamodel_references():
         B b1 -> a1 B b2 -> a2 B b3 -> UNKNOWN
         ''')
 
-def test_multi_metamodel_references_with_importURI():
 
+def test_multi_metamodel_references_with_importURI():
     # Use a global repo.
     # This is useful, especially with circular includes or diamond shaped
     # includes. Without such a repo, you might get double instantiations of
@@ -92,7 +90,8 @@ def test_multi_metamodel_references_with_importURI():
     # Create two meta models with the global repo.
     # The second meta model allows referencing the first one.
     mm_A = metamodel_from_str(grammarA, global_repository=global_repo)
-    mm_B = metamodel_from_str(grammarBWithImport, global_repository=global_repo,
+    mm_B = metamodel_from_str(grammarBWithImport,
+                              global_repository=global_repo,
                               referenced_metamodels=[mm_A])
 
     # define a default scope provider supporting the importURI feature
@@ -106,7 +105,7 @@ def test_multi_metamodel_references_with_importURI():
     # load a model from B which includes a model from A.
     current_dir = os.path.dirname(__file__)
     model = mm_B.model_from_file(os.path.join(current_dir, 'multi_metamodel',
-                                          'refs','b.b'))
+                                              'refs', 'b.b'))
 
     # check that the classes from the correct meta model are used
     # (and that the model was loaded).
@@ -115,4 +114,3 @@ def test_multi_metamodel_references_with_importURI():
 
     # clean up
     scoping.MetaModelProvider.clear()
-

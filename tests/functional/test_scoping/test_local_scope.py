@@ -273,6 +273,7 @@ def test_model_with_local_scope_postponed():
     # END
     #################################
 
+
 def test_model_with_local_scope_wrong_type():
     """
     This is a basic test for the local scope provider
@@ -299,4 +300,5 @@ def test_model_with_local_scope_wrong_type():
     with raises(textx.exceptions.TextXSemanticError,
                 match=r'.*wrong_port.*'):
         _ = my_meta_model.model_from_file(
-            abspath(dirname(__file__)) + "/components_model1/example_wrong_type.components")
+            abspath(dirname(__file__))
+            + "/components_model1/example_wrong_type.components")
