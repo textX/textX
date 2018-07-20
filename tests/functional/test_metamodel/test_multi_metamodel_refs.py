@@ -81,7 +81,12 @@ def test_multi_metamodel_references_with_importURI():
     # model elements.
     # However, if B includes A, but A not B, both meta models might have
     # global repos on their own (global between model files of the same
-    # meta model --> global_repository=True).
+    # meta model --> global_repository=True). Circular dependencies
+    # will require shared grammars, like in test_metamodel_provider3.py,
+    # because it is not possible to share meta models for referencing, before
+    # the meta model is constructed (like in our example, mm_A cannot
+    # reference mm_B, if mm_B already references mm_A because one has to
+    # constructed first).
     global_repo = scoping.GlobalModelRepository()
 
     # Create two meta models with the global repo.
