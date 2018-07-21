@@ -1,0 +1,6 @@
+#include "data_structures_including_error.data"
+#include "types.type" // double include, loaded 1x only
+
+algo A1 : Point -> City
+algo A2 : City -> Population
+connect A1 -> A2

@@ -509,7 +509,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
 
         return inst
 
-    def call_obj_processors(model_obj, metaclass=None):
+    def call_obj_processors(metamodel, model_obj, metaclass=None):
         """
         Depth-first model object processing.
         """
@@ -530,12 +530,14 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                     if metaattr.mult in many:
                         for idx, obj in enumerate(attr):
                             if obj:
-                                result = call_obj_processors(obj,
+                                result = call_obj_processors(m._tx_metamodel,
+                                                             obj,
                                                              metaattr.cls)
                                 if result is not None:
                                     attr[idx] = result
                     else:
-                        result = call_obj_processors(attr, metaattr.cls)
+                        result = call_obj_processors(m._tx_metamodel,
+                                                     attr, metaattr.cls)
                         if result is not None:
                             setattr(model_obj, metaattr.name, result)
 
@@ -612,14 +614,14 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
         for m in models:
             assert 0 == len(get_children_of_type(Postponed.__class__, m))
 
-        # We have model loaded and all link resolved
-        # So we shall do a depth-first call of object
-        # processors if any processor is defined.
-        if metamodel.obj_processors:
-            if parser.debug:
-                parser.dprint("CALLING OBJECT PROCESSORS")
-            for m in models:
-                call_obj_processors(m)
+            # We have model loaded and all link resolved
+            # So we shall do a depth-first call of object
+            # processors if any processor is defined.
+            if m._tx_metamodel.obj_processors:
+                if parser.debug:
+                    parser.dprint("CALLING OBJECT PROCESSORS")
+                for m in models:
+                    call_obj_processors(m._tx_metamodel, m)
 
     if metamodel.textx_tools_support \
             and type(model) not in PRIMITIVE_PYTHON_TYPES:

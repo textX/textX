@@ -1,0 +1,4 @@
+#include "types_with_error.type"
+data Point { x: Int y: Int}
+data City { name: string }
+data Population { count: Int}

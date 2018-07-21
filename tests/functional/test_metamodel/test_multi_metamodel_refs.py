@@ -5,6 +5,7 @@ from pytest import raises
 from textx import metamodel_from_str, metamodel_from_file
 import textx.scoping.providers as scoping_providers
 import textx.scoping as scoping
+import textx.scoping.tools as tools
 import textx.exceptions
 
 grammarA = """
@@ -142,10 +143,20 @@ class LibTypes:
             '''
                 Model: types+=Type;
                 Type: 'type' name=ID;
+                Comment: /\/\/.*$/;
             ''',
             global_repository=global_repo)
         textx.scoping.MetaModelProvider.add_metamodel("*.type",
                                                       LibTypes.get_metamodel())
+        def check_type(t):
+            if t.name[0].isupper():
+                raise textx.exceptions.TextXSyntaxError(
+                    "types must be lowercase",
+                    **tools.get_location(t)
+                )
+        LibTypes._mm.register_obj_processors({
+            'Type': check_type
+        })
 
 class LibData:
     """ Library for Datadefs:
@@ -178,6 +189,7 @@ class LibData:
                 '}';
                 Attribute: name=ID ':' type=[Type];
                 Include: '#include' importURI=STRING;
+                Comment: /\/\/.*$/;
             ''',
             global_repository=global_repo,
             referenced_metamodels=[LibTypes.get_metamodel()])
@@ -224,6 +236,15 @@ class LibFlow:
             {"*.*": scoping_providers.FQNImportURI()})
         textx.scoping.MetaModelProvider.add_metamodel("*.flow",
                                                       LibFlow.get_metamodel())
+        def check_flow(f):
+            if f.algo1.outp != f.algo2.inp:
+                raise textx.exceptions.TextXSemanticError(
+                    "algo data types must match",
+                    **tools.get_location(f)
+                )
+        LibFlow._mm.register_obj_processors({
+            'Flow': check_flow
+        })
 
 
 def test_multi_metamodel_types_data_flow1():
@@ -287,4 +308,39 @@ def test_multi_metamodel_types_data_flow2():
     # are shared with the first model
     # --> global repo
     assert model1.algos[0].inp.attributes[0].type in model2.includes[0]._tx_loaded_models[0].types
+
+
+def test_multi_metamodel_types_data_flow_validation_error_in_types():
+
+    selector = "no global scope"
+    textx.scoping.MetaModelProvider.clear()
+    LibTypes.library_init(selector)
+    LibData.library_init(selector)
+    LibFlow.library_init(selector)
+
+    current_dir = os.path.dirname(__file__)
+
+    with raises(textx.exceptions.TextXSyntaxError,
+                match=r'.*lowercase.*'):
+        _ = LibFlow.get_metamodel().model_from_file(
+            os.path.join(current_dir, 'multi_metamodel','types_data_flow',
+                         'data_flow_including_error.flow')
+        )
+
+def test_multi_metamodel_types_data_flow_validation_error_in_data_flow():
+
+    selector = "no global scope"
+    textx.scoping.MetaModelProvider.clear()
+    LibTypes.library_init(selector)
+    LibData.library_init(selector)
+    LibFlow.library_init(selector)
+
+    current_dir = os.path.dirname(__file__)
+
+    with raises(textx.exceptions.TextXSemanticError,
+                match=r'.*data types must match.*'):
+        _ = LibFlow.get_metamodel().model_from_file(
+            os.path.join(current_dir, 'multi_metamodel','types_data_flow',
+                         'data_flow_with_error.flow')
+        )
 
