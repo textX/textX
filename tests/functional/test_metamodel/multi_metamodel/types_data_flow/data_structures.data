@@ -1,0 +1,4 @@
+#include "types.type"
+data Point { x: int y: int}
+data City { name: string }
+data Population { count: int}

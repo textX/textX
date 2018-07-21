@@ -114,3 +114,177 @@ def test_multi_metamodel_references_with_importURI():
 
     # clean up
     scoping.MetaModelProvider.clear()
+
+# -------------------------------------
+
+class LibTypes:
+    """ Library for Typedefs:
+            type int
+            type string
+    """
+
+    _mm = None
+
+    @staticmethod
+    def get_metamodel():
+        return LibTypes._mm
+
+    @staticmethod
+    def library_init(repo_selector):
+        if repo_selector=="no global scope":
+            global_repo = False
+        elif repo_selector=="global repo":
+            global_repo = True
+        else:
+            raise Exception("unexpected parameter 'repo_selector={}'"
+                            .format(repo_selector))
+        LibTypes._mm = metamodel_from_str(
+            '''
+                Model: types+=Type;
+                Type: 'type' name=ID;
+            ''',
+            global_repository=global_repo)
+        textx.scoping.MetaModelProvider.add_metamodel("*.type",
+                                                      LibTypes.get_metamodel())
+
+class LibData:
+    """ Library for Datadefs:
+            data Point { x: int y: int}
+            data City { name: string }
+            data Population { count: int}
+    """
+
+    _mm = None
+
+    @staticmethod
+    def get_metamodel():
+        return LibData._mm
+
+    @staticmethod
+    def library_init(repo_selector):
+        if repo_selector=="no global scope":
+            global_repo = False
+        elif repo_selector=="global repo":
+            # get the global repo from the inherited meta model:
+            global_repo = LibTypes.get_metamodel()._tx_model_repository
+        else:
+            raise Exception("unexpected parameter 'repo_selector={}'"
+                            .format(repo_selector))
+        LibData._mm = metamodel_from_str(
+            '''
+                Model: includes*=Include data+=Data;
+                Data: 'data' name=ID '{'
+                    attributes+=Attribute
+                '}';
+                Attribute: name=ID ':' type=[Type];
+                Include: '#include' importURI=STRING;
+            ''',
+            global_repository=global_repo,
+            referenced_metamodels=[LibTypes.get_metamodel()])
+        LibData._mm.register_scope_providers(
+            {"*.*": scoping_providers.FQNImportURI()})
+        textx.scoping.MetaModelProvider.add_metamodel("*.data",
+                                                      LibData.get_metamodel())
+
+class LibFlow:
+    """ Library for DataFlows
+            algo A1 : Point -> City
+            algo A2 : City -> Population
+            connect A1 -> A2
+    """
+
+    _mm = None
+
+    @staticmethod
+    def get_metamodel():
+        return LibFlow._mm
+
+    @staticmethod
+    def library_init(repo_selector):
+        if repo_selector=="no global scope":
+            global_repo = False
+        elif repo_selector=="global repo":
+            # get the global repo from the inherited meta model:
+            global_repo = LibData.get_metamodel()._tx_model_repository
+        else:
+            raise Exception("unexpected parameter 'repo_selector={}'"
+                            .format(repo_selector))
+
+        LibFlow._mm = metamodel_from_str(
+            '''
+                Model: includes*=Include algos+=Algo flows+=Flow;
+                Algo: 'algo' name=ID ':' inp=[Data] '->' outp=[Data];
+                Flow: 'connect' algo1=[Algo] '->' algo2=[Algo] ;
+                Include: '#include' importURI=STRING;
+                Comment: /\/\/.*$/;
+            ''',
+            global_repository = global_repo,
+            referenced_metamodels=[LibData.get_metamodel()])
+        LibFlow._mm.register_scope_providers(
+            {"*.*": scoping_providers.FQNImportURI()})
+        textx.scoping.MetaModelProvider.add_metamodel("*.flow",
+                                                      LibFlow.get_metamodel())
+
+
+def test_multi_metamodel_types_data_flow1():
+
+    # this stuff normally happens in the python module directly of the
+    # third party lib
+    selector = "no global scope"
+    textx.scoping.MetaModelProvider.clear()
+    LibTypes.library_init(selector)
+    LibData.library_init(selector)
+    LibFlow.library_init(selector)
+
+    current_dir = os.path.dirname(__file__)
+    model1 = LibFlow.get_metamodel().model_from_file(
+        os.path.join(current_dir, 'multi_metamodel','types_data_flow',
+                     'data_flow.flow')
+    )
+
+    # althought, types.type is included 2x, it is only present 1x
+    # (scope providers share a common repo within on model and all
+    #  loaded models in that model)
+    assert 3 == len(model1._tx_model_repository.all_models.filename_to_model)
+
+    # load the type model also used by model1
+    model2 = LibData.get_metamodel().model_from_file(
+        os.path.join(current_dir, 'multi_metamodel','types_data_flow',
+                     'data_structures.data')
+    )
+
+    # the types (reloaded by the second model)
+    # are not shared with the first model
+    # --> no global repo
+    assert model1.algos[0].inp.attributes[0].type not in model2.includes[0]._tx_loaded_models[0].types
+
+
+def test_multi_metamodel_types_data_flow2():
+
+    # this stuff normally happens in the python module directly of the
+    # third party lib
+    selector = "global repo"
+    textx.scoping.MetaModelProvider.clear()
+    LibTypes.library_init(selector)
+    LibData.library_init(selector)
+    LibFlow.library_init(selector)
+
+    current_dir = os.path.dirname(__file__)
+    model1 = LibFlow.get_metamodel().model_from_file(
+        os.path.join(current_dir, 'multi_metamodel','types_data_flow',
+                     'data_flow.flow')
+    )
+    # althought, types.type is included 2x, it is only present 1x
+    assert 3 == len(model1._tx_model_repository.all_models.filename_to_model)
+
+    # load the type model also used by model1
+    model2 = LibData.get_metamodel().model_from_file(
+        os.path.join(current_dir, 'multi_metamodel','types_data_flow',
+                     'data_structures.data')
+    )
+
+    # the types (reloaded by the second model)
+    # are shared with the first model
+    # --> global repo
+    assert model1.algos[0].inp.attributes[0].type in model2.includes[0]._tx_loaded_models[0].types
+

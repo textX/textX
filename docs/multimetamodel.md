@@ -60,15 +60,12 @@ of type A (from "grammarA"). It also allows importing other model files.
     Import: 'import' importURI=STRING;
 
 
-In our case B models may include A models, but A models cannot include B
-models. This, there is no need to have a shared repository between both meta 
-models. A global repository within each meta model is enough 
-(global_repository=True). Here, we create two meta models, where
+Here, we create two meta models, where
 the second meta model allows referencing the first one
 (**referenced_metamodels=[mm_A]**).
 
-    mm_A = metamodel_from_str(grammarA, global_repository=True)
-    mm_B = metamodel_from_str(grammarBWithImport, global_repository=True,
+    mm_A = metamodel_from_str(grammarA)
+    mm_B = metamodel_from_str(grammarBWithImport,
                               referenced_metamodels=[mm_A])
 
 Then we define a default scope provider supporting the importURI-feature:
@@ -80,7 +77,7 @@ and we map file endings to the meta models:
     scoping.MetaModelProvider.add_metamodel("*.a", mm_A)
     scoping.MetaModelProvider.add_metamodel("*.b", mm_B)
 
-Full example (with a globally shared repository): see 
+Full example (also with a globally shared repository discussion): see 
 [tests/test_metamodel/test_multi_metamodel_refs.py](https://github.com/igordejanovic/textX/tree/master/tests/test_metamodel/test_multi_metamodel_refs.py).
 
 
