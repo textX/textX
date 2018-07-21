@@ -347,7 +347,7 @@ class GlobalRepo(ImportURI):
     def add_model(self, model):
         """
         Adds a model directly. Useful when combining models
-        pasred from a string (instead of a file).
+        parsed from a string (instead of a file).
         Args:
             model: the model to be added later.
         """
@@ -360,7 +360,7 @@ class GlobalRepo(ImportURI):
         Normally this is done automatically while
         reference resolution of one loaded model.
 
-        However, if you wich to load all models
+        However, if you which to load all models
         you can call this and get a model repository.
 
         The metamodels must be identifiable via the MetaModelProvider.
