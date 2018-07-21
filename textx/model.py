@@ -530,13 +530,13 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                     if metaattr.mult in many:
                         for idx, obj in enumerate(attr):
                             if obj:
-                                result = call_obj_processors(m._tx_metamodel,
+                                result = call_obj_processors(metamodel,
                                                              obj,
                                                              metaattr.cls)
                                 if result is not None:
                                     attr[idx] = result
                     else:
-                        result = call_obj_processors(m._tx_metamodel,
+                        result = call_obj_processors(metamodel,
                                                      attr, metaattr.cls)
                         if result is not None:
                             setattr(model_obj, metaattr.name, result)
