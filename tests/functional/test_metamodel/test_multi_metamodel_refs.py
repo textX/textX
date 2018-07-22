@@ -274,10 +274,17 @@ def test_multi_metamodel_types_data_flow1():
                      'data_structures.data')
     )
 
+    # load the type model also used by model1 and model2
+    model3 = LibTypes.get_metamodel().model_from_file(
+        os.path.join(current_dir, 'multi_metamodel','types_data_flow',
+                     'types.type')
+    )
+
     # the types (reloaded by the second model)
     # are not shared with the first model
     # --> no global repo
     assert model1.algos[0].inp.attributes[0].type not in model2.includes[0]._tx_loaded_models[0].types
+    assert model1.algos[0].inp.attributes[0].type not in model3.types
 
 
 def test_multi_metamodel_types_data_flow2():
@@ -304,10 +311,17 @@ def test_multi_metamodel_types_data_flow2():
                      'data_structures.data')
     )
 
+    # load the type model also used by model1 and model2
+    model3 = LibTypes.get_metamodel().model_from_file(
+        os.path.join(current_dir, 'multi_metamodel','types_data_flow',
+                     'types.type')
+    )
+
     # the types (reloaded by the second model)
     # are shared with the first model
     # --> global repo
     assert model1.algos[0].inp.attributes[0].type in model2.includes[0]._tx_loaded_models[0].types
+    assert model1.algos[0].inp.attributes[0].type in model3.types
 
 
 def test_multi_metamodel_types_data_flow_validation_error_in_types():
