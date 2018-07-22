@@ -111,6 +111,7 @@ class TextXMetaModel(DebugPrinter):
                  textx_tools_support=False, use_regexp_group=False, **kwargs):
         # evaluate optional parameter "global_repository"
         global_repository = kwargs.pop("global_repository", False)
+        self.referenced_metamodels = kwargs.pop("referenced_metamodels", [])
         if global_repository:
             from textx.scoping import GlobalModelRepository
             if isinstance(global_repository, GlobalModelRepository):
@@ -419,6 +420,15 @@ class TextXMetaModel(DebugPrinter):
         textX rules.
         """
         # TODO: Implement complex textX validations.
+
+    def get_metaclass_for_references(self, name):
+        if name in self:
+            return self[name]
+        else:
+            for mm in self.referenced_metamodels:
+                if name in mm:
+                    return mm[name]
+        return None
 
     def __getitem__(self, name):
         """

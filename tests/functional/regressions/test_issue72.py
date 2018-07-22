@@ -11,25 +11,30 @@ if sys.version < '3':
 else:
     text = str
 
+
 class OuterObject(object):
-    counter=0
+    counter = 0
+
     def __init__(self, parent=None, col_items=None):
         print("INIT OuterObject")
         self.col_items = col_items
 
     def process(self):
-        OuterObject.counter+=1
+        OuterObject.counter += 1
         print("PROCESS OuterObject")
 
+
 class InnerObject(object):
-    counter=0
+    counter = 0
+
     def __init__(self, parent=None, m_id=None):
         print("INIT InnerObject")
         self.m_id = m_id
 
     def process(self):
         print("PROCESS InnerObject")
-        InnerObject.counter+=1
+        InnerObject.counter += 1
+
 
 grammar1 = """
 OuterObject:
@@ -57,25 +62,28 @@ InnerObject:
 
 """
 
+
 def default_processor(obj):
     obj.process()
+
 
 def parse_lola(grammar, lola_str):
     lola_str = str(lola_str)
     obj_processors = {
         "InnerObject": default_processor,
         "OuterObject": default_processor
-        }
+    }
 
     lola_classes = [InnerObject, OuterObject]
 
     meta_model = metamodel_from_str(
         grammar, classes=lola_classes,
         ignore_case=True, auto_init_attributes=False
-        )
+    )
     meta_model.register_obj_processors(obj_processors)
     model = meta_model.model_from_str(lola_str)
     return model
+
 
 def test_issue72():
     test_str = "'foo', 'bar'"
@@ -83,11 +91,11 @@ def test_issue72():
     OuterObject.counter = 0
     InnerObject.counter = 0
     _ = parse_lola(grammar2, test_str)
-    assert OuterObject.counter==1
-    assert InnerObject.counter==2
+    assert OuterObject.counter == 1
+    assert InnerObject.counter == 2
 
     OuterObject.counter = 0
     InnerObject.counter = 0
     _ = parse_lola(grammar1, test_str)
-    assert OuterObject.counter==1
-    assert InnerObject.counter==2  # fails (issue 72)
+    assert OuterObject.counter == 1
+    assert InnerObject.counter == 2  # fails (issue 72)

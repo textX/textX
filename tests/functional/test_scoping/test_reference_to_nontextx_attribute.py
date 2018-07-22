@@ -57,7 +57,6 @@ def test_reference_to_nontextx_attribute():
     A2_gender = get_unique_named_object(my_model, "A2").pyattr
     assert A2_gender == "male"
 
-
     with raises(Exception, match=r'.*noname.*'):
         _ = my_metamodel.model_from_str('''
         import "test_reference_to_nontextx_attribute/othermodel.json" as data

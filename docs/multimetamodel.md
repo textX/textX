@@ -9,7 +9,76 @@ which meta model to use when loading a file in a scope provider using the
 `PlainNameGlobalRepo`). If no file pattern matches, the meta model of the current
 model is utilized.
 
-Simple examples see [tests/test_scoping/test_metamodel_provider*.py](https://github.com/igordejanovic/textX/tree/master/tests/functional/test_scoping).
+
+There are different ways to combine meta models: **(1)** a meta model can use 
+another meta model to compose its own structures (extending a meta model) 
+or **(2)** a meta model can reference elements from another meta model.
+
+**Extending an existing meta model** can be realized in TextX by defining 
+a grammar extending an existing grammar. All user classes, scope providers 
+and processors must be manually added to the new meta model. Such extended 
+meta models can also reference elements of models created with the original 
+meta model. Although the meta classes corresponding to inherited rules are 
+redefined by the extending meta model, scope providers match the object 
+types correctly. This is implemented by comparing the types by their name 
+(see textx.scoping.tool.textx_isinstance). Simple examples: see 
+[tests/test_scoping/test_metamodel_provider*.py](https://github.com/igordejanovic/textX/tree/master/tests/functional/test_scoping).
+
+
+**Referencing elements from another meta model** can be achieved without 
+having the original grammar, nor any other details like scope providers, etc. 
+Such references can, thus, be enabled while having access only to the 
+meta model object of the meta model to be referenced. This object may 
+originate from a library installed on the system (without sources, like 
+the grammar). The meta model to be referenced is passed to the referencing 
+meta model while constructing it. The referencing grammar can then reference 
+the types (rules) of the referenced meta model. Rule lookup takes care of 
+choosing the correct types. Simple examples: see 
+[tests/test_metamodel/test_multi_metamodel_refs.py](https://github.com/igordejanovic/textX/tree/master/tests/test_metamodel/test_multi_metamodel_refs.py).
+
+
+Thus, when designing a domain model (e.g., from the software test domain) to 
+reference elements of another domain model (e.g., from the 
+interface/communication domain), the second possibility (referencing) 
+is probably a cleaner way to achieve the task than the first possibility 
+(extending).
+
+
+## Use Case: meta model referencing another meta model
+
+We have two grammars (grammar A nd B). "grammarA" defines named elements of 
+type A:
+
+    Model: a+=A;
+    A:'A' name=ID;
+
+"GrammarBWithImportURI" defines named elements of type B referencing elements
+of type A (from "grammarA"). It also allows importing other model files.
+
+    Model: imports+=Import b+=B;
+    B:'B' name=ID '->' a=[A];
+    Import: 'import' importURI=STRING;
+
+
+Here, we create two meta models, where
+the second meta model allows referencing the first one
+(**referenced_metamodels=[mm_A]**).
+
+    mm_A = metamodel_from_str(grammarA)
+    mm_B = metamodel_from_str(grammarBWithImport,
+                              referenced_metamodels=[mm_A])
+
+Then we define a default scope provider supporting the importURI-feature:
+
+    mm_B.register_scope_providers({"*.*": scoping_providers.FQNImportURI()})
+
+and we map file endings to the meta models:
+
+    scoping.MetaModelProvider.add_metamodel("*.a", mm_A)
+    scoping.MetaModelProvider.add_metamodel("*.b", mm_B)
+
+Full example (also with a globally shared repository discussion): see 
+[tests/test_metamodel/test_multi_metamodel_refs.py](https://github.com/igordejanovic/textX/tree/master/tests/test_metamodel/test_multi_metamodel_refs.py).
 
 
 ## Use Case: Recipes and Ingredients with global model sharing
@@ -45,8 +114,7 @@ model elements among both meta models:
     scoping.MetaModelProvider.add_metamodel("*.ingredient", i_mm)
 
 
-
-## Use Case: meta-model sharing with the ImportURI-feature
+## Use Case: meta model sharing with the ImportURI-feature
 
 In this use case we have a given meta model to define components and instances
 of components. A second model is added to define users to use instances of such
@@ -143,4 +211,4 @@ Where the json file `othermodel.json` consists of:
 We provide a pragmatic way to define meta-models using other meta models.
 Mostly, we focus on textx meta-models using other textx meta-models. But scope
 providers may be used to also link a textx meta model to an arbitrary non-textx
-data structure.
+data structure. 

@@ -126,6 +126,7 @@ def test_fully_qualified_name_ref():
     # END
     #################################
 
+
 def test_fully_qualified_name_ref_type_error():
     """
     This is a basic test for the FQN (positive and negative test).

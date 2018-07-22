@@ -132,6 +132,7 @@ def test_plain_name_ref():
     # END
     #################################
 
+
 def test_plain_name_ref_with_muli_metamodel_support():
     """
     Basic test for PlainName with multi metamodel support.
@@ -238,6 +239,7 @@ def test_plain_name_ref_with_muli_metamodel_support():
     #################################
     # END
     #################################
+
 
 def test_plain_name_ref_type_error():
     """

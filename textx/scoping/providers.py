@@ -284,7 +284,7 @@ class ImportURI(scoping.ModelLoader):
         else:
             if hasattr(get_metamodel(model), "_tx_model_repository"):
                 model_repository = GlobalModelRepository(get_metamodel(
-                    model._tx_model_repository.all_models))
+                    model)._tx_model_repository.all_models)
             else:
                 model_repository = GlobalModelRepository()
             model._tx_model_repository = model_repository
@@ -350,6 +350,7 @@ class GlobalRepo(ImportURI):
     def __init__(self, scope_provider, filename_pattern=None, glob_args=None):
         ImportURI.__init__(self, scope_provider, glob_args=glob_args)
         self.filename_pattern_list = []
+        self.models_to_be_added_directly = []
         if filename_pattern:
             self.register_models(filename_pattern)
 
@@ -370,6 +371,17 @@ class GlobalRepo(ImportURI):
         for filename_pattern in self.filename_pattern_list:
             model._tx_model_repository.load_models_using_filepattern(
                 filename_pattern, model=model, glob_args=self.glob_args)
+        for m in self.models_to_be_added_directly:
+            model._tx_model_repository._add_model(m)
+
+    def add_model(self, model):
+        """
+        Adds a model directly. Useful when combining models
+        parsed from a string (instead of a file).
+        Args:
+            model: the model to be added later.
+        """
+        self.models_to_be_added_directly.append(model)
 
     def load_models_in_model_repo(self, global_model_repo=None):
         """
@@ -378,7 +390,7 @@ class GlobalRepo(ImportURI):
         Normally this is done automatically while
         reference resolution of one loaded model.
 
-        However, if you wich to load all models
+        However, if you wish to load all models
         you can call this and get a model repository.
 
         The metamodels must be identifiable via the MetaModelProvider.

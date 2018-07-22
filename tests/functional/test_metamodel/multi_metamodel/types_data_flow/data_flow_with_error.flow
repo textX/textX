@@ -1,0 +1,5 @@
+#include "data_structures.data"
+
+algo A1 : Point -> City
+algo A2 : City -> Population
+connect A2 -> A1 // Error, must be A1 -> A2
