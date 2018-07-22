@@ -360,7 +360,7 @@ class GlobalRepo(ImportURI):
         Normally this is done automatically while
         reference resolution of one loaded model.
 
-        However, if you which to load all models
+        However, if you wish to load all models
         you can call this and get a model repository.
 
         The metamodels must be identifiable via the MetaModelProvider.
