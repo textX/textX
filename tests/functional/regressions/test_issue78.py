@@ -93,7 +93,7 @@ def test_issue78_obj_processors_replacement2_specialized():
     ''')
     assert ['Base_S1','Base_S2'] == test_list
     assert 'Special_S1' == m.base[0]
-    assert 'Special1' != m.base[1].__class__.__name__  # it is a str now...
+    assert 'Special1' != m.base[0].__class__.__name__  # it is a str now...
     assert 'Special2' == m.base[1].__class__.__name__  # this one is unchanged
 
 
