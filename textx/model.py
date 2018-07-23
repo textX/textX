@@ -576,7 +576,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
 
         # both obj_processors are called, if two different processors
         # are defined for the object metaclass and the grammar metaclass
-        # (happens with type==RULE_ABSTRACT):
+        # (can happen with type==RULE_ABSTRACT):
         # e.g.
         #   Base: Special1|Special2;
         #   RuleCurrentlyChecked: att_to_be_checked=[Base]
