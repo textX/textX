@@ -564,20 +564,41 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                         if result is not None:
                             setattr(model_obj, metaattr.name, result)
 
-        # find obj_proc of rule found in grammar
-        # (this obj_processor dominates of a processor for the current
-        # meta class of the object being processed)
-        obj_processor = metamodel.obj_processors.get(
-            metaclass_of_grammar_rule.__name__, None)
+        # return value of obj_processor
+        return_value_grammar = None
+        return_value_obj = None
 
-        # if not found and if rule in grammar differs from current rule of obj
-        if obj_processor is None and current_metaclass_of_obj is not None:
-            obj_processor = metamodel.obj_processors.get(
+        # call obj_proc of the current meta_class
+        if current_metaclass_of_obj is not None and \
+                current_metaclass_of_obj is not metaclass_of_grammar_rule:
+            obj_processor_obj = metamodel.obj_processors.get(
                 current_metaclass_of_obj.__name__, None)
+            if obj_processor_obj:
+                return_value_obj = obj_processor_obj(model_obj)
 
-        # if an object processor is found, call it.
-        if obj_processor:
-            return obj_processor(model_obj)
+        # call obj_proc of rule found in grammar
+        obj_processor_grammar = metamodel.obj_processors.get(
+            metaclass_of_grammar_rule.__name__, None)
+        if obj_processor_grammar:
+            return_value_grammar = obj_processor_grammar(model_obj)
+
+        # both obj_processors are called, if two different processors
+        # are defined for the object metaclass and the grammar metaclass:
+        # e.g.
+        #   Base: Special1|Special2;
+        #   RuleCurrentlyChecked: att_to_be_checked=[Base]
+        # with object processors defined for Base, Special1, and Special2.
+        #
+        # Both processors are called, but for the return value the
+        # obj_processor corresponding to the object (e.g. of type Special1)
+        # dominates over the obj_processor of the grammar rule (Base).
+        #
+        # The order they are called is: first object (e.g., Special1), then
+        # the grammar based metaclass object processor (e.g., Base).
+        if return_value_obj:
+            return return_value_obj
+        else:
+            return return_value_grammar # or None
 
     model = process_node(parse_tree)
     # Register filename of the model for later use (e.g. imports/scoping).
