@@ -533,19 +533,20 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
         many = [MULT_ONEORMORE, MULT_ZEROORMORE]
 
 
+        # https://stackoverflow.com/questions/3848091/set-iteration-order-varies-from-run-to-run
         if model_obj.__class__.__name__ in metamodel:
             current_metaclass_of_obj = metamodel[model_obj.__class__.__name__]
-            merged_attributes = set(
-                list(metaclass_of_grammar_rule._tx_attrs.values())
-                + list(current_metaclass_of_obj._tx_attrs.values())
-            )
+            attributes_to_process = \
+                list(current_metaclass_of_obj._tx_attrs.values())
+            for attr in metaclass_of_grammar_rule._tx_attrs.values():
+                if attr not in attributes_to_process:
+                    attributes_to_process.append(attr)
         else:
             current_metaclass_of_obj = None
-            merged_attributes = set(
+            attributes_to_process = \
                 list(metaclass_of_grammar_rule._tx_attrs.values())
-            )
 
-        for metaattr in merged_attributes:
+        for metaattr in attributes_to_process:
             # If attribute is base type or containment reference go down
             if metaattr.is_base_type or (metaattr.ref and metaattr.cont):
                 attr = getattr(model_obj, metaattr.name)
