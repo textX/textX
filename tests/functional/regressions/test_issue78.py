@@ -147,10 +147,9 @@ def test_issue78_quickcheck_no_obj_processors_called_for_references():
     assert ['a1','a2','a3'] == test_list
 
     # only references to A: --> obj proc not called
-    test_list=[]
     global_repo_provider.add_model(m1)
     m2 = mm.model_from_str('''
     B b1 -> a1 B b2 -> a2 B b3 -> a3
     ''')
-    assert [] == test_list
+    assert ['a1','a2','a3'] == test_list # unchanged...
 
