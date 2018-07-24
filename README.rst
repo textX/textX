@@ -102,6 +102,17 @@ Docs and tutorials
 
 The full documentation with tutorials is available at http://igordejanovic.net/textX/
 
+Support in IDE/editors
+======================
+
+- [textX-languageserver](https://github.com/textX-tools/textX-languageserver) -
+  Language Server Protocol support for any textX based language
+- [textX-extensions](https://github.com/textX-tools/textX-extensions) - syntax
+  highlighting, code outline for Visual Studio Code
+- [textx.vim](https://github.com/igordejanovic/textx.vim/) -
+  Highlighting and outline of textX grammars
+- [textx-mode](https://github.com/novakboskov/textx-mode) -
+  Emacs mode for textX grammars
 
 Discussion and help
 ===================
