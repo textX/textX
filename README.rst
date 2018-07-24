@@ -105,13 +105,13 @@ The full documentation with tutorials is available at http://igordejanovic.net/t
 Support in IDE/editors
 ======================
 
-- [textX-languageserver](https://github.com/textX-tools/textX-languageserver) -
+- `textX-languageserver https://github.com/textX-tools/textX-languageserver`_ -
   Language Server Protocol support for any textX based language
-- [textX-extensions](https://github.com/textX-tools/textX-extensions) - syntax
+- `textX-extensions https://github.com/textX-tools/textX-extensions`_ - syntax
   highlighting, code outline for Visual Studio Code
-- [textx.vim](https://github.com/igordejanovic/textx.vim/) -
+- `textx.vim https://github.com/igordejanovic/textx.vim/`_ -
   Highlighting and outline of textX grammars
-- [textx-mode](https://github.com/novakboskov/textx-mode) -
+- `textx-mode https://github.com/novakboskov/textx-mode`_ -
   Emacs mode for textX grammars
 
 Discussion and help
