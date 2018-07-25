@@ -543,7 +543,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
 
             for metaattr in current_metaclass_of_obj._tx_attrs.values():
                 # If attribute is base type or containment reference go down
-                if metaattr.is_base_type or (metaattr.ref and metaattr.cont):
+                if metaattr.cont:
                     attr = getattr(model_obj, metaattr.name)
                     if attr:
                         if metaattr.mult in many:
