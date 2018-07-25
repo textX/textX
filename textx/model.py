@@ -518,13 +518,15 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
 
         return inst
 
-    def call_obj_processors(metamodel, model_obj, metaclass_of_grammar_rule=None):
+    def call_obj_processors(metamodel, model_obj,
+                            metaclass_of_grammar_rule=None):
         """
         Depth-first model object processing.
         """
         try:
             if metaclass_of_grammar_rule is None:
-                metaclass_of_grammar_rule = metamodel[model_obj.__class__.__name__]
+                metaclass_of_grammar_rule = \
+                    metamodel[model_obj.__class__.__name__]
         except KeyError:
             raise TextXSemanticError(
                 'Unknown meta-class "{}".'
@@ -591,7 +593,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
         if return_value_current is not None:
             return return_value_current
         else:
-            return return_value_grammar # may be None
+            return return_value_grammar  # may be None
 
     model = process_node(parse_tree)
     # Register filename of the model for later use (e.g. imports/scoping).
