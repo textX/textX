@@ -518,44 +518,82 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
 
         return inst
 
-    def call_obj_processors(metamodel, model_obj, metaclass=None):
+    def call_obj_processors(metamodel, model_obj,
+                            metaclass_of_grammar_rule=None):
         """
         Depth-first model object processing.
         """
         try:
-            if metaclass is None:
-                metaclass = metamodel[model_obj.__class__.__name__]
+            if metaclass_of_grammar_rule is None:
+                metaclass_of_grammar_rule = \
+                    metamodel[model_obj.__class__.__name__]
         except KeyError:
             raise TextXSemanticError(
                 'Unknown meta-class "{}".'
                 .format(model.obj.__class__.__name__))
 
         many = [MULT_ONEORMORE, MULT_ZEROORMORE]
-        for metaattr in metaclass._tx_attrs.values():
-            # If attribute is base type or containment reference go down
-            if metaattr.is_base_type or (metaattr.ref and metaattr.cont):
-                attr = getattr(model_obj, metaattr.name)
-                if attr:
-                    if metaattr.mult in many:
-                        for idx, obj in enumerate(attr):
-                            if obj:
-                                result = call_obj_processors(metamodel,
-                                                             obj,
-                                                             metaattr.cls)
-                                if result is not None:
-                                    attr[idx] = result
-                    else:
-                        result = call_obj_processors(metamodel,
-                                                     attr, metaattr.cls)
-                        if result is not None:
-                            setattr(model_obj, metaattr.name, result)
 
-        obj_processor = metamodel.obj_processors.get(metaclass.__name__, None)
-        if obj_processor is None:
-            obj_processor = metamodel.obj_processors.get(
-                model_obj.__class__.__name__, None)
-        if obj_processor:
-            return obj_processor(model_obj)
+        # return value of obj_processor
+        return_value_grammar = None
+        return_value_current = None
+
+        # enter recursive visit of attributes only, if the class of the
+        # object being processed is a meta class of the current meta model
+        if model_obj.__class__.__name__ in metamodel:
+            current_metaclass_of_obj = metamodel[model_obj.__class__.__name__]
+
+            for metaattr in current_metaclass_of_obj._tx_attrs.values():
+                # If attribute is base type or containment reference go down
+                if metaattr.cont:
+                    attr = getattr(model_obj, metaattr.name)
+                    if attr:
+                        if metaattr.mult in many:
+                            for idx, obj in enumerate(attr):
+                                if obj:
+                                    result = call_obj_processors(metamodel,
+                                                                 obj,
+                                                                 metaattr.cls)
+                                    if result is not None:
+                                        attr[idx] = result
+                        else:
+                            result = call_obj_processors(metamodel,
+                                                         attr, metaattr.cls)
+                            if result is not None:
+                                setattr(model_obj, metaattr.name, result)
+
+            # call obj_proc of the current meta_class if type == RULE_ABSTRACT
+            if current_metaclass_of_obj is not metaclass_of_grammar_rule:
+                assert RULE_ABSTRACT == metaclass_of_grammar_rule._tx_type
+                obj_processor_current = metamodel.obj_processors.get(
+                    current_metaclass_of_obj.__name__, None)
+                if obj_processor_current:
+                    return_value_current = obj_processor_current(model_obj)
+
+        # call obj_proc of rule found in grammar
+        obj_processor_grammar = metamodel.obj_processors.get(
+            metaclass_of_grammar_rule.__name__, None)
+        if obj_processor_grammar:
+            return_value_grammar = obj_processor_grammar(model_obj)
+
+        # both obj_processors are called, if two different processors
+        # are defined for the object metaclass and the grammar metaclass
+        # (can happen with type==RULE_ABSTRACT):
+        # e.g.
+        #   Base: Special1|Special2;
+        #   RuleCurrentlyChecked: att_to_be_checked=[Base]
+        # with object processors defined for Base, Special1, and Special2.
+        #
+        # Both processors are called, but for the return value the
+        # obj_processor corresponding to the object (e.g. of type Special1)
+        # dominates over the obj_processor of the grammar rule (Base).
+        #
+        # The order they are called is: first object (e.g., Special1), then
+        # the grammar based metaclass object processor (e.g., Base).
+        if return_value_current is not None:
+            return return_value_current
+        else:
+            return return_value_grammar  # may be None
 
     model = process_node(parse_tree)
     # Register filename of the model for later use (e.g. imports/scoping).
