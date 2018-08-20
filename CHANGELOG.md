@@ -1,5 +1,20 @@
 # textX changelog
 
+* ?? Release 1.8.0
+   - https://github.com/igordejanovic/textX/pull/71
+     - Regular expression with group support
+     - See [the
+       docs](http://www.igordejanovic.net/textX/development/grammar/#matches)
+       for usage.
+   - https://github.com/igordejanovic/textX/pull/69
+     - Fixing issue #66 - serching for scope providers
+   - https://github.com/igordejanovic/textX/pull/77
+     - New multi meta model support for references-only
+   - https://github.com/igordejanovic/textX/pull/79
+     - Fixing obj_processors calling
+   - mkdocs documentation now uses [mike](https://github.com/jimporter/mike) for
+     multiversion support.
+
 * 2018-07-02 Release 1.7.1
 
    - Fixed bug with obj. processor call.
