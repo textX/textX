@@ -249,7 +249,7 @@ class ImportURI(scoping.ModelLoader):
     def set_glob_args(self, glob_args):
         self.glob_args = glob_args
 
-    def _load_referenced_models(self, model):
+    def _load_referenced_models(self, model, encoding='utf-8'):
         from textx.model import get_children
         visited = []
         for obj in get_children(
@@ -273,9 +273,10 @@ class ImportURI(scoping.ModelLoader):
                 filename_pattern = abspath(basedir + obj.importURI)
                 obj._tx_loaded_models = \
                     model._tx_model_repository.load_models_using_filepattern(
-                        filename_pattern, model=model, glob_args=self.glob_args)
+                        filename_pattern, model=model,
+                        glob_args=self.glob_args, encoding=encoding)
 
-    def load_models(self, model):
+    def load_models(self, model, encoding='utf-8'):
         from textx.model import get_metamodel
         from textx.scoping import GlobalModelRepository
         # do we already have loaded models (analysis)? No -> check/load them
@@ -288,7 +289,7 @@ class ImportURI(scoping.ModelLoader):
             else:
                 model_repository = GlobalModelRepository()
             model._tx_model_repository = model_repository
-        self._load_referenced_models(model)
+        self._load_referenced_models(model, encoding=encoding)
 
     def __call__(self, obj, attr, obj_ref):
         from textx.model import ObjCrossRef, get_model
