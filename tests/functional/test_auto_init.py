@@ -67,4 +67,3 @@ def test_no_auto_init():
     # because there cannot be three state.
     # Either string to match exists or not.
     assert model.d is False
-

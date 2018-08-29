@@ -11,17 +11,18 @@ if sys.version < '3':
 else:
     text = str
 
-grammar = """
+grammar = r"""
 Model: entries += Entry;
 Entry:
     'data' '=' data=/\"(?ms){3}(.*?)\"{3}/
 ;
 """
-grammar2 = """
+grammar2 = r"""
 Model:
     'data' '=' data=/\"(?ms){3}(.*?)\"{3}\s*\-(\w+)\-/
 ;
 """
+
 
 def test_regexp_with_groups_deactivated():
     """
@@ -41,6 +42,7 @@ def test_regexp_with_groups_deactivated():
     assert 'This' in m.entries[0].data  # This and text in model
     assert 'text!' in m.entries[0].data  # This and text in model
 
+
 def test_regexp_with_groups_activated():
     """
     Test that the grammar with w/o groups.
@@ -59,6 +61,7 @@ def test_regexp_with_groups_activated():
     assert '"""' not in m.entries[0].data  # """ is not removed
     assert 'This' in m.entries[0].data  # This and text in model
     assert 'text!' in m.entries[0].data  # This and text in model
+
 
 def test_regexp_with_groups_activated2():
     """

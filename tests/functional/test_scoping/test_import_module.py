@@ -115,16 +115,16 @@ def test_model_with_imports_and_errors():
 
     with raises(textx.exceptions.TextXSemanticError,
                 match=r'.*Unknown object.*types.int.*'):
-        _ = my_meta_model.model_from_file(
+        my_meta_model.model_from_file(
             abspath(dirname(__file__)) +
             "/interface_model1/model_b/app_error1.if")
 
     with raises(IOError, match=r'.*file_not_found\.if.*'):
-        _ = my_meta_model.model_from_file(
+        my_meta_model.model_from_file(
             abspath(dirname(__file__)) +
             "/interface_model1/model_b/app_error2.if")
 
-    #################################
+    #####tests/functional/test_scoping/test_children.py############################
     # END
     #################################
 
