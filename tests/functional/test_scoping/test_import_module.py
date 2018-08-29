@@ -124,7 +124,7 @@ def test_model_with_imports_and_errors():
             abspath(dirname(__file__)) +
             "/interface_model1/model_b/app_error2.if")
 
-    #####tests/functional/test_scoping/test_children.py############################
+    #################################
     # END
     #################################
 
