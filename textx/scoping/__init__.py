@@ -133,7 +133,8 @@ class GlobalModelRepository(object):
             self.all_models = ModelRepository()
 
     def load_models_using_filepattern(
-            self, filename_pattern, model, glob_args, is_main_model=False):
+            self, filename_pattern, model, glob_args, is_main_model=False,
+            encoding='utf-8'):
         """
         add a new model to all relevant objects
 
@@ -156,7 +157,8 @@ class GlobalModelRepository(object):
         for filename in filenames:
             the_metamodel = MetaModelProvider.get_metamodel(model, filename)
             loaded_models.append(
-                self.load_model(the_metamodel, filename, is_main_model))
+                self.load_model(the_metamodel, filename, is_main_model,
+                                encoding=encoding))
         return loaded_models
 
     def load_model_using_search_path(
@@ -188,7 +190,8 @@ class GlobalModelRepository(object):
         raise IOError(
             errno.ENOENT, os.strerror(errno.ENOENT), filename)
 
-    def load_model(self, the_metamodel, filename, is_main_model):
+    def load_model(
+            self, the_metamodel, filename, is_main_model, encoding='utf-8'):
         """
         load a single model
 
@@ -210,7 +213,7 @@ class GlobalModelRepository(object):
                 new_model = the_metamodel.internal_model_from_file(
                     filename, pre_ref_resolution_callback=lambda
                     other_model: self.pre_ref_resolution_callback(other_model),
-                    is_main_model=is_main_model)
+                    is_main_model=is_main_model, encoding=encoding)
                 self.all_models.filename_to_model[filename] = new_model
             # print("ADDING {}".format(filename))
             self.local_models.filename_to_model[filename] = new_model

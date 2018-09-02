@@ -257,13 +257,13 @@ def get_model_parser(top_rule, comments_model, **kwargs):
             model = self.get_model_from_str(
                 model_str, file_name=file_name, debug=debug,
                 pre_ref_resolution_callback=pre_ref_resolution_callback,
-                is_main_model=is_main_model)
+                is_main_model=is_main_model, encoding=encoding)
 
             return model
 
         def get_model_from_str(self, model_str, file_name=None, debug=None,
                                pre_ref_resolution_callback=None,
-                               is_main_model=True):
+                               is_main_model=True, encoding='utf-8'):
             """
             Parses given string and creates model object graph.
             """
@@ -282,7 +282,7 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                 model = parse_tree_to_objgraph(
                     self, self.parse_tree[0], file_name=file_name,
                     pre_ref_resolution_callback=pre_ref_resolution_callback,
-                    is_main_model=is_main_model)
+                    is_main_model=is_main_model, encoding=encoding)
             finally:
                 if debug is not None:
                     self.debug = old_debug_state
@@ -299,7 +299,7 @@ def get_model_parser(top_rule, comments_model, **kwargs):
 
 def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                            pre_ref_resolution_callback=None,
-                           is_main_model=True):
+                           is_main_model=True, encoding='utf-8'):
     """
     Transforms parse_tree to object graph representing model in a
     new language.
@@ -611,7 +611,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
     for scope_provider in metamodel.scope_providers.values():
         from textx.scoping import ModelLoader
         if isinstance(scope_provider, ModelLoader):
-            scope_provider.load_models(model)
+            scope_provider.load_models(model, encoding=encoding)
 
     if not is_primitive_type:
         model._tx_reference_resolver = ReferenceResolver(
