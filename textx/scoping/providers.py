@@ -249,7 +249,7 @@ class ImportURI(scoping.ModelLoader):
     def set_glob_args(self, glob_args):
         self.glob_args = glob_args
 
-    def _load_referenced_models(self, model, encoding='utf-8'):
+    def _load_referenced_models(self, model, encoding):
         from textx.model import get_children
         visited = []
         for obj in get_children(
@@ -368,10 +368,11 @@ class GlobalRepo(ImportURI):
         """
         self.filename_pattern_list.append(filename_pattern)
 
-    def _load_referenced_models(self, model):
+    def _load_referenced_models(self, model, encoding):
         for filename_pattern in self.filename_pattern_list:
             model._tx_model_repository.load_models_using_filepattern(
-                filename_pattern, model=model, glob_args=self.glob_args)
+                filename_pattern, model=model, glob_args=self.glob_args,
+                encoding=encoding)
         for m in self.models_to_be_added_directly:
             model._tx_model_repository._add_model(m)
 
@@ -384,7 +385,8 @@ class GlobalRepo(ImportURI):
         """
         self.models_to_be_added_directly.append(model)
 
-    def load_models_in_model_repo(self, global_model_repo=None):
+    def load_models_in_model_repo(self, global_model_repo=None,
+                                  encoding='utf-8'):
         """
         load all registered models (called explicitly from
         the user and not as an automatic activity).
@@ -405,7 +407,7 @@ class GlobalRepo(ImportURI):
         for filename_pattern in self.filename_pattern_list:
             global_model_repo.load_models_using_filepattern(
                 filename_pattern, model=None, glob_args=self.glob_args,
-                is_main_model=True
+                is_main_model=True, encoding=encoding
             )
         return global_model_repo
 
