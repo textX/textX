@@ -2,8 +2,6 @@ from __future__ import unicode_literals
 
 from os.path import dirname, abspath
 
-from pytest import raises
-
 import textx.scoping as scoping
 import textx.scoping.providers as scoping_providers
 from textx import metamodel_from_file
