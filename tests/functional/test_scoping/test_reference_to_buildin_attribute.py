@@ -3,7 +3,7 @@ from textx import metamodel_from_str
 from pytest import raises
 from textx.scoping.tools import get_unique_named_object
 
-metamodel_str = '''
+metamodel_str = r'''
 Model:
     access+=Access
 ;
@@ -59,18 +59,18 @@ def test_reference_to_buildin_attribute():
 
     # check error cases
     with raises(Exception, match=r'.*noname not found.*'):
-        _ = my_metamodel.model_from_str('''
+        my_metamodel.model_from_str('''
         access A1 foreign_model
         access A2 foreign_model.noname
         ''')
 
     with raises(Exception, match=r'.*unknown_model.*'):
-        _ = my_metamodel.model_from_str('''
+        my_metamodel.model_from_str('''
         access A1 foreign_model
         access A2 unknown_model.name
         ''')
     with raises(Exception, match=r'.*unknown_model.*'):
-        _ = my_metamodel.model_from_str('''
+        my_metamodel.model_from_str('''
         access A1 unknown_model
         access A2 foreign_model.name
         ''')

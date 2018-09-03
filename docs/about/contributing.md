@@ -1,28 +1,145 @@
 # Contributing
 
-textX is open for contributions. You can contribute code, documentation, tests,
-bug reports.  If you plan to make a contribution it would be great if you first
-announce that on the discussion forum.
+Contributions are welcome, and they are greatly appreciated!. You can contribute
+code, documentation, tests, bug reports. Every little bit helps, and credit will
+always be given. If you plan to make a contribution it would be great if you
+first announce that on [the issue
+tracker](https://github.com/igordejanovic/textX/issues).
 
-For bug reports please use [github issue
-tracker](https://github.com/igordejanovic/textx/issues/).
-
-For code/doc/test contributions do the following:
-
-1. Fork the [project on github](https://github.com/igordejanovic/textx/).
-1. Clone your fork.
-1. Make a branch for the new feature and switch to it.
-1. Make one or more commits.
-1. Push your branch to github.
-1. Make a pull request. I will look at the changes and if everything is ok I will pull it in.
-
-!!! note
-    For code contributions please try to adhere to the [PEP-8
-    guidelines](http://legacy.python.org/dev/peps/pep-0008/).  Although I am not
-    strict in that regard it is useful to have a common ground for the coding style.
-    To make things easier use tools for code checking (PyLint, PyFlakes, pep8
-    etc.).
+You can contribute in many ways:
 
 
+## Types of Contributions
 
 
+### Report Bugs
+
+Report bugs at https://github.com/igordejanovic/textX/issues.
+
+If you are reporting a bug, please include:
+
+- Your operating system name and version.
+- Any details about your local setup that might be helpful in troubleshooting.
+- Detailed steps to reproduce the bug.
+
+
+### Fix Bugs
+
+Look through the GitHub issues for bugs. Anything tagged with "bug"
+and "help wanted" is open to whoever wants to implement it.
+
+
+### Implement Features
+
+Look through the GitHub issues for features. Anything tagged with "enhancement"
+and "help wanted" is open to whoever wants to implement it.
+
+
+### Write Documentation
+
+textX could always use more documentation, whether as part of the
+official textX docs, in docstrings, or even on the web in blog posts,
+articles, and such.
+
+
+### Submit Feedback
+
+The best way to send feedback is to file an issue at https://github.com/igordejanovic/textX/issues.
+
+If you are proposing a feature:
+
+- Explain in detail how it would work.
+- Keep the scope as narrow as possible, to make it easier to implement.
+- Remember that this is a volunteer-driven project, and that contributions
+  are welcome :)
+
+
+## Get Started!
+
+Ready to contribute? Here's how to set up `textX` for local development.
+
+1. Fork the `textX` repo on GitHub.
+2. Clone your fork locally:
+
+        $ git clone git@github.com:your_name_here/textX.git
+
+3. Install your local copy into a virtualenv. Assuming you have
+   [virtualenv](https://virtualenv.pypa.io/en/latest) installed, this is how you
+   set up your fork for local development:
+
+        $ cd textX/
+        $ virtualenv venv
+        $ source venv/bin/activate
+        $ pip install -r requirements_dev.txt
+        $ pip install -e .
+        
+    Previous stuff is needed only the first time. To continue working on textX
+    later you just do:
+    
+        $ cd textX/
+        $ source venv/bin/activate
+        
+    Note that on Windows sourcing syntax is a bit different. Check the docs for
+    virtualenv.
+        
+    An excellent overview of available tools for Python environments management
+    can be found
+    [here](https://stackoverflow.com/questions/41573587/what-is-the-difference-between-venv-pyvenv-pyenv-virtualenv-virtualenvwrappe)
+    
+    To verify that everything is setup properly run tests:
+    
+        $ flake8 tests/functional/
+        $ py.test tests/functional/
+
+4. Create a branch for local development::
+
+        $ git checkout -b name-of-your-bugfix-or-feature
+
+   Now you can make your changes locally.
+
+5. When you're done making changes, check that your changes pass flake8 and the
+   tests:
+
+        $ flake8 textX tests
+        $ py.test tests/functional/
+
+6. Commit your changes and push your branch to GitHub:
+
+        $ git add .
+        $ git commit -m "Your detailed description of your changes."
+        $ git push origin name-of-your-bugfix-or-feature
+
+7. Submit a pull request through the GitHub website.
+
+
+## Pull Request Guidelines
+
+Before you submit a pull request, check that it meets these guidelines:
+
+1. The pull request should include tests.
+2. If the pull request adds/changes functionality, the docs should be updated. 
+3. The pull request should work for Python 2.7, 3.4-3.7. Check
+   https://travis-ci.org/igordejanovic/textX/pull_requests and make sure that
+   the tests pass for all supported Python versions.
+
+
+## Tips
+
+To run a subset of tests:
+
+```
+$ py.test tests/functional/mytest.py
+```
+
+or a single test:
+
+```
+$ py.test tests/functional/mytest.py::some_test
+```
+
+## Credit
+
+This guide is based on the guide generated by
+[Cookiecutter](https://github.com/audreyr/cookiecutter) and
+[cookiecutter-pypackage](https://github.com/audreyr/cookiecutter-pypackage)
+project template.

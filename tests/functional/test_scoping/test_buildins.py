@@ -48,13 +48,13 @@ def test_buildins():
     # MODEL PARSING
     #################################
 
-    _ = my_metamodel.model_from_str('''
+    my_metamodel.model_from_str('''
     thing A {}
     thing B {}
     thing C {A B}
     ''')
 
-    _ = my_metamodel.model_from_str('''
+    my_metamodel.model_from_str('''
     thing A {}
     thing B {}
     thing C {A B OneThing OtherThing}
@@ -62,7 +62,7 @@ def test_buildins():
 
     with raises(textx.exceptions.TextXSemanticError,
                 match=r'.*Unknown object.*UnknownPart.*'):
-        _ = my_metamodel.model_from_str('''
+        my_metamodel.model_from_str('''
         thing A {}
         thing B {}
         thing C {A B OneThing OtherThing UnknownPart}
@@ -100,13 +100,13 @@ def test_buildins_fully_qualified_name():
     # MODEL PARSING
     #################################
 
-    _ = my_metamodel.model_from_str('''
+    my_metamodel.model_from_str('''
     thing A {}
     thing B {}
     thing C {A B}
     ''')
 
-    _ = my_metamodel.model_from_str('''
+    my_metamodel.model_from_str('''
     thing A {}
     thing B {}
     thing C {A B OneThing OtherThing}
@@ -114,7 +114,7 @@ def test_buildins_fully_qualified_name():
 
     with raises(textx.exceptions.TextXSemanticError,
                 match=r'.*Unknown object.*UnknownPart.*'):
-        _ = my_metamodel.model_from_str('''
+        my_metamodel.model_from_str('''
         thing A {}
         thing B {}
         thing C {A B OneThing OtherThing UnknownPart}

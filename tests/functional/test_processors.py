@@ -121,7 +121,7 @@ def test_object_processor_replace_object():
 
 
 def test_obj_processor_simple_match_rule():
-    grammar = """
+    grammar = r"""
     First:
         a=MyFloat 'end'
     ;

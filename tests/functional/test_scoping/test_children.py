@@ -66,7 +66,7 @@ def test_children():
     ''')
 
     #################################
-    # TEST 
+    # TEST
     #################################
 
     res = get_children_of_type("Class", my_model)

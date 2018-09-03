@@ -25,29 +25,32 @@ Entry:
 // - the text is anything which does contain '"""' and no '@'
 //   (@ may be escaped)
 // - the reference 'ref' is a normal textx reference
-FreeTextWithRefs: 
-    text=/(?ms)((?:\\@|"\\@|""\\@|[^"@]|"[^"@]|""[^"@])*(?:"|"")?)@/ 
+FreeTextWithRefs:
+    text=/(?ms)((?:\\@|"\\@|""\\@|[^"@]|"[^"@]|""[^"@])*(?:"|"")?)@/
     '[' ref=[Entry] ']'
 ;
 
 // The last text is a non-greedy "match anything" until '"""'
-LastFreeText: 
+LastFreeText:
     text=/(?ms)(.*?)\"{3}/
 ;
 '''
+
 
 class Entry(object):
     def __init__(self, **kwargs):
         for k in kwargs.keys():
             setattr(self, k, kwargs[k])
+
     def __str__(self):
         """returns the entry as model text"""
-        text=""
+        text = ""
         for d in self.data:
-            text+=d.text
-            text+="@[{}]".format(d.ref.name)
-        text+=self.datalast.text
-        return text.replace("\@","@")
+            text += d.text
+            text += "@[{}]".format(d.ref.name)
+        text += self.datalast.text
+        return text.replace(r"\@", "@")
+
 
 def test_free_text_with_references():
     model_str = r'''
@@ -58,21 +61,21 @@ def test_free_text_with_references():
     ENTRY Bonjour:  """another french "\@@[Hello]", see @[Salut]"""
     ENTRY NoLink:   """Just text"""
     ENTRY Empty:    """"""
-    '''
+    '''  # noqa
     metamodel = metamodel_from_str(grammar, classes=[Entry],
                                    use_regexp_group=True)
     m = metamodel.model_from_str(model_str)
 
-    assert 1==len(m.entries[0].data)
-    assert 1==len(m.entries[1].data)
-    assert 5==len(m.entries[2].data)
-    assert 1==len(m.entries[3].data)
-    assert 2==len(m.entries[4].data)
-    assert 0==len(m.entries[5].data)
-    assert 0==len(m.entries[6].data)
+    assert 1 == len(m.entries[0].data)
+    assert 1 == len(m.entries[1].data)
+    assert 5 == len(m.entries[2].data)
+    assert 1 == len(m.entries[3].data)
+    assert 2 == len(m.entries[4].data)
+    assert 0 == len(m.entries[5].data)
+    assert 0 == len(m.entries[6].data)
 
-    assert 'Hi'==m.entries[0].data[0].ref.name
-    assert m.entries[1]==m.entries[0].data[0].ref
+    assert 'Hi' == m.entries[0].data[0].ref.name
+    assert m.entries[1] == m.entries[0].data[0].ref
 
     assert 'a way to say hello@mail (see @[Hi])' == str(m.entries[0])
     assert 'german way to say hello (see ""@[Hello]"")' == str(m.entries[3])

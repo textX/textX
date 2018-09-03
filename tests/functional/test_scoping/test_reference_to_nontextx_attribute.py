@@ -4,7 +4,7 @@ from os.path import dirname, abspath
 from pytest import raises
 from textx.scoping.tools import get_unique_named_object
 
-metamodel_str = '''
+metamodel_str = r'''
 Model:
     imports+=Json
     access+=Access
@@ -58,14 +58,14 @@ def test_reference_to_nontextx_attribute():
     assert A2_gender == "male"
 
     with raises(Exception, match=r'.*noname.*'):
-        _ = my_metamodel.model_from_str('''
+        my_metamodel.model_from_str('''
         import "test_reference_to_nontextx_attribute/othermodel.json" as data
         access A1 data.noname
         access A2 data.gender
         ''')
 
     with raises(Exception, match=r'.*filenotfound.*'):
-        _ = my_metamodel.model_from_str('''
+        my_metamodel.model_from_str('''
         import "test_reference_to_nontextx_attribute/filenotfound.json" as data
         access A1 data.name
         access A2 data.gender

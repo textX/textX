@@ -8,7 +8,7 @@ def test_noskipws():
     """
     Test 'noskipws' rule modifier.
     """
-    grammar = """
+    grammar = r"""
     Rule:
         'entity' name=ID /\s*/ call=Rule2;
     Rule2[noskipws]:
@@ -51,7 +51,7 @@ def test_ws():
     """
     Test 'ws' rule modifier.
     """
-    grammar = """
+    grammar = r"""
     Rule:
         'entity' name=ID /\s*/ call=Rule2;
     Rule2[ws='\n']:
@@ -69,7 +69,7 @@ def test_ws():
     metamodel.model_from_str("entity Person first\nsecond")
 
     # In this variant we will skip spaces and tabs but not newlines.
-    grammar = """
+    grammar = r"""
     Rule:
         'entity' name=ID /\s*/ call=Rule2;
     Rule2[ws=' \t']:
@@ -91,7 +91,7 @@ def test_skipws_ws():
     Test 'skipws' and 'ws'rule modifier in combination.
     """
 
-    grammar = """
+    grammar = r"""
     Rule:
         'entity' name=ID call=Rule2;
     Rule2[skipws, ws=' \t']:

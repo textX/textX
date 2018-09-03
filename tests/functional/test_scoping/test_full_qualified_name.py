@@ -103,7 +103,7 @@ def test_fully_qualified_name_ref():
     ############################
     with raises(textx.exceptions.TextXSemanticError,
                 match=r'None:8:.*: error.*Unknown object.*Part1.*'):
-        _ = my_metamodel.model_from_str(''' #1
+        my_metamodel.model_from_str(''' #1
         package P1 { #2
             class Part1 { #3
             } #4
@@ -118,7 +118,7 @@ def test_fully_qualified_name_ref():
     with raises(textx.exceptions.TextXSemanticError,
                 match=r'.*test_fully_qualified_name_test_error.model:8:\d+:'
                       ' error.*Unknown object.*Part1.*'):
-        _ = my_metamodel.model_from_file(
+        my_metamodel.model_from_file(
             dirname(__file__) +
             "/misc/test_fully_qualified_name_test_error.model")
 
@@ -145,7 +145,7 @@ def test_fully_qualified_name_ref_type_error():
 
     with raises(textx.exceptions.TextXSemanticError,
                 match=r'.*p1.*'):
-        _ = my_metamodel.model_from_str('''
+        my_metamodel.model_from_str('''
         package P1 {
             class Part1 {
             }

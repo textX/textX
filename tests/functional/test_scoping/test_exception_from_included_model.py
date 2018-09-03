@@ -61,7 +61,7 @@ def test_exception_from_included_model():
 
     with raises(textx.exceptions.TextXSemanticError,
                 match=r'.*model_d\.b:5:3:.*d1 triggers artifical error'):
-        _ = a_mm.model_from_file(
+        a_mm.model_from_file(
             this_folder + "/metamodel_provider3/inheritance2/model_a.a")
 
     #################################

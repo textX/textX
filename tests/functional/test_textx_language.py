@@ -148,7 +148,7 @@ def test_match_rule_complex():
     """
     Test match rule that has complex expressions.
     """
-    grammar = """
+    grammar = r"""
     Rule: ('one' /\d+/)* 'foo'+ |'two'|'three';
     """
     meta = metamodel_from_str(grammar)
@@ -165,7 +165,7 @@ def test_match_rule_suppress():
     """
     Test suppressing operator in match rules.
     """
-    grammar = """
+    grammar = r"""
     FullyQualifiedID[noskipws]:
         /\s*/-
         QuotedID+['.']

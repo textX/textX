@@ -24,7 +24,7 @@ def test_model_with_imports_and_search_path_bad_case1():
     #################################
 
     with raises(IOError, match=r'.*lib.*tasks.*'):
-        _ = my_meta_model.model_from_file(
+        my_meta_model.model_from_file(
             abspath(dirname(__file__)) + "/issue66/assembly_car1.prog")
 
     #################################
@@ -53,7 +53,7 @@ def test_model_with_imports_and_search_path_good_case():
     # MODEL PARSING
     #################################
 
-    _ = my_meta_model.model_from_file(
+    my_meta_model.model_from_file(
         abspath(dirname(__file__)) + "/issue66/assembly_car1.prog")
 
     #################################
@@ -83,7 +83,7 @@ def test_model_with_imports_and_search_path_bad_case2a():
     #################################
 
     with raises(IOError, match=r'.*position\.tasks.*'):
-        _ = my_meta_model.model_from_file(
+        my_meta_model.model_from_file(
             abspath(dirname(__file__)) + "/issue66/assembly_car1.prog")
 
     #################################
@@ -113,7 +113,7 @@ def test_model_with_imports_and_search_path_bad_case2b():
     #################################
 
     with raises(IOError, match=r'.*assembly\.tasks.*'):
-        _ = my_meta_model.model_from_file(
+        my_meta_model.model_from_file(
             abspath(dirname(__file__)) + "/issue66/assembly_car1.prog")
 
     #################################
@@ -138,8 +138,8 @@ def test_model_with_imports_and_search_path_bad_case_search_and_glob1():
     with raises(Exception,
                 match=r'you cannot use globbing together with a search path'):
         my_meta_model.register_scope_providers(
-            {"*.*": scoping_providers.PlainNameImportURI(glob_args={},
-                                                         search_path=search_path)})
+            {"*.*": scoping_providers.PlainNameImportURI(
+                glob_args={}, search_path=search_path)})
 
     #################################
     # END
@@ -169,12 +169,13 @@ def test_model_with_imports_and_search_path_bad_case_search_and_glob2():
     #################################
 
     with raises(IOError, match=r'.*assembly\.\*.*'):
-        _ = my_meta_model.model_from_file(
+        my_meta_model.model_from_file(
             abspath(dirname(__file__)) + "/issue66/assembly_car2.prog")
 
     #################################
     # END
     #################################
+
 
 def test_model_with_imports_relative_to_current_model():
     """
@@ -209,7 +210,8 @@ def test_model_with_imports_relative_to_current_model():
     # only locally).
 
     assert 2 == len(m.imports)
-    dirs = list(map( lambda i: dirname(i._tx_loaded_models[0]._tx_filename), m.imports))
+    dirs = list(map(lambda i: dirname(i._tx_loaded_models[0]._tx_filename),
+                    m.imports))
     assert dirs[0] == dirs[1]
     # both included model have the same location. Thus, the local path is
     # preferred (as designed through the order of search paths).
