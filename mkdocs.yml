@@ -4,41 +4,43 @@ site_description: A meta-language for building Domain-Specific Languages (DSLs)
 site_author: Igor Dejanović
 
 repo_url: https://github.com/igordejanovic/textX
-google_analytics: ['UA-68681917-1', 'igordejanovic.net']
+google_analytics: [UA-68681917-1, igordejanovic.net]
 theme: readthedocs
-extra_css: ['style.css']
+extra_css: [style.css, css/version-select.css]
 
-pages:
+nav:
 - Home: index.md
 - User Guide:
-    - Grammar: grammar.md
-    - Meta-model: metamodel.md
-    - Model: model.md
-    - Scoping: scoping.md
-    - Multi meta-model: multimetamodel.md
-    - Parser configuration: parser_config.md
-    - Visualization: visualization.md
-    - Error handling: error_handling.md
-    - Debugging: debugging.md
-    - textx command: textx_command.md
+  - Grammar: grammar.md
+  - Meta-model: metamodel.md
+  - Model: model.md
+  - Scoping: scoping.md
+  - Multi meta-model: multimetamodel.md
+  - Parser configuration: parser_config.md
+  - Visualization: visualization.md
+  - Error handling: error_handling.md
+  - Debugging: debugging.md
+  - textx command: textx_command.md
 - Tutorials:
-    - Hello World: tutorials/hello_world.md
-    - Robot: tutorials/robot.md
-    - Entity: tutorials/entity.md
-    - State Machine: tutorials/state_machine.md
-    - Toy language compiler: tutorials/toylanguage.md
+  - Hello World: tutorials/hello_world.md
+  - Robot: tutorials/robot.md
+  - Entity: tutorials/entity.md
+  - State Machine: tutorials/state_machine.md
+  - Toy language compiler: tutorials/toylanguage.md
 - About:
-    - Comparison: about/comparison.md
-    - Discuss: about/discuss.md
-    - Contributing: about/contributing.md
-    - License: about/license.md
+  - Comparison: about/comparison.md
+  - Discuss: about/discuss.md
+  - Contributing: about/contributing.md
+  - License: about/license.md
 - What's new:
-    - Release 1.5: whatsnew/release_1_5.md
+  - Release 1.5: whatsnew/release_1_5.md
 
 markdown_extensions:
-    - admonition:
-    - toc:
-        permalink: True
+- admonition:
+- toc:
+    permalink: true
 
-copyright: Copyright &copy; 2016 <a href="http://igordejanovic.net/">Igor Dejanović</a>.
+copyright: Copyright &copy; <a href="http://igordejanovic.net/">Igor Dejanović</a>.
 
+extra_javascript:
+- js/version-select.js
