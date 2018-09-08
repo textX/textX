@@ -1,3 +1,5 @@
 pytest
 flake8
 jinja2
+mkdocs
+mike
