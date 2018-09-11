@@ -65,3 +65,6 @@ venv
 *.pdf
 *.svg
 !docs/**/*svg
+
+# Other
+.pytest_cache
