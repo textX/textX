@@ -352,29 +352,29 @@ expressions will consume input on success.</p>
 /[-\w]*\b/
 /[^}]*/
 </code></pre>
-</li>
-</ul>
 <p>For more information on Regular Expression in Python see <a href="https://docs.python.org/3/howto/regex.html">Regular Expression
-  HOWTO</a>.</p>
-<p>When the metamodel has the option use_regexp_group enabled
-  (use_regexp_group=True), then a regular expression with exactly
-  one group is replaced by the group. This can be used to define multiline
-  strings to be stored in the model without the surrounding limiters:</p>
-<pre><code>    Model: 'data' '=' data=/(?ms)\"{3}(.*?)\"{3}/;
+HOWTO</a>.</p>
+<p>When the metamodel has the option <code>use_regexp_group</code> set to <code>True</code>, then a
+regular expression with exactly one group is replaced by the group. This can
+be used to define multiline strings to be stored in the model without the
+surrounding limiters:</p>
+<pre><code>  Model: 'data' '=' data=/(?ms)\"{3}(.*?)\"{3}/;
 </code></pre>
 <p>An example model could be</p>
-<pre><code>    data = """
-    This is a multiline
-    text!
-    """
+<pre><code>  data = """
+  This is a multiline
+  text!
+  """
 </code></pre>
 <p>When creating a metamodel with this grammar and the option
-  use_regexp_group enabled, a multiline string delimited with '"""'
-  is accepted: "(?ms)" activates the multiline option and the "dot matches
-  everything" option. "\"{3}" matches the delimited '"""'. The pattern
-  '"(.*?)" is a non-greedy variant of "get anything".</p>
-<pre><code>    metamodel = metamodel_from_str(grammar, use_regexp_group=True)
+<code>use_regexp_group</code> enabled, a multiline string delimited with <code>"""</code> is
+accepted: <code>(?ms)</code> activates the multiline option and the <em>dot matches
+everything</em> option. <code>\"{3}</code> matches the delimited <code>"""</code>. The pattern
+<code>"(.*?)</code> is a non-greedy variant of <em>get anything</em>.</p>
+<pre><code>  metamodel = metamodel_from_str(grammar, use_regexp_group=True)
 </code></pre>
+</li>
+</ul>
 <h3 id="sequence">Sequence<a class="headerlink" href="#sequence" title="Permanent link">&para;</a></h3>
 <p>Sequence is a textX expression that is given by just writing contained
 sub-expressions one after another. For example,the following rule:</p>
