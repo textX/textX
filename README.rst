@@ -144,7 +144,7 @@ Tested for 2.7, 3.3+
    :target: https://travis-ci.org/igordejanovic/textX
 
 .. |docs| image:: https://img.shields.io/badge/docs-latest-green.svg
-   :target: http://igordejanovic.net/textX/
+   :target: http://igordejanovic.net/textX/development/
    :alt: Documentation Status
 
 
