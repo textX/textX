@@ -5,10 +5,10 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="A meta-language for building Domain-Specific Languages (DSLs)">
+  
   <meta name="author" content="Igor Dejanović">
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Home - textX</title>
+  <title>Debugging - textX</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../css/theme.css" type="text/css" />
@@ -19,8 +19,8 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Home";
-    var mkdocs_page_input_path = "ideas/README.md";
+    var mkdocs_page_name = "Debugging";
+    var mkdocs_page_input_path = "debugging.md";
     var mkdocs_page_url = null;
   </script>
   
@@ -101,9 +101,15 @@
                     
     <a class="" href="../error_handling/">Error handling</a>
                 </li>
-                <li class="">
+                <li class=" current">
                     
-    <a class="" href="../debugging/">Debugging</a>
+    <a class="current" href="./">Debugging</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l3"><a href="#debugging">Debugging</a></li>
+    
+
+    </ul>
                 </li>
                 <li class="">
                     
@@ -194,11 +200,15 @@
     <li><a href="..">Docs</a> &raquo;</li>
     
       
+        
+          <li>User Guide &raquo;</li>
+        
+      
     
-    <li>Home</li>
+    <li>Debugging</li>
     <li class="wy-breadcrumbs-aside">
       
-        <a href="https://github.com/igordejanovic/textX/edit/master/docs/ideas/README.md"
+        <a href="https://github.com/igordejanovic/textX/edit/master/docs/debugging.md"
           class="icon icon-github"> Edit on GitHub</a>
       
     </li>
@@ -208,14 +218,78 @@
           <div role="main">
             <div class="section">
               
-                <p>This is a place for new development ideas.</p>
-<p>Contributions are welcome. If you have new idea or would like to refine some of
-the existing make a fork of the repo, do your changes and send me a pull
-request.</p>
+                <h1 id="debugging">Debugging<a class="headerlink" href="#debugging" title="Permanent link">&para;</a></h1>
+<p>textX supports debugging on the meta-model (grammar) and model levels. If
+debugging is enabled, textX will print various debugging messages.</p>
+<p>If the <code>debug</code> parameter of the meta-model construction is set to <code>True</code>, debug
+messages during grammar parsing and meta-model construction will be printed.
+Additionally, a parse tree created during the grammar parsing as well as
+meta-model (if constructed successfully) dot files will be generated:</p>
+<pre><code class="python">form textx.metamodel import metamodel_from_file
+
+robot_metamodel = metamodel_from_file('robot.tx', debug=True)
+</code></pre>
+
+<p>If <code>debug</code> is set in the <code>model_from_file/str</code> calls, various messages during
+the model parsing and construction will be printed. Additionally, parse tree
+created from the input as well as the model will be exported to dot files.</p>
+<pre><code class="python">  robot_program = robot_metamodel.model_from_file('program.rbt', debug=True)
+</code></pre>
+
+<p>Alternatively, you can use <a href="../textx_command/">textx check or visualize command</a>
+in debug mode.</p>
+<pre><code>$ textx -d visualize robot.tx program.rbt
+
+*** PARSING LANGUAGE DEFINITION ***
+New rule: grammar_to_import -&gt; RegExMatch
+New rule: import_stm -&gt; Sequence
+New rule: rule_name -&gt; RegExMatch
+New rule: param_name -&gt; RegExMatch
+New rule: string_value -&gt; OrderedChoice
+New rule: rule_param -&gt; Sequence
+Rule rule_param founded in cache.
+New rule: rule_params -&gt; Sequence
+...
+
+&gt;&gt; Matching rule textx_model=Sequence at position 0 =&gt; */* This ex
+  &gt;&gt; Matching rule ZeroOrMore in textx_model at position 0 =&gt; */* This ex
+      &gt;&gt; Matching rule import_stm=Sequence in textx_model at position 0 =&gt; */* This ex
+        ?? Try match rule StrMatch(import) in import_stm at position 0 =&gt; */* This ex
+        &gt;&gt; Matching rule comment=OrderedChoice in import_stm at position 0 =&gt; */* This ex
+            ?? Try match rule comment_line=RegExMatch(//.*?$) in comment at position 0 =&gt; */* This ex
+            -- NoMatch at 0
+            ?? Try match rule comment_block=RegExMatch(/\*(.|\n)*?\*/) in comment at position 0 =&gt; */* This ex
+
+...
+
+
+Generating 'robot.tx.dot' file for meta-model.
+To convert to png run 'dot -Tpng -O robot.tx.dot'
+Generating 'program.rbt.dot' file for model.
+To convert to png run 'dot -Tpng -O program.rbt.dot'
+</code></pre>
+<p>This command renders parse trees and parser models of both textX and your
+language to dot files. Also, a meta-model and model of the language will be
+rendered if parsed correctly.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>By default all debug messages will be printed to stdout. You can provide
+<code>file</code> parameter to <code>metamodel_from_file/str</code> to specify file-like object
+where all messages should go.</p>
+</div>
               
             </div>
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../textx_command/" class="btn btn-neutral float-right" title="textx command">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../error_handling/" class="btn btn-neutral" title="Error handling"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>
@@ -243,6 +317,10 @@ request.</p>
           <a href="https://github.com/igordejanovic/textX/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
       
       
+        <span><a href="../error_handling/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../textx_command/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>
@@ -253,8 +331,3 @@ request.</p>
 
 </body>
 </html>
-
-<!--
-MkDocs version : 1.0.4
-Build Date UTC : 2018-10-06 09:41:43
--->

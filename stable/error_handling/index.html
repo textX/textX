@@ -5,10 +5,10 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="A meta-language for building Domain-Specific Languages (DSLs)">
+  
   <meta name="author" content="Igor Dejanović">
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Home - textX</title>
+  <title>Error handling - textX</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../css/theme.css" type="text/css" />
@@ -19,8 +19,8 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Home";
-    var mkdocs_page_input_path = "ideas/README.md";
+    var mkdocs_page_name = "Error handling";
+    var mkdocs_page_input_path = "error_handling.md";
     var mkdocs_page_url = null;
   </script>
   
@@ -97,9 +97,15 @@
                     
     <a class="" href="../visualization/">Visualization</a>
                 </li>
-                <li class="">
+                <li class=" current">
                     
-    <a class="" href="../error_handling/">Error handling</a>
+    <a class="current" href="./">Error handling</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l3"><a href="#error-handling">Error handling</a></li>
+    
+
+    </ul>
                 </li>
                 <li class="">
                     
@@ -194,11 +200,15 @@
     <li><a href="..">Docs</a> &raquo;</li>
     
       
+        
+          <li>User Guide &raquo;</li>
+        
+      
     
-    <li>Home</li>
+    <li>Error handling</li>
     <li class="wy-breadcrumbs-aside">
       
-        <a href="https://github.com/igordejanovic/textX/edit/master/docs/ideas/README.md"
+        <a href="https://github.com/igordejanovic/textX/edit/master/docs/error_handling.md"
           class="icon icon-github"> Edit on GitHub</a>
       
     </li>
@@ -208,14 +218,32 @@
           <div role="main">
             <div class="section">
               
-                <p>This is a place for new development ideas.</p>
-<p>Contributions are welcome. If you have new idea or would like to refine some of
-the existing make a fork of the repo, do your changes and send me a pull
-request.</p>
+                <h1 id="error-handling">Error handling<a class="headerlink" href="#error-handling" title="Permanent link">&para;</a></h1>
+<p>textX will raise an error if a syntax or semantic error is detected during
+meta-model or model parsing/construction.</p>
+<p>For a syntax error <code>TextXSyntaxError</code> is raised. For a semantic error
+<code>TextXSemanticError</code> is raised. Both exceptions inherit from <code>TextXError</code>. These
+exceptions are located in <code>textx.exceptions</code> module.</p>
+<p>All exceptions have <code>message</code> attribute with the error message, and <code>line</code> and
+<code>col</code> attributes which represent line and column where the error was found.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>See also <a href="../textx_command/">textx command/tool</a> for (meta)model checking 
+from command line.</p>
+</div>
               
             </div>
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../debugging/" class="btn btn-neutral float-right" title="Debugging">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../visualization/" class="btn btn-neutral" title="Visualization"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>
@@ -243,6 +271,10 @@ request.</p>
           <a href="https://github.com/igordejanovic/textX/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
       
       
+        <span><a href="../visualization/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../debugging/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>
@@ -253,8 +285,3 @@ request.</p>
 
 </body>
 </html>
-
-<!--
-MkDocs version : 1.0.4
-Build Date UTC : 2018-10-06 09:41:43
--->

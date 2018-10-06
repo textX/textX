@@ -5,10 +5,10 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="A meta-language for building Domain-Specific Languages (DSLs)">
+  
   <meta name="author" content="Igor Dejanović">
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Home - textX</title>
+  <title>textx command - textX</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../css/theme.css" type="text/css" />
@@ -19,8 +19,8 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Home";
-    var mkdocs_page_input_path = "ideas/README.md";
+    var mkdocs_page_name = "textx command";
+    var mkdocs_page_input_path = "textx_command.md";
     var mkdocs_page_url = null;
   </script>
   
@@ -105,9 +105,21 @@
                     
     <a class="" href="../debugging/">Debugging</a>
                 </li>
-                <li class="">
+                <li class=" current">
                     
-    <a class="" href="../textx_command/">textx command</a>
+    <a class="current" href="./">textx command</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l3"><a href="#textx-commandtool">textx command/tool</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l4" href="#using-the-tool">Using the tool</a></li>
+        
+        </ul>
+    
+
+    </ul>
                 </li>
     </ul>
 	    </li>
@@ -194,11 +206,15 @@
     <li><a href="..">Docs</a> &raquo;</li>
     
       
+        
+          <li>User Guide &raquo;</li>
+        
+      
     
-    <li>Home</li>
+    <li>textx command</li>
     <li class="wy-breadcrumbs-aside">
       
-        <a href="https://github.com/igordejanovic/textX/edit/master/docs/ideas/README.md"
+        <a href="https://github.com/igordejanovic/textX/edit/master/docs/textx_command.md"
           class="icon icon-github"> Edit on GitHub</a>
       
     </li>
@@ -208,14 +224,72 @@
           <div role="main">
             <div class="section">
               
-                <p>This is a place for new development ideas.</p>
-<p>Contributions are welcome. If you have new idea or would like to refine some of
-the existing make a fork of the repo, do your changes and send me a pull
-request.</p>
+                <h1 id="textx-commandtool">textx command/tool<a class="headerlink" href="#textx-commandtool" title="Permanent link">&para;</a></h1>
+<p>To check and visualize (meta)models from the command line.</p>
+<hr />
+<h2 id="using-the-tool">Using the tool<a class="headerlink" href="#using-the-tool" title="Permanent link">&para;</a></h2>
+<p>To get basic help:</p>
+<pre><code>$ textx --help
+usage: textx [-h] [-i] [-d] cmd metamodel [model]
+
+textX checker and visualizer
+
+positional arguments:
+  cmd         Command - "check" or "visualize"
+  metamodel   Meta-model file name
+  model       Model file name
+
+optional arguments:
+  -h, --help  show this help message and exit
+  -i          case-insensitive parsing
+  -d          run in debug mode
+</code></pre>
+<p>You can check and visualize (generate a .dot file) your meta-model or model using
+this tool.</p>
+<p>For example, to check and visualize a metamodel you could issue:</p>
+<pre><code>$ textx visualize robot.tx
+Meta-model OK.
+Generating 'robot.tx.dot' file for meta-model.
+To convert to png run 'dot -Tpng -O robot.tx.dot'
+</code></pre>
+<p>Create an image from the .dot file:</p>
+<pre><code>$ dot -Tpng -O robot.tx.dot
+</code></pre>
+<p>Or use some <code>dot</code> viewer. For example:</p>
+<pre><code>$ xdot robot.tx.dot
+</code></pre>
+<p>Visualize model:</p>
+<pre><code>$ textx visualize robot.tx program.rbt
+Meta-model OK.
+Model OK.
+Generating 'robot.tx.dot' file for meta-model.
+To convert to png run 'dot -Tpng -O robot.tx.dot'
+Generating 'program.rbt.dot' file for model.
+To convert to png run 'dot -Tpng -O program.rbt.dot'
+</code></pre>
+<p>To only check (meta)models use <code>check</code> command:</p>
+<pre><code>$ textx check robot.tx program.rbt
+</code></pre>
+<p>If there is an error you will get a nice error report:</p>
+<pre><code>$ textx check robot.tx program.rbt
+Meta-model OK.
+Error in model file.
+Expected 'initial' or 'up' or 'down' or 'left' or 
+  'right' or 'end' at program.rbt:(3, 3) =&gt; 'al 3, 1   *gore 4    '.
+</code></pre>
               
             </div>
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../tutorials/hello_world/" class="btn btn-neutral float-right" title="Hello World">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../debugging/" class="btn btn-neutral" title="Debugging"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>
@@ -243,6 +317,10 @@ request.</p>
           <a href="https://github.com/igordejanovic/textX/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
       
       
+        <span><a href="../debugging/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../tutorials/hello_world/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>
@@ -253,8 +331,3 @@ request.</p>
 
 </body>
 </html>
-
-<!--
-MkDocs version : 1.0.4
-Build Date UTC : 2018-10-06 09:41:43
--->

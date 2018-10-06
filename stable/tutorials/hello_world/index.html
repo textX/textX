@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="Igor Dejanović">
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <title>Hello World - textX</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+  <link href="../../style.css" rel="stylesheet">
+  <link href="../../css/version-select.css" rel="stylesheet">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Hello World";
+    var mkdocs_page_input_path = "tutorials/hello_world.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+  <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-68681917-1', 'igordejanovic.net');
+      ga('send', 'pageview');
+  </script>
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href="../.." class="icon icon-home"> textX</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../..">Home</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">User Guide</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../../grammar/">Grammar</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../metamodel/">Meta-model</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../model/">Model</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../scoping/">Scoping</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../multimetamodel/">Multi meta-model</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../parser_config/">Parser configuration</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../visualization/">Visualization</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../error_handling/">Error handling</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../debugging/">Debugging</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../textx_command/">textx command</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Tutorials</span>
+    <ul class="subnav">
+                <li class=" current">
+                    
+    <a class="current" href="./">Hello World</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l3"><a href="#hello-world-example">Hello World example</a></li>
+    
+
+    </ul>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../robot/">Robot</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../entity/">Entity</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../state_machine/">State Machine</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../toylanguage/">Toy language compiler</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">About</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../../about/comparison/">Comparison</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../about/discuss/">Discuss</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../about/contributing/">Contributing</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../about/license/">License</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">What's new</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../../whatsnew/release_1_5/">Release 1.5</a>
+                </li>
+    </ul>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../..">textX</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Tutorials &raquo;</li>
+        
+      
+    
+    <li>Hello World</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/igordejanovic/textX/edit/master/docs/tutorials/hello_world.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="hello-world-example">Hello World example<a class="headerlink" href="#hello-world-example" title="Permanent link">&para;</a></h1>
+<p>This is an example of very simple Hello World like language.</p>
+<hr />
+<p>These are the steps to build a very basic Hello World - like language.</p>
+<ol>
+<li>
+<p>Write a language description in textX (file <code>hello.tx</code>):</p>
+<pre><code>HelloWorldModel:
+  'hello' to_greet+=Who[',']
+;
+
+Who:
+  name = /[^,]*/
+;
+</code></pre>
+<p>Description consists of a set of parsing rules which at the same time
+describe Python classes that will be dynamically created and used to
+instantiate objects of your model.  This small example consists of two
+rules: <code>HelloWorldModel</code> and <code>Who</code>.  <code>HelloWorldModel</code> starts with the
+keyword <code>hello</code> after which a one or more <code>Who</code> object must be written
+separated by commas. <code>Who</code> objects will be parsed, instantiated and stored
+in a <code>to_greet</code> list on a <code>HelloWorldModel</code> object. <code>Who</code> objects consists
+only of its names which must be matched the regular expression rule
+<code>/[^,]*/</code> (match non-comma zero or more times). Please see <a href="../../grammar/">textX
+grammar</a> section for more information on writing grammar
+rules.</p>
+</li>
+<li>
+<p>At this point you can check and visualise meta-model using following command
+   from command line:</p>
+<pre><code>$ textx visualize hello.tx
+Meta-model OK.
+Generating 'hello.tx.dot' file for meta-model.
+To convert to png run 'dot -Tpng -O hello.tx.dot'
+</code></pre>
+<p><img alt="hello meta-model" src="../../images/hello_meta.dot.png" /></p>
+<p>You can see that for each rule from language description an appropriate
+Python class has been created. A BASETYPE hierarchy is built-in. Each
+meta-model has it.</p>
+</li>
+<li>
+<p>Create some content (i.e. model) in your new language (<code>example.hello</code>):</p>
+<pre><code>hello World, Solar System, Universe
+</code></pre>
+<p>Your language syntax is also described by language rules from step 1.</p>
+<p>If we break down the text of the example model it looks like this:</p>
+<p><img alt="hello model parts" src="../../images/hello_parts.png" /></p>
+<p>We see that the whole line is a <code>HelloWorldModel</code> and the parts <code>World</code>, 
+<code>Solar System</code>, and <code>Universe</code> are <code>Who</code> objects. Red coloured text is
+syntactic noise that is needed by the parser (and programmers) to recognize
+the boundaries of the objects in the text.</p>
+</li>
+<li>
+<p>To use your models from Python first create meta-model from textX language
+   description (file <code>hello.py</code>):</p>
+<pre><code>from textx import metamodel_from_file
+hello_meta = metamodel_from_file('hello.tx')
+</code></pre>
+</li>
+<li>
+<p>Than use meta-model to create models from textual description:</p>
+<pre><code>example_hello_model = hello_meta.model_from_file('example.hello')
+</code></pre>
+<p>Textual model <code>example.hello</code> will be parsed and transformed to a plain
+Python object graph. Object classes are those defined by the meta-model.</p>
+</li>
+<li>
+<p>You can optionally export model to <code>dot</code> file to visualize it. Run following
+   from the command line:</p>
+<pre><code>$ textx visualize hello.tx example.hello
+Meta-model OK.
+Model OK.
+Generating 'hello.tx.dot' file for meta-model.
+To convert to png run 'dot -Tpng -O hello.tx.dot'
+Generating 'example.hello.dot' file for model.
+To convert to png run 'dot -Tpng -O example.hello.dot'
+</code></pre>
+<p><img alt="Example hello model" src="../../images/example.dot.png" /></p>
+<p>This is an object graph automatically constructed from <code>example.hello</code>
+file.</p>
+<p>We see that each <code>Who</code> object is contained in the python attribute
+<code>to_greet</code> of list type which is defined by the grammar.</p>
+</li>
+<li>
+<p>Use your model: interpret it, generate code … It is a plain Python
+   graph of objects with plain attributes!</p>
+</li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Try out a <a href="../robot/">complete tutorial</a> for building a simple robot language.</p>
+</div>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../robot/" class="btn btn-neutral float-right" title="Robot">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../../textx_command/" class="btn btn-neutral" title="textx command"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>Copyright &copy; <a href="http://igordejanovic.net/">Igor Dejanović</a>.</p>
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+          <a href="https://github.com/igordejanovic/textX/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
+      
+      
+        <span><a href="../../textx_command/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../robot/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '../..';</script>
+    <script src="../../js/theme.js" defer></script>
+      <script src="../../js/version-select.js" defer></script>
+      <script src="../../search/main.js" defer></script>
+
+</body>
+</html>
