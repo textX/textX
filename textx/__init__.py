@@ -6,4 +6,4 @@ from textx.exceptions import TextXError, TextXSyntaxError, \
     TextXSemanticError
 from textx.langapi import get_language, iter_languages
 
-__version__ = "1.7.1"
+__version__ = "1.8.0"
