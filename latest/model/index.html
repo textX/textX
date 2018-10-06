@@ -236,8 +236,8 @@ resolved to a proper python reference.</p>
 <p>Each object is an instance of a class from the meta-model. Classes are created
 on-the-fly from the grammar rules or are <a href="../metamodel/#custom-classes">supplied by the
 user</a>.</p>
-<p>A model is created from the input string using the <code>model_from_file</code> and <code>model_from_str</code>
-methods of the meta-model instance.</p>
+<p>A model is created from the input string using the <code>model_from_file</code> and 
+<code>model_from_str</code> methods of the meta-model instance.</p>
 <pre><code>from textx import metamodel_from_file
 
 my_mm = metamodel_from_file('mygrammar.tx')
@@ -245,6 +245,11 @@ my_mm = metamodel_from_file('mygrammar.tx')
 # Create model
 my_model = my_mm.model_from_file('some_model.ext')
 </code></pre>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The model_from_file method takes an optional argument <code>encoding</code>
+to control the input encoding of the model file to be loaded.</p>
+</div>
 <p>Let's take the Entity language used in <a href="../metamodel/#custom-classes">Custom
 Classes</a> section.</p>
 <p>Content of <code>entity.tx</code> file:</p>
@@ -306,6 +311,15 @@ given type exists <code>None</code> is returned.</p>
     process.</li>
 </ul>
 <p>Returns a list of all model elements of type <code>typ</code> starting from model element
+<code>root</code>. The search process will follow containment links only. Non-containing
+references shall not be followed.</p>
+<h3 id="get_childrenselector-root"><code>get_children(selector, root)</code><a class="headerlink" href="#get_childrenselector-root" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>select(obj)</code>: a callable returning True if the object is of interest.</li>
+<li><code>root (model object)</code>: Python model object which is the start of the search
+    process.</li>
+</ul>
+<p>Returns a list of all selected model elements starting from model element
 <code>root</code>. The search process will follow containment links only. Non-containing
 references shall not be followed.</p>
 <h2 id="special-model-objects-attributes">Special model object's attributes<a class="headerlink" href="#special-model-objects-attributes" title="Permanent link">&para;</a></h2>
