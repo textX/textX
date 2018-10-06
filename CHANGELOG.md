@@ -7,11 +7,20 @@
        docs](http://www.igordejanovic.net/textX/development/grammar/#matches)
        for usage.
    - https://github.com/igordejanovic/textX/pull/69
-     - Fixing issue #66 - serching for scope providers
+     - Added search path feature (issue #66) - search path support for model 
+       files (importURI scope providers; see docs/scoping.md).
    - https://github.com/igordejanovic/textX/pull/77
-     - New multi meta model support for references-only
+     - New multi meta model support for references-only for better meta model
+       modularity (referencing models without having access to the grammar, 
+       see docs/multimetamodel.md).
    - https://github.com/igordejanovic/textX/pull/79
-     - Fixing obj_processors calling
+     - Fixing obj_processors calling.
+   - https://github.com/igordejanovic/textX/pull/84
+     - New contribution guide.
+   - https://github.com/igordejanovic/textX/pull/81
+     - Bugfix: lost encoding for multi meta-model.
+   - https://github.com/igordejanovic/textX/pull/68
+     - changed parser access in metamodel (private attribute "_parser")
    - mkdocs documentation now uses [mike](https://github.com/jimporter/mike) for
      multiversion support.
 
