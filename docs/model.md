@@ -12,8 +12,8 @@ Each object is an instance of a class from the meta-model. Classes are created
 on-the-fly from the grammar rules or are [supplied by the
 user](metamodel.md#custom-classes).
 
-A model is created from the input string using the `model_from_file` and `model_from_str`
-methods of the meta-model instance.
+A model is created from the input string using the `model_from_file` and 
+`model_from_str` methods of the meta-model instance.
 
     from textx import metamodel_from_file
 
@@ -21,6 +21,11 @@ methods of the meta-model instance.
 
     # Create model
     my_model = my_mm.model_from_file('some_model.ext')
+
+
+!!! note
+    The model_from_file method takes an optional argument `encoding`
+    to control the input encoding of the model file to be loaded.
 
 
 Let's take the Entity language used in [Custom
@@ -100,6 +105,16 @@ given type exists `None` is returned.
     process.
 
 Returns a list of all model elements of type `typ` starting from model element
+`root`. The search process will follow containment links only. Non-containing
+references shall not be followed.
+
+### `get_children(selector, root)`
+
+- `select(obj)`: a callable returning True if the object is of interest.
+- `root (model object)`: Python model object which is the start of the search
+    process.
+
+Returns a list of all selected model elements starting from model element
 `root`. The search process will follow containment links only. Non-containing
 references shall not be followed.
 
