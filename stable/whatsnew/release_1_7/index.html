@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="Igor Dejanović">
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <title>What's new in textX 1.7 - textX</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+  <link href="../../style.css" rel="stylesheet">
+  <link href="../../css/version-select.css" rel="stylesheet">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "What's new in textX 1.7";
+    var mkdocs_page_input_path = "whatsnew/release_1_7.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+  <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-68681917-1', 'igordejanovic.net');
+      ga('send', 'pageview');
+  </script>
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href="../.." class="icon icon-home"> textX</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../..">Home</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">User Guide</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../../grammar/">Grammar</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../metamodel/">Meta-model</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../model/">Model</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../scoping/">Scoping</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../multimetamodel/">Multi meta-model</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../parser_config/">Parser configuration</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../visualization/">Visualization</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../error_handling/">Error handling</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../debugging/">Debugging</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../textx_command/">textx command</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Tutorials</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../../tutorials/hello_world/">Hello World</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../tutorials/robot/">Robot</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../tutorials/entity/">Entity</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../tutorials/state_machine/">State Machine</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../tutorials/toylanguage/">Toy language compiler</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">About</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../../about/comparison/">Comparison</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../about/discuss/">Discuss</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../about/contributing/">Contributing</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../about/license/">License</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">What's new</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../release_1_5/">Release 1.5</a>
+                </li>
+    </ul>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../..">textX</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>What's new in textX 1.7</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/igordejanovic/textX/edit/master/docs/whatsnew/release_1_7.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="whats-new-in-textx-17">What's new in textX 1.7<a class="headerlink" href="#whats-new-in-textx-17" title="Permanent link">&para;</a></h1>
+<p>This version is a huge one thanks to Pierre (goto40@GitHub) who did an amazing
+job on scoping and multi-meta-model support.</p>
+<h2 id="configurable-scoping-support">Configurable scoping support<a class="headerlink" href="#configurable-scoping-support" title="Permanent link">&para;</a></h2>
+<h2 id="multi-meta-model-support">Multi-meta-model support<a class="headerlink" href="#multi-meta-model-support" title="Permanent link">&para;</a></h2>
+<h2 id="change-in-the-way-object-processors-work">Change in the way object processors work<a class="headerlink" href="#change-in-the-way-object-processors-work" title="Permanent link">&para;</a></h2>
+<p>Previously object processors could do validation of the object and alter its
+content but could not replace the given object. This prevented processors for
+being used in e.g. expression evaluation or model interpretation (as a form of
+visitors/semantic actions). In this version it is now possible to return an
+arbitrary object from the processor and it will be used instead of the original.</p>
+<p>This change obsoletes <code>match filters</code> so in this version the support for match
+filters is removed which is a backward incompatible change.</p>
+<p>Luckily, upgrade is simple, just register your match filters as object
+processors like this:</p>
+<p>Before:</p>
+<pre><code>match_filters = {
+    'MyRule': my_match_filter
+}
+mm = metamodel_from_file(..., match_filters=match_filters)
+</code></pre>
+<p>Now:</p>
+<pre><code>object_processors = {
+     'MyRule': my_match_filter
+}
+mm = metamodel_from_file(...)
+mm.register_obj_processors(object_processors)
+</code></pre>
+              
+            </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>Copyright &copy; <a href="http://igordejanovic.net/">Igor Dejanović</a>.</p>
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+          <a href="https://github.com/igordejanovic/textX/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
+      
+      
+      
+    </span>
+</div>
+    <script>var base_url = '../..';</script>
+    <script src="../../js/theme.js" defer></script>
+      <script src="../../js/version-select.js" defer></script>
+      <script src="../../search/main.js" defer></script>
+
+</body>
+</html>
