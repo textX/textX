@@ -18,6 +18,7 @@ install:
 script:
     - coverage run --source textx -m py.test tests/functional
     - coverage report
+    - flake8 --exclude tests/perf
 
 matrix:
   include:
