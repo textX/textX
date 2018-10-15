@@ -55,12 +55,11 @@ class StateMachine(object):
                     return
                 event = int(event)
                 event = self.model.events[event-1]
-            except:
+            except Exception:
                 print('Invalid input')
 
             self.event(event)
             self.print_menu()
-
 
 
 if __name__ == '__main__':
