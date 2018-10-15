@@ -102,6 +102,10 @@
     object. See [the
     docs](http://www.igordejanovic.net/textX/metamodel/#object-processors). In
     order to migrate your match filters just register them as object processors.
+    
+  - Backward incompatible change: all methods of `textx.model` module get a
+    `get_` prefix. See [this commit](https://github.com/igordejanovic/textX/commit/90667f29604f2e67c593e5a66de11ea286cf5be0) and [the
+    docs](http://www.igordejanovic.net/textX/1.7/model/#model-api)
 
   - Fixing FLOAT regex. Thanks Boris Marin (borismarin@GitHub)!
   - Fixing position info on obj cross ref. Thanks Daniel Elero (danixeee@GitHub)!
