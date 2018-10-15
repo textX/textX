@@ -19,7 +19,7 @@ install:
 script:
     - coverage run --source textx -m py.test tests/functional
     - coverage report
-    - flake8 --exclude tests/perf,textx/six.py,textx/lang.py
+    - flake8 textx tests --exclude tests/perf,textx/six.py,textx/lang.py
 
 matrix:
   include:
