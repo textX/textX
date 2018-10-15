@@ -9,13 +9,15 @@ before_install:
     # Installing Arpeggio as a dependency
     - cd ..
     - pip install Jinja2
+    - pip install coverage
     - git clone --depth=1 --branch=master git://github.com/igordejanovic/Arpeggio.git
     - cd Arpeggio && python setup.py install
     - cd ../textX
 install:
     - python setup.py install
 script:
-    - py.test tests/functional
+    - coverage run --source textx -m py.test tests/functional
+    - coverage report
 
 matrix:
   include:
