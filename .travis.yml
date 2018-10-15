@@ -18,7 +18,7 @@ install:
     - python setup.py install
 script:
     - coverage run --source textx -m py.test tests/functional
-    - coverage report
+    - coverage report --fail-under 80
     - flake8 textx tests --exclude tests/perf,textx/six.py,textx/lang.py
 
 matrix:
