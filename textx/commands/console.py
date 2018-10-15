@@ -13,7 +13,8 @@ def textx():
     class MyParser(argparse.ArgumentParser):
         """
         Custom argument parser for printing help message in case of an error.
-        See http://stackoverflow.com/questions/4042452/display-help-message-with-python-argparse-when-script-is-called-without-any-argu
+        See
+        http://stackoverflow.com/questions/4042452/display-help-message-with-python-argparse-when-script-is-called-without-any-argu
         """
         def error(self, message):
             sys.stderr.write('error: %s\n' % message)
