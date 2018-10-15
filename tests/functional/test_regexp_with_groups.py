@@ -14,12 +14,12 @@ else:
 grammar = r"""
 Model: entries += Entry;
 Entry:
-    'data' '=' data=/\"(?ms){3}(.*?)\"{3}/
+    'data' '=' data=/(?ms)\"{3}(.*?)\"{3}/
 ;
 """
 grammar2 = r"""
 Model:
-    'data' '=' data=/\"(?ms){3}(.*?)\"{3}\s*\-(\w+)\-/
+    'data' '=' data=/(?ms)\"{3}(.*?)\"{3}\s*\-(\w+)\-/
 ;
 """
 
