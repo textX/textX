@@ -85,6 +85,11 @@
       within one metamodel or language).
     - The metamodel clones the parser when parsing a model file. The meta model
       holds one parser, which is clone for every model to be parsed.
+
+      Backward incompatible change: The metamodel.parser is only a blueprint 
+      and cannot be used to, e.g., determine model element positions in the
+      file. Use your_model_obj._tx_parser instead.
+
     - TextXModelParser now has a clone method.
       (TBC: is the clone ok: see responsibility of the method)
     - model.py: the resolution loop logic now mostly moved to a separate object
