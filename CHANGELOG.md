@@ -93,7 +93,8 @@
 
       Backward incompatible change: The metamodel.parser is only a blueprint 
       and cannot be used to, e.g., determine model element positions in the
-      file. Use your_model_obj._tx_parser instead.
+      file. Use your_model._tx_parser instead, e.g., 
+      textx.get_model(obj)._tx_parser).
 
     - TextXModelParser now has a clone method.
       (TBC: is the clone ok: see responsibility of the method)
