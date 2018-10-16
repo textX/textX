@@ -1,5 +1,10 @@
 # textX changelog
 
+* Next Release 1.?.?
+   - https://github.com/igordejanovic/textX/pull/93
+     - Changed attribute name for the metamodel object (from 
+       "metamodel._parser" to "metamodel._parser_blueprint").
+
 * 2018-10-06 Release 1.8.0
 
    - https://github.com/igordejanovic/textX/pull/71
