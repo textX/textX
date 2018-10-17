@@ -85,20 +85,22 @@ you could also reference such information sources.
 
 ## Referencing global data using full qualified names
 
-    package P1 {
-        class Part1 {
+ * Example model:
+
+        package P1 {
+            class Part1 {
+            }
         }
-    }
-    package P2 {
-        class Part2 {
-            attr C2 rec;
+        package P2 {
+            class Part2 {
+                attr C2 rec;
+            }
+            class C2 {
+                attr P1.Part1 p1;
+                attr Part2 p2a;
+                attr P2.Part2 p2b;
+            }
         }
-        class C2 {
-            attr P1.Part1 p1;
-            attr Part2 p2a;
-            attr P2.Part2 p2b;
-        }
-    }
 
  * Unittest
    [tests/functional/test_scoping/test_full_qualified_name.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_full_qualified_name.py),
