@@ -35,7 +35,8 @@ def test_match_complex_recursive_peg_rule_resolve():
     """
     metamodel = metamodel_from_str(grammar)
 
-    assert metamodel._parser_blueprint.parser_model.nodes[0].rule_name == 'expression'
+    assert metamodel._parser_blueprint.parser_model.nodes[0].rule_name == \
+        'expression'
     assert type(metamodel._parser_blueprint.parser_model.nodes[0]) is Sequence
 
     calc_rule = metamodel['calc']._tx_peg_rule
