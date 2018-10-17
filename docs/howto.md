@@ -160,3 +160,16 @@ concrete DSL. These DLS reference each other.
 
  * Unittest
    [tests/functional/test_metamodel/test_multi_metamodel_refs.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_metamodel/test_multi_metamodel_refs.py),
+
+## Enable and distinguish float and int values for attributes
+
+ * Model text:
+ 
+        x1 = 1
+        x2 = -1
+        y1 = 1.0
+        y2 = 1.1e-2
+        y3 = -1.1e+2
+
+ * Unittest 
+   [tests/functional/examples/test_modeling_float_int_variables.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/examples/test_modeling_float_int_variables.py),
