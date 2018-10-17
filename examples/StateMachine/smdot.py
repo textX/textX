@@ -1,15 +1,11 @@
 """
 Export state machine models to dot.
 """
+from __future__ import unicode_literals
 import codecs
 import sys
 from os.path import dirname, join
 from textx import metamodel_from_file
-if sys.version < '3':
-    text = unicode
-else:
-    text = str
-
 
 HEADER = '''
     digraph xtext {
@@ -64,5 +60,5 @@ if __name__ == '__main__':
         meta = metamodel_from_file(join(this_folder, 'state_machine.tx'))
         model = meta.model_from_file(model_name)
         with codecs.open("{}.dot".format(model_name), 'w',
-                            encoding='utf-8') as f:
+                         encoding='utf-8') as f:
             f.write(sm_to_dot(model))

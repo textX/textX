@@ -220,7 +220,7 @@ class GlobalModelRepository(object):
         return self.local_models.filename_to_model[filename]
 
     def _add_model(self, model):
-        filename =self.update_model_in_repo_based_on_filename(model)
+        filename = self.update_model_in_repo_based_on_filename(model)
         self.local_models.filename_to_model[filename] = model
 
     def update_model_in_repo_based_on_filename(self, model):
@@ -234,9 +234,9 @@ class GlobalModelRepository(object):
             for fn in self.all_models.filename_to_model:
                 if self.all_models.filename_to_model[fn] == model:
                     return fn
-            i=0
+            i = 0
             while self.all_models.has_model("anonymous{}".format(i)):
-                i+=1
+                i += 1
             myfilename = "anonymous{}".format(i)
             self.all_models.filename_to_model[myfilename] = model
         else:
@@ -244,7 +244,6 @@ class GlobalModelRepository(object):
             if (not self.all_models.has_model(myfilename)):
                 self.all_models.filename_to_model[myfilename] = model
         return myfilename
-
 
     def pre_ref_resolution_callback(self, other_model):
         """
@@ -296,4 +295,3 @@ def get_all_models_including_attached_models(model):
     else:
         models = [model]
     return models
-

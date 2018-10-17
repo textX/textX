@@ -10,7 +10,7 @@ from textx.exceptions import TextXSemanticError
 import textx.scoping as scoping
 
 """
-This module defines scope providers to be used in conjunctions with a 
+This module defines scope providers to be used in conjunctions with a
 textx.metamodel meta model.
 
 See docs/scoping.md
