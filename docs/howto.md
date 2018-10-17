@@ -60,9 +60,9 @@ like in the exmample referenced below "@[myref]"):
    [tests/functional/examples/test_free_text_with_references.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/examples/test_free_text_with_references.py),
 
 
-## Referncing a json database from within a textx model
+## Referncing a JSON database from within a textX model
 
-Here, we link a textx model with a non textx database (could be any database
+Here, we link a textX model with a non textX database (could be any database
 or data structure available in python). If you have, e.g., a DOORS binding,
 you could also reference such information sources.
 
@@ -103,7 +103,7 @@ you could also reference such information sources.
 
 ## Multi-metamodel multi-file models
 
-Here, we focus on referencing model elements from models based on other textx 
+Here, we focus on referencing model elements from models based on other textX 
 meta models. These other meta models are typically imported from other python
 modules (e.g. deployed separately).
 
