@@ -46,7 +46,7 @@ textx.scoping.providers.ExtRelativeName scope provider:
 
 The idea is to model a string with an arbitrary content and links to other
 objects (the links are encoded with a special symbol, e.g. "[myref]" or - 
-like in the exmample referenced below "@myref"):
+like in the exmample referenced below "@[myref]"):
 
     ENTRY Hello:    """a way to say hello\@mail (see @[Hi])"""
     ENTRY Hi:       """another way to say hello (see @[Hello])"""
