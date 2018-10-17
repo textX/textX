@@ -68,3 +68,4 @@ venv
 
 # Other
 .pytest_cache
+.idea
