@@ -83,3 +83,63 @@ you could also reference such information sources.
  * Unittest (components with inherited slots)
    [tests/functional/test_scoping/test_reference_to_nontextx_attribute.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_reference_to_nontextx_attribute.py),
 
+## Referencing global data using full qualified names
+
+ * Unittest
+   [tests/functional/test_scoping/test_full_qualified_name.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_full_qualified_name.py),
+
+
+## Multi-file models
+
+ * Unittest (global import)
+   [tests/functional/test_scoping/test_global_import_modules.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_global_import_modules.py),
+
+ * Unittest (explicit import, "importURI")
+   [tests/functional/test_scoping/test_import_module.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_import_module.py),
+
+ * Unittest (explicit import, "importURI" with custom search path)
+   [tests/functional/test_scoping/test_import_module_search_path_issue66.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_import_module_search_path_issue66.py),
+
+
+## Multi-metamodel multi-file models
+
+Here, we focus on referencing model elements from models based on other textx 
+meta models. These other meta models are typically imported from other python
+modules (e.g. deployed separately).
+
+In the example referenced below, we simulate three modules with three classes
+in the unittest. Each class take the role of one module and defines one
+concrete DSL. These DLS reference each other.
+
+ * Model example (types.type) - "Type"-DSL
+
+        type int
+        type string 
+
+ * Model example (data_structures.data) - "Data"-DSL
+
+        #include "types.type"
+
+        data Point { x: int y: int}
+        data City { name: string }
+        data Population { count: int}
+
+ * Model example (data_flow.flow) - "Flow"-DSL
+
+        #include "data_structures.data"
+        #include "types.type" // double include, loaded 1x only
+        
+        algo A1 : Point -> City
+        algo A2 : City -> Population
+        connect A1 -> A2
+
+ * Model example (data_flow.flow) - "Flow"-DSL with validation error
+
+        #include "data_structures.data"
+        
+        algo A1 : Point -> City
+        algo A2 : City -> Population
+        connect A2 -> A1 // Error, must be A1 -> A2
+
+ * Unittest
+   [tests/functional/test_metamodel/test_multi_metamodel_refs.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_metamodel/test_multi_metamodel_refs.py),
