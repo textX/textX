@@ -22,7 +22,7 @@ def test_reference_to_nontextx_attribute():
     # This test demonstrates how to link a textX model to
     # an arbitrary other non textX model.
     # Here we use a json file as external model
-    # to deomstrate how to load external models on the fly.
+    # to demonstrate how to load external models on the fly.
 
     # custom scope provider
     def generic_scope_provider(obj, attr, attr_ref):

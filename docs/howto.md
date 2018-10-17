@@ -59,3 +59,27 @@ like in the exmample referenced below "@myref"):
  * Unittest (components with inherited slots)
    [tests/functional/examples/test_free_text_with_references.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/examples/test_free_text_with_references.py),
 
+
+## Referncing a json database from within a textx model
+
+Here, we link a textx model with a non textx database (could be any database
+or data structure available in python). If you have, e.g., a DOORS binding,
+you could also reference such information sources.
+
+ * JSON-File "data.json":
+ 
+        {
+          "name": "pierre",
+          "gender": "male"
+        }
+ 
+ * TextX-model:
+
+        import "data.json" as data
+        access A1 data.name
+        access A2 data.gender
+
+
+ * Unittest (components with inherited slots)
+   [tests/functional/test_scoping/test_reference_to_nontextx_attribute.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_reference_to_nontextx_attribute.py),
+
