@@ -4,7 +4,7 @@ from textx import metamodel_from_str
 def test_int_and_floats():
     grammar = '''
     Model: vars+=Var;
-    Var: name=ID '=' value=Val; 
+    Var: name=ID '=' value=Val;
     Val: O_FLOAT|O_INT; // order matters: float first!
     O_INT: intVal=MYINT;
     O_FLOAT: floatVal=MYFLOAT;
@@ -26,8 +26,8 @@ def test_int_and_floats():
     })
     m = mm.model_from_str(model_text)
 
-    assert 'O_INT'   == m.vars[0].value.__class__.__name__
-    assert 'O_INT'   == m.vars[1].value.__class__.__name__
+    assert 'O_INT' == m.vars[0].value.__class__.__name__
+    assert 'O_INT' == m.vars[1].value.__class__.__name__
     assert 'O_FLOAT' == m.vars[2].value.__class__.__name__
     assert 'O_FLOAT' == m.vars[3].value.__class__.__name__
     assert 'O_FLOAT' == m.vars[4].value.__class__.__name__
