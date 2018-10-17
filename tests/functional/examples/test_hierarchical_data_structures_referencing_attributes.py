@@ -44,8 +44,10 @@ def test_referencing_attributes():
     }
     
     instance d: D
+    instance a: A
     reference d.c.b.a.x
     reference d.b1.a.x
+    reference a.x
     '''
 
     def ref_scope(refItem, attr, attr_ref):
@@ -73,7 +75,13 @@ def test_referencing_attributes():
     assert m.references[0].refs[-1].valref.name=='x'
     assert m.references[0].refs[-1].valref == m.structs[0].vals[0]
 
-    assert m.references[0].refs[-2].valref.name=='b'
+    assert m.references[0].refs[-2].valref.name=='a'
     assert m.references[0].refs[-2].valref == m.structs[1].vals[0]
 
+    assert m.references[0].refs[-3].valref.name=='b'
+    assert m.references[0].refs[-3].valref == m.structs[2].vals[0]
+
     assert m.references[1].refs[-1].valref == m.structs[0].vals[0]
+
+    assert m.references[2].refs[0].valref.name=='x'
+    assert m.references[2].refs[0].valref == m.structs[0].vals[0]
