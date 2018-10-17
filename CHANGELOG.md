@@ -1,5 +1,10 @@
 # textX changelog
 
+* Next Release 1.?.?
+   - https://github.com/igordejanovic/textX/pull/93
+     - Changed attribute name for the metamodel object (from 
+       "metamodel._parser" to "metamodel._parser_blueprint").
+
 * 2018-10-06 Release 1.8.0
 
    - https://github.com/igordejanovic/textX/pull/71
@@ -85,6 +90,12 @@
       within one metamodel or language).
     - The metamodel clones the parser when parsing a model file. The meta model
       holds one parser, which is clone for every model to be parsed.
+
+      Backward incompatible change: The metamodel.parser is only a blueprint 
+      and cannot be used to, e.g., determine model element positions in the
+      file. Use your_model._tx_parser instead, e.g., 
+      textx.get_model(obj)._tx_parser).
+
     - TextXModelParser now has a clone method.
       (TBC: is the clone ok: see responsibility of the method)
     - model.py: the resolution loop logic now mostly moved to a separate object

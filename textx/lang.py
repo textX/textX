@@ -915,7 +915,7 @@ def language_from_str(language_def, metamodel):
 
     # Here we connect meta-model and language parser for convenience.
     lang_parser.metamodel = metamodel
-    metamodel._parser = lang_parser
+    metamodel._parser_blueprint = lang_parser
 
     if metamodel.debug:
         # Create dot file for debuging purposes
