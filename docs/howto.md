@@ -26,7 +26,7 @@ structures).
     reference d.b1.a.x
 
  * Unittest 
-   [tests/functional/examples/test_hierarchical_data_structures_referencing_attributes.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/examples/test_hierarchical_data_structures_referencing_attributes.py),
+   [tests/functional/examples/test_hierarchical_data_structures_referencing_attributes.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/examples/test_hierarchical_data_structures_referencing_attributes.py)
 
 ## Modeling classes and objects: class inheritance
 
@@ -34,12 +34,12 @@ Inherited attributes or methods can be accumulated with the
 textx.scoping.providers.ExtRelativeName scope provider:
 
  * Unittest (classes with pseudo inherited methods)
-   [tests/functional/test_scoping/test_metamodel_provider3.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_metamodel_provider3.py),
+   [tests/functional/test_scoping/test_metamodel_provider3.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_metamodel_provider3.py)
     * test_metamodel_provider_advanced_test3_inheritance2
     * test_metamodel_provider_advanced_test3_diamond
 
  * Unittest (components with inherited slots)
-   [tests/functional/test_scoping/test_inheritance.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_inheritance.py),
+   [tests/functional/test_scoping/test_inheritance.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_inheritance.py)
 
 
 ## Modeling Wiki-like texts with references inside
@@ -56,8 +56,8 @@ like in the exmample referenced below "@[myref]"):
     ENTRY NoLink:   """Just text"""
     ENTRY Empty:    """"""
 
- * Unittest (components with inherited slots)
-   [tests/functional/examples/test_free_text_with_references.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/examples/test_free_text_with_references.py),
+ * Unittest
+   [tests/functional/examples/test_free_text_with_references.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/examples/test_free_text_with_references.py)
 
 
 ## Referncing a JSON database from within a textX model
@@ -80,8 +80,8 @@ you could also reference such information sources.
         access A2 data.gender
 
 
- * Unittest (components with inherited slots)
-   [tests/functional/test_scoping/test_reference_to_nontextx_attribute.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_reference_to_nontextx_attribute.py),
+ * Unittest
+   [tests/functional/test_scoping/test_reference_to_nontextx_attribute.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_reference_to_nontextx_attribute.py)
 
 ## Referencing global data using full qualified names
 
@@ -103,19 +103,19 @@ you could also reference such information sources.
         }
 
  * Unittest
-   [tests/functional/test_scoping/test_full_qualified_name.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_full_qualified_name.py),
+   [tests/functional/test_scoping/test_full_qualified_name.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_full_qualified_name.py)
 
 
 ## Multi-file models
 
  * Unittest (global import)
-   [tests/functional/test_scoping/test_global_import_modules.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_global_import_modules.py),
+   [tests/functional/test_scoping/test_global_import_modules.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_global_import_modules.py)
 
  * Unittest (explicit import, "importURI")
-   [tests/functional/test_scoping/test_import_module.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_import_module.py),
+   [tests/functional/test_scoping/test_import_module.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_import_module.py)
 
  * Unittest (explicit import, "importURI" with custom search path)
-   [tests/functional/test_scoping/test_import_module_search_path_issue66.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_import_module_search_path_issue66.py),
+   [tests/functional/test_scoping/test_import_module_search_path_issue66.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_import_module_search_path_issue66.py)
 
 
 ## Multi-metamodel multi-file models
@@ -159,7 +159,7 @@ concrete DSL. These DLS reference each other.
         connect A2 -> A1 // Error, must be A1 -> A2
 
  * Unittest
-   [tests/functional/test_metamodel/test_multi_metamodel_refs.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_metamodel/test_multi_metamodel_refs.py),
+   [tests/functional/test_metamodel/test_multi_metamodel_refs.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_metamodel/test_multi_metamodel_refs.py)
 
 ## Enable and distinguish float and int values for attributes
 
@@ -172,4 +172,4 @@ concrete DSL. These DLS reference each other.
         y3 = -1.1e+2
 
  * Unittest 
-   [tests/functional/examples/test_modeling_float_int_variables.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/examples/test_modeling_float_int_variables.py),
+   [tests/functional/examples/test_modeling_float_int_variables.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/examples/test_modeling_float_int_variables.py)
