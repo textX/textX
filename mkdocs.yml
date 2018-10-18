@@ -21,6 +21,7 @@ nav:
   - Error handling: error_handling.md
   - Debugging: debugging.md
   - textx command: textx_command.md
+  - Howtos: howto.md
 - Tutorials:
   - Hello World: tutorials/hello_world.md
   - Robot: tutorials/robot.md
