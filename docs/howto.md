@@ -1,4 +1,4 @@
-# Howto
+# HowTos
 
 ## Modeling hierarchical data structures: referencing attributes
 

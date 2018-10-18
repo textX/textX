@@ -1,4 +1,6 @@
 from textx import metamodel_from_str
+from pytest import raises
+import textx.exceptions
 
 
 def test_referencing_attributes():
@@ -90,3 +92,32 @@ def test_referencing_attributes():
 
     assert m.references[2].refs[0].valref.name == 'x'
     assert m.references[2].refs[0].valref == m.structs[0].vals[0]
+
+    # negative tests
+    # error: "not_there" not pasrt of A
+    with raises(textx.exceptions.TextXSemanticError,
+                match=r'.*Unknown object.*not_there.*'):
+        mm.model_from_str('''
+        struct A { val x }
+        struct B { val a: A}
+        struct C {
+            val b: B
+            val a: A
+        }
+        instance c: C
+        reference c.b.a.not_there
+        ''')
+
+    # error: B.a is not of type A
+    with raises(textx.exceptions.TextXSemanticError,
+                match=r'.*Unknown object.*x.*'):
+        mm.model_from_str('''
+        struct A { val x }
+        struct B { val a }
+        struct C {
+            val b: B
+            val a: A
+        }
+        instance c: C
+        reference c.b.a.x
+        ''')
