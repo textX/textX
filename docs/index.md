@@ -115,7 +115,7 @@ You should get output like this:
 
 ## Python versions
 
-textX works with Python 2.7, 3.3+. Other versions might work but are not
+textX works with Python 2.7, 3.4+. Other versions might work but are not
 tested.
 
 ## Getting started
