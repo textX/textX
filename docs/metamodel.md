@@ -285,7 +285,8 @@ Here is a list of the default values for each base textX type:
 
  - ID - empty string - ''
  - INT - int - 0
- - FLOAT - float - 0.0
+ - FLOAT - float - 0.0 (also 0 is possible)
+ - STRICTFLOAT - float - 0.0 (0. or .0 or 0e1, but not 0, which is an INT)
  - BOOL - bool - False
  - STRING - empty string - ''
 
