@@ -2,7 +2,7 @@ from textx import metamodel_from_str
 
 
 def test_int_and_floats():
-    grammar = '''
+    grammar = r'''
     Model: vars+=Var;
     Var: name=ID '=' value=Val;
     Val: O_FLOAT|O_INT; // order matters: float first!
