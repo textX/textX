@@ -1,6 +1,9 @@
 # textX changelog
 
 * Next Release 1.?.?
+   - https://github.com/igordejanovic/textX/pull/98
+     - Added STRICTFLOAT as buildin type to allow to distinguish ints from
+       floats in NUMBERs. Fixed docu link.
    - https://github.com/igordejanovic/textX/pull/93
      - Changed attribute name for the metamodel object (from 
        "metamodel._parser" to "metamodel._parser_blueprint").
