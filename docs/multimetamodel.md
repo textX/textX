@@ -22,7 +22,7 @@ meta model. Although the meta classes corresponding to inherited rules are
 redefined by the extending meta model, scope providers match the object 
 types correctly. This is implemented by comparing the types by their name 
 (see textx.scoping.tool.textx_isinstance). Simple examples: see 
-[tests/test_scoping/test_metamodel_provider*.py](https://github.com/igordejanovic/textX/tree/master/tests/functional/test_scoping).
+[tests/functional/test_scoping/test_metamodel_provider*.py](https://github.com/igordejanovic/textX/tree/master/tests/functional/test_scoping).
 
 
 **Referencing elements from another meta model** can be achieved without 
@@ -34,7 +34,7 @@ the grammar). The meta model to be referenced is passed to the referencing
 meta model while constructing it. The referencing grammar can then reference 
 the types (rules) of the referenced meta model. Rule lookup takes care of 
 choosing the correct types. Simple examples: see 
-[tests/test_metamodel/test_multi_metamodel_refs.py](https://github.com/igordejanovic/textX/tree/master/tests/test_metamodel/test_multi_metamodel_refs.py).
+[tests/functional/test_metamodel/test_multi_metamodel_refs.py](https://github.com/igordejanovic/textX/tree/master/tests/functional/test_metamodel/test_multi_metamodel_refs.py).
 
 
 Thus, when designing a domain model (e.g., from the software test domain) to 
