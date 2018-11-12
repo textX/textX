@@ -47,7 +47,12 @@ depicted in the following figure:
 * `INT` rule: matches an integer number. This match will be converted to
   a Python `int` instance.
 * `FLOAT` rule: will match a floating point number. This match will be converted
-  to a Python `float` instance.
+  to a Python `float` instance ('FLOAT' is a direct subtype of 'BASETYPE'; 
+  in order to distinguish floats and ints, 'STRICTFLOAT' was introduced).
+* `STRICTFLOAT` rule: will match a floating point number. This match will be 
+  converted to a Python `float` instance. A 'STRICTFLOAT' will not match an 'INT' 
+  (without "." or "e|E"). A 'NUMBER' is either a 'STRICTFLOAT' or an 'INT', 
+  and will, thus, be converted to a float or an int, respectively.
 * `BOOL` rule: matches the words `true` or `false`. This match
   will be converted to a Python `bool` instance.
 * `STRING` rule: matches a quoted string. This match will be converted

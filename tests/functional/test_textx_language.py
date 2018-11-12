@@ -329,7 +329,7 @@ def test_basetype():
     assert model.a2 is False
     assert model.a3 is True
     assert model.a4 is True
-    assert model.b == 0.0
+    assert model.b == 0
     assert model.c == 4.5
     assert model.d == "string"
     assert model.e == "some_id"
@@ -356,9 +356,7 @@ def test_float_int_number():
 
     model = meta.model_from_str('3 5 2.0')
     assert model.a == 3
-
-    # NUMBER type always convert to python float
-    assert type(model.a) is float
+    assert type(model.a) is int
 
     assert model.b == 5
     assert model.c == 2
