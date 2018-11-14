@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+from textx import metamodel_from_str
 from os.path import dirname, abspath
 from pytest import raises
 import textx.exceptions
@@ -32,6 +33,7 @@ def test_importURI_variations_import_string_hook():
     #################################
     # END
     #################################
+
 
 def test_importURI_variations_import_as_ok1():
     #################################
@@ -110,4 +112,3 @@ def test_importURI_variations_import_as_error():
     #################################
     # END
     #################################
-
