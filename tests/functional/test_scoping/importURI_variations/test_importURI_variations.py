@@ -28,6 +28,7 @@ Import: 'import' importURI=FQNI ('as' name=ID)?;
 Comment: /\/\/.*$/;
 '''
 
+
 def test_importURI_variations_import_string_hook():
     #################################
     # META MODEL DEF
