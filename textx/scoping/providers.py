@@ -233,8 +233,8 @@ class ImportURI(scoping.ModelLoader):
     command in an attribute _tx_loaded_models (list of models).
 
     If "importAs" is enabled AND the rule with the "importURI" attribute
-    has a "name", the loaded model is not added to the list of globally
-    visible models..
+    has a "name" not None or an empty String, the loaded model is not
+    added to the list of globally visible models..
 
     The importURI_converter is used to process the importURI attribute to
     yield a filename or a filename pattern.
@@ -282,6 +282,11 @@ class ImportURI(scoping.ModelLoader):
         visited = []
         for obj in get_children(
                 lambda x: hasattr(x, "importURI") and x not in visited, model):
+            add_to_local_models = True
+            if hasattr(obj, "name"):
+                if obj.name is not None and obj.name != "":
+                    add_to_local_models = not self.importAs
+
             visited.append(obj)
             if self.search_path is not None:
                 # search_path based i/o:
@@ -291,7 +296,7 @@ class ImportURI(scoping.ModelLoader):
                     model._tx_model_repository.load_model_using_search_path(
                         self.importURI_converter(obj.importURI), model=model,
                         search_path=my_search_path, encoding=encoding,
-                        add_to_local_models=not self.importAs)
+                        add_to_local_models=add_to_local_models)
                 obj._tx_loaded_models = [loaded_model]
 
             else:
@@ -305,7 +310,7 @@ class ImportURI(scoping.ModelLoader):
                     model._tx_model_repository.load_models_using_filepattern(
                         filename_pattern, model=model,
                         glob_args=self.glob_args, encoding=encoding,
-                        add_to_local_models=not self.importAs)
+                        add_to_local_models=add_to_local_models)
 
     def load_models(self, model, encoding='utf-8'):
         from textx.model import get_metamodel
