@@ -14,7 +14,7 @@ Property:
 ;
 
 Value:
-     STRING | INT | FLOAT | GUID | Object | ID
+     STRING | NUMBER | GUID | Object | ID
 ;
 
 GUID:
