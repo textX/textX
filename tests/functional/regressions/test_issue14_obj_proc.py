@@ -54,5 +54,5 @@ def test_issue_14():
     assert model.commands[1] == 'sleep'
     assert model.commands[2] == 34
     assert model.commands[3] == 4.3
-    assert model.commands[4] == True
+    assert model.commands[4] is True
     assert model.commands[5] == "a string"
