@@ -1,0 +1,7 @@
+import folder.a as a // allows (2)
+import folder.a // allows (1)
+
+package B {
+    object A1 "from B" ref packageA1.A // (1)
+    object A2 "from B" ref a.packageA2.A // (2)
+}
