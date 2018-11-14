@@ -1,0 +1,8 @@
+package packageC1 {
+    object A "from C1";
+}
+package packageC2 {
+    object A "from C2" ref packageC1.A;
+    object B "from C2" ref A;
+    object C "from C2" ref packageC2.A;
+}
