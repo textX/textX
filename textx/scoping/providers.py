@@ -241,7 +241,8 @@ class ImportURI(scoping.ModelLoader):
     """
 
     def __init__(self, scope_provider, glob_args=None, search_path=None,
-                 importAs=False, importURI_converter=None):
+                 importAs=False, importURI_converter=None,
+                 name_setter=None):
         """
         Creates a new ImportURI Provider.
         Args:
@@ -257,6 +258,12 @@ class ImportURI(scoping.ModelLoader):
             importAs: activate importAs feature (see class documentation).
             importURI_converter: Callable to convert the importURI attribute
                 to a filename pattern (default: None).
+            name_setter: Callable to define a name based on the rule instance
+                containing the importURI attribute. With this you can set the
+                name of the importURI object to something dependent of the
+                original importURI value (caution: for an FQN based lookup,
+                this name should NOT contain dots '.').
+
         """
         from textx.scoping import ModelLoader
         ModelLoader.__init__(self)
@@ -271,6 +278,7 @@ class ImportURI(scoping.ModelLoader):
             self.importURI_converter = importURI_converter
         else:
             self.importURI_converter = lambda x: x
+        self.name_setter = name_setter
         if glob_args:
             self.set_glob_args(glob_args)
 
@@ -283,6 +291,9 @@ class ImportURI(scoping.ModelLoader):
         for obj in get_children(
                 lambda x: hasattr(x, "importURI") and x not in visited, model):
             add_to_local_models = True
+            if self.name_setter is not None:
+                obj.name = self.name_setter(obj)
+                print("setting name to {}".format(obj.name))
             if hasattr(obj, "name"):
                 if obj.name is not None and obj.name != "":
                     add_to_local_models = not self.importAs
@@ -365,11 +376,12 @@ class FQNImportURI(ImportURI):
     """
 
     def __init__(self, glob_args=None, search_path=None, importAs=False,
-                 importURI_converter=None):
+                 importURI_converter=None, name_setter=None):
         ImportURI.__init__(self, FQN(follow_loaded_models=importAs),
                            glob_args=glob_args,
                            search_path=search_path, importAs=importAs,
-                           importURI_converter=importURI_converter)
+                           importURI_converter=importURI_converter,
+                           name_setter=name_setter)
 
 
 class PlainNameImportURI(ImportURI):
