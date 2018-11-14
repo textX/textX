@@ -134,7 +134,7 @@ class GlobalModelRepository(object):
 
     def load_models_using_filepattern(
             self, filename_pattern, model, glob_args, is_main_model=False,
-            encoding='utf-8'):
+            encoding='utf-8', add_to_local_models=True):
         """
         add a new model to all relevant objects
 
@@ -158,11 +158,13 @@ class GlobalModelRepository(object):
             the_metamodel = MetaModelProvider.get_metamodel(model, filename)
             loaded_models.append(
                 self.load_model(the_metamodel, filename, is_main_model,
-                                encoding=encoding))
+                                encoding=encoding,
+                                add_to_local_models=add_to_local_models))
         return loaded_models
 
     def load_model_using_search_path(
-            self, filename, model, search_path, is_main_model=False):
+            self, filename, model, search_path, is_main_model=False,
+            encoding='utf8', add_to_local_models=True):
         """
         add a new model to all relevant objects
 
@@ -185,13 +187,16 @@ class GlobalModelRepository(object):
                     MetaModelProvider.get_metamodel(model, full_filename)
                 return self.load_model(the_metamodel,
                                        full_filename,
-                                       is_main_model)
+                                       is_main_model,
+                                       encoding=encoding,
+                                       add_to_local_models=add_to_local_models)
 
         raise IOError(
             errno.ENOENT, os.strerror(errno.ENOENT), filename)
 
     def load_model(
-            self, the_metamodel, filename, is_main_model, encoding='utf-8'):
+            self, the_metamodel, filename, is_main_model, encoding='utf-8',
+            add_to_local_models=True):
         """
         load a single model
 
@@ -216,8 +221,10 @@ class GlobalModelRepository(object):
                     is_main_model=is_main_model, encoding=encoding)
                 self.all_models.filename_to_model[filename] = new_model
             # print("ADDING {}".format(filename))
-            self.local_models.filename_to_model[filename] = new_model
-        return self.local_models.filename_to_model[filename]
+            if add_to_local_models:
+                self.local_models.filename_to_model[filename] = new_model
+        assert self.all_models.has_model(filename)  # to be sure...
+        return self.all_models.filename_to_model[filename]
 
     def _add_model(self, model):
         filename = self.update_model_in_repo_based_on_filename(model)

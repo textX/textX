@@ -13,8 +13,31 @@ def test_importURI_variations_import_string_hook():
     #################################
 
     my_meta_model = metamodel_from_str('''
-        TODO
+Model:
+        imports*=Import
+        packages*=Package
+;
+
+Package:
+        'package' name=ID '{'
+            objects*=Object
+        '}'
+;
+
+Object:
+    'object' name=ID text=STRING ('ref' ref=[Object|FQN])? ';'?
+;
+
+FQN: ID+['.'];
+Import: 'import' importURI=FQN;
+Comment: /\/\/.*$/;
     ''')
+
+    def conv(i):
+        return i.replace(".", "/")+".model"
+
+    my_meta_model.register_scope_providers(
+        {"*.*": scoping_providers.FQNImportURI(importURI_converter=conv)})
 
     #################################
     # MODEL PARSING
@@ -27,8 +50,11 @@ def test_importURI_variations_import_string_hook():
     # TEST MODEL
     #################################
 
-    pass
-    # TODO
+    assert my_model.packages[0].name == "B"
+    assert my_model.packages[0].objects[0].name == "A1"
+    assert my_model.packages[0].objects[0].ref.text == "from A1"
+    assert my_model.packages[0].objects[1].name == "A2"
+    assert my_model.packages[0].objects[1].ref.text == "from A2"
 
     #################################
     # END

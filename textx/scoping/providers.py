@@ -113,9 +113,15 @@ class PlainName(object):
 class FQN(object):
     """
     fully qualified name scope provider
+
+    if the parameter follow_loaded_models=True is used,
+    any _tx_loaded_models attribute is used in name lookup.
+    (this field is set by the importURI feature and can be used
+    here to activate a python like "import ABC as XYZ" behavior).
     """
 
-    def __init__(self):
+    def __init__(self, follow_loaded_models=False):
+        self.follow_loaded_models = follow_loaded_models
         pass
 
     def __call__(self, obj, attr, obj_ref):
@@ -161,6 +167,12 @@ class FQN(object):
                     else:
                         if hasattr(obj, "name") and obj.name == name:
                             return obj
+                if self.follow_loaded_models and hasattr(
+                        parent, "_tx_loaded_models"):
+                    for m in parent._tx_loaded_models:
+                        return_value = find_obj(m, name)
+                        if return_value is not None:
+                            return return_value
                 return None
 
             for n in fqn_name.split('.'):
@@ -219,9 +231,17 @@ class ImportURI(scoping.ModelLoader):
     Adds the loaded models to the importURI-objects: Thus, a model element
     used to import another model references all loaded models with this
     command in an attribute _tx_loaded_models (list of models).
+
+    If "importAs" is enabled AND the rule with the "importURI" attribute
+    has a "name", the loaded model is not added to the list of globally
+    visible models..
+
+    The importURI_converter is used to process the importURI attribute to
+    yield a filename or a filename pattern.
     """
 
-    def __init__(self, scope_provider, glob_args=None, search_path=None):
+    def __init__(self, scope_provider, glob_args=None, search_path=None,
+                 importAs=False, importURI_converter=None):
         """
         Creates a new ImportURI Provider.
         Args:
@@ -234,6 +254,9 @@ class ImportURI(scoping.ModelLoader):
             search_path: a list with path strings used to find files. Without
                 this information (None), the current model file location
                 indicates where to search files.
+            importAs: activate importAs feature (see class documentation).
+            importURI_converter: Callable to convert the importURI attribute
+                to a filename pattern (default: None).
         """
         from textx.scoping import ModelLoader
         ModelLoader.__init__(self)
@@ -243,6 +266,11 @@ class ImportURI(scoping.ModelLoader):
                             "search path")
         self.glob_args = {}
         self.search_path = search_path
+        self.importAs = importAs
+        if importURI_converter is not None:
+            self.importURI_converter = importURI_converter
+        else:
+            self.importURI_converter = lambda x: x
         if glob_args:
             self.set_glob_args(glob_args)
 
@@ -261,8 +289,9 @@ class ImportURI(scoping.ModelLoader):
                     [dirname(model._tx_filename)] + self.search_path
                 loaded_model = \
                     model._tx_model_repository.load_model_using_search_path(
-                        obj.importURI, model=model,
-                        search_path=my_search_path)
+                        self.importURI_converter(obj.importURI), model=model,
+                        search_path=my_search_path, encoding=encoding,
+                        add_to_local_models=not self.importAs)
                 obj._tx_loaded_models = [loaded_model]
 
             else:
@@ -270,11 +299,13 @@ class ImportURI(scoping.ModelLoader):
                 basedir = dirname(model._tx_filename)
                 if len(basedir) > 0:
                     basedir += "/"
-                filename_pattern = abspath(basedir + obj.importURI)
+                filename_pattern = abspath(basedir + self.importURI_converter(
+                    obj.importURI))
                 obj._tx_loaded_models = \
                     model._tx_model_repository.load_models_using_filepattern(
                         filename_pattern, model=model,
-                        glob_args=self.glob_args, encoding=encoding)
+                        glob_args=self.glob_args, encoding=encoding,
+                        add_to_local_models=not self.importAs)
 
     def load_models(self, model, encoding='utf-8'):
         from textx.model import get_metamodel
@@ -319,11 +350,21 @@ class ImportURI(scoping.ModelLoader):
 class FQNImportURI(ImportURI):
     """
     scope provider with ImportURI and FQN
+
+    If "importAs" is enabled the FQN scope provider will
+    get parameters to "bridge" over elements with _tx_loaded_models
+    attributes (allowing to reference imported models through named
+    importURI based rule instances).
+
+    See also: "test_importURI_variations.py".
     """
 
-    def __init__(self, glob_args=None, search_path=None):
-        ImportURI.__init__(self, FQN(), glob_args=glob_args,
-                           search_path=search_path)
+    def __init__(self, glob_args=None, search_path=None, importAs=False,
+                 importURI_converter=None):
+        ImportURI.__init__(self, FQN(follow_loaded_models=importAs),
+                           glob_args=glob_args,
+                           search_path=search_path, importAs=importAs,
+                           importURI_converter=importURI_converter)
 
 
 class PlainNameImportURI(ImportURI):
