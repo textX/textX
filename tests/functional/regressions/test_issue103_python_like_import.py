@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 
 from textx import metamodel_from_str
 from os.path import dirname, abspath
-import textx.exceptions
 import textx.scoping.providers as scoping_providers
 
 
@@ -17,11 +16,8 @@ def test_issue103_python_like_import():
                 classes*=Class
                 vars*=Var
         ;
-        
         Class: 'class' name=ID '{' '}' ';';
-        
-        Var: 'var' name=ID '=' 'new' class=[Class|FQN] '(' ')';
-        
+        Var: 'var' name=ID '=' 'new' theclass=[Class|FQN] '(' ')';
         FQN: ID+['.'];
         Import: 'import' importURI=STRING;
         Comment: /#.*$/;
@@ -34,7 +30,8 @@ def test_issue103_python_like_import():
         return m.group(1)
 
     mm.register_scope_providers(
-        {"*.*": scoping_providers.FQNImportURI(importAs=True, name_setter=name_setter)})
+        {"*.*": scoping_providers.FQNImportURI(importAs=True,
+                                               name_setter=name_setter)})
 
     #################################
     # MODEL PARSING
@@ -47,7 +44,7 @@ def test_issue103_python_like_import():
     # TEST MODEL
     #################################
 
-    #assert my_model.packages[0].name == "B"
+    assert m.vars[0].theclass.name == "a"
 
     #################################
     # END
