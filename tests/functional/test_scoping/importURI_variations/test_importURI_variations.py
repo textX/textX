@@ -6,7 +6,7 @@ from pytest import raises
 import textx.exceptions
 import textx.scoping.providers as scoping_providers
 
-grammar = '''
+grammar = r'''
 Model:
         imports*=Import
         packages*=Package
