@@ -108,6 +108,14 @@ We provide some standard scope providers:
    lookup.
    Example: see [tests/test_scoping/test_global_import_modules.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_global_import_modules.py).
     - `textx.scoping.providers.FQNGlobalRepo` (decorated scope provider)
+       
+       Here, you can also activate the "importAs" feature to allow to make
+       imported models not visible in your root namespace, but related to
+       a named importURI element ([tests/test_scoping/importURI_variations/test_importURI_variations.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/importURI_variations/test_importURI_variations.py))
+       
+       You can also transform the importURI attribute to a filename:
+       see ([tests/test_scoping/importURI_variations/test_importURI_variations.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/importURI_variations/test_importURI_variations.py).
+       
     - `textx.scoping.providers.PlainNameGlobalRepo` (decorated scope provider)
  * `textx.scoping.providers.RelativeName`: This is a scope provider to **resolve
    relative lookups**: e.g., model-methods of a model-instance, defined by the

@@ -377,9 +377,11 @@ class PlainNameImportURI(ImportURI):
     scope provider with ImportURI and PlainName names
     """
 
-    def __init__(self, glob_args=None, search_path=None):
+    def __init__(self, glob_args=None, search_path=None,
+                 importURI_converter=None):
         ImportURI.__init__(self, PlainName(), glob_args=glob_args,
-                           search_path=search_path)
+                           search_path=search_path,
+                           importURI_converter=importURI_converter)
 
 
 class GlobalRepo(ImportURI):
