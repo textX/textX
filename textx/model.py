@@ -213,7 +213,7 @@ def get_model_parser(top_rule, comments_model, **kwargs):
         def clone(self):
             """
             Responsibility: create a clone in order to parse a separate file.
-            It must Kbe possible that more than one clone exist in parallel,
+            It must be possible that more than one clone exist in parallel,
             without being influenced by other parser clones.
 
             Returns:
