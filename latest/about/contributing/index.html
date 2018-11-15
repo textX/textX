@@ -109,6 +109,10 @@
                     
     <a class="" href="../../textx_command/">textx command</a>
                 </li>
+                <li class="">
+                    
+    <a class="" href="../../howto/">Howtos</a>
+                </li>
     </ul>
 	    </li>
           
@@ -297,7 +301,7 @@ virtualenv.</p>
 can be found
 <a href="https://stackoverflow.com/questions/41573587/what-is-the-difference-between-venv-pyvenv-pyenv-virtualenv-virtualenvwrappe">here</a></p>
 <p>To verify that everything is setup properly run tests:</p>
-<pre><code>$ flake8 tests/functional/
+<pre><code>$ flake8 textx tests --exclude tests/perf,textx/six.py,textx/lang.py
 $ py.test tests/functional/
 </code></pre>
 </li>
@@ -309,13 +313,19 @@ $ py.test tests/functional/
 </ol>
 <p>Now you can make your changes locally.</p>
 <ol>
-<li>
-<p>When you're done making changes, check that your changes pass flake8 and the
-   tests:</p>
-<pre><code>$ flake8 textX tests
+<li>When you're done making changes, check that your changes pass flake8, the
+   tests, and have a look at the coverage:<pre><code>$ flake8 textx tests/functional
 $ py.test tests/functional/
+$ coverage run --source textx -m py.test tests/functional
+$ coverage report
 </code></pre>
 </li>
+</ol>
+<p>In case you have doubts, have also a look at the html rendered version of
+   the coverage results:</p>
+<pre><code>    $ coverage html
+</code></pre>
+<ol>
 <li>
 <p>Commit your changes and push your branch to GitHub:</p>
 <pre><code>$ git add .
