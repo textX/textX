@@ -18,9 +18,9 @@
 
 33347576[ label="{INT|}"]
 
-//33353112[ label="{FLOAT|}"]
+33353112[ label="{FLOAT|}"]
 
-33358648[ label="{(STRICT)FLOAT|}"]
+33358648[ label="{STRICTFLOAT|}"]
 
 33364184[ label="{NUMBER|}"]
 33364184 -> 33358648 [dir=back]
@@ -28,7 +28,7 @@
 
 33369720[ label="{BASETYPE|}"]
 33369720 -> 33364184 [dir=back]
-//33369720 -> 33353112 [dir=back]
+33369720 -> 33353112 [dir=back]
 33369720 -> 33342632 [dir=back]
 33369720 -> 33158696 [dir=back]
 33369720 -> 33337688 [dir=back]
