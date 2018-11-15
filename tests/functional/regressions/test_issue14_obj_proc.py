@@ -26,9 +26,10 @@ def test_issue_14():
         ;
 
         InteractCommand:
-            'sleep' | INT | FLOAT | BOOL | STRING
+            'sleep' | NUMBER | BOOL | STRING
         ;
     """
+    # note: you can also use "STRICTFLOAT | INT" instead of "NUMBER"
 
     mm = metamodel_from_str(grammar)
     metamodel_export(mm, 'test_issue_14_metamodel.dot')
@@ -48,3 +49,10 @@ def test_issue_14():
     """
     model = mm.model_from_str(model_str)
     model_export(model, 'test_issue_14_model.dot')
+    assert model.commands[0].x == 2
+    assert model.commands[0].y == 3
+    assert model.commands[1] == 'sleep'
+    assert model.commands[2] == 34
+    assert model.commands[3] == 4.3
+    assert model.commands[4] is True
+    assert model.commands[5] == "a string"
