@@ -122,9 +122,9 @@ We provide some standard scope providers:
    the path, starting form your current rule_object and yields
    rule_object.a.b.c (this means, rule_object must have an attribute a, which 
    in turn has an attribute b, and so on...). 
-   The **last element of your path** must either be a **named
-   object**, corresponding to your reference text (ref_name), or a **list of named
-   objects** containing the named object to be resolved.
+   The **last element of your path** must either be an object containing 
+   an attribute corresponding to your reference text (ref_name), or - more usual -
+   a **list of named objects** containing the named object to be resolved.
 
         grammar = '''
             Model:        kinds += GroupKind values += Ref;
