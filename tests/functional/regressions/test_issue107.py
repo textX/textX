@@ -120,3 +120,38 @@ def test_issue107_example_with_relative_name():
     '''
 
     mm.model_from_str(model)
+
+
+def test_issue107_example_with_relative_name_deep_tree():
+    from textx.scoping.providers import RelativeName
+
+    grammar = '''
+        Model:        kinds += GroupKind values+=Formula;
+        LiteralKind : name=ID;
+        GroupKind:    kindName=ID name=ID "{"
+                        vars *= LiteralKind
+                      "}";
+        Formula:      formula=FormulaPlus;
+        FormulaPlus:  sum+=FormulaMult['+'];
+        FormulaMult:  mul+=FormulaVal['*'];
+        FormulaVal:   (ref=Ref)|(val=NUMBER)|('(' rec=FormulaPlus ')');
+        Ref: ref0=[GroupKind] '.' ref1=[LiteralKind];
+    '''
+    mm = textx.metamodel_from_str(grammar)
+    mm.register_scope_providers({
+        "Ref.ref0": RelativeName("parent(Model).kinds"),
+        "Ref.ref1": RelativeName("ref0.vars")
+        })
+
+    model = '''
+    Kind1 kind1 {
+        a b c
+    }
+    Kind2 kind2 {
+        a b c
+    }
+
+    3+6*(7+2*kind1.a) 4+5*8(1+2*kind2.a) kind1.b
+    '''
+
+    mm.model_from_str(model)

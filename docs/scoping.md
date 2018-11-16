@@ -142,6 +142,25 @@ We provide some standard scope providers:
    or similar). The only special attribute is "parent(Type)", which follows
    the parent relationship until a given type is found. 
 
+        grammar = '''
+            Model:        kinds += GroupKind values+=Formula;
+            LiteralKind : name=ID;
+            GroupKind:    kindName=ID name=ID "{"
+                            vars *= LiteralKind
+                          "}";
+            Formula:      formula=FormulaPlus;
+            FormulaPlus:  sum+=FormulaMult['+'];
+            FormulaMult:  mul+=FormulaVal['*'];
+            FormulaVal:   (ref=Ref)|(val=NUMBER)|('(' rec=FormulaPlus ')');
+            Ref: ref0=[GroupKind] '.' ref1=[LiteralKind];
+        '''
+        mm = textx.metamodel_from_str(grammar)
+        mm.register_scope_providers({
+            "Ref.ref0": RelativeName("parent(Model).kinds"),
+            "Ref.ref1": RelativeName("ref0.vars")
+            })
+
+
  * `textx.scoping.providers.ExtRelativeName`: The same as `RelativeName` **allowing
    to model inheritance or chained lookups**.
    Example: see [tests/test_scoping/test_local_scope.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_local_scope.py).
