@@ -131,7 +131,7 @@ def test_issue107_example_with_relative_name_deep_tree():
         GroupKind:    kindName=ID name=ID "{"
                         vars *= LiteralKind
                       "}";
-        Formula:      formula=FormulaPlus;
+        Formula:      formula=FormulaPlus ';';
         FormulaPlus:  sum+=FormulaMult['+'];
         FormulaMult:  mul+=FormulaVal['*'];
         FormulaVal:   (ref=Ref)|(val=NUMBER)|('(' rec=FormulaPlus ')');
@@ -151,6 +151,6 @@ def test_issue107_example_with_relative_name_deep_tree():
         a b c
     }
 
-    3+6*(7+2*kind1.a) 4+5*8(1+2*kind2.a) kind1.b
+    3+6*(7+2*kind1.a); 4+5*(1+2*kind2.a); kind1.b;
     '''
     mm.model_from_str(model)

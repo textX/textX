@@ -150,7 +150,7 @@ We provide some standard scope providers:
             GroupKind:    kindName=ID name=ID "{"
                             vars *= LiteralKind
                           "}";
-            Formula:      formula=FormulaPlus;
+            Formula:      formula=FormulaPlus ';';
             FormulaPlus:  sum+=FormulaMult['+'];
             FormulaMult:  mul+=FormulaVal['*'];
             FormulaVal:   (ref=Ref)|(val=NUMBER)|('(' rec=FormulaPlus ')');
@@ -161,7 +161,7 @@ We provide some standard scope providers:
             "Ref.ref0": RelativeName("parent(Model).kinds"),
             "Ref.ref1": RelativeName("ref0.vars")
             })
-
+    
         model = '''
         Kind1 kind1 {
             a b c
@@ -170,7 +170,7 @@ We provide some standard scope providers:
             a b c
         }
     
-        3+6*(7+2*kind1.a) 4+5*8(1+2*kind2.a) kind1.b
+        3+6*(7+2*kind1.a); 4+5*(1+2*kind2.a); kind1.b;
         '''
         mm.model_from_str(model)
 
