@@ -153,5 +153,4 @@ def test_issue107_example_with_relative_name_deep_tree():
 
     3+6*(7+2*kind1.a) 4+5*8(1+2*kind2.a) kind1.b
     '''
-
     mm.model_from_str(model)

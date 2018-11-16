@@ -162,6 +162,17 @@ We provide some standard scope providers:
             "Ref.ref1": RelativeName("ref0.vars")
             })
 
+    model = '''
+    Kind1 kind1 {
+        a b c
+    }
+    Kind2 kind2 {
+        a b c
+    }
+
+    3+6*(7+2*kind1.a) 4+5*8(1+2*kind2.a) kind1.b
+    '''
+    mm.model_from_str(model)
 
  * `textx.scoping.providers.ExtRelativeName`: The same as `RelativeName` **allowing
    to model inheritance or chained lookups**.
