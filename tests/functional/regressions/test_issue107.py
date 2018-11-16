@@ -155,4 +155,3 @@ def test_issue107_example_with_relative_name_deep_tree():
     '''
 
     mm.model_from_str(model)
-
