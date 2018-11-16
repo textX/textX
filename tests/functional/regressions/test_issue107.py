@@ -3,6 +3,7 @@ import textx.scoping.providers
 import textx.exceptions
 from pytest import raises
 
+
 def test_issue107_example_with_FQN_scoping_and_a_validator():
     grammar = '''
     Model:
@@ -37,10 +38,10 @@ def test_issue107_example_with_FQN_scoping_and_a_validator():
     fqn = textx.scoping.providers.FQN()
     mm.register_scope_providers({"*.*": fqn})  # OK: "*.*" --> set default
 
-    ## =================================================
-    ## OPTIONAL
-    ##
-    ## make sure LiteralKind1 comes from GroupKind1 etc.
+    # =================================================
+    # OPTIONAL
+    #
+    # make sure LiteralKind1 comes from GroupKind1 etc.
 
     def check_ref(ref):
         def check(ref, obj, typeof_parent):
@@ -51,16 +52,16 @@ def test_issue107_example_with_FQN_scoping_and_a_validator():
                         obj.parent.__class__.__name__,
                         obj.name
                     ), **textx.scoping.tools.get_location(ref))
-        if ref.val.__class__.__name__== "LiteralKind1":
-            check(ref,ref.val,"GroupKind1")
-        if ref.val.__class__.__name__== "LiteralKind2":
+
+        if ref.val.__class__.__name__ == "LiteralKind1":
+            check(ref, ref.val, "GroupKind1")
+        if ref.val.__class__.__name__ == "LiteralKind2":
             check(ref, ref.val, "GroupKind2")
 
     mm.register_obj_processors({"Ref": check_ref})
 
-    ##
-    ## =================================================
-
+    #
+    # =================================================
 
     model = '''
     Kind1 kind1 {
@@ -118,4 +119,4 @@ def test_issue107_example_with_relative_name():
     kind1.a kind1.b kind2.a
     '''
 
-    m = mm.model_from_str(model)
+    mm.model_from_str(model)
