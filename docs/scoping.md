@@ -115,6 +115,33 @@ We provide some standard scope providers:
    reference to the model-class of a model-instance) is used to determine the
    concrete referenced object (e.g. the model-method, owned by a model-class).
    Example: see [tests/test_scoping/test_local_scope.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_local_scope.py).
+
+   The RelativeName scope provider expects a **path through your model as string**
+   to resolve a given reference text (ref_name): the path "a.b.c" denotes 
+   the path, starting form your current rule_object and yields
+   rule_object.a.b.c (this means, rule_object must have an attribute a, which 
+   in turn has an attribute b, and so on...). 
+   The **last element of your path** must either be a **named
+   object**, corresponding to your reference text (ref_name), or a **list of named
+   objects** containing the named object to be resolved.
+
+        grammar = '''
+            Model:        kinds += GroupKind values += Ref;
+            LiteralKind : name=ID;
+            GroupKind:    kindName=ID name=ID "{"
+                            vars *= LiteralKind
+                          "}";
+            Ref: ref0=[GroupKind] '.' ref1=[LiteralKind];
+        '''
+        mm = textx.metamodel_from_str(grammar)
+        scope = textx.scoping.providers.RelativeName("ref0.vars")
+        mm.register_scope_providers({"Ref.ref1": scope})
+
+   
+   Of course, you can use "parent" as part of your path string (but no indices
+   or similar). The only special attribute is "parent(Type)", which follows
+   the parent relationship until a given type is found. 
+
  * `textx.scoping.providers.ExtRelativeName`: The same as `RelativeName` **allowing
    to model inheritance or chained lookups**.
    Example: see [tests/test_scoping/test_local_scope.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_local_scope.py).
