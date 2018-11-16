@@ -118,7 +118,8 @@ We provide some standard scope providers:
 
    The RelativeName scope provider expects a **path through your model as string**
    to resolve a given reference text (ref_name, in the example below,
-   "ref1=[LiteralKind]" or "ref1=[LiteralKind|ID]"): the path "a.b.c" denotes 
+   "ref1=[LiteralKind]" or "ref1=[LiteralKind|ID]"): the path "a.b.c" 
+   (in the example below "ref0.vars"") denotes 
    the path, starting form your current rule_object and yields
    rule_object.a.b.c (this means, rule_object must have an attribute a, which 
    in turn has an attribute b, and so on...). 
