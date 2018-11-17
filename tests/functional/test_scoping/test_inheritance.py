@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
 import re
-from os.path import dirname, abspath
+from os.path import dirname, abspath, join
 
 import textx.scoping.providers as scoping_providers
 from textx import get_children_of_type
@@ -35,8 +35,8 @@ def test_inheritance_processor():
     #################################
 
     my_model = my_meta_model.model_from_file(
-        abspath(dirname(__file__)) +
-        "/components_model1/example_inherit3.components")
+        join(abspath(dirname(__file__)),
+             "components_model1", "example_inherit3.components"))
 
     #################################
     # TEST MODEL

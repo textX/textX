@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 
-from os.path import dirname, abspath
+from os.path import dirname, abspath, join
 
 from pytest import raises
 
@@ -29,7 +29,8 @@ def test_postponed_resolution_error():
         return scoping.Postponed()
 
     my_meta_model = metamodel_from_file(
-        abspath(dirname(__file__)) + '/components_model1/Components.tx')
+        join(abspath(dirname(__file__)),
+             'components_model1', 'Components.tx'))
     my_meta_model.register_scope_providers({
         "*.*": scoping_providers.FQN(),
         "Connection.from_port": from_port,
@@ -43,8 +44,8 @@ def test_postponed_resolution_error():
     with raises(textx.exceptions.TextXSemanticError,
                 match=r'.*Unresolvable cross references.*'):
         my_meta_model.model_from_file(
-            abspath(dirname(__file__)) +
-            "/components_model1/example.components")
+            join(abspath(dirname(__file__)),
+                 "components_model1", "example.components"))
 
 
 def test_model_with_local_scope():
@@ -70,7 +71,8 @@ def test_model_with_local_scope():
     #################################
 
     my_model = my_meta_model.model_from_file(
-        abspath(dirname(__file__)) + "/components_model1/example.components")
+        join(abspath(dirname(__file__)), "components_model1",
+             "example.components"))
 
     #################################
     # TEST MODEL
@@ -124,8 +126,8 @@ def test_model_with_local_scope_and_error():
     with raises(textx.exceptions.TextXSemanticError,
                 match=r'.*Unknown objec.*input1.*SlotIn.*'):
         my_meta_model.model_from_file(
-            abspath(dirname(__file__)) +
-            "/components_model1/example_err1.components")
+            join(abspath(dirname(__file__)),
+                 "components_model1", "example_err1.components"))
 
     #################################
     # END
@@ -159,8 +161,8 @@ def test_model_with_local_scope_and_inheritance2():
     #################################
 
     my_model = my_meta_model.model_from_file(
-        abspath(dirname(__file__)) +
-        "/components_model1/example_inherit1.components")
+        join(abspath(dirname(__file__)),
+             "components_model1", "example_inherit1.components"))
 
     #################################
     # TEST MODEL
@@ -188,8 +190,8 @@ def test_model_with_local_scope_and_inheritance2():
     #################################
 
     my_model = my_meta_model.model_from_file(
-        abspath(dirname(__file__)) +
-        "/components_model1/example_inherit2.components")
+        join(abspath(dirname(__file__)),
+             "components_model1", "example_inherit2.components"))
 
     #################################
     # TEST MODEL
@@ -258,10 +260,10 @@ def test_model_with_local_scope_postponed():
     # MODEL PARSING
     #################################
 
-    my_meta_model1.model_from_file(abspath(dirname(__file__)) +
-                                   "/components_model1/example.components")
-    my_meta_model2.model_from_file(abspath(dirname(__file__)) +
-                                   "/components_model2/example.components")
+    my_meta_model1.model_from_file(join(abspath(dirname(__file__)),
+                                   "components_model1", "example.components"))
+    my_meta_model2.model_from_file(join(abspath(dirname(__file__)),
+                                   "components_model2", "example.components"))
 
     #################################
     # TEST MODEL
@@ -284,7 +286,8 @@ def test_model_with_local_scope_wrong_type():
     #################################
 
     my_meta_model = metamodel_from_file(
-        abspath(dirname(__file__)) + '/components_model1/Components.tx')
+        join(abspath(dirname(__file__)),
+             'components_model1', 'Components.tx'))
     my_meta_model.register_scope_providers({
         "*.*": scoping_providers.FQN(),
         "Connection.from_port":
@@ -300,5 +303,5 @@ def test_model_with_local_scope_wrong_type():
     with raises(textx.exceptions.TextXSemanticError,
                 match=r'.*wrong_port.*'):
         my_meta_model.model_from_file(
-            abspath(dirname(__file__))
-            + "/components_model1/example_wrong_type.components")
+            join(abspath(dirname(__file__)),
+                 "components_model1", "example_wrong_type.components"))
