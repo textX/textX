@@ -1,6 +1,9 @@
 # textX changelog
 
 * Next Release 1.?.?
+   - https://github.com/igordejanovic/textX/pull/114
+     - python like imports (named import rules, scope providers affected)
+     - OS incompatibility fixes (path separator).
    - https://github.com/igordejanovic/textX/pull/98
      - Added STRICTFLOAT as buildin type to allow to distinguish ints from
        floats in NUMBERs. Fixed docu link.
