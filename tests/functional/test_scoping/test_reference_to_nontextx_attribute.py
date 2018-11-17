@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 from textx import metamodel_from_str
-from os.path import dirname, abspath
+from os.path import dirname, abspath, join
 from pytest import raises
 from textx.scoping.tools import get_unique_named_object
 
@@ -32,7 +32,7 @@ def test_reference_to_nontextx_attribute():
         if not hasattr(obj.pyobj, "data"):
             import json
             obj.pyobj.data = json.load(open(
-                abspath(dirname(__file__)) + "/" + obj.pyobj.filename))
+                join(abspath(dirname(__file__)), obj.pyobj.filename)))
         if attr_ref.obj_name in obj.pyobj.data:
             return obj.pyobj.data[attr_ref.obj_name]
         else:

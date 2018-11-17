@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 
-from os.path import dirname, abspath
+from os.path import dirname, abspath, join
 
 import textx.scoping.providers as scoping_providers
 from textx import get_children_of_type
@@ -17,10 +17,12 @@ def test_model_with_local_scope_and_circular_ref_via_two_models():
     #################################
 
     my_meta_model = metamodel_from_file(
-        abspath(dirname(__file__)) + '/components_model1/Components.tx',
+        join(abspath(dirname(__file__)),
+             'components_model1', 'Components.tx'),
         global_repository=True)
     global_scope = scoping_providers.FQNGlobalRepo(
-        abspath(dirname(__file__)) + "/components_model1/example_?.components")
+        join(abspath(dirname(__file__)),
+             "components_model1", "example_?.components"))
     my_meta_model.register_scope_providers({
         "*.*": global_scope,
         "Connection.from_port":
@@ -34,9 +36,11 @@ def test_model_with_local_scope_and_circular_ref_via_two_models():
     #################################
 
     my_model_a = my_meta_model.model_from_file(
-        abspath(dirname(__file__)) + "/components_model1/example_A.components")
+        join(abspath(dirname(__file__)),
+             "components_model1", "example_A.components"))
     my_model_b = my_meta_model.model_from_file(
-        abspath(dirname(__file__)) + "/components_model1/example_B.components")
+        join(abspath(dirname(__file__)),
+             "components_model1", "example_B.components"))
 
     a_my_a = get_unique_named_object(my_model_a, "mya")
     a_my_b = get_unique_named_object(my_model_a, "myb")
