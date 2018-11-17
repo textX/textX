@@ -17,7 +17,8 @@ def test_inheritance_processor():
     #################################
 
     my_meta_model = metamodel_from_file(
-        abspath(dirname(__file__)) + '/components_model1/Components.tx')
+        join(abspath(dirname(__file__)),
+             'components_model1', 'Components.tx'))
     my_meta_model.register_scope_providers({
         "*.*": scoping_providers.FQN(),
         "Connection.from_port":

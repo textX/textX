@@ -57,7 +57,8 @@ def test_model_with_local_scope():
     #################################
 
     my_meta_model = metamodel_from_file(
-        abspath(dirname(__file__)) + '/components_model1/Components.tx')
+        join(abspath(dirname(__file__)), 'components_model1',
+             'Components.tx'))
     my_meta_model.register_scope_providers({
         "*.*": scoping_providers.FQN(),
         "Connection.from_port":
@@ -110,7 +111,8 @@ def test_model_with_local_scope_and_error():
     #################################
 
     my_meta_model = metamodel_from_file(
-        abspath(dirname(__file__)) + '/components_model1/Components.tx')
+        join(abspath(dirname(__file__)), 'components_model1',
+             'Components.tx'))
     my_meta_model.register_scope_providers({
         "*.*": scoping_providers.FQN(),
         "Connection.from_port":
@@ -143,7 +145,8 @@ def test_model_with_local_scope_and_inheritance2():
     #################################
 
     my_meta_model = metamodel_from_file(
-        abspath(dirname(__file__)) + '/components_model1/Components.tx')
+        join(abspath(dirname(__file__)), 'components_model1',
+             'Components.tx'))
     my_meta_model.register_scope_providers({
         "*.*": scoping_providers.FQN(),
         "Connection.from_port":
@@ -238,7 +241,8 @@ def test_model_with_local_scope_postponed():
 
     sp1 = scoping_providers.RelativeName("from_inst.component.slots")
     my_meta_model1 = metamodel_from_file(
-        abspath(dirname(__file__)) + '/components_model1/Components.tx')
+        join(abspath(dirname(__file__)),
+             'components_model1', 'Components.tx'))
     my_meta_model1.register_scope_providers({
         "*.*": scoping_providers.FQN(),
         "Connection.from_port": sp1,
@@ -247,8 +251,9 @@ def test_model_with_local_scope_postponed():
     })
 
     sp2 = scoping_providers.RelativeName("from_inst.component.slots")
-    my_meta_model2 = metamodel_from_file(abspath(dirname(__file__)) +
-                                         '/components_model2/Components.tx')
+    my_meta_model2 = metamodel_from_file(
+        join(abspath(dirname(__file__)), 'components_model2',
+             'Components.tx'))
     my_meta_model2.register_scope_providers({
         "*.*": scoping_providers.FQN(),
         "Connection.from_port": sp2,
