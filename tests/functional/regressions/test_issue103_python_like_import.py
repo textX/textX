@@ -24,10 +24,10 @@ def test_issue103_python_like_import():
         ''')
 
     def name_setter(import_obj):
-        import re
-        m = re.search(r'^([^\.]+).*$', import_obj.importURI)
-        assert m
-        return m.group(1)
+        # this method is responsible to deduce the module name in the
+        # language from the importURI string
+        # e.g. here: import "file.ext" --> module name "file".
+        return import_obj.importURI.split('.')[0]
 
     mm.register_scope_providers(
         {"*.*": scoping_providers.FQNImportURI(importAs=True,
