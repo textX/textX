@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 
-from os.path import dirname, abspath
+from os.path import dirname, abspath, join
 
 from pytest import raises
 
@@ -23,7 +23,8 @@ def test_metamodel_provider_basic_test():
     #################################
 
     mm_components = metamodel_from_file(
-        abspath(dirname(__file__)) + '/metamodel_provider/Components.tx')
+        join(abspath(dirname(__file__)),
+             'metamodel_provider', 'Components.tx'))
     mm_components.register_scope_providers({
         "*.*": scoping_providers.FQNImportURI(),
         "Connection.from_port":
@@ -33,7 +34,7 @@ def test_metamodel_provider_basic_test():
     })
 
     mm_users = metamodel_from_file(
-        abspath(dirname(__file__)) + '/metamodel_provider/Users.tx')
+        join(abspath(dirname(__file__)), 'metamodel_provider', 'Users.tx'))
     mm_users.register_scope_providers({
         "*.*": scoping_providers.FQNImportURI(),
     })
@@ -48,7 +49,8 @@ def test_metamodel_provider_basic_test():
     #################################
 
     my_model = mm_users.model_from_file(
-        abspath(dirname(__file__)) + "/metamodel_provider/example.users")
+        join(abspath(dirname(__file__)),
+             "metamodel_provider", "example.users"))
 
     #################################
     # TEST MODEL

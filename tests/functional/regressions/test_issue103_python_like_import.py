@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
 from textx import metamodel_from_str
-from os.path import dirname, abspath
+from os.path import dirname, abspath, join
 import textx.scoping.providers as scoping_providers
 
 
@@ -39,7 +39,7 @@ def test_issue103_python_like_import():
     #################################
 
     m = mm.model_from_file(
-        abspath(dirname(__file__)) + "/issue103/main.mod")
+        join(abspath(dirname(__file__)), "issue103", "main.mod"))
 
     #################################
     # TEST MODEL

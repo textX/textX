@@ -5,7 +5,7 @@
 # License: MIT License
 #######################################################################
 
-from os.path import dirname, abspath
+from os.path import dirname, abspath, join
 from textx.exceptions import TextXSemanticError
 import textx.scoping as scoping
 
@@ -313,10 +313,9 @@ class ImportURI(scoping.ModelLoader):
             else:
                 # globing based i/o:
                 basedir = dirname(model._tx_filename)
-                if len(basedir) > 0:
-                    basedir += "/"
-                filename_pattern = abspath(basedir + self.importURI_converter(
-                    obj.importURI))
+                filename_pattern = abspath(
+                    join(basedir, self.importURI_converter(obj.importURI)))
+
                 obj._tx_loaded_models = \
                     model._tx_model_repository.load_models_using_filepattern(
                         filename_pattern, model=model,
