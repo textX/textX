@@ -185,7 +185,8 @@ def test_model_with_circular_imports():
     #################################
 
     my_meta_model = metamodel_from_file(
-        abspath(dirname(__file__)) + '/interface_model1/Interface.tx')
+        join(abspath(dirname(__file__)),
+             'interface_model1', 'Interface.tx'))
     my_meta_model.register_scope_providers(
         {"*.*": scoping_providers.FQNImportURI()})
 
@@ -194,7 +195,8 @@ def test_model_with_circular_imports():
     #################################
 
     my_model = my_meta_model.model_from_file(
-        abspath(dirname(__file__)) + "/interface_model1/model_c/A.if")
+        join(abspath(dirname(__file__)),
+             "interface_model1", "model_c", "A.if"))
 
     #################################
     # TEST MODEL
@@ -247,7 +249,8 @@ def test_model_with_multi_import():
     #################################
 
     my_meta_model = metamodel_from_file(
-        abspath(dirname(__file__)) + '/interface_model1/Interface.tx')
+        join(abspath(dirname(__file__)),
+             'interface_model1', 'Interface.tx'))
     my_meta_model.register_scope_providers(
         {"*.*": scoping_providers.FQNImportURI()})
 
@@ -256,8 +259,8 @@ def test_model_with_multi_import():
     #################################
 
     my_model = my_meta_model.model_from_file(
-        abspath(dirname(__file__)) +
-        "/interface_model1/model_c/A_multi_import.if")
+        join(abspath(dirname(__file__)),
+             "interface_model1", "model_c", "A_multi_import.if"))
 
     #################################
     # TEST MODEL

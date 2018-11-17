@@ -31,18 +31,21 @@ def test_metamodel_provider_advanced_test3_global():
 
     global_repo_provider = scoping_providers.PlainNameGlobalRepo()
     global_repo_provider.register_models(
-        this_folder + "/metamodel_provider3/circular/*.a")
+        join(this_folder, "metamodel_provider3", "circular", "*.a"))
     global_repo_provider.register_models(
-        this_folder + "/metamodel_provider3/circular/*.b")
+        join(this_folder, "metamodel_provider3", "circular", "*.b"))
     global_repo_provider.register_models(
-        this_folder + "/metamodel_provider3/circular/*.c")
+        join(this_folder, "metamodel_provider3", "circular", "*.c"))
 
     a_mm = get_meta_model(
-        global_repo_provider, this_folder + "/metamodel_provider3/A.tx")
+        global_repo_provider, join(this_folder,
+                                   "metamodel_provider3", "A.tx"))
     b_mm = get_meta_model(
-        global_repo_provider, this_folder + "/metamodel_provider3/B.tx")
+        global_repo_provider, join(this_folder,
+                                   "metamodel_provider3", "B.tx"))
     c_mm = get_meta_model(
-        global_repo_provider, this_folder + "/metamodel_provider3/C.tx")
+        global_repo_provider, join(this_folder,
+                                   "metamodel_provider3", "C.tx"))
 
     scoping.MetaModelProvider.clear()
     scoping.MetaModelProvider.add_metamodel("*.a", a_mm)
@@ -114,11 +117,14 @@ def test_metamodel_provider_advanced_test3_import():
     import_lookup_provider = scoping_providers.PlainNameImportURI()
 
     a_mm = get_meta_model(
-        import_lookup_provider, this_folder + "/metamodel_provider3/A.tx")
+        import_lookup_provider, join(this_folder,
+                                     "metamodel_provider3", "A.tx"))
     b_mm = get_meta_model(
-        import_lookup_provider, this_folder + "/metamodel_provider3/B.tx")
+        import_lookup_provider, join(this_folder,
+                                     "metamodel_provider3", "B.tx"))
     c_mm = get_meta_model(
-        import_lookup_provider, this_folder + "/metamodel_provider3/C.tx")
+        import_lookup_provider, join(this_folder,
+                                     "metamodel_provider3", "C.tx"))
 
     scoping.MetaModelProvider.clear()
     scoping.MetaModelProvider.add_metamodel("*.a", a_mm)
@@ -130,7 +136,7 @@ def test_metamodel_provider_advanced_test3_import():
     #################################
 
     m = a_mm.model_from_file(
-        this_folder + "/metamodel_provider3/circular/model_a.a")
+        join(this_folder, "metamodel_provider3", "circular", "model_a.a"))
     model_repo = m._tx_model_repository.all_models
 
     #################################
@@ -188,11 +194,14 @@ def test_metamodel_provider_advanced_test3_inheritance():
     import_lookup_provider = scoping_providers.FQNImportURI()
 
     a_mm = get_meta_model(
-        import_lookup_provider, this_folder + "/metamodel_provider3/A.tx")
+        import_lookup_provider, join(this_folder,
+                                     "metamodel_provider3", "A.tx"))
     b_mm = get_meta_model(
-        import_lookup_provider, this_folder + "/metamodel_provider3/B.tx")
+        import_lookup_provider, join(this_folder,
+                                     "metamodel_provider3", "B.tx"))
     c_mm = get_meta_model(
-        import_lookup_provider, this_folder + "/metamodel_provider3/C.tx")
+        import_lookup_provider, join(this_folder,
+                                     "metamodel_provider3", "C.tx"))
 
     scoping.MetaModelProvider.clear()
     scoping.MetaModelProvider.add_metamodel("*.a", a_mm)
@@ -204,7 +213,8 @@ def test_metamodel_provider_advanced_test3_inheritance():
     #################################
 
     m = a_mm.model_from_file(
-        this_folder + "/metamodel_provider3/inheritance/model_a.a")
+        join(this_folder, "metamodel_provider3",
+             "inheritance", "model_a.a"))
     model_repo = m._tx_model_repository.all_models
 
     #################################
@@ -255,11 +265,14 @@ def test_metamodel_provider_advanced_test3_inheritance2():
     import_lookup_provider = scoping_providers.FQNImportURI()
 
     a_mm = get_meta_model(
-        import_lookup_provider, this_folder + "/metamodel_provider3/A.tx")
+        import_lookup_provider, join(this_folder,
+                                     "metamodel_provider3", "A.tx"))
     b_mm = get_meta_model(
-        import_lookup_provider, this_folder + "/metamodel_provider3/B.tx")
+        import_lookup_provider, join(this_folder,
+                                     "metamodel_provider3", "B.tx"))
     c_mm = get_meta_model(
-        import_lookup_provider, this_folder + "/metamodel_provider3/C.tx")
+        import_lookup_provider, join(this_folder,
+                                     "metamodel_provider3", "C.tx"))
 
     scoping.MetaModelProvider.clear()
     scoping.MetaModelProvider.add_metamodel("*.a", a_mm)
@@ -271,7 +284,8 @@ def test_metamodel_provider_advanced_test3_inheritance2():
     #################################
 
     m = a_mm.model_from_file(
-        this_folder + "/metamodel_provider3/inheritance2/model_a.a")
+        join(this_folder, "metamodel_provider3",
+             "inheritance2", "model_a.a"))
     model_repo = m._tx_model_repository.all_models
 
     #################################
@@ -330,11 +344,14 @@ def test_metamodel_provider_advanced_test3_diamond():
     import_lookup_provider = scoping_providers.FQNImportURI()
 
     a_mm = get_meta_model(
-        import_lookup_provider, this_folder + "/metamodel_provider3/A.tx")
+        import_lookup_provider, join(this_folder,
+                                     "metamodel_provider3", "A.tx"))
     b_mm = get_meta_model(
-        import_lookup_provider, this_folder + "/metamodel_provider3/B.tx")
+        import_lookup_provider, join(this_folder,
+                                     "metamodel_provider3", "B.tx"))
     c_mm = get_meta_model(
-        import_lookup_provider, this_folder + "/metamodel_provider3/C.tx")
+        import_lookup_provider, join(this_folder,
+                                     "metamodel_provider3", "C.tx"))
 
     scoping.MetaModelProvider.clear()
     scoping.MetaModelProvider.add_metamodel("*.a", a_mm)
@@ -346,7 +363,8 @@ def test_metamodel_provider_advanced_test3_diamond():
     #################################
 
     m = a_mm.model_from_file(
-        this_folder + "/metamodel_provider3/diamond/A_includes_B_C.a")
+        join(this_folder, "metamodel_provider3",
+             "diamond", "A_includes_B_C.a"))
     model_repo = m._tx_model_repository.all_models
 
     #################################

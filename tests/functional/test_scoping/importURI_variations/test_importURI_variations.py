@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
 from textx import metamodel_from_str
-from os.path import dirname, abspath
+from os.path import dirname, abspath, join
 from pytest import raises
 import textx.exceptions
 import textx.scoping.providers as scoping_providers
@@ -47,7 +47,7 @@ def test_importURI_variations_import_string_hook():
     #################################
 
     my_model = my_meta_model.model_from_file(
-        abspath(dirname(__file__)) + "/importStringHook/b.model")
+        join(abspath(dirname(__file__)), "importStringHook", "b.model"))
 
     #################################
     # TEST MODEL
@@ -83,7 +83,7 @@ def test_importURI_variations_import_as_ok1():
     #################################
 
     my_model = my_meta_model.model_from_file(
-        abspath(dirname(__file__)) + "/importAs/b_ok1.model")
+        join(abspath(dirname(__file__)), "importAs", "b_ok1.model"))
 
     #################################
     # TEST MODEL
@@ -119,7 +119,7 @@ def test_importURI_variations_import_as_ok2():
     #################################
 
     my_model = my_meta_model.model_from_file(
-        abspath(dirname(__file__)) + "/importAs/b_ok2.model")
+        join(abspath(dirname(__file__)), "importAs", "b_ok2.model"))
 
     #################################
     # TEST MODEL
@@ -155,7 +155,7 @@ def test_importURI_variations_import_as_multi_import():
     #################################
 
     my_model = my_meta_model.model_from_file(
-        abspath(dirname(__file__)) + "/importAs/b_multi_import.model")
+        join(abspath(dirname(__file__)), "importAs", "b_multi_import.model"))
 
     #################################
     # TEST MODEL
@@ -193,7 +193,7 @@ def test_importURI_variations_import_as_error():
     with raises(textx.exceptions.TextXSemanticError,
                 match=r'.*Unknown object.*packageA1.A.*'):
         my_meta_model.model_from_file(
-            abspath(dirname(__file__)) + "/importAs/b_error.model")
+            join(abspath(dirname(__file__)), "importAs", "b_error.model"))
 
     #################################
     # END
