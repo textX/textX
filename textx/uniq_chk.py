@@ -21,7 +21,7 @@ def uniq_chk(obj, attr_name):
     def scan_siblings(siblings):
         for p in siblings:
             for q in siblings:
-                if p == q:
+                if p is q:
                     break
 
                 if p.name == q.name:
