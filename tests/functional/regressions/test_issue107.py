@@ -123,6 +123,9 @@ def test_issue107_example_with_relative_name():
 
 
 def test_issue107_example_with_relative_name_deep_tree():
+    # This example simulates the FQN scope provider with
+    # the RelativeName provider...
+    # It would be easier to directly use the FQN here...
     from textx.scoping.providers import RelativeName
 
     grammar = '''
@@ -154,3 +157,101 @@ def test_issue107_example_with_relative_name_deep_tree():
     3+6*(7+2*kind1.a); 4+5*(1+2*kind2.a); kind1.b;
     '''
     mm.model_from_str(model)
+
+
+def test_issue107_example_with_relative_name_and_validation():
+    from textx import metamodel_from_str
+    from textx.scoping.providers import RelativeName, FQN
+
+    meta_model = metamodel_from_str(r'''
+        Model: aspects+=Aspect scenarios+=Scenario testcases+=Testcase;
+        Scenario: 'SCENARIO' name=ID 'BEGIN'
+            configs+=Config
+        'END';
+        Config: 'CONFIG' name=ID 'HAS' '(' haves*=[Aspect] ')';
+        Aspect: 'ASPECT' name=ID;
+        Testcase: 'TESTCASE' name=ID 'BEGIN'
+            'USES' scenario=[Scenario] 'WITH' config=[Config]
+            'NEEDS' '(' needs*=[Aspect] ')'
+        'END';
+        Comment: /\/\/.*/;
+    ''')
+
+    # ------------------------------------
+    # SCOPING
+    #
+    meta_model.register_scope_providers({
+        '*.*': FQN(),
+
+        # Here we define that the referenced configurations are
+        # found in the referenced scenarios of a Testcase:
+        'Testcase.config': RelativeName('scenario.configs')
+    })
+
+    # ------------------------------------
+    # VALIDATION
+    #
+    def check_testcase(testcase):
+        """
+        checks that the config used by the testcase fulfills its needs
+        """
+        for need in testcase.needs:
+            if need not in testcase.config.haves:
+                raise textx.exceptions.TextXSemanticError(
+                    "validation error: {}: {} not found in {}.{}".format(
+                        testcase.name,
+                        need.name,
+                        testcase.scenario.name,
+                        testcase.config.name
+                    ))
+
+    meta_model.register_obj_processors({
+        'Testcase': check_testcase
+    })
+
+    # ------------------------------------
+    # EXAMPLE
+    #
+    meta_model.model_from_str('''
+        ASPECT NetworkTraffic
+        ASPECT FileAccess
+        SCENARIO S001 BEGIN
+            CONFIG HeavyNetworkTraffic HAS (NetworkTraffic)
+            CONFIG NoNetworkTraffic HAS ()
+        END
+        SCENARIO S002 BEGIN
+            CONFIG WithFileAccess HAS (NetworkTraffic FileAccess)
+            CONFIG NoFileAccess HAS (NetworkTraffic)
+        END
+        TESTCASE T001 BEGIN
+            USES S001 WITH HeavyNetworkTraffic
+            NEEDS (NetworkTraffic)
+        END
+        TESTCASE T002 BEGIN
+            //USES S001 WITH NoNetworkTraffic // Error
+            USES S002 WITH NoFileAccess
+            NEEDS (NetworkTraffic)
+        END
+    ''')
+
+    with (raises(textx.exceptions.TextXSemanticError)):
+        meta_model.model_from_str('''
+            ASPECT NetworkTraffic
+            ASPECT FileAccess
+            SCENARIO S001 BEGIN
+                CONFIG HeavyNetworkTraffic HAS (NetworkTraffic)
+                CONFIG NoNetworkTraffic HAS ()
+            END
+            SCENARIO S002 BEGIN
+                CONFIG WithFileAccess HAS (NetworkTraffic FileAccess)
+                CONFIG NoFileAccess HAS (NetworkTraffic)
+            END
+            TESTCASE T001 BEGIN
+                USES S001 WITH HeavyNetworkTraffic
+                NEEDS (NetworkTraffic)
+            END
+            TESTCASE T002 BEGIN
+                USES S001 WITH NoNetworkTraffic // Error
+                NEEDS (NetworkTraffic)
+            END
+        ''')
