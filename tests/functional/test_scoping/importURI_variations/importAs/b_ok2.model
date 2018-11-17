@@ -1,0 +1,5 @@
+import folder.a as a
+package B {
+    object A1 "from B" ref a.packageA1.A
+    object A2 "from B" ref a.packageA2.A
+}

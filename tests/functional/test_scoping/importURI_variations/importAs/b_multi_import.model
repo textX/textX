@@ -1,0 +1,5 @@
+import folder.* as multi  // imports "folder/a.model" and "folder/c.model"
+package B {
+    object A1 "from B" ref multi.packageA1.A
+    object A2 "from B" ref multi.packageC2.A
+}

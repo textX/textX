@@ -43,11 +43,14 @@ def test_exception_from_included_model():
     import_lookup_provider = scoping_providers.FQNImportURI()
 
     a_mm = get_meta_model(
-        import_lookup_provider, this_folder + "/metamodel_provider3/A.tx")
+        import_lookup_provider, join(this_folder,
+                                     "metamodel_provider3", "A.tx"))
     b_mm = get_meta_model(
-        import_lookup_provider, this_folder + "/metamodel_provider3/B.tx")
+        import_lookup_provider, join(this_folder,
+                                     "metamodel_provider3", "B.tx"))
     c_mm = get_meta_model(
-        import_lookup_provider, this_folder + "/metamodel_provider3/C.tx")
+        import_lookup_provider, join(this_folder,
+                                     "metamodel_provider3", "C.tx"))
 
     scoping.MetaModelProvider.clear()
     scoping.MetaModelProvider.add_metamodel("*.a", a_mm)
@@ -62,7 +65,8 @@ def test_exception_from_included_model():
     with raises(textx.exceptions.TextXSemanticError,
                 match=r'.*model_d\.b:5:3:.*d1 triggers artifical error'):
         a_mm.model_from_file(
-            this_folder + "/metamodel_provider3/inheritance2/model_a.a")
+            join(this_folder, "metamodel_provider3",
+                 "inheritance2", "model_a.a"))
 
     #################################
     # END

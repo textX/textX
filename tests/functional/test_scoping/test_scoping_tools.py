@@ -1,5 +1,5 @@
 from __future__ import unicode_literals
-from os.path import dirname, abspath
+from os.path import dirname, abspath, join
 
 import textx.scoping.providers as scoping_providers
 from textx import metamodel_from_file, metamodel_from_str
@@ -37,7 +37,8 @@ def test_get_referenced_object():
     #################################
 
     my_meta_model = metamodel_from_file(
-        abspath(dirname(__file__)) + '/components_model1/Components.tx')
+        join(abspath(dirname(__file__)),
+             'components_model1', 'Components.tx'))
     my_meta_model.register_scope_providers({
         "*.*": scoping_providers.FQN(),
         "Connection.from_port":
@@ -55,8 +56,8 @@ def test_get_referenced_object():
     #################################
 
     my_model = my_meta_model.model_from_file(
-        abspath(dirname(__file__)) +
-        "/components_model1/example_inherit2.components")
+        join(abspath(dirname(__file__)),
+             "components_model1", "example_inherit2.components"))
 
     #################################
     # TEST MODEL
@@ -79,7 +80,8 @@ def test_get_list_of_concatenated_objects():
     #################################
 
     my_meta_model = metamodel_from_file(
-        abspath(dirname(__file__)) + '/components_model1/Components.tx')
+        join(abspath(dirname(__file__)),
+             'components_model1', 'Components.tx'))
     my_meta_model.register_scope_providers({
         "*.*": scoping_providers.FQN(),
         "Connection.from_port":
@@ -97,11 +99,11 @@ def test_get_list_of_concatenated_objects():
     #################################
 
     my_model1 = my_meta_model.model_from_file(
-        abspath(dirname(__file__)) +
-        "/components_model1/example_inherit1.components")
+        join(abspath(dirname(__file__)),
+             "components_model1", "example_inherit1.components"))
     my_model2 = my_meta_model.model_from_file(
-        abspath(dirname(__file__)) +
-        "/components_model1/example_inherit2.components")
+        join(abspath(dirname(__file__)),
+             "components_model1", "example_inherit2.components"))
 
     #################################
     # TEST MODEL

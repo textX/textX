@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 
-from os.path import dirname, abspath
+from os.path import dirname, abspath, join
 
 import textx.scoping.providers as scoping_providers
 from textx import metamodel_from_file
@@ -19,19 +19,23 @@ def test_globalimports_basic_test_with_single_model_file():
     #################################
 
     my_meta_model = metamodel_from_file(
-        abspath(dirname(__file__)) + '/interface_model2/Interface.tx')
+        join(abspath(dirname(__file__)), 'interface_model2',
+             'Interface.tx'))
     my_meta_model.register_scope_providers(
         {"*.*": scoping_providers.FQNGlobalRepo(
-            abspath(dirname(__file__)) + "/interface_model2/model_a/*.if")})
+            join(abspath(dirname(__file__)), "interface_model2",
+                 "model_a", "*.if"))})
 
     #################################
     # MODEL PARSING
     #################################
 
     my_model = my_meta_model.model_from_file(
-        abspath(dirname(__file__)) + "/interface_model2/model_a/all_in_one.if")
+        join(abspath(dirname(__file__)), "interface_model2",
+             "model_a", "all_in_one.if"))
     my_model2 = my_meta_model.model_from_file(
-        abspath(dirname(__file__)) + "/interface_model2/model_a/all_in_one.if")
+        join(abspath(dirname(__file__)), "interface_model2",
+             "model_a", "all_in_one.if"))
 
     #################################
     # TEST MODEL
@@ -64,20 +68,24 @@ def test_globalimports_basic_test_with_single_model_file_and_global_repo():
     #################################
 
     my_meta_model = metamodel_from_file(
-        abspath(dirname(__file__)) + '/interface_model2/Interface.tx',
+        join(abspath(dirname(__file__)), 'interface_model2',
+             'Interface.tx'),
         global_repository=True)
     my_meta_model.register_scope_providers(
         {"*.*": scoping_providers.FQNGlobalRepo(
-            abspath(dirname(__file__)) + "/interface_model2/model_a/*.if")})
+            join(abspath(dirname(__file__)), 'interface_model2',
+                 'model_a', '*.if'))})
 
     #################################
     # MODEL PARSING
     #################################
 
     my_model = my_meta_model.model_from_file(
-        abspath(dirname(__file__)) + "/interface_model2/model_a/all_in_one.if")
+        join(abspath(dirname(__file__)), "interface_model2",
+             "model_a", "all_in_one.if"))
     my_model2 = my_meta_model.model_from_file(
-        abspath(dirname(__file__)) + "/interface_model2/model_a/all_in_one.if")
+        join(abspath(dirname(__file__)), "interface_model2",
+             "model_a", "all_in_one.if"))
 
     #################################
     # TEST MODEL
@@ -110,17 +118,20 @@ def test_globalimports_basic_test_with_distributed_model():
     #################################
 
     my_meta_model = metamodel_from_file(
-        abspath(dirname(__file__)) + '/interface_model2/Interface.tx')
+        join(abspath(dirname(__file__)),
+             'interface_model2', 'Interface.tx'))
     my_meta_model.register_scope_providers(
         {"*.*": scoping_providers.FQNGlobalRepo(
-            abspath(dirname(__file__)) + "/interface_model2/model_b/*.if")})
+            join(abspath(dirname(__file__)),
+                 "interface_model2", "model_b", "*.if"))})
 
     #################################
     # MODEL PARSING
     #################################
 
     my_model = my_meta_model.model_from_file(
-        abspath(dirname(__file__)) + "/interface_model2/model_b/app.if")
+        join(abspath(dirname(__file__)),
+             "interface_model2", "model_b", "app.if"))
 
     #################################
     # TEST MODEL
@@ -128,7 +139,8 @@ def test_globalimports_basic_test_with_distributed_model():
 
     # check that "socket" is an interface
     inner_model = my_model._tx_model_repository.all_models.filename_to_model[
-        abspath(dirname(__file__)) + "/interface_model2/model_b/base.if"]
+        join(abspath(dirname(__file__)),
+             "interface_model2", "model_b", "base.if")]
     check_unique_named_object_has_class(inner_model, "socket", "Interface")
 
     # check that "s.s1" is a reference to the socket interface

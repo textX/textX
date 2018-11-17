@@ -1,4 +1,4 @@
-from os.path import dirname
+from os.path import dirname, join
 
 from pytest import raises
 
@@ -119,8 +119,8 @@ def test_fully_qualified_name_ref():
                 match=r'.*test_fully_qualified_name_test_error.model:8:\d+:'
                       ' error.*Unknown object.*Part1.*'):
         my_metamodel.model_from_file(
-            dirname(__file__) +
-            "/misc/test_fully_qualified_name_test_error.model")
+            join(dirname(__file__),
+                 "misc", "test_fully_qualified_name_test_error.model"))
 
     #################################
     # END
