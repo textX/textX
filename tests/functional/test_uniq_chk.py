@@ -26,11 +26,14 @@ Property:
 ;
 """
 
+
 def uniq_chk_entities(x):
     uniq_chk(x, 'entities')
 
+
 def uniq_chk_properties(x):
     uniq_chk(x, 'properties')
+
 
 def test_multiple_objects_model_level():
     """
@@ -86,4 +89,3 @@ def test_multiple_objects_inner_level():
     for model_str in [model_str1, model_str2]:
         with pytest.raises(TextXSemanticError):
             metamodel.model_from_str(model_str)
-
