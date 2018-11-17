@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
 import io
-from os.path import dirname, abspath, join
+from os.path import dirname, abspath, join, sep
 
 import textx.export as export
 import textx.scoping as scoping
@@ -67,5 +67,5 @@ def test_model_export():
     print(text)
     assert "a2_very_long_name" in text
     assert "b2_very_long_name" in text
-    assert "inheritance/model_a.a" in text
-    assert "inheritance/model_b.b" in text
+    assert "inheritance{}model_b.b".format(sep) in text
+    assert "inheritance{}model_b.b".format(sep) in text
