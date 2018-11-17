@@ -160,6 +160,18 @@ def test_issue107_example_with_relative_name_deep_tree():
 
 
 def test_issue107_example_with_relative_name_and_validation():
+    """
+        We model here:
+         * Testcases
+         * Aspects (to be tested)
+         * Scenarios (for Testcases) with Configurations
+
+        We want that only "Configurations" of the "Scenario"
+        referenced by a "Testcase" are visible to the "Testcase".
+        This restriction is context specific (to the context
+        of the "Testcase" described by the referenced "Scenario").
+        Scoping mechanisms allow to define this scope.
+    """
     from textx import metamodel_from_str
     from textx.scoping.providers import RelativeName, FQN
 
