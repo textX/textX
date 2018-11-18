@@ -1,7 +1,7 @@
 import pytest
 
 from textx import metamodel_from_str
-from textx.uniq_chk import uniq_chk
+from textx.validation.uniq_chk import uniq_chk
 from textx.exceptions import TextXSemanticError
 
 
