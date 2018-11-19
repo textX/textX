@@ -668,8 +668,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
             if m._tx_metamodel.obj_processors:
                 if parser.debug:
                     parser.dprint("CALLING OBJECT PROCESSORS")
-                for m in models:
-                    call_obj_processors(m._tx_metamodel, m)
+                call_obj_processors(m._tx_metamodel, m)
 
     if metamodel.textx_tools_support \
             and type(model) not in PRIMITIVE_PYTHON_TYPES:
