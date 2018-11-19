@@ -1,7 +1,6 @@
 import textx
 from os.path import join, dirname
 import textx.scoping.providers as scoping_providers
-from pytest import raises
 
 
 def test_issue108_obj_proc_multifile():
@@ -17,9 +16,8 @@ def test_issue108_obj_proc_multifile():
         Class: 'class' name=ID '{' '}';
     ''')
 
-
-    lst_class_names=[]
-    lst_models=[]
+    lst_class_names = []
+    lst_models = []
 
     def print_obj(x):
         lst_class_names.append(x.name)
@@ -27,12 +25,13 @@ def test_issue108_obj_proc_multifile():
     def print_model(m, mm):
         lst_models.append(m)
 
-    mm.register_scope_providers({'*.*': scoping_providers.PlainNameImportURI()})
+    mm.register_scope_providers(
+        {'*.*': scoping_providers.PlainNameImportURI()})
     mm.register_obj_processors({'Class': print_obj})
     mm.register_model_processor(print_model)
 
     current_dir = dirname(__file__)
-    m = mm.model_from_file(join(current_dir, 'issue108', 'a.dsl'))
+    mm.model_from_file(join(current_dir, 'issue108', 'a.dsl'))
 
     assert 2 == len(lst_models)
     assert 2 == len(lst_class_names)
