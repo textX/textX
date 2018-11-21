@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from os.path import dirname, join
 
 from pytest import raises

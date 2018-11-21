@@ -2,6 +2,7 @@
 This is a variant of calc example using object processors for on-the-fly
 evaluation.
 """
+from __future__ import unicode_literals
 import sys
 from textx import metamodel_from_str
 

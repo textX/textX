@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 import textx
 from pytest import raises
 

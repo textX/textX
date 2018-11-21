@@ -21,5 +21,11 @@ def test_unicode_grammar_from_string():
 
     """
 
+    model_str = """
+    first ♪
+    """
+
     metamodel = metamodel_from_str(grammar)
     assert metamodel
+    model = metamodel.model_from_str(model_str)
+    assert model.a == "♪"

@@ -18,7 +18,7 @@ from arpeggio import StrMatch, Optional, ZeroOrMore, OneOrMore, Sequence,\
 from arpeggio.export import PMDOTExporter
 from arpeggio import RegExMatch as _
 
-from .exceptions import TextXSyntaxError, TextXSemanticError
+from .exceptions import TextXError, TextXSyntaxError, TextXSemanticError
 from .const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, \
     MULT_OPTIONAL, RULE_COMMON, RULE_MATCH, RULE_ABSTRACT, mult_lt
 
@@ -881,6 +881,9 @@ def language_from_str(language_def, metamodel):
     Returns:
         Parser for the new language.
     """
+
+    if type(language_def) is not text:
+        raise TextXError("textX accepts only unicode strings.")
 
     if metamodel.debug:
         metamodel.dprint("*** PARSING LANGUAGE DEFINITION ***")
