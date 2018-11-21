@@ -20,6 +20,12 @@ Parsing the input and creating the model is done by `model_from_file` and
 When parsing a model file or string a new parser is cloned for each model.
 This parser can be accessed via the model attribute `_tx_parser`.
 
+!!! warning
+
+    textX accepts unicode strings only so `metamodel_from_str` parameter should be
+    `str` for Python 3.x or `unicode` for Python 2.x. That is true for all API
+    parameters where string is accepted. The easiest way for Python 2.x is to use
+    `from __future__ import unicode_literals` at the top of the file.
 
 ## Custom classes
 

@@ -24,8 +24,15 @@ A model is created from the input string using the `model_from_file` and
 
 
 !!! note
-    The model_from_file method takes an optional argument `encoding`
+    The `model_from_file` method takes an optional argument `encoding`
     to control the input encoding of the model file to be loaded.
+   
+!!! warning
+
+    textX accepts unicode strings only so `metamodel_from_str` and `model_from_str`
+    parameter should be `str` for Python 3.x or `unicode` for Python 2.x. That is
+    true for all API parameters where string is accepted. The easiest way for Python
+    2.x is to use `from __future__ import unicode_literals` at the top of the file.
 
 
 Let's take the Entity language used in [Custom
