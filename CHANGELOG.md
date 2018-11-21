@@ -10,6 +10,14 @@
    - https://github.com/igordejanovic/textX/pull/93
      - Changed attribute name for the metamodel object (from 
        "metamodel._parser" to "metamodel._parser_blueprint").
+   - https://github.com/igordejanovic/textX/pull/120
+     Unicode requirement for (meta)-model strings API parameters made strict.
+     This should prevent common errors with Python 2.x
+     See:
+     https://github.com/igordejanovic/textX/issues/105
+     https://github.com/igordejanovic/textX/pull/99
+     https://github.com/igordejanovic/textX/issues/117
+
 
 * 2018-10-06 Release 1.8.0
 
