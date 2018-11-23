@@ -1,7 +1,6 @@
 
 """
-This is a variant of calc example using object processors for on-the-fly
-evaluation.
+This is a variant of calc example using textx_isinstance() to inspect object types.
 """
 
 import sys
