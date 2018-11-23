@@ -184,10 +184,10 @@ during meta-model instantiation together with two of its instances (`integer` an
 
 Now, we can make a dict of builtin objects.
 
-  myobjs =  {
-    'integer': SimpleType(None, 'integer')
-    'string': SimpleType(None, 'string')
-  }
+    myobjs =  {
+      'integer': SimpleType(None, 'integer'),
+      'string': SimpleType(None, 'string')
+    }
 
 And register our custom class and two builtins on the meta-model:
 
