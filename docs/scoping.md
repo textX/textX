@@ -17,20 +17,24 @@ globally. Other scope providers will take namespaces into account, support
 references to parts of the model stored in different files or even models
 defined by other metamodels (imported into the current metamodel). Moreover,
 scope providers exist allowing to reference model elements relative to other
-referenced model elements: This can be a referenced method defined in a
-referenced class of an instance (with a meta-model defining classes, methods and
-instances of classes).
+referenced model elements. For example, this can be a referenced method defined
+in a referenced class of an instance (with a meta-model defining classes,
+methods and instances of classes).
 
 
 ## Usage
 
 The scope providers are registered to the metamodel and can be bound to specific
-parts of rules:
+attributes of grammar rules:
 
  * e.g., `my_meta_model.register_scope_providers({"*.*": scoping.providers.FQN()})`
+   bounds `FQN` provider to all attributes of all grammar rules due to `*.*`
  * or: `my_meta_model.register_scope_providers({"MyAttribute.ref": scoping.providers.FQN()})`
+   bounds `FQN` provider to attribute `ref` of grammar rule `MyAttribute`
  * or: `my_meta_model.register_scope_providers({"*.ref": scoping.providers.FQN()})`
+   bounds `FQN` provider to `ref` attribute of all grammar rules.
  * or: `my_meta_model.register_scope_providers({"MyAttribute.*": scoping.providers.FQN()})`
+   bounds `FQN` provider to all attributes of `MyAttribute` grammar rule
 
 Example (from [tests/test_scoping/test_local_scope.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_local_scope.py)):
 
@@ -52,11 +56,15 @@ Example (from [tests/test_scoping/test_local_scope.py](https://github.com/igorde
     ;
 
     # Python snippet
-    my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/components_model1/Components.tx')
+    my_meta_model = metamodel_from_file(
+        os.path.join(abspath(dirname(__file__)), 'components_model1', 'Components.tx')
+
     my_meta_model.register_scope_providers({
         "*.*": scoping_providers.FQN(),
-        "Connection.from_port": scoping_providers.RelativeName("from_inst.component.slots"),
-        "Connection.to_port": scoping_providers.RelativeName("to_inst.component.slots"),
+        "Connection.from_port": scoping_providers.RelativeName(
+            "from_inst.component.slots"),
+        "Connection.to_port": scoping_providers.RelativeName(
+            "to_inst.component.slots"),
     })
 
 
@@ -147,9 +155,9 @@ Examples see [tests/test_scoping/test_import_module.py](https://github.com/igord
 
 The scope providers are python callables accepting `obj, attr, obj_ref`:
 
- * `obj`     : the object representing the start of the search (e.g., a rule
-             (e.g. `MyAttribute` in the example above, or the model)
- * `attr`    : a reference to the attribute `ref`
+ * `obj`     : the object representing the start of the search (e.g., a rule,
+               like`MyAttribute` in the example above, or the model)
+ * `attr`    : a reference to the attribute (e.g. `ref` in the first example above)
  * `obj_ref` : a `textx.model.ObjCrossRef` - the reference to be resolved
 
 The scope provider return the referenced object (e.g. a `MyInterface` object in
@@ -157,7 +165,7 @@ the example illustrated in the `Motivation and Introduction` above (or `None` if
 nothing is found; or a `Postponed` object, see below).
 
 The scope provider is responsible to check the type and throw a
-TextXSemanticError if the type is not ok.
+`TextXSemanticError` if the type is not OK.
 
 Scope providers shall be stateless or have unmodifiable state after
 construction: this means they should allow to be reused for different models
