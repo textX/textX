@@ -46,11 +46,10 @@ def textx_isinstance(obj, obj_cls):
     if isinstance(obj, obj_cls):
         return True
     if hasattr(obj_cls, "_tx_fqn") and hasattr(obj, "_tx_fqn"):
-        if getattr(obj_cls, "_tx_fqn") == getattr(obj, "_tx_fqn"):
+        if obj_cls._tx_fqn == obj._tx_fqn:
             return True
     if hasattr(obj_cls, "_tx_inh_by"):
-        inh_by = getattr(obj_cls, "_tx_inh_by")
-        for cls in inh_by:
+        for cls in obj_cls._tx_inh_by:
             if (textx_isinstance(obj, cls)):
                 return True
     return False
@@ -165,7 +164,7 @@ def get_referenced_object(prev_obj, obj, dot_separated_name,
     elif type(obj) is list:
         next_obj = None
         for res in obj:
-            if hasattr(res, "name") and getattr(res, "name") == names[0]:
+            if hasattr(res, "name") and res.name == names[0]:
                 if desired_type is None or textx_isinstance(res, desired_type):
                     next_obj = res
                 else:
