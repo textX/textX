@@ -1,6 +1,7 @@
 
 """
-This is a variant of calc example using textx_isinstance() to inspect object types.
+This is a variant of calc example using textx_isinstance() to inspect object
+types.
 """
 
 import sys
@@ -58,8 +59,8 @@ def main(debug=False):
         return textx_isinstance(x, calc_mm[rule])
 
     def assertIs(x, rule):
-        assert _is(x, rule), 'Unexpected object "{}" of type "{}" to rule "{}"'\
-                .format(x, type(x), rule) 
+        assert _is(x, rule), 'Unexpected object "{}" to rule "{}"'\
+                    .format(x, type(x), rule)
 
     def evaluate(x):
 
