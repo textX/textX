@@ -173,11 +173,11 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../about/contributing/">Contributing</a>
+    <a class="" href="https://github.com/igordejanovic/textx/CONTRIBUTING.md">Contributing</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../about/license/">License</a>
+    <a class="" href="https://github.com/igordejanovic/textX/blob/master/LICENSE.txt">License</a>
                 </li>
     </ul>
 	    </li>
@@ -331,17 +331,27 @@ to wildcard selection (e.e, <code>"*.*"</code>).</p>
    for <code>ImportURI</code> you need to provide another scope provider for the concrete
    lookup.
    Example: see <a href="https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_global_import_modules.py">tests/test_scoping/test_global_import_modules.py</a>.
-    - <code>textx.scoping.providers.FQNGlobalRepo</code> (decorated scope provider)
-    - <code>textx.scoping.providers.PlainNameGlobalRepo</code> (decorated scope provider)
- * <code>textx.scoping.providers.RelativeName</code>: This is a scope provider to <strong>resolve
+    - <code>textx.scoping.providers.FQNGlobalRepo</code> (decorated scope provider)</p>
+<pre><code>   Here, you can also activate the "importAs" feature to allow to make
+   imported models not visible in your root namespace, but related to
+   a named importURI element ([tests/test_scoping/importURI_variations/test_importURI_variations.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/importURI_variations/test_importURI_variations.py))
+
+   You can also transform the importURI attribute to a filename:
+   see ([tests/test_scoping/importURI_variations/test_importURI_variations.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/importURI_variations/test_importURI_variations.py).
+
+- `textx.scoping.providers.PlainNameGlobalRepo` (decorated scope provider)
+</code></pre>
+<ul>
+<li><code>textx.scoping.providers.RelativeName</code>: This is a scope provider to <strong>resolve
    relative lookups</strong>: e.g., model-methods of a model-instance, defined by the
    class associated with the model-instance. Typically, another reference (the
    reference to the model-class of a model-instance) is used to determine the
    concrete referenced object (e.g. the model-method, owned by a model-class).
-   Example: see <a href="https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_local_scope.py">tests/test_scoping/test_local_scope.py</a>.
- * <code>textx.scoping.providers.ExtRelativeName</code>: The same as <code>RelativeName</code> <strong>allowing
+   Example: see <a href="https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_local_scope.py">tests/test_scoping/test_local_scope.py</a>.</li>
+<li><code>textx.scoping.providers.ExtRelativeName</code>: The same as <code>RelativeName</code> <strong>allowing
    to model inheritance or chained lookups</strong>.
-   Example: see <a href="https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_local_scope.py">tests/test_scoping/test_local_scope.py</a>.</p>
+   Example: see <a href="https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_local_scope.py">tests/test_scoping/test_local_scope.py</a>.</li>
+</ul>
 <h3 id="note-on-uniqueness-of-model-elements">Note on Uniqueness of Model Elements<a class="headerlink" href="#note-on-uniqueness-of-model-elements" title="Permanent link">&para;</a></h3>
 <p>Two different models created using one single meta model (not using a scope
 provider like <code>GlobalRepo</code>, but by directly loading the models from file) have

@@ -173,11 +173,11 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../../about/contributing/">Contributing</a>
+    <a class="" href="https://github.com/igordejanovic/textx/CONTRIBUTING.md">Contributing</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../../about/license/">License</a>
+    <a class="" href="https://github.com/igordejanovic/textX/blob/master/LICENSE.txt">License</a>
                 </li>
     </ul>
 	    </li>
@@ -374,10 +374,11 @@ during meta-model instantiation together with two of its instances (<code>intege
     self.name = name
 </code></pre>
 <p>Now, we can make a dict of builtin objects.</p>
-<p>myobjs =  {
-    'integer': SimpleType(None, 'integer')
-    'string': SimpleType(None, 'string')
-  }</p>
+<pre><code>myobjs =  {
+  'integer': SimpleType(None, 'integer'),
+  'string': SimpleType(None, 'string')
+}
+</code></pre>
 <p>And register our custom class and two builtins on the meta-model:</p>
 <pre><code>meta = metamodel_from_file('entity.tx', 
                            classes=[SimpleType],
