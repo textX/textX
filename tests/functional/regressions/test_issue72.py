@@ -68,7 +68,7 @@ def default_processor(obj):
 
 
 def parse_lola(grammar, lola_str):
-    lola_str = str(lola_str)
+    lola_str = lola_str
     obj_processors = {
         "InnerObject": default_processor,
         "OuterObject": default_processor

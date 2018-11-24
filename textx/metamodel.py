@@ -9,6 +9,7 @@
 from __future__ import absolute_import
 import codecs
 import os
+import sys
 from collections import OrderedDict
 from arpeggio import DebugPrinter
 from textx.six import add_metaclass
@@ -16,6 +17,12 @@ from textx.lang import language_from_str, python_type, BASE_TYPE_NAMES, ID, \
     BOOL, INT, FLOAT, STRICTFLOAT, STRING, NUMBER, BASETYPE, OBJECT
 from textx.const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, \
     RULE_MATCH, RULE_ABSTRACT
+from textx.exceptions import TextXError
+
+if sys.version < '3':
+    text = unicode  # noqa
+else:
+    text = str
 
 
 __all__ = ['metamodel_from_str', 'metamodel_from_file']
@@ -496,6 +503,10 @@ class TextXMetaModel(DebugPrinter):
                resolved. This can be useful to manage models distributed
                across files (scoping)
         """
+
+        if type(model_str) is not text:
+            raise TextXError("textX accepts only unicode strings.")
+
         model = self._parser_blueprint.clone().get_model_from_str(
             model_str, debug=debug,
             pre_ref_resolution_callback=pre_ref_resolution_callback)

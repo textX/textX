@@ -1,7 +1,8 @@
+from __future__ import unicode_literals
 from textx.metamodel import metamodel_from_str
 
 call_counter = 0
-grammar1 = u"""
+grammar1 = """
 foo:
     'foo' m_formula = Formula
 ;
@@ -60,7 +61,7 @@ def default_processor(obj):
 
 
 def parse_str(grammar, lola_str):
-    lola_str = str(lola_str)
+    lola_str = lola_str
     obj_processors = {
         "foo": default_processor,
         "Formula": default_processor,
@@ -78,17 +79,17 @@ def parse_str(grammar, lola_str):
 def test_issue_80_object_processors():
     global call_counter
 
-    test_str = u"foo a323 + a111"
+    test_str = "foo a323 + a111"
     call_counter = 0
     parse_str(grammar1, test_str)
     assert call_counter == 6
 
-    test_str = u"foo a323 a111"
+    test_str = "foo a323 a111"
     call_counter = 0
     parse_str(grammar2, test_str)
     assert call_counter == 6
 
-    test_str = u"foo a323 + a111"
+    test_str = "foo a323 + a111"
     call_counter = 0
     parse_str(grammar3, test_str)
     assert call_counter == 4

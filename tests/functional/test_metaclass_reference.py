@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 import pytest
 import os
 from textx import metamodel_from_str, metamodel_from_file
