@@ -32,7 +32,7 @@ def sm_to_dot(model):
     first = True
     for state in model.states:
         dot_str += '{}[label="{{{}{}|{}}}"]\n'.format(
-            id(state), "-\> " if first else "", state.name,
+            id(state), r"-\> " if first else "", state.name,
             "\\n".join(action.name for action in state.actions))
         first = False
 
