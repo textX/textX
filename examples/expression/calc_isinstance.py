@@ -24,8 +24,7 @@ Term: operands=Factor (operators=MulOrDiv operands=Factor)*;
 MulOrDiv: '*' | '/' ;
 Factor: (sign=PlusOrMinus)?  op=Operand;
 PrimitiveOperand: op_num=NUMBER | op_id=ID;
-CompoundOperand: '(' expression=Expression ')';
-Operand: PrimitiveOperand | CompoundOperand;
+Operand: PrimitiveOperand | ('(' Expression ')');
 '''
 
 # Global variable namespace
