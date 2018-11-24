@@ -31,8 +31,8 @@ nav:
 - About:
   - Comparison: about/comparison.md
   - Discuss: about/discuss.md
-  - Contributing: about/contributing.md
-  - License: about/license.md
+  - Contributing: https://github.com/igordejanovic/textx/CONTRIBUTING.md
+  - License: https://github.com/igordejanovic/textX/blob/master/LICENSE.txt
 - What's new:
   - Release 1.5: whatsnew/release_1_5.md
 
