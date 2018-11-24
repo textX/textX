@@ -82,8 +82,7 @@ class PlainName(object):
                 # - provides: the resolved object or None
                 if id(cls) in get_parser(obj)._instances:
                     objs = get_parser(obj)._instances[id(cls)]
-                    if obj_name in objs:
-                        return objs[obj_name]
+                    return objs.get(obj_name)
 
         if self.multi_metamodel_support:
             from textx import get_model, get_children

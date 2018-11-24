@@ -93,7 +93,7 @@ class ModelRepository(object):
         self.filename_to_model = {}
 
     def has_model(self, filename):
-        return filename in self.filename_to_model.keys()
+        return filename in self.filename_to_model
 
 
 class GlobalModelRepository(object):

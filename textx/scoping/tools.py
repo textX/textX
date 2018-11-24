@@ -46,11 +46,10 @@ def textx_isinstance(obj, obj_cls):
     if isinstance(obj, obj_cls):
         return True
     if hasattr(obj_cls, "_tx_fqn") and hasattr(obj, "_tx_fqn"):
-        if getattr(obj_cls, "_tx_fqn") == getattr(obj, "_tx_fqn"):
+        if obj_cls._tx_fqn == obj._tx_fqn:
             return True
     if hasattr(obj_cls, "_tx_inh_by"):
-        inh_by = getattr(obj_cls, "_tx_inh_by")
-        for cls in inh_by:
+        for cls in obj_cls._tx_inh_by:
             if (textx_isinstance(obj, cls)):
                 return True
     return False
@@ -62,7 +61,7 @@ def get_list_of_concatenated_objects(obj, dot_separated_name,
     get a list of the objects consisting of
     - obj
     - obj+"."+dot_separated_name
-    - (obj+"."+dot_separated_name)+"."+dot_separated_name (called ercursively)
+    - (obj+"."+dot_separated_name)+"."+dot_separated_name (called recursively)
     Note: lists are expanded
 
     Args:
@@ -137,7 +136,7 @@ def get_referenced_object(prev_obj, obj, dot_separated_name,
     get objects based on a path
 
     Args:
-        prev_obj: the object containing obj (req. is obj is a list)
+        prev_obj: the object containing obj (req. if obj is a list)
         obj: the current object
         dot_separated_name: the attribute name "a.b.c.d" starting from obj
            Note: the attribute "parent(TYPE)" is a shortcut to jump to the
@@ -165,7 +164,7 @@ def get_referenced_object(prev_obj, obj, dot_separated_name,
     elif type(obj) is list:
         next_obj = None
         for res in obj:
-            if hasattr(res, "name") and getattr(res, "name") == names[0]:
+            if hasattr(res, "name") and res.name == names[0]:
                 if desired_type is None or textx_isinstance(res, desired_type):
                     next_obj = res
                 else:
@@ -200,7 +199,7 @@ def get_referenced_object(prev_obj, obj, dot_separated_name,
 def get_referenced_object_as_list(
         prev_obj, obj, dot_separated_name, desired_type=None):
     """
-    same as get_referenced_object
+    Same as get_referenced_object, but always returns a list.
 
     Args:
         prev_obj: see get_referenced_object
