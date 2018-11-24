@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 import textx
 from os.path import join, dirname
 import textx.scoping.providers as scoping_providers

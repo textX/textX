@@ -2,6 +2,7 @@
 This is a variant of calc example using dynamically added properties to
 classes created by textx.
 """
+from __future__ import unicode_literals
 import sys
 from textx import metamodel_from_str
 
