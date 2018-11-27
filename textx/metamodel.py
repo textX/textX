@@ -274,7 +274,7 @@ class TextXMetaModel(DebugPrinter):
             name(str): The name of the class.
             peg_rule(ParserExpression): An arpeggio peg rule used to match
                 this class.
-            positon(int): A position in the input where class is defined.
+            position(int): A position in the input where class is defined.
             root(bool): Is this class a root class of the metamodel.
             rule_type: The type of the rule this meta-class is for. One of
                 RULE_COMMON, RULE_ABSTRACT or RULE_MATCH.
@@ -289,7 +289,7 @@ class TextXMetaModel(DebugPrinter):
         @add_metaclass(TextXMetaClass)
         class TextXClass(object):
             """
-            Dynamicaly created class. Each textX rule will result in
+            Dynamically created class. Each textX rule will result in
             creating one Python class with the type name of the rule.
             textX model is a graph of instances of these Python classes.
 

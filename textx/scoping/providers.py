@@ -224,7 +224,7 @@ class FQN(object):
 class ImportURI(scoping.ModelLoader):
     """
     Scope provider supporting Xtext-like importURI attributes (w/o
-    URInamespace). This class requries another scope provider, which is
+    URInamespace). This class requires another scope provider, which is
     called internally.
 
     Adds the loaded models to the importURI-objects: Thus, a model element
@@ -418,11 +418,10 @@ class GlobalRepo(ImportURI):
         register models into provider object - visible for all
 
         Args:
-            mymetamodel: the metamodel to be used to load the models
             filename_pattern: the pattern (e.g. file.myext or dir/**/*.myext)
 
         Returns:
-            nothing
+            None
         """
         self.filename_pattern_list.append(filename_pattern)
 
@@ -535,7 +534,7 @@ class RelativeName(object):
 class ExtRelativeName(object):
     """
     Similar as RelativeName.
-    Here you specifiy separately
+    Here you specify separately
     - how to find the class.
     - how to find the methods (starting from a class).
     - how to find inherited/chained classes (starting from a class).
