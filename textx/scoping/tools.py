@@ -222,7 +222,7 @@ def get_referenced_object_as_list(
 
 def get_unique_named_object_in_all_models(root, name):
     """
-    retrieves a unqiue named object (no fully qualified name)
+    retrieves a unique named object (no fully qualified name)
 
     Args:
         root: start of search (if root is a model all known models are searched
@@ -252,7 +252,7 @@ def get_unique_named_object_in_all_models(root, name):
 
 def get_unique_named_object(root, name):
     """
-    retrieves a unqiue named object (no fully qualified name)
+    retrieves a unique named object (no fully qualified name)
 
     Args:
         root: start of search
