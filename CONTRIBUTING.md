@@ -88,7 +88,7 @@ Ready to contribute? Here's how to set up `textX` for local development.
     
     To verify that everything is setup properly run tests:
     
-        $ flake8 textx tests --exclude tests/perf,textx/six.py,textx/lang.py
+        $ flake8
         $ py.test tests/functional/
 
 4. Create a branch for local development::
@@ -100,7 +100,7 @@ Ready to contribute? Here's how to set up `textX` for local development.
 5. When you're done making changes, check that your changes pass flake8, the
    tests, and have a look at the coverage:
 
-        $ flake8 textx tests/functional
+        $ flake8
         $ py.test tests/functional/
         $ coverage run --source textx -m py.test tests/functional
         $ coverage report
