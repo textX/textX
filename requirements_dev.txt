@@ -4,3 +4,4 @@ coverage
 jinja2
 mkdocs
 mike
+memory-profiler
