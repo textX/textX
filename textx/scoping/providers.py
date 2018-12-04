@@ -166,6 +166,8 @@ class FQN(object):
                         self.scope_redirection_logic is not None:
                     from textx.scoping import Postponed
                     res = self.scope_redirection_logic(parent)
+                    assert res is not None, \
+                        "scope_redirection_logic must not return None"
                     if type(res) is Postponed:
                         return res
                     for m in res:
@@ -380,6 +382,7 @@ def follow_loaded_models_scope_redirection_logic(obj, scope_redirection_logic):
     lst = []
     if scope_redirection_logic is not None:
         lst = scope_redirection_logic(obj)
+        assert lst is not None, "scope_redirection_logic must not return None"
         if type(lst) is Postponed:
             return lst
     if hasattr(obj, "_tx_loaded_models"):
@@ -404,7 +407,7 @@ class FQNImportURI(ImportURI):
                  scope_redirection_logic=None):
         if importAs:
             def my_scope_redirection_logic_def(obj):
-                follow_loaded_models_scope_redirection_logic(
+                return follow_loaded_models_scope_redirection_logic(
                     obj, scope_redirection_logic)
             my_scope_redirection_logic = my_scope_redirection_logic_def
         else:

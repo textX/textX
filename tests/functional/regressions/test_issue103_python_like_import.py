@@ -3,7 +3,8 @@ from __future__ import unicode_literals
 from textx import metamodel_from_str
 from os.path import dirname, abspath, join
 import textx.scoping.providers as scoping_providers
-
+from pytest import raises
+from textx.exceptions import TextXSemanticError
 
 def test_issue103_python_like_import():
     """
@@ -66,7 +67,6 @@ def test_issue103_imported_namedspaces():
         Package: PackageDef|PackageRef;
         PackageDef: "package" name=ID "{" packages*=Package classes*=Class "}";
         PackageRef: "using" ref=[Package|FQN] "as" name=ID;
-        
         Class: 'class' name=ID '{' '}' ';';
         Var: 'var' name=ID '=' 'new' theclass=[Class|FQN] '(' ')';
         FQN: ID+['.'];
@@ -100,6 +100,47 @@ def test_issue103_imported_namedspaces():
     # MODEL PARSING
     #################################
 
+    # first test
+    mm.model_from_str('''
+        package p1 {
+            package p2 {
+                class a {};
+            }
+        }
+        using p1.p2 as main
+        var x = new p1.p2.a()
+        var y = new main.a()
+    ''')
+
+    # first test (negativ example)
+    with raises(TextXSemanticError,
+                match=r'.*Unknown object "error.a".*'):
+        mm.model_from_str('''
+            package p1 {
+                package p2 {
+                    class a {};
+                }
+            }
+            using p1.p2 as main
+            var x = new p1.p2.a()
+            var y = new error.a()
+        ''')
+
+    # first test (negativ example)
+    with raises(TextXSemanticError,
+                match=r'.*Unknown object "p1.error".*'):
+        mm.model_from_str('''
+            package p1 {
+                package p2 {
+                    class a {};
+                }
+            }
+            using p1.error as main
+            var x = new p1.p2.a()
+            var y = new main.a()
+        ''')
+
+    # second test
     m = mm.model_from_file(
         join(abspath(dirname(__file__)), "issue103", "main.packageRef"))
 

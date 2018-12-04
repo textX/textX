@@ -1,4 +1,4 @@
-# imported module 'base.mod'
+# imported module
 package p1 {
     package p11 {
         package p111 {

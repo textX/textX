@@ -89,6 +89,28 @@ We provide some standard scope providers:
  * `textx.scoping.providers.FQN`: This is a **provider similar to Java or Xtext
    name loopup**.
    Example: see [tests/test_scoping/test_full_qualified_name.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_full_qualified_name.py).
+   
+   A central feature of this scope provider is, that it traverses the model
+   tree and searches for a matching sequence of named objects (objects with
+   an attribute name matching parts of the full qualified name separated by 
+   dots). You can also provide a callback (scope_redirection_logic) to specify
+   that certain named objects are not searched recursively, but are replaced
+   by a list of objects instead, which are searched in place of the current object.
+   With this feature you can create, e.g., namespace/package aliases in your 
+   language. You can also activate a python like module import behavior 
+   for your language (with `textx.scoping.providers.FQNImportURI`), which is based 
+   on this callback.
+   Example: see [tests/functional/regressions/test_issue103_python_like_import.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/regressions/test_issue103_python_like_import.py).
+
+        package p1 {
+            package p2 {
+                class a {};
+            }
+        }
+        using p1.p2 as main
+        var x = new p1.p2.a()
+        var y = new main.a()
+   
  * `textx.scoping.providers.ImportURI`: This a provider which **allows to load
    additional modules** for lookup.
    You need to define a rule with an attribute `importURI` as string (like in
