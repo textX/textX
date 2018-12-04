@@ -8,6 +8,7 @@
 from os.path import dirname, abspath, join
 from textx.exceptions import TextXSemanticError
 import textx.scoping as scoping
+from textx.scoping import Postponed
 
 """
 This module defines scope providers to be used in conjunctions with a
@@ -112,16 +113,22 @@ class PlainName(object):
 class FQN(object):
     """
     fully qualified name scope provider
-
-    if the parameter follow_loaded_models=True is used,
-    any _tx_loaded_models attribute is used in name lookup.
-    (this field is set by the importURI feature and can be used
-    here to activate a python like "import ABC as XYZ" behavior).
     """
 
-    def __init__(self, follow_loaded_models=False):
-        self.follow_loaded_models = follow_loaded_models
-        pass
+    def __init__(self, scope_redirection_logic=None):
+        """
+        Args:
+            scope_redirection_logic: this callable gets a
+            named model being processed. This callable
+            is required to return a list of elements,
+            in which the FQN provider continues to
+            search for named elements (you may also
+            return an empty list of a list with one
+            element).
+            The scope_redirection_logic may also return
+            a Postponed object.
+        """
+        self.scope_redirection_logic = scope_redirection_logic
 
     def __call__(self, obj, attr, obj_ref):
         """
@@ -153,6 +160,15 @@ class FQN(object):
             """
 
             def find_obj(parent, name):
+                if self.scope_redirection_logic is not None:
+                    from textx.scoping import Postponed
+                    res = self.scope_redirection_logic(parent)
+                    if type(res) is Postponed:
+                        return res
+                    for m in res:
+                        return_value = find_obj(m, name)
+                        if return_value is not None:
+                            return return_value
                 for attr in [a for a in parent.__dict__ if
                              not a.startswith('__') and not
                              a.startswith('_tx_') and not
@@ -166,17 +182,13 @@ class FQN(object):
                     else:
                         if hasattr(obj, "name") and obj.name == name:
                             return obj
-                if self.follow_loaded_models and hasattr(
-                        parent, "_tx_loaded_models"):
-                    for m in parent._tx_loaded_models:
-                        return_value = find_obj(m, name)
-                        if return_value is not None:
-                            return return_value
                 return None
 
             for n in fqn_name.split('.'):
                 obj = find_obj(p, n)
                 if obj:
+                    if type(obj) is Postponed:
+                        return obj
                     p = obj
                 else:
                     return None
@@ -361,6 +373,17 @@ class ImportURI(scoping.ModelLoader):
         return None
 
 
+def follow_loaded_models_scope_redirection_logic(obj, scope_redirection_logic):
+    lst = []
+    if scope_redirection_logic is not None:
+        lst = scope_redirection_logic(obj)
+        if type(lst) is Postponed:
+            return lst
+    elif hasattr(obj, "_tx_loaded_models"):
+        lst = lst + obj._tx_loaded_models
+    return lst
+
+
 class FQNImportURI(ImportURI):
     """
     scope provider with ImportURI and FQN
@@ -374,8 +397,15 @@ class FQNImportURI(ImportURI):
     """
 
     def __init__(self, glob_args=None, search_path=None, importAs=False,
-                 importURI_converter=None, importURI_to_scope_name=None):
-        ImportURI.__init__(self, FQN(follow_loaded_models=importAs),
+                 importURI_converter=None, importURI_to_scope_name=None,
+                 scope_redirection_logic=None):
+        if importAs:
+            my_scope_redirection_logic = \
+                lambda obj: follow_loaded_models_scope_redirection_logic(
+                    obj,scope_redirection_logic)
+        else:
+            my_scope_redirection_logic = scope_redirection_logic
+        ImportURI.__init__(self, FQN(scope_redirection_logic=my_scope_redirection_logic),
                            glob_args=glob_args,
                            search_path=search_path, importAs=importAs,
                            importURI_converter=importURI_converter,
@@ -514,7 +544,6 @@ class RelativeName(object):
 
     def __call__(self, obj, attr, obj_ref):
         from textx.scoping.tools import get_referenced_object
-        from textx.scoping import Postponed
         from textx import get_model
         try:
             res = get_referenced_object(
@@ -550,7 +579,6 @@ class ExtRelativeName(object):
     def __call__(self, obj, attr, obj_ref):
         from textx.scoping.tools import get_referenced_object, \
             get_list_of_concatenated_objects
-        from textx.scoping import Postponed
         from textx import get_model
         try:
             # print("DEBUG: ExtRelativeName.__call__(...{})".
