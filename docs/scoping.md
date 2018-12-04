@@ -90,14 +90,14 @@ We provide some standard scope providers:
    name loopup**.
    Example: see [tests/test_scoping/test_full_qualified_name.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_full_qualified_name.py).
    
-   A central feature of this scope provider is, that it traverses the model
-   tree and searches for a matching sequence of named objects (objects with
+   A central feature of this scope provider is, that it **traverses the model
+   tree and searches for a matching sequence of named objects** (objects with
    an attribute name matching parts of the full qualified name separated by 
-   dots). You can also provide a callback (scope_redirection_logic) to specify
+   dots). You can also provide a **callback** (`scope_redirection_logic`) to specify
    that certain named objects are not searched recursively, but are replaced
    by a list of objects instead, which are searched in place of the current object.
-   With this feature you can create, e.g., namespace/package aliases in your 
-   language. You can also activate a python like module import behavior 
+   With this feature you can create, e.g., **namespace/package aliases** in your 
+   language. You can also activate a **python like module import behavior** 
    for your language (with `textx.scoping.providers.FQNImportURI`), which is based 
    on this callback.
    Example: see [tests/functional/regressions/test_issue103_python_like_import.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/regressions/test_issue103_python_like_import.py).
@@ -110,6 +110,12 @@ We provide some standard scope providers:
         using p1.p2 as main
         var x = new p1.p2.a()
         var y = new main.a()
+        
+   Note: Except in the context of the scope_redirection_logic (see above), the FQN does
+   not take Postponed (unresolved) references into account. The reason is that
+   this would create a much more complex decision logic to decide which reference
+   needs to be resolved first. The purpose of the FQN is to identify direct instances
+   of model objects, and no references.
    
  * `textx.scoping.providers.ImportURI`: This a provider which **allows to load
    additional modules** for lookup.
