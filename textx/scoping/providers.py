@@ -119,14 +119,16 @@ class FQN(object):
         """
         Args:
             scope_redirection_logic: this callable gets a
-            named model being processed. This callable
+            named model being processed. **(a)** This callable
             is required to return a list of elements,
             in which the FQN provider continues to
             search for named elements (you may also
             return an empty list of a list with one
-            element).
-            The scope_redirection_logic may also return
-            a Postponed object.
+            element). **(b)** The scope_redirection_logic may
+            also return a Postponed object. **(c)** The
+            scope_redirection_logic is not applied for the
+            object containing the reference to be resolved
+            (in order to prevent getting circular dependencies).
         """
         self.scope_redirection_logic = scope_redirection_logic
 
@@ -145,7 +147,7 @@ class FQN(object):
         Returns: None or the referenced object
         """
 
-        def _find_obj_fqn(p, fqn_name, cls):
+        def _find_obj_fqn(p, fqn_name, cls, current_obj):
             """
             Helper function:
             find a named object based on a qualified name ("."-separated
@@ -160,7 +162,8 @@ class FQN(object):
             """
 
             def find_obj(parent, name):
-                if self.scope_redirection_logic is not None:
+                if parent is not current_obj and \
+                        self.scope_redirection_logic is not None:
                     from textx.scoping import Postponed
                     res = self.scope_redirection_logic(parent)
                     if type(res) is Postponed:
@@ -199,7 +202,7 @@ class FQN(object):
             else:
                 return None
 
-        def _find_referenced_obj(p, name, cls):
+        def _find_referenced_obj(p, name, cls, current_obj):
             """
             Helper function:
             Search the fully qualified name starting at relative container p.
@@ -213,12 +216,12 @@ class FQN(object):
             Returns:
                 None or the found object
             """
-            ret = _find_obj_fqn(p, name, cls)
+            ret = _find_obj_fqn(p, name, cls, current_obj)
             if ret:
                 return ret
             while hasattr(p, "parent"):
                 p = p.parent
-                ret = _find_obj_fqn(p, name, cls)
+                ret = _find_obj_fqn(p, name, cls, current_obj)
                 if ret:
                     return ret
             return None
@@ -226,7 +229,7 @@ class FQN(object):
         from textx.model import ObjCrossRef
         assert type(obj_ref) is ObjCrossRef, type(obj_ref)
         obj_cls, obj_name = obj_ref.cls, obj_ref.obj_name
-        ret = _find_referenced_obj(obj, obj_name, obj_cls)
+        ret = _find_referenced_obj(obj, obj_name, obj_cls, obj)
         if ret:
             return ret
         else:
@@ -379,7 +382,7 @@ def follow_loaded_models_scope_redirection_logic(obj, scope_redirection_logic):
         lst = scope_redirection_logic(obj)
         if type(lst) is Postponed:
             return lst
-    elif hasattr(obj, "_tx_loaded_models"):
+    if hasattr(obj, "_tx_loaded_models"):
         lst = lst + obj._tx_loaded_models
     return lst
 
@@ -400,12 +403,14 @@ class FQNImportURI(ImportURI):
                  importURI_converter=None, importURI_to_scope_name=None,
                  scope_redirection_logic=None):
         if importAs:
-            my_scope_redirection_logic = \
-                lambda obj: follow_loaded_models_scope_redirection_logic(
-                    obj,scope_redirection_logic)
+            def my_scope_redirection_logic_def(obj):
+                follow_loaded_models_scope_redirection_logic(
+                    obj, scope_redirection_logic)
+            my_scope_redirection_logic = my_scope_redirection_logic_def
         else:
             my_scope_redirection_logic = scope_redirection_logic
-        ImportURI.__init__(self, FQN(scope_redirection_logic=my_scope_redirection_logic),
+        ImportURI.__init__(self, FQN(
+            scope_redirection_logic=my_scope_redirection_logic),
                            glob_args=glob_args,
                            search_path=search_path, importAs=importAs,
                            importURI_converter=importURI_converter,
