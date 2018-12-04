@@ -6,6 +6,7 @@ import textx.scoping.providers as scoping_providers
 from pytest import raises
 from textx.exceptions import TextXSemanticError
 
+
 def test_issue103_python_like_import():
     """
     see issue 103 for a detailed error report
