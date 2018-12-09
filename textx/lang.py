@@ -808,7 +808,7 @@ class TextXVisitor(PTNodeVisitor):
     def visit_str_match(self, node, children):
         try:
             to_match = children[0]
-        except:
+        except IndexError:
             to_match = ''
 
         # Support for autokwd metamodel param.
@@ -826,7 +826,7 @@ class TextXVisitor(PTNodeVisitor):
     def visit_re_match(self, node, children):
         try:
             to_match = children[0]
-        except:
+        except IndexError:
             to_match = ''
         regex = RegExMatch(to_match,
                            ignore_case=self.metamodel.ignore_case)
