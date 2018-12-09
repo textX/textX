@@ -338,17 +338,31 @@ class TextXVisitor(PTNodeVisitor):
                         cls._tx_inh_by.append(rule._tx_class)
                 else:
                     # Recursivelly append all referenced classes.
-                    def _add_reffered_classes(rule, inh_by):
+                    def _add_reffered_classes(rule, inh_by, start=False):
+                        if rule.root and not start:
+                            if hasattr(rule, '_tx_class'):
+                                _determine_rule_type(rule._tx_class)
+                                if rule._tx_class._tx_type != RULE_MATCH and\
+                                        rule._tx_class not in inh_by:
+                                    inh_by.append(rule._tx_class)
+                            return 1
+                        else:
+                            rule_references = 0
+                            for r in rule.nodes:
+                                rule_references += \
+                                    _add_reffered_classes(r, inh_by)
+                            if rule_references > 1:
+                                raise TextXSemanticError(
+                                    'Referencing multiple rules from '
+                                    'a single choice of abstract rule "{}" '
+                                    'is not allowed.'.format(cls.__name__))
+                            return rule_references
+
+                    if type(rule) is OrderedChoice:
                         for r in rule.nodes:
-                            if r.root:
-                                if hasattr(r, '_tx_class'):
-                                    _determine_rule_type(r._tx_class)
-                                    if r._tx_class._tx_type != RULE_MATCH and\
-                                            r._tx_class not in inh_by:
-                                        inh_by.append(r._tx_class)
-                            else:
-                                _add_reffered_classes(r, inh_by)
-                    _add_reffered_classes(rule, cls._tx_inh_by)
+                            _add_reffered_classes(r, cls._tx_inh_by)
+                    else:
+                        _add_reffered_classes(rule, cls._tx_inh_by, start=True)
 
         resolved_classes = set()
         for cls in metamodel:
@@ -808,7 +822,7 @@ class TextXVisitor(PTNodeVisitor):
     def visit_str_match(self, node, children):
         try:
             to_match = children[0]
-        except:
+        except IndexError:
             to_match = ''
 
         # Support for autokwd metamodel param.
@@ -826,7 +840,7 @@ class TextXVisitor(PTNodeVisitor):
     def visit_re_match(self, node, children):
         try:
             to_match = children[0]
-        except:
+        except IndexError:
             to_match = ''
         regex = RegExMatch(to_match,
                            ignore_case=self.metamodel.ignore_case)
