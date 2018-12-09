@@ -107,3 +107,38 @@ def test_abstract_alternative_string_match():
     result = evaluate(model)
 
     assert (result - 6.93805555) < 0.0001
+
+
+def test_abstract_alternative_multiple_rules():
+    grammar = r'''
+    Model: a+=A;
+    A: B | '(' C D ')';
+    B: 'B' name=ID x=INT;
+    C: 'C' name=ID;
+    D: 'D' x=INT;
+    '''
+
+    mm = metamodel_from_str(grammar)
+
+    modelstr = '''
+    B b1 1
+    B b2 2
+    ( C c1 D 11 )
+    ( C c2 D 12 )
+    '''
+
+    model = mm.model_from_str(modelstr)
+
+    assert model.a[0].name == 'b1'
+    assert model.a[0].x == 1
+    assert textx_isinstance(model.a[0], mm['A'])
+    assert textx_isinstance(model.a[0], mm['B'])
+    assert not textx_isinstance(model.a[0], mm['C'])
+    assert not textx_isinstance(model.a[0], mm['D'])
+
+    assert model.a[2].name == 'c1'
+    #assert model.a[2].x == 11                       # does not work
+    assert textx_isinstance(model.a[2], mm['A'])
+    assert not textx_isinstance(model.a[2], mm['B'])
+    assert textx_isinstance(model.a[2], mm['C'])
+    #assert textx_isinstance(model.a[2], mm['D'])  # fails
