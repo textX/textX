@@ -4,6 +4,7 @@ This is a variant of calc example using textx_isinstance() to inspect object
 types.
 """
 
+from __future__ import unicode_literals
 import sys
 from os.path import join, dirname
 from textx import metamodel_from_str
