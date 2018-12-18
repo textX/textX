@@ -52,8 +52,9 @@ showing how to generate source code from models.
     Taken from [#36](https://github.com/igordejanovic/textX/issues/36).
 
 
-## Are the output totally deterministic ?
-No, because internally the `id()` function is used when generating the `.dot` output.
+## Is the `.dot` output fully deterministic ?
+No, because internally the `id()` function is used when generating the `.dot`
+output for nodes identification.
 
 !!! note
     Taken from [#101](https://github.com/igordejanovic/textX/issues/101).
