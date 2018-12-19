@@ -1,0 +1,47 @@
+from __future__ import unicode_literals
+import os
+import os.path
+from textx import metamodel_from_file
+import textx.scoping.providers as scoping_providers
+import textx.scoping as scoping
+
+
+class C1:
+    def __init__(self, **kwargs):
+        for k in kwargs.keys():
+            setattr(self, k, kwargs[k])
+
+
+def test_multi_metamodel_obj_proc():
+    global_repo = scoping.GlobalModelRepository()
+    repo = scoping_providers.PlainNameGlobalRepo()
+    repo.register_models(os.path.dirname(__file__)+"/multi_obj_proc/*.a")
+
+    mm_A = metamodel_from_file(os.path.join(
+        os.path.dirname(__file__),
+        "multi_obj_proc",
+        "A.tx"
+    ), global_repository=global_repo, classes=[C1])
+    mm_B = metamodel_from_file(os.path.join(
+        os.path.dirname(__file__),
+        "multi_obj_proc",
+        "B.tx"
+    ), global_repository=global_repo, classes=[C1])
+
+    mm_B.register_scope_providers({"*.*": repo})
+
+    def proc(a):
+        print(a)
+
+    mm_A.register_obj_processors({"C1": proc})
+    mm_B.register_obj_processors({"C1": proc})
+
+    scoping.MetaModelProvider.clear()
+    scoping.MetaModelProvider.add_metamodel("*.a", mm_A)
+    scoping.MetaModelProvider.add_metamodel("*.b", mm_B)
+
+    mm_B.model_from_file(os.path.join(
+        os.path.dirname(__file__),
+        "multi_obj_proc",
+        "b.b"
+    ))
