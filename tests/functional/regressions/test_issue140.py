@@ -6,7 +6,7 @@ import textx.scoping.providers as scoping_providers
 import textx.scoping as scoping
 
 
-class C1:
+class C1(object):
     def __init__(self, **kwargs):
         for k in kwargs.keys():
             setattr(self, k, kwargs[k])
