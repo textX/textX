@@ -15,16 +15,16 @@ class C1(object):
 def test_multi_metamodel_obj_proc():
     global_repo = scoping.GlobalModelRepository()
     repo = scoping_providers.PlainNameGlobalRepo()
-    repo.register_models(os.path.dirname(__file__)+"/multi_obj_proc/*.a")
+    repo.register_models(os.path.dirname(__file__)+"/issue140/*.a")
 
     mm_A = metamodel_from_file(os.path.join(
         os.path.dirname(__file__),
-        "multi_obj_proc",
+        "issue140",
         "A.tx"
     ), global_repository=global_repo, classes=[C1])
     mm_B = metamodel_from_file(os.path.join(
         os.path.dirname(__file__),
-        "multi_obj_proc",
+        "issue140",
         "B.tx"
     ), global_repository=global_repo, classes=[C1])
 
@@ -42,6 +42,6 @@ def test_multi_metamodel_obj_proc():
 
     mm_B.model_from_file(os.path.join(
         os.path.dirname(__file__),
-        "multi_obj_proc",
+        "issue140",
         "b.b"
     ))
