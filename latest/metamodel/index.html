@@ -162,6 +162,10 @@
                     
     <a class="" href="../tutorials/toylanguage/">Toy language compiler</a>
                 </li>
+                <li class="">
+                    
+    <a class="" href="../tutorials/self-dsl/">self-dsl</a>
+                </li>
     </ul>
 	    </li>
           
@@ -255,6 +259,13 @@ to <a href="../model/">model</a>.</p>
 </code></pre>
 <p>When parsing a model file or string a new parser is cloned for each model.
 This parser can be accessed via the model attribute <code>_tx_parser</code>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>textX accepts unicode strings only so <code>metamodel_from_str</code> parameter should be
+<code>str</code> for Python 3.x or <code>unicode</code> for Python 2.x. That is true for all API
+parameters where string is accepted. The easiest way for Python 2.x is to use
+<code>from __future__ import unicode_literals</code> at the top of the file.</p>
+</div>
 <h2 id="custom-classes">Custom classes<a class="headerlink" href="#custom-classes" title="Permanent link">&para;</a></h2>
 <p>For each grammar rule a Python class with the same name is created dynamically.
 These classes are instantiated during the parsing of the input string/file to

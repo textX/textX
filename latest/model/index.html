@@ -154,6 +154,10 @@
                     
     <a class="" href="../tutorials/toylanguage/">Toy language compiler</a>
                 </li>
+                <li class="">
+                    
+    <a class="" href="../tutorials/self-dsl/">self-dsl</a>
+                </li>
     </ul>
 	    </li>
           
@@ -251,8 +255,15 @@ my_model = my_mm.model_from_file('some_model.ext')
 </code></pre>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The model_from_file method takes an optional argument <code>encoding</code>
+<p>The <code>model_from_file</code> method takes an optional argument <code>encoding</code>
 to control the input encoding of the model file to be loaded.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>textX accepts unicode strings only so <code>metamodel_from_str</code> and <code>model_from_str</code>
+parameter should be <code>str</code> for Python 3.x or <code>unicode</code> for Python 2.x. That is
+true for all API parameters where string is accepted. The easiest way for Python
+2.x is to use <code>from __future__ import unicode_literals</code> at the top of the file.</p>
 </div>
 <p>Let's take the Entity language used in <a href="../metamodel/#custom-classes">Custom
 Classes</a> section.</p>

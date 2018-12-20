@@ -156,6 +156,10 @@
                     
     <a class="" href="../tutorials/toylanguage/">Toy language compiler</a>
                 </li>
+                <li class="">
+                    
+    <a class="" href="../tutorials/self-dsl/">self-dsl</a>
+                </li>
     </ul>
 	    </li>
           
@@ -246,17 +250,21 @@ globally. Other scope providers will take namespaces into account, support
 references to parts of the model stored in different files or even models
 defined by other metamodels (imported into the current metamodel). Moreover,
 scope providers exist allowing to reference model elements relative to other
-referenced model elements: This can be a referenced method defined in a
-referenced class of an instance (with a meta-model defining classes, methods and
-instances of classes).</p>
+referenced model elements. For example, this can be a referenced method defined
+in a referenced class of an instance (with a meta-model defining classes,
+methods and instances of classes).</p>
 <h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
 <p>The scope providers are registered to the metamodel and can be bound to specific
-parts of rules:</p>
+attributes of grammar rules:</p>
 <ul>
-<li>e.g., <code>my_meta_model.register_scope_providers({"*.*": scoping.providers.FQN()})</code></li>
-<li>or: <code>my_meta_model.register_scope_providers({"MyAttribute.ref": scoping.providers.FQN()})</code></li>
-<li>or: <code>my_meta_model.register_scope_providers({"*.ref": scoping.providers.FQN()})</code></li>
-<li>or: <code>my_meta_model.register_scope_providers({"MyAttribute.*": scoping.providers.FQN()})</code></li>
+<li>e.g., <code>my_meta_model.register_scope_providers({"*.*": scoping.providers.FQN()})</code>
+   bounds <code>FQN</code> provider to all attributes of all grammar rules due to <code>*.*</code></li>
+<li>or: <code>my_meta_model.register_scope_providers({"MyAttribute.ref": scoping.providers.FQN()})</code>
+   bounds <code>FQN</code> provider to attribute <code>ref</code> of grammar rule <code>MyAttribute</code></li>
+<li>or: <code>my_meta_model.register_scope_providers({"*.ref": scoping.providers.FQN()})</code>
+   bounds <code>FQN</code> provider to <code>ref</code> attribute of all grammar rules.</li>
+<li>or: <code>my_meta_model.register_scope_providers({"MyAttribute.*": scoping.providers.FQN()})</code>
+   bounds <code>FQN</code> provider to all attributes of <code>MyAttribute</code> grammar rule</li>
 </ul>
 <p>Example (from <a href="https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_local_scope.py">tests/test_scoping/test_local_scope.py</a>):</p>
 <pre><code># Grammar snippet (Components.tx)
@@ -277,11 +285,15 @@ Connection:
 ;
 
 # Python snippet
-my_meta_model = metamodel_from_file(abspath(dirname(__file__)) + '/components_model1/Components.tx')
+my_meta_model = metamodel_from_file(
+    os.path.join(abspath(dirname(__file__)), 'components_model1', 'Components.tx')
+
 my_meta_model.register_scope_providers({
     "*.*": scoping_providers.FQN(),
-    "Connection.from_port": scoping_providers.RelativeName("from_inst.component.slots"),
-    "Connection.to_port": scoping_providers.RelativeName("to_inst.component.slots"),
+    "Connection.from_port": scoping_providers.RelativeName(
+        "from_inst.component.slots"),
+    "Connection.to_port": scoping_providers.RelativeName(
+        "to_inst.component.slots"),
 })
 </code></pre>
 <p>This example selects the fully qualified name provider as default provider
@@ -365,16 +377,16 @@ have unique model elements (no double instances).</p>
 <h2 id="technical-aspects-and-implementation-details">Technical aspects and implementation details<a class="headerlink" href="#technical-aspects-and-implementation-details" title="Permanent link">&para;</a></h2>
 <p>The scope providers are python callables accepting <code>obj, attr, obj_ref</code>:</p>
 <ul>
-<li><code>obj</code>     : the object representing the start of the search (e.g., a rule
-             (e.g. <code>MyAttribute</code> in the example above, or the model)</li>
-<li><code>attr</code>    : a reference to the attribute <code>ref</code></li>
+<li><code>obj</code>     : the object representing the start of the search (e.g., a rule,
+               like<code>MyAttribute</code> in the example above, or the model)</li>
+<li><code>attr</code>    : a reference to the attribute (e.g. <code>ref</code> in the first example above)</li>
 <li><code>obj_ref</code> : a <code>textx.model.ObjCrossRef</code> - the reference to be resolved</li>
 </ul>
 <p>The scope provider return the referenced object (e.g. a <code>MyInterface</code> object in
 the example illustrated in the <code>Motivation and Introduction</code> above (or <code>None</code> if
 nothing is found; or a <code>Postponed</code> object, see below).</p>
 <p>The scope provider is responsible to check the type and throw a
-TextXSemanticError if the type is not ok.</p>
+<code>TextXSemanticError</code> if the type is not OK.</p>
 <p>Scope providers shall be stateless or have unmodifiable state after
 construction: this means they should allow to be reused for different models
 (created using the same meta-model) without interacting with each other. This

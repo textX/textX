@@ -7,18 +7,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <meta name="author" content="Igor Dejanović">
-  <link rel="shortcut icon" href="/img/favicon.ico">
-  <title>textX</title>
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <title>self-dsl - textX</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
-  <link rel="stylesheet" href="/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="/css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" type="text/css" />
   <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
-  <link href="/style.css" rel="stylesheet">
-  <link href="/css/version-select.css" rel="stylesheet">
+  <link href="../../style.css" rel="stylesheet">
+  <link href="../../css/version-select.css" rel="stylesheet">
   
-  <script src="/js/jquery-2.1.1.min.js" defer></script>
-  <script src="/js/modernizr-2.8.3.min.js" defer></script>
+  <script>
+    // Current page data
+    var mkdocs_page_name = "self-dsl";
+    var mkdocs_page_input_path = "tutorials/self-dsl.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../../js/modernizr-2.8.3.min.js" defer></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
   <script>hljs.initHighlightingOnLoad();</script> 
   
@@ -41,9 +48,9 @@
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
       <div class="wy-side-nav-search">
-        <a href="/." class="icon icon-home"> textX</a>
+        <a href="../.." class="icon icon-home"> textX</a>
         <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="//search.html" method="get">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
   </form>
 </div>
@@ -55,7 +62,7 @@
           
             <li class="toctree-l1">
 		
-    <a class="" href="/.">Home</a>
+    <a class="" href="../..">Home</a>
 	    </li>
           
             <li class="toctree-l1">
@@ -64,47 +71,47 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="/grammar/">Grammar</a>
+    <a class="" href="../../grammar/">Grammar</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="/metamodel/">Meta-model</a>
+    <a class="" href="../../metamodel/">Meta-model</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="/model/">Model</a>
+    <a class="" href="../../model/">Model</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="/scoping/">Scoping</a>
+    <a class="" href="../../scoping/">Scoping</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="/multimetamodel/">Multi meta-model</a>
+    <a class="" href="../../multimetamodel/">Multi meta-model</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="/parser_config/">Parser configuration</a>
+    <a class="" href="../../parser_config/">Parser configuration</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="/visualization/">Visualization</a>
+    <a class="" href="../../visualization/">Visualization</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="/error_handling/">Error handling</a>
+    <a class="" href="../../error_handling/">Error handling</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="/debugging/">Debugging</a>
+    <a class="" href="../../debugging/">Debugging</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="/textx_command/">textx command</a>
+    <a class="" href="../../textx_command/">textx command</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="/howto/">Howtos</a>
+    <a class="" href="../../howto/">Howtos</a>
                 </li>
     </ul>
 	    </li>
@@ -115,27 +122,33 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="/tutorials/hello_world/">Hello World</a>
+    <a class="" href="../hello_world/">Hello World</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="/tutorials/robot/">Robot</a>
+    <a class="" href="../robot/">Robot</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="/tutorials/entity/">Entity</a>
+    <a class="" href="../entity/">Entity</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="/tutorials/state_machine/">State Machine</a>
+    <a class="" href="../state_machine/">State Machine</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="/tutorials/toylanguage/">Toy language compiler</a>
+    <a class="" href="../toylanguage/">Toy language compiler</a>
                 </li>
-                <li class="">
+                <li class=" current">
                     
-    <a class="" href="/tutorials/self-dsl/">self-dsl</a>
+    <a class="current" href="./">self-dsl</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l3"><a href="#self-dsl">self-dsl</a></li>
+    
+
+    </ul>
                 </li>
     </ul>
 	    </li>
@@ -146,11 +159,11 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="/about/comparison/">Comparison</a>
+    <a class="" href="../../about/comparison/">Comparison</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="/about/discuss/">Discuss</a>
+    <a class="" href="../../about/discuss/">Discuss</a>
                 </li>
                 <li class="">
                     
@@ -169,7 +182,7 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="/whatsnew/release_1_5/">Release 1.5</a>
+    <a class="" href="../../whatsnew/release_1_5/">Release 1.5</a>
                 </li>
     </ul>
 	    </li>
@@ -184,7 +197,7 @@
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="/.">textX</a>
+        <a href="../..">textX</a>
       </nav>
 
       
@@ -192,10 +205,19 @@
         <div class="rst-content">
           <div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href="/.">Docs</a> &raquo;</li>
+    <li><a href="../..">Docs</a> &raquo;</li>
     
+      
+        
+          <li>Tutorials &raquo;</li>
+        
+      
     
+    <li>self-dsl</li>
     <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/igordejanovic/textX/edit/master/docs/tutorials/self-dsl.md"
+          class="icon icon-github"> Edit on GitHub</a>
       
     </li>
   </ul>
@@ -204,15 +226,26 @@
           <div role="main">
             <div class="section">
               
-
-  <h1 id="404-page-not-found">404</h1>
-
-  <p><strong>Page not found</strong></p>
-
-
+                <h1 id="self-dsl">self-dsl<a class="headerlink" href="#self-dsl" title="Permanent link">&para;</a></h1>
+<p>A tutorial site on creation of Domain-Specific Languages.</p>
+<hr />
+<p>Pierre Bayerl is maintaining an <a href="https://goto40.github.io/self-dsl/">excellent tutorial
+site</a> on writing DSL for both Xtext and
+textX. Check out his <a href="https://goto40.github.io/self-dsl/textx_intro/">tutorial for
+textX</a>.</p>
+              
             </div>
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../../about/comparison/" class="btn btn-neutral float-right" title="Comparison">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../toylanguage/" class="btn btn-neutral" title="Toy language compiler"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>
@@ -240,13 +273,17 @@
           <a href="https://github.com/igordejanovic/textX/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
       
       
+        <span><a href="../toylanguage/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../../about/comparison/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>
-    <script>var base_url = '/';</script>
-    <script src="/js/theme.js" defer></script>
-      <script src="/js/version-select.js" defer></script>
-      <script src="/search/main.js" defer></script>
+    <script>var base_url = '../..';</script>
+    <script src="../../js/theme.js" defer></script>
+      <script src="../../js/version-select.js" defer></script>
+      <script src="../../search/main.js" defer></script>
 
 </body>
 </html>
