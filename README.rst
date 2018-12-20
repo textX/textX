@@ -118,7 +118,12 @@ Support in IDE/editors
 Discussion and help
 ===================
 
-For bug report, general discussion and help please use `GitHub issue tracker <https://github.com/igordejanovic/textX/issues>`_.
+For general questions and help please use `StackOverflow
+<https://stackoverflow.com/questions/tagged/textx/>`_. Just make sure to tag your question with the
+`textx` tag.
+
+For issues, suggestions and feature request please use 
+`GitHub issue tracker <https://github.com/igordejanovic/textX/issues>`_.
 
 
 License

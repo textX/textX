@@ -149,8 +149,13 @@ check out [examples](https://github.com/igordejanovic/textX/tree/master/examples
 
 ## Discussion and help
 
-For general discussion and help please
-use [GitHub issue tracker](https://github.com/igordejanovic/textX/issues).
+For general questions and help please use
+[StackOverflow](https://stackoverflow.com/questions/tagged/textx). Just make
+sure to tag your question with the `textx` tag.
+
+
+For issues, suggestions and feature request please use 
+[GitHub issue tracker](https://github.com/igordejanovic/textX/issues).
 
 
 ## Projects using textX

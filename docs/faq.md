@@ -1,6 +1,8 @@
 # Frequently Asked Questions
-Your question is not there ? Try the [bug tracker](https://github.com/igordejanovic/textX/labels/question),
-or [stackoverflow](https://stackoverflow.com/questions/tagged/textx) !
+
+Your question is not here? Please use
+[stackoverflow](https://stackoverflow.com/questions/tagged/textx). Just make
+sure your question is tagged with `textx`.
 
 
 ## Is TextX suitable to generate Django model code ?
