@@ -140,6 +140,7 @@ See textX `Tutorials` to get you started:
 - [Entity](tutorials/entity.md)
 - [State Machine](tutorials/state_machine.md) - video tutorial
 - [Toy language compiler](tutorials/toylanguage.md)
+- [self-dsl](tutorials/self-dsl.md)
 
 For specific information read various `User Guide` sections.
 
