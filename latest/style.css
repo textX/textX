@@ -1,2 +1,2 @@
 div.col-md-9 img[alt="textX logo"] { background-color: transparent; border: none; }
-li { margin-top: 12px; }
+.rst-content .section ul li p:last-child { margin-bottom: 12px; }
