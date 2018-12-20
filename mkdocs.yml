@@ -28,6 +28,7 @@ nav:
   - Entity: tutorials/entity.md
   - State Machine: tutorials/state_machine.md
   - Toy language compiler: tutorials/toylanguage.md
+  - self-dsl: tutorials/self-dsl.md
 - About:
   - Comparison: about/comparison.md
   - Discuss: about/discuss.md

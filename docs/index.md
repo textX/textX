@@ -25,8 +25,21 @@ modeling language is bellow.
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/CN2IVtInapo" frameborder="0" allowfullscreen></iframe>
 
+
 For a not-so-basic video tutorial check out [State Machine video
 tutorial](tutorials/state_machine.md).
+
+
+For an introduction to DSLs in general here are some references:
+
+- Federico Tomassetti: [The complete guide to (external) Domain Specific
+  Languages](https://tomassetti.me/domain-specific-languages/).
+- Pierre Bayerl: [self-dsl](https://goto40.github.io/self-dsl/).
+
+For an in-depth coverage on the subject we recommend the following books:
+
+- Voelter, Markus, et al. [DSL engineering: Designing, implementing and using domain-specific languages](http://dslbook.org). dslbook.org, 2013.
+- Kelly, Steven, and Juha-Pekka Tolvanen. [Domain-specific modeling: enabling full code generation](http://dsmbook.com/). John Wiley & Sons, 2008.
 
 
 ## Feature highlights
