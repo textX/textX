@@ -238,8 +238,9 @@ currently unmaintained.
 If you are using textX in your research project we would be very grateful if you
 cite our paper:
 
-Dejanović I., Vaderna R., Milosavljević G., Vuković Ž. (2017).
-TextX: A Python tool for Domain-Specific Languages implementation.
+Dejanović I., Vaderna R., Milosavljević G., Vuković Ž. (2017). [TextX: A Python
+tool for Domain-Specific Languages
+implementation](https://www.doi.org/10.1016/j.knosys.2016.10.023).
 Knowledge-Based Systems, 115, 1-4.
 
 ```bibtex
