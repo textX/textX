@@ -8,7 +8,7 @@
   
   <meta name="author" content="Igor Dejanović">
   <link rel="shortcut icon" href="../../img/favicon.ico">
-  <title>Domain-Specific model visualization - textX</title>
+  <title>self-dsl - textX</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../../css/theme.css" type="text/css" />
@@ -19,8 +19,8 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Domain-Specific model visualization";
-    var mkdocs_page_input_path = "ideas/domain_specific_visualization.md";
+    var mkdocs_page_name = "self-dsl";
+    var mkdocs_page_input_path = "tutorials/self-dsl.md";
     var mkdocs_page_url = null;
   </script>
   
@@ -118,27 +118,33 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="../../tutorials/hello_world/">Hello World</a>
+    <a class="" href="../hello_world/">Hello World</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../../tutorials/robot/">Robot</a>
+    <a class="" href="../robot/">Robot</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../../tutorials/entity/">Entity</a>
+    <a class="" href="../entity/">Entity</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../../tutorials/state_machine/">State Machine</a>
+    <a class="" href="../state_machine/">State Machine</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../../tutorials/toylanguage/">Toy language compiler</a>
+    <a class="" href="../toylanguage/">Toy language compiler</a>
                 </li>
-                <li class="">
+                <li class=" current">
                     
-    <a class="" href="../../tutorials/self-dsl/">self-dsl</a>
+    <a class="current" href="./">self-dsl</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l3"><a href="#self-dsl">self-dsl</a></li>
+    
+
+    </ul>
                 </li>
     </ul>
 	    </li>
@@ -198,11 +204,15 @@
     <li><a href="../..">Docs</a> &raquo;</li>
     
       
+        
+          <li>Tutorials &raquo;</li>
+        
+      
     
-    <li>Domain-Specific model visualization</li>
+    <li>self-dsl</li>
     <li class="wy-breadcrumbs-aside">
       
-        <a href="https://github.com/igordejanovic/textX/edit/master/docs/ideas/domain_specific_visualization.md"
+        <a href="https://github.com/igordejanovic/textX/edit/master/docs/tutorials/self-dsl.md"
           class="icon icon-github"> Edit on GitHub</a>
       
     </li>
@@ -212,23 +222,26 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="domain-specific-model-visualization">Domain-Specific model visualization<a class="headerlink" href="#domain-specific-model-visualization" title="Permanent link">&para;</a></h1>
-<p>Currently, both meta-models and models can be visualized but the model
-visualization is not domain-specific. It would be nice to have a way do specify
-what our language looks like (see <a href="https://github.com/igordejanovic/textX/tree/master/examples/StateMachine">StateMachine
-example</a>).
-Some form of DSL for specifying the graphical syntax could help.</p>
-<p>Besides, graphical syntaxes are very good for the structure overview and navigation
-(panning, zooming). This feature would provide fast navigation over the model and
-could be synced with the textual representation in various editors (vim, emacs,
-atom, sublime...) using editor plugins.</p>
-<p>Therefore, editing would be done textually, but code comprehension and
-navigation could be aided by graphical visualization.</p>
-<p><strong> TODO: Ideas for graphical syntax DSL </strong></p>
+                <h1 id="self-dsl">self-dsl<a class="headerlink" href="#self-dsl" title="Permanent link">&para;</a></h1>
+<p>A tutorial site on creation of Domain-Specific Languages.</p>
+<hr />
+<p>Pierre Bayerl is maintaining an <a href="https://goto40.github.io/self-dsl/">excellent tutorial
+site</a> on writing DSL for both Xtext and
+textX. Check out his <a href="https://goto40.github.io/self-dsl/textx_intro/">tutorial for
+textX</a>.</p>
               
             </div>
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../../about/comparison/" class="btn btn-neutral float-right" title="Comparison">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../toylanguage/" class="btn btn-neutral" title="Toy language compiler"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>
@@ -256,6 +269,10 @@ navigation could be aided by graphical visualization.</p>
           <a href="https://github.com/igordejanovic/textX/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
       
       
+        <span><a href="../toylanguage/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../../about/comparison/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>
