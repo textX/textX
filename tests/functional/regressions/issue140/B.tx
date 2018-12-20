@@ -1,0 +1,5 @@
+import A
+Model: x+=X;
+X: 'X' name=ID '{' r+=R '}';
+R: R1|C1;
+R1: 'R1' ref=[E];

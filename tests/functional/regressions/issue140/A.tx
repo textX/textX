@@ -1,0 +1,6 @@
+Model: es+=E;
+E: 'E' name=ID '{' c+=C '}';
+C: C1;
+C1: 'C1' name=ID t=TXT;
+
+TXT: txt=STRING;
