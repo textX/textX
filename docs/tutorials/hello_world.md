@@ -4,9 +4,11 @@ This is an example of very simple Hello World like language.
 
 ---
 
-Note: a `.tx` file is meant for Grammar. See [textX grammar](../grammar.md) on 
-what you can do inside a Grammer file, including [comments](../grammar.md#grammar-comments)!
+!!! note
 
+    A `.tx` file extension is used for textX grammar. See [textX
+    grammar](../grammar.md) on what you can do inside a grammar file, including
+    [comments](../grammar.md#grammar-comments)!
 
 These are the steps to build a very basic Hello World - like language.
 
