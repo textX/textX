@@ -113,7 +113,7 @@ def test_issue103_imported_namedspaces():
         var y = new main.a()
     ''')
 
-    # first test (negativ example)
+    # first test (negative example)
     with raises(TextXSemanticError,
                 match=r'.*Unknown object "error.a".*'):
         mm.model_from_str('''
@@ -127,7 +127,7 @@ def test_issue103_imported_namedspaces():
             var y = new error.a()
         ''')
 
-    # first test (negativ example)
+    # first test (negative example)
     with raises(TextXSemanticError,
                 match=r'.*Unknown object "p1.error".*'):
         mm.model_from_str('''

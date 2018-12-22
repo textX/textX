@@ -132,7 +132,7 @@ class FQN(object):
         """
         self.scope_redirection_logic = scope_redirection_logic
 
-    def __call__(self, obj, attr, obj_ref):
+    def __call__(self, current_obj, attr, obj_ref):
         """
         find a fully qualified name.
         Use this callable as scope_provider in a meta-model:
@@ -140,14 +140,15 @@ class FQN(object):
             {"*.*":textx.scoping.providers.FQN})
 
         Args:
-            obj: object corresponding a instance of an object (rule instance)
+            current_obj: object corresponding a instance of an
+                         object (rule instance)
             attr: the referencing attribute (unused)
             obj_ref: ObjCrossRef to be resolved
 
         Returns: None or the referenced object
         """
 
-        def _find_obj_fqn(p, fqn_name, cls, current_obj):
+        def _find_obj_fqn(p, fqn_name, cls):
             """
             Helper function:
             find a named object based on a qualified name ("."-separated
@@ -204,7 +205,7 @@ class FQN(object):
             else:
                 return None
 
-        def _find_referenced_obj(p, name, cls, current_obj):
+        def _find_referenced_obj(p, name, cls):
             """
             Helper function:
             Search the fully qualified name starting at relative container p.
@@ -218,24 +219,20 @@ class FQN(object):
             Returns:
                 None or the found object
             """
-            ret = _find_obj_fqn(p, name, cls, current_obj)
+            ret = _find_obj_fqn(p, name, cls)
             if ret:
                 return ret
             while hasattr(p, "parent"):
                 p = p.parent
-                ret = _find_obj_fqn(p, name, cls, current_obj)
+                ret = _find_obj_fqn(p, name, cls)
                 if ret:
                     return ret
-            return None
+                # else continue to next parent or return None
 
         from textx.model import ObjCrossRef
         assert type(obj_ref) is ObjCrossRef, type(obj_ref)
         obj_cls, obj_name = obj_ref.cls, obj_ref.obj_name
-        ret = _find_referenced_obj(obj, obj_name, obj_cls, obj)
-        if ret:
-            return ret
-        else:
-            return None
+        return _find_referenced_obj(current_obj, obj_name, obj_cls)
 
 
 class ImportURI(scoping.ModelLoader):
