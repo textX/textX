@@ -1,6 +1,12 @@
 # textX changelog
 
 * Next Release 1.?.?
+
+   - https://github.com/igordejanovic/textX/pull/134
+     - Fixing bug when using a sequence of matches and rule reference in
+       an abstract rule choice alternative.
+     - Explicitly disallowing referencing more than one rule in an abstract
+       rule choice alternative.
    - https://github.com/igordejanovic/textX/pull/114
      - python like imports (named import rules, scope providers affected)
      - OS incompatibility fixes (path separator).

@@ -38,3 +38,15 @@ cannot be used. Instead, meta-model and model are exported to dot if the
 example is run in debug mode. Pass `debug=True` in the call to the `main`
 function at the last line.
 
+`calc.py` example has a few variants, each demostrates a different approach
+for working with the model:
+
+  1. `calc_processors.py` -- instead of the custom classes employs object
+     processors for evaluation
+  2. `calc_monkey.py` -- similar to original `calc.py`, but instead of defining
+     the custom classes, patches the ones created by textx, adding the `value`
+     property which will evaluate the result.
+  3. `calc_isinstance.py` -- uses a single `evaluate` function that traverses
+     the model; the function employs `textx_isinstance()` to tell apart between
+     different object types in the model tree.
+

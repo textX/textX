@@ -25,8 +25,21 @@ modeling language is bellow.
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/CN2IVtInapo" frameborder="0" allowfullscreen></iframe>
 
+
 For a not-so-basic video tutorial check out [State Machine video
 tutorial](tutorials/state_machine.md).
+
+
+For an introduction to DSLs in general here are some references:
+
+- Federico Tomassetti: [The complete guide to (external) Domain Specific
+  Languages](https://tomassetti.me/domain-specific-languages/).
+- Pierre Bayerl: [self-dsl](https://goto40.github.io/self-dsl/).
+
+For an in-depth coverage on the subject we recommend the following books:
+
+- Voelter, Markus, et al. [DSL engineering: Designing, implementing and using domain-specific languages](http://dslbook.org). dslbook.org, 2013.
+- Kelly, Steven, and Juha-Pekka Tolvanen. [Domain-specific modeling: enabling full code generation](http://dsmbook.com/). John Wiley & Sons, 2008.
 
 
 ## Feature highlights
@@ -127,6 +140,7 @@ See textX `Tutorials` to get you started:
 - [Entity](tutorials/entity.md)
 - [State Machine](tutorials/state_machine.md) - video tutorial
 - [Toy language compiler](tutorials/toylanguage.md)
+- [self-dsl](tutorials/self-dsl.md)
 
 For specific information read various `User Guide` sections.
 
@@ -136,8 +150,13 @@ check out [examples](https://github.com/igordejanovic/textX/tree/master/examples
 
 ## Discussion and help
 
-For general discussion and help please
-use [GitHub issue tracker](https://github.com/igordejanovic/textX/issues).
+For general questions and help please use
+[StackOverflow](https://stackoverflow.com/questions/tagged/textx). Just make
+sure to tag your question with the `textx` tag.
+
+
+For issues, suggestions and feature request please use 
+[GitHub issue tracker](https://github.com/igordejanovic/textX/issues).
 
 
 ## Projects using textX
@@ -220,8 +239,9 @@ currently unmaintained.
 If you are using textX in your research project we would be very grateful if you
 cite our paper:
 
-Dejanović I., Vaderna R., Milosavljević G., Vuković Ž. (2017).
-TextX: A Python tool for Domain-Specific Languages implementation.
+Dejanović I., Vaderna R., Milosavljević G., Vuković Ž. (2017). [TextX: A Python
+tool for Domain-Specific Languages
+implementation](https://www.doi.org/10.1016/j.knosys.2016.10.023).
 Knowledge-Based Systems, 115, 1-4.
 
 ```bibtex

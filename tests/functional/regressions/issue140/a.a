@@ -1,0 +1,6 @@
+E name1 {
+    C1 c1 'hello1'
+}
+E name2 {
+    C1 c1 'hello2'
+}

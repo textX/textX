@@ -353,7 +353,11 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                 # If this meta-class is product of abstract rule replace it
                 # with matched concrete meta-class down the inheritance tree.
                 # Abstract meta-class should never be instantiated.
-                return process_node(node[0])
+                if len(node) > 1:
+                    return process_node(next(n for n in node
+                                             if type(n) is not Terminal))
+                else:
+                    return process_node(node[0])
             elif mclass._tx_type == RULE_MATCH:
                 # If this is a product of match rule handle it as a RHS
                 # of assignment and return converted python type.
@@ -564,7 +568,8 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                                 setattr(model_obj, metaattr.name, result)
 
             # call obj_proc of the current meta_class if type == RULE_ABSTRACT
-            if current_metaclass_of_obj is not metaclass_of_grammar_rule:
+            if current_metaclass_of_obj._tx_fqn !=\
+                    metaclass_of_grammar_rule._tx_fqn:
                 assert RULE_ABSTRACT == metaclass_of_grammar_rule._tx_type
                 obj_processor_current = metamodel.obj_processors.get(
                     current_metaclass_of_obj.__name__, None)
