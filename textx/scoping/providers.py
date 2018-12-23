@@ -8,6 +8,7 @@
 from os.path import dirname, abspath, join
 from textx.exceptions import TextXSemanticError
 import textx.scoping as scoping
+from textx.scoping import Postponed
 
 """
 This module defines scope providers to be used in conjunctions with a
@@ -112,18 +113,26 @@ class PlainName(object):
 class FQN(object):
     """
     fully qualified name scope provider
-
-    if the parameter follow_loaded_models=True is used,
-    any _tx_loaded_models attribute is used in name lookup.
-    (this field is set by the importURI feature and can be used
-    here to activate a python like "import ABC as XYZ" behavior).
     """
 
-    def __init__(self, follow_loaded_models=False):
-        self.follow_loaded_models = follow_loaded_models
-        pass
+    def __init__(self, scope_redirection_logic=None):
+        """
+        Args:
+            scope_redirection_logic: this callable gets a
+            named model being processed. **(a)** This callable
+            is required to return a list of elements,
+            in which the FQN provider continues to
+            search for named elements (you may also
+            return an empty list of a list with one
+            element). **(b)** The scope_redirection_logic may
+            also return a Postponed object. **(c)** The
+            scope_redirection_logic is not applied for the
+            object containing the reference to be resolved
+            (in order to prevent getting circular dependencies).
+        """
+        self.scope_redirection_logic = scope_redirection_logic
 
-    def __call__(self, obj, attr, obj_ref):
+    def __call__(self, current_obj, attr, obj_ref):
         """
         find a fully qualified name.
         Use this callable as scope_provider in a meta-model:
@@ -131,7 +140,8 @@ class FQN(object):
             {"*.*":textx.scoping.providers.FQN})
 
         Args:
-            obj: object corresponding a instance of an object (rule instance)
+            current_obj: object corresponding a instance of an
+                         object (rule instance)
             attr: the referencing attribute (unused)
             obj_ref: ObjCrossRef to be resolved
 
@@ -153,6 +163,18 @@ class FQN(object):
             """
 
             def find_obj(parent, name):
+                if parent is not current_obj and \
+                        self.scope_redirection_logic is not None:
+                    from textx.scoping import Postponed
+                    res = self.scope_redirection_logic(parent)
+                    assert res is not None, \
+                        "scope_redirection_logic must not return None"
+                    if type(res) is Postponed:
+                        return res
+                    for m in res:
+                        return_value = find_obj(m, name)
+                        if return_value is not None:
+                            return return_value
                 for attr in [a for a in parent.__dict__ if
                              not a.startswith('__') and not
                              a.startswith('_tx_') and not
@@ -166,17 +188,13 @@ class FQN(object):
                     else:
                         if hasattr(obj, "name") and obj.name == name:
                             return obj
-                if self.follow_loaded_models and hasattr(
-                        parent, "_tx_loaded_models"):
-                    for m in parent._tx_loaded_models:
-                        return_value = find_obj(m, name)
-                        if return_value is not None:
-                            return return_value
                 return None
 
             for n in fqn_name.split('.'):
                 obj = find_obj(p, n)
                 if obj:
+                    if type(obj) is Postponed:
+                        return obj
                     p = obj
                 else:
                     return None
@@ -209,16 +227,12 @@ class FQN(object):
                 ret = _find_obj_fqn(p, name, cls)
                 if ret:
                     return ret
-            return None
+                # else continue to next parent or return None
 
         from textx.model import ObjCrossRef
         assert type(obj_ref) is ObjCrossRef, type(obj_ref)
         obj_cls, obj_name = obj_ref.cls, obj_ref.obj_name
-        ret = _find_referenced_obj(obj, obj_name, obj_cls)
-        if ret:
-            return ret
-        else:
-            return None
+        return _find_referenced_obj(current_obj, obj_name, obj_cls)
 
 
 class ImportURI(scoping.ModelLoader):
@@ -361,6 +375,18 @@ class ImportURI(scoping.ModelLoader):
         return None
 
 
+def follow_loaded_models_scope_redirection_logic(obj, scope_redirection_logic):
+    lst = []
+    if scope_redirection_logic is not None:
+        lst = scope_redirection_logic(obj)
+        assert lst is not None, "scope_redirection_logic must not return None"
+        if type(lst) is Postponed:
+            return lst
+    if hasattr(obj, "_tx_loaded_models"):
+        lst = lst + obj._tx_loaded_models
+    return lst
+
+
 class FQNImportURI(ImportURI):
     """
     scope provider with ImportURI and FQN
@@ -374,8 +400,17 @@ class FQNImportURI(ImportURI):
     """
 
     def __init__(self, glob_args=None, search_path=None, importAs=False,
-                 importURI_converter=None, importURI_to_scope_name=None):
-        ImportURI.__init__(self, FQN(follow_loaded_models=importAs),
+                 importURI_converter=None, importURI_to_scope_name=None,
+                 scope_redirection_logic=None):
+        if importAs:
+            def my_scope_redirection_logic_def(obj):
+                return follow_loaded_models_scope_redirection_logic(
+                    obj, scope_redirection_logic)
+            my_scope_redirection_logic = my_scope_redirection_logic_def
+        else:
+            my_scope_redirection_logic = scope_redirection_logic
+        ImportURI.__init__(self, FQN(
+            scope_redirection_logic=my_scope_redirection_logic),
                            glob_args=glob_args,
                            search_path=search_path, importAs=importAs,
                            importURI_converter=importURI_converter,
@@ -514,7 +549,6 @@ class RelativeName(object):
 
     def __call__(self, obj, attr, obj_ref):
         from textx.scoping.tools import get_referenced_object
-        from textx.scoping import Postponed
         from textx import get_model
         try:
             res = get_referenced_object(
@@ -550,7 +584,6 @@ class ExtRelativeName(object):
     def __call__(self, obj, attr, obj_ref):
         from textx.scoping.tools import get_referenced_object, \
             get_list_of_concatenated_objects
-        from textx.scoping import Postponed
         from textx import get_model
         try:
             # print("DEBUG: ExtRelativeName.__call__(...{})".

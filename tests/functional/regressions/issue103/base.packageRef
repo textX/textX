@@ -1,0 +1,11 @@
+# imported module
+package p1 {
+    package p11 {
+        package p111 {
+            class a {};
+        }
+    }
+}
+package p2 {
+    using p1.p11 as pref1
+}

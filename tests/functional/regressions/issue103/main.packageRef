@@ -1,0 +1,4 @@
+# main module
+import 'base.packageRef'
+using base.p2 as ref1
+var x = new ref1.pref1.p111.a()
