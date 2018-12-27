@@ -181,11 +181,11 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="https://github.com/igordejanovic/textX/blob/master/CONTRIBUTING.md">Contributing</a>
+    <a class="" href="https://github.com/textX/textX/blob/master/CONTRIBUTING.md">Contributing</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="https://github.com/igordejanovic/textX/blob/master/LICENSE.txt">License</a>
+    <a class="" href="https://github.com/textX/textX/blob/master/LICENSE.txt">License</a>
                 </li>
     </ul>
 	    </li>
@@ -230,7 +230,7 @@
     <li>Multi meta-model</li>
     <li class="wy-breadcrumbs-aside">
       
-        <a href="https://github.com/igordejanovic/textX/edit/master/docs/multimetamodel.md"
+        <a href="https://github.com/textX/textX/edit/master/docs/multimetamodel.md"
           class="icon icon-github"> Edit on GitHub</a>
       
     </li>
@@ -260,7 +260,7 @@ meta model. Although the meta classes corresponding to inherited rules are
 redefined by the extending meta model, scope providers match the object 
 types correctly. This is implemented by comparing the types by their name 
 (see textx.scoping.tool.textx_isinstance). Simple examples: see 
-<a href="https://github.com/igordejanovic/textX/tree/master/tests/functional/test_scoping">tests/functional/test_scoping/test_metamodel_provider*.py</a>.</p>
+<a href="https://github.com/textX/textX/tree/master/tests/functional/test_scoping">tests/functional/test_scoping/test_metamodel_provider*.py</a>.</p>
 <p><strong>Referencing elements from another meta model</strong> can be achieved without 
 having the original grammar, nor any other details like scope providers, etc. 
 Such references can, thus, be enabled while having access only to the 
@@ -270,7 +270,7 @@ the grammar). The meta model to be referenced is passed to the referencing
 meta model while constructing it. The referencing grammar can then reference 
 the types (rules) of the referenced meta model. Rule lookup takes care of 
 choosing the correct types. Simple examples: see 
-<a href="https://github.com/igordejanovic/textX/tree/master/tests/functional/test_metamodel/test_multi_metamodel_refs.py">tests/functional/test_metamodel/test_multi_metamodel_refs.py</a>.</p>
+<a href="https://github.com/textX/textX/tree/master/tests/functional/test_metamodel/test_multi_metamodel_refs.py">tests/functional/test_metamodel/test_multi_metamodel_refs.py</a>.</p>
 <p>Thus, when designing a domain model (e.g., from the software test domain) to 
 reference elements of another domain model (e.g., from the 
 interface/communication domain), the second possibility (referencing) 
@@ -303,7 +303,7 @@ mm_B = metamodel_from_str(grammarBWithImport,
 scoping.MetaModelProvider.add_metamodel("*.b", mm_B)
 </code></pre>
 <p>Full example (also with a globally shared repository discussion): see 
-<a href="https://github.com/igordejanovic/textX/tree/master/tests/test_metamodel/test_multi_metamodel_refs.py">tests/test_metamodel/test_multi_metamodel_refs.py</a>.</p>
+<a href="https://github.com/textX/textX/tree/master/tests/test_metamodel/test_multi_metamodel_refs.py">tests/test_metamodel/test_multi_metamodel_refs.py</a>.</p>
 <h2 id="use-case-recipes-and-ingredients-with-global-model-sharing">Use Case: Recipes and Ingredients with global model sharing<a class="headerlink" href="#use-case-recipes-and-ingredients-with-global-model-sharing" title="Permanent link">&para;</a></h2>
 <p>In this use case we define recipes (food preparation) including a list of
 ingredients. The ingredients of a recipe model element are defined by</p>
@@ -321,7 +321,7 @@ sugar</code>). Moreover some ingredients may inherit features of other ingredien
 <p>The <code>MetaModelProvider</code> is utilized to allocate the file extensions to the meta
 models
 (see
-<a href="https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_metamodel_provider2.py">test_metamodel_provider2.py</a>).
+<a href="https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_metamodel_provider2.py">test_metamodel_provider2.py</a>).
 Importantly, a common model repository (<code>global_repo</code>) is defined to share all
 model elements among both meta models:</p>
 <pre><code>i_mm = get_meta_model(
@@ -362,7 +362,7 @@ user pi uses usage.action1
 </code></pre>
 <h2 id="use-case-referencing-non-textx-meta-modelsmodels">Use Case: referencing non-textx meta-models/models<a class="headerlink" href="#use-case-referencing-non-textx-meta-modelsmodels" title="Permanent link">&para;</a></h2>
 <p>You can reference an arbitrary python object using the <code>OBJECT</code> rule (see:
-<a href="https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_reference_to_buildin_attribute.py">test_reference_to_buildin_attribute.py</a>)</p>
+<a href="https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_reference_to_buildin_attribute.py">test_reference_to_buildin_attribute.py</a>)</p>
 <pre><code>Access:
     'access' name=ID pyobj=[OBJECT] ('.' pyattr=[OBJECT])?
 </code></pre>
@@ -388,7 +388,7 @@ This can be used to, e.g., use a non-textx AST object and reference it from a
 textx model.</p>
 <h3 id="referencing-non-textx-meta-modelsmodels-with-a-json-file">Referencing non-textx meta-models/models with a json file<a class="headerlink" href="#referencing-non-textx-meta-modelsmodels-with-a-json-file" title="Permanent link">&para;</a></h3>
 <p>In
-<a href="https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_reference_to_nontextx_attribute.py">test_reference_to_nontextx_attribute.py</a> we
+<a href="https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_reference_to_nontextx_attribute.py">test_reference_to_nontextx_attribute.py</a> we
 also demonstrate how such an external model can be loaded with our own language
 (using a json file as external model).</p>
 <pre><code>import "test_reference_to_nontextx_attribute/othermodel.json" as data
@@ -443,7 +443,7 @@ data structure. </p>
   <div class="rst-versions" role="note" style="cursor: pointer">
     <span class="rst-current-version" data-toggle="rst-current-version">
       
-          <a href="https://github.com/igordejanovic/textX/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
+          <a href="https://github.com/textX/textX/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
       
       
         <span><a href="../scoping/" style="color: #fcfcfc;">&laquo; Previous</a></span>
