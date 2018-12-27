@@ -173,22 +173,11 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../about/contributing/">Contributing</a>
+    <a class="" href="https://github.com/textX/textX/blob/master/CONTRIBUTING.md">Contributing</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../about/license/">License</a>
-                </li>
-    </ul>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <span class="caption-text">What's new</span>
-    <ul class="subnav">
-                <li class="">
-                    
-    <a class="" href="../whatsnew/release_1_5/">Release 1.5</a>
+    <a class="" href="https://github.com/textX/textX/blob/master/LICENSE.txt">License</a>
                 </li>
     </ul>
 	    </li>
@@ -222,7 +211,7 @@
     <li>Scoping</li>
     <li class="wy-breadcrumbs-aside">
       
-        <a href="https://github.com/igordejanovic/textX/edit/master/docs/scoping.md"
+        <a href="https://github.com/textX/textX/edit/master/docs/scoping.md"
           class="icon icon-github"> Edit on GitHub</a>
       
     </li>
@@ -258,7 +247,7 @@ parts of rules:</p>
 <li>or: <code>my_meta_model.register_scope_providers({"*.ref": scoping.providers.FQN()})</code></li>
 <li>or: <code>my_meta_model.register_scope_providers({"MyAttribute.*": scoping.providers.FQN()})</code></li>
 </ul>
-<p>Example (from <a href="https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_local_scope.py">tests/test_scoping/test_local_scope.py</a>):</p>
+<p>Example (from <a href="https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_local_scope.py">tests/test_scoping/test_local_scope.py</a>):</p>
 <pre><code># Grammar snippet (Components.tx)
 Component:
     'component' name=ID ('extends' extends+=[Component|FQN][','])? '{'
@@ -302,7 +291,7 @@ to wildcard selection (e.e, <code>"*.*"</code>).</p>
    textX.</li>
 <li><code>textx.scoping.providers.FQN</code>: This is a <strong>provider similar to Java or Xtext
    name loopup</strong>.
-   Example: see <a href="https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_full_qualified_name.py">tests/test_scoping/test_full_qualified_name.py</a>.</li>
+   Example: see <a href="https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_full_qualified_name.py">tests/test_scoping/test_full_qualified_name.py</a>.</li>
 <li><code>textx.scoping.providers.ImportURI</code>: This a provider which <strong>allows to load
    additional modules</strong> for lookup.
    You need to define a rule with an attribute <code>importURI</code> as string (like in
@@ -312,7 +301,7 @@ to wildcard selection (e.e, <code>"*.*"</code>).</p>
    Model objects formed by the rules with an <code>importURI</code> attribute get an
    additional attribute <code>_tx_loaded_models</code> which is a list of the loaded
    models by this rule instance.
-   Example: see <a href="https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_import_module.py">tests/test_scoping/test_import_module.py</a>.<ul>
+   Example: see <a href="https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_import_module.py">tests/test_scoping/test_import_module.py</a>.<ul>
 <li><code>FQNImportURI</code> (decorated scope provider)</li>
 <li><code>PlainNameImportURI</code> (decorated scope provider)</li>
 </ul>
@@ -325,12 +314,12 @@ to wildcard selection (e.e, <code>"*.*"</code>).</p>
    In this case globbing is not allowed and is disabled (reason: it is
    unclear if the user wants to glob over all search path entries or to stop
    after the first match).
-   Example: see <a href="https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_import_module_search_path_issue66.py">tests/test_scoping/test_import_module_search_path_issue66.py</a>.
+   Example: see <a href="https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_import_module_search_path_issue66.py">tests/test_scoping/test_import_module_search_path_issue66.py</a>.
  * <code>textx.scoping.providers.GlobalRepo</code>: This is a provider where <strong>you initially
    need to specifiy the model files to be loaded and used for lookup</strong>. Like
    for <code>ImportURI</code> you need to provide another scope provider for the concrete
    lookup.
-   Example: see <a href="https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_global_import_modules.py">tests/test_scoping/test_global_import_modules.py</a>.
+   Example: see <a href="https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_global_import_modules.py">tests/test_scoping/test_global_import_modules.py</a>.
     - <code>textx.scoping.providers.FQNGlobalRepo</code> (decorated scope provider)
     - <code>textx.scoping.providers.PlainNameGlobalRepo</code> (decorated scope provider)
  * <code>textx.scoping.providers.RelativeName</code>: This is a scope provider to <strong>resolve
@@ -338,10 +327,10 @@ to wildcard selection (e.e, <code>"*.*"</code>).</p>
    class associated with the model-instance. Typically, another reference (the
    reference to the model-class of a model-instance) is used to determine the
    concrete referenced object (e.g. the model-method, owned by a model-class).
-   Example: see <a href="https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_local_scope.py">tests/test_scoping/test_local_scope.py</a>.
+   Example: see <a href="https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_local_scope.py">tests/test_scoping/test_local_scope.py</a>.
  * <code>textx.scoping.providers.ExtRelativeName</code>: The same as <code>RelativeName</code> <strong>allowing
    to model inheritance or chained lookups</strong>.
-   Example: see <a href="https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_local_scope.py">tests/test_scoping/test_local_scope.py</a>.</p>
+   Example: see <a href="https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_local_scope.py">tests/test_scoping/test_local_scope.py</a>.</p>
 <h3 id="note-on-uniqueness-of-model-elements">Note on Uniqueness of Model Elements<a class="headerlink" href="#note-on-uniqueness-of-model-elements" title="Permanent link">&para;</a></h3>
 <p>Two different models created using one single meta model (not using a scope
 provider like <code>GlobalRepo</code>, but by directly loading the models from file) have
@@ -351,7 +340,7 @@ meta model (<code>global_repository=True</code>). Then, the meta model will stor
 instance of a <code>GlobalModelRepository</code> as a base for all loaded models.</p>
 <p>Model elements in models including other parts of the model (possibly circular)
 have unique model elements (no double instances).</p>
-<p>Examples see <a href="https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_import_module.py">tests/test_scoping/test_import_module.py</a>.</p>
+<p>Examples see <a href="https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_import_module.py">tests/test_scoping/test_import_module.py</a>.</p>
 <h2 id="technical-aspects-and-implementation-details">Technical aspects and implementation details<a class="headerlink" href="#technical-aspects-and-implementation-details" title="Permanent link">&para;</a></h2>
 <p>The scope providers are python callables accepting <code>obj, attr, obj_ref</code>:</p>
 <ul>
@@ -433,7 +422,7 @@ control flow responsibility of the resolution process is allocated to the
   <div class="rst-versions" role="note" style="cursor: pointer">
     <span class="rst-current-version" data-toggle="rst-current-version">
       
-          <a href="https://github.com/igordejanovic/textX/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
+          <a href="https://github.com/textX/textX/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
       
       
         <span><a href="../model/" style="color: #fcfcfc;">&laquo; Previous</a></span>
