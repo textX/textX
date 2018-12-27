@@ -14,7 +14,7 @@ parser and a meta-model (a.k.a. abstract syntax) for the language.
 See the docs for the details.
 
 textX follows the syntax and semantics of Xtext but `differs in some places
-<http://www.igordejanovic.net/textX/latest/about/comparison/>`_ and is
+<http://textx.github.io/textX/latest/about/comparison/>`_ and is
 implemented 100% in Python using `Arpeggio`_ PEG parser - no grammar
 ambiguities, unlimited lookahead, interpreter style of work.
 
@@ -101,7 +101,7 @@ Docs and tutorials
 ==================
 
 The full documentation with tutorials is available at
-http://www.igordejanovic.net/textX/stable/
+http://textx.github.io/textX/stable/
 
 Support in IDE/editors
 ======================
@@ -146,11 +146,11 @@ Tested for 2.7, 3.4+
 
 .. |license| image:: https://img.shields.io/pypi/l/Arpeggio.svg
 
-.. |build-status| image:: https://travis-ci.org/igordejanovic/textX.svg?branch=master
-   :target: https://travis-ci.org/igordejanovic/textX
+.. |build-status| image:: https://travis-ci.org/textX/textX.svg?branch=master
+   :target: https://travis-ci.org/textX/textX
 
 .. |docs| image:: https://img.shields.io/badge/docs-latest-green.svg
-   :target: http://www.igordejanovic.net/textX/latest/
+   :target: http://textx.github.io/textX/latest/
    :alt: Documentation Status
 
 

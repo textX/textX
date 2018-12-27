@@ -30,7 +30,7 @@
    - https://github.com/textX/textX/pull/71
      - Regular expression with group support
      - See [the
-       docs](http://www.igordejanovic.net/textX/development/grammar/#matches)
+       docs](http://textx.github.io/textX/development/grammar/#matches)
        for usage.
    - https://github.com/textX/textX/pull/69
      - Added search path feature (issue #66) - search path support for model 
@@ -64,8 +64,8 @@
   - A major feature of this release is multi-(meta-)model support with
     configurable resolving techniques. Thanks Pierre Bayerl (goto40@GitHub)!
 
-    The docs sections are [here](http://www.igordejanovic.net/textX/scoping/)
-    and [here](http://www.igordejanovic.net/textX/multimetamodel/).
+    The docs sections are [here](http://textx.github.io/textX/scoping/)
+    and [here](http://textx.github.io/textX/multimetamodel/).
 
     Details follow:
     - added new function textx.get_model.children to search arbritrary children
@@ -131,12 +131,12 @@
     Now there are only object processors but they are called for any type of
     rule and the returned value if exists is used instead of the original
     object. See [the
-    docs](http://www.igordejanovic.net/textX/metamodel/#object-processors). In
+    docs](http://textx.github.io/textX/metamodel/#object-processors). In
     order to migrate your match filters just register them as object processors.
     
   - Backward incompatible change: all methods of `textx.model` module get a
     `get_` prefix. See [this commit](https://github.com/textX/textX/commit/90667f29604f2e67c593e5a66de11ea286cf5be0) and [the
-    docs](http://www.igordejanovic.net/textX/1.7/model/#model-api)
+    docs](http://textx.github.io/textX/1.7/model/#model-api)
 
   - Fixing FLOAT regex. Thanks Boris Marin (borismarin@GitHub)!
   - Fixing position info on obj cross ref. Thanks Daniel Elero (danixeee@GitHub)!
@@ -170,15 +170,15 @@
 
 * 2017-05-15 Release 1.5
   - For a more detailed feature highlights overview for this release
-    please see [what's new section in the docs](http://www.igordejanovic.net/textX/whatsnew/release_1_5).
+    please see [what's new section in the docs](http://textx.github.io/textX/whatsnew/release_1_5).
   - fixed issue #27 Operator precendence. Note: backward incompatibility! Be
     sure to read
-    [what's new section in the docs](http://www.igordejanovic.net/textX/whatsnew/release_1_5) before upgrade.
+    [what's new section in the docs](http://textx.github.io/textX/whatsnew/release_1_5) before upgrade.
   - Issue #30 - match filters.
-    See [the docs](http://www.igordejanovic.net/textX/metamodel/#match-filters).
-  - Added support for unordered groups. See [the docs](http://www.igordejanovic.net/textX/grammar/#repetitions).
+    See [the docs](http://textx.github.io/textX/metamodel/#match-filters).
+  - Added support for unordered groups. See [the docs](http://textx.github.io/textX/grammar/#repetitions).
   - Added `_tx_metamodel` attribute on the model object for easy access to the
-    language metamodel. See [the docs](http://www.igordejanovic.net/textX/model/#special-model-objects-attributes).
+    language metamodel. See [the docs](http://textx.github.io/textX/model/#special-model-objects-attributes).
   - Fixed issue #33. Much more robust support for multiple assignments to the
     same attribute.
   - Fixes in namespace support. Import now works even for grammar defined as
@@ -186,8 +186,8 @@
   - Added special attribute `_tx_position_end` on model objects with the
     information where the object ends in the input stream.
   - Added various handy functions for querying a model. See [the docs on model
-    API](http://www.igordejanovic.net/textX/model/#model-api).
-  - New examples and additions to the docs. Added [comparison to Xtext](http://www.igordejanovic.net/textX/about/comparison) for
+    API](http://textx.github.io/textX/model/#model-api).
+  - New examples and additions to the docs. Added [comparison to Xtext](http://textx.github.io/textX/about/comparison) for
     users with previous Xtext exposure. Added references to [ppci tutorial by
     Windel Bouwman](https://ppci.readthedocs.io/en/latest/howto/toy.html).
   - textX now have an [Emacs mode](https://github.com/novakboskov/textx-mode)!

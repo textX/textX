@@ -33,9 +33,9 @@ There is no direct support for whitespace sensitive languages at the moment. An 
 
 
 ## How to use line terminator as EOL token (like Python) ?
-You can disable whitespace skipping using `ws` [parser parameter](http://www.igordejanovic.net/textX/parser_config/#whitespace-handling) to redefine whitespaces or disable whitespace entirely using `skipws` param.
+You can disable whitespace skipping using `ws` [parser parameter](http://textx.github.io/textX/parser_config/#whitespace-handling) to redefine whitespaces or disable whitespace entirely using `skipws` param.
 
-You can also do that [per rule](http://www.igordejanovic.net/textX/grammar/#rule-modifiers). This way you can catch whitespaces in your grammar. For your particular case, when you should match inside single line only, there is even simpler solution by using [`eolterm` repetition modifier](http://www.igordejanovic.net/textX/grammar/#repetition-modifiers).
+You can also do that [per rule](http://textx.github.io/textX/grammar/#rule-modifiers). This way you can catch whitespaces in your grammar. For your particular case, when you should match inside single line only, there is even simpler solution by using [`eolterm` repetition modifier](http://textx.github.io/textX/grammar/#repetition-modifiers).
 
 See for example implementation of [pyFlies conditions](https://github.com/igordejanovic/pyFlies/blob/master/examples/Simon/Simon.pf). In this DSL each state is a separate line.
 

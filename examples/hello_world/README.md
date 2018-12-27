@@ -1,7 +1,7 @@
 This is a very simple example textX language.
 
 For a full explanation see
-[tutorial](http://igordejanovic.net/textX/tutorials/hello_world/).
+[tutorial](http://textx.github.io/textX/tutorials/hello_world/).
 
 To run the example do the following:
 

@@ -46,7 +46,7 @@ You can see that integers initialize to 0, floats to 0.0 and other strings to th
 <!-- I would argue that they should be consistent and all initialize to None unless they parsed. Otherwise there is no reliable way to know which rule fired. -->
 <!-- What if the user entered 0.0 or the empty string? -->
 
-As documented [here](http://www.igordejanovic.net/textX/stable/metamodel/#auto-initialization-of-the-attributes), this behavior can be changed with `auto_init_attributes` param of meta-model instanciation.
+As documented [here](http://textx.github.io/textX/stable/metamodel/#auto-initialization-of-the-attributes), this behavior can be changed with `auto_init_attributes` param of meta-model instanciation.
 
 !!! note
     Taken from [#135](https://github.com/textX/textX/issues/135).

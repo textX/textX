@@ -29,7 +29,7 @@ An example input is:
     a and b or not false
 
 Evaluation is done using [custom
-classes](http://igordejanovic.net/textX/metamodel/#custom-classes). Provided
+classes](http://textx.github.io/textX/metamodel/#custom-classes). Provided
 classes have `value` property which will evaluate the result using appropriate
 operations and values of referenced subexpressions.
 
