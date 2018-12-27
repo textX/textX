@@ -400,7 +400,7 @@ class TextXMetaModel(DebugPrinter):
                     setattr(obj, attr_name,
                             python_type(attr.cls.__name__)())
                 else:
-                    # See https://github.com/igordejanovic/textX/issues/11
+                    # See https://github.com/textX/textX/issues/11
                     if attr.bool_assignment:
                         # Only ?= assignments shall have default
                         # value of False.

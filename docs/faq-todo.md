@@ -1,5 +1,5 @@
 # Frequently Asked Questions (to answer ASAP)
-Follows some copy-paste of [questions found in the bug tracker](https://github.com/igordejanovic/textX/labels/question),
+Follows some copy-paste of [questions found in the bug tracker](https://github.com/textX/textX/labels/question),
 that should be at some point be integrated into the [FAQ page](faq.md), Q&A style.
 
 
@@ -49,18 +49,18 @@ You can see that integers initialize to 0, floats to 0.0 and other strings to th
 As documented [here](http://www.igordejanovic.net/textX/stable/metamodel/#auto-initialization-of-the-attributes), this behavior can be changed with `auto_init_attributes` param of meta-model instanciation.
 
 !!! note
-    Taken from [#135](https://github.com/igordejanovic/textX/issues/135).
+    Taken from [#135](https://github.com/textX/textX/issues/135).
 
 
 ## How to divide the model in two files ?
 !!! note
-    Inspired from [#65](https://github.com/igordejanovic/textX/issues/65).
+    Inspired from [#65](https://github.com/textX/textX/issues/65).
 
 
 ## How to reference non-TextX objects in the grammar ?
 By providing the metamodel instanciation a function that returns the objects to map, using `metamodel.register_scope_providers()` method.
 
-See [this example](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_reference_to_nontextx_attribute.py).
+See [this example](https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_reference_to_nontextx_attribute.py).
 
 !!! note
-    Taken from [#51](https://github.com/igordejanovic/textX/issues/51).
+    Taken from [#51](https://github.com/textX/textX/issues/51).

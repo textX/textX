@@ -22,7 +22,7 @@ meta model. Although the meta classes corresponding to inherited rules are
 redefined by the extending meta model, scope providers match the object 
 types correctly. This is implemented by comparing the types by their name 
 (see textx.scoping.tool.textx_isinstance). Simple examples: see 
-[tests/functional/test_scoping/test_metamodel_provider*.py](https://github.com/igordejanovic/textX/tree/master/tests/functional/test_scoping).
+[tests/functional/test_scoping/test_metamodel_provider*.py](https://github.com/textX/textX/tree/master/tests/functional/test_scoping).
 
 
 **Referencing elements from another meta model** can be achieved without 
@@ -34,7 +34,7 @@ the grammar). The meta model to be referenced is passed to the referencing
 meta model while constructing it. The referencing grammar can then reference 
 the types (rules) of the referenced meta model. Rule lookup takes care of 
 choosing the correct types. Simple examples: see 
-[tests/functional/test_metamodel/test_multi_metamodel_refs.py](https://github.com/igordejanovic/textX/tree/master/tests/functional/test_metamodel/test_multi_metamodel_refs.py).
+[tests/functional/test_metamodel/test_multi_metamodel_refs.py](https://github.com/textX/textX/tree/master/tests/functional/test_metamodel/test_multi_metamodel_refs.py).
 
 
 Thus, when designing a domain model (e.g., from the software test domain) to 
@@ -78,7 +78,7 @@ and we map file endings to the meta models:
     scoping.MetaModelProvider.add_metamodel("*.b", mm_B)
 
 Full example (also with a globally shared repository discussion): see 
-[tests/test_metamodel/test_multi_metamodel_refs.py](https://github.com/igordejanovic/textX/tree/master/tests/test_metamodel/test_multi_metamodel_refs.py).
+[tests/test_metamodel/test_multi_metamodel_refs.py](https://github.com/textX/textX/tree/master/tests/test_metamodel/test_multi_metamodel_refs.py).
 
 
 ## Use Case: Recipes and Ingredients with global model sharing
@@ -101,7 +101,7 @@ Here, two meta models are defined to handle ingredient definitions (e.g.
 The `MetaModelProvider` is utilized to allocate the file extensions to the meta
 models
 (see
-[test_metamodel_provider2.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_metamodel_provider2.py)).
+[test_metamodel_provider2.py](https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_metamodel_provider2.py)).
 Importantly, a common model repository (`global_repo`) is defined to share all
 model elements among both meta models:
 
@@ -153,7 +153,7 @@ With this construct we can define a user model referencing a component model:
 ## Use Case: referencing non-textx meta-models/models
 
 You can reference an arbitrary python object using the `OBJECT` rule (see:
-[test_reference_to_buildin_attribute.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_reference_to_buildin_attribute.py))
+[test_reference_to_buildin_attribute.py](https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_reference_to_buildin_attribute.py))
 
     Access:
         'access' name=ID pyobj=[OBJECT] ('.' pyattr=[OBJECT])?
@@ -190,7 +190,7 @@ textx model.
 ### Referencing non-textx meta-models/models with a json file
 
 In
-[test_reference_to_nontextx_attribute.py](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_scoping/test_reference_to_nontextx_attribute.py) we
+[test_reference_to_nontextx_attribute.py](https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_reference_to_nontextx_attribute.py) we
 also demonstrate how such an external model can be loaded with our own language
 (using a json file as external model).
 

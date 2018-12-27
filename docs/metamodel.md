@@ -193,7 +193,7 @@ original object. This can be used to implement e.g. expression evaluators or
 on-the-fly model interpretation. For more information
 
 !!! note
-    For more information please take a look at [the tests](https://github.com/igordejanovic/textX/blob/master/tests/functional/test_processors.py).
+    For more information please take a look at [the tests](https://github.com/textX/textX/blob/master/tests/functional/test_processors.py).
 
 
 ## Built-in objects
@@ -225,7 +225,7 @@ these two entities as the `Attribute` types.
 Now an `integer` and `string` `Attribute` types can be used.
 See [model](model.md)
 and
-[Entitiy](https://github.com/igordejanovic/textX/tree/master/examples/Entity)
+[Entitiy](https://github.com/textX/textX/tree/master/examples/Entity)
 example for more.
 
 

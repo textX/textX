@@ -5,14 +5,14 @@
 Currently, textX has [import
 statement](http://igordejanovic.net/textX/grammar/#grammar-modularization)
 which enables one grammar to import rules form the other one. But for some more
-complex use-cases (see [issue 26](https://github.com/igordejanovic/textX/issues/26))
+complex use-cases (see [issue 26](https://github.com/textX/textX/issues/26))
 this is not enough.
 
 
 ## Modularization at the grammar/meta-model level
 
 
-Motivation example (see [issue 26](https://github.com/igordejanovic/textX/issues/26)).
+Motivation example (see [issue 26](https://github.com/textX/textX/issues/26)).
 
 
     type_meta_def = '''

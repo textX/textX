@@ -3,7 +3,7 @@
 Currently, both meta-models and models can be visualized but the model
 visualization is not domain-specific. It would be nice to have a way do specify
 what our language looks like (see [StateMachine
-example](https://github.com/igordejanovic/textX/tree/master/examples/StateMachine)).
+example](https://github.com/textX/textX/tree/master/examples/StateMachine)).
 Some form of DSL for specifying the graphical syntax could help.
 
 Besides, graphical syntaxes are very good for the structure overview and navigation

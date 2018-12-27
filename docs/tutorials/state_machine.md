@@ -1,6 +1,6 @@
 # State machine language
 
-This is a video tutorial that explains the implementation of [the StateMachine example](https://github.com/igordejanovic/textX/tree/master/examples/StateMachine).
+This is a video tutorial that explains the implementation of [the StateMachine example](https://github.com/textX/textX/tree/master/examples/StateMachine).
 
 ---
 

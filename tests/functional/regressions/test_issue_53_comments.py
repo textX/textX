@@ -4,7 +4,7 @@ from textx import metamodel_from_str
 
 def test_comments_skipws_optimization():
     '''
-    See https://github.com/igordejanovic/textX/issues/53
+    See https://github.com/textX/textX/issues/53
     '''
 
     grammar = r'''

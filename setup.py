@@ -43,8 +43,8 @@ setup(
     author='Igor R. Dejanovic',
     author_email='igor.dejanovic@gmail.com',
     license='MIT',
-    url='https://github.com/igordejanovic/textX',
-    download_url='https://github.com/igordejanovic/textX/archive/v%s.tar.gz'
+    url='https://github.com/textX/textX',
+    download_url='https://github.com/textX/textX/archive/v%s.tar.gz'
         % VERSION,
     packages=["textx", "textx.commands", "textx.scoping"],
     install_requires=["Arpeggio>=1.9.0"],

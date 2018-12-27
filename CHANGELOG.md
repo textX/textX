@@ -2,50 +2,50 @@
 
 * Next Release 1.?.?
 
-   - https://github.com/igordejanovic/textX/pull/134
+   - https://github.com/textX/textX/pull/134
      - Fixing bug when using a sequence of matches and rule reference in
        an abstract rule choice alternative.
      - Explicitly disallowing referencing more than one rule in an abstract
        rule choice alternative.
-   - https://github.com/igordejanovic/textX/pull/114
+   - https://github.com/textX/textX/pull/114
      - python like imports (named import rules, scope providers affected)
      - OS incompatibility fixes (path separator).
-   - https://github.com/igordejanovic/textX/pull/98
+   - https://github.com/textX/textX/pull/98
      - Added STRICTFLOAT as buildin type to allow to distinguish ints from
        floats in NUMBERs. Fixed docu link.
-   - https://github.com/igordejanovic/textX/pull/93
+   - https://github.com/textX/textX/pull/93
      - Changed attribute name for the metamodel object (from 
        "metamodel._parser" to "metamodel._parser_blueprint").
-   - https://github.com/igordejanovic/textX/pull/120
+   - https://github.com/textX/textX/pull/120
      Unicode requirement for (meta)-model strings API parameters made strict.
      This should prevent common errors with Python 2.x
      See:
-     https://github.com/igordejanovic/textX/issues/105
-     https://github.com/igordejanovic/textX/pull/99
-     https://github.com/igordejanovic/textX/issues/117
+     https://github.com/textX/textX/issues/105
+     https://github.com/textX/textX/pull/99
+     https://github.com/textX/textX/issues/117
 
 
 * 2018-10-06 Release 1.8.0
 
-   - https://github.com/igordejanovic/textX/pull/71
+   - https://github.com/textX/textX/pull/71
      - Regular expression with group support
      - See [the
        docs](http://www.igordejanovic.net/textX/development/grammar/#matches)
        for usage.
-   - https://github.com/igordejanovic/textX/pull/69
+   - https://github.com/textX/textX/pull/69
      - Added search path feature (issue #66) - search path support for model 
        files (importURI scope providers; see docs/scoping.md).
-   - https://github.com/igordejanovic/textX/pull/77
+   - https://github.com/textX/textX/pull/77
      - New multi meta model support for references-only for better meta model
        modularity (referencing models without having access to the grammar, 
        see docs/multimetamodel.md).
-   - https://github.com/igordejanovic/textX/pull/79
+   - https://github.com/textX/textX/pull/79
      - Fixing obj_processors calling.
-   - https://github.com/igordejanovic/textX/pull/84
+   - https://github.com/textX/textX/pull/84
      - New contribution guide.
-   - https://github.com/igordejanovic/textX/pull/81
+   - https://github.com/textX/textX/pull/81
      - Bugfix: lost encoding for multi meta-model.
-   - https://github.com/igordejanovic/textX/pull/68
+   - https://github.com/textX/textX/pull/68
      - changed parser access in metamodel (private attribute "_parser")
    - mkdocs documentation now uses [mike](https://github.com/jimporter/mike) for
      multiversion support.
@@ -53,9 +53,9 @@
 * 2018-07-02 Release 1.7.1
 
    - Fixed bug with obj. processor call.
-     https://github.com/igordejanovic/textX/issues/72
+     https://github.com/textX/textX/issues/72
    - Fixed bug with `pos_to_linecol` in the context of multi-file models.
-     https://github.com/igordejanovic/textX/issues/67
+     https://github.com/textX/textX/issues/67
    - More tests.
    - Thanks goto40@GitHub for the above fixes/tests.
 
@@ -135,7 +135,7 @@
     order to migrate your match filters just register them as object processors.
     
   - Backward incompatible change: all methods of `textx.model` module get a
-    `get_` prefix. See [this commit](https://github.com/igordejanovic/textX/commit/90667f29604f2e67c593e5a66de11ea286cf5be0) and [the
+    `get_` prefix. See [this commit](https://github.com/textX/textX/commit/90667f29604f2e67c593e5a66de11ea286cf5be0) and [the
     docs](http://www.igordejanovic.net/textX/1.7/model/#model-api)
 
   - Fixing FLOAT regex. Thanks Boris Marin (borismarin@GitHub)!

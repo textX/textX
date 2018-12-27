@@ -496,7 +496,7 @@ assignments. There are two types of rule references:
 
     Attributes with `name` names are used for reference auto-resolving. A dict
     lookup is used, thus they must be of a hashable type. See 
-    [issue #40](https://github.com/igordejanovic/textX/issues/40).
+    [issue #40](https://github.com/textX/textX/issues/40).
 
 
 ### Syntactic predicates

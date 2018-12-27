@@ -1,7 +1,7 @@
 """This regression tests abstract rule which have an alternative with string
 matches and a rule reference.
 
-See https://github.com/igordejanovic/textX/pull/128
+See https://github.com/textX/textX/pull/128
 
 """
 from __future__ import unicode_literals

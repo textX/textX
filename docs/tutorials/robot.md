@@ -388,7 +388,7 @@ And now our robot behaves as expected!
 
 !!! note
     The code from this tutorial can be found in the
-    [examples/robot](https://github.com/igordejanovic/textX/tree/master/examples/robot)
+    [examples/robot](https://github.com/textX/textX/tree/master/examples/robot)
     folder.
 
     Next, you can read [the Entity tutorial](entity.md) where you can see how to

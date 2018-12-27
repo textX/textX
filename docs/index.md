@@ -145,7 +145,7 @@ See textX `Tutorials` to get you started:
 For specific information read various `User Guide` sections.
 
 Also, you can
-check out [examples](https://github.com/igordejanovic/textX/tree/master/examples/).
+check out [examples](https://github.com/textX/textX/tree/master/examples/).
 
 
 ## Discussion and help
@@ -156,7 +156,7 @@ sure to tag your question with the `textx` tag.
 
 
 For issues, suggestions and feature request please use 
-[GitHub issue tracker](https://github.com/igordejanovic/textX/issues).
+[GitHub issue tracker](https://github.com/textX/textX/issues).
 
 
 ## Projects using textX

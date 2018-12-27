@@ -4,7 +4,7 @@ Contributions are welcome, and they are greatly appreciated!. You can contribute
 code, documentation, tests, bug reports. Every little bit helps, and credit will
 always be given. If you plan to make a contribution it would be great if you
 first announce that on [the issue
-tracker](https://github.com/igordejanovic/textX/issues).
+tracker](https://github.com/textX/textX/issues).
 
 You can contribute in many ways:
 
@@ -14,7 +14,7 @@ You can contribute in many ways:
 
 ### Report Bugs
 
-Report bugs at https://github.com/igordejanovic/textX/issues.
+Report bugs at https://github.com/textX/textX/issues.
 
 If you are reporting a bug, please include:
 
@@ -44,7 +44,7 @@ articles, and such.
 
 ### Submit Feedback
 
-The best way to send feedback is to file an issue at https://github.com/igordejanovic/textX/issues.
+The best way to send feedback is to file an issue at https://github.com/textX/textX/issues.
 
 If you are proposing a feature:
 
@@ -126,7 +126,7 @@ Before you submit a pull request, check that it meets these guidelines:
 1. The pull request should include tests.
 2. If the pull request adds/changes functionality, the docs should be updated. 
 3. The pull request should work for Python 2.7, 3.4-3.7. Check
-   https://travis-ci.org/igordejanovic/textX/pull_requests and make sure that
+   https://travis-ci.org/textX/textX/pull_requests and make sure that
    the tests pass for all supported Python versions.
 
 

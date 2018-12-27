@@ -385,5 +385,5 @@ And the generated code will look like this:
 
 !!! note
     The code from this tutorial can be found in the
-    [examples/Entity](https://github.com/igordejanovic/textX/tree/master/examples/Entity)
+    [examples/Entity](https://github.com/textX/textX/tree/master/examples/Entity)
     folder.

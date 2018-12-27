@@ -13,5 +13,5 @@ textX - Meta-language for building Domain-Specific Languages (DSLs) in Python
 # Contributors
 
 For the full information about contributions see
-[here](https://github.com/igordejanovic/textX/graphs/contributors)
+[here](https://github.com/textX/textX/graphs/contributors)
 

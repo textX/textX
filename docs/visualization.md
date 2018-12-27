@@ -20,7 +20,7 @@ For more info see [this SO thread](http://stackoverflow.com/questions/1494492/gr
 ## Meta-model visualization
 
 To visualize a meta-model (see [Entity
-example](https://github.com/igordejanovic/textX/tree/master/examples/Entity))
+example](https://github.com/textX/textX/tree/master/examples/Entity))
 do:
 
 ```python
@@ -39,13 +39,13 @@ dot viewers or convert it to various image formats using the 'dot' tool.
 
 The following image is generated:
 
-![Entity meta-model](https://raw.githubusercontent.com/igordejanovic/textX/master/examples/Entity/dotexport/entity_meta.dot.png)
+![Entity meta-model](https://raw.githubusercontent.com/textX/textX/master/examples/Entity/dotexport/entity_meta.dot.png)
 
 
 ## Model visualization
 
 Similarly to meta-model visualization, you can also visualize your models (see [Entity
-example](https://github.com/igordejanovic/textX/tree/master/examples/Entity)).
+example](https://github.com/textX/textX/tree/master/examples/Entity)).
 
 ```python
 from textx.export import model_export
@@ -62,7 +62,7 @@ Convert this `dot` file to `png` with:
 
 The following image is generated:
 
-![Person model](https://raw.githubusercontent.com/igordejanovic/textX/master/examples/Entity/dotexport/person.dot.png)
+![Person model](https://raw.githubusercontent.com/textX/textX/master/examples/Entity/dotexport/person.dot.png)
 
 
 
