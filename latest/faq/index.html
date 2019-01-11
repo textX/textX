@@ -242,8 +242,8 @@ sure your question is tagged with <code>textx</code>.</p>
 <p>Taken from <a href="https://github.com/textX/textX/issues/44">#44</a>.</p>
 </div>
 <h2 id="how-to-use-line-terminator-as-eol-token-like-python">How to use line terminator as EOL token (like Python) ?<a class="headerlink" href="#how-to-use-line-terminator-as-eol-token-like-python" title="Permanent link">&para;</a></h2>
-<p>You can disable whitespace skipping using <code>ws</code> <a href="http://www.igordejanovic.net/textX/parser_config/#whitespace-handling">parser parameter</a> to redefine whitespaces or disable whitespace entirely using <code>skipws</code> param.</p>
-<p>You can also do that <a href="http://www.igordejanovic.net/textX/grammar/#rule-modifiers">per rule</a>. This way you can catch whitespaces in your grammar. For your particular case, when you should match inside single line only, there is even simpler solution by using <a href="http://www.igordejanovic.net/textX/grammar/#repetition-modifiers"><code>eolterm</code> repetition modifier</a>.</p>
+<p>You can disable whitespace skipping using <code>ws</code> <a href="http://textx.github.io/textX/parser_config/#whitespace-handling">parser parameter</a> to redefine whitespaces or disable whitespace entirely using <code>skipws</code> param.</p>
+<p>You can also do that <a href="http://textx.github.io/textX/grammar/#rule-modifiers">per rule</a>. This way you can catch whitespaces in your grammar. For your particular case, when you should match inside single line only, there is even simpler solution by using <a href="http://textx.github.io/textX/grammar/#repetition-modifiers"><code>eolterm</code> repetition modifier</a>.</p>
 <p>See for example implementation of <a href="https://github.com/igordejanovic/pyFlies/blob/master/examples/Simon/Simon.pf">pyFlies conditions</a>. In this DSL each state is a separate line.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
