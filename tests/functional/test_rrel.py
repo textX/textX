@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 import pytest
 from arpeggio import ParserPython, NoMatch, EOF
 from textx.rrel import rrel_expression
