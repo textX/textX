@@ -41,6 +41,25 @@ textX could always use more documentation, whether as part of the
 official textX docs, in docstrings, or even on the web in blog posts,
 articles, and such.
 
+#### How to Test the Documentation Locally
+
+textX is currently using `mkdocs`, a documentation generator, to generate the docs into html files. 
+
+To test the docs locally, you need to follow the first 3 instructions at the [Get Started!](#get-started) section
+
+1. Fork the repo (one-time effort)
+2. Clone your fork locally (one-time effort)
+3. Create a virtualenv for the fork and install the relevant libraries (one-time effort)
+
+Once you complete the above 3 instructions, you can now:
+
+4. Activate the virtualenv
+5. Run `mkdocs serve` at the root folder
+
+`mkdocs` will run a webserver that serves the documentation at 127.0.0.1:8000
+
+To make changes to the configurations, you can look at `mkdocs.yml`. For more information on how to use mkdocs, visit this [site](https://www.mkdocs.org).
+
 
 ### Submit Feedback
 
