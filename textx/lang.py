@@ -21,6 +21,7 @@ from arpeggio import RegExMatch as _
 from .exceptions import TextXError, TextXSyntaxError, TextXSemanticError
 from .const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, \
     MULT_OPTIONAL, RULE_COMMON, RULE_MATCH, RULE_ABSTRACT, mult_lt
+from .rrel import rrel_expression, RRELSublanguageVisitor
 
 import sys
 if sys.version < '3':
@@ -64,7 +65,9 @@ def assignment_rhs():       return [simple_match, reference], Optional(repeat_mo
 # References
 def reference():            return [rule_ref, obj_ref]
 def rule_ref():             return ident
-def obj_ref():              return '[', class_name, Optional('|', obj_ref_rule), ']'
+def obj_ref():              return ('[', class_name,
+                                    Optional('|', Optional(obj_ref_rule),
+                                             Optional('|', rrel_expression)), ']')
 
 def rule_name():            return ident
 def obj_ref_rule():         return ident
@@ -170,7 +173,7 @@ class ClassCrossRef(object):
         self.position = position
 
 
-class TextXVisitor(PTNodeVisitor):
+class TextXVisitor(RRELSublanguageVisitor, PTNodeVisitor):
 
     def __init__(self, grammar_parser, metamodel):
         self.grammar_parser = grammar_parser
