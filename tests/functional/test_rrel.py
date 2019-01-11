@@ -73,4 +73,4 @@ def test_rrel_simple_path():
     A: 'a' name=ID;
     '''
 
-    mm = metamodel_from_str(grammar)
+    metamodel_from_str(grammar)
