@@ -31,7 +31,6 @@ nav:
   - self-dsl: tutorials/self-dsl.md
 - About:
   - Comparison: about/comparison.md
-  - Discuss: about/discuss.md
   - Contributing: https://github.com/textX/textX/blob/master/CONTRIBUTING.md
   - License: https://github.com/textX/textX/blob/master/LICENSE.txt
 - What's new:
