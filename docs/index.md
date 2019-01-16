@@ -2,7 +2,7 @@
 
 ---
 
-[textX](https://github.com/igordejanovic/textX) is a meta-language (i.e. a
+[textX](https://github.com/textX/textX) is a meta-language (i.e. a
 language for language definition) for domain-specific language (DSL)
 specification in Python.
 
@@ -224,13 +224,13 @@ Stay tuned ;)
 ### Other editors
 
 If you are a vim editor user check
-out [support for vim](https://github.com/igordejanovic/textx.vim/).
+out [support for vim](https://github.com/textX/textx.vim/).
 
 For emacs there is [textx-mode](https://github.com/novakboskov/textx-mode) which
 is also available in [MELPA](https://melpa.org/#/textx-mode).
 
 You can also check
-out [textX-ninja project](https://github.com/igordejanovic/textX-ninja). It is
+out [textX-ninja project](https://github.com/textX/textX-ninja). It is
 currently unmaintained.
 
 

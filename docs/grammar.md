@@ -191,7 +191,7 @@ match the expressions in that order.
     the same input string.
 
 Underlying parsing technology of textX
-is [Arpeggio](https://github.com/igordejanovic/Arpeggio) which is a parser based
+is [Arpeggio](https://github.com/textX/Arpeggio) which is a parser based
 on PEG grammars and thus the `|` operator directly translates to Arpeggio's PEG
 ordered choice. Using ordered choice yields unambiguous parsing. If the text
 parses there is only one possible parse tree.

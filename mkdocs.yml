@@ -41,7 +41,7 @@ markdown_extensions:
 - toc:
     permalink: true
 
-copyright: Copyright &copy; <a href="http://igordejanovic.net/">Igor Dejanović</a>.
+copyright: Copyright &copy; <a href="http://www.igordejanovic.net/">Igor Dejanović</a>.
 
 extra_javascript:
 - js/version-select.js

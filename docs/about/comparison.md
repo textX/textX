@@ -56,7 +56,7 @@ environment. It can also be used for non-Python development using code
 generation from textX models (see [Entity tutorial](../tutorials/entity)).
 Tooling infrastructure, editor support etc. will be developed as independent
 projects (see for example
-[textx-tools](https://github.com/igordejanovic/textx-tools)).
+[textx-tools](https://github.com/textX/textx-tools)).
 
 
 # Difference to Xtext grammar language
@@ -388,7 +388,7 @@ Xtext use two additional DSLs:
 
 The only additional DSL used in textX is genconf which is a DSL for generator
 configuration and has been developed as a part of
-[textx-tools project](https://github.com/igordejanovic/textx-tools).
+[textx-tools project](https://github.com/textX/textx-tools).
 
 ## Template engines
 
@@ -407,10 +407,10 @@ language-specific tool-chain from the grammar description and additional
 specifications.
 
 textX does not provide IDE integrations. There
-is [textx-tools](https://github.com/igordejanovic/textx-tools) project which
+is [textx-tools](https://github.com/textX/textx-tools) project which
 provide pluggable platform for developing textX languages and generators with
 project scaffolding. Integration for popular code editors is planned. There is
-some basic [support for vim](https://github.com/igordejanovic/textx.vim)
+some basic [support for vim](https://github.com/textX/textx.vim)
 and [emacs](https://github.com/novakboskov/textx-mode) at the moment. There is a
 support for visualization of grammars (meta-models) and models but the model
 visualization is generic, i.e. it will show you the object graph of your model
