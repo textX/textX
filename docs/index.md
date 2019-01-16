@@ -1,4 +1,4 @@
-![textX logo](images/textX-logo.svg)
+![textX logo](images/textX-logo.png)
 
 ---
 
