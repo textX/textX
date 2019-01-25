@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 import sys
 import click
+import pkg_resources
 from textx import metamodel_from_file, TextXError
 from textx.export import metamodel_export, model_export
 
@@ -84,5 +85,23 @@ def check_model(metamodel_file, model_file=None, debug=False,
     return metamodel, model
 
 
-if __name__ == '__main__':
-    textx()
+def register_textx_subcommands():
+    """
+    Find and use all textx sub-commands registered through extension points.
+    Extension points for CLI extension are:
+    - `textx_commands` - for registering top-level commands.
+    - `textx_command_groups` - for registering command groups.
+    """
+    # Register direct sub-commands
+    global textx
+    for subcommand in pkg_resources.iter_entry_points(group='textx_commands'):
+        textx.command()(subcommand.load())
+
+    # Register sub-command groups
+    for subgroup in pkg_resources.iter_entry_points(
+            group='textx_command_groups'):
+        subgroup.load()(textx)
+
+
+# Register sub-commands registered through extension points.
+register_textx_subcommands()
