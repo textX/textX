@@ -1,11 +1,13 @@
+import os
 import pytest
 import subprocess
 
 
 @pytest.fixture(scope="session")
 def example_project():
+    this_folder = os.path.dirname(__file__)
     output = subprocess.check_output(
-        ['pip', 'install', '-e', 'example_project'],
+        ['pip', 'install', '-e', os.path.join(this_folder, 'example_project')],
         stderr=subprocess.STDOUT)
     assert b'Successfully installed textX-subcommand-test' in output
 
