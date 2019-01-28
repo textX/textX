@@ -46,15 +46,15 @@ setup(
     url='https://github.com/textX/textX',
     download_url='https://github.com/textX/textX/archive/v%s.tar.gz'
         % VERSION,
-    packages=["textx", "textx.commands", "textx.scoping"],
-    install_requires=["Arpeggio>=1.9.0"],
+    packages=["textx", "textx.scoping"],
+    install_requires=["Arpeggio>=1.9.0", "click==7.0"],
     tests_require=[
         'pytest',
     ],
     keywords="parser meta-language meta-model language DSL",
     entry_points={
         'console_scripts': [
-            'textx = textx.commands.console:textx'
+            'textx = textx.cli:textx'
         ]
     },
     classifiers=[
