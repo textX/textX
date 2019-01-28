@@ -8,7 +8,7 @@ from __future__ import unicode_literals
 import pytest
 import sys
 from textx import metamodel_from_str, TextXSemanticError
-from textx.scoping.tools import textx_isinstance
+from textx import textx_isinstance
 
 if sys.version < '3':
     text = unicode  # noqa

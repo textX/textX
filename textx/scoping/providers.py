@@ -87,7 +87,7 @@ class PlainName(object):
 
         if self.multi_metamodel_support:
             from textx import get_model, get_children
-            from textx.scoping.tools import textx_isinstance
+            from textx import textx_isinstance
             result_lst = get_children(
                 lambda x:
                 hasattr(x, "name") and x.name == obj_ref.obj_name
@@ -199,7 +199,7 @@ class FQN(object):
                 else:
                     return None
 
-            from textx.scoping.tools import textx_isinstance
+            from textx import textx_isinstance
             if textx_isinstance(obj, cls):
                 return p
             else:

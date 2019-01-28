@@ -21,7 +21,7 @@ meta models can also reference elements of models created with the original
 meta model. Although the meta classes corresponding to inherited rules are 
 redefined by the extending meta model, scope providers match the object 
 types correctly. This is implemented by comparing the types by their name 
-(see textx.scoping.tool.textx_isinstance). Simple examples: see 
+(see textx.textx_isinstance). Simple examples: see 
 [tests/functional/test_scoping/test_metamodel_provider*.py](https://github.com/textX/textX/tree/master/tests/functional/test_scoping).
 
 
