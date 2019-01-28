@@ -151,6 +151,47 @@ class DotRenderer(object):
             .format(id(special), id(base))
 
 
+class PlantUmlRenderer(object):
+
+    def get_header(self):
+        return "@startuml"
+
+    def get_trailer(self):
+        return '@enduml'
+
+    def render_class(self, cls):
+        name = cls.__name__
+        attrs = ""
+        if cls._tx_type is not RULE_COMMON:
+            attrs = match_abstract_str(cls)
+        else:
+            for attr in cls._tx_attrs.values():
+                required = "+" if attr.mult in \
+                    [MULT_ONE, MULT_ONEORMORE] else ""
+                mult_list = attr.mult in [MULT_ZEROORMORE, MULT_ONEORMORE]
+                attr_type = "list[{}]".format(attr.cls.__name__) \
+                    if mult_list else attr.cls.__name__
+                if attr.ref and attr.cls.__name__ != 'OBJECT':
+                    pass
+                else:
+                    # If it is plain type
+                    attrs += "{}{}:{}\\l".format(required,
+                                                 attr.name, attr_type)
+        return 'class {} {{\n}}\n'.format(
+                cls._tx_fqn
+                )
+
+    def render_attr_link(self, cls, attr):
+        arrowtail = "arrowtail=diamond, dir=both, " \
+            if attr.cont else ""
+        if attr.ref and attr.cls.__name__ != 'OBJECT':
+            # If attribute is a reference
+            mult = attr.mult if not attr.mult == MULT_ONE else ""
+            return ''
+
+    def render_inherited_by(self, base, special):
+        return ''
+
 
 def metamodel_export(metamodel, file_name, renderer=None):
     with codecs.open(file_name, 'w', encoding="utf-8") as f:

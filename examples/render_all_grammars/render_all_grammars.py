@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 from textx import metamodel_from_file
-from textx.export import metamodel_export
+from textx.export import metamodel_export, PlantUmlRenderer
 import fnmatch
 import os
 from os.path import sep,join,dirname, exists
@@ -22,10 +22,14 @@ def main(path=None, debug=False):
         destpath = join(dirname(__file__),"dot")
         if not exists(destpath): os.mkdir(destpath)
         dest_dot = join(destpath, outfname_base+".dot")
+        destpath = join(dirname(__file__),"pu")
+        if not exists(destpath): os.mkdir(destpath)
+        dest_pu = join(destpath, outfname_base+".pu")
 
         print(dest_dot)
         mm = metamodel_from_file(inname, debug=debug)
         metamodel_export(mm, dest_dot)
+        metamodel_export(mm, dest_pu, renderer = PlantUmlRenderer())
 
     print("after copying an initial output to out_ref,")
     print(" you may use: diff -Nsaur dot dot_ref |less")
