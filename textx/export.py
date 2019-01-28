@@ -111,6 +111,9 @@ class DotRenderer(object):
     def get_header(self):
         return HEADER
 
+    def get_trailer(self):
+        return '\n}'
+
     def render_class(self, cls):
         name = cls.__name__
         attrs = ""
@@ -148,15 +151,16 @@ class DotRenderer(object):
             .format(id(special), id(base))
 
 
-def metamodel_export(metamodel, file_name):
 
+def metamodel_export(metamodel, file_name, renderer=None):
     with codecs.open(file_name, 'w', encoding="utf-8") as f:
-        metamodel_export_tofile(metamodel, f)
+        metamodel_export_tofile(metamodel, f, renderer)
 
 
-def metamodel_export_tofile(metamodel, f, renderer=DotRenderer()):
+def metamodel_export_tofile(metamodel, f, renderer=None):
+    if renderer is None:
+        renderer = DotRenderer()
     f.write(renderer.get_header())
-
     for cls in metamodel:
         if cls._tx_type is not RULE_COMMON:
             pass
@@ -165,13 +169,10 @@ def metamodel_export_tofile(metamodel, f, renderer=DotRenderer()):
                 if attr.ref and attr.cls.__name__ != 'OBJECT':
                     f.write(renderer.render_attr_link(cls, attr)+'\n')
         f.write(renderer.render_class(cls)+'\n')
-
         for inherited_by in cls._tx_inh_by:
             f.write(renderer.render_inherited_by(inherited_by, cls)+'\n')
-
         f.write("\n")
-
-    f.write("\n}\n")
+    f.write("{}\n".format(renderer.get_trailer()))
 
 
 def model_export(model, file_name, repo=None):
