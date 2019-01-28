@@ -106,47 +106,72 @@ def dot_repr(o):
         return text(o)
 
 
+class DotRenderer(object):
+
+    def get_header(self):
+        return HEADER
+
+    def render_class(self, cls):
+        name = cls.__name__
+        attrs = ""
+        if cls._tx_type is not RULE_COMMON:
+            attrs = match_abstract_str(cls)
+        else:
+            for attr in cls._tx_attrs.values():
+                required = "+" if attr.mult in \
+                    [MULT_ONE, MULT_ONEORMORE] else ""
+                mult_list = attr.mult in [MULT_ZEROORMORE, MULT_ONEORMORE]
+                attr_type = "list[{}]".format(attr.cls.__name__) \
+                    if mult_list else attr.cls.__name__
+                if attr.ref and attr.cls.__name__ != 'OBJECT':
+                    pass
+                else:
+                    # If it is plain type
+                    attrs += "{}{}:{}\\l".format(required,
+                                                 attr.name, attr_type)
+        return '{}[ label="{{{}|{}}}"]'.format(
+                id(cls), "*{}".format(name)
+                if cls._tx_type is RULE_ABSTRACT else name, attrs)
+
+    def render_attr_link(self, cls, attr):
+        arrowtail = "arrowtail=diamond, dir=both, " \
+            if attr.cont else ""
+        if attr.ref and attr.cls.__name__ != 'OBJECT':
+            # If attribute is a reference
+            mult = attr.mult if not attr.mult == MULT_ONE else ""
+            return '{} -> {}[{}headlabel="{} {}"]'\
+                .format(id(cls), id(attr.cls), arrowtail,
+                        attr.name, mult)
+
+    def render_inherited_by(self, base, special):
+        return '{} -> {} [dir=back]'\
+            .format(id(special), id(base))
+
+
 def metamodel_export(metamodel, file_name):
 
     with codecs.open(file_name, 'w', encoding="utf-8") as f:
-        f.write(HEADER)
+        metamodel_export_tofile(metamodel, f)
 
-        for cls in metamodel:
-            name = cls.__name__
-            attrs = ""
-            if cls._tx_type is not RULE_COMMON:
-                attrs = match_abstract_str(cls)
-            else:
-                for attr in cls._tx_attrs.values():
-                    arrowtail = "arrowtail=diamond, dir=both, " \
-                        if attr.cont else ""
-                    mult_list = attr.mult in [MULT_ZEROORMORE, MULT_ONEORMORE]
-                    required = "+" if attr.mult in \
-                        [MULT_ONE, MULT_ONEORMORE] else ""
-                    attr_type = "list[{}]".format(attr.cls.__name__) \
-                        if mult_list else attr.cls.__name__
-                    if attr.ref and attr.cls.__name__ != 'OBJECT':
-                        # If attribute is a reference
-                        mult = attr.mult if not attr.mult == MULT_ONE else ""
-                        f.write('{} -> {}[{}headlabel="{} {}"]\n'
-                                .format(id(cls), id(attr.cls), arrowtail,
-                                        attr.name, mult))
-                    else:
-                        # If it is plain type
-                        attrs += "{}{}:{}\\l".format(required,
-                                                     attr.name, attr_type)
 
-            f.write('{}[ label="{{{}|{}}}"]\n'.format(
-                    id(cls), "*{}".format(name)
-                    if cls._tx_type is RULE_ABSTRACT else name, attrs))
+def metamodel_export_tofile(metamodel, f, renderer=DotRenderer()):
+    f.write(renderer.get_header())
 
-            for inherited_by in cls._tx_inh_by:
-                f.write('{} -> {} [dir=back]\n'
-                        .format(id(cls), id(inherited_by)))
+    for cls in metamodel:
+        if cls._tx_type is not RULE_COMMON:
+            pass
+        else:
+            for attr in cls._tx_attrs.values():
+                if attr.ref and attr.cls.__name__ != 'OBJECT':
+                    f.write(renderer.render_attr_link(cls, attr)+'\n')
+        f.write(renderer.render_class(cls)+'\n')
 
-            f.write("\n")
+        for inherited_by in cls._tx_inh_by:
+            f.write(renderer.render_inherited_by(inherited_by, cls)+'\n')
 
-        f.write("\n}\n")
+        f.write("\n")
+
+    f.write("\n}\n")
 
 
 def model_export(model, file_name, repo=None):

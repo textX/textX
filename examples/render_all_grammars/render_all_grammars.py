@@ -27,6 +27,8 @@ def main(path=None, debug=False):
         mm = metamodel_from_file(inname, debug=debug)
         metamodel_export(mm, dest_dot)
 
+    print("after copying an initial output to out_ref,")
+    print(" you may use: diff -Nsaur dot dot_ref |less")
 
 if __name__ == "__main__":
     main()
