@@ -1,0 +1,43 @@
+
+    digraph xtext {
+    fontname = "Bitstream Vera Sans"
+    fontsize = 8
+    node[
+        shape=record,
+        style=filled,
+        fillcolor=aliceblue
+    ]
+    nodesep = 0.3
+    edge[dir=black,arrowtail=empty]
+
+
+35008120[ label="{Third|+a:INT\l}"]
+
+35195160[ label="{ID|}"]
+
+35185912[ label="{STRING|}"]
+
+35236152[ label="{BOOL|}"]
+
+35205352[ label="{INT|}"]
+
+34980440[ label="{FLOAT|}"]
+
+34985976[ label="{STRICTFLOAT|}"]
+
+34991512[ label="{NUMBER|}"]
+34991512 -> 34985976 [dir=back]
+34991512 -> 35205352 [dir=back]
+
+34997048[ label="{BASETYPE|}"]
+34997048 -> 34991512 [dir=back]
+34997048 -> 34980440 [dir=back]
+34997048 -> 35236152 [dir=back]
+34997048 -> 35195160 [dir=back]
+34997048 -> 35185912 [dir=back]
+
+35002584[ label="{*OBJECT|}"]
+35002584 -> 34997048 [dir=back]
+
+
+}

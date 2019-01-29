@@ -1,0 +1,75 @@
+
+    digraph xtext {
+    fontname = "Bitstream Vera Sans"
+    fontsize = 8
+    node[
+        shape=record,
+        style=filled,
+        fillcolor=aliceblue
+    ]
+    nodesep = 0.3
+    edge[dir=black,arrowtail=empty]
+
+
+34683176 -> 34767272[arrowtail=diamond, dir=both, headlabel="packages 0..*"]
+34683176[ label="{Model|}"]
+
+34767272 -> 34787992[arrowtail=diamond, dir=both, headlabel="components 1..*"]
+34767272 -> 34870200[arrowtail=diamond, dir=both, headlabel="instances 1..*"]
+34767272 -> 34875736[arrowtail=diamond, dir=both, headlabel="connections 1..*"]
+34767272 -> 34767272[arrowtail=diamond, dir=both, headlabel="packages 1..*"]
+34767272[ label="{Package|+name:ID\l}"]
+
+34787992 -> 34787992[headlabel="extends "]
+34787992 -> 34851704[arrowtail=diamond, dir=both, headlabel="slots 0..*"]
+34787992[ label="{Component|+name:ID\l}"]
+
+34851704[ label="{*Slot|}"]
+34851704 -> 34757432 [dir=back]
+34851704 -> 34762968 [dir=back]
+
+34757432[ label="{SlotIn|+name:ID\l}"]
+
+34762968[ label="{SlotOut|+name:ID\l}"]
+
+34870200 -> 34787992[headlabel="component "]
+34870200[ label="{Instance|+name:ID\l}"]
+
+34875736 -> 34762968[headlabel="from_port "]
+34875736 -> 34870200[headlabel="from_inst "]
+34875736 -> 34757432[headlabel="to_port "]
+34875736 -> 34870200[headlabel="to_inst "]
+34875736[ label="{Connection|}"]
+
+34881272[ label="{FQN|FQN}"]
+
+34886808[ label="{Comment|\\/\\/.*$}"]
+
+34777160[ label="{ID|}"]
+
+34735144[ label="{STRING|}"]
+
+32384024[ label="{BOOL|}"]
+
+34820152[ label="{INT|}"]
+
+34826968[ label="{FLOAT|}"]
+
+34832504[ label="{STRICTFLOAT|}"]
+
+34838040[ label="{NUMBER|}"]
+34838040 -> 34832504 [dir=back]
+34838040 -> 34820152 [dir=back]
+
+34843576[ label="{BASETYPE|}"]
+34843576 -> 34838040 [dir=back]
+34843576 -> 34826968 [dir=back]
+34843576 -> 32384024 [dir=back]
+34843576 -> 34777160 [dir=back]
+34843576 -> 34735144 [dir=back]
+
+34849112[ label="{*OBJECT|}"]
+34849112 -> 34843576 [dir=back]
+
+
+}

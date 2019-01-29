@@ -1,0 +1,78 @@
+@startuml
+            set namespaceSeparator .
+        robot.Program *-- "0..*" robot.Command
+class robot.Program  {
+}
+
+
+class robot.Command <<abstract>> {
+}
+
+robot.Command <|-- robot.InitialCommand
+robot.Command <|-- robot.MoveCommand
+
+class robot.InitialCommand  {
+INT x
+INT y
+}
+
+
+class robot.MoveCommand  {
+Direction direction
+INT steps
+}
+
+
+class robot.Direction <<match>> {
+}
+
+
+class robot.Comment <<match>> {
+}
+
+
+class ID <<match>> {
+}
+
+
+class STRING <<match>> {
+}
+
+
+class BOOL <<match>> {
+}
+
+
+class INT <<match>> {
+}
+
+
+class FLOAT <<match>> {
+}
+
+
+class STRICTFLOAT <<match>> {
+}
+
+
+class NUMBER <<match>> {
+}
+
+NUMBER <|-- STRICTFLOAT
+NUMBER <|-- INT
+
+class BASETYPE <<match>> {
+}
+
+BASETYPE <|-- NUMBER
+BASETYPE <|-- FLOAT
+BASETYPE <|-- BOOL
+BASETYPE <|-- ID
+BASETYPE <|-- STRING
+
+class OBJECT <<abstract>> {
+}
+
+OBJECT <|-- BASETYPE
+
+@enduml

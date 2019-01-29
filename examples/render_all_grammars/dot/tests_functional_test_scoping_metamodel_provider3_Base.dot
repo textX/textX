@@ -1,0 +1,58 @@
+
+    digraph xtext {
+    fontname = "Bitstream Vera Sans"
+    fontsize = 8
+    node[
+        shape=record,
+        style=filled,
+        fillcolor=aliceblue
+    ]
+    nodesep = 0.3
+    edge[dir=black,arrowtail=empty]
+
+
+35448952 -> 35448952[headlabel="extends 1..*"]
+35448952 -> 34914232[arrowtail=diamond, dir=both, headlabel="methods 1..*"]
+35448952[ label="{Cls|+name:ID\l}"]
+
+34914232[ label="{Method|+name:ID\l}"]
+
+34790936 -> 35448952[headlabel="ref "]
+34790936[ label="{Obj|+name:ID\l}"]
+
+34954680 -> 34790936[headlabel="obj "]
+34954680 -> 34914232[headlabel="method "]
+34954680[ label="{Call|+name:ID\l}"]
+
+35046536[ label="{Import|+importURI:STRING\l}"]
+
+34903368[ label="{Comment|\\/\\/.*}"]
+
+34763912[ label="{ID|}"]
+
+34450648[ label="{STRING|}"]
+
+34785160[ label="{BOOL|}"]
+
+34437432[ label="{INT|}"]
+
+34734088[ label="{FLOAT|}"]
+
+34427544[ label="{STRICTFLOAT|}"]
+
+34923880[ label="{NUMBER|}"]
+34923880 -> 34427544 [dir=back]
+34923880 -> 34437432 [dir=back]
+
+34869144[ label="{BASETYPE|}"]
+34869144 -> 34923880 [dir=back]
+34869144 -> 34734088 [dir=back]
+34869144 -> 34785160 [dir=back]
+34869144 -> 34763912 [dir=back]
+34869144 -> 34450648 [dir=back]
+
+34933768[ label="{*OBJECT|}"]
+34933768 -> 34869144 [dir=back]
+
+
+}

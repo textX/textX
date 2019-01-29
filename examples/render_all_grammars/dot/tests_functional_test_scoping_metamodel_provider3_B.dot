@@ -1,0 +1,64 @@
+
+    digraph xtext {
+    fontname = "Bitstream Vera Sans"
+    fontsize = 8
+    node[
+        shape=record,
+        style=filled,
+        fillcolor=aliceblue
+    ]
+    nodesep = 0.3
+    edge[dir=black,arrowtail=empty]
+
+
+34812248 -> 34440376[arrowtail=diamond, dir=both, headlabel="imports 1..*"]
+34812248 -> 34668472[arrowtail=diamond, dir=both, headlabel="cls 1..*"]
+34812248 -> 34781160[arrowtail=diamond, dir=both, headlabel="obj 1..*"]
+34812248 -> 35421832[arrowtail=diamond, dir=both, headlabel="call 1..*"]
+34812248[ label="{Model|}"]
+
+35247208[ label="{ID|}"]
+
+34679544[ label="{STRING|}"]
+
+35259112[ label="{BOOL|}"]
+
+34410200[ label="{INT|}"]
+
+34691736[ label="{FLOAT|}"]
+
+34665944[ label="{STRICTFLOAT|}"]
+
+34804280[ label="{NUMBER|}"]
+34804280 -> 34665944 [dir=back]
+34804280 -> 34410200 [dir=back]
+
+34417704[ label="{BASETYPE|}"]
+34417704 -> 34804280 [dir=back]
+34417704 -> 34691736 [dir=back]
+34417704 -> 35259112 [dir=back]
+34417704 -> 35247208 [dir=back]
+34417704 -> 34679544 [dir=back]
+
+34414648[ label="{*OBJECT|}"]
+34414648 -> 34417704 [dir=back]
+
+34668472 -> 34668472[headlabel="extends 1..*"]
+34668472 -> 34434488[arrowtail=diamond, dir=both, headlabel="methods 1..*"]
+34668472[ label="{Cls|+name:ID\l}"]
+
+34434488[ label="{Method|+name:ID\l}"]
+
+34781160 -> 34668472[headlabel="ref "]
+34781160[ label="{Obj|+name:ID\l}"]
+
+35421832 -> 34781160[headlabel="obj "]
+35421832 -> 34434488[headlabel="method "]
+35421832[ label="{Call|+name:ID\l}"]
+
+34440376[ label="{Import|+importURI:STRING\l}"]
+
+34423160[ label="{Comment|\\/\\/.*}"]
+
+
+}

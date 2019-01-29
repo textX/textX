@@ -1,0 +1,58 @@
+
+    digraph xtext {
+    fontname = "Bitstream Vera Sans"
+    fontsize = 8
+    node[
+        shape=record,
+        style=filled,
+        fillcolor=aliceblue
+    ]
+    nodesep = 0.3
+    edge[dir=black,arrowtail=empty]
+
+
+34441432 -> 34420088[arrowtail=diamond, dir=both, headlabel="ingredients 1..*"]
+34441432[ label="{Recipe|}"]
+
+34420088 -> 34776216[headlabel="unit "]
+34420088 -> 34785160[headlabel="type "]
+34420088[ label="{Ingredient|+count:POS_FLOAT\l}"]
+
+34785160 -> 34785160[headlabel="extends "]
+34785160 -> 34776216[arrowtail=diamond, dir=both, headlabel="units 1..*"]
+34785160[ label="{IngredientType|+name:ID\l}"]
+
+34776216[ label="{Unit|+weight:POS_FLOAT\l+name:ID\l}"]
+
+34788936[ label="{POS_FLOAT|\\d+ . UINT\?}"]
+
+34795880[ label="{UINT|\\d+}"]
+
+34439432[ label="{ID|}"]
+
+34434488[ label="{STRING|}"]
+
+34858440[ label="{BOOL|}"]
+
+34303928[ label="{INT|}"]
+
+34405256[ label="{FLOAT|}"]
+
+34880328[ label="{STRICTFLOAT|}"]
+
+34923880[ label="{NUMBER|}"]
+34923880 -> 34880328 [dir=back]
+34923880 -> 34303928 [dir=back]
+
+34934824[ label="{BASETYPE|}"]
+34934824 -> 34923880 [dir=back]
+34934824 -> 34405256 [dir=back]
+34934824 -> 34858440 [dir=back]
+34934824 -> 34439432 [dir=back]
+34934824 -> 34434488 [dir=back]
+
+34956808[ label="{*OBJECT|}"]
+34956808 -> 34934824 [dir=back]
+
+
+}

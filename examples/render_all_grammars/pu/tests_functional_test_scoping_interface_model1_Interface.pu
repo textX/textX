@@ -1,0 +1,103 @@
+@startuml
+            set namespaceSeparator .
+        Interface.Model *-- "0..*" Interface.Import
+Interface.Model *-- "0..*" Interface.Package
+class Interface.Model  {
+}
+
+
+Interface.Package *-- "1..*" Interface.Interface
+Interface.Package *-- "1..*" Interface.Package
+Interface.Package *-- "1..*" Interface.RawType
+class Interface.Package  {
+ID name
+}
+
+
+class Interface.RawType  {
+ID name
+}
+
+
+Interface.Interface *-- "0..*" Interface.Attribute
+class Interface.Interface  {
+ID name
+}
+
+
+class Interface.Attribute <<abstract>> {
+}
+
+Interface.Attribute <|-- Interface.RawTypeAttribute
+Interface.Attribute <|-- Interface.EmbeddedAttribute
+
+Interface.RawTypeAttribute o-- Interface.RawType
+class Interface.RawTypeAttribute  {
+ID name
+}
+
+
+Interface.EmbeddedAttribute o-- Interface.Interface
+class Interface.EmbeddedAttribute  {
+ID name
+}
+
+
+class Interface.FQN <<match>> {
+}
+
+
+class Interface.Import  {
+STRING importURI
+}
+
+
+class Interface.Comment <<match>> {
+}
+
+
+class ID <<match>> {
+}
+
+
+class STRING <<match>> {
+}
+
+
+class BOOL <<match>> {
+}
+
+
+class INT <<match>> {
+}
+
+
+class FLOAT <<match>> {
+}
+
+
+class STRICTFLOAT <<match>> {
+}
+
+
+class NUMBER <<match>> {
+}
+
+NUMBER <|-- STRICTFLOAT
+NUMBER <|-- INT
+
+class BASETYPE <<match>> {
+}
+
+BASETYPE <|-- NUMBER
+BASETYPE <|-- FLOAT
+BASETYPE <|-- BOOL
+BASETYPE <|-- ID
+BASETYPE <|-- STRING
+
+class OBJECT <<abstract>> {
+}
+
+OBJECT <|-- BASETYPE
+
+@enduml

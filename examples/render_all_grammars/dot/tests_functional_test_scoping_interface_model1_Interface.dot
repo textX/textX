@@ -1,0 +1,71 @@
+
+    digraph xtext {
+    fontname = "Bitstream Vera Sans"
+    fontsize = 8
+    node[
+        shape=record,
+        style=filled,
+        fillcolor=aliceblue
+    ]
+    nodesep = 0.3
+    edge[dir=black,arrowtail=empty]
+
+
+35225784 -> 35268296[arrowtail=diamond, dir=both, headlabel="imports 0..*"]
+35225784 -> 35230728[arrowtail=diamond, dir=both, headlabel="packages 0..*"]
+35225784[ label="{Model|}"]
+
+35230728 -> 35240616[arrowtail=diamond, dir=both, headlabel="interfaces 1..*"]
+35230728 -> 35230728[arrowtail=diamond, dir=both, headlabel="packages 1..*"]
+35230728 -> 35235672[arrowtail=diamond, dir=both, headlabel="raw_types 1..*"]
+35230728[ label="{Package|+name:ID\l}"]
+
+35235672[ label="{RawType|+name:ID\l}"]
+
+35240616 -> 35246152[arrowtail=diamond, dir=both, headlabel="attributes 0..*"]
+35240616[ label="{Interface|+name:ID\l}"]
+
+35246152[ label="{*Attribute|}"]
+35246152 -> 35251688 [dir=back]
+35246152 -> 35257224 [dir=back]
+
+35251688 -> 35235672[headlabel="ref "]
+35251688[ label="{RawTypeAttribute|+name:ID\l}"]
+
+35257224 -> 35240616[headlabel="ref "]
+35257224[ label="{EmbeddedAttribute|+name:ID\l}"]
+
+35262760[ label="{FQN|FQN}"]
+
+35268296[ label="{Import|+importURI:STRING\l}"]
+
+35273832[ label="{Comment|\\/\\/.*$}"]
+
+35132008[ label="{ID|}"]
+
+35095368[ label="{STRING|}"]
+
+35075176[ label="{BOOL|}"]
+
+35178600[ label="{INT|}"]
+
+35199048[ label="{FLOAT|}"]
+
+35204584[ label="{STRICTFLOAT|}"]
+
+35210120[ label="{NUMBER|}"]
+35210120 -> 35204584 [dir=back]
+35210120 -> 35178600 [dir=back]
+
+35215656[ label="{BASETYPE|}"]
+35215656 -> 35210120 [dir=back]
+35215656 -> 35199048 [dir=back]
+35215656 -> 35075176 [dir=back]
+35215656 -> 35132008 [dir=back]
+35215656 -> 35095368 [dir=back]
+
+35221192[ label="{*OBJECT|}"]
+35221192 -> 35215656 [dir=back]
+
+
+}

@@ -1,0 +1,80 @@
+@startuml
+            set namespaceSeparator .
+        Base.Recipe *-- "1..*" Base.Ingredient
+class Base.Recipe  {
+}
+
+
+Base.Ingredient o-- Base.Unit
+Base.Ingredient o-- Base.IngredientType
+class Base.Ingredient  {
+POS_FLOAT count
+}
+
+
+Base.IngredientType o-- Base.IngredientType
+Base.IngredientType *-- "1..*" Base.Unit
+class Base.IngredientType  {
+ID name
+}
+
+
+class Base.Unit  {
+POS_FLOAT weight
+ID name
+}
+
+
+class Base.POS_FLOAT <<match>> {
+}
+
+
+class Base.UINT <<match>> {
+}
+
+
+class ID <<match>> {
+}
+
+
+class STRING <<match>> {
+}
+
+
+class BOOL <<match>> {
+}
+
+
+class INT <<match>> {
+}
+
+
+class FLOAT <<match>> {
+}
+
+
+class STRICTFLOAT <<match>> {
+}
+
+
+class NUMBER <<match>> {
+}
+
+NUMBER <|-- STRICTFLOAT
+NUMBER <|-- INT
+
+class BASETYPE <<match>> {
+}
+
+BASETYPE <|-- NUMBER
+BASETYPE <|-- FLOAT
+BASETYPE <|-- BOOL
+BASETYPE <|-- ID
+BASETYPE <|-- STRING
+
+class OBJECT <<abstract>> {
+}
+
+OBJECT <|-- BASETYPE
+
+@enduml

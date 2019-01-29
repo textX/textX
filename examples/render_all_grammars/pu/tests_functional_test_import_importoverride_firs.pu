@@ -1,0 +1,68 @@
+@startuml
+            set namespaceSeparator .
+        first.First *-- "1..*" second.Second
+first.First *-- "1..*" first.Third
+class first.First  {
+}
+
+
+class first.Third  {
+STRING chain
+}
+
+
+class ID <<match>> {
+}
+
+
+class STRING <<match>> {
+}
+
+
+class BOOL <<match>> {
+}
+
+
+class INT <<match>> {
+}
+
+
+class FLOAT <<match>> {
+}
+
+
+class STRICTFLOAT <<match>> {
+}
+
+
+class NUMBER <<match>> {
+}
+
+NUMBER <|-- STRICTFLOAT
+NUMBER <|-- INT
+
+class BASETYPE <<match>> {
+}
+
+BASETYPE <|-- NUMBER
+BASETYPE <|-- FLOAT
+BASETYPE <|-- BOOL
+BASETYPE <|-- ID
+BASETYPE <|-- STRING
+
+class OBJECT <<abstract>> {
+}
+
+OBJECT <|-- BASETYPE
+
+second.Second *-- "1..*" relative.third.Third
+class second.Second  {
+}
+
+
+class relative.third.Third  {
+INT t
+}
+
+
+@enduml

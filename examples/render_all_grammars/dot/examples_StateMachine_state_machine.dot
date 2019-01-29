@@ -1,0 +1,65 @@
+
+    digraph xtext {
+    fontname = "Bitstream Vera Sans"
+    fontsize = 8
+    node[
+        shape=record,
+        style=filled,
+        fillcolor=aliceblue
+    ]
+    nodesep = 0.3
+    edge[dir=black,arrowtail=empty]
+
+
+35131864 -> 35126328[arrowtail=diamond, dir=both, headlabel="events 1..*"]
+35131864 -> 35126328[headlabel="resetEvents 1..*"]
+35131864 -> 35033912[arrowtail=diamond, dir=both, headlabel="commands 1..*"]
+35131864 -> 35615480[arrowtail=diamond, dir=both, headlabel="states 1..*"]
+35131864[ label="{StateMachine|}"]
+
+35204600[ label="{Keyword|end\|events\|resetEvents\|state\|actions}"]
+
+35126328[ label="{Event|+name:SMID\l+code:ID\l}"]
+
+35033912[ label="{Command|+name:SMID\l+code:ID\l}"]
+
+35615480 -> 35033912[headlabel="actions 1..*"]
+35615480 -> 35189112[arrowtail=diamond, dir=both, headlabel="transitions 1..*"]
+35615480[ label="{State|+name:ID\l}"]
+
+35189112 -> 35126328[headlabel="event "]
+35189112 -> 35615480[headlabel="to_state "]
+35189112[ label="{Transition|}"]
+
+35194056[ label="{SMID| ID}"]
+
+35199592[ label="{Comment|\\/\\*(.\|\\n)*\?\\*\\/}"]
+
+35180872[ label="{ID|}"]
+
+34418536[ label="{STRING|}"]
+
+34621976[ label="{BOOL|}"]
+
+35233608[ label="{INT|}"]
+
+35592264[ label="{FLOAT|}"]
+
+35586248[ label="{STRICTFLOAT|}"]
+
+35271256[ label="{NUMBER|}"]
+35271256 -> 35586248 [dir=back]
+35271256 -> 35233608 [dir=back]
+
+35276792[ label="{BASETYPE|}"]
+35276792 -> 35271256 [dir=back]
+35276792 -> 35592264 [dir=back]
+35276792 -> 34621976 [dir=back]
+35276792 -> 35180872 [dir=back]
+35276792 -> 34418536 [dir=back]
+
+35605304[ label="{*OBJECT|}"]
+35605304 -> 35276792 [dir=back]
+
+
+}

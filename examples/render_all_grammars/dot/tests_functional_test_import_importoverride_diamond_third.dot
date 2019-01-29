@@ -1,0 +1,46 @@
+
+    digraph xtext {
+    fontname = "Bitstream Vera Sans"
+    fontsize = 8
+    node[
+        shape=record,
+        style=filled,
+        fillcolor=aliceblue
+    ]
+    nodesep = 0.3
+    edge[dir=black,arrowtail=empty]
+
+
+35406696 -> 35653608[arrowtail=diamond, dir=both, headlabel="diamond "]
+35406696[ label="{Third|}"]
+
+35247208[ label="{ID|}"]
+
+35645352[ label="{STRING|}"]
+
+34441432[ label="{BOOL|}"]
+
+35258168[ label="{INT|}"]
+
+34410200[ label="{FLOAT|}"]
+
+34690680[ label="{STRICTFLOAT|}"]
+
+35051256[ label="{NUMBER|}"]
+35051256 -> 34690680 [dir=back]
+35051256 -> 35258168 [dir=back]
+
+34666888[ label="{BASETYPE|}"]
+34666888 -> 35051256 [dir=back]
+34666888 -> 34410200 [dir=back]
+34666888 -> 34441432 [dir=back]
+34666888 -> 35247208 [dir=back]
+34666888 -> 35645352 [dir=back]
+
+34805336[ label="{*OBJECT|}"]
+34805336 -> 34666888 [dir=back]
+
+35653608[ label="{MyDiamondRule|+a:INT\l}"]
+
+
+}

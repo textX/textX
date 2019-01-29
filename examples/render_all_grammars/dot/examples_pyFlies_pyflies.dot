@@ -1,0 +1,176 @@
+
+    digraph xtext {
+    fontname = "Bitstream Vera Sans"
+    fontsize = 8
+    node[
+        shape=record,
+        style=filled,
+        fillcolor=aliceblue
+    ]
+    nodesep = 0.3
+    edge[dir=black,arrowtail=empty]
+
+
+35551704 -> 35185224[arrowtail=diamond, dir=both, headlabel="blocks 1..*"]
+35551704 -> 35529368[arrowtail=diamond, dir=both, headlabel="structure "]
+35551704 -> 35545640[arrowtail=diamond, dir=both, headlabel="targets 0..*"]
+35551704[ label="{PyFliesModel|+name:STRING\l+description:STRING\l+basepath:STRING\l}"]
+
+35185224[ label="{*BlockType|}"]
+35185224 -> 35230664 [dir=back]
+35185224 -> 34450648 [dir=back]
+35185224 -> 34429048 [dir=back]
+
+35230664 -> 35649480[arrowtail=diamond, dir=both, headlabel="conditions "]
+35230664 -> 35817464[arrowtail=diamond, dir=both, headlabel="stimuli "]
+35230664[ label="{TestType|+name:ID\l}"]
+
+35649480 -> 34511160[arrowtail=diamond, dir=both, headlabel="conditions 1..*"]
+35649480[ label="{Conditions|+varNames:list[WORD]\l}"]
+
+34511160[ label="{Condition|+varValues:list[WORD]\l}"]
+
+35817464 -> 35482168[arrowtail=diamond, dir=both, headlabel="condStimuli 1..*"]
+35817464[ label="{Stimuli|+dmin:INT\l+dmax:INT\l}"]
+
+35482168 -> 35745528[arrowtail=diamond, dir=both, headlabel="conditionMatch "]
+35482168 -> 35735512[arrowtail=diamond, dir=both, headlabel="stimuli 1..*"]
+35482168[ label="{ConditionStimuli|}"]
+
+35745528 -> 35696104[arrowtail=diamond, dir=both, headlabel="expression "]
+35745528[ label="{ConditionMatch|}"]
+
+35696104[ label="{*ConditionMatchExpression|}"]
+35696104 -> 35690568 [dir=back]
+35696104 -> 34915288 [dir=back]
+35696104 -> 35758184 [dir=back]
+
+35690568[ label="{FixedCondition|+expression:FixedConditionEnum\l}"]
+
+34923880[ label="{FixedConditionEnum|all\|error\|fixation\|correct}"]
+
+34915288[ label="{OrdinalCondition|+expression:INT\l}"]
+
+35758184 -> 35798744[arrowtail=diamond, dir=both, headlabel="expression "]
+35758184[ label="{ExpressionCondition|}"]
+
+35798744 -> 34823688[arrowtail=diamond, dir=both, headlabel="operand 0..*"]
+35798744[ label="{OrExpression|}"]
+
+34823688 -> 35823944[arrowtail=diamond, dir=both, headlabel="operand 0..*"]
+34823688[ label="{AndExpression|}"]
+
+35823944[ label="{*NotEqualsExpression|}"]
+35823944 -> 34427544 [dir=back]
+35823944 -> 35557944 [dir=back]
+
+34427544 -> 35557944[arrowtail=diamond, dir=both, headlabel="operand "]
+34427544[ label="{NotExpression|}"]
+
+35557944[ label="{EqualsExpression|+varName:WORD\l+varValue:WORD\l}"]
+
+35735512[ label="{*Stimulus|}"]
+35735512 -> 34957864 [dir=back]
+35735512 -> 35808344 [dir=back]
+35735512 -> 35630504 [dir=back]
+35735512 -> 34954680 [dir=back]
+35735512 -> 34789992 [dir=back]
+
+34957864[ label="{Image|+file:STRING\lx:list[WORD]\ly:list[INT]\ldmin:list[WORD]\ldmax:list[INT]\lwidth:list[WORD]\lheight:list[INT]\l}"]
+
+35808344[ label="{Shape|+shape:ShapeType\lx:list[WORD]\ly:list[INT]\ldmin:list[WORD]\ldmax:list[INT]\lwidth:list[WORD]\lheight:list[INT]\lcolor:list[WORD]\lfillcolor:list[WORD]\llineWidth:list[WORD]\l}"]
+
+35117128[ label="{ShapeType|rectangle\|circle\|triangle\|cross}"]
+
+34789992[ label="{Text|+text:TextType\lx:list[WORD]\ly:list[INT]\ldmin:list[WORD]\ldmax:list[INT]\lwidth:list[WORD]\lheight:list[INT]\lcolor:list[WORD]\l}"]
+
+35642232[ label="{TextType|STRING\|\\w*\\b}"]
+
+35400072[ label="{WORD|[-\\w]*\\b}"]
+
+35630504[ label="{Sound|+frequency:INT\l+dmin:WORD\l+dmax:INT\l}"]
+
+34954680[ label="{Audio|+file:STRING\l+dmin:WORD\l+dmax:INT\l}"]
+
+34446712[ label="{*Block|}"]
+34446712 -> 34679544 [dir=back]
+34446712 -> 34444712 [dir=back]
+
+35046536 -> 35230664[headlabel="type "]
+35046536[ label="{TestInstance|+trials:INT\lpractice:BOOL\lrandomize:BOOL\l}"]
+
+34430104 -> 34450648[headlabel="type "]
+34430104[ label="{ScreenInstance|}"]
+
+34685736 -> 34429048[headlabel="type "]
+34685736[ label="{SubjectInstance|}"]
+
+35246152[ label="{*Reference|}"]
+35246152 -> 35046536 [dir=back]
+35246152 -> 34430104 [dir=back]
+35246152 -> 34685736 [dir=back]
+
+34800936[ label="{*StructureElement|}"]
+34800936 -> 35246152 [dir=back]
+34800936 -> 34446712 [dir=back]
+
+35529368 -> 34800936[arrowtail=diamond, dir=both, headlabel="elements 0..*"]
+35529368[ label="{Structure|}"]
+
+34679544 -> 34800936[arrowtail=diamond, dir=both, headlabel="elements 0..*"]
+34679544[ label="{Sequence|}"]
+
+34444712 -> 34800936[arrowtail=diamond, dir=both, headlabel="elements 0..*"]
+34444712[ label="{Randomize|}"]
+
+34450648[ label="{ScreenType|+name:ID\l+content:STRING\l}"]
+
+34429048 -> 35646296[arrowtail=diamond, dir=both, headlabel="attribute 1..*"]
+34429048[ label="{SubjectType|+name:ID\l}"]
+
+35646296 -> 35153672[arrowtail=diamond, dir=both, headlabel="type "]
+35646296[ label="{SubjectAttribute|+name:ID\l+label:STRING\l}"]
+
+35153672[ label="{*SubjectAttributeType|int\|string\|float}"]
+35153672 -> 35259112 [dir=back]
+
+35259112[ label="{Enum|+values:list[ID]\l}"]
+
+35545640 -> 34778104[arrowtail=diamond, dir=both, headlabel="responseMap 0..*"]
+35545640 -> 34407256[arrowtail=diamond, dir=both, headlabel="targetParam 0..*"]
+35545640[ label="{Target|+name:ID\l+output:STRING\l}"]
+
+34407256[ label="{TargetParam|+name:ID\l+value:BASETYPE\l}"]
+
+34778104[ label="{ResponseMap|+name:ID\l+target:BASETYPE\l}"]
+
+35051256[ label="{Comment|\\/\\/.*$\|\\/\\*(.\|\\n)*\?\\*\\/}"]
+
+35803752[ label="{ID|}"]
+
+35813928[ label="{STRING|}"]
+
+35819464[ label="{BOOL|}"]
+
+35825000[ label="{INT|}"]
+
+35830536[ label="{FLOAT|}"]
+
+35836072[ label="{STRICTFLOAT|}"]
+
+35841608[ label="{NUMBER|}"]
+35841608 -> 35836072 [dir=back]
+35841608 -> 35825000 [dir=back]
+
+35847144[ label="{BASETYPE|}"]
+35847144 -> 35841608 [dir=back]
+35847144 -> 35830536 [dir=back]
+35847144 -> 35819464 [dir=back]
+35847144 -> 35803752 [dir=back]
+35847144 -> 35813928 [dir=back]
+
+35852680[ label="{*OBJECT|}"]
+35852680 -> 35847144 [dir=back]
+
+
+}

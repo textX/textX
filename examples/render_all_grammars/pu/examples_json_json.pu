@@ -1,0 +1,75 @@
+@startuml
+            set namespaceSeparator .
+        class json.File <<abstract>> {
+}
+
+json.File <|-- json.Array
+json.File <|-- json.Object
+
+json.Array *-- "0..*" json.Value
+class json.Array  {
+}
+
+
+class json.Value <<abstract>> {
+}
+
+json.Value <|-- json.Object
+json.Value <|-- json.Array
+
+json.Object *-- "0..*" json.Member
+class json.Object  {
+}
+
+
+json.Member *-- json.Value
+class json.Member  {
+STRING key
+}
+
+
+class ID <<match>> {
+}
+
+
+class STRING <<match>> {
+}
+
+
+class BOOL <<match>> {
+}
+
+
+class INT <<match>> {
+}
+
+
+class FLOAT <<match>> {
+}
+
+
+class STRICTFLOAT <<match>> {
+}
+
+
+class NUMBER <<match>> {
+}
+
+NUMBER <|-- STRICTFLOAT
+NUMBER <|-- INT
+
+class BASETYPE <<match>> {
+}
+
+BASETYPE <|-- NUMBER
+BASETYPE <|-- FLOAT
+BASETYPE <|-- BOOL
+BASETYPE <|-- ID
+BASETYPE <|-- STRING
+
+class OBJECT <<abstract>> {
+}
+
+OBJECT <|-- BASETYPE
+
+@enduml

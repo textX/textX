@@ -1,0 +1,114 @@
+@startuml
+            set namespaceSeparator .
+        Components.Model *-- "0..*" Components.Package
+class Components.Model  {
+}
+
+
+Components.Package *-- "1..*" Components.Component
+Components.Package *-- "1..*" Components.Instance
+Components.Package *-- "1..*" Components.Connection
+Components.Package *-- "1..*" Components.Package
+Components.Package *-- "1..*" Components.Interface
+class Components.Package  {
+ID name
+}
+
+
+class Components.Interface  {
+ID name
+}
+
+
+Components.Component o-- "1..*" Components.Component
+Components.Component *-- "0..*" Components.Slot
+class Components.Component  {
+ID name
+}
+
+
+class Components.Slot <<abstract>> {
+}
+
+Components.Slot <|-- Components.SlotIn
+Components.Slot <|-- Components.SlotOut
+
+Components.SlotIn o-- "1..*" Components.Interface
+class Components.SlotIn  {
+ID name
+}
+
+
+Components.SlotOut o-- "1..*" Components.Interface
+class Components.SlotOut  {
+ID name
+}
+
+
+Components.Instance o-- Components.Component
+class Components.Instance  {
+ID name
+}
+
+
+Components.Connection o-- Components.Instance
+Components.Connection o-- Components.SlotOut
+Components.Connection o-- Components.Instance
+Components.Connection o-- Components.SlotIn
+class Components.Connection  {
+}
+
+
+class Components.FQN <<match>> {
+}
+
+
+class Components.Comment <<match>> {
+}
+
+
+class ID <<match>> {
+}
+
+
+class STRING <<match>> {
+}
+
+
+class BOOL <<match>> {
+}
+
+
+class INT <<match>> {
+}
+
+
+class FLOAT <<match>> {
+}
+
+
+class STRICTFLOAT <<match>> {
+}
+
+
+class NUMBER <<match>> {
+}
+
+NUMBER <|-- STRICTFLOAT
+NUMBER <|-- INT
+
+class BASETYPE <<match>> {
+}
+
+BASETYPE <|-- NUMBER
+BASETYPE <|-- FLOAT
+BASETYPE <|-- BOOL
+BASETYPE <|-- ID
+BASETYPE <|-- STRING
+
+class OBJECT <<abstract>> {
+}
+
+OBJECT <|-- BASETYPE
+
+@enduml

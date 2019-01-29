@@ -1,0 +1,56 @@
+
+    digraph xtext {
+    fontname = "Bitstream Vera Sans"
+    fontsize = 8
+    node[
+        shape=record,
+        style=filled,
+        fillcolor=aliceblue
+    ]
+    nodesep = 0.3
+    edge[dir=black,arrowtail=empty]
+
+
+35267352 -> 35280728[arrowtail=diamond, dir=both, headlabel="imports 0..*"]
+35267352 -> 35295512[arrowtail=diamond, dir=both, headlabel="skills 1..*"]
+35267352 -> 35261816[arrowtail=diamond, dir=both, headlabel="skill_types 1..*"]
+35267352[ label="{Model|}"]
+
+35295512 -> 35261816[headlabel="type "]
+35295512 -> 35250744[arrowtail=diamond, dir=both, headlabel="properties 1..*"]
+35295512[ label="{Skill|+name:ID\l}"]
+
+35261816[ label="{SkillType|+name:ID\l}"]
+
+35250744[ label="{Property|+name:ID\l+value:BASETYPE\l}"]
+
+35280728[ label="{Import|+importURI:STRING\l}"]
+
+35287624[ label="{ID|}"]
+
+35292568[ label="{STRING|}"]
+
+35297512[ label="{BOOL|}"]
+
+35303048[ label="{INT|}"]
+
+35308584[ label="{FLOAT|}"]
+
+35202584[ label="{STRICTFLOAT|}"]
+
+35144024[ label="{NUMBER|}"]
+35144024 -> 35202584 [dir=back]
+35144024 -> 35303048 [dir=back]
+
+35219192[ label="{BASETYPE|}"]
+35219192 -> 35144024 [dir=back]
+35219192 -> 35308584 [dir=back]
+35219192 -> 35297512 [dir=back]
+35219192 -> 35287624 [dir=back]
+35219192 -> 35292568 [dir=back]
+
+35233672[ label="{*OBJECT|}"]
+35233672 -> 35219192 [dir=back]
+
+
+}

@@ -1,0 +1,74 @@
+@startuml
+            set namespaceSeparator .
+        A.Model *-- "1..*" A.E
+class A.Model  {
+}
+
+
+A.E *-- "1..*" A.C
+class A.E  {
+ID name
+}
+
+
+class A.C <<abstract>> {
+}
+
+A.C <|-- A.C1
+
+A.C1 *-- A.TXT
+class A.C1  {
+ID name
+}
+
+
+class A.TXT  {
+STRING txt
+}
+
+
+class ID <<match>> {
+}
+
+
+class STRING <<match>> {
+}
+
+
+class BOOL <<match>> {
+}
+
+
+class INT <<match>> {
+}
+
+
+class FLOAT <<match>> {
+}
+
+
+class STRICTFLOAT <<match>> {
+}
+
+
+class NUMBER <<match>> {
+}
+
+NUMBER <|-- STRICTFLOAT
+NUMBER <|-- INT
+
+class BASETYPE <<match>> {
+}
+
+BASETYPE <|-- NUMBER
+BASETYPE <|-- FLOAT
+BASETYPE <|-- BOOL
+BASETYPE <|-- ID
+BASETYPE <|-- STRING
+
+class OBJECT <<abstract>> {
+}
+
+OBJECT <|-- BASETYPE
+
+@enduml

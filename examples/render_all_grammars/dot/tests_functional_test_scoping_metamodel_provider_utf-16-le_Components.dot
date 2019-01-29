@@ -1,0 +1,80 @@
+
+    digraph xtext {
+    fontname = "Bitstream Vera Sans"
+    fontsize = 8
+    node[
+        shape=record,
+        style=filled,
+        fillcolor=aliceblue
+    ]
+    nodesep = 0.3
+    edge[dir=black,arrowtail=empty]
+
+
+34405256 -> 34880328[arrowtail=diamond, dir=both, headlabel="packages 0..*"]
+34405256[ label="{Model|}"]
+
+34880328 -> 34404312[arrowtail=diamond, dir=both, headlabel="components 1..*"]
+34880328 -> 34928824[arrowtail=diamond, dir=both, headlabel="instances 1..*"]
+34880328 -> 35422888[arrowtail=diamond, dir=both, headlabel="connections 1..*"]
+34880328 -> 34880328[arrowtail=diamond, dir=both, headlabel="packages 1..*"]
+34880328 -> 35171144[arrowtail=diamond, dir=both, headlabel="interfaces 1..*"]
+34880328[ label="{Package|+name:ID\l}"]
+
+35171144[ label="{Interface|+name:ID\l}"]
+
+34404312 -> 34404312[headlabel="extends 1..*"]
+34404312 -> 34528440[arrowtail=diamond, dir=both, headlabel="slots 0..*"]
+34404312[ label="{Component|+name:ID\l}"]
+
+34528440[ label="{*Slot|}"]
+34528440 -> 34939304 [dir=back]
+34528440 -> 34945896 [dir=back]
+
+34939304 -> 35171144[headlabel="formats 1..*"]
+34939304[ label="{SlotIn|+name:ID\l}"]
+
+34945896 -> 35171144[headlabel="formats 1..*"]
+34945896[ label="{SlotOut|+name:ID\l}"]
+
+34928824 -> 34404312[headlabel="component "]
+34928824[ label="{Instance|+name:ID\l}"]
+
+35422888 -> 34928824[headlabel="from_inst "]
+35422888 -> 34945896[headlabel="from_port "]
+35422888 -> 34928824[headlabel="to_inst "]
+35422888 -> 34939304[headlabel="to_port "]
+35422888[ label="{Connection|}"]
+
+35453432[ label="{FQN|FQN}"]
+
+35465560[ label="{Comment|\\/\\/.*$}"]
+
+35436328[ label="{ID|}"]
+
+35444360[ label="{STRING|}"]
+
+35449896[ label="{BOOL|}"]
+
+35455432[ label="{INT|}"]
+
+35460968[ label="{FLOAT|}"]
+
+35466504[ label="{STRICTFLOAT|}"]
+
+35472040[ label="{NUMBER|}"]
+35472040 -> 35466504 [dir=back]
+35472040 -> 35455432 [dir=back]
+
+35477576[ label="{BASETYPE|}"]
+35477576 -> 35472040 [dir=back]
+35477576 -> 35460968 [dir=back]
+35477576 -> 35449896 [dir=back]
+35477576 -> 35436328 [dir=back]
+35477576 -> 35444360 [dir=back]
+
+35483112[ label="{*OBJECT|}"]
+35483112 -> 35477576 [dir=back]
+
+
+}

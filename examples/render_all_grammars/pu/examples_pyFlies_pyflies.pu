@@ -1,0 +1,330 @@
+@startuml
+            set namespaceSeparator .
+        pyflies.PyFliesModel *-- "1..*" pyflies.BlockType
+pyflies.PyFliesModel *-- pyflies.Structure
+pyflies.PyFliesModel *-- "0..*" pyflies.Target
+class pyflies.PyFliesModel  {
+STRING name
+STRING description
+STRING basepath
+}
+
+
+class pyflies.BlockType <<abstract>> {
+}
+
+pyflies.BlockType <|-- pyflies.TestType
+pyflies.BlockType <|-- pyflies.ScreenType
+pyflies.BlockType <|-- pyflies.SubjectType
+
+pyflies.TestType *-- pyflies.Conditions
+pyflies.TestType *-- pyflies.Stimuli
+class pyflies.TestType  {
+ID name
+}
+
+
+pyflies.Conditions *-- "1..*" pyflies.Condition
+class pyflies.Conditions  {
+list[WORD] varNames
+}
+
+
+class pyflies.Condition  {
+list[WORD] varValues
+}
+
+
+pyflies.Stimuli *-- "1..*" pyflies.ConditionStimuli
+class pyflies.Stimuli  {
+INT dmin
+INT dmax
+}
+
+
+pyflies.ConditionStimuli *-- pyflies.ConditionMatch
+pyflies.ConditionStimuli *-- "1..*" pyflies.Stimulus
+class pyflies.ConditionStimuli  {
+}
+
+
+pyflies.ConditionMatch *-- pyflies.ConditionMatchExpression
+class pyflies.ConditionMatch  {
+}
+
+
+class pyflies.ConditionMatchExpression <<abstract>> {
+}
+
+pyflies.ConditionMatchExpression <|-- pyflies.FixedCondition
+pyflies.ConditionMatchExpression <|-- pyflies.OrdinalCondition
+pyflies.ConditionMatchExpression <|-- pyflies.ExpressionCondition
+
+class pyflies.FixedCondition  {
+FixedConditionEnum expression
+}
+
+
+class pyflies.FixedConditionEnum <<match>> {
+}
+
+
+class pyflies.OrdinalCondition  {
+INT expression
+}
+
+
+pyflies.ExpressionCondition *-- pyflies.OrExpression
+class pyflies.ExpressionCondition  {
+}
+
+
+pyflies.OrExpression *-- "0..*" pyflies.AndExpression
+class pyflies.OrExpression  {
+}
+
+
+pyflies.AndExpression *-- "0..*" pyflies.NotEqualsExpression
+class pyflies.AndExpression  {
+}
+
+
+class pyflies.NotEqualsExpression <<abstract>> {
+}
+
+pyflies.NotEqualsExpression <|-- pyflies.NotExpression
+pyflies.NotEqualsExpression <|-- pyflies.EqualsExpression
+
+pyflies.NotExpression *-- pyflies.EqualsExpression
+class pyflies.NotExpression  {
+}
+
+
+class pyflies.EqualsExpression  {
+WORD varName
+WORD varValue
+}
+
+
+class pyflies.Stimulus <<abstract>> {
+}
+
+pyflies.Stimulus <|-- pyflies.Image
+pyflies.Stimulus <|-- pyflies.Shape
+pyflies.Stimulus <|-- pyflies.Sound
+pyflies.Stimulus <|-- pyflies.Audio
+pyflies.Stimulus <|-- pyflies.Text
+
+class pyflies.Image  {
+STRING file
+optional<list[WORD]> x
+optional<list[INT]> y
+optional<list[WORD]> dmin
+optional<list[INT]> dmax
+optional<list[WORD]> width
+optional<list[INT]> height
+}
+
+
+class pyflies.Shape  {
+ShapeType shape
+optional<list[WORD]> x
+optional<list[INT]> y
+optional<list[WORD]> dmin
+optional<list[INT]> dmax
+optional<list[WORD]> width
+optional<list[INT]> height
+optional<list[WORD]> color
+optional<list[WORD]> fillcolor
+optional<list[WORD]> lineWidth
+}
+
+
+class pyflies.ShapeType <<match>> {
+}
+
+
+class pyflies.Text  {
+TextType text
+optional<list[WORD]> x
+optional<list[INT]> y
+optional<list[WORD]> dmin
+optional<list[INT]> dmax
+optional<list[WORD]> width
+optional<list[INT]> height
+optional<list[WORD]> color
+}
+
+
+class pyflies.TextType <<match>> {
+}
+
+
+class pyflies.WORD <<match>> {
+}
+
+
+class pyflies.Sound  {
+INT frequency
+WORD dmin
+INT dmax
+}
+
+
+class pyflies.Audio  {
+STRING file
+WORD dmin
+INT dmax
+}
+
+
+class pyflies.Block <<abstract>> {
+}
+
+pyflies.Block <|-- pyflies.Sequence
+pyflies.Block <|-- pyflies.Randomize
+
+pyflies.TestInstance o-- pyflies.TestType
+class pyflies.TestInstance  {
+INT trials
+optional<BOOL> practice
+optional<BOOL> randomize
+}
+
+
+pyflies.ScreenInstance o-- pyflies.ScreenType
+class pyflies.ScreenInstance  {
+}
+
+
+pyflies.SubjectInstance o-- pyflies.SubjectType
+class pyflies.SubjectInstance  {
+}
+
+
+class pyflies.Reference <<abstract>> {
+}
+
+pyflies.Reference <|-- pyflies.TestInstance
+pyflies.Reference <|-- pyflies.ScreenInstance
+pyflies.Reference <|-- pyflies.SubjectInstance
+
+class pyflies.StructureElement <<abstract>> {
+}
+
+pyflies.StructureElement <|-- pyflies.Reference
+pyflies.StructureElement <|-- pyflies.Block
+
+pyflies.Structure *-- "0..*" pyflies.StructureElement
+class pyflies.Structure  {
+}
+
+
+pyflies.Sequence *-- "0..*" pyflies.StructureElement
+class pyflies.Sequence  {
+}
+
+
+pyflies.Randomize *-- "0..*" pyflies.StructureElement
+class pyflies.Randomize  {
+}
+
+
+class pyflies.ScreenType  {
+ID name
+STRING content
+}
+
+
+pyflies.SubjectType *-- "1..*" pyflies.SubjectAttribute
+class pyflies.SubjectType  {
+ID name
+}
+
+
+pyflies.SubjectAttribute *-- pyflies.SubjectAttributeType
+class pyflies.SubjectAttribute  {
+ID name
+STRING label
+}
+
+
+class pyflies.SubjectAttributeType <<abstract>> {
+}
+
+pyflies.SubjectAttributeType <|-- pyflies.Enum
+
+class pyflies.Enum  {
+list[ID] values
+}
+
+
+pyflies.Target *-- "0..*" pyflies.ResponseMap
+pyflies.Target *-- "0..*" pyflies.TargetParam
+class pyflies.Target  {
+ID name
+STRING output
+}
+
+
+class pyflies.TargetParam  {
+ID name
+BASETYPE value
+}
+
+
+class pyflies.ResponseMap  {
+ID name
+BASETYPE target
+}
+
+
+class pyflies.Comment <<match>> {
+}
+
+
+class ID <<match>> {
+}
+
+
+class STRING <<match>> {
+}
+
+
+class BOOL <<match>> {
+}
+
+
+class INT <<match>> {
+}
+
+
+class FLOAT <<match>> {
+}
+
+
+class STRICTFLOAT <<match>> {
+}
+
+
+class NUMBER <<match>> {
+}
+
+NUMBER <|-- STRICTFLOAT
+NUMBER <|-- INT
+
+class BASETYPE <<match>> {
+}
+
+BASETYPE <|-- NUMBER
+BASETYPE <|-- FLOAT
+BASETYPE <|-- BOOL
+BASETYPE <|-- ID
+BASETYPE <|-- STRING
+
+class OBJECT <<abstract>> {
+}
+
+OBJECT <|-- BASETYPE
+
+@enduml

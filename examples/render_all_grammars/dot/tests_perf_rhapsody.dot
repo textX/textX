@@ -1,0 +1,58 @@
+
+    digraph xtext {
+    fontname = "Bitstream Vera Sans"
+    fontsize = 8
+    node[
+        shape=record,
+        style=filled,
+        fillcolor=aliceblue
+    ]
+    nodesep = 0.3
+    edge[dir=black,arrowtail=empty]
+
+
+34427544 -> 34410200[arrowtail=diamond, dir=both, headlabel="root "]
+34427544[ label="{RhapsodyModel|+header:STRING\l}"]
+
+34410200 -> 34628200[arrowtail=diamond, dir=both, headlabel="properties 1..*"]
+34410200[ label="{Object|+name:ID\l}"]
+
+34628200 -> 32379544[arrowtail=diamond, dir=both, headlabel="values 0..*"]
+34628200[ label="{Property|+name:ID\l}"]
+
+32379544[ label="{*Value|STRING\|INT\|FLOAT\|ID}"]
+32379544 -> 34648664 [dir=back]
+32379544 -> 34410200 [dir=back]
+
+34648664[ label="{GUID|+value:STRING\l}"]
+
+34654920[ label="{Comment|\\/\\/.*$}"]
+
+34407256[ label="{ID|}"]
+
+34412200[ label="{STRING|}"]
+
+34417144[ label="{BOOL|}"]
+
+34422088[ label="{INT|}"]
+
+34429544[ label="{FLOAT|}"]
+
+34434488[ label="{STRICTFLOAT|}"]
+
+34439432[ label="{NUMBER|}"]
+34439432 -> 34434488 [dir=back]
+34439432 -> 34422088 [dir=back]
+
+34444968[ label="{BASETYPE|}"]
+34444968 -> 34439432 [dir=back]
+34444968 -> 34429544 [dir=back]
+34444968 -> 34417144 [dir=back]
+34444968 -> 34407256 [dir=back]
+34444968 -> 34412200 [dir=back]
+
+34449912[ label="{*OBJECT|}"]
+34449912 -> 34444968 [dir=back]
+
+
+}

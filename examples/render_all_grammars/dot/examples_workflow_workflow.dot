@@ -1,0 +1,55 @@
+
+    digraph xtext {
+    fontname = "Bitstream Vera Sans"
+    fontsize = 8
+    node[
+        shape=record,
+        style=filled,
+        fillcolor=aliceblue
+    ]
+    nodesep = 0.3
+    edge[dir=black,arrowtail=empty]
+
+
+35150376 -> 35040904[headlabel="init "]
+35150376 -> 35040904[arrowtail=diamond, dir=both, headlabel="tasks 0..*"]
+35150376 -> 35234552[arrowtail=diamond, dir=both, headlabel="actions 0..*"]
+35150376[ label="{Workflow|+name:ID\l+desc:STRING\l}"]
+
+35040904 -> 35234552[headlabel="entry 0..*"]
+35040904 -> 35234552[headlabel="leave 0..*"]
+35040904 -> 35040904[headlabel="next 1..*"]
+35040904[ label="{Task|+name:ID\l}"]
+
+35234552[ label="{Action|+name:ID\l}"]
+
+35240088[ label="{Comment|\\/\\/.*$}"]
+
+35398424[ label="{ID|}"]
+
+35623640[ label="{STRING|}"]
+
+34977448[ label="{BOOL|}"]
+
+34626680[ label="{INT|}"]
+
+34966104[ label="{FLOAT|}"]
+
+35494200[ label="{STRICTFLOAT|}"]
+
+35127384[ label="{NUMBER|}"]
+35127384 -> 35494200 [dir=back]
+35127384 -> 34626680 [dir=back]
+
+35132920[ label="{BASETYPE|}"]
+35132920 -> 35127384 [dir=back]
+35132920 -> 34966104 [dir=back]
+35132920 -> 34977448 [dir=back]
+35132920 -> 35398424 [dir=back]
+35132920 -> 35623640 [dir=back]
+
+35145304[ label="{*OBJECT|}"]
+35145304 -> 35132920 [dir=back]
+
+
+}

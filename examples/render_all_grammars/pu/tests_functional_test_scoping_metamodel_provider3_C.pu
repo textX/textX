@@ -1,0 +1,89 @@
+@startuml
+            set namespaceSeparator .
+        C.Model *-- "1..*" Base.Import
+C.Model *-- "1..*" Base.Cls
+C.Model *-- "1..*" Base.Obj
+C.Model *-- "1..*" Base.Call
+class C.Model  {
+}
+
+
+class ID <<match>> {
+}
+
+
+class STRING <<match>> {
+}
+
+
+class BOOL <<match>> {
+}
+
+
+class INT <<match>> {
+}
+
+
+class FLOAT <<match>> {
+}
+
+
+class STRICTFLOAT <<match>> {
+}
+
+
+class NUMBER <<match>> {
+}
+
+NUMBER <|-- STRICTFLOAT
+NUMBER <|-- INT
+
+class BASETYPE <<match>> {
+}
+
+BASETYPE <|-- NUMBER
+BASETYPE <|-- FLOAT
+BASETYPE <|-- BOOL
+BASETYPE <|-- ID
+BASETYPE <|-- STRING
+
+class OBJECT <<abstract>> {
+}
+
+OBJECT <|-- BASETYPE
+
+Base.Cls o-- "1..*" Base.Cls
+Base.Cls *-- "1..*" Base.Method
+class Base.Cls  {
+ID name
+}
+
+
+class Base.Method  {
+ID name
+}
+
+
+Base.Obj o-- Base.Cls
+class Base.Obj  {
+ID name
+}
+
+
+Base.Call o-- Base.Obj
+Base.Call o-- Base.Method
+class Base.Call  {
+ID name
+}
+
+
+class Base.Import  {
+STRING importURI
+}
+
+
+class Base.Comment <<match>> {
+}
+
+
+@enduml

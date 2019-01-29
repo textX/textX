@@ -1,0 +1,89 @@
+
+    digraph xtext {
+    fontname = "Bitstream Vera Sans"
+    fontsize = 8
+    node[
+        shape=record,
+        style=filled,
+        fillcolor=aliceblue
+    ]
+    nodesep = 0.3
+    edge[dir=black,arrowtail=empty]
+
+
+35108504 -> 35423832[arrowtail=diamond, dir=both, headlabel="imports 1..*"]
+35108504 -> 35418888[arrowtail=diamond, dir=both, headlabel="users 1..*"]
+35108504[ label="{Model|}"]
+
+35418888 -> 35402216[headlabel="instance "]
+35418888[ label="{User|+name:ID\l}"]
+
+35423832[ label="{Import|+importURI:STRING\l}"]
+
+34638424[ label="{ID|}"]
+
+34644680[ label="{STRING|}"]
+
+35351416[ label="{BOOL|}"]
+
+35356952[ label="{INT|}"]
+
+35362488[ label="{FLOAT|}"]
+
+35368024[ label="{STRICTFLOAT|}"]
+
+35373560[ label="{NUMBER|}"]
+35373560 -> 35368024 [dir=back]
+35373560 -> 35356952 [dir=back]
+
+34861976[ label="{BASETYPE|}"]
+34861976 -> 35373560 [dir=back]
+34861976 -> 35362488 [dir=back]
+34861976 -> 35351416 [dir=back]
+34861976 -> 34638424 [dir=back]
+34861976 -> 34644680 [dir=back]
+
+35389304[ label="{*OBJECT|}"]
+35389304 -> 34861976 [dir=back]
+
+35256168 -> 35184024[arrowtail=diamond, dir=both, headlabel="packages 0..*"]
+35256168[ label="{Model|}"]
+
+35184024 -> 35361544[arrowtail=diamond, dir=both, headlabel="components 1..*"]
+35184024 -> 35402216[arrowtail=diamond, dir=both, headlabel="instances 1..*"]
+35184024 -> 35407752[arrowtail=diamond, dir=both, headlabel="connections 1..*"]
+35184024 -> 35184024[arrowtail=diamond, dir=both, headlabel="packages 1..*"]
+35184024 -> 35229672[arrowtail=diamond, dir=both, headlabel="interfaces 1..*"]
+35184024[ label="{Package|+name:ID\l}"]
+
+35229672[ label="{Interface|+name:ID\l}"]
+
+35361544 -> 35361544[headlabel="extends 1..*"]
+35361544 -> 34861032[arrowtail=diamond, dir=both, headlabel="slots 0..*"]
+35361544[ label="{Component|+name:ID\l}"]
+
+34861032[ label="{*Slot|}"]
+34861032 -> 34643736 [dir=back]
+34861032 -> 34634296 [dir=back]
+
+34643736 -> 35229672[headlabel="formats 1..*"]
+34643736[ label="{SlotIn|+name:ID\l}"]
+
+34634296 -> 35229672[headlabel="formats 1..*"]
+34634296[ label="{SlotOut|+name:ID\l}"]
+
+35402216 -> 35361544[headlabel="component "]
+35402216[ label="{Instance|+name:ID\l}"]
+
+35407752 -> 35402216[headlabel="from_inst "]
+35407752 -> 34634296[headlabel="from_port "]
+35407752 -> 35402216[headlabel="to_inst "]
+35407752 -> 34643736[headlabel="to_port "]
+35407752[ label="{Connection|}"]
+
+35413288[ label="{FQN|FQN}"]
+
+35350360[ label="{Comment|\\/\\/.*$}"]
+
+
+}
