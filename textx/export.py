@@ -154,13 +154,14 @@ class DotRenderer(object):
 class PlantUmlRenderer(object):
 
     def get_header(self):
-        return "@startuml"
+        return '''@startuml
+            set namespaceSeparator .
+        '''
 
     def get_trailer(self):
         return '@enduml'
 
     def render_class(self, cls):
-        name = cls.__name__
         attrs = ""
         if cls._tx_type is not RULE_COMMON:
             attrs = match_abstract_str(cls)
@@ -182,11 +183,9 @@ class PlantUmlRenderer(object):
                 )
 
     def render_attr_link(self, cls, attr):
-        arrowtail = "arrowtail=diamond, dir=both, " \
-            if attr.cont else ""
         if attr.ref and attr.cls.__name__ != 'OBJECT':
             # If attribute is a reference
-            mult = attr.mult if not attr.mult == MULT_ONE else ""
+            # mult = attr.mult if not attr.mult == MULT_ONE else ""
             return ''
 
     def render_inherited_by(self, base, special):
