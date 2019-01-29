@@ -163,9 +163,9 @@ class PlantUmlRenderer(object):
 
     def render_class(self, cls):
         attrs = ""
-        stereotype= ""
+        stereotype = ""
         if cls._tx_type is not RULE_COMMON:
-            stereotype+=cls._tx_type
+            stereotype += cls._tx_type
         else:
             for attr in cls._tx_attrs.values():
                 required = attr.mult in [MULT_ONE, MULT_ONEORMORE]
@@ -178,8 +178,9 @@ class PlantUmlRenderer(object):
                     if required:
                         attrs += "{} {}\n".format(attr_type, attr.name)
                     else:
-                        attrs += "optional<{}> {}\n".format(attr_type, attr.name)
-        if len(stereotype)>0:
+                        attrs += "optional<{}> {}\n".format(attr_type,
+                                                            attr.name)
+        if len(stereotype) > 0:
             stereotype = "<<"+stereotype+">>"
         return 'class {} {} {{\n{}}}\n'.format(
                 cls._tx_fqn, stereotype, attrs

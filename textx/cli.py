@@ -63,7 +63,7 @@ def visualize(ctx, meta_model_file, model_file, ignore_case, output_format):
         metamodel_export(meta_model, dot_file)
 
     if model_file:
-        if output_format=='plantuml':
+        if output_format == 'plantuml':
             raise Exception("plantuml is not supported for model files, yet.")
         dot_file = "{}.dot".format(model_file)
         click.echo("Generating '{}' file for model.".format(model_file))
