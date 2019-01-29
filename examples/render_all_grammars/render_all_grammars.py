@@ -43,6 +43,10 @@ def main(path=None, debug=False):
             md.write(" * source: {}/{}\n".format(m[0], m[1]))
             md.write(" * basename: {}\n".format(outfname_base))
             md.write('\n')
+            with open(inname, "rt") as gr:
+                for l in gr:
+                    md.write("\t\t"+l)
+            md.write('\n')
             md.write('<img width="49%" src="{}" alt="{}">\n'.format(
                 dest_pu_png, dest_pu_png))
             md.write('<img width="49%" src="{}" alt="{}">\n'.format(

@@ -163,24 +163,26 @@ class PlantUmlRenderer(object):
 
     def render_class(self, cls):
         attrs = ""
-        content = ""
+        stereotype= ""
         if cls._tx_type is not RULE_COMMON:
-            attrs = match_abstract_str(cls)
+            stereotype+=cls._tx_type
         else:
             for attr in cls._tx_attrs.values():
-                required = "+" if attr.mult in \
-                    [MULT_ONE, MULT_ONEORMORE] else ""
+                required = attr.mult in [MULT_ONE, MULT_ONEORMORE]
                 mult_list = attr.mult in [MULT_ZEROORMORE, MULT_ONEORMORE]
                 attr_type = "list[{}]".format(attr.cls.__name__) \
                     if mult_list else attr.cls.__name__
                 if attr.ref and attr.cls.__name__ != 'OBJECT':
                     pass
                 else:
-                    # If it is plain type
-                    attrs += "{}{}:{}\\l".format(required,
-                                                 attr.name, attr_type)
-        return 'class {} {{\n{}}}\n'.format(
-                cls._tx_fqn, content
+                    if required:
+                        attrs += "{} {}\n".format(attr_type, attr.name)
+                    else:
+                        attrs += "optional<{}> {}\n".format(attr_type, attr.name)
+        if len(stereotype)>0:
+            stereotype = "<<"+stereotype+">>"
+        return 'class {} {} {{\n{}}}\n'.format(
+                cls._tx_fqn, stereotype, attrs
                 )
 
     def render_attr_link(self, cls, attr):
