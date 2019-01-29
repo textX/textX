@@ -6,7 +6,7 @@ from textx import metamodel_from_file, metamodel_from_str
 from textx.scoping.tools import get_referenced_object, \
     get_list_of_concatenated_objects
 from textx.scoping.tools import get_unique_named_object
-from textx.scoping.tools import textx_isinstance
+from textx import textx_isinstance
 from textx import get_children_of_type
 
 

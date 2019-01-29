@@ -8,7 +8,7 @@ from __future__ import unicode_literals
 import sys
 from os.path import join, dirname
 from textx import metamodel_from_str
-from textx.scoping.tools import textx_isinstance
+from textx import textx_isinstance
 from textx.export import metamodel_export, model_export
 
 if sys.version < '3':

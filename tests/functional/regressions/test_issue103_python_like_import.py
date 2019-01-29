@@ -82,7 +82,7 @@ def test_issue103_imported_namedspaces():
         return import_obj.importURI.split('.')[0]
 
     def custom_scope_redirection(obj):
-        from textx.scoping.tools import textx_isinstance
+        from textx import textx_isinstance
         if textx_isinstance(obj, mm["PackageRef"]):
             if obj.ref is None:
                 from textx.scoping import Postponed
