@@ -148,7 +148,7 @@ class DotRenderer(object):
 
     def render_inherited_by(self, base, special):
         return '{} -> {} [dir=back]'\
-            .format(id(special), id(base))
+            .format(id(base), id(special))
 
 
 class PlantUmlRenderer(object):
@@ -163,6 +163,7 @@ class PlantUmlRenderer(object):
 
     def render_class(self, cls):
         attrs = ""
+        content = ""
         if cls._tx_type is not RULE_COMMON:
             attrs = match_abstract_str(cls)
         else:
@@ -178,18 +179,27 @@ class PlantUmlRenderer(object):
                     # If it is plain type
                     attrs += "{}{}:{}\\l".format(required,
                                                  attr.name, attr_type)
-        return 'class {} {{\n}}\n'.format(
-                cls._tx_fqn
+        return 'class {} {{\n{}}}\n'.format(
+                cls._tx_fqn, content
                 )
 
     def render_attr_link(self, cls, attr):
         if attr.ref and attr.cls.__name__ != 'OBJECT':
             # If attribute is a reference
             # mult = attr.mult if not attr.mult == MULT_ONE else ""
-            return ''
+            if attr.cont:
+                arr = "*--"
+            else:
+                arr = "o--"
+            if attr.mult == MULT_ZEROORMORE:
+                arr = arr + ' "0..*"'
+            elif attr.mult == MULT_ONEORMORE:
+                arr = arr + ' "1..*"'
+            return '{} {} {}'.format(
+                cls._tx_fqn, arr, attr.cls._tx_fqn)
 
     def render_inherited_by(self, base, special):
-        return ''
+        return '{} <|-- {}'.format(base._tx_fqn, special._tx_fqn)
 
 
 def metamodel_export(metamodel, file_name, renderer=None):
@@ -210,7 +220,7 @@ def metamodel_export_tofile(metamodel, f, renderer=None):
                     f.write(renderer.render_attr_link(cls, attr)+'\n')
         f.write(renderer.render_class(cls)+'\n')
         for inherited_by in cls._tx_inh_by:
-            f.write(renderer.render_inherited_by(inherited_by, cls)+'\n')
+            f.write(renderer.render_inherited_by(cls, inherited_by)+'\n')
         f.write("\n")
     f.write("{}\n".format(renderer.get_trailer()))
 
