@@ -17,6 +17,7 @@ def create_testgroup(topgroup):
     @click.option('--group-option', default=False, is_flag=True,
                   help="Some group option.")
     def testgroup(group_option):
+        """Here we write group explanation."""
         pass
 
     @testgroup.command()
@@ -24,6 +25,7 @@ def create_testgroup(topgroup):
     @click.option('--some-option', default=False, is_flag=True,
                   help="Testing option in custom command.")
     def groupcommand1(some_argument, some_option):
+        """And here we write a doc for particular command."""
         click.echo("GroupCommand1: argument: {}, option:{}".format(
             some_argument, some_option))
 
@@ -32,5 +34,6 @@ def create_testgroup(topgroup):
     @click.option('--some-option', default=False, is_flag=True,
                   help="Testing option in custom command.")
     def groupcommand2(some_argument, some_option):
+        """This is another command docs."""
         click.echo("GroupCommand2: argument: {}, option:{}".format(
             some_argument, some_option))
