@@ -116,6 +116,8 @@
         
             <li><a class="toctree-l4" href="#using-the-tool">Using the tool</a></li>
         
+            <li><a class="toctree-l4" href="#extending-textx-command">Extending textx command</a></li>
+        
         </ul>
     
 
@@ -233,37 +235,48 @@
 <hr />
 <h2 id="using-the-tool">Using the tool<a class="headerlink" href="#using-the-tool" title="Permanent link">&para;</a></h2>
 <p>To get basic help:</p>
-<pre><code>$ textx --help
-usage: textx [-h] [-i] [-d] cmd metamodel [model]
+<pre><code class="sh">$ textx --help
+Usage: textx [OPTIONS] COMMAND [ARGS]...
 
-textX checker and visualizer
+Options:
+  --debug  Debug/trace output.
+  --help   Show this message and exit.
 
-positional arguments:
-  cmd         Command - "check" or "visualize"
-  metamodel   Meta-model file name
-  model       Model file name
-
-optional arguments:
-  -h, --help  show this help message and exit
-  -i          case-insensitive parsing
-  -d          run in debug mode
+Commands:
+  check        Check validity of meta-model and optionally model.
+  visualize    Generate .dot file(s) from meta-model and optionally model.
 </code></pre>
+
+<p>To get a help on a specific command:</p>
+<pre><code class="sh">$ textx check --help
+Usage: textx check [OPTIONS] META_MODEL_FILE [MODEL_FILE]
+
+  Check validity of meta-model and optionally model.
+
+Options:
+  -i, --ignore-case  case-insensitive parsing.
+  --help             Show this message and exit.
+</code></pre>
+
 <p>You can check and visualize (generate a .dot file) your meta-model or model using
 this tool.</p>
 <p>For example, to check and visualize a metamodel you could issue:</p>
-<pre><code>$ textx visualize robot.tx
+<pre><code class="sh">$ textx visualize robot.tx
 Meta-model OK.
 Generating 'robot.tx.dot' file for meta-model.
 To convert to png run 'dot -Tpng -O robot.tx.dot'
 </code></pre>
+
 <p>Create an image from the .dot file:</p>
-<pre><code>$ dot -Tpng -O robot.tx.dot
+<pre><code class="sh">$ dot -Tpng -O robot.tx.dot
 </code></pre>
+
 <p>Or use some <code>dot</code> viewer. For example:</p>
-<pre><code>$ xdot robot.tx.dot
+<pre><code class="sh">$ xdot robot.tx.dot
 </code></pre>
+
 <p>Visualize model:</p>
-<pre><code>$ textx visualize robot.tx program.rbt
+<pre><code class="sh">$ textx visualize robot.tx program.rbt
 Meta-model OK.
 Model OK.
 Generating 'robot.tx.dot' file for meta-model.
@@ -271,16 +284,166 @@ To convert to png run 'dot -Tpng -O robot.tx.dot'
 Generating 'program.rbt.dot' file for model.
 To convert to png run 'dot -Tpng -O program.rbt.dot'
 </code></pre>
+
 <p>To only check (meta)models use <code>check</code> command:</p>
-<pre><code>$ textx check robot.tx program.rbt
+<pre><code class="sh">$ textx check robot.tx program.rbt
+Meta-model OK.
+Model OK.
 </code></pre>
+
 <p>If there is an error you will get a nice error report:</p>
-<pre><code>$ textx check robot.tx program.rbt
+<pre><code class="sh">$ textx check robot.tx program.rbt
 Meta-model OK.
 Error in model file.
-Expected 'initial' or 'up' or 'down' or 'left' or 
+Expected 'initial' or 'up' or 'down' or 'left' or
   'right' or 'end' at program.rbt:(3, 3) =&gt; 'al 3, 1   *gore 4    '.
 </code></pre>
+
+<h2 id="extending-textx-command">Extending textx command<a class="headerlink" href="#extending-textx-command" title="Permanent link">&para;</a></h2>
+<p><code>textx</code> command can be extended from other installed Python packages using
+<a href="https://setuptools.readthedocs.io/en/latest/pkg_resources.html">pkg_resources</a>
+extension points. Using command extension one can add new commands and command
+groups to the <code>textx</code> command.</p>
+<p><code>textx</code> uses <a href="https://github.com/pallets/click/">click</a> library for CLI commands
+processing. That makes really easy to create new commands and command groups.</p>
+<p>To create a new command you have to create a Python function decorated with
+<code>click</code> decorators used for the definition of arguments and options. For more
+information please see <a href="https://click.palletsprojects.com/en/7.x/">click
+documentation</a>.</p>
+<p>For example:</p>
+<pre><code class="python">import click
+
+@click.argument('some_argument', type=click.Path())
+@click.option('--some-option', default=False, is_flag=True,
+              help=&quot;Testing option in custom command.&quot;)
+def testcommand(some_argument, some_option):
+    &quot;&quot;&quot;
+    This command will be found as a sub-command of `textx` command once this
+    project is installed.
+    &quot;&quot;&quot;
+    click.echo(&quot;Hello sub-command test!&quot;)
+</code></pre>
+
+<p>Register new command in your project's <code>setup.py</code> file under the entry point
+<code>textx_commands</code> (we are assuming that <code>testcommand</code> function is in package
+<code>cli</code>).</p>
+<pre><code class="python">setup(
+    name='MyProject',
+    packages=[&quot;cli&quot;],
+    entry_points={
+        'textx_commands': [
+            'testcommand = cli:testcommand'
+        ],
+    }
+)
+</code></pre>
+
+<p>If you install now your project in the same Python environment where <code>textX</code> is
+installed you will see that <code>textx</code> command now has your command registered.</p>
+<pre><code class="sh">$ textx
+Usage: textx [OPTIONS] COMMAND [ARGS]...
+
+Options:
+  --debug  Debug/trace output.
+  --help   Show this message and exit.
+
+Commands:
+  check        Check validity of meta-model and optionally model.
+  testcommand  This command will be found as a sub-command of `textx`...
+  visualize    Generate .dot file(s) from meta-model and optionally model.
+
+
+$ textx testcommand some_argument
+Hello sub-command test!
+</code></pre>
+
+<p>Similarly you can create new command groups. To do that create a function that
+accepts <code>click</code> top-level group and registers new group on it with your group's
+commands. You can have a group level options and a command level options and
+arguments.</p>
+<p>Here is a full example:</p>
+<pre><code class="python">import click
+
+def create_testgroup(topgroup):
+    @topgroup.group()
+    @click.option('--group-option', default=False, is_flag=True,
+                  help=&quot;Some group option.&quot;)
+    def testgroup(group_option):
+        &quot;&quot;&quot;Here we write group explanation.&quot;&quot;&quot;
+        pass
+
+    @testgroup.command()
+    @click.argument('some_argument', type=click.Path())
+    @click.option('--some-option', default=False, is_flag=True,
+                  help=&quot;Testing option in custom command.&quot;)
+    def groupcommand1(some_argument, some_option):
+        &quot;&quot;&quot;And here we write a doc for particular command.&quot;&quot;&quot;
+        click.echo(&quot;GroupCommand1: argument: {}, option:{}&quot;.format(
+            some_argument, some_option))
+
+    @testgroup.command()
+    @click.argument('some_argument', type=click.Path())
+    @click.option('--some-option', default=False, is_flag=True,
+                  help=&quot;Testing option in custom command.&quot;)
+    def groupcommand2(some_argument, some_option):
+        &quot;&quot;&quot;This is another command docs.&quot;&quot;&quot;
+        click.echo(&quot;GroupCommand2: argument: {}, option:{}&quot;.format(
+            some_argument, some_option))
+</code></pre>
+
+<p>In this example we created a new group called <code>testgroup</code>. We use that group in
+the rest of the code to decorate new commands belonging to the group.</p>
+<p>We have to register our function in the extension point <code>textx_command_groups</code>:</p>
+<pre><code class="python">setup(
+    name='MyProject',
+    packages=[&quot;cli&quot;],
+    entry_points={
+        ...
+        'textx_command_groups': [
+            'testgroup = cli:create_testgroup'
+        ]
+    }
+    }
+)
+</code></pre>
+
+<p>If <code>MyProject</code> is installed in the environment where <code>textX</code> is installed you'll
+see that your command group is now accessible by the <code>textx</code> command:</p>
+<pre><code class="sh">$  textx
+Usage: textx [OPTIONS] COMMAND [ARGS]...
+
+Options:
+  --debug  Debug/trace output.
+  --help   Show this message and exit.
+
+Commands:
+  check        Check validity of meta-model and optionally model.
+  testcommand  This command will be found as a sub-command of `textx`...
+  testgroup    Here we write group explanation.
+  visualize    Generate .dot file(s) from meta-model and optionally model.
+
+
+$ textx testgroup
+Usage: textx testgroup [OPTIONS] COMMAND [ARGS]...
+
+  Here we write group explanation.
+
+Options:
+  --group-option  Some group option.
+  --help          Show this message and exit.
+
+Commands:
+  groupcommand1  And here we write a doc for particular command.
+  groupcommand2  This is another command docs.
+
+
+$ textx testgroup groupcommand1 first_argument
+GroupCommand1: argument: first_argument, option:False
+</code></pre>
+
+<p>For a full example please take a look at <a href="https://github.com/textX/textX/blob/master/tests/functional/subcommands/test_subcommands.py">this
+test</a> and this <a href="https://github.com/textX/textX/tree/master/tests/functional/subcommands/example_project">example test
+project</a>.</p>
               
             </div>
           </div>
