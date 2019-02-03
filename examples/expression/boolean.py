@@ -47,7 +47,7 @@ class Or(ExpressionElement):
     def value(self):
         ret = self.op[0].value
         for operand in self.op[1:]:
-                ret = ret or operand.value
+            ret = ret or operand.value
         return ret
 
 

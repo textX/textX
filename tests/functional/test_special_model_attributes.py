@@ -24,7 +24,7 @@ def test_special_model_attributes():
     assert model._tx_filename
     assert model._tx_filename.endswith('test_special_model_attributes.model')
     assert model._tx_metamodel is mm
-    assert model.objs[1]._tx_position is 4
+    assert model.objs[1]._tx_position == 4
 
     model = mm.model_from_str('34, 56')
 
