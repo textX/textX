@@ -1,7 +1,9 @@
 @startuml
-            set namespaceSeparator .
-        class third.Third  {
-INT t
+set namespaceSeparator .
+
+
+class third.Third  {
+  INT t
 }
 
 
@@ -32,21 +34,21 @@ class STRICTFLOAT <<match>> {
 class NUMBER <<match>> {
 }
 
-NUMBER <|-- STRICTFLOAT
-NUMBER <|-- INT
 
 class BASETYPE <<match>> {
 }
 
+
+class OBJECT <<abstract>> {
+}
+
+
+NUMBER <|-- STRICTFLOAT
+NUMBER <|-- INT
 BASETYPE <|-- NUMBER
 BASETYPE <|-- FLOAT
 BASETYPE <|-- BOOL
 BASETYPE <|-- ID
 BASETYPE <|-- STRING
-
-class OBJECT <<abstract>> {
-}
-
 OBJECT <|-- BASETYPE
-
 @enduml

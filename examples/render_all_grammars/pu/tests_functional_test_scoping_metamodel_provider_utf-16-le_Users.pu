@@ -1,19 +1,18 @@
 @startuml
-            set namespaceSeparator .
-        Users.Model *-- "1..*" Users.Import
-Users.Model *-- "1..*" Users.User
+set namespaceSeparator .
+
+
 class Users.Model  {
 }
 
 
-Users.User o-- Components.Instance
 class Users.User  {
-ID name
+  ID name
 }
 
 
 class Users.Import  {
-STRING importURI
+  STRING importURI
 }
 
 
@@ -44,78 +43,53 @@ class STRICTFLOAT <<match>> {
 class NUMBER <<match>> {
 }
 
-NUMBER <|-- STRICTFLOAT
-NUMBER <|-- INT
 
 class BASETYPE <<match>> {
 }
 
-BASETYPE <|-- NUMBER
-BASETYPE <|-- FLOAT
-BASETYPE <|-- BOOL
-BASETYPE <|-- ID
-BASETYPE <|-- STRING
 
 class OBJECT <<abstract>> {
 }
 
-OBJECT <|-- BASETYPE
 
-Components.Model *-- "0..*" Components.Package
 class Components.Model  {
 }
 
 
-Components.Package *-- "1..*" Components.Component
-Components.Package *-- "1..*" Components.Instance
-Components.Package *-- "1..*" Components.Connection
-Components.Package *-- "1..*" Components.Package
-Components.Package *-- "1..*" Components.Interface
 class Components.Package  {
-ID name
+  ID name
 }
 
 
 class Components.Interface  {
-ID name
+  ID name
 }
 
 
-Components.Component o-- "1..*" Components.Component
-Components.Component *-- "0..*" Components.Slot
 class Components.Component  {
-ID name
+  ID name
 }
 
 
 class Components.Slot <<abstract>> {
 }
 
-Components.Slot <|-- Components.SlotIn
-Components.Slot <|-- Components.SlotOut
 
-Components.SlotIn o-- "1..*" Components.Interface
 class Components.SlotIn  {
-ID name
+  ID name
 }
 
 
-Components.SlotOut o-- "1..*" Components.Interface
 class Components.SlotOut  {
-ID name
+  ID name
 }
 
 
-Components.Instance o-- Components.Component
 class Components.Instance  {
-ID name
+  ID name
 }
 
 
-Components.Connection o-- Components.Instance
-Components.Connection o-- Components.SlotOut
-Components.Connection o-- Components.Instance
-Components.Connection o-- Components.SlotIn
 class Components.Connection  {
 }
 
@@ -128,4 +102,32 @@ class Components.Comment <<match>> {
 }
 
 
+Users.Model *-- "1..*" Users.Import
+Users.Model *-- "1..*" Users.User
+Users.User o-- Components.Instance
+NUMBER <|-- STRICTFLOAT
+NUMBER <|-- INT
+BASETYPE <|-- NUMBER
+BASETYPE <|-- FLOAT
+BASETYPE <|-- BOOL
+BASETYPE <|-- ID
+BASETYPE <|-- STRING
+OBJECT <|-- BASETYPE
+Components.Model *-- "0..*" Components.Package
+Components.Package *-- "1..*" Components.Component
+Components.Package *-- "1..*" Components.Instance
+Components.Package *-- "1..*" Components.Connection
+Components.Package *-- "1..*" Components.Package
+Components.Package *-- "1..*" Components.Interface
+Components.Component o-- "1..*" Components.Component
+Components.Component *-- "0..*" Components.Slot
+Components.Slot <|-- Components.SlotIn
+Components.Slot <|-- Components.SlotOut
+Components.SlotIn o-- "1..*" Components.Interface
+Components.SlotOut o-- "1..*" Components.Interface
+Components.Instance o-- Components.Component
+Components.Connection o-- Components.Instance
+Components.Connection o-- Components.SlotOut
+Components.Connection o-- Components.Instance
+Components.Connection o-- Components.SlotIn
 @enduml

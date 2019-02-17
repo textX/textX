@@ -11,79 +11,81 @@
     edge[dir=black,arrowtail=empty]
 
 
-35001432 -> 35102312[arrowtail=diamond, dir=both, headlabel="imports 1..*"]
-35001432 -> 35097368[arrowtail=diamond, dir=both, headlabel="users 1..*"]
-35001432[ label="{Model|}"]
+40181032[ label="{Model|}"]
 
-35097368 -> 35077176[headlabel="instance "]
-35097368[ label="{User|+name:ID\l}"]
+40276968[ label="{User|+name:ID\l}"]
 
-35102312[ label="{Import|+importURI:STRING\l}"]
+40281912[ label="{Import|+importURI:STRING\l}"]
 
-32381544[ label="{ID|}"]
+37556216[ label="{ID|}"]
 
-34410200[ label="{STRING|}"]
+39962872[ label="{STRING|}"]
 
-34675080[ label="{BOOL|}"]
+40035496[ label="{BOOL|}"]
 
-34990360[ label="{INT|}"]
+40169960[ label="{INT|}"]
 
-35006968[ label="{FLOAT|}"]
+40186568[ label="{FLOAT|}"]
 
-34968056[ label="{STRICTFLOAT|}"]
+40118552[ label="{STRICTFLOAT|}"]
 
-35028232[ label="{NUMBER|}"]
-35028232 -> 34968056 [dir=back]
-35028232 -> 34990360 [dir=back]
+40207832[ label="{NUMBER|}"]
 
-35036632[ label="{BASETYPE|}"]
-35036632 -> 35028232 [dir=back]
-35036632 -> 35006968 [dir=back]
-35036632 -> 34675080 [dir=back]
-35036632 -> 32381544 [dir=back]
-35036632 -> 34410200 [dir=back]
+40216232[ label="{BASETYPE|}"]
 
-35042168[ label="{*OBJECT|}"]
-35042168 -> 35036632 [dir=back]
+40221768[ label="{*OBJECT|}"]
 
-34984824 -> 34656552[arrowtail=diamond, dir=both, headlabel="packages 0..*"]
-34984824[ label="{Model|}"]
+40164424[ label="{Model|}"]
 
-34656552 -> 35046536[arrowtail=diamond, dir=both, headlabel="components 1..*"]
-34656552 -> 35077176[arrowtail=diamond, dir=both, headlabel="instances 1..*"]
-34656552 -> 35082712[arrowtail=diamond, dir=both, headlabel="connections 1..*"]
-34656552 -> 34656552[arrowtail=diamond, dir=both, headlabel="packages 1..*"]
-34656552 -> 34629048[arrowtail=diamond, dir=both, headlabel="interfaces 1..*"]
-34656552[ label="{Package|+name:ID\l}"]
+39827768[ label="{Package|+name:ID\l}"]
 
-34629048[ label="{Interface|+name:ID\l}"]
+39942808[ label="{Interface|+name:ID\l}"]
 
-35046536 -> 35046536[headlabel="extends 1..*"]
-35046536 -> 35051256[arrowtail=diamond, dir=both, headlabel="slots 0..*"]
-35046536[ label="{Component|+name:ID\l}"]
+40226136[ label="{Component|+name:ID\l}"]
 
-35051256[ label="{*Slot|}"]
-35051256 -> 35066104 [dir=back]
-35051256 -> 35071640 [dir=back]
+40230856[ label="{*Slot|}"]
 
-35066104 -> 34629048[headlabel="formats 1..*"]
-35066104[ label="{SlotIn|+name:ID\l}"]
+40245704[ label="{SlotIn|+name:ID\l}"]
 
-35071640 -> 34629048[headlabel="formats 1..*"]
-35071640[ label="{SlotOut|+name:ID\l}"]
+40251240[ label="{SlotOut|+name:ID\l}"]
 
-35077176 -> 35046536[headlabel="component "]
-35077176[ label="{Instance|+name:ID\l}"]
+40256776[ label="{Instance|+name:ID\l}"]
 
-35082712 -> 35077176[headlabel="from_inst "]
-35082712 -> 35071640[headlabel="from_port "]
-35082712 -> 35077176[headlabel="to_inst "]
-35082712 -> 35066104[headlabel="to_port "]
-35082712[ label="{Connection|}"]
+40262312[ label="{Connection|}"]
 
-35088248[ label="{FQN|FQN}"]
+40267848[ label="{FQN|FQN}"]
 
-35026760[ label="{Comment|\\/\\/.*$}"]
+40206360[ label="{Comment|\\/\\/.*$}"]
 
+
+
+40181032 -> 40281912[arrowtail=diamond, dir=both, headlabel="imports 1..*"]
+40181032 -> 40276968[arrowtail=diamond, dir=both, headlabel="users 1..*"]
+40276968 -> 40256776[headlabel="instance "]
+40207832 -> 40118552 [dir=back]
+40207832 -> 40169960 [dir=back]
+40216232 -> 40207832 [dir=back]
+40216232 -> 40186568 [dir=back]
+40216232 -> 40035496 [dir=back]
+40216232 -> 37556216 [dir=back]
+40216232 -> 39962872 [dir=back]
+40221768 -> 40216232 [dir=back]
+40164424 -> 39827768[arrowtail=diamond, dir=both, headlabel="packages 0..*"]
+39827768 -> 40226136[arrowtail=diamond, dir=both, headlabel="components 1..*"]
+39827768 -> 40256776[arrowtail=diamond, dir=both, headlabel="instances 1..*"]
+39827768 -> 40262312[arrowtail=diamond, dir=both, headlabel="connections 1..*"]
+39827768 -> 39827768[arrowtail=diamond, dir=both, headlabel="packages 1..*"]
+39827768 -> 39942808[arrowtail=diamond, dir=both, headlabel="interfaces 1..*"]
+40226136 -> 40226136[headlabel="extends 1..*"]
+40226136 -> 40230856[arrowtail=diamond, dir=both, headlabel="slots 0..*"]
+40230856 -> 40245704 [dir=back]
+40230856 -> 40251240 [dir=back]
+40245704 -> 39942808[headlabel="formats 1..*"]
+40251240 -> 39942808[headlabel="formats 1..*"]
+40256776 -> 40226136[headlabel="component "]
+40262312 -> 40256776[headlabel="from_inst "]
+40262312 -> 40251240[headlabel="from_port "]
+40262312 -> 40256776[headlabel="to_inst "]
+40262312 -> 40245704[headlabel="to_port "]
 
 }

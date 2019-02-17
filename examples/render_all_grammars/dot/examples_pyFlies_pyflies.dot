@@ -11,166 +11,168 @@
     edge[dir=black,arrowtail=empty]
 
 
-35551704 -> 35185224[arrowtail=diamond, dir=both, headlabel="blocks 1..*"]
-35551704 -> 35529368[arrowtail=diamond, dir=both, headlabel="structure "]
-35551704 -> 35545640[arrowtail=diamond, dir=both, headlabel="targets 0..*"]
-35551704[ label="{PyFliesModel|+name:STRING\l+description:STRING\l+basepath:STRING\l}"]
+40198904[ label="{PyFliesModel|+name:STRING\l+description:STRING\l+basepath:STRING\l}"]
 
-35185224[ label="{*BlockType|}"]
-35185224 -> 35230664 [dir=back]
-35185224 -> 34450648 [dir=back]
-35185224 -> 34429048 [dir=back]
+40669976[ label="{*BlockType|}"]
 
-35230664 -> 35649480[arrowtail=diamond, dir=both, headlabel="conditions "]
-35230664 -> 35817464[arrowtail=diamond, dir=both, headlabel="stimuli "]
-35230664[ label="{TestType|+name:ID\l}"]
+40809048[ label="{TestType|+name:ID\l}"]
 
-35649480 -> 34511160[arrowtail=diamond, dir=both, headlabel="conditions 1..*"]
-35649480[ label="{Conditions|+varNames:list[WORD]\l}"]
+40710616[ label="{Conditions|+varNames:list[WORD]\l}"]
 
-34511160[ label="{Condition|+varValues:list[WORD]\l}"]
+40974168[ label="{Condition|+varValues:list[WORD]\l}"]
 
-35817464 -> 35482168[arrowtail=diamond, dir=both, headlabel="condStimuli 1..*"]
-35817464[ label="{Stimuli|+dmin:INT\l+dmax:INT\l}"]
+40646120[ label="{Stimuli|+dmin:INT\l+dmax:INT\l}"]
 
-35482168 -> 35745528[arrowtail=diamond, dir=both, headlabel="conditionMatch "]
-35482168 -> 35735512[arrowtail=diamond, dir=both, headlabel="stimuli 1..*"]
-35482168[ label="{ConditionStimuli|}"]
+40837864[ label="{ConditionStimuli|}"]
 
-35745528 -> 35696104[arrowtail=diamond, dir=both, headlabel="expression "]
-35745528[ label="{ConditionMatch|}"]
+40896568[ label="{ConditionMatch|}"]
 
-35696104[ label="{*ConditionMatchExpression|}"]
-35696104 -> 35690568 [dir=back]
-35696104 -> 34915288 [dir=back]
-35696104 -> 35758184 [dir=back]
+40880360[ label="{*ConditionMatchExpression|}"]
 
-35690568[ label="{FixedCondition|+expression:FixedConditionEnum\l}"]
+40902104[ label="{FixedCondition|+expression:FixedConditionEnum\l}"]
 
-34923880[ label="{FixedConditionEnum|all\|error\|fixation\|correct}"]
+40918712[ label="{FixedConditionEnum|all\|error\|fixation\|correct}"]
 
-34915288[ label="{OrdinalCondition|+expression:INT\l}"]
+40980360[ label="{OrdinalCondition|+expression:INT\l}"]
 
-35758184 -> 35798744[arrowtail=diamond, dir=both, headlabel="expression "]
-35758184[ label="{ExpressionCondition|}"]
+40696760[ label="{ExpressionCondition|}"]
 
-35798744 -> 34823688[arrowtail=diamond, dir=both, headlabel="operand 0..*"]
-35798744[ label="{OrExpression|}"]
+39996808[ label="{OrExpression|}"]
 
-34823688 -> 35823944[arrowtail=diamond, dir=both, headlabel="operand 0..*"]
-34823688[ label="{AndExpression|}"]
+39937848[ label="{AndExpression|}"]
 
-35823944[ label="{*NotEqualsExpression|}"]
-35823944 -> 34427544 [dir=back]
-35823944 -> 35557944 [dir=back]
+40866520[ label="{*NotEqualsExpression|}"]
 
-34427544 -> 35557944[arrowtail=diamond, dir=both, headlabel="operand "]
-34427544[ label="{NotExpression|}"]
+39957816[ label="{NotExpression|}"]
 
-35557944[ label="{EqualsExpression|+varName:WORD\l+varValue:WORD\l}"]
+40204600[ label="{EqualsExpression|+varName:WORD\l+varValue:WORD\l}"]
 
-35735512[ label="{*Stimulus|}"]
-35735512 -> 34957864 [dir=back]
-35735512 -> 35808344 [dir=back]
-35735512 -> 35630504 [dir=back]
-35735512 -> 34954680 [dir=back]
-35735512 -> 34789992 [dir=back]
+40895512[ label="{*Stimulus|}"]
 
-34957864[ label="{Image|+file:STRING\lx:list[WORD]\ly:list[INT]\ldmin:list[WORD]\ldmax:list[INT]\lwidth:list[WORD]\lheight:list[INT]\l}"]
+39990920[ label="{Image|+file:STRING\lx:list[WORD]\ly:list[INT]\ldmin:list[WORD]\ldmax:list[INT]\lwidth:list[WORD]\lheight:list[INT]\l}"]
 
-35808344[ label="{Shape|+shape:ShapeType\lx:list[WORD]\ly:list[INT]\ldmin:list[WORD]\ldmax:list[INT]\lwidth:list[WORD]\lheight:list[INT]\lcolor:list[WORD]\lfillcolor:list[WORD]\llineWidth:list[WORD]\l}"]
+40286984[ label="{Shape|+shape:ShapeType\lx:list[WORD]\ly:list[INT]\ldmin:list[WORD]\ldmax:list[INT]\lwidth:list[WORD]\lheight:list[INT]\lcolor:list[WORD]\lfillcolor:list[WORD]\llineWidth:list[WORD]\l}"]
 
-35117128[ label="{ShapeType|rectangle\|circle\|triangle\|cross}"]
+39585704[ label="{ShapeType|rectangle\|circle\|triangle\|cross}"]
 
-34789992[ label="{Text|+text:TextType\lx:list[WORD]\ly:list[INT]\ldmin:list[WORD]\ldmax:list[INT]\lwidth:list[WORD]\lheight:list[INT]\lcolor:list[WORD]\l}"]
+40225080[ label="{Text|+text:TextType\lx:list[WORD]\ly:list[INT]\ldmin:list[WORD]\ldmax:list[INT]\lwidth:list[WORD]\lheight:list[INT]\lcolor:list[WORD]\l}"]
 
-35642232[ label="{TextType|STRING\|\\w*\\b}"]
+40465416[ label="{TextType|STRING\|\\w*\\b}"]
 
-35400072[ label="{WORD|[-\\w]*\\b}"]
+40711960[ label="{WORD|[-\\w]*\\b}"]
 
-35630504[ label="{Sound|+frequency:INT\l+dmin:WORD\l+dmax:INT\l}"]
+39941800[ label="{Sound|+frequency:INT\l+dmin:WORD\l+dmax:INT\l}"]
 
-34954680[ label="{Audio|+file:STRING\l+dmin:WORD\l+dmax:INT\l}"]
+40077912[ label="{Audio|+file:STRING\l+dmin:WORD\l+dmax:INT\l}"]
 
-34446712[ label="{*Block|}"]
-34446712 -> 34679544 [dir=back]
-34446712 -> 34444712 [dir=back]
+39864536[ label="{*Block|}"]
 
-35046536 -> 35230664[headlabel="type "]
-35046536[ label="{TestInstance|+trials:INT\lpractice:BOOL\lrandomize:BOOL\l}"]
+40830552[ label="{TestInstance|+trials:INT\lpractice:BOOL\lrandomize:BOOL\l}"]
 
-34430104 -> 34450648[headlabel="type "]
-34430104[ label="{ScreenInstance|}"]
+39973112[ label="{ScreenInstance|}"]
 
-34685736 -> 34429048[headlabel="type "]
-34685736[ label="{SubjectInstance|}"]
+40175048[ label="{SubjectInstance|}"]
 
-35246152[ label="{*Reference|}"]
-35246152 -> 35046536 [dir=back]
-35246152 -> 34430104 [dir=back]
-35246152 -> 34685736 [dir=back]
+40427400[ label="{*Reference|}"]
 
-34800936[ label="{*StructureElement|}"]
-34800936 -> 35246152 [dir=back]
-34800936 -> 34446712 [dir=back]
+40437416[ label="{*StructureElement|}"]
 
-35529368 -> 34800936[arrowtail=diamond, dir=both, headlabel="elements 0..*"]
-35529368[ label="{Structure|}"]
+39619656[ label="{Structure|}"]
 
-34679544 -> 34800936[arrowtail=diamond, dir=both, headlabel="elements 0..*"]
-34679544[ label="{Sequence|}"]
+40331736[ label="{Sequence|}"]
 
-34444712 -> 34800936[arrowtail=diamond, dir=both, headlabel="elements 0..*"]
-34444712[ label="{Randomize|}"]
+39821976[ label="{Randomize|}"]
 
-34450648[ label="{ScreenType|+name:ID\l+content:STRING\l}"]
+40836808[ label="{ScreenType|+name:ID\l+content:STRING\l}"]
 
-34429048 -> 35646296[arrowtail=diamond, dir=both, headlabel="attribute 1..*"]
-34429048[ label="{SubjectType|+name:ID\l}"]
+39822920[ label="{SubjectType|+name:ID\l}"]
 
-35646296 -> 35153672[arrowtail=diamond, dir=both, headlabel="type "]
-35646296[ label="{SubjectAttribute|+name:ID\l+label:STRING\l}"]
+40330792[ label="{SubjectAttribute|+name:ID\l+label:STRING\l}"]
 
-35153672[ label="{*SubjectAttributeType|int\|string\|float}"]
-35153672 -> 35259112 [dir=back]
+39961816[ label="{*SubjectAttributeType|int\|string\|float}"]
 
-35259112[ label="{Enum|+values:list[ID]\l}"]
+39966408[ label="{Enum|+values:list[ID]\l}"]
 
-35545640 -> 34778104[arrowtail=diamond, dir=both, headlabel="responseMap 0..*"]
-35545640 -> 34407256[arrowtail=diamond, dir=both, headlabel="targetParam 0..*"]
-35545640[ label="{Target|+name:ID\l+output:STRING\l}"]
+40187912[ label="{Target|+name:ID\l+output:STRING\l}"]
 
-34407256[ label="{TargetParam|+name:ID\l+value:BASETYPE\l}"]
+40681720[ label="{TargetParam|+name:ID\l+value:BASETYPE\l}"]
 
-34778104[ label="{ResponseMap|+name:ID\l+target:BASETYPE\l}"]
+40313832[ label="{ResponseMap|+name:ID\l+target:BASETYPE\l}"]
 
-35051256[ label="{Comment|\\/\\/.*$\|\\/\\*(.\|\\n)*\?\\*\\/}"]
+40561432[ label="{Comment|\\/\\/.*$\|\\/\\*(.\|\\n)*\?\\*\\/}"]
 
-35803752[ label="{ID|}"]
+40985368[ label="{ID|}"]
 
-35813928[ label="{STRING|}"]
+40995544[ label="{STRING|}"]
 
-35819464[ label="{BOOL|}"]
+41001080[ label="{BOOL|}"]
 
-35825000[ label="{INT|}"]
+41006616[ label="{INT|}"]
 
-35830536[ label="{FLOAT|}"]
+41012152[ label="{FLOAT|}"]
 
-35836072[ label="{STRICTFLOAT|}"]
+41017688[ label="{STRICTFLOAT|}"]
 
-35841608[ label="{NUMBER|}"]
-35841608 -> 35836072 [dir=back]
-35841608 -> 35825000 [dir=back]
+41023224[ label="{NUMBER|}"]
 
-35847144[ label="{BASETYPE|}"]
-35847144 -> 35841608 [dir=back]
-35847144 -> 35830536 [dir=back]
-35847144 -> 35819464 [dir=back]
-35847144 -> 35803752 [dir=back]
-35847144 -> 35813928 [dir=back]
+41028760[ label="{BASETYPE|}"]
 
-35852680[ label="{*OBJECT|}"]
-35852680 -> 35847144 [dir=back]
+41034296[ label="{*OBJECT|}"]
 
+
+
+40198904 -> 40669976[arrowtail=diamond, dir=both, headlabel="blocks 1..*"]
+40198904 -> 39619656[arrowtail=diamond, dir=both, headlabel="structure "]
+40198904 -> 40187912[arrowtail=diamond, dir=both, headlabel="targets 0..*"]
+40669976 -> 40809048 [dir=back]
+40669976 -> 40836808 [dir=back]
+40669976 -> 39822920 [dir=back]
+40809048 -> 40710616[arrowtail=diamond, dir=both, headlabel="conditions "]
+40809048 -> 40646120[arrowtail=diamond, dir=both, headlabel="stimuli "]
+40710616 -> 40974168[arrowtail=diamond, dir=both, headlabel="conditions 1..*"]
+40646120 -> 40837864[arrowtail=diamond, dir=both, headlabel="condStimuli 1..*"]
+40837864 -> 40896568[arrowtail=diamond, dir=both, headlabel="conditionMatch "]
+40837864 -> 40895512[arrowtail=diamond, dir=both, headlabel="stimuli 1..*"]
+40896568 -> 40880360[arrowtail=diamond, dir=both, headlabel="expression "]
+40880360 -> 40902104 [dir=back]
+40880360 -> 40980360 [dir=back]
+40880360 -> 40696760 [dir=back]
+40696760 -> 39996808[arrowtail=diamond, dir=both, headlabel="expression "]
+39996808 -> 39937848[arrowtail=diamond, dir=both, headlabel="operand 0..*"]
+39937848 -> 40866520[arrowtail=diamond, dir=both, headlabel="operand 0..*"]
+40866520 -> 39957816 [dir=back]
+40866520 -> 40204600 [dir=back]
+39957816 -> 40204600[arrowtail=diamond, dir=both, headlabel="operand "]
+40895512 -> 39990920 [dir=back]
+40895512 -> 40286984 [dir=back]
+40895512 -> 39941800 [dir=back]
+40895512 -> 40077912 [dir=back]
+40895512 -> 40225080 [dir=back]
+39864536 -> 40331736 [dir=back]
+39864536 -> 39821976 [dir=back]
+40830552 -> 40809048[headlabel="type "]
+39973112 -> 40836808[headlabel="type "]
+40175048 -> 39822920[headlabel="type "]
+40427400 -> 40830552 [dir=back]
+40427400 -> 39973112 [dir=back]
+40427400 -> 40175048 [dir=back]
+40437416 -> 40427400 [dir=back]
+40437416 -> 39864536 [dir=back]
+39619656 -> 40437416[arrowtail=diamond, dir=both, headlabel="elements 0..*"]
+40331736 -> 40437416[arrowtail=diamond, dir=both, headlabel="elements 0..*"]
+39821976 -> 40437416[arrowtail=diamond, dir=both, headlabel="elements 0..*"]
+39822920 -> 40330792[arrowtail=diamond, dir=both, headlabel="attribute 1..*"]
+40330792 -> 39961816[arrowtail=diamond, dir=both, headlabel="type "]
+39961816 -> 39966408 [dir=back]
+40187912 -> 40313832[arrowtail=diamond, dir=both, headlabel="responseMap 0..*"]
+40187912 -> 40681720[arrowtail=diamond, dir=both, headlabel="targetParam 0..*"]
+41023224 -> 41017688 [dir=back]
+41023224 -> 41006616 [dir=back]
+41028760 -> 41023224 [dir=back]
+41028760 -> 41012152 [dir=back]
+41028760 -> 41001080 [dir=back]
+41028760 -> 40985368 [dir=back]
+41028760 -> 40995544 [dir=back]
+41034296 -> 41028760 [dir=back]
 
 }

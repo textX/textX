@@ -11,33 +11,35 @@
     edge[dir=black,arrowtail=empty]
 
 
-35071656[ label="{MyDiamondRule|+a:INT\l}"]
+40259800[ label="{MyDiamondRule|+a:INT\l}"]
 
-35511160[ label="{ID|}"]
+40694552[ label="{ID|}"]
 
-35517064[ label="{STRING|}"]
+40699864[ label="{STRING|}"]
 
-35522600[ label="{BOOL|}"]
+40705400[ label="{BOOL|}"]
 
-35528136[ label="{INT|}"]
+40710936[ label="{INT|}"]
 
-35533672[ label="{FLOAT|}"]
+40716472[ label="{FLOAT|}"]
 
-35539208[ label="{STRICTFLOAT|}"]
+40722008[ label="{STRICTFLOAT|}"]
 
-35544744[ label="{NUMBER|}"]
-35544744 -> 35539208 [dir=back]
-35544744 -> 35528136 [dir=back]
+40727544[ label="{NUMBER|}"]
 
-35550280[ label="{BASETYPE|}"]
-35550280 -> 35544744 [dir=back]
-35550280 -> 35533672 [dir=back]
-35550280 -> 35522600 [dir=back]
-35550280 -> 35511160 [dir=back]
-35550280 -> 35517064 [dir=back]
+40733080[ label="{BASETYPE|}"]
 
-35555816[ label="{*OBJECT|}"]
-35555816 -> 35550280 [dir=back]
+40738616[ label="{*OBJECT|}"]
 
+
+
+40727544 -> 40722008 [dir=back]
+40727544 -> 40710936 [dir=back]
+40733080 -> 40727544 [dir=back]
+40733080 -> 40716472 [dir=back]
+40733080 -> 40705400 [dir=back]
+40733080 -> 40694552 [dir=back]
+40733080 -> 40699864 [dir=back]
+40738616 -> 40733080 [dir=back]
 
 }

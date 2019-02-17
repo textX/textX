@@ -11,48 +11,50 @@
     edge[dir=black,arrowtail=empty]
 
 
-34413704[ label="{*File|}"]
-34413704 -> 34419592 [dir=back]
-34413704 -> 35703352 [dir=back]
+40213864[ label="{*File|}"]
 
-34419592 -> 34417592[arrowtail=diamond, dir=both, headlabel="values 0..*"]
-34419592[ label="{Array|}"]
+39855192[ label="{Array|}"]
 
-34417592[ label="{*Value|STRING\|FLOAT\|BOOL\|null}"]
-34417592 -> 35703352 [dir=back]
-34417592 -> 34419592 [dir=back]
+40391032[ label="{*Value|STRING\|FLOAT\|BOOL\|null}"]
 
-35703352 -> 34983928[arrowtail=diamond, dir=both, headlabel="members 0..*"]
-35703352[ label="{Object|}"]
+40334104[ label="{Object|}"]
 
-34983928 -> 34417592[arrowtail=diamond, dir=both, headlabel="value "]
-34983928[ label="{Member|+key:STRING\l}"]
+40680664[ label="{Member|+key:STRING\l}"]
 
-35063432[ label="{ID|}"]
+40140472[ label="{ID|}"]
 
-35068376[ label="{STRING|}"]
+40148888[ label="{STRING|}"]
 
-35009496[ label="{BOOL|}"]
+40365624[ label="{BOOL|}"]
 
-35015032[ label="{INT|}"]
+40371160[ label="{INT|}"]
 
-35082904[ label="{FLOAT|}"]
+40376696[ label="{FLOAT|}"]
 
-35088440[ label="{STRICTFLOAT|}"]
+40242024[ label="{STRICTFLOAT|}"]
 
-34985976[ label="{NUMBER|}"]
-34985976 -> 35088440 [dir=back]
-34985976 -> 35015032 [dir=back]
+40247560[ label="{NUMBER|}"]
 
-34991512[ label="{BASETYPE|}"]
-34991512 -> 34985976 [dir=back]
-34991512 -> 35082904 [dir=back]
-34991512 -> 35009496 [dir=back]
-34991512 -> 35063432 [dir=back]
-34991512 -> 35068376 [dir=back]
+40253096[ label="{BASETYPE|}"]
 
-34997048[ label="{*OBJECT|}"]
-34997048 -> 34991512 [dir=back]
+40258632[ label="{*OBJECT|}"]
 
+
+
+40213864 -> 39855192 [dir=back]
+40213864 -> 40334104 [dir=back]
+39855192 -> 40391032[arrowtail=diamond, dir=both, headlabel="values 0..*"]
+40391032 -> 40334104 [dir=back]
+40391032 -> 39855192 [dir=back]
+40334104 -> 40680664[arrowtail=diamond, dir=both, headlabel="members 0..*"]
+40680664 -> 40391032[arrowtail=diamond, dir=both, headlabel="value "]
+40247560 -> 40242024 [dir=back]
+40247560 -> 40371160 [dir=back]
+40253096 -> 40247560 [dir=back]
+40253096 -> 40376696 [dir=back]
+40253096 -> 40365624 [dir=back]
+40253096 -> 40140472 [dir=back]
+40253096 -> 40148888 [dir=back]
+40258632 -> 40253096 [dir=back]
 
 }

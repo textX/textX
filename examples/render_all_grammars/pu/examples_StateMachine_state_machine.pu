@@ -1,9 +1,7 @@
 @startuml
-            set namespaceSeparator .
-        state_machine.StateMachine *-- "1..*" state_machine.Event
-state_machine.StateMachine o-- "1..*" state_machine.Event
-state_machine.StateMachine *-- "1..*" state_machine.Command
-state_machine.StateMachine *-- "1..*" state_machine.State
+set namespaceSeparator .
+
+
 class state_machine.StateMachine  {
 }
 
@@ -13,26 +11,22 @@ class state_machine.Keyword <<match>> {
 
 
 class state_machine.Event  {
-SMID name
-ID code
+  SMID name
+  ID code
 }
 
 
 class state_machine.Command  {
-SMID name
-ID code
+  SMID name
+  ID code
 }
 
 
-state_machine.State o-- "1..*" state_machine.Command
-state_machine.State *-- "1..*" state_machine.Transition
 class state_machine.State  {
-ID name
+  ID name
 }
 
 
-state_machine.Transition o-- state_machine.Event
-state_machine.Transition o-- state_machine.State
 class state_machine.Transition  {
 }
 
@@ -72,21 +66,29 @@ class STRICTFLOAT <<match>> {
 class NUMBER <<match>> {
 }
 
-NUMBER <|-- STRICTFLOAT
-NUMBER <|-- INT
 
 class BASETYPE <<match>> {
 }
 
+
+class OBJECT <<abstract>> {
+}
+
+
+state_machine.StateMachine *-- "1..*" state_machine.Event
+state_machine.StateMachine o-- "1..*" state_machine.Event
+state_machine.StateMachine *-- "1..*" state_machine.Command
+state_machine.StateMachine *-- "1..*" state_machine.State
+state_machine.State o-- "1..*" state_machine.Command
+state_machine.State *-- "1..*" state_machine.Transition
+state_machine.Transition o-- state_machine.Event
+state_machine.Transition o-- state_machine.State
+NUMBER <|-- STRICTFLOAT
+NUMBER <|-- INT
 BASETYPE <|-- NUMBER
 BASETYPE <|-- FLOAT
 BASETYPE <|-- BOOL
 BASETYPE <|-- ID
 BASETYPE <|-- STRING
-
-class OBJECT <<abstract>> {
-}
-
 OBJECT <|-- BASETYPE
-
 @enduml

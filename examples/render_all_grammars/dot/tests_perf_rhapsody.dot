@@ -11,48 +11,50 @@
     edge[dir=black,arrowtail=empty]
 
 
-34427544 -> 34410200[arrowtail=diamond, dir=both, headlabel="root "]
-34427544[ label="{RhapsodyModel|+header:STRING\l}"]
+39600536[ label="{RhapsodyModel|+header:STRING\l}"]
 
-34410200 -> 34628200[arrowtail=diamond, dir=both, headlabel="properties 1..*"]
-34410200[ label="{Object|+name:ID\l}"]
+39585704[ label="{Object|+name:ID\l}"]
 
-34628200 -> 32379544[arrowtail=diamond, dir=both, headlabel="values 0..*"]
-34628200[ label="{Property|+name:ID\l}"]
+39800904[ label="{Property|+name:ID\l}"]
 
-32379544[ label="{*Value|STRING\|INT\|FLOAT\|ID}"]
-32379544 -> 34648664 [dir=back]
-32379544 -> 34410200 [dir=back]
+37556216[ label="{*Value|STRING\|INT\|FLOAT\|ID}"]
 
-34648664[ label="{GUID|+value:STRING\l}"]
+39821368[ label="{GUID|+value:STRING\l}"]
 
-34654920[ label="{Comment|\\/\\/.*$}"]
+39828216[ label="{Comment|\\/\\/.*$}"]
 
-34407256[ label="{ID|}"]
+39323064[ label="{ID|}"]
 
-34412200[ label="{STRING|}"]
+39587704[ label="{STRING|}"]
 
-34417144[ label="{BOOL|}"]
+39592648[ label="{BOOL|}"]
 
-34422088[ label="{INT|}"]
+39597592[ label="{INT|}"]
 
-34429544[ label="{FLOAT|}"]
+39602536[ label="{FLOAT|}"]
 
-34434488[ label="{STRICTFLOAT|}"]
+39607480[ label="{STRICTFLOAT|}"]
 
-34439432[ label="{NUMBER|}"]
-34439432 -> 34434488 [dir=back]
-34439432 -> 34422088 [dir=back]
+39613784[ label="{NUMBER|}"]
 
-34444968[ label="{BASETYPE|}"]
-34444968 -> 34439432 [dir=back]
-34444968 -> 34429544 [dir=back]
-34444968 -> 34417144 [dir=back]
-34444968 -> 34407256 [dir=back]
-34444968 -> 34412200 [dir=back]
+39619912[ label="{BASETYPE|}"]
 
-34449912[ label="{*OBJECT|}"]
-34449912 -> 34444968 [dir=back]
+39625448[ label="{*OBJECT|}"]
 
+
+
+39600536 -> 39585704[arrowtail=diamond, dir=both, headlabel="root "]
+39585704 -> 39800904[arrowtail=diamond, dir=both, headlabel="properties 1..*"]
+39800904 -> 37556216[arrowtail=diamond, dir=both, headlabel="values 0..*"]
+37556216 -> 39821368 [dir=back]
+37556216 -> 39585704 [dir=back]
+39613784 -> 39607480 [dir=back]
+39613784 -> 39597592 [dir=back]
+39619912 -> 39613784 [dir=back]
+39619912 -> 39602536 [dir=back]
+39619912 -> 39592648 [dir=back]
+39619912 -> 39323064 [dir=back]
+39619912 -> 39587704 [dir=back]
+39625448 -> 39619912 [dir=back]
 
 }

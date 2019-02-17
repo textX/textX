@@ -112,7 +112,7 @@ class DotRenderer(object):
         return HEADER
 
     def get_trailer(self):
-        return '\n}'
+        return '\n}\n'
 
     def render_class(self, cls):
         name = cls.__name__
@@ -132,7 +132,7 @@ class DotRenderer(object):
                     # If it is plain type
                     attrs += "{}{}:{}\\l".format(required,
                                                  attr.name, attr_type)
-        return '{}[ label="{{{}|{}}}"]'.format(
+        return '{}[ label="{{{}|{}}}"]\n\n'.format(
                 id(cls), "*{}".format(name)
                 if cls._tx_type is RULE_ABSTRACT else name, attrs)
 
@@ -142,12 +142,12 @@ class DotRenderer(object):
         if attr.ref and attr.cls.__name__ != 'OBJECT':
             # If attribute is a reference
             mult = attr.mult if not attr.mult == MULT_ONE else ""
-            return '{} -> {}[{}headlabel="{} {}"]'\
+            return '{} -> {}[{}headlabel="{} {}"]\n'\
                 .format(id(cls), id(attr.cls), arrowtail,
                         attr.name, mult)
 
     def render_inherited_by(self, base, special):
-        return '{} -> {} [dir=back]'\
+        return '{} -> {} [dir=back]\n'\
             .format(id(base), id(special))
 
 
@@ -155,11 +155,11 @@ class PlantUmlRenderer(object):
 
     def get_header(self):
         return '''@startuml
-            set namespaceSeparator .
-        '''
+set namespaceSeparator .
+'''
 
     def get_trailer(self):
-        return '@enduml'
+        return '@enduml\n'
 
     def render_class(self, cls):
         attrs = ""
@@ -176,13 +176,13 @@ class PlantUmlRenderer(object):
                     pass
                 else:
                     if required:
-                        attrs += "{} {}\n".format(attr_type, attr.name)
+                        attrs += "  {} {}\n".format(attr_type, attr.name)
                     else:
-                        attrs += "optional<{}> {}\n".format(attr_type,
+                        attrs += "  optional<{}> {}\n".format(attr_type,
                                                             attr.name)
         if len(stereotype) > 0:
             stereotype = "<<"+stereotype+">>"
-        return 'class {} {} {{\n{}}}\n'.format(
+        return '\n\nclass {} {} {{\n{}}}\n'.format(
                 cls._tx_fqn, stereotype, attrs
                 )
 
@@ -198,11 +198,11 @@ class PlantUmlRenderer(object):
                 arr = arr + ' "0..*"'
             elif attr.mult == MULT_ONEORMORE:
                 arr = arr + ' "1..*"'
-            return '{} {} {}'.format(
+            return '{} {} {}\n'.format(
                 cls._tx_fqn, arr, attr.cls._tx_fqn)
 
     def render_inherited_by(self, base, special):
-        return '{} <|-- {}'.format(base._tx_fqn, special._tx_fqn)
+        return '{} <|-- {}\n'.format(base._tx_fqn, special._tx_fqn)
 
 
 def metamodel_export(metamodel, file_name, renderer=None):
@@ -215,17 +215,18 @@ def metamodel_export_tofile(metamodel, f, renderer=None):
         renderer = DotRenderer()
     f.write(renderer.get_header())
     for cls in metamodel:
+        f.write(renderer.render_class(cls))
+    f.write("\n\n")
+    for cls in metamodel:
         if cls._tx_type is not RULE_COMMON:
             pass
         else:
             for attr in cls._tx_attrs.values():
                 if attr.ref and attr.cls.__name__ != 'OBJECT':
-                    f.write(renderer.render_attr_link(cls, attr)+'\n')
-        f.write(renderer.render_class(cls)+'\n')
+                    f.write(renderer.render_attr_link(cls, attr))
         for inherited_by in cls._tx_inh_by:
-            f.write(renderer.render_inherited_by(cls, inherited_by)+'\n')
-        f.write("\n")
-    f.write("{}\n".format(renderer.get_trailer()))
+            f.write(renderer.render_inherited_by(cls, inherited_by))
+    f.write("{}".format(renderer.get_trailer()))
 
 
 def model_export(model, file_name, repo=None):

@@ -1,31 +1,27 @@
 @startuml
-            set namespaceSeparator .
-        entity.EntityModel *-- "0..*" entity.SimpleType
-entity.EntityModel *-- "1..*" entity.Entity
+set namespaceSeparator .
+
+
 class entity.EntityModel  {
 }
 
 
-entity.Entity *-- "1..*" entity.Property
 class entity.Entity  {
-ID name
+  ID name
 }
 
 
-entity.Property o-- entity.Type
 class entity.Property  {
-ID name
+  ID name
 }
 
 
 class entity.Type <<abstract>> {
 }
 
-entity.Type <|-- entity.SimpleType
-entity.Type <|-- entity.Entity
 
 class entity.SimpleType  {
-ID name
+  ID name
 }
 
 
@@ -56,21 +52,27 @@ class STRICTFLOAT <<match>> {
 class NUMBER <<match>> {
 }
 
-NUMBER <|-- STRICTFLOAT
-NUMBER <|-- INT
 
 class BASETYPE <<match>> {
 }
 
+
+class OBJECT <<abstract>> {
+}
+
+
+entity.EntityModel *-- "0..*" entity.SimpleType
+entity.EntityModel *-- "1..*" entity.Entity
+entity.Entity *-- "1..*" entity.Property
+entity.Property o-- entity.Type
+entity.Type <|-- entity.SimpleType
+entity.Type <|-- entity.Entity
+NUMBER <|-- STRICTFLOAT
+NUMBER <|-- INT
 BASETYPE <|-- NUMBER
 BASETYPE <|-- FLOAT
 BASETYPE <|-- BOOL
 BASETYPE <|-- ID
 BASETYPE <|-- STRING
-
-class OBJECT <<abstract>> {
-}
-
 OBJECT <|-- BASETYPE
-
 @enduml

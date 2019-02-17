@@ -11,46 +11,48 @@
     edge[dir=black,arrowtail=empty]
 
 
-35430968 -> 35107272[arrowtail=diamond, dir=both, headlabel="commands 0..*"]
-35430968[ label="{Program|}"]
+40802568[ label="{Program|}"]
 
-35107272[ label="{*Command|}"]
-35107272 -> 34696216 [dir=back]
-35107272 -> 35392536 [dir=back]
+40828552[ label="{*Command|}"]
 
-34696216[ label="{InitialCommand|+x:INT\l+y:INT\l}"]
+40362232[ label="{InitialCommand|+x:INT\l+y:INT\l}"]
 
-35392536[ label="{MoveCommand|+direction:Direction\l+steps:INT\l}"]
+40293640[ label="{MoveCommand|+direction:Direction\l+steps:INT\l}"]
 
-35637096[ label="{Direction|up\|down\|left\|right}"]
+40336104[ label="{Direction|up\|down\|left\|right}"]
 
-35073032[ label="{Comment|\\/\\/.*$}"]
+40444120[ label="{Comment|\\/\\/.*$}"]
 
-34813368[ label="{ID|}"]
+40341704[ label="{ID|}"]
 
-35073976[ label="{STRING|}"]
+39797736[ label="{STRING|}"]
 
-35516424[ label="{BOOL|}"]
+40401672[ label="{BOOL|}"]
 
-35394536[ label="{INT|}"]
+40351000[ label="{INT|}"]
 
-35633096[ label="{FLOAT|}"]
+40355944[ label="{FLOAT|}"]
 
-35638040[ label="{STRICTFLOAT|}"]
+40294584[ label="{STRICTFLOAT|}"]
 
-34655784[ label="{NUMBER|}"]
-34655784 -> 35638040 [dir=back]
-34655784 -> 35394536 [dir=back]
+40820296[ label="{NUMBER|}"]
 
-34978504[ label="{BASETYPE|}"]
-34978504 -> 34655784 [dir=back]
-34978504 -> 35633096 [dir=back]
-34978504 -> 35516424 [dir=back]
-34978504 -> 34813368 [dir=back]
-34978504 -> 35073976 [dir=back]
+40384712[ label="{BASETYPE|}"]
 
-34984040[ label="{*OBJECT|}"]
-34984040 -> 34978504 [dir=back]
+40337048[ label="{*OBJECT|}"]
 
+
+
+40802568 -> 40828552[arrowtail=diamond, dir=both, headlabel="commands 0..*"]
+40828552 -> 40362232 [dir=back]
+40828552 -> 40293640 [dir=back]
+40820296 -> 40294584 [dir=back]
+40820296 -> 40351000 [dir=back]
+40384712 -> 40820296 [dir=back]
+40384712 -> 40355944 [dir=back]
+40384712 -> 40401672 [dir=back]
+40384712 -> 40341704 [dir=back]
+40384712 -> 39797736 [dir=back]
+40337048 -> 40384712 [dir=back]
 
 }

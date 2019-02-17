@@ -11,46 +11,48 @@
     edge[dir=black,arrowtail=empty]
 
 
-35770312 -> 35264760[arrowtail=diamond, dir=both, headlabel="root "]
-35770312[ label="{RhapsodyModel|+header:STRING\l}"]
+40950984[ label="{RhapsodyModel|+header:STRING\l}"]
 
-35264760 -> 35594680[arrowtail=diamond, dir=both, headlabel="properties 1..*"]
-35264760[ label="{Object|+name:ID\l}"]
+39979400[ label="{Object|+name:ID\l}"]
 
-35594680 -> 34673544[arrowtail=diamond, dir=both, headlabel="values 0..*"]
-35594680[ label="{Property|+name:ID\l}"]
+39600072[ label="{Property|+name:ID\l}"]
 
-34673544[ label="{*Value|STRING\|NUMBER\|ID}"]
-34673544 -> 35250744 [dir=back]
-34673544 -> 35264760 [dir=back]
+39592152[ label="{*Value|STRING\|NUMBER\|ID}"]
 
-35250744[ label="{GUID|+value:STRING\l}"]
+39588264[ label="{GUID|+value:STRING\l}"]
 
-35525032[ label="{ID|}"]
+40159832[ label="{ID|}"]
 
-34804280[ label="{STRING|}"]
+39613784[ label="{STRING|}"]
 
-34413704[ label="{BOOL|}"]
+40213864[ label="{BOOL|}"]
 
-34419592[ label="{INT|}"]
+39855192[ label="{INT|}"]
 
-35257112[ label="{FLOAT|}"]
+40192488[ label="{FLOAT|}"]
 
-35045480[ label="{STRICTFLOAT|}"]
+40829496[ label="{STRICTFLOAT|}"]
 
-35258056[ label="{NUMBER|}"]
-35258056 -> 35045480 [dir=back]
-35258056 -> 34419592 [dir=back]
+40329736[ label="{NUMBER|}"]
 
-35524088[ label="{BASETYPE|}"]
-35524088 -> 35258056 [dir=back]
-35524088 -> 35257112 [dir=back]
-35524088 -> 34413704 [dir=back]
-35524088 -> 35525032 [dir=back]
-35524088 -> 34804280 [dir=back]
+40158888[ label="{BASETYPE|}"]
 
-35121736[ label="{*OBJECT|}"]
-35121736 -> 35524088 [dir=back]
+40559432[ label="{*OBJECT|}"]
 
+
+
+40950984 -> 39979400[arrowtail=diamond, dir=both, headlabel="root "]
+39979400 -> 39600072[arrowtail=diamond, dir=both, headlabel="properties 1..*"]
+39600072 -> 39592152[arrowtail=diamond, dir=both, headlabel="values 0..*"]
+39592152 -> 39588264 [dir=back]
+39592152 -> 39979400 [dir=back]
+40329736 -> 40829496 [dir=back]
+40329736 -> 39855192 [dir=back]
+40158888 -> 40329736 [dir=back]
+40158888 -> 40192488 [dir=back]
+40158888 -> 40213864 [dir=back]
+40158888 -> 40159832 [dir=back]
+40158888 -> 39613784 [dir=back]
+40559432 -> 40158888 [dir=back]
 
 }

@@ -1,32 +1,29 @@
 @startuml
-            set namespaceSeparator .
-        task_specification.Model *-- "0..*" task_specification.Import
-task_specification.Model *-- "1..*" task_specification.Skill
-task_specification.Model *-- "1..*" task_specification.SkillType
+set namespaceSeparator .
+
+
 class task_specification.Model  {
 }
 
 
-task_specification.Skill o-- task_specification.SkillType
-task_specification.Skill *-- "1..*" task_specification.Property
 class task_specification.Skill  {
-ID name
+  ID name
 }
 
 
 class task_specification.SkillType  {
-ID name
+  ID name
 }
 
 
 class task_specification.Property  {
-ID name
-BASETYPE value
+  ID name
+  BASETYPE value
 }
 
 
 class task_specification.Import  {
-STRING importURI
+  STRING importURI
 }
 
 
@@ -57,21 +54,26 @@ class STRICTFLOAT <<match>> {
 class NUMBER <<match>> {
 }
 
-NUMBER <|-- STRICTFLOAT
-NUMBER <|-- INT
 
 class BASETYPE <<match>> {
 }
 
+
+class OBJECT <<abstract>> {
+}
+
+
+task_specification.Model *-- "0..*" task_specification.Import
+task_specification.Model *-- "1..*" task_specification.Skill
+task_specification.Model *-- "1..*" task_specification.SkillType
+task_specification.Skill o-- task_specification.SkillType
+task_specification.Skill *-- "1..*" task_specification.Property
+NUMBER <|-- STRICTFLOAT
+NUMBER <|-- INT
 BASETYPE <|-- NUMBER
 BASETYPE <|-- FLOAT
 BASETYPE <|-- BOOL
 BASETYPE <|-- ID
 BASETYPE <|-- STRING
-
-class OBJECT <<abstract>> {
-}
-
 OBJECT <|-- BASETYPE
-
 @enduml

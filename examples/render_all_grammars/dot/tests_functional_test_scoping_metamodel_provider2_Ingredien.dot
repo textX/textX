@@ -11,51 +11,53 @@
     edge[dir=black,arrowtail=empty]
 
 
-34958808 -> 34930824[arrowtail=diamond, dir=both, headlabel="ingredientTypes 1..*"]
-34958808[ label="{Model|}"]
+40132520[ label="{Model|}"]
 
-34898776[ label="{ID|}"]
+40071896[ label="{ID|}"]
 
-34905752[ label="{STRING|}"]
+40078872[ label="{STRING|}"]
 
-34910696[ label="{BOOL|}"]
+40083816[ label="{BOOL|}"]
 
-34916232[ label="{INT|}"]
+40089352[ label="{INT|}"]
 
-34855240[ label="{FLOAT|}"]
+40028360[ label="{FLOAT|}"]
 
-34736088[ label="{STRICTFLOAT|}"]
+39909576[ label="{STRICTFLOAT|}"]
 
-34884808[ label="{NUMBER|}"]
-34884808 -> 34736088 [dir=back]
-34884808 -> 34916232 [dir=back]
+40057928[ label="{NUMBER|}"]
 
-34908696[ label="{BASETYPE|}"]
-34908696 -> 34884808 [dir=back]
-34908696 -> 34855240 [dir=back]
-34908696 -> 34910696 [dir=back]
-34908696 -> 34898776 [dir=back]
-34908696 -> 34905752 [dir=back]
+40081816[ label="{BASETYPE|}"]
 
-34894648[ label="{*OBJECT|}"]
-34894648 -> 34908696 [dir=back]
+40067768[ label="{*OBJECT|}"]
 
-34920936 -> 34925880[arrowtail=diamond, dir=both, headlabel="ingredients 1..*"]
-34920936[ label="{Recipe|}"]
+40094056[ label="{Recipe|}"]
 
-34925880 -> 34935768[headlabel="unit "]
-34925880 -> 34930824[headlabel="type "]
-34925880[ label="{Ingredient|+count:POS_FLOAT\l}"]
+40099000[ label="{Ingredient|+count:POS_FLOAT\l}"]
 
-34930824 -> 34930824[headlabel="extends "]
-34930824 -> 34935768[arrowtail=diamond, dir=both, headlabel="units 1..*"]
-34930824[ label="{IngredientType|+name:ID\l}"]
+40103944[ label="{IngredientType|+name:ID\l}"]
 
-34935768[ label="{Unit|+weight:POS_FLOAT\l+name:ID\l}"]
+40109480[ label="{Unit|+weight:POS_FLOAT\l+name:ID\l}"]
 
-34941304[ label="{POS_FLOAT|\\d+ . UINT\?}"]
+40115016[ label="{POS_FLOAT|\\d+ . UINT\?}"]
 
-34946840[ label="{UINT|\\d+}"]
+40120552[ label="{UINT|\\d+}"]
 
+
+
+40132520 -> 40103944[arrowtail=diamond, dir=both, headlabel="ingredientTypes 1..*"]
+40057928 -> 39909576 [dir=back]
+40057928 -> 40089352 [dir=back]
+40081816 -> 40057928 [dir=back]
+40081816 -> 40028360 [dir=back]
+40081816 -> 40083816 [dir=back]
+40081816 -> 40071896 [dir=back]
+40081816 -> 40078872 [dir=back]
+40067768 -> 40081816 [dir=back]
+40094056 -> 40099000[arrowtail=diamond, dir=both, headlabel="ingredients 1..*"]
+40099000 -> 40109480[headlabel="unit "]
+40099000 -> 40103944[headlabel="type "]
+40103944 -> 40103944[headlabel="extends "]
+40103944 -> 40109480[arrowtail=diamond, dir=both, headlabel="units 1..*"]
 
 }

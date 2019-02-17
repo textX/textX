@@ -1,6 +1,7 @@
 @startuml
-            set namespaceSeparator .
-        Ingredient.Model *-- "1..*" Base.IngredientType
+set namespaceSeparator .
+
+
 class Ingredient.Model  {
 }
 
@@ -32,45 +33,32 @@ class STRICTFLOAT <<match>> {
 class NUMBER <<match>> {
 }
 
-NUMBER <|-- STRICTFLOAT
-NUMBER <|-- INT
 
 class BASETYPE <<match>> {
 }
 
-BASETYPE <|-- NUMBER
-BASETYPE <|-- FLOAT
-BASETYPE <|-- BOOL
-BASETYPE <|-- ID
-BASETYPE <|-- STRING
 
 class OBJECT <<abstract>> {
 }
 
-OBJECT <|-- BASETYPE
 
-Base.Recipe *-- "1..*" Base.Ingredient
 class Base.Recipe  {
 }
 
 
-Base.Ingredient o-- Base.Unit
-Base.Ingredient o-- Base.IngredientType
 class Base.Ingredient  {
-POS_FLOAT count
+  POS_FLOAT count
 }
 
 
-Base.IngredientType o-- Base.IngredientType
-Base.IngredientType *-- "1..*" Base.Unit
 class Base.IngredientType  {
-ID name
+  ID name
 }
 
 
 class Base.Unit  {
-POS_FLOAT weight
-ID name
+  POS_FLOAT weight
+  ID name
 }
 
 
@@ -82,4 +70,18 @@ class Base.UINT <<match>> {
 }
 
 
+Ingredient.Model *-- "1..*" Base.IngredientType
+NUMBER <|-- STRICTFLOAT
+NUMBER <|-- INT
+BASETYPE <|-- NUMBER
+BASETYPE <|-- FLOAT
+BASETYPE <|-- BOOL
+BASETYPE <|-- ID
+BASETYPE <|-- STRING
+OBJECT <|-- BASETYPE
+Base.Recipe *-- "1..*" Base.Ingredient
+Base.Ingredient o-- Base.Unit
+Base.Ingredient o-- Base.IngredientType
+Base.IngredientType o-- Base.IngredientType
+Base.IngredientType *-- "1..*" Base.Unit
 @enduml

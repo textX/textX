@@ -11,58 +11,60 @@
     edge[dir=black,arrowtail=empty]
 
 
-35528312 -> 35533848[arrowtail=diamond, dir=both, headlabel="x 1..*"]
-35528312[ label="{Model|}"]
+40175048[ label="{Model|}"]
 
-35533848 -> 35539384[arrowtail=diamond, dir=both, headlabel="r 1..*"]
-35533848[ label="{X|+name:ID\l}"]
+40180584[ label="{X|+name:ID\l}"]
 
-35539384[ label="{*R|}"]
-35539384 -> 35544920 [dir=back]
-35539384 -> 35141768 [dir=back]
+40186120[ label="{*R|}"]
 
-35544920 -> 35022760[headlabel="ref "]
-35544920[ label="{R1|}"]
+40191656[ label="{R1|}"]
 
-35136520[ label="{ID|}"]
+40710728[ label="{ID|}"]
 
-35142712[ label="{STRING|}"]
+40716984[ label="{STRING|}"]
 
-35148248[ label="{BOOL|}"]
+40722520[ label="{BOOL|}"]
 
-35153784[ label="{INT|}"]
+40728056[ label="{INT|}"]
 
-35159320[ label="{FLOAT|}"]
+40733592[ label="{FLOAT|}"]
 
-35512424[ label="{STRICTFLOAT|}"]
+40739128[ label="{STRICTFLOAT|}"]
 
-35517960[ label="{NUMBER|}"]
-35517960 -> 35512424 [dir=back]
-35517960 -> 35153784 [dir=back]
+40164696[ label="{NUMBER|}"]
 
-35088904[ label="{BASETYPE|}"]
-35088904 -> 35517960 [dir=back]
-35088904 -> 35159320 [dir=back]
-35088904 -> 35148248 [dir=back]
-35088904 -> 35136520 [dir=back]
-35088904 -> 35142712 [dir=back]
+40261448[ label="{BASETYPE|}"]
 
-34652840[ label="{*OBJECT|}"]
-34652840 -> 35088904 [dir=back]
+40429992[ label="{*OBJECT|}"]
 
-34999992 -> 35022760[arrowtail=diamond, dir=both, headlabel="es 1..*"]
-34999992[ label="{Model|}"]
+40406264[ label="{Model|}"]
 
-35022760 -> 35121128[arrowtail=diamond, dir=both, headlabel="c 1..*"]
-35022760[ label="{E|+name:ID\l}"]
+40322312[ label="{E|+name:ID\l}"]
 
-35121128[ label="{*C|}"]
-35121128 -> 35141768 [dir=back]
+40334440[ label="{*C|}"]
 
-35141768 -> 35158376[arrowtail=diamond, dir=both, headlabel="t "]
-35141768[ label="{C1|+name:ID\l}"]
+40716040[ label="{C1|+name:ID\l}"]
 
-35158376[ label="{TXT|+txt:STRING\l}"]
+40732648[ label="{TXT|+txt:STRING\l}"]
 
+
+
+40175048 -> 40180584[arrowtail=diamond, dir=both, headlabel="x 1..*"]
+40180584 -> 40186120[arrowtail=diamond, dir=both, headlabel="r 1..*"]
+40186120 -> 40191656 [dir=back]
+40186120 -> 40716040 [dir=back]
+40191656 -> 40322312[headlabel="ref "]
+40164696 -> 40739128 [dir=back]
+40164696 -> 40728056 [dir=back]
+40261448 -> 40164696 [dir=back]
+40261448 -> 40733592 [dir=back]
+40261448 -> 40722520 [dir=back]
+40261448 -> 40710728 [dir=back]
+40261448 -> 40716984 [dir=back]
+40429992 -> 40261448 [dir=back]
+40406264 -> 40322312[arrowtail=diamond, dir=both, headlabel="es 1..*"]
+40322312 -> 40334440[arrowtail=diamond, dir=both, headlabel="c 1..*"]
+40334440 -> 40716040 [dir=back]
+40716040 -> 40732648[arrowtail=diamond, dir=both, headlabel="t "]
 
 }

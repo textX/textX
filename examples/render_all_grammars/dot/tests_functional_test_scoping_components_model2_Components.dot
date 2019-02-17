@@ -11,65 +11,67 @@
     edge[dir=black,arrowtail=empty]
 
 
-34683176 -> 34767272[arrowtail=diamond, dir=both, headlabel="packages 0..*"]
-34683176[ label="{Model|}"]
+39856472[ label="{Model|}"]
 
-34767272 -> 34787992[arrowtail=diamond, dir=both, headlabel="components 1..*"]
-34767272 -> 34870200[arrowtail=diamond, dir=both, headlabel="instances 1..*"]
-34767272 -> 34875736[arrowtail=diamond, dir=both, headlabel="connections 1..*"]
-34767272 -> 34767272[arrowtail=diamond, dir=both, headlabel="packages 1..*"]
-34767272[ label="{Package|+name:ID\l}"]
+39939208[ label="{Package|+name:ID\l}"]
 
-34787992 -> 34787992[headlabel="extends "]
-34787992 -> 34851704[arrowtail=diamond, dir=both, headlabel="slots 0..*"]
-34787992[ label="{Component|+name:ID\l}"]
+39959928[ label="{Component|+name:ID\l}"]
 
-34851704[ label="{*Slot|}"]
-34851704 -> 34757432 [dir=back]
-34851704 -> 34762968 [dir=back]
+40024824[ label="{*Slot|}"]
 
-34757432[ label="{SlotIn|+name:ID\l}"]
+39929368[ label="{SlotIn|+name:ID\l}"]
 
-34762968[ label="{SlotOut|+name:ID\l}"]
+39934904[ label="{SlotOut|+name:ID\l}"]
 
-34870200 -> 34787992[headlabel="component "]
-34870200[ label="{Instance|+name:ID\l}"]
+40043320[ label="{Instance|+name:ID\l}"]
 
-34875736 -> 34762968[headlabel="from_port "]
-34875736 -> 34870200[headlabel="from_inst "]
-34875736 -> 34757432[headlabel="to_port "]
-34875736 -> 34870200[headlabel="to_inst "]
-34875736[ label="{Connection|}"]
+40048856[ label="{Connection|}"]
 
-34881272[ label="{FQN|FQN}"]
+40054392[ label="{FQN|FQN}"]
 
-34886808[ label="{Comment|\\/\\/.*$}"]
+40059928[ label="{Comment|\\/\\/.*$}"]
 
-34777160[ label="{ID|}"]
+39949096[ label="{ID|}"]
 
-34735144[ label="{STRING|}"]
+39908632[ label="{STRING|}"]
 
-32384024[ label="{BOOL|}"]
+39796792[ label="{BOOL|}"]
 
-34820152[ label="{INT|}"]
+39993272[ label="{INT|}"]
 
-34826968[ label="{FLOAT|}"]
+40000088[ label="{FLOAT|}"]
 
-34832504[ label="{STRICTFLOAT|}"]
+40005624[ label="{STRICTFLOAT|}"]
 
-34838040[ label="{NUMBER|}"]
-34838040 -> 34832504 [dir=back]
-34838040 -> 34820152 [dir=back]
+40011160[ label="{NUMBER|}"]
 
-34843576[ label="{BASETYPE|}"]
-34843576 -> 34838040 [dir=back]
-34843576 -> 34826968 [dir=back]
-34843576 -> 32384024 [dir=back]
-34843576 -> 34777160 [dir=back]
-34843576 -> 34735144 [dir=back]
+40016696[ label="{BASETYPE|}"]
 
-34849112[ label="{*OBJECT|}"]
-34849112 -> 34843576 [dir=back]
+40022232[ label="{*OBJECT|}"]
 
+
+
+39856472 -> 39939208[arrowtail=diamond, dir=both, headlabel="packages 0..*"]
+39939208 -> 39959928[arrowtail=diamond, dir=both, headlabel="components 1..*"]
+39939208 -> 40043320[arrowtail=diamond, dir=both, headlabel="instances 1..*"]
+39939208 -> 40048856[arrowtail=diamond, dir=both, headlabel="connections 1..*"]
+39939208 -> 39939208[arrowtail=diamond, dir=both, headlabel="packages 1..*"]
+39959928 -> 39959928[headlabel="extends "]
+39959928 -> 40024824[arrowtail=diamond, dir=both, headlabel="slots 0..*"]
+40024824 -> 39929368 [dir=back]
+40024824 -> 39934904 [dir=back]
+40043320 -> 39959928[headlabel="component "]
+40048856 -> 39934904[headlabel="from_port "]
+40048856 -> 40043320[headlabel="from_inst "]
+40048856 -> 39929368[headlabel="to_port "]
+40048856 -> 40043320[headlabel="to_inst "]
+40011160 -> 40005624 [dir=back]
+40011160 -> 39993272 [dir=back]
+40016696 -> 40011160 [dir=back]
+40016696 -> 40000088 [dir=back]
+40016696 -> 39796792 [dir=back]
+40016696 -> 39949096 [dir=back]
+40016696 -> 39908632 [dir=back]
+40022232 -> 40016696 [dir=back]
 
 }

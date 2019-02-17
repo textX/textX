@@ -1,32 +1,29 @@
 @startuml
-            set namespaceSeparator .
-        Base.Cls o-- "1..*" Base.Cls
-Base.Cls *-- "1..*" Base.Method
+set namespaceSeparator .
+
+
 class Base.Cls  {
-ID name
+  ID name
 }
 
 
 class Base.Method  {
-ID name
+  ID name
 }
 
 
-Base.Obj o-- Base.Cls
 class Base.Obj  {
-ID name
+  ID name
 }
 
 
-Base.Call o-- Base.Obj
-Base.Call o-- Base.Method
 class Base.Call  {
-ID name
+  ID name
 }
 
 
 class Base.Import  {
-STRING importURI
+  STRING importURI
 }
 
 
@@ -61,21 +58,26 @@ class STRICTFLOAT <<match>> {
 class NUMBER <<match>> {
 }
 
-NUMBER <|-- STRICTFLOAT
-NUMBER <|-- INT
 
 class BASETYPE <<match>> {
 }
 
+
+class OBJECT <<abstract>> {
+}
+
+
+Base.Cls o-- "1..*" Base.Cls
+Base.Cls *-- "1..*" Base.Method
+Base.Obj o-- Base.Cls
+Base.Call o-- Base.Obj
+Base.Call o-- Base.Method
+NUMBER <|-- STRICTFLOAT
+NUMBER <|-- INT
 BASETYPE <|-- NUMBER
 BASETYPE <|-- FLOAT
 BASETYPE <|-- BOOL
 BASETYPE <|-- ID
 BASETYPE <|-- STRING
-
-class OBJECT <<abstract>> {
-}
-
 OBJECT <|-- BASETYPE
-
 @enduml

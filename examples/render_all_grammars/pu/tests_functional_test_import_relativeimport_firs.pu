@@ -1,7 +1,7 @@
 @startuml
-            set namespaceSeparator .
-        first.First *-- "1..*" second.Second
-first.First *-- "1..*" relative.third.Third
+set namespaceSeparator .
+
+
 class first.First  {
 }
 
@@ -33,31 +33,33 @@ class STRICTFLOAT <<match>> {
 class NUMBER <<match>> {
 }
 
-NUMBER <|-- STRICTFLOAT
-NUMBER <|-- INT
 
 class BASETYPE <<match>> {
 }
 
+
+class OBJECT <<abstract>> {
+}
+
+
+class second.Second  {
+  list[STRING] second
+}
+
+
+class relative.third.Third  {
+  list[Second] third
+}
+
+
+first.First *-- "1..*" second.Second
+first.First *-- "1..*" relative.third.Third
+NUMBER <|-- STRICTFLOAT
+NUMBER <|-- INT
 BASETYPE <|-- NUMBER
 BASETYPE <|-- FLOAT
 BASETYPE <|-- BOOL
 BASETYPE <|-- ID
 BASETYPE <|-- STRING
-
-class OBJECT <<abstract>> {
-}
-
 OBJECT <|-- BASETYPE
-
-class second.Second  {
-list[STRING] second
-}
-
-
-class relative.third.Third  {
-list[Second] third
-}
-
-
 @enduml

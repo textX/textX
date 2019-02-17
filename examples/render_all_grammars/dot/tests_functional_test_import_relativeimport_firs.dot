@@ -11,39 +11,41 @@
     edge[dir=black,arrowtail=empty]
 
 
-35056408 -> 35063480[arrowtail=diamond, dir=both, headlabel="second 1..*"]
-35056408 -> 35180104[arrowtail=diamond, dir=both, headlabel="third 1..*"]
-35056408[ label="{First|}"]
+40143288[ label="{First|}"]
 
-35617912[ label="{ID|}"]
+40613288[ label="{ID|}"]
 
-35033320[ label="{STRING|}"]
+40455224[ label="{STRING|}"]
 
-35272008[ label="{BOOL|}"]
+40772808[ label="{BOOL|}"]
 
-35237256[ label="{INT|}"]
+40278264[ label="{INT|}"]
 
-35613432[ label="{FLOAT|}"]
+40409976[ label="{FLOAT|}"]
 
-35401128[ label="{STRICTFLOAT|}"]
+40283800[ label="{STRICTFLOAT|}"]
 
-35219192[ label="{NUMBER|}"]
-35219192 -> 35401128 [dir=back]
-35219192 -> 35237256 [dir=back]
+40419992[ label="{NUMBER|}"]
 
-35224728[ label="{BASETYPE|}"]
-35224728 -> 35219192 [dir=back]
-35224728 -> 35613432 [dir=back]
-35224728 -> 35272008 [dir=back]
-35224728 -> 35617912 [dir=back]
-35224728 -> 35033320 [dir=back]
+40139288[ label="{BASETYPE|}"]
 
-35057352[ label="{*OBJECT|}"]
-35057352 -> 35224728 [dir=back]
+40144232[ label="{*OBJECT|}"]
 
-35063480[ label="{Second|+second:list[STRING]\l}"]
+40150360[ label="{Second|+second:list[STRING]\l}"]
 
-35180104[ label="{Third|+third:list[Second]\l}"]
+39832472[ label="{Third|+third:list[Second]\l}"]
 
+
+
+40143288 -> 40150360[arrowtail=diamond, dir=both, headlabel="second 1..*"]
+40143288 -> 39832472[arrowtail=diamond, dir=both, headlabel="third 1..*"]
+40419992 -> 40283800 [dir=back]
+40419992 -> 40278264 [dir=back]
+40139288 -> 40419992 [dir=back]
+40139288 -> 40409976 [dir=back]
+40139288 -> 40772808 [dir=back]
+40139288 -> 40613288 [dir=back]
+40139288 -> 40455224 [dir=back]
+40144232 -> 40139288 [dir=back]
 
 }

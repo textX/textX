@@ -1,6 +1,7 @@
 @startuml
-            set namespaceSeparator .
-        third.Third *-- last.MyDiamondRule
+set namespaceSeparator .
+
+
 class third.Third  {
 }
 
@@ -32,26 +33,27 @@ class STRICTFLOAT <<match>> {
 class NUMBER <<match>> {
 }
 
-NUMBER <|-- STRICTFLOAT
-NUMBER <|-- INT
 
 class BASETYPE <<match>> {
 }
 
+
+class OBJECT <<abstract>> {
+}
+
+
+class last.MyDiamondRule  {
+  INT a
+}
+
+
+third.Third *-- last.MyDiamondRule
+NUMBER <|-- STRICTFLOAT
+NUMBER <|-- INT
 BASETYPE <|-- NUMBER
 BASETYPE <|-- FLOAT
 BASETYPE <|-- BOOL
 BASETYPE <|-- ID
 BASETYPE <|-- STRING
-
-class OBJECT <<abstract>> {
-}
-
 OBJECT <|-- BASETYPE
-
-class last.MyDiamondRule  {
-INT a
-}
-
-
 @enduml

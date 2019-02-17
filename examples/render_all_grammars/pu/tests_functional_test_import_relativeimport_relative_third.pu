@@ -1,7 +1,9 @@
 @startuml
-            set namespaceSeparator .
-        class third.Third  {
-list[Second] third
+set namespaceSeparator .
+
+
+class third.Third  {
+  list[Second] third
 }
 
 
@@ -32,25 +34,25 @@ class STRICTFLOAT <<match>> {
 class NUMBER <<match>> {
 }
 
-NUMBER <|-- STRICTFLOAT
-NUMBER <|-- INT
 
 class BASETYPE <<match>> {
 }
 
-BASETYPE <|-- NUMBER
-BASETYPE <|-- FLOAT
-BASETYPE <|-- BOOL
-BASETYPE <|-- ID
-BASETYPE <|-- STRING
 
 class OBJECT <<abstract>> {
 }
 
-OBJECT <|-- BASETYPE
 
 class fourth.Second <<match>> {
 }
 
 
+NUMBER <|-- STRICTFLOAT
+NUMBER <|-- INT
+BASETYPE <|-- NUMBER
+BASETYPE <|-- FLOAT
+BASETYPE <|-- BOOL
+BASETYPE <|-- ID
+BASETYPE <|-- STRING
+OBJECT <|-- BASETYPE
 @enduml

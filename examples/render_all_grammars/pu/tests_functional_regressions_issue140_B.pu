@@ -1,23 +1,20 @@
 @startuml
-            set namespaceSeparator .
-        B.Model *-- "1..*" B.X
+set namespaceSeparator .
+
+
 class B.Model  {
 }
 
 
-B.X *-- "1..*" B.R
 class B.X  {
-ID name
+  ID name
 }
 
 
 class B.R <<abstract>> {
 }
 
-B.R <|-- B.R1
-B.R <|-- A.C1
 
-B.R1 o-- A.E
 class B.R1  {
 }
 
@@ -49,48 +46,53 @@ class STRICTFLOAT <<match>> {
 class NUMBER <<match>> {
 }
 
-NUMBER <|-- STRICTFLOAT
-NUMBER <|-- INT
 
 class BASETYPE <<match>> {
 }
 
-BASETYPE <|-- NUMBER
-BASETYPE <|-- FLOAT
-BASETYPE <|-- BOOL
-BASETYPE <|-- ID
-BASETYPE <|-- STRING
 
 class OBJECT <<abstract>> {
 }
 
-OBJECT <|-- BASETYPE
 
-A.Model *-- "1..*" A.E
 class A.Model  {
 }
 
 
-A.E *-- "1..*" A.C
 class A.E  {
-ID name
+  ID name
 }
 
 
 class A.C <<abstract>> {
 }
 
-A.C <|-- A.C1
 
-A.C1 *-- A.TXT
 class A.C1  {
-ID name
+  ID name
 }
 
 
 class A.TXT  {
-STRING txt
+  STRING txt
 }
 
 
+B.Model *-- "1..*" B.X
+B.X *-- "1..*" B.R
+B.R <|-- B.R1
+B.R <|-- A.C1
+B.R1 o-- A.E
+NUMBER <|-- STRICTFLOAT
+NUMBER <|-- INT
+BASETYPE <|-- NUMBER
+BASETYPE <|-- FLOAT
+BASETYPE <|-- BOOL
+BASETYPE <|-- ID
+BASETYPE <|-- STRING
+OBJECT <|-- BASETYPE
+A.Model *-- "1..*" A.E
+A.E *-- "1..*" A.C
+A.C <|-- A.C1
+A.C1 *-- A.TXT
 @enduml

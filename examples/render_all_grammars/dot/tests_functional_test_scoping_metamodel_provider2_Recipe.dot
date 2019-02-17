@@ -11,51 +11,53 @@
     edge[dir=black,arrowtail=empty]
 
 
-34697272 -> 34404312[arrowtail=diamond, dir=both, headlabel="recipe "]
-34697272[ label="{Model|}"]
+39874184[ label="{Model|}"]
 
-34770808[ label="{ID|}"]
+39861592[ label="{ID|}"]
 
-34799992[ label="{STRING|}"]
+39866536[ label="{STRING|}"]
 
-34407256[ label="{BOOL|}"]
+39967464[ label="{BOOL|}"]
 
-34779160[ label="{INT|}"]
+39952984[ label="{INT|}"]
 
-34692680[ label="{FLOAT|}"]
+39852248[ label="{FLOAT|}"]
 
-34666888[ label="{STRICTFLOAT|}"]
+39978456[ label="{STRICTFLOAT|}"]
 
-34411704[ label="{NUMBER|}"]
-34411704 -> 34666888 [dir=back]
-34411704 -> 34779160 [dir=back]
+39590152[ label="{NUMBER|}"]
 
-34812248[ label="{BASETYPE|}"]
-34812248 -> 34411704 [dir=back]
-34812248 -> 34692680 [dir=back]
-34812248 -> 34407256 [dir=back]
-34812248 -> 34770808 [dir=back]
-34812248 -> 34799992 [dir=back]
+39797736[ label="{BASETYPE|}"]
 
-34698216[ label="{*OBJECT|}"]
-34698216 -> 34812248 [dir=back]
+39871128[ label="{*OBJECT|}"]
 
-34404312 -> 34417144[arrowtail=diamond, dir=both, headlabel="ingredients 1..*"]
-34404312[ label="{Recipe|}"]
+39616376[ label="{Recipe|}"]
 
-34417144 -> 34933768[headlabel="unit "]
-34417144 -> 34869144[headlabel="type "]
-34417144[ label="{Ingredient|+count:POS_FLOAT\l}"]
+39592648[ label="{Ingredient|+count:POS_FLOAT\l}"]
 
-34869144 -> 34869144[headlabel="extends "]
-34869144 -> 34933768[arrowtail=diamond, dir=both, headlabel="units 1..*"]
-34869144[ label="{IngredientType|+name:ID\l}"]
+39801272[ label="{IngredientType|+name:ID\l}"]
 
-34933768[ label="{Unit|+weight:POS_FLOAT\l+name:ID\l}"]
+40052392[ label="{Unit|+weight:POS_FLOAT\l+name:ID\l}"]
 
-34700808[ label="{POS_FLOAT|\\d+ . UINT\?}"]
+40128392[ label="{POS_FLOAT|\\d+ . UINT\?}"]
 
-34794936[ label="{UINT|\\d+}"]
+39990088[ label="{UINT|\\d+}"]
 
+
+
+39874184 -> 39616376[arrowtail=diamond, dir=both, headlabel="recipe "]
+39590152 -> 39978456 [dir=back]
+39590152 -> 39952984 [dir=back]
+39797736 -> 39590152 [dir=back]
+39797736 -> 39852248 [dir=back]
+39797736 -> 39967464 [dir=back]
+39797736 -> 39861592 [dir=back]
+39797736 -> 39866536 [dir=back]
+39871128 -> 39797736 [dir=back]
+39616376 -> 39592648[arrowtail=diamond, dir=both, headlabel="ingredients 1..*"]
+39592648 -> 40052392[headlabel="unit "]
+39592648 -> 39801272[headlabel="type "]
+39801272 -> 39801272[headlabel="extends "]
+39801272 -> 40052392[arrowtail=diamond, dir=both, headlabel="units 1..*"]
 
 }

@@ -1,7 +1,7 @@
 @startuml
-            set namespaceSeparator .
-        first_diamond.First *-- "1..*" diamond.second.Second
-first_diamond.First *-- "1..*" diamond.third.Third
+set namespaceSeparator .
+
+
 class first_diamond.First  {
 }
 
@@ -33,31 +33,33 @@ class STRICTFLOAT <<match>> {
 class NUMBER <<match>> {
 }
 
-NUMBER <|-- STRICTFLOAT
-NUMBER <|-- INT
 
 class BASETYPE <<match>> {
 }
 
+
+class OBJECT <<abstract>> {
+}
+
+
+class diamond.second.Second  {
+}
+
+
+class diamond.third.Third  {
+}
+
+
+first_diamond.First *-- "1..*" diamond.second.Second
+first_diamond.First *-- "1..*" diamond.third.Third
+NUMBER <|-- STRICTFLOAT
+NUMBER <|-- INT
 BASETYPE <|-- NUMBER
 BASETYPE <|-- FLOAT
 BASETYPE <|-- BOOL
 BASETYPE <|-- ID
 BASETYPE <|-- STRING
-
-class OBJECT <<abstract>> {
-}
-
 OBJECT <|-- BASETYPE
-
 diamond.second.Second *-- diamond.last.MyDiamondRule
-class diamond.second.Second  {
-}
-
-
 diamond.third.Third *-- diamond.last.MyDiamondRule
-class diamond.third.Third  {
-}
-
-
 @enduml

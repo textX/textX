@@ -1,13 +1,13 @@
 @startuml
-            set namespaceSeparator .
-        first.First *-- "1..*" second.Second
-first.First *-- "1..*" first.Third
+set namespaceSeparator .
+
+
 class first.First  {
 }
 
 
 class first.Third  {
-STRING t
+  STRING t
 }
 
 
@@ -38,31 +38,33 @@ class STRICTFLOAT <<match>> {
 class NUMBER <<match>> {
 }
 
-NUMBER <|-- STRICTFLOAT
-NUMBER <|-- INT
 
 class BASETYPE <<match>> {
 }
 
-BASETYPE <|-- NUMBER
-BASETYPE <|-- FLOAT
-BASETYPE <|-- BOOL
-BASETYPE <|-- ID
-BASETYPE <|-- STRING
 
 class OBJECT <<abstract>> {
 }
 
-OBJECT <|-- BASETYPE
 
-second.Second *-- "1..*" relative.third.Third
 class second.Second  {
 }
 
 
 class relative.third.Third  {
-INT t
+  INT t
 }
 
 
+first.First *-- "1..*" second.Second
+first.First *-- "1..*" first.Third
+NUMBER <|-- STRICTFLOAT
+NUMBER <|-- INT
+BASETYPE <|-- NUMBER
+BASETYPE <|-- FLOAT
+BASETYPE <|-- BOOL
+BASETYPE <|-- ID
+BASETYPE <|-- STRING
+OBJECT <|-- BASETYPE
+second.Second *-- "1..*" relative.third.Third
 @enduml

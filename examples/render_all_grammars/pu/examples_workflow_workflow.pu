@@ -1,24 +1,20 @@
 @startuml
-            set namespaceSeparator .
-        workflow.Workflow o-- workflow.Task
-workflow.Workflow *-- "0..*" workflow.Task
-workflow.Workflow *-- "0..*" workflow.Action
+set namespaceSeparator .
+
+
 class workflow.Workflow  {
-ID name
-STRING desc
+  ID name
+  STRING desc
 }
 
 
-workflow.Task o-- "0..*" workflow.Action
-workflow.Task o-- "0..*" workflow.Action
-workflow.Task o-- "1..*" workflow.Task
 class workflow.Task  {
-ID name
+  ID name
 }
 
 
 class workflow.Action  {
-ID name
+  ID name
 }
 
 
@@ -53,21 +49,27 @@ class STRICTFLOAT <<match>> {
 class NUMBER <<match>> {
 }
 
-NUMBER <|-- STRICTFLOAT
-NUMBER <|-- INT
 
 class BASETYPE <<match>> {
 }
 
+
+class OBJECT <<abstract>> {
+}
+
+
+workflow.Workflow o-- workflow.Task
+workflow.Workflow *-- "0..*" workflow.Task
+workflow.Workflow *-- "0..*" workflow.Action
+workflow.Task o-- "0..*" workflow.Action
+workflow.Task o-- "0..*" workflow.Action
+workflow.Task o-- "1..*" workflow.Task
+NUMBER <|-- STRICTFLOAT
+NUMBER <|-- INT
 BASETYPE <|-- NUMBER
 BASETYPE <|-- FLOAT
 BASETYPE <|-- BOOL
 BASETYPE <|-- ID
 BASETYPE <|-- STRING
-
-class OBJECT <<abstract>> {
-}
-
 OBJECT <|-- BASETYPE
-
 @enduml

@@ -1,29 +1,27 @@
 @startuml
-            set namespaceSeparator .
-        A.Model *-- "1..*" A.E
+set namespaceSeparator .
+
+
 class A.Model  {
 }
 
 
-A.E *-- "1..*" A.C
 class A.E  {
-ID name
+  ID name
 }
 
 
 class A.C <<abstract>> {
 }
 
-A.C <|-- A.C1
 
-A.C1 *-- A.TXT
 class A.C1  {
-ID name
+  ID name
 }
 
 
 class A.TXT  {
-STRING txt
+  STRING txt
 }
 
 
@@ -54,21 +52,25 @@ class STRICTFLOAT <<match>> {
 class NUMBER <<match>> {
 }
 
-NUMBER <|-- STRICTFLOAT
-NUMBER <|-- INT
 
 class BASETYPE <<match>> {
 }
 
+
+class OBJECT <<abstract>> {
+}
+
+
+A.Model *-- "1..*" A.E
+A.E *-- "1..*" A.C
+A.C <|-- A.C1
+A.C1 *-- A.TXT
+NUMBER <|-- STRICTFLOAT
+NUMBER <|-- INT
 BASETYPE <|-- NUMBER
 BASETYPE <|-- FLOAT
 BASETYPE <|-- BOOL
 BASETYPE <|-- ID
 BASETYPE <|-- STRING
-
-class OBJECT <<abstract>> {
-}
-
 OBJECT <|-- BASETYPE
-
 @enduml

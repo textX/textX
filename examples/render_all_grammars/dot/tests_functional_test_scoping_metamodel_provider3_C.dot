@@ -11,54 +11,56 @@
     edge[dir=black,arrowtail=empty]
 
 
-34699864 -> 34626568[arrowtail=diamond, dir=both, headlabel="imports 1..*"]
-34699864 -> 35308680[arrowtail=diamond, dir=both, headlabel="cls 1..*"]
-34699864 -> 35295512[arrowtail=diamond, dir=both, headlabel="obj 1..*"]
-34699864 -> 35301048[arrowtail=diamond, dir=both, headlabel="call 1..*"]
-34699864[ label="{Model|}"]
+39870072[ label="{Model|}"]
 
-35464504[ label="{ID|}"]
+40107480[ label="{ID|}"]
 
-34956808[ label="{STRING|}"]
+39989976[ label="{STRING|}"]
 
-35250744[ label="{BOOL|}"]
+40431048[ label="{BOOL|}"]
 
-35255224[ label="{INT|}"]
+40360088[ label="{INT|}"]
 
-32376600[ label="{FLOAT|}"]
+39872072[ label="{FLOAT|}"]
 
-32382136[ label="{STRICTFLOAT|}"]
+40353000[ label="{STRICTFLOAT|}"]
 
-35114632[ label="{NUMBER|}"]
-35114632 -> 32382136 [dir=back]
-35114632 -> 35255224 [dir=back]
+40291048[ label="{NUMBER|}"]
 
-35432616[ label="{BASETYPE|}"]
-35432616 -> 35114632 [dir=back]
-35432616 -> 32376600 [dir=back]
-35432616 -> 35250744 [dir=back]
-35432616 -> 35464504 [dir=back]
-35432616 -> 34956808 [dir=back]
+40295528[ label="{BASETYPE|}"]
 
-34654840[ label="{*OBJECT|}"]
-34654840 -> 35432616 [dir=back]
+39803384[ label="{*OBJECT|}"]
 
-35308680 -> 35308680[headlabel="extends 1..*"]
-35308680 -> 34675544[arrowtail=diamond, dir=both, headlabel="methods 1..*"]
-35308680[ label="{Cls|+name:ID\l}"]
+40037496[ label="{Cls|+name:ID\l}"]
 
-34675544[ label="{Method|+name:ID\l}"]
+40614696[ label="{Method|+name:ID\l}"]
 
-35295512 -> 35308680[headlabel="ref "]
-35295512[ label="{Obj|+name:ID\l}"]
+39828104[ label="{Obj|+name:ID\l}"]
 
-35301048 -> 35295512[headlabel="obj "]
-35301048 -> 34675544[headlabel="method "]
-35301048[ label="{Call|+name:ID\l}"]
+40573480[ label="{Call|+name:ID\l}"]
 
-34626568[ label="{Import|+importURI:STRING\l}"]
+40579016[ label="{Import|+importURI:STRING\l}"]
 
-35175448[ label="{Comment|\\/\\/.*}"]
+40486680[ label="{Comment|\\/\\/.*}"]
 
+
+
+39870072 -> 40579016[arrowtail=diamond, dir=both, headlabel="imports 1..*"]
+39870072 -> 40037496[arrowtail=diamond, dir=both, headlabel="cls 1..*"]
+39870072 -> 39828104[arrowtail=diamond, dir=both, headlabel="obj 1..*"]
+39870072 -> 40573480[arrowtail=diamond, dir=both, headlabel="call 1..*"]
+40291048 -> 40353000 [dir=back]
+40291048 -> 40360088 [dir=back]
+40295528 -> 40291048 [dir=back]
+40295528 -> 39872072 [dir=back]
+40295528 -> 40431048 [dir=back]
+40295528 -> 40107480 [dir=back]
+40295528 -> 39989976 [dir=back]
+39803384 -> 40295528 [dir=back]
+40037496 -> 40037496[headlabel="extends 1..*"]
+40037496 -> 40614696[arrowtail=diamond, dir=both, headlabel="methods 1..*"]
+39828104 -> 40037496[headlabel="ref "]
+40573480 -> 39828104[headlabel="obj "]
+40573480 -> 40614696[headlabel="method "]
 
 }

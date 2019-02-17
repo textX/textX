@@ -1,31 +1,28 @@
 @startuml
-            set namespaceSeparator .
-        rhapsody.RhapsodyModel *-- rhapsody.Object
+set namespaceSeparator .
+
+
 class rhapsody.RhapsodyModel  {
-STRING header
+  STRING header
 }
 
 
-rhapsody.Object *-- "1..*" rhapsody.Property
 class rhapsody.Object  {
-ID name
+  ID name
 }
 
 
-rhapsody.Property *-- "0..*" rhapsody.Value
 class rhapsody.Property  {
-ID name
+  ID name
 }
 
 
 class rhapsody.Value <<abstract>> {
 }
 
-rhapsody.Value <|-- rhapsody.GUID
-rhapsody.Value <|-- rhapsody.Object
 
 class rhapsody.GUID  {
-STRING value
+  STRING value
 }
 
 
@@ -56,21 +53,26 @@ class STRICTFLOAT <<match>> {
 class NUMBER <<match>> {
 }
 
-NUMBER <|-- STRICTFLOAT
-NUMBER <|-- INT
 
 class BASETYPE <<match>> {
 }
 
+
+class OBJECT <<abstract>> {
+}
+
+
+rhapsody.RhapsodyModel *-- rhapsody.Object
+rhapsody.Object *-- "1..*" rhapsody.Property
+rhapsody.Property *-- "0..*" rhapsody.Value
+rhapsody.Value <|-- rhapsody.GUID
+rhapsody.Value <|-- rhapsody.Object
+NUMBER <|-- STRICTFLOAT
+NUMBER <|-- INT
 BASETYPE <|-- NUMBER
 BASETYPE <|-- FLOAT
 BASETYPE <|-- BOOL
 BASETYPE <|-- ID
 BASETYPE <|-- STRING
-
-class OBJECT <<abstract>> {
-}
-
 OBJECT <|-- BASETYPE
-
 @enduml

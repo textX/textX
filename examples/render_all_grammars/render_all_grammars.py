@@ -6,7 +6,7 @@ import os
 from os.path import sep, join, dirname, exists
 
 
-def main(path=None, debug=False):
+def main(path=None, debug=False, reportfilename="REPORT.md"):
     if path is None:
         path = join(dirname(__file__), "..", "..")
 
@@ -16,7 +16,7 @@ def main(path=None, debug=False):
         for filename in fnmatch.filter(filenames, '*.tx'):
             matches.append((root, filename))
 
-    with open("README.md", "wt") as md:
+    with open(reportfilename, "wt") as md:
         md.write("# All grammars (*.tx)\n")
         for m in matches:
             inname = join(m[0], m[1])
@@ -59,7 +59,7 @@ def main(path=None, debug=False):
     print("how to process and display the output:")
     print("  dot -O -Tpng dot/*.dot")
     print("  plantuml pu/*.pu")
-    print("open the generated README.md")
+    print("open the generated {}".format(reportfilename))
 
 
 if __name__ == "__main__":

@@ -11,36 +11,38 @@
     edge[dir=black,arrowtail=empty]
 
 
-35502968 -> 35494776[arrowtail=diamond, dir=both, headlabel="diamond "]
-35502968[ label="{Third|}"]
+40685640[ label="{Third|}"]
 
-35304472[ label="{ID|}"]
+40213400[ label="{ID|}"]
 
-34990456[ label="{STRING|}"]
+40234056[ label="{STRING|}"]
 
-35060104[ label="{BOOL|}"]
+40246184[ label="{BOOL|}"]
 
-35079368[ label="{INT|}"]
+40341704[ label="{INT|}"]
 
-35089448[ label="{FLOAT|}"]
+40269992[ label="{FLOAT|}"]
 
-35095256[ label="{STRICTFLOAT|}"]
+40275912[ label="{STRICTFLOAT|}"]
 
-35100792[ label="{NUMBER|}"]
-35100792 -> 35095256 [dir=back]
-35100792 -> 35079368 [dir=back]
+40281448[ label="{NUMBER|}"]
 
-35106328[ label="{BASETYPE|}"]
-35106328 -> 35100792 [dir=back]
-35106328 -> 35089448 [dir=back]
-35106328 -> 35060104 [dir=back]
-35106328 -> 35304472 [dir=back]
-35106328 -> 34990456 [dir=back]
+40286984[ label="{BASETYPE|}"]
 
-35489240[ label="{*OBJECT|}"]
-35489240 -> 35106328 [dir=back]
+40671912[ label="{*OBJECT|}"]
 
-35494776[ label="{MyDiamondRule|+a:INT\l}"]
+40677448[ label="{MyDiamondRule|+a:INT\l}"]
 
+
+
+40685640 -> 40677448[arrowtail=diamond, dir=both, headlabel="diamond "]
+40281448 -> 40275912 [dir=back]
+40281448 -> 40341704 [dir=back]
+40286984 -> 40281448 [dir=back]
+40286984 -> 40269992 [dir=back]
+40286984 -> 40246184 [dir=back]
+40286984 -> 40213400 [dir=back]
+40286984 -> 40234056 [dir=back]
+40671912 -> 40286984 [dir=back]
 
 }

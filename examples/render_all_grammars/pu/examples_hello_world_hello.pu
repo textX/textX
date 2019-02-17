@@ -1,12 +1,13 @@
 @startuml
-            set namespaceSeparator .
-        hello.HelloWorldModel *-- "1..*" hello.Who
+set namespaceSeparator .
+
+
 class hello.HelloWorldModel  {
 }
 
 
 class hello.Who  {
-STRING name
+  STRING name
 }
 
 
@@ -37,21 +38,22 @@ class STRICTFLOAT <<match>> {
 class NUMBER <<match>> {
 }
 
-NUMBER <|-- STRICTFLOAT
-NUMBER <|-- INT
 
 class BASETYPE <<match>> {
 }
 
+
+class OBJECT <<abstract>> {
+}
+
+
+hello.HelloWorldModel *-- "1..*" hello.Who
+NUMBER <|-- STRICTFLOAT
+NUMBER <|-- INT
 BASETYPE <|-- NUMBER
 BASETYPE <|-- FLOAT
 BASETYPE <|-- BOOL
 BASETYPE <|-- ID
 BASETYPE <|-- STRING
-
-class OBJECT <<abstract>> {
-}
-
 OBJECT <|-- BASETYPE
-
 @enduml

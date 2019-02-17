@@ -11,58 +11,60 @@
     edge[dir=black,arrowtail=empty]
 
 
-34677080 -> 34981288[arrowtail=diamond, dir=both, headlabel="packages 0..*"]
-34677080[ label="{Model|}"]
+40037496[ label="{Model|}"]
 
-34981288 -> 34992360[arrowtail=diamond, dir=both, headlabel="interfaces 1..*"]
-34981288 -> 34981288[arrowtail=diamond, dir=both, headlabel="packages 1..*"]
-34981288 -> 34986824[arrowtail=diamond, dir=both, headlabel="raw_types 1..*"]
-34981288[ label="{Package|+name:ID\l}"]
+40160888[ label="{Package|+name:ID\l}"]
 
-34986824[ label="{RawType|+name:ID\l}"]
+40166424[ label="{RawType|+name:ID\l}"]
 
-34992360 -> 34997896[arrowtail=diamond, dir=both, headlabel="attributes 0..*"]
-34992360[ label="{Interface|+name:ID\l}"]
+40171960[ label="{Interface|+name:ID\l}"]
 
-34997896[ label="{*Attribute|}"]
-34997896 -> 35003432 [dir=back]
-34997896 -> 35008968 [dir=back]
+40177496[ label="{*Attribute|}"]
 
-35003432 -> 34986824[headlabel="ref "]
-35003432[ label="{RawTypeAttribute|+name:ID\l}"]
+40183032[ label="{RawTypeAttribute|+name:ID\l}"]
 
-35008968 -> 34992360[headlabel="ref "]
-35008968[ label="{EmbeddedAttribute|+name:ID\l}"]
+40188568[ label="{EmbeddedAttribute|+name:ID\l}"]
 
-35014504[ label="{FQN|FQN}"]
+40194104[ label="{FQN|FQN}"]
 
-35020040[ label="{Comment|\\/\\/.*$}"]
+40199640[ label="{Comment|\\/\\/.*$}"]
 
-34511160[ label="{ID|}"]
+40093000[ label="{ID|}"]
 
-34427544[ label="{STRING|}"]
+39844456[ label="{STRING|}"]
 
-34807400[ label="{BOOL|}"]
+39859032[ label="{BOOL|}"]
 
-32378600[ label="{INT|}"]
+37552680[ label="{INT|}"]
 
-34653608[ label="{FLOAT|}"]
+37558216[ label="{FLOAT|}"]
 
-34658552[ label="{STRICTFLOAT|}"]
+39829768[ label="{STRICTFLOAT|}"]
 
-34625512[ label="{NUMBER|}"]
-34625512 -> 34658552 [dir=back]
-34625512 -> 32378600 [dir=back]
+40139176[ label="{NUMBER|}"]
 
-34964520[ label="{BASETYPE|}"]
-34964520 -> 34625512 [dir=back]
-34964520 -> 34653608 [dir=back]
-34964520 -> 34807400 [dir=back]
-34964520 -> 34511160 [dir=back]
-34964520 -> 34427544 [dir=back]
+40144120[ label="{BASETYPE|}"]
 
-34970056[ label="{*OBJECT|}"]
-34970056 -> 34964520 [dir=back]
+40149656[ label="{*OBJECT|}"]
 
+
+
+40037496 -> 40160888[arrowtail=diamond, dir=both, headlabel="packages 0..*"]
+40160888 -> 40171960[arrowtail=diamond, dir=both, headlabel="interfaces 1..*"]
+40160888 -> 40160888[arrowtail=diamond, dir=both, headlabel="packages 1..*"]
+40160888 -> 40166424[arrowtail=diamond, dir=both, headlabel="raw_types 1..*"]
+40171960 -> 40177496[arrowtail=diamond, dir=both, headlabel="attributes 0..*"]
+40177496 -> 40183032 [dir=back]
+40177496 -> 40188568 [dir=back]
+40183032 -> 40166424[headlabel="ref "]
+40188568 -> 40171960[headlabel="ref "]
+40139176 -> 39829768 [dir=back]
+40139176 -> 37552680 [dir=back]
+40144120 -> 40139176 [dir=back]
+40144120 -> 37558216 [dir=back]
+40144120 -> 39859032 [dir=back]
+40144120 -> 40093000 [dir=back]
+40144120 -> 39844456 [dir=back]
+40149656 -> 40144120 [dir=back]
 
 }

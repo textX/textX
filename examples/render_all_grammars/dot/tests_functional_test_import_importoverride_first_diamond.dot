@@ -11,41 +11,43 @@
     edge[dir=black,arrowtail=empty]
 
 
-35645352 -> 35629560[arrowtail=diamond, dir=both, headlabel="seconds 1..*"]
-35645352 -> 35637160[arrowtail=diamond, dir=both, headlabel="thirds 1..*"]
-35645352[ label="{First|}"]
+40828552[ label="{First|}"]
 
-35603064[ label="{ID|}"]
+40785672[ label="{ID|}"]
 
-35608888[ label="{STRING|}"]
+40791496[ label="{STRING|}"]
 
-35614424[ label="{BOOL|}"]
+40797032[ label="{BOOL|}"]
 
-35619960[ label="{INT|}"]
+40802568[ label="{INT|}"]
 
-35520600[ label="{FLOAT|}"]
+40703400[ label="{FLOAT|}"]
 
-35542744[ label="{STRICTFLOAT|}"]
+40725544[ label="{STRICTFLOAT|}"]
 
-35087448[ label="{NUMBER|}"]
-35087448 -> 35542744 [dir=back]
-35087448 -> 35619960 [dir=back]
+40267992[ label="{NUMBER|}"]
 
-35379688[ label="{BASETYPE|}"]
-35379688 -> 35087448 [dir=back]
-35379688 -> 35520600 [dir=back]
-35379688 -> 35614424 [dir=back]
-35379688 -> 35603064 [dir=back]
-35379688 -> 35608888 [dir=back]
+40564488[ label="{BASETYPE|}"]
 
-35602120[ label="{*OBJECT|}"]
-35602120 -> 35379688 [dir=back]
+40776456[ label="{*OBJECT|}"]
 
-35629560 -> 35558408[arrowtail=diamond, dir=both, headlabel="diamond "]
-35629560[ label="{Second|}"]
+40812168[ label="{Second|}"]
 
-35637160 -> 35558408[arrowtail=diamond, dir=both, headlabel="diamond "]
-35637160[ label="{Third|}"]
+40820360[ label="{Third|}"]
 
+
+
+40828552 -> 40812168[arrowtail=diamond, dir=both, headlabel="seconds 1..*"]
+40828552 -> 40820360[arrowtail=diamond, dir=both, headlabel="thirds 1..*"]
+40267992 -> 40725544 [dir=back]
+40267992 -> 40802568 [dir=back]
+40564488 -> 40267992 [dir=back]
+40564488 -> 40703400 [dir=back]
+40564488 -> 40797032 [dir=back]
+40564488 -> 40785672 [dir=back]
+40564488 -> 40791496 [dir=back]
+40776456 -> 40564488 [dir=back]
+40812168 -> 40789496[arrowtail=diamond, dir=both, headlabel="diamond "]
+40820360 -> 40789496[arrowtail=diamond, dir=both, headlabel="diamond "]
 
 }

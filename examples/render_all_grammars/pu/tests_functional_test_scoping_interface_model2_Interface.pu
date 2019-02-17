@@ -1,44 +1,37 @@
 @startuml
-            set namespaceSeparator .
-        Interface.Model *-- "0..*" Interface.Package
+set namespaceSeparator .
+
+
 class Interface.Model  {
 }
 
 
-Interface.Package *-- "1..*" Interface.Interface
-Interface.Package *-- "1..*" Interface.Package
-Interface.Package *-- "1..*" Interface.RawType
 class Interface.Package  {
-ID name
+  ID name
 }
 
 
 class Interface.RawType  {
-ID name
+  ID name
 }
 
 
-Interface.Interface *-- "0..*" Interface.Attribute
 class Interface.Interface  {
-ID name
+  ID name
 }
 
 
 class Interface.Attribute <<abstract>> {
 }
 
-Interface.Attribute <|-- Interface.RawTypeAttribute
-Interface.Attribute <|-- Interface.EmbeddedAttribute
 
-Interface.RawTypeAttribute o-- Interface.RawType
 class Interface.RawTypeAttribute  {
-ID name
+  ID name
 }
 
 
-Interface.EmbeddedAttribute o-- Interface.Interface
 class Interface.EmbeddedAttribute  {
-ID name
+  ID name
 }
 
 
@@ -77,21 +70,30 @@ class STRICTFLOAT <<match>> {
 class NUMBER <<match>> {
 }
 
-NUMBER <|-- STRICTFLOAT
-NUMBER <|-- INT
 
 class BASETYPE <<match>> {
 }
 
+
+class OBJECT <<abstract>> {
+}
+
+
+Interface.Model *-- "0..*" Interface.Package
+Interface.Package *-- "1..*" Interface.Interface
+Interface.Package *-- "1..*" Interface.Package
+Interface.Package *-- "1..*" Interface.RawType
+Interface.Interface *-- "0..*" Interface.Attribute
+Interface.Attribute <|-- Interface.RawTypeAttribute
+Interface.Attribute <|-- Interface.EmbeddedAttribute
+Interface.RawTypeAttribute o-- Interface.RawType
+Interface.EmbeddedAttribute o-- Interface.Interface
+NUMBER <|-- STRICTFLOAT
+NUMBER <|-- INT
 BASETYPE <|-- NUMBER
 BASETYPE <|-- FLOAT
 BASETYPE <|-- BOOL
 BASETYPE <|-- ID
 BASETYPE <|-- STRING
-
-class OBJECT <<abstract>> {
-}
-
 OBJECT <|-- BASETYPE
-
 @enduml
