@@ -69,3 +69,6 @@ venv
 # Other
 .pytest_cache
 .idea
+examples/render_all_grammars/pu
+examples/render_all_grammars/REPORT.md
+
