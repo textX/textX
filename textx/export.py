@@ -179,7 +179,7 @@ set namespaceSeparator .
                         attrs += "  {} {}\n".format(attr_type, attr.name)
                     else:
                         attrs += "  optional<{}> {}\n".format(attr_type,
-                                                            attr.name)
+                                                              attr.name)
         if len(stereotype) > 0:
             stereotype = "<<"+stereotype+">>"
         return '\n\nclass {} {} {{\n{}}}\n'.format(
