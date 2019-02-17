@@ -3,6 +3,8 @@ from __future__ import unicode_literals
 from textx import metamodel_from_str, get_model, get_metamodel
 from pytest import raises
 from textx.exceptions import TextXSemanticError
+import textx.scoping.providers as providers
+from textx.scoping import Postponed
 
 """
 This test and example demonstrates how to use a custom scope provider to
@@ -15,14 +17,23 @@ Here we can
 The goal is that we can use a custom scope provider to define a known
 person on the fly, if it is not define.
 
-Note: This example has some limits. Another scope provider which requires to
-reference a person not yet created, may get an error.
+If you have additional rules with references to a person, which are not
+defining such persons on the fly, you need to take into account, that
+some persons may still be generated. Thus, you need to wait (with a
+"Postponed" object) for your reference resolution (see grammar_addon and
+"Postponer" how this can be achieved).
 """
 
 grammar = r'''
 Model: (persons+=Person|knows+=Knows)*;
 Person: ':' 'person' name=ID;
 Knows: person1=[Person] 'knows' person2=[Person];
+'''
+grammar_addon = r'''
+Model: (persons+=Person|knows+=Knows|greetings=Greeting)*;
+Person: ':' 'person' name=ID;
+Knows: person1=[Person] 'knows' person2=[Person]; // inventing
+Greeting: '*' 'hello' person=[Person]; // non-inventing
 '''
 
 
@@ -39,6 +50,24 @@ def person_definer_scope(knows, attr, attr_ref):
         person.parent = m
         m.persons.append(person)
         return person
+
+
+class Postponer(object):
+    """
+    scope provider which forwards to a base scope provider
+    and transforms a None to a Postponed.
+    Reference resolution will fail if a set of Postponed
+    resolutions does not change any more.
+    """
+    def __init__(self, base=providers.PlainName()):
+        self.base = base
+
+    def __call__(self, *args, **kwargs):
+        ret = self.base(*args, **kwargs)
+        if ret is None:
+            return Postponed()
+        else:
+            return ret
 
 
 def test_issue167_normal_lookup():
@@ -76,8 +105,6 @@ def test_issue167_custom_lookup():
     assert len(m.persons) == 3
     assert len(m.knows) == 3
 
-    mm = metamodel_from_str(grammar)
-    mm.register_scope_providers({'Knows.*': person_definer_scope})
     m = mm.model_from_str(r'''
         :person Tom
         :person Jerry
@@ -89,8 +116,6 @@ def test_issue167_custom_lookup():
     assert len(m.persons) == 3
     assert len(m.knows) == 3
 
-    mm = metamodel_from_str(grammar)
-    mm.register_scope_providers({'Knows.*': person_definer_scope})
     m = mm.model_from_str(r'''
         Tom knows Jerry
         Tom knows Berry
@@ -102,8 +127,6 @@ def test_issue167_custom_lookup():
     assert len(m.persons) == 3
     assert len(m.knows) == 3
 
-    mm = metamodel_from_str(grammar)
-    mm.register_scope_providers({'Knows.*': person_definer_scope})
     m = mm.model_from_str(r'''
         Tom knows Jerry
         Tom knows Berry
@@ -111,3 +134,54 @@ def test_issue167_custom_lookup():
         ''')
     assert len(m.persons) == 3
     assert len(m.knows) == 3
+
+
+def test_issue167_custom_lookup_addon_failure():
+    mm = metamodel_from_str(grammar_addon)
+    mm.register_scope_providers({'Knows.*': person_definer_scope})
+
+    # Here, at least one case produces an error, since
+    # Tom is not part of the model until the "Knowns" rule
+    # is resolved.
+    with raises(TextXSemanticError, match=r'.*Unknown object.*Tom.*'):
+        mm.model_from_str(r'''
+            Tom knows Jerry
+            *hello Tom
+            ''')
+        mm.model_from_str(r'''
+            *hello Tom
+            Tom knows Jerry
+            ''')
+
+
+def test_issue167_custom_lookup_addon_fix():
+    mm = metamodel_from_str(grammar_addon)
+    mm.register_scope_providers({'Knows.*': person_definer_scope,
+                                 'Greeting.*': Postponer()})
+
+    m = mm.model_from_str(r'''
+        Tom knows Jerry
+        *hello Tom
+        ''')
+
+    assert len(m.persons) == 2
+    assert len(m.knows) == 1
+    assert len(m.greetings) == 1
+    assert m.greetings[0].person == m.knows[0].person1
+
+    m = mm.model_from_str(r'''
+        *hello Tom
+        Tom knows Jerry
+        ''')
+
+    assert len(m.persons) == 2
+    assert len(m.knows) == 1
+    assert len(m.greetings) == 1
+    assert m.greetings[0].person == m.knows[0].person1
+
+    # Unknown elements still produce an error, as expected
+    with raises(TextXSemanticError, match=r'.*Unresolvable.*Berry.*'):
+        mm.model_from_str(r'''
+            Tom knows Jerry
+            *hello Berry
+            ''')
