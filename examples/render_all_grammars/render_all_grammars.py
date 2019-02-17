@@ -53,8 +53,6 @@ def main(path=None, debug=False, reportfilename="REPORT.md"):
                 dest_dot_png, dest_dot_png))
             md.write('\n\n')
 
-    print("after copying an initial output to out_ref,")
-    print("  you may use: diff -Nsaur dot dot_ref |less")
     print("-------------------------")
     print("how to process and display the output:")
     print("  dot -O -Tpng dot/*.dot")
