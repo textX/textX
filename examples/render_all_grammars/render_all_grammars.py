@@ -6,9 +6,11 @@ import os
 from os.path import sep, join, dirname, exists
 
 
-def main(path=None, debug=False, reportfilename="REPORT.md"):
+def main(path=None, debug=False, reportfilename=None):
     if path is None:
         path = join(dirname(__file__), "..", "..")
+    if reportfilename is None:
+        reportfilename = join(dirname(__file__), "REPORT.md")
 
     print("render_all_grammars.py - example program")
     matches = []
@@ -47,10 +49,14 @@ def main(path=None, debug=False, reportfilename="REPORT.md"):
                 for l in gr:
                     md.write("\t\t"+l)
             md.write('\n')
+            rel_dest_dot_png = os.path.relpath(
+                dest_dot_png, dirname(reportfilename))
+            rel_dest_pu_png = os.path.relpath(
+                dest_pu_png, dirname(reportfilename))
             md.write('<img width="49%" src="{}" alt="{}">\n'.format(
-                dest_pu_png, dest_pu_png))
+                rel_dest_pu_png, rel_dest_pu_png))
             md.write('<img width="49%" src="{}" alt="{}">\n'.format(
-                dest_dot_png, dest_dot_png))
+                rel_dest_dot_png, rel_dest_dot_png))
             md.write('\n\n')
 
     print("-------------------------")
