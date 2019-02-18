@@ -25,12 +25,12 @@ def main(path=None, debug=False, reportfilename=None):
             outfname_base = "{}_{}".format(
                 m[0].replace(path, '').lstrip(sep).replace(sep, '_'),
                 m[1].rstrip('.tx'))
-            destpath = join(dirname(__file__), "dot")
+            destpath = join(dirname(reportfilename), "dot")
             if not exists(destpath):
                 os.mkdir(destpath)
             dest_dot = join(destpath, outfname_base + ".dot")
             dest_dot_png = join(destpath, outfname_base + ".dot.png")
-            destpath = join(dirname(__file__), "pu")
+            destpath = join(dirname(reportfilename), "pu")
             if not exists(destpath):
                 os.mkdir(destpath)
             dest_pu = join(destpath, outfname_base+".pu")
