@@ -21,7 +21,9 @@ ignore_case_arg = click.option('--ignore-case/', '-i/', default=False,
                                help="case-insensitive parsing.")
 format_arg = click.option('--output-format', '-f',
                           type=click.Choice(['dot', 'plantuml']),
-                          default='dot')
+                          default='dot',
+                          help="select the output format (plantuml not "
+                               "available for model files, yet.")
 
 
 @textx.command()

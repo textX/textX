@@ -41,6 +41,27 @@ The following image is generated:
 
 ![Entity meta-model](https://raw.githubusercontent.com/textX/textX/master/examples/Entity/dotexport/entity_meta.dot.png)
 
+Alternatively, you can also specify an alternative renderer to export your 
+meta model for the PlantUML tool (http://plantuml.com/).
+
+```python
+from textx import metamodel_from_file
+from textx.export import metamodel_export, PlantUmlRenderer
+
+entity_mm = metamodel_from_file('entity.tx')
+
+metamodel_export(entity_mm, 'entity.pu',renderer=PlantUmlRenderer())
+```
+
+`entity.pu` file will be created. You can convert it to various image 
+formats using the 'plantuml' tool.
+
+    $ plantuml -Tpng entity.pu
+
+The following image is generated:
+
+![Entity meta-model](https://raw.githubusercontent.com/textX/textX/master/examples/Entity/dotexport/entity_meta_platuml.png)
+
 
 ## Model visualization
 
@@ -69,3 +90,6 @@ The following image is generated:
 !!! note
     Also, see [textx command/tool](textx_command.md) for model visualization
     from the command line.
+
+!!! note
+    PlantUML output is not yet available for model files.
