@@ -15,6 +15,15 @@ freely available (e.g. [xdot](https://github.com/jrfonseca/xdot.py),
 Alternatively, dot files can be converted to image formats using `dot` command.
 For more info see [this SO thread](http://stackoverflow.com/questions/1494492/graphviz-how-to-go-from-dot-to-a-graph).
 
+In addition to [GraphViz](http://www.graphviz.org/) 
+we also support [PlantUML](http://plantuml.com/) as 
+target for our exports (see [textx command/tool](textx_command.md)).
+You can copy-paste the exported file content
+online on the [PlantUML](http://plantuml.com/) website to
+visualize it. The PlantUML Tool is a JAR file (Java) which runs on various platforms.
+Many Linux distributions have this tool included (e.g. Ubuntu:
+```apt install platuml```).
+
 
 
 ## Meta-model visualization

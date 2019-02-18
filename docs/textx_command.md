@@ -27,7 +27,7 @@ To get basic help:
 You can check and visualize (generate a .dot file) your meta-model or model using
 this tool.
 
-Check also the detailed help (to, e.g., choose the output format: dot/plantuml):
+Check also the detailed help (to, e.g., choose the output format: "dot" or "plantuml"):
 
     $ textx visualize --help
     Usage: textx visualize [OPTIONS] META_MODEL_FILE [MODEL_FILE]
