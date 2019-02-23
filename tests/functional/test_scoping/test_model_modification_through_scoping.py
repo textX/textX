@@ -70,7 +70,7 @@ class Postponer(object):
             return ret
 
 
-def test_issue167_normal_lookup():
+def test_model_modification_through_scoping_normal_lookup():
     mm = metamodel_from_str(grammar)
     m = mm.model_from_str(r'''
         :person Tom
@@ -81,7 +81,7 @@ def test_issue167_normal_lookup():
     assert len(m.knows) == 1
 
 
-def test_issue167_normal_lookup_failure():
+def test_model_modification_through_scoping_normal_lookup_failure():
     mm = metamodel_from_str(grammar)
     with raises(TextXSemanticError):
         mm.model_from_str(r'''
@@ -92,7 +92,7 @@ def test_issue167_normal_lookup_failure():
             ''')
 
 
-def test_issue167_custom_lookup():
+def test_model_modification_through_scoping_custom_lookup():
     mm = metamodel_from_str(grammar)
     mm.register_scope_providers({'Knows.*': person_definer_scope})
     m = mm.model_from_str(r'''
@@ -136,7 +136,7 @@ def test_issue167_custom_lookup():
     assert len(m.knows) == 3
 
 
-def test_issue167_custom_lookup_addon_failure():
+def test_model_modification_through_scoping_custom_lookup_addon_failure():
     mm = metamodel_from_str(grammar_addon)
     mm.register_scope_providers({'Knows.*': person_definer_scope})
 
@@ -154,7 +154,7 @@ def test_issue167_custom_lookup_addon_failure():
             ''')
 
 
-def test_issue167_custom_lookup_addon_fix():
+def test_model_modification_through_scoping_custom_lookup_addon_fix():
     mm = metamodel_from_str(grammar_addon)
     mm.register_scope_providers({'Knows.*': person_definer_scope,
                                  'Greeting.*': Postponer()})
