@@ -164,45 +164,6 @@ We provide some standard scope providers:
    Example: see [tests/test_scoping/test_local_scope.py](https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_local_scope.py).
 
 
-### Using the scope provider to modify a model
-
-Scoping takes place after the model is completely parsed. Thus, 
-while resolving references you can rely on the assumption that all
-model elements already exist.
-
-However, **if your scope provider creates (invents) model elements**, it may
-happen, that also model elements to be referenced do not yet exist. This may
-happen, if your meta model allows to define a model element by referencing
-it (like [PlantUML](http://plantuml.com/) is doing for, e.g., classes).
-If you then require to reference these model elements "defined by
-a reference", you must take into account that these elements
-may have not yet been created. This can be achieved in the same 
-way as handling unresolved references in a scope provider (with the 
-"Postponed" mechanism).
-
-An example of such a meta model is given in 
-[tests/test_model_modification_through_scoping.py](https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_model_modification_through_scoping.py):
-Here you can 
- * **define** Persons explicitly (existence) and
- * **reference** two persons which **know** each other (relationship). 
- Moreover, referencing a not existent persons (all person defined
- by the grammar have been created at the time of reference resolving)
- will create an additional (new) person (and, thus, modify the model).
-
-In an extension of the grammar we then also allow 
-
- * to **greet** persons. This also happens by referencing a person (like for
- the "knows"-relationship). 
- But this time, **not existent persons shall not be created**, but should yield 
- a referencing error. 
- 
-   **Implementation:** Since it is unclear if a not 
- existent person may be created by a not yet resolved "knows"-relationship reference, 
- we have to postpone the resolution of a failed greeting (return "Postponed"). 
- The reference resolution mechanism will detect if a state is reached 
- with only postponed references and will then raise an error, as expected.
-
-
 ### Note on Uniqueness of Model Elements
 
 Two different models created using one single meta model (not using a scope
@@ -267,3 +228,42 @@ references to be resolved until all references are resolved or no progress
 regarding the resolution is observed. In the latter case an error is raised. The
 control flow responsibility of the resolution process is allocated to the
 `model.py` module.
+
+
+### Using the scope provider to modify a model
+
+Scoping takes place after the model is completely parsed. Thus, 
+while resolving references you can rely on the assumption that all
+model elements already exist.
+
+However, **if your scope provider creates (invents) model elements**, it may
+happen, that also model elements to be referenced do not yet exist. This may
+happen, if your meta model allows to define a model element by referencing
+it (like [PlantUML](http://plantuml.com/) is doing for, e.g., classes).
+If you then require to reference these model elements "defined by
+a reference", you must take into account that these elements
+may have not yet been created. This can be achieved in the same 
+way as handling unresolved references in a scope provider (with the 
+"Postponed" mechanism).
+
+An example of such a meta model is given in 
+[tests/test_model_modification_through_scoping.py](https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_model_modification_through_scoping.py):
+Here you can 
+ * **define** Persons explicitly (existence) and
+ * **reference** two persons which **know** each other (relationship). 
+ Moreover, referencing a not existent persons (all person defined
+ by the grammar have been created at the time of reference resolving)
+ will create an additional (new) person (and, thus, modify the model).
+
+In an extension of the grammar we then also allow 
+
+ * to **greet** persons. This also happens by referencing a person (like for
+ the "knows"-relationship). 
+ But this time, **not existent persons shall not be created**, but should yield 
+ a referencing error. 
+ 
+   **Implementation:** Since it is unclear if a not 
+ existent person may be created by a not yet resolved "knows"-relationship reference, 
+ we have to postpone the resolution of a failed greeting (return "Postponed"). 
+ The reference resolution mechanism will detect if a state is reached 
+ with only postponed references and will then raise an error, as expected.
