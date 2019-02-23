@@ -252,7 +252,7 @@ An example of such a meta model is given in
 Here you can 
  * **define** Persons explicitly (existence) and
  * **reference** two persons which **know** each other (relationship). 
- Moreover, referencing a not existent persons (all person **explicitly defined**
+ Moreover, **referencing a not existent persons** (all person explicitly defined
  by the grammar have been created at the time of reference resolving)
  will **create an additional (new) person** (and, thus, modify the model).
 
