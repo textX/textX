@@ -244,7 +244,7 @@ If you then require to reference these model elements "defined by
 a reference", you must take into account that these elements
 may have not yet been created. This can be achieved in the same 
 way as handling unresolved references in a scope provider (with the 
-"Postponed" mechanism).
+"Postponed" mechanism). This use case was motivated by #167.
 
 An example of such a meta model is given in 
 [tests/test_model_modification_through_scoping.py](https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_model_modification_through_scoping.py):
