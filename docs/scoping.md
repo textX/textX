@@ -244,7 +244,7 @@ If you then require to reference these model elements "defined by
 a reference", you must take into account that these elements
 may have not yet been created. This can be achieved in the same 
 way as handling unresolved references in a scope provider (with the 
-"Postponed" mechanism). This use case was motivated by 
+```Postponed``` mechanism). This use case was motivated by 
 [#167](https://github.com/textX/textX/issues/167).
 
 An example of such a meta model is given in 
@@ -265,6 +265,6 @@ In an extension of the grammar we then also allow
  
    **Implementation:** Since it is unclear if a not 
  existent person may be created by a not yet resolved "knows"-relationship reference, 
- we have to postpone the resolution of a failed greeting (return "Postponed"). 
+ we have to postpone the resolution of a failed greeting (return ```Postponed```). 
  The reference resolution mechanism will detect if a state is reached 
  with only postponed references and will then raise an error, as expected.
