@@ -255,7 +255,7 @@ executed.
 
 If you want to **reference an element not directly modelled** (instantiated), you need to
 instantiate or load this element or information somewhere. This information can be,
-e.g., information from a non-textx model, such a JSON file 
+e.g., information from a non-textx model, such as a JSON file 
 (see: [test_reference_to_nontextx_attribute.py](https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_reference_to_nontextx_attribute.py)).
 Since you need to resolve a reference (e.g. to an ```[OBJECT]``` in the
 given example), you cannot rely on object processors, since they are executed
