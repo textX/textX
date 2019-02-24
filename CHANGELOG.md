@@ -2,6 +2,8 @@
 
 * Next Release 1.?.?
 
+   - https://github.com/textX/textX/pull/165
+     - added metamodel export feature for PlantUML
    - https://github.com/textX/textX/pull/134
      - Fixing bug when using a sequence of matches and rule reference in
        an abstract rule choice alternative.

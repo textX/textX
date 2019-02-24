@@ -23,7 +23,7 @@ format_arg = click.option('--output-format', '-f',
                           type=click.Choice(['dot', 'plantuml']),
                           default='dot',
                           help="select the output format (plantuml not "
-                               "available for model files, yet.")
+                               "available for model files, yet).")
 
 
 @textx.command()
