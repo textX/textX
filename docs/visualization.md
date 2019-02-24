@@ -15,6 +15,15 @@ freely available (e.g. [xdot](https://github.com/jrfonseca/xdot.py),
 Alternatively, dot files can be converted to image formats using `dot` command.
 For more info see [this SO thread](http://stackoverflow.com/questions/1494492/graphviz-how-to-go-from-dot-to-a-graph).
 
+In addition to [GraphViz](http://www.graphviz.org/) 
+we also support [PlantUML](http://plantuml.com/) as 
+target for our exports (see [textx command/tool](textx_command.md)).
+You can copy-paste the exported file content
+online on the [PlantUML](http://plantuml.com/) website to
+visualize it. The PlantUML Tool is a JAR file (Java) which runs on various platforms.
+Many Linux distributions have this tool included (e.g. Ubuntu:
+```apt install platuml```).
+
 
 
 ## Meta-model visualization
@@ -40,6 +49,27 @@ dot viewers or convert it to various image formats using the 'dot' tool.
 The following image is generated:
 
 ![Entity meta-model](https://raw.githubusercontent.com/textX/textX/master/examples/Entity/dotexport/entity_meta.dot.png)
+
+Alternatively, you can also specify an alternative renderer to export your 
+meta model for the PlantUML tool (http://plantuml.com/).
+
+```python
+from textx import metamodel_from_file
+from textx.export import metamodel_export, PlantUmlRenderer
+
+entity_mm = metamodel_from_file('entity.tx')
+
+metamodel_export(entity_mm, 'entity.pu',renderer=PlantUmlRenderer())
+```
+
+`entity.pu` file will be created. You can convert it to various image 
+formats using the 'plantuml' tool.
+
+    $ plantuml -Tpng entity.pu
+
+The following image is generated:
+
+![Entity meta-model](https://raw.githubusercontent.com/textX/textX/master/examples/Entity/dotexport/entity_meta_platuml.png)
 
 
 ## Model visualization
@@ -69,3 +99,6 @@ The following image is generated:
 !!! note
     Also, see [textx command/tool](textx_command.md) for model visualization
     from the command line.
+
+!!! note
+    PlantUML output is not yet available for model files.

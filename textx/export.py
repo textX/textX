@@ -106,47 +106,127 @@ def dot_repr(o):
         return text(o)
 
 
-def metamodel_export(metamodel, file_name):
+class DotRenderer(object):
 
-    with codecs.open(file_name, 'w', encoding="utf-8") as f:
-        f.write(HEADER)
+    def get_header(self):
+        return HEADER
 
-        for cls in metamodel:
-            name = cls.__name__
-            attrs = ""
-            if cls._tx_type is not RULE_COMMON:
-                attrs = match_abstract_str(cls)
-            else:
-                for attr in cls._tx_attrs.values():
-                    arrowtail = "arrowtail=diamond, dir=both, " \
-                        if attr.cont else ""
-                    mult_list = attr.mult in [MULT_ZEROORMORE, MULT_ONEORMORE]
-                    required = "+" if attr.mult in \
-                        [MULT_ONE, MULT_ONEORMORE] else ""
-                    attr_type = "list[{}]".format(attr.cls.__name__) \
-                        if mult_list else attr.cls.__name__
-                    if attr.ref and attr.cls.__name__ != 'OBJECT':
-                        # If attribute is a reference
-                        mult = attr.mult if not attr.mult == MULT_ONE else ""
-                        f.write('{} -> {}[{}headlabel="{} {}"]\n'
-                                .format(id(cls), id(attr.cls), arrowtail,
-                                        attr.name, mult))
+    def get_trailer(self):
+        return '\n}\n'
+
+    def render_class(self, cls):
+        name = cls.__name__
+        attrs = ""
+        if cls._tx_type is not RULE_COMMON:
+            attrs = match_abstract_str(cls)
+        else:
+            for attr in cls._tx_attrs.values():
+                required = "+" if attr.mult in \
+                    [MULT_ONE, MULT_ONEORMORE] else ""
+                mult_list = attr.mult in [MULT_ZEROORMORE, MULT_ONEORMORE]
+                attr_type = "list[{}]".format(attr.cls.__name__) \
+                    if mult_list else attr.cls.__name__
+                if attr.ref and attr.cls.__name__ != 'OBJECT':
+                    pass
+                else:
+                    # If it is plain type
+                    attrs += "{}{}:{}\\l".format(required,
+                                                 attr.name, attr_type)
+        return '{}[ label="{{{}|{}}}"]\n\n'.format(
+                id(cls), "*{}".format(name)
+                if cls._tx_type is RULE_ABSTRACT else name, attrs)
+
+    def render_attr_link(self, cls, attr):
+        arrowtail = "arrowtail=diamond, dir=both, " \
+            if attr.cont else ""
+        if attr.ref and attr.cls.__name__ != 'OBJECT':
+            # If attribute is a reference
+            mult = attr.mult if not attr.mult == MULT_ONE else ""
+            return '{} -> {}[{}headlabel="{} {}"]\n'\
+                .format(id(cls), id(attr.cls), arrowtail,
+                        attr.name, mult)
+
+    def render_inherited_by(self, base, special):
+        return '{} -> {} [dir=back]\n'\
+            .format(id(base), id(special))
+
+
+class PlantUmlRenderer(object):
+
+    def get_header(self):
+        return '''@startuml
+set namespaceSeparator .
+'''
+
+    def get_trailer(self):
+        return '@enduml\n'
+
+    def render_class(self, cls):
+        attrs = ""
+        stereotype = ""
+        if cls._tx_type is not RULE_COMMON:
+            stereotype += cls._tx_type
+        else:
+            for attr in cls._tx_attrs.values():
+                required = attr.mult in [MULT_ONE, MULT_ONEORMORE]
+                mult_list = attr.mult in [MULT_ZEROORMORE, MULT_ONEORMORE]
+                attr_type = "list[{}]".format(attr.cls.__name__) \
+                    if mult_list else attr.cls.__name__
+                if attr.ref and attr.cls.__name__ != 'OBJECT':
+                    pass
+                else:
+                    if required:
+                        attrs += "  {} {}\n".format(attr_type, attr.name)
                     else:
-                        # If it is plain type
-                        attrs += "{}{}:{}\\l".format(required,
-                                                     attr.name, attr_type)
+                        attrs += "  optional<{}> {}\n".format(attr_type,
+                                                              attr.name)
+        if len(stereotype) > 0:
+            stereotype = "<<"+stereotype+">>"
+        return '\n\nclass {} {} {{\n{}}}\n'.format(
+                cls._tx_fqn, stereotype, attrs
+                )
 
-            f.write('{}[ label="{{{}|{}}}"]\n'.format(
-                    id(cls), "*{}".format(name)
-                    if cls._tx_type is RULE_ABSTRACT else name, attrs))
+    def render_attr_link(self, cls, attr):
+        if attr.ref and attr.cls.__name__ != 'OBJECT':
+            # If attribute is a reference
+            # mult = attr.mult if not attr.mult == MULT_ONE else ""
+            if attr.cont:
+                arr = "*--"
+            else:
+                arr = "o--"
+            if attr.mult == MULT_ZEROORMORE:
+                arr = arr + ' "0..*"'
+            elif attr.mult == MULT_ONEORMORE:
+                arr = arr + ' "1..*"'
+            return '{} {} {}\n'.format(
+                cls._tx_fqn, arr, attr.cls._tx_fqn)
 
-            for inherited_by in cls._tx_inh_by:
-                f.write('{} -> {} [dir=back]\n'
-                        .format(id(cls), id(inherited_by)))
+    def render_inherited_by(self, base, special):
+        return '{} <|-- {}\n'.format(base._tx_fqn, special._tx_fqn)
 
-            f.write("\n")
 
-        f.write("\n}\n")
+def metamodel_export(metamodel, file_name, renderer=None):
+    with codecs.open(file_name, 'w', encoding="utf-8") as f:
+        metamodel_export_tofile(metamodel, f, renderer)
+
+
+def metamodel_export_tofile(metamodel, f, renderer=None):
+    if renderer is None:
+        renderer = DotRenderer()
+    f.write(renderer.get_header())
+    for cls in metamodel:
+        f.write(renderer.render_class(cls))
+    f.write("\n\n")
+    for cls in metamodel:
+        if cls._tx_type is not RULE_COMMON:
+            pass
+        else:
+            for attr in cls._tx_attrs.values():
+                if attr.ref and attr.cls.__name__ != 'OBJECT':
+                    f.write(renderer.render_attr_link(cls, attr))
+        for inherited_by in cls._tx_inh_by:
+            f.write(renderer.render_inherited_by(cls, inherited_by))
+    f.write("{}".format(renderer.get_trailer()))
 
 
 def model_export(model, file_name, repo=None):
