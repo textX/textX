@@ -39,6 +39,21 @@ Options:
 You can check and visualize (generate a .dot file) your meta-model or model using
 this tool.
 
+Check also the detailed help (to, e.g., choose the output format: "dot" or "plantuml"):
+
+    $ textx visualize --help
+    Usage: textx visualize [OPTIONS] META_MODEL_FILE [MODEL_FILE]
+    
+      Generate .dot file(s) from meta-model and optionally model.
+    
+    Options:
+      -i, --ignore-case               case-insensitive parsing.
+      -f, --output-format [dot|plantuml]
+                                      select the output format (plantuml not
+                                      available for model files, yet.
+      --help                          Show this message and exit.
+
+
 For example, to check and visualize a metamodel you could issue:
 
 ```sh
