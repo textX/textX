@@ -248,7 +248,7 @@ model elements already exist.
 
 It also shows, that **objects processors** kick in when all 
 references are resolved. That means that no references are 
-resolved any more after the first object processor has been
+resolved any more after or while the first object processor has been
 executed.
 
 #### Use case: reference data in non-textx models
