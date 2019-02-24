@@ -232,16 +232,47 @@ control flow responsibility of the resolution process is allocated to the
 
 ### Using the scope provider to modify a model
 
-Scoping takes place after the model is completely parsed. Thus, 
+Model creation by the metamodel (loading the model) is divided into
+a set of strictly ordered activities. Understanding that order
+makes it clear where in the metamodel and its configuration (e.g.,
+scope providers or object processors) it is allowed to modify the
+model itself and what has to be taken into account.
+
+The following image sketches these ordered activities:
+![model_from_file_or_str.pu](images/model_from_file_or_str.png)
+
+The image illustrates that, while **resolving references**, all directly modeled
+objects are already loaded and instantiated. Scoping takes place after the model is completely parsed. Thus, 
 while resolving references you can rely on the assumption that all
 model elements already exist.
 
-However, **if your scope provider creates (invents) model elements**, it may
-happen, that also model elements to be referenced do not yet exist. This may
-happen, if your meta model allows to define a model element by referencing
+It also shows, that **objects processors** kick in when all 
+references are resolved. That means that no references are 
+resolved any more after the first object processor has been
+executed.
+
+#### Use case: reference data in non-textx models
+
+If you want to **reference an element not directly modelled** (instantiated), you need to
+instantiate or load this element or information somewhere. This information can be,
+e.g., information from a non-textx model, such a JSON file 
+(see: [test_reference_to_nontextx_attribute.py](https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_reference_to_nontextx_attribute.py)).
+Since you need to resolve a reference (e.g. to an [Object] in the
+given example), you cannot rely on object processors, since they are executed
+*after* reference resolution. Thus, scope providers need to take care of
+that.
+
+#### Use case: reference data "defined by references"
+
+You may have the use case, that you want to
+define/instantiate objects by referencing them (on the fly).
+This may happen, if your meta model allows to define a model element by referencing
 it (like [PlantUML](http://plantuml.com/) is doing for, e.g., classes).
+In that case **your scope provider creates (invents) model elements**. 
+
 If you then require to reference these model elements "defined by
-a reference", you must take into account that these elements
+a reference" by another "non-inventing reference", 
+you must take into account that these elements
 may have not yet been created. This can be achieved in the same 
 way as handling unresolved references in a scope provider (with the 
 ```Postponed``` mechanism). This use case was motivated by 

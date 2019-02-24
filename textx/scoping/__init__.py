@@ -116,7 +116,7 @@ class GlobalModelRepository(object):
     GlobalModelRepository forwards the embedded ModelRepository
     "all_models" to the new GlobalModelRepository of the
     next model. This is done using the pre_ref_resolution_callback
-    to set the neccesary information before resolving
+    to set the necessary information before resolving
     the references in the new loaded model.
     """
 
