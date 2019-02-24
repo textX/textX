@@ -281,9 +281,10 @@ way as handling unresolved references in a scope provider (with the
 An example of such a meta model is given in 
 [tests/test_model_modification_through_scoping.py](https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_model_modification_through_scoping.py):
 Here you can 
+
  * **define** Persons explicitly (existence) and
  * **reference** two persons which **know** each other (relationship). 
- Moreover, **referencing a not existent persons** (all person explicitly defined
+ Moreover, **referencing a nonexistent persons** (all person explicitly defined
  by the grammar have been created at the time of reference resolving)
  will **create an additional (new) person** (and, thus, modify the model).
 
@@ -291,11 +292,11 @@ In an extension of the grammar we then also allow
 
  * to **greet** persons. This also happens by referencing a person (like for
  the "knows"-relationship). 
- But this time, **not existent persons shall not be created**, but should yield 
+ But this time, **nonexistent persons shall not be created**, but should yield 
  a referencing error. 
  
-   **Implementation:** Since it is unclear if a not 
- existent person may be created by a not yet resolved "knows"-relationship reference, 
+   **Implementation:** Since it is unclear if a
+ nonexistent person may be created by a not yet resolved "knows"-relationship reference, 
  we have to postpone the resolution of a failed greeting (return ```Postponed```). 
  The reference resolution mechanism will detect if a state is reached 
  with only postponed references and will then raise an error, as expected.
