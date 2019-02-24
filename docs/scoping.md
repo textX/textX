@@ -260,7 +260,7 @@ e.g., information from a non-textx model, such as a JSON file
 Since you need to resolve a reference (e.g. to an ```[OBJECT]``` in the
 given example), you cannot rely on object processors, since they are executed
 *after* reference resolution. Thus, scope providers need to take care of
-that.
+that (e.g., take care of loading the JSON data).
 
 #### Use case: reference data "defined by references"
 
