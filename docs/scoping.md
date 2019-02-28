@@ -228,3 +228,75 @@ references to be resolved until all references are resolved or no progress
 regarding the resolution is observed. In the latter case an error is raised. The
 control flow responsibility of the resolution process is allocated to the
 `model.py` module.
+
+
+### Using the scope provider to modify a model
+
+Model creation by the metamodel (loading the model) is divided into
+a set of strictly ordered activities. Understanding that order
+makes it clear where in the metamodel and its configuration (e.g.,
+scope providers or object processors) it is allowed to modify the
+model itself and what has to be taken into account.
+
+The following image sketches these ordered activities:
+![model_from_file_or_str.pu](images/model_from_file_or_str.png)
+
+The image illustrates that, while **resolving references**, all directly modeled
+objects are already loaded and instantiated. Scoping takes place after the model is completely parsed. Thus, 
+while resolving references you can rely on the assumption that all
+model elements already exist.
+
+It also shows, that **objects processors** kick in when all 
+references are resolved. That means that no references are 
+resolved any more after or while the first object processor has been
+executed.
+
+#### Use case: reference data in non-textx models
+
+If you want to **reference an element not directly modelled** (instantiated), you need to
+instantiate or load this element or information somewhere. This information can be,
+e.g., information from a non-textx model, such as a JSON file 
+(see: [test_reference_to_nontextx_attribute.py](https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_reference_to_nontextx_attribute.py)).
+Since you need to resolve a reference (e.g. to an ```[OBJECT]``` in the
+given example), you cannot rely on object processors, since they are executed
+*after* reference resolution. Thus, scope providers need to take care of
+that (e.g., take care of loading the JSON data).
+
+#### Use case: reference data "defined by references"
+
+You may have the use case, that you want to
+define/instantiate objects by referencing them (on the fly).
+This may happen, if your meta model allows to define a model element by referencing
+it (like [PlantUML](http://plantuml.com/) is doing for, e.g., classes).
+In that case **your scope provider creates (invents) model elements**. 
+
+If you then require to reference these model elements "defined by
+a reference" by another "non-inventing reference", 
+you must take into account that these elements
+may have not yet been created. This can be achieved in the same 
+way as handling unresolved references in a scope provider (with the 
+```Postponed``` mechanism). This use case was motivated by 
+[#167](https://github.com/textX/textX/issues/167).
+
+An example of such a meta model is given in 
+[tests/test_model_modification_through_scoping.py](https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_model_modification_through_scoping.py):
+Here you can 
+
+ * **define** Persons explicitly (existence) and
+ * **reference** two persons which **know** each other (relationship). 
+ Moreover, **referencing a nonexistent persons** (all person explicitly defined
+ by the grammar have been created at the time of reference resolving)
+ will **create an additional (new) person** (and, thus, modify the model).
+
+In an extension of the grammar we then also allow 
+
+ * to **greet** persons. This also happens by referencing a person (like for
+ the "knows"-relationship). 
+ But this time, **nonexistent persons shall not be created**, but should yield 
+ a referencing error. 
+ 
+   **Implementation:** Since it is unclear if a
+ nonexistent person may be created by a not yet resolved "knows"-relationship reference, 
+ we have to postpone the resolution of a failed greeting (return ```Postponed```). 
+ The reference resolution mechanism will detect if a state is reached 
+ with only postponed references and will then raise an error, as expected.

@@ -1,7 +1,9 @@
 # textX changelog
 
 * Next Release 1.?.?
-
+   - https://github.com/textX/textX/pull/168
+     - Adding examples and documentation related to scope providers
+       (related to model modification through scope providers).
    - https://github.com/textX/textX/pull/165
      - Added metamodel export feature for PlantUML.
    - https://github.com/textX/textX/pull/134
