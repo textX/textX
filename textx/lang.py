@@ -318,7 +318,7 @@ class TextXVisitor(PTNodeVisitor):
                 _determine_rule_type(target_cls)
                 abstract = target_cls._tx_type != RULE_MATCH
             else:
-                # Find at leat one referenced rule that is not match rule by
+                # Find at least one referenced rule that is not match rule by
                 # going down the parser model and finding root rules.
                 def _has_nonmatch_ref(rule):
                     for r in rule.nodes:
@@ -340,7 +340,7 @@ class TextXVisitor(PTNodeVisitor):
                     if rule._tx_class not in cls._tx_inh_by:
                         cls._tx_inh_by.append(rule._tx_class)
                 else:
-                    # Recursivelly append all referenced classes.
+                    # Recursively append all referenced classes.
                     def _add_reffered_classes(rule, inh_by, start=False):
                         if rule.root and not start:
                             if hasattr(rule, '_tx_class'):
