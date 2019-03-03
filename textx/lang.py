@@ -300,25 +300,26 @@ class TextXVisitor(PTNodeVisitor):
             # If there are attributes collected than this is a common
             # rule
             if len(cls._tx_attrs) > 0:
-                cls._tx_type = RULE_COMMON
+                if cls._tx_type != RULE_COMMON:
+                    cls._tx_type = RULE_COMMON
+                    has_change[0] = True
                 return
 
             rule = cls._tx_peg_rule
 
-            # Check if this rule is abstract
-            # Abstract are root rules which haven't got any attributes
-            # and reference at least one non-match rule.
+            # Check if this rule is abstract. Abstract are root rules which
+            # haven't got any attributes and reference at least one non-match
+            # rule.
             abstract = False
             if rule.rule_name and cls.__name__ != rule.rule_name:
-                # Special case. Body of the rule is a single rule
-                # reference and the referenced rule is not match rule.
+                # Special case. Body of the rule is a single rule reference and
+                # the referenced rule is not match rule.
                 target_cls = metamodel[rule.rule_name]
                 _determine_rule_type(target_cls)
                 abstract = target_cls._tx_type != RULE_MATCH
             else:
-                # Find at leat one referenced rule that is not match
-                # rule by going down the parser
-                # model and finding root rules.
+                # Find at leat one referenced rule that is not match rule by
+                # going down the parser model and finding root rules.
                 def _has_nonmatch_ref(rule):
                     for r in rule.nodes:
                         if r.root:
@@ -331,7 +332,9 @@ class TextXVisitor(PTNodeVisitor):
                 abstract = _has_nonmatch_ref(rule)
 
             if abstract:
-                cls._tx_type = RULE_ABSTRACT
+                if cls._tx_type != RULE_ABSTRACT:
+                    cls._tx_type = RULE_ABSTRACT
+                    has_change[0] = True
                 # Add inherited classes to this rule's meta-class
                 if rule.rule_name and cls.__name__ != rule.rule_name:
                     if rule._tx_class not in cls._tx_inh_by:
@@ -364,9 +367,15 @@ class TextXVisitor(PTNodeVisitor):
                     else:
                         _add_reffered_classes(rule, cls._tx_inh_by, start=True)
 
-        resolved_classes = set()
-        for cls in metamodel:
-            _determine_rule_type(cls)
+        # Multi-pass rule type resolving to support circular rule references.
+        # `has_change` is a list to support outer scope variable change in
+        # Python 2.x
+        has_change = [True]
+        while has_change[0]:
+            has_change[0] = False
+            resolved_classes = set()
+            for cls in metamodel:
+                _determine_rule_type(cls)
 
     def _resolve_cls_refs(self, grammar_parser, model_parser):
 
