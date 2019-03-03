@@ -331,10 +331,9 @@ class TextXVisitor(PTNodeVisitor):
                             return True
                 abstract = _has_nonmatch_ref(rule)
 
-            if abstract:
-                if cls._tx_type != RULE_ABSTRACT:
-                    cls._tx_type = RULE_ABSTRACT
-                    has_change[0] = True
+            if abstract and cls._tx_type != RULE_ABSTRACT:
+                cls._tx_type = RULE_ABSTRACT
+                has_change[0] = True
                 # Add inherited classes to this rule's meta-class
                 if rule.rule_name and cls.__name__ != rule.rule_name:
                     if rule._tx_class not in cls._tx_inh_by:
