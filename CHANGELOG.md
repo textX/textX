@@ -1,35 +1,68 @@
 # textX changelog
 
-* Next Release 1.?.?
-   - https://github.com/textX/textX/pull/168
-     - Adding examples and documentation related to scope providers
-       (related to model modification through scope providers).
-   - https://github.com/textX/textX/pull/165
-     - Added metamodel export feature for PlantUML.
-   - https://github.com/textX/textX/pull/134
-     - Fixing bug when using a sequence of matches and rule reference in
-       an abstract rule choice alternative.
-     - Explicitly disallowing referencing more than one rule in an abstract
-       rule choice alternative.
-   - https://github.com/textX/textX/pull/114
-     - python like imports (named import rules, scope providers affected)
-     - OS incompatibility fixes (path separator).
-   - https://github.com/textX/textX/pull/98
-     - Added STRICTFLOAT as buildin type to allow to distinguish ints from
-       floats in NUMBERs. Fixed docu link.
-   - https://github.com/textX/textX/pull/93
-     - Changed attribute name for the metamodel object (from 
-       "metamodel._parser" to "metamodel._parser_blueprint").
-   - https://github.com/textX/textX/pull/120
-     Unicode requirement for (meta)-model strings API parameters made strict.
-     This should prevent common errors with Python 2.x
-     See:
-     https://github.com/textX/textX/issues/105
-     https://github.com/textX/textX/pull/99
-     https://github.com/textX/textX/issues/117
+All _notable_ changes to this project will be documented in this file.
+
+The format is based on _[Keep a Changelog][keepachangelog]_, and this project
+adheres to _[Semantic Versioning][semver]_.
+
+Everything that is documented in the [official docs][textXDocs] is considered
+the part of the public API.
+
+Backward incompatible changes are marked with **(BIC)**. These changes are the
+reason for the major version increase so when upgrading between major versions
+please take a look at related PRs and issues and see if the change affects you.
+
+## [Unreleased]
+
+### Added
+
+  - Adding examples and documentation related to scope providers (related to
+    model modification through scope providers) ([#168])
+  - metamodel export feature for [PlantUML] ([#165])
+  - `textx_isinstance` from `textx.scoping.tools` made available in `textx`
+    ([#164], [#157])
+  - CLI extensibility ([#162], [#161])
+  - An initial version of FAQ page ([#138]). Thanks Aluriak@GitHub
+  - A version of `calc.py` exercises usage of
+    `text.scoping.tools.textx_isinstance()` to inspect model objects types
+    during traversal. ([#136], [#123]). Thanks dkrikun@GitHub
+  - A version of `calc.py` in expression example that exercises dynamically adding
+    properties to object classes ([#126]). Thanks dkrikun@GitHub
+  - python like imports (named import rules, scope providers affected) ([#114])
+  - Added `STRICTFLOAT` as buildin type to allow to distinguish ints from floats
+    in `NUMBER`. Fixed docu link ([#98]). Possible **(BIC)**
+  - Added [flake8] and [coverage] checking ([#92])
+
+### Changed
+
+  - CLI migrated to the [click] library ([#162])
+  - Docs improvements ([#146], [#153], [#151]). Thanks simkimsia@GitHub.
+  - `FQN` constuctor param `follow_loaded_models` removed and introduced
+    callback `scope_rediction_logic` to implement arbitrary logic on FQN
+    resolution ([#133], [#114], [#103]) **(BIC)**
+  - Changed attribute name for the meta-model object (from `metamodel._parser`
+    to `metamodel._parser_blueprint`). ([#93]) **(BIC)**
+  - Started using _[Keep a Changelog][keepachangelog]_ ([#174])
+  - Started using _[Semantic Versioning][semver]_ ([#174])
+     
+### Fixed
+
+  - Circular rule references in grammars ([#173], [#159], [#155])
+  - Assertion error while calling object processors with multi meta models
+    (extended grammars) and custom types ([#141], [#140])
+  - Using a sequence of matches and rule reference in an abstract rule choice
+    alternative, and explicitly disallowing referencing more than one rule in an
+    abstract rule choice alternative ([#134])
+  - Unicode requirement for (meta)-model strings API parameters made strict.
+    This should prevent common errors with Python 2.x. ([#120]) (related: [#99],
+    [#105], [#117]). Possible **(BIC)**
+  - OS incompatibility fixes (path separator). ([#114])
+  - Object processors called twice for imported models ([#108], [#118])
+  - Documentation and examples regarding `NUMBER` base type ([#97], [#100]).
+    Thanks approxit@GitHub
 
 
-* 2018-10-06 Release 1.8.0
+## [v1.8.0] (released: 2018-10-06)
 
    - https://github.com/textX/textX/pull/71
      - Regular expression with group support
@@ -51,10 +84,9 @@
      - Bugfix: lost encoding for multi meta-model.
    - https://github.com/textX/textX/pull/68
      - changed parser access in metamodel (private attribute "_parser")
-   - mkdocs documentation now uses [mike](https://github.com/jimporter/mike) for
-     multiversion support.
+   - mkdocs documentation now uses [mike] for multiversion support.
 
-* 2018-07-02 Release 1.7.1
+## [v1.7.1] (released: 2018-07-02)
 
    - Fixed bug with obj. processor call.
      https://github.com/textX/textX/issues/72
@@ -63,7 +95,7 @@
    - More tests.
    - Thanks goto40@GitHub for the above fixes/tests.
 
-* 2018-05-31 Release 1.7.0
+## [v1.7.0] (released: 2018-05-31)
 
   - A major feature of this release is multi-(meta-)model support with
     configurable resolving techniques. Thanks Pierre Bayerl (goto40@GitHub)!
@@ -146,10 +178,11 @@
   - Fixing position info on obj cross ref. Thanks Daniel Elero (danixeee@GitHub)!
 
 
-* 2017-11-22 Release 1.6.1
+## [v1.6.1] (released: 2017-11-22)
   - Fixing build for PyPI.
 
-* 2017-11-18 Release 1.6
+## [v1.6] (released: 2017-11-18)
+
   - Fix class masking for split grammar and rule overriden. Thanks aranega@GitHub!
   - Simplifying metaclass handling. Using Python type system.
   - Fixing base namespace construction.
@@ -161,28 +194,34 @@
   - Cleanup. Refactorings and code reorganization.
   - textX api functions and classes are now available directly from `textx` module.
 
-* 2017-11-17 Release 1.5.2
+## [v1.5.2] (released:2017-11-17)
+
   - Fixing bug with assignments in repetition. Commit e918868.
   - Fix in resolving of attributes. Commit 8d18073.
   - More robust obj. processor call.
 
-* 2017-06-14 Release 1.5.1
+## [v1.5.1] (released: 2017-06-14)
+
   - Fixed issue #34 triggered with multiple assignments with the different types
     leading to errors in reference resolving.
   - Fixed inheritance of base types.
   - Some fixes in the docs (thanks borismarin@github).
 
-* 2017-05-15 Release 1.5
-  - For a more detailed feature highlights overview for this release
-    please see [what's new section in the docs](http://textx.github.io/textX/whatsnew/release_1_5).
-  - fixed issue #27 Operator precendence. Note: backward incompatibility! Be
-    sure to read
-    [what's new section in the docs](http://textx.github.io/textX/whatsnew/release_1_5) before upgrade.
-  - Issue #30 - match filters.
-    See [the docs](http://textx.github.io/textX/metamodel/#match-filters).
-  - Added support for unordered groups. See [the docs](http://textx.github.io/textX/grammar/#repetitions).
+## [v1.5] (released: 2017-05-15)
+
+  - For a more detailed feature highlights overview for this release please see
+    [what's new section in the
+    docs](http://textx.github.io/textX/whatsnew/release_1_5).
+  - fixed issue #27 Operator precedence. Note: backward incompatibility! Be
+    sure to read [what's new section in the
+    docs](http://textx.github.io/textX/whatsnew/release_1_5) before upgrade.
+  - Issue #30 - match filters. See [the
+    docs](http://textx.github.io/textX/metamodel/#match-filters).
+  - Added support for unordered groups. See [the
+    docs](http://textx.github.io/textX/grammar/#repetitions).
   - Added `_tx_metamodel` attribute on the model object for easy access to the
-    language metamodel. See [the docs](http://textx.github.io/textX/model/#special-model-objects-attributes).
+    language metamodel. See [the
+    docs](http://textx.github.io/textX/model/#special-model-objects-attributes).
   - Fixed issue #33. Much more robust support for multiple assignments to the
     same attribute.
   - Fixes in namespace support. Import now works even for grammar defined as
@@ -191,12 +230,14 @@
     information where the object ends in the input stream.
   - Added various handy functions for querying a model. See [the docs on model
     API](http://textx.github.io/textX/model/#model-api).
-  - New examples and additions to the docs. Added [comparison to Xtext](http://textx.github.io/textX/about/comparison) for
-    users with previous Xtext exposure. Added references to [ppci tutorial by
-    Windel Bouwman](https://ppci.readthedocs.io/en/latest/howto/toy.html).
+  - New examples and additions to the docs. Added [comparison to
+    Xtext](http://textx.github.io/textX/about/comparison) for users with
+    previous Xtext exposure. Added references to [ppci tutorial by Windel
+    Bouwman](https://ppci.readthedocs.io/en/latest/howto/toy.html).
   - textX now have an [Emacs mode](https://github.com/novakboskov/textx-mode)!
 
-* 2016-05-31 Release 1.4
+## [v1.4] (released: 2016-05-31)
+
   - Significant performance improvements done in Arpeggio (see issue #22).
   - Fixed wrong rule type detection and infinite recursion in dot export for
     recursive match rules (issues #23 and #25).
@@ -206,12 +247,14 @@
     meta-model instantiation.
   - New example - IBM Rational Rhapsody format.
 
-* 2016-05-17 Release 1.3.1
+## [v1.3.1] (released: 2016-05-17)
+
   - Fixing several bugs in special cases regarding abstract rule with a single
     rule reference and match suppression.
   - Improvements in docs, tutorials and examples.
 
-* 2016-05-05 Release 1.3
+## [v1.3] (released: 2016-05-05)
+
   - Added support for syntactic predicates (`!` and `&`). A.K.A. negative and
     positive lookahead. Tests. Docs.
   - Added support for match suppression (operator `-`). Tests. Docs.
@@ -219,70 +262,80 @@
   - Added StateMachine example from Martin Fowler's DSL book.
   - Various improvements in documentation and examples.
 
-* 2016-04-28 Release 1.2
+## [v1.2] (released: 2016-04-28)
+
   - Reworked rule types detection and handling. Simplified textX grammar.
   - Performance improvements.
   - Updated docs to reflect changes.
   - Additional examples. Fixing and tidying up.
-  - Various improvements in the dot rendering. Added * prefix for abstract classes.
+  - Various improvements in the dot rendering. Added `*` prefix for abstract
+    classes.
   - Extended tests. Added test for all examples.
   - Improvements in textx command.
 
-* 2016-04-01 Release 1.1.1
-  - Bugfix release. Added missing commands package.
+## [v1.1.1] (released: 2016-04-01)
 
-* 2016-04-01 Release 1.1
+  - Added missing `commands` package.
+
+## [v1.1] (released: 2016-04-01)
+
   - Metamodel API tiding. Some undocumented internally used attrs/methods made
     private.
   - textx command is console entry point now.
   - Some fixes and improvements in the docs and examples.
 
-* 2016-03-03 Release 1.0
-  - Migrated docs to MkDocs.
+## [v1.0] (released: 2016-03-03)
+
+  - Migrated docs to [MkDocs][MkDocs].
   - Docs improvement.
   - Fixed escaping of backslashes in the dot exporter.
   - Added `textx` command/script for (meta)model checking/visualization.
 
-* 2015-08-27 Release 0.4.2
-  - Added debug parameter to model_from_str.
-  - All prints converted to DebugPrinter.
-  - Fixed issue when object processor is applied to the list of BASETYPE
+## [v0.4.2] (released: 2015-08-27)
+
+  - Added debug parameter to `model_from_str`.
+  - All prints converted to `DebugPrinter`.
+  - Fixed issue when object processor is applied to the list of `BASETYPE`
     elements.
-  - Fix in model export to dot to render proper base python type values inside
+  - Fix in model export to `dot` to render proper base python type values inside
     lists.
 
-* 2015-08-08 Release 0.4.1
+## [v0.4.1] (released: 2015-08-08)
+
   - Fixed bug with multiple rule params.
   - Fixed ws rule loaded from file.
   - Fixed loading of README in setup.py to use utf-8 encoding always.
   - Added more tests.
 
-* 2015-05-08 Release 0.4
+## [v0.4] (released: 2015-05-08)
+
   - Reworked meta-class/objects initialization.
-  - Added _tx_ prefix to textX class and object special attributes to prevent
+  - Added `_tx_` prefix to textX class and object special attributes to prevent
     name clashing with the user attributes.
   - Entity example.
   - More tests.
   - Documentation finished (except the advanced tutorial).
 
-* 2015-04-04 Release 0.3.1
-  - Bugfix: Boolean type matching for BASETYPE defined attributes.
+## [v0.3.1] (released: 2015-04-04)
+
+  - Boolean type matching for `BASETYPE` defined attributes.
   - More tests.
 
-* 2015-02-10 Release 0.3
+## [v0.3] (released: 2015-02-10)
+
   - Refactoring textX grammar. Support for ordered choice of sequences. Tests.
   - Introduced new parameters to meta-model construction:
 
-    - ignore-case - for case sensitive/insensitive matching.
-    - autokwd - for matching on word boundaries for keyword-like matches.
-    - skipws - for enabling/disabling automatic whitespace skipping.
-    - ws - for redefinition of white-spaces.
-    - auto_init_attributes - for auto initializing of model attributes
-                             based on their types.
+    - `ignore-case` - for case sensitive/insensitive matching.
+    - `autokwd` - for matching on word boundaries for keyword-like matches.
+    - `skipws` - for enabling/disabling automatic whitespace skipping.
+    - `ws` - for redefinition of white-spaces.
+    - `auto_init_attributes` - for auto initializing of model attributes based
+      on their types.
 
   - Object processor callbacks.
   - Support for user meta-classes.
-  - Rule modifiers (ws, skipws, noskipws)
+  - Rule modifiers (`ws`, `skipws`, `noskipws`)
   - Grammar import.
   - Meta-model redesigned.
   - Support for unicode grammars.
@@ -290,31 +343,106 @@
   - Documentation. Work in progress.
   - Travis integration.
 
-* Release 0.2
+## [v0.2] (released: 2014-09-20)
 
   - Tests.
   - Started documentation writing.
-  - A keyword-like string matches will be matched with the respect of word boundaries.
+  - A keyword-like string matches will be matched with the respect of word
+    boundaries.
   - Grammar redesigned.
-  - Introduced repetition operator modifiers (eolterm, separator).
+  - Introduced repetition operator modifiers (`eolterm`, `separator`).
   - Support for multiple attribute assignment in the same rule.
   - Position is now stored on model objects.
   - Support for model processor callbacks.
   - Filename is now accessible on model if the model is created from file.
   - Various bugfixes.
 
-* Release 0.1.2
+## [v0.1.2] (released: 2014-08-17)
 
   - Bugfix in conversion of basetypes to python.
 
-* Release 0.1.1
+## [v0.1.1] (released: 2014-08-17)
 
-  - Bugfix release. Using relative imports.
+  - Using relative imports.
 
-* Release 0.1
+## [v0.1] (released: 2014-08-17)
 
   - Initial release. Most planed stuff in place.
   - XText-like language fully functional. Rules, match rules, abstract rule,
     list matches, string matches, regex matches...
   - Metamodel and model construction.
   - Export to dot.
+
+
+[#174]: https://github.com/textX/textX/pull/174
+[#173]: https://github.com/textX/textX/pull/173
+[#168]: https://github.com/textX/textX/pull/168
+[#165]: https://github.com/textX/textX/pull/165
+[#164]: https://github.com/textX/textX/pull/164
+[#162]: https://github.com/textX/textX/pull/162
+[#161]: https://github.com/textX/textX/issues/161
+[#159]: https://github.com/textX/textX/pull/159
+[#157]: https://github.com/textX/textX/issues/157
+[#155]: https://github.com/textX/textX/issues/155
+[#153]: https://github.com/textX/textX/pull/153
+[#151]: https://github.com/textX/textX/pull/151
+[#146]: https://github.com/textX/textX/pull/146
+[#141]: https://github.com/textX/textX/pull/141
+[#140]: https://github.com/textX/textX/issues/140
+[#138]: https://github.com/textX/textX/pull/138
+[#136]: https://github.com/textX/textX/pull/136
+[#134]: https://github.com/textX/textX/pull/134
+[#133]: https://github.com/textX/textX/pull/133
+[#126]: https://github.com/textX/textX/pull/126
+[#123]: https://github.com/textX/textX/issues/123
+[#120]: https://github.com/textX/textX/pull/120
+[#118]: https://github.com/textX/textX/pull/118
+[#117]: https://github.com/textX/textX/pull/117
+[#114]: https://github.com/textX/textX/pull/114
+[#108]: https://github.com/textX/textX/issues/108
+[#105]: https://github.com/textX/textX/issues/105
+[#103]: https://github.com/textX/textX/issues/103
+[#100]: https://github.com/textX/textX/pull/100
+[#99]: https://github.com/textX/textX/pull/99
+[#98]: https://github.com/textX/textX/pull/98
+[#97]: https://github.com/textX/textX/issues/97
+[#93]: https://github.com/textX/textX/pull/93
+[#92]: https://github.com/textX/textX/pull/92
+
+[Unreleased]: https://github.com/textX/textX/compare/v1.8.0...HEAD
+[v1.8.0]: https://github.com/textX/textX/compare/v1.7.1...v1.8.0
+[v1.7.1]: https://github.com/textX/textX/compare/v1.7.0...v1.7.1
+[v1.7.0]: https://github.com/textX/textX/compare/v1.6.1...v1.7.0
+[v1.6.1]: https://github.com/textX/textX/compare/v1.6...v1.6.1
+[v1.6]: https://github.com/textX/textX/compare/v1.5.2...v1.6
+[v1.5.2]: https://github.com/textX/textX/compare/v1.5.1...v1.5.2
+[v1.5.1]: https://github.com/textX/textX/compare/v1.5...v1.5.1
+[v1.5]: https://github.com/textX/textX/compare/v1.4...v1.5
+[v1.4]: https://github.com/textX/textX/compare/v1.3.1...v1.4
+[v1.3.1]: https://github.com/textX/textX/compare/v1.3...v1.3.1
+[v1.3]: https://github.com/textX/textX/compare/v1.2...v1.3
+[v1.2]: https://github.com/textX/textX/compare/v1.1.1...v1.2
+[v1.1.1]: https://github.com/textX/textX/compare/v1.1...v1.1.1
+[v1.1]: https://github.com/textX/textX/compare/v1.0...v1.1
+[v1.0]: https://github.com/textX/textX/compare/v0.4.2...v1.0
+[v0.4.2]: https://github.com/textX/textX/compare/v0.4.1...v0.4.2
+[v0.4.1]: https://github.com/textX/textX/compare/v0.4...v0.4.1
+[v0.4]: https://github.com/textX/textX/compare/v0.3.1...v0.4
+[v0.3.1]: https://github.com/textX/textX/compare/v0.3...v0.3.1
+[v0.3]: https://github.com/textX/textX/compare/v0.2.1...v0.3
+[v0.2.1]: https://github.com/textX/textX/compare/v0.2...v0.2.1
+[v0.2]: https://github.com/textX/textX/compare/v0.1.2...v0.2
+[v0.1.2]: https://github.com/textX/textX/compare/v0.1.1...v0.1.2
+[v0.1.1]: https://github.com/textX/textX/compare/v0.1...v0.1.1
+[v0.1]: https://github.com/textX/textX/compare/0f33ecb0016a8f527...v0.1
+
+
+[click]: https://github.com/pallets/click
+[coverage]: https://coverage.readthedocs.io/
+[flake8]: http://flake8.pycqa.org/en/latest/
+[keepachangelog]: https://keepachangelog.com/
+[mike]: https://github.com/jimporter/mike
+[MkDocs]: https://www.mkdocs.org/
+[PlantUML]: http://plantuml.com/
+[semver]: https://semver.org/spec/v2.0.0.html
+[textXDocs]: http://textx.github.io/textX/latest/
