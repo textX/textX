@@ -55,6 +55,9 @@ setup(
     entry_points={
         'console_scripts': [
             'textx = textx.cli:textx'
+        ],
+        'textx_languages': [
+            'textx = textx.lang:textx',  # textX meta-language is built-in
         ]
     },
     classifiers=[

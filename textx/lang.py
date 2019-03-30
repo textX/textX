@@ -21,6 +21,7 @@ from arpeggio import RegExMatch as _
 from .exceptions import TextXError, TextXSyntaxError, TextXSemanticError
 from .const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, \
     MULT_OPTIONAL, RULE_COMMON, RULE_MATCH, RULE_ABSTRACT, mult_lt
+from .registration import LanguageDesc
 
 import sys
 if sys.version < '3':
@@ -952,3 +953,10 @@ def language_from_str(language_def, metamodel):
             "{}_parser_model.dot".format(metamodel.rootcls.__name__))
 
     return lang_parser
+
+
+# Register built-in textX language. See setup.py entry_points
+textx = LanguageDesc(name='textX',
+                     extension='tx',
+                     description='A meta-language for language definition',
+                     metamodel=None)
