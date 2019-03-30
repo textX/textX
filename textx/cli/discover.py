@@ -1,14 +1,14 @@
 import click
-import pkg_resources
+
+from textx.registration import (get_language_descriptions,
+                                get_generator_descriptions)
 
 
 def list_languages():
     """
     List all registered languages
     """
-    for language in pkg_resources.iter_entry_points(
-            group='textx_languages'):
-        language = language.load()
+    for language in get_language_descriptions().values():
         click.echo("{}({})\t\t{}".format(language.name,
                                          language.extension,
                                          language.description))
@@ -18,9 +18,9 @@ def list_generators():
     """
     List all registered generators
     """
-    for generator in pkg_resources.iter_entry_points(
-            group='textx_generators'):
-        generator = generator.load()
-        click.echo("{}->{}\t\t{}".format(generator.language,
-                                         generator.target,
-                                         generator.desciption))
+    generators = get_generator_descriptions()
+    for language in generators.values():
+        for generator in language.values():
+            click.echo("{}->{}\t\t{}".format(generator.language,
+                                             generator.target,
+                                             generator.desciption))
