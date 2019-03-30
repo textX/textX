@@ -6,5 +6,8 @@ from textx.exceptions import TextXError, TextXSyntaxError, \
     TextXSemanticError
 from textx.langapi import get_language, iter_languages
 from textx.scoping.tools import textx_isinstance
+from textx.registration import (LanguageDesc, GeneratorDesc,
+                                register_language, register_generator,
+                                get_language_metamodel)
 
 __version__ = "1.8.0"
