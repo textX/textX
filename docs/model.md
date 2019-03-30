@@ -94,7 +94,7 @@ Finds the root of the model following `parent` references.
 
 ### `get_metamodel(obj)`
 
-Returns metamodel for the model given `obj` belongs to.
+Returns meta-model the model given with `obj` conforms to.
 
 ### `get_parent_of_type(typ, obj)`
 
