@@ -27,10 +27,7 @@ def get_language_descriptions():
         languages = {}
         for language in pkg_resources.iter_entry_points(
                 group='textx_languages'):
-            if language.name in languages:
-                raise TextXRegistrationError(
-                    'Language "{}" already registered.'.format(language.name))
-            languages[language.name] = language.load()
+            register_language(language.load())
     return languages
 
 
@@ -43,12 +40,7 @@ def get_generator_descriptions():
         generators = {}
         for generator in pkg_resources.iter_entry_points(
                 group='textx_generators'):
-            lang_gens = generators.setdefault(generator.language, {})
-            if generator.target in lang_gens:
-                raise TextXRegistrationError(
-                    'Generator "{}->{}" already registered.'.format(
-                        generator.language, generator.target))
-            lang_gens[generator.target] = generator.load()
+            register_generator(generator.load())
     return generators
 
 
@@ -67,6 +59,34 @@ def get_generator_description(language_name, target_name):
     if generators in None:
         get_generator_descriptions()
     return generators[language_name][target_name]
+
+
+def register_language(language_desc):
+    """
+    Programmatically register a language.
+    """
+    global languages
+    if languages is None:
+        get_language_descriptions()
+    if language_desc.name in languages:
+        raise TextXRegistrationError(
+            'Language "{}" already registered.'.format(language_desc.name))
+    languages[language_desc.name] = language_desc
+
+
+def register_generator(generator_desc):
+    """
+    Programmatically register a generator.
+    """
+    global generators
+    if generators is None:
+        get_generator_descriptions()
+    lang_gens = generators.setdefault(generator_desc.language, {})
+    if generator_desc.target in lang_gens:
+        raise TextXRegistrationError(
+            'Generator "{}->{}" already registered.'.format(
+                generator_desc.language, generator_desc.target))
+    lang_gens[generator_desc.target] = generator_desc
 
 
 def get_language_metamodel(language_name):
