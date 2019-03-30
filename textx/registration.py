@@ -1,6 +1,8 @@
 from collections import namedtuple
 import pkg_resources
 
+from textx.exceptions import TextXRegistrationError
+
 # A tuple used in language registration/discovery
 LanguageDesc = namedtuple('LanguageDesc',
                           'name extension description metamodel')
@@ -25,6 +27,9 @@ def get_language_descriptions():
         languages = {}
         for language in pkg_resources.iter_entry_points(
                 group='textx_languages'):
+            if language.name in languages:
+                raise TextXRegistrationError(
+                    'Language "{}" already registered.'.format(language.name))
             languages[language.name] = language.load()
     return languages
 
@@ -39,6 +44,10 @@ def get_generator_descriptions():
         for generator in pkg_resources.iter_entry_points(
                 group='textx_generators'):
             lang_gens = generators.setdefault(generator.language, {})
+            if generator.target in lang_gens:
+                raise TextXRegistrationError(
+                    'Generator "{}->{}" already registered.'.format(
+                        generator.language, generator.target))
             lang_gens[generator.target] = generator.load()
     return generators
 

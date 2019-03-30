@@ -38,3 +38,8 @@ class TextXSyntaxError(TextXError):
             message, line, col, err_type, filename)
         # Possible rules on this position
         self.expected_rules = expected_rules
+
+
+class TextXRegistrationError(TextXError):
+    def __init__(self, message):
+        super(TextXSyntaxError, self).__init__(message)
