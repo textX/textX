@@ -29,6 +29,43 @@ else:
 __all__ = ['metamodel_from_str', 'metamodel_from_file']
 
 
+def metamodel_from_str(lang_desc, metamodel=None, **kwargs):
+    """
+    Creates a new metamodel from the textX description given as a string.
+
+    Args:
+        lang_desc(str): A textX language description.
+        metamodel(TextXMetaModel): A metamodel that should be used.
+        other params: See TextXMetaModel.
+
+    """
+
+    if not metamodel:
+        metamodel = TextXMetaModel(**kwargs)
+
+    language_from_str(lang_desc, metamodel)
+
+    return metamodel
+
+
+def metamodel_from_file(file_name, **kwargs):
+    """
+    Creates new metamodel from the given file.
+
+    Args:
+        file_name(str): The name of the file with textX language description.
+        other params: See metamodel_from_str.
+    """
+    with codecs.open(file_name, 'r', 'utf-8') as f:
+        lang_desc = f.read()
+
+    metamodel = metamodel_from_str(lang_desc=lang_desc,
+                                   file_name=file_name,
+                                   **kwargs)
+
+    return metamodel
+
+
 class MetaAttr(object):
     """
     A metaclass for attribute description.
@@ -605,40 +642,3 @@ textx = LanguageDesc(name='textX',
                      extension='tx',
                      description='A meta-language for language definition',
                      metamodel=lambda: TextXMetaMetaModel())
-
-
-def metamodel_from_str(lang_desc, metamodel=None, **kwargs):
-    """
-    Creates a new metamodel from the textX description given as a string.
-
-    Args:
-        lang_desc(str): A textX language description.
-        metamodel(TextXMetaModel): A metamodel that should be used.
-        other params: See TextXMetaModel.
-
-    """
-
-    if not metamodel:
-        metamodel = TextXMetaModel(**kwargs)
-
-    language_from_str(lang_desc, metamodel)
-
-    return metamodel
-
-
-def metamodel_from_file(file_name, **kwargs):
-    """
-    Creates new metamodel from the given file.
-
-    Args:
-        file_name(str): The name of the file with textX language description.
-        other params: See metamodel_from_str.
-    """
-    with codecs.open(file_name, 'r', 'utf-8') as f:
-        lang_desc = f.read()
-
-    metamodel = metamodel_from_str(lang_desc=lang_desc,
-                                   file_name=file_name,
-                                   **kwargs)
-
-    return metamodel
