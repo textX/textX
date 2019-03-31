@@ -60,7 +60,7 @@ setup(
             'list_languages = textx.cli.discover:list_languages',
             'list_generators = textx.cli.discover:list_generators',
             'generate = textx.cli.generate:generate',
-            'validate = textx.cli.validate:validate'
+            'check = textx.cli.check:check'
         ],
         'textx_languages': [
             'textx = textx.metamodel:textx',  # textX meta-language is built-in

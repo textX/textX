@@ -29,19 +29,6 @@ format_arg = click.option('--output-format', '-f',
 @meta_model_arg
 @model_arg
 @ignore_case_arg
-@click.pass_context
-def check(ctx, meta_model_file, model_file, ignore_case):
-    """
-    Check validity of meta-model and optionally model.
-    """
-    debug = ctx.obj['debug']
-    check_model(meta_model_file, model_file, debug, ignore_case)
-
-
-@textx.command()
-@meta_model_arg
-@model_arg
-@ignore_case_arg
 @format_arg
 @click.pass_context
 def visualize(ctx, meta_model_file, model_file, ignore_case, output_format):
