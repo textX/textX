@@ -63,7 +63,7 @@ setup(
             'validate = textx.cli.validate:validate'
         ],
         'textx_languages': [
-            'textx = textx.lang:textx',  # textX meta-language is built-in
+            'textx = textx.metamodel:textx',  # textX meta-language is built-in
         ]
     },
     classifiers=[

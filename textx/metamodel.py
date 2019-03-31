@@ -18,6 +18,7 @@ from textx.lang import language_from_str, python_type, BASE_TYPE_NAMES, ID, \
 from textx.const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, \
     RULE_MATCH, RULE_ABSTRACT
 from textx.exceptions import TextXError
+from .registration import LanguageDesc
 
 if sys.version < '3':
     text = unicode  # noqa
@@ -578,6 +579,32 @@ class TextXMetaModel(DebugPrinter):
                 value=callable
         """
         self.obj_processors = obj_processors
+
+
+class TextXMetaMetaModel(object):
+    """
+    A dummy TextX meta-meta-model file that represents the meta-model
+    of the textX language. Used to treat all languages in a consistent way.
+    """
+
+    def model_from_str(self, model_str, debug=None):
+        """
+        Instantiates meta-model (a.k.a. textX model) from the given string.
+        """
+        return metamodel_from_str(model_str, debug=debug)
+
+    def model_from_file(self, file_name, encoding='utf-8', debug=None):
+        """
+        Instantiates meta-model (a.k.a. textX model) from the given file.
+        """
+        return metamodel_from_file(file_name, debug=debug)
+
+
+# Register built-in textX language. See setup.py entry_points
+textx = LanguageDesc(name='textX',
+                     extension='tx',
+                     description='A meta-language for language definition',
+                     metamodel=lambda: TextXMetaMetaModel())
 
 
 def metamodel_from_str(lang_desc, metamodel=None, **kwargs):
