@@ -186,6 +186,8 @@ def test_fully_qualified_name_ref_name_proposer():
         }
     }
     package P2 {
+        class Part1 {
+        }
         class Part2 {
             attr C2 rec;
         }
@@ -205,6 +207,15 @@ def test_fully_qualified_name_ref_name_proposer():
     from textx.model import ObjCrossRef
 
     a = get_children(lambda x: hasattr(x, 'name') and x.name == "p1",
-                     my_model)[0]
-    proposed_names = get_reference_name_propositions(a, a._tx_attrs['ref'], "Part")
-    pass
+                     my_model)
+    assert len(a) == 1
+    a = a[0]
+
+    proposed_names = get_reference_name_propositions(
+        a, a._tx_attrs['ref'], "p2a") # wrong type!
+    assert len(proposed_names) == 0
+
+    proposed_names = get_reference_name_propositions(
+        a, a._tx_attrs['ref'], "Part1")
+    assert sorted(["Part1", "P2.Part1", "P1.Part1"])\
+           == sorted(proposed_names)

@@ -144,13 +144,65 @@ class FQN(ReferenceNameProposer):
     def get_reference_name_propositions(self, obj, attr, name_part):
         """
         (see ReferenceNameProposer)
-        Note: we reused the __call__ logic here
         """
-        from textx.model import ObjCrossRef
-        obj_ref = ObjCrossRef(name_part, attr.cls, 0 )  # pos irrelevant for this impl
-        return self.__call__(obj, attr, obj_ref, [])
+        from textx import get_children
+        current_name_stack = []
+        return_list = []
 
-    def __call__(self, current_obj, attr, obj_ref, name_list=None):
+        def get_full_current_name(n):
+            if len(current_name_stack) <= 1:
+                return n
+            else:
+                return current_name_stack[-1] + "." + n
+
+        def visit(*args):
+            if len(args)==0:
+                # print("leave: ", current_name_stack[-1])
+                current_name_stack.pop()
+
+            elif len(args)==1:
+                if len(current_name_stack) == 0:
+                    current_name_stack.append(
+                        get_full_current_name(None))
+                else:
+                    if not hasattr(args[0],'name'):
+                        return False
+                    current_name_stack.append(
+                        get_full_current_name(args[0].name))
+                    # print("enter: ", current_name_stack[-1])
+
+                if self.scope_redirection_logic is not None:
+                    return self.scope_redirection_logic(args[0])
+            else:
+                raise Exception(
+                    "unexpected call with more than one argument")
+
+        def decider(x):
+            from textx import textx_isinstance
+            if hasattr(x,'name') and textx_isinstance(x, attr.cls):
+                n = get_full_current_name(x.name)
+                if n.find(name_part)>=0:
+                    # print("added", n)
+                    return_list.append(n)
+                    return True
+                else:
+                    return False
+            else:
+                return False
+
+        lst = get_children(decider, obj, visit)
+        count = len(lst)
+        assert len(return_list) == count
+
+        while hasattr(obj, "parent"):
+            obj = obj.parent
+            lst = get_children(decider, obj, visit)
+            count += len(lst)
+            assert len(return_list) == count
+
+        return return_list
+
+    def __call__(self, current_obj, attr, obj_ref):
         """
         find a fully qualified name.
         Use this callable as scope_provider in a meta-model:

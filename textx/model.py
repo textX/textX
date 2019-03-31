@@ -60,16 +60,26 @@ def get_parent_of_type(typ, obj):
             return obj
 
 
-def get_children(decider, root):
+def get_children(decider, root, visitor=None):
     """
     Returns a list of all model elements of type 'typ' starting from model
     element 'root'. The search process will follow containment links only.
     Non-containing references shall not be followed.
 
     Args:
-        decider(obj): a callable returning True if the object is of interest.
-        root (model object): Python model object which is the start of the
-            search process.
+        decider(obj): a callable returning True if the object
+            is of interest.
+        root (model object): Python model object which is the
+            start of the search process.
+        visitor(obj): a callable, if not None, called
+            (1) each time an object is visited (with the obj
+                as param).
+                -   If it returns False, the recursion is
+                    interrupted
+                -   Else if it returns a list, the returned
+                    list of objects is visited additionally.
+            (2) Called each time a non-interrupted visit ends
+                (w/o params).
     """
     collected = []
 
@@ -80,9 +90,16 @@ def get_children(decider, root):
 
         # Use meta-model to search for all contained child elements.
         cls = elem.__class__
-
         if hasattr(cls, '_tx_attrs') and decider(elem):
             collected.append(elem)
+
+        if visitor is not None:
+            ret = visitor(elem)
+            if ret is False:
+                return
+            elif isinstance(ret, list):
+                for x in ret:
+                    follow(decider, x, visitor)
 
         if hasattr(cls, '_tx_attrs'):
             for attr_name, attr in cls._tx_attrs.items():
@@ -97,6 +114,8 @@ def get_children(decider, root):
                         if new_elem_list:
                             for new_elem in new_elem_list:
                                 follow(new_elem)
+        if visitor is not None:
+            visitor()
 
     follow(root)
     return collected
