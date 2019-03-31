@@ -295,10 +295,10 @@ def get_scope_provider(obj, attr):
 
 def get_reference_name_propositions(obj, attr, name_part):
     """
-        retrieve a list of reference name propositions. This function can be used
-        independently of the scope provider instance. If the (automatically
-        deduced) scope provider is not a ReferenceNameProposer, an empty
-        list is returned.
+        retrieve a list of reference name propositions. This function
+        can be used independently of the scope provider instance. If
+        the (automatically deduced) scope provider is not a
+        ReferenceNameProposer, an empty list is returned.
 
         Args:
             obj: unused (used for multi_metamodel_support)
@@ -314,7 +314,8 @@ def get_reference_name_propositions(obj, attr, name_part):
     if not isinstance(a_scope_provider, ReferenceNameProposer):
         return []
     else:
-        return a_scope_provider.get_reference_name_propositions(obj, attr, name_part)
+        return a_scope_provider.get_reference_name_propositions(
+            obj, attr, name_part)
 
 
 class ModelLoader(object):

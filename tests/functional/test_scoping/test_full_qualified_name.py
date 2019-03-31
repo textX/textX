@@ -211,15 +211,15 @@ def test_fully_qualified_name_ref_name_proposer():
     a = a[0]
 
     proposed_names = get_reference_name_propositions(
-        a, a._tx_attrs['ref'], "p2a") # wrong type!
+        a, a._tx_attrs['ref'], "p2a")  # wrong type!
     assert len(proposed_names) == 0
 
     proposed_names = get_reference_name_propositions(
         a, a._tx_attrs['ref'], "Part1")
     assert sorted(["Part1", "P2.Part1", "P1.Part1"])\
-           == sorted(proposed_names)
+        == sorted(proposed_names)
 
     proposed_names = get_reference_name_propositions(
-        a, a._tx_attrs['ref'], "1") # do not find p1
+        a, a._tx_attrs['ref'], "1")  # do not find p1
     assert sorted(["Part1", "P2.Part1", "P1.Part1"])\
-           == sorted(proposed_names)
+        == sorted(proposed_names)

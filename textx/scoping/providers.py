@@ -115,7 +115,9 @@ class PlainName(ReferenceNameProposer):
         """
         from textx import get_model, get_children
         from textx import textx_isinstance
-        result_lst = get_children(lambda x: hasattr(x, "name") and x.name.find(name_part) >= 0 and textx_isinstance(x, attr.cls), get_model(obj))
+        result_lst = get_children(
+            lambda x: hasattr(x, "name") and x.name.find(name_part) >= 0
+            and textx_isinstance(x, attr.cls), get_model(obj))
         return list(map(lambda x: x.name, result_lst))
 
 
@@ -156,16 +158,16 @@ class FQN(ReferenceNameProposer):
                 return current_name_stack[-1] + "." + n
 
         def visit(*args):
-            if len(args)==0:
+            if len(args) == 0:
                 # print("leave: ", current_name_stack[-1])
                 current_name_stack.pop()
 
-            elif len(args)==1:
+            elif len(args) == 1:
                 if len(current_name_stack) == 0:
                     current_name_stack.append(
                         get_full_current_name(None))
                 else:
-                    if not hasattr(args[0],'name'):
+                    if not hasattr(args[0], 'name'):
                         return False
                     current_name_stack.append(
                         get_full_current_name(args[0].name))
@@ -179,9 +181,9 @@ class FQN(ReferenceNameProposer):
 
         def decider(x):
             from textx import textx_isinstance
-            if hasattr(x,'name') and textx_isinstance(x, attr.cls):
+            if hasattr(x,  'name') and textx_isinstance(x, attr.cls):
                 n = get_full_current_name(x.name)
-                if n.find(name_part)>=0:
+                if n.find(name_part) >= 0:
                     # print("added", n)
                     return_list.append(n)
                     return True
@@ -454,11 +456,13 @@ class ImportURI(scoping.ModelLoader, scoping.ReferenceNameProposer):
         model_repository = model._tx_model_repository
 
         # 1) find object names locally
-        ret = self.scope_provider.get_reference_name_propositions(obj, attr, name_part)
+        ret = self.scope_provider.get_reference_name_propositions(
+            obj, attr, name_part)
 
         # 2) also process loaded models
         for m in model_repository.local_models.filename_to_model.values():
-            ret = ret + self.scope_provider.get_reference_name_propositions(m, attr, name_part)
+            ret = ret + self.scope_provider.get_reference_name_propositions(
+                m, attr, name_part)
 
         return list(set(ret))
 
