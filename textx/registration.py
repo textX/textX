@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+import os
 from collections import namedtuple
 import pkg_resources
 
@@ -18,9 +20,9 @@ languages = None
 generators = None
 
 
-def get_language_descriptions():
+def language_descriptions():
     """
-    Return a dict of LanguageDesc instances keyed by language name.
+    Return a dict of `LanguageDesc` instances keyed by language name.
     """
     global languages
     if languages is None:
@@ -31,9 +33,9 @@ def get_language_descriptions():
     return languages
 
 
-def get_generator_descriptions():
+def generator_descriptions():
     """
-    Return a dict of GeneratorDesc instances keyed by language name.
+    Return a dict of `GeneratorDesc` instances keyed by language name.
     """
     global generators
     if generators is None:
@@ -44,20 +46,27 @@ def get_generator_descriptions():
     return generators
 
 
-def get_language_description(language_name):
+def language_description(language_name):
+    """
+    Return `LanguageDesc` for the given language name.
+    """
     global languages
     if languages is None:
-        get_language_descriptions()
-    return languages[language_name]
+        language_descriptions()
+    try:
+        return languages[language_name]
+    except KeyError:
+        raise TextXRegistrationError('Language "{}" not registered.'
+                                     .format(language_name))
 
 
-def get_generator_description(language_name, target_name):
+def generator_description(language_name, target_name):
     """
-    For the given target and language name return GeneratorDesc instance.
+    Return `GeneratorDesc` instance for the given target and language name.
     """
     global generators
     if generators in None:
-        get_generator_descriptions()
+        generator_descriptions()
     return generators[language_name][target_name]
 
 
@@ -67,7 +76,7 @@ def register_language(language_desc):
     """
     global languages
     if languages is None:
-        get_language_descriptions()
+        language_descriptions()
     if language_desc.name in languages:
         raise TextXRegistrationError(
             'Language "{}" already registered.'.format(language_desc.name))
@@ -80,7 +89,7 @@ def register_generator(generator_desc):
     """
     global generators
     if generators is None:
-        get_generator_descriptions()
+        generator_descriptions()
     lang_gens = generators.setdefault(generator_desc.language, {})
     if generator_desc.target in lang_gens:
         raise TextXRegistrationError(
@@ -89,12 +98,59 @@ def register_generator(generator_desc):
     lang_gens[generator_desc.target] = generator_desc
 
 
-def get_language_metamodel(language_name):
+def metamodel_for_language(language_name):
     """
     Load and return the meta-model for the given language.
     Cache it for further use.
     """
     if language_name not in metamodels:
-        language = get_language_description(language_name)
+        language = language_description(language_name)
         metamodels[language_name] = language.metamodel()
     return metamodels[language_name]
+
+
+def metamodels_for_file_extension(file_extension):
+    """
+    Return meta-models registered for the given extension.
+    """
+    ext_metamodels = []
+    for language in language_descriptions().values():
+        if language.extension == file_extension:
+            ext_metamodels.append(metamodel_for_language(language.name))
+    return ext_metamodels
+
+
+def metamodel_for_file_extension(file_extension):
+    """
+    Return a meta-model registered for the given extension or raise
+    `TextXRegistrationError` if more than one is registered.
+    """
+    ext_metamodels = metamodels_for_file_extension(file_extension)
+    if len(ext_metamodels) > 1:
+        raise TextXRegistrationError('Multiple languages registered for "{}"'
+                                     ' extension.'.format(file_extension))
+    elif len(ext_metamodels) == 0:
+        raise TextXRegistrationError('No language registered for "{}" '
+                                     'extension.'.format(file_extension))
+    else:
+        return ext_metamodels[0]
+
+
+def metamodels_for_file(file_name):
+    """
+    Return meta-models that can parse the given file.
+    """
+    _, file_extension = os.path.splitext(file_name)
+    file_extension = file_extension.strip('.')
+    return metamodels_for_file_extension(file_extension)
+
+
+def metamodel_for_file(file_name):
+    """
+    Return a meta-model that can parse the given file or raise
+    `TextXRegistrationError` if more than one is registered.
+    """
+
+    _, file_extension = os.path.splitext(file_name)
+    file_extension = file_extension.strip('.')
+    return metamodel_for_file_extension(file_extension)

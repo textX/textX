@@ -42,4 +42,4 @@ class TextXSyntaxError(TextXError):
 
 class TextXRegistrationError(TextXError):
     def __init__(self, message):
-        super(TextXSyntaxError, self).__init__(message)
+        super(TextXRegistrationError, self).__init__(message)
