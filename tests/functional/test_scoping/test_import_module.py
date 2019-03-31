@@ -271,3 +271,51 @@ def test_model_with_multi_import():
     i = imports[0]
     assert 4 == len(i._tx_loaded_models)  # 4 files
     assert 4 == len(set(i._tx_loaded_models))  # 4 different files
+
+
+def test_model_with_imports_and_reference_name_proposer():
+    """
+    Basic test for FQNImportURI (good case)
+    """
+    #################################
+    # META MODEL DEF
+    #################################
+
+    my_meta_model = metamodel_from_file(
+        join(abspath(dirname(__file__)),
+             'interface_model1', 'Interface.tx'))
+    my_meta_model.register_scope_providers(
+        {"*.*": scoping_providers.FQNImportURI()})
+
+    #################################
+    # MODEL PARSING
+    #################################
+
+    my_model = my_meta_model.model_from_file(
+        join(abspath(dirname(__file__)),
+             "interface_model1", "model_b", "app.if"))
+
+    #################################
+    # TEST MODEL
+    #################################
+    from textx.scoping import get_reference_name_propositions
+
+    userid = get_unique_named_object(my_model, "userid")
+    proposed_names = get_reference_name_propositions(
+        userid, userid._tx_attrs['ref'], "int")
+
+    assert sorted(["types.int", "types.uint32_t", "types.uint16_t"])\
+        == sorted(proposed_names)
+
+    s = get_unique_named_object(my_model, "s")
+    proposed_names = get_reference_name_propositions(
+        s, s._tx_attrs['ref'], "")
+
+    assert sorted(["base.inout_sockets", "app1", "app.app1",
+                   "base.system.socket"])\
+        == sorted(proposed_names)
+
+
+    #################################
+    # END
+    #################################
