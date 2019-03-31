@@ -315,7 +315,6 @@ def test_model_with_imports_and_reference_name_proposer():
                    "base.system.socket"])\
         == sorted(proposed_names)
 
-
     #################################
     # END
     #################################
