@@ -234,6 +234,89 @@ class GlobalModelRepository(object):
         self.all_models.filename_to_model[filename] = other_model
 
 
+class ReferenceNameProposer(object):
+    """
+    This class is an interface to mark a scope provider to be able to propose
+    a list of reference names for a given cross reference.
+    This function may be useful for an editor, to retrieve a list of possible
+    names for a reference.
+
+    The scope provider itself can then also be used to get the concrete
+    objects referenced by the returned names.
+    """
+
+    def __init__(self):
+        pass
+
+    def get_reference_name_propositions(self, obj, attr, name_part):
+        """
+        retrieve a list of reference name propositions.
+
+        Args:
+            obj: parent
+            attr: attribute
+            name_part: The name is used to build the list
+                (e.g. using a substring-like logic).
+
+        Returns:
+            the list of strings representing the proposed reference names
+        """
+        return []
+
+
+def get_scope_provider(obj, attr):
+    """
+        retrieve a scope provider for an attribute of a model element.
+
+        Args:
+            obj: model element
+            attr: attribute
+
+        Returns:
+            the scope provider specified in the metamodel (or the default
+            scope provider if none is specified).
+    """
+
+    # Note: this function is tested implicitely by many tests using
+    # some scope providers. (The function is utilized in
+    # model.py.)
+    from textx import get_model, get_metamodel
+    mm = get_metamodel(get_model(obj))
+    attr_refs = [obj.__class__.__name__ + "." + attr.name,
+                 "*." + attr.name, obj.__class__.__name__ + ".*",
+                 "*.*"]
+    for attr_ref in attr_refs:
+        if attr_ref in mm.scope_providers:
+            return mm.scope_providers[attr_ref]
+    else:
+        from textx.scoping.providers import PlainName as DefaultScopeProvider
+        return DefaultScopeProvider()
+
+
+def get_reference_name_propositions(obj, attr, name_part):
+    """
+        retrieve a list of reference name propositions. This function can be used
+        independently of the scope provider instance. If the (automatically
+        deduced) scope provider is not a ReferenceNameProposer, an empty
+        list is returned.
+
+        Args:
+            obj: unused (used for multi_metamodel_support)
+            attr: unused
+            name_part: The name is used to build the list
+                    (e.g. using a substring-like logic;
+                    dependent of the ReferenceNameProposer implementation).
+        Returns:
+            the list of strings representing the proposed reference names
+            or [] if the scope provider is not a ReferenceNameProposer
+    """
+    a_scope_provider = get_scope_provider(obj, attr)
+    if not isinstance(a_scope_provider, ReferenceNameProposer):
+        return []
+    else:
+        return a_scope_provider.get_reference_name_propositions(obj, attr, name_part)
+
+
 class ModelLoader(object):
     """
     This class is an interface to mark a scope provider as an additional model

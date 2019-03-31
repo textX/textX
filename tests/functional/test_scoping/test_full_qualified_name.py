@@ -162,3 +162,49 @@ def test_fully_qualified_name_ref_type_error():
             }
         }
         ''')
+
+
+def test_fully_qualified_name_ref_name_proposer():
+    """
+    This is test for the ReferenceNameProposer logic
+    of the FQN
+    """
+    #################################
+    # META MODEL DEF
+    #################################
+
+    my_metamodel = metamodel_from_str(metamodel_str)
+    my_metamodel.register_scope_providers({"*.*": scoping_providers.FQN()})
+
+    #################################
+    # MODEL PARSING
+    #################################
+
+    my_model = my_metamodel.model_from_str('''
+    package P1 {
+        class Part1 {
+        }
+    }
+    package P2 {
+        class Part2 {
+            attr C2 rec;
+        }
+        class C2 {
+            attr P1.Part1 p1;
+            attr Part2 p2a;
+            attr P2.Part2 p2b;
+        }
+    }
+    ''')
+
+    #################################
+    # TEST MODEL
+    #################################
+
+    from textx.scoping import get_reference_name_propositions
+    from textx.model import ObjCrossRef
+
+    a = get_children(lambda x: hasattr(x, 'name') and x.name == "p1",
+                     my_model)[0]
+    proposed_names = get_reference_name_propositions(a, a._tx_attrs['ref'], "Part")
+    pass

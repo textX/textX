@@ -8,7 +8,7 @@
 from os.path import dirname, abspath, join
 from textx.exceptions import TextXSemanticError
 import textx.scoping as scoping
-from textx.scoping import Postponed
+from textx.scoping import Postponed, ReferenceNameProposer
 
 """
 This module defines scope providers to be used in conjunctions with a
@@ -19,7 +19,7 @@ See docs/scoping.md
 """
 
 
-class PlainName(object):
+class PlainName(ReferenceNameProposer):
     """
     plain name scope provider
     """
@@ -109,8 +109,17 @@ class PlainName(object):
 
         return None  # error handled outside
 
+    def get_reference_name_propositions(self, obj, attr, name_part):
+        """
+        (see ReferenceNameProposer)
+        """
+        from textx import get_model, get_children
+        from textx import textx_isinstance
+        result_lst = get_children(lambda x: hasattr(x, "name") and x.name.find(name_part) >= 0 and textx_isinstance(x, attr.cls), get_model(obj))
+        return map(lambda x: x.name, result_lst)
 
-class FQN(object):
+
+class FQN(ReferenceNameProposer):
     """
     fully qualified name scope provider
     """
@@ -132,7 +141,16 @@ class FQN(object):
         """
         self.scope_redirection_logic = scope_redirection_logic
 
-    def __call__(self, current_obj, attr, obj_ref):
+    def get_reference_name_propositions(self, obj, attr, name_part):
+        """
+        (see ReferenceNameProposer)
+        Note: we reused the __call__ logic here
+        """
+        from textx.model import ObjCrossRef
+        obj_ref = ObjCrossRef(name_part, attr.cls, 0 )  # pos irrelevant for this impl
+        return self.__call__(obj, attr, obj_ref, [])
+
+    def __call__(self, current_obj, attr, obj_ref, name_list=None):
         """
         find a fully qualified name.
         Use this callable as scope_provider in a meta-model:
@@ -235,7 +253,7 @@ class FQN(object):
         return _find_referenced_obj(current_obj, obj_name, obj_cls)
 
 
-class ImportURI(scoping.ModelLoader):
+class ImportURI(scoping.ModelLoader, scoping.ReferenceNameProposer):
     """
     Scope provider supporting Xtext-like importURI attributes (w/o
     URInamespace). This class requires another scope provider, which is
@@ -373,6 +391,24 @@ class ImportURI(scoping.ModelLoader):
             if ret:
                 return ret
         return None
+
+    def get_reference_name_propositions(self, obj, attr, name_part):
+        from textx.model import get_model
+
+        if not isinstance(self.scope_provider, ReferenceNameProposer):
+            return []
+
+        model = get_model(obj)
+        model_repository = model._tx_model_repository
+
+        # 1) find object names locally
+        ret = self.scope_provider.get_reference_name_propositions(obj, attr, name_part)
+
+        # 2) also process loaded models
+        for m in model_repository.local_models.filename_to_model.values():
+            ret = ret + self.scope_provider.get_reference_name_propositions(m, attr, name_part)
+
+        return list(set(ret))
 
 
 def follow_loaded_models_scope_redirection_logic(obj, scope_redirection_logic):

@@ -13,7 +13,6 @@ from textx.const import MULT_OPTIONAL, MULT_ONE, MULT_ONEORMORE, \
     UNKNOWN_OBJ_ERROR
 from textx.lang import PRIMITIVE_PYTHON_TYPES
 from textx.scoping import Postponed
-from textx.scoping.providers import PlainName as DefaultScopeProvider
 
 if sys.version < '3':
     text = unicode  # noqa
@@ -722,6 +721,7 @@ class ReferenceResolver:
         """
         Resolves model references.
         """
+        from textx.scoping import get_scope_provider
         metamodel = self.parser.metamodel
 
         current_crossrefs = self.parser._crossrefs
@@ -734,22 +734,11 @@ class ReferenceResolver:
         # -------------------------
         # start of resolve-loop
         # -------------------------
-        default_scope = DefaultScopeProvider()
         for obj, attr, crossref in current_crossrefs:
             if (get_model(obj) == self.model):
                 attr_value = getattr(obj, attr.name)
-                attr_refs = [obj.__class__.__name__ + "." + attr.name,
-                             "*." + attr.name, obj.__class__.__name__ + ".*",
-                             "*.*"]
-                for attr_ref in attr_refs:
-                    if attr_ref in metamodel.scope_providers:
-                        if self.parser.debug:
-                            self.parser.dprint(" FOUND {}".format(attr_ref))
-                        resolved = metamodel.scope_providers[attr_ref](
-                            obj, attr, crossref)
-                        break
-                else:
-                    resolved = default_scope(obj, attr, crossref)
+                the_scope_provider = get_scope_provider(obj, attr)
+                resolved = the_scope_provider(obj, attr, crossref)
 
                 # Collect cross-references for textx-tools
                 if resolved and not type(resolved) is Postponed:
