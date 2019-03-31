@@ -279,3 +279,66 @@ def test_plain_name_ref_type_error():
             }
         }
         ''')
+
+
+def test_plain_name_ref_name_proposer():
+    """
+    This is test for the ReferenceNameProposer logic
+    of the FQN
+    """
+    #################################
+    # META MODEL DEF
+    #################################
+
+    my_metamodel = metamodel_from_str(metamodel_str)
+
+    #################################
+    # MODEL PARSING
+    #################################
+
+    my_model = my_metamodel.model_from_str('''
+    package P1 {
+        class Part1 {
+        }
+    }
+    package P2 {
+        class Part2 {
+            attr C2 rec;
+        }
+        class C2 {
+            attr Part1 p1;
+            attr Part2 p2a;
+            attr Part2 p2b;
+        }
+    }
+    ''')
+
+    #################################
+    # TEST MODEL
+    #################################
+
+    from textx.scoping import get_reference_name_propositions
+
+    a = get_children(lambda x: hasattr(x, 'name') and x.name == "p1",
+                     my_model)
+    assert len(a) == 1
+    a = a[0]
+
+    proposed_names = get_reference_name_propositions(
+        a, a._tx_attrs['ref'], "p2a") # wrong type!
+    assert len(proposed_names) == 0
+
+    proposed_names = get_reference_name_propositions(
+        a, a._tx_attrs['ref'], "Part1")
+    assert sorted(["Part1"])\
+           == sorted(proposed_names)
+
+    proposed_names = get_reference_name_propositions(
+        a, a._tx_attrs['ref'], "Part")
+    assert sorted(["Part1","Part2"])\
+           == sorted(proposed_names)
+
+    proposed_names = get_reference_name_propositions(
+        a, a._tx_attrs['ref'], "1")  # do not find p1
+    assert sorted(["Part1"])\
+           == sorted(proposed_names)

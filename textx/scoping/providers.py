@@ -116,7 +116,7 @@ class PlainName(ReferenceNameProposer):
         from textx import get_model, get_children
         from textx import textx_isinstance
         result_lst = get_children(lambda x: hasattr(x, "name") and x.name.find(name_part) >= 0 and textx_isinstance(x, attr.cls), get_model(obj))
-        return map(lambda x: x.name, result_lst)
+        return list(map(lambda x: x.name, result_lst))
 
 
 class FQN(ReferenceNameProposer):

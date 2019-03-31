@@ -204,7 +204,6 @@ def test_fully_qualified_name_ref_name_proposer():
     #################################
 
     from textx.scoping import get_reference_name_propositions
-    from textx.model import ObjCrossRef
 
     a = get_children(lambda x: hasattr(x, 'name') and x.name == "p1",
                      my_model)
@@ -217,5 +216,10 @@ def test_fully_qualified_name_ref_name_proposer():
 
     proposed_names = get_reference_name_propositions(
         a, a._tx_attrs['ref'], "Part1")
+    assert sorted(["Part1", "P2.Part1", "P1.Part1"])\
+           == sorted(proposed_names)
+
+    proposed_names = get_reference_name_propositions(
+        a, a._tx_attrs['ref'], "1") # do not find p1
     assert sorted(["Part1", "P2.Part1", "P1.Part1"])\
            == sorted(proposed_names)
