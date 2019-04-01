@@ -19,8 +19,9 @@ def test_examples():
     examples_pat = os.path.join(os.path.abspath(os.path.dirname(__file__)),
                                 '../../examples/*/*.py')
 
-    # Filter out __init__.py
-    examples = [f for f in glob.glob(examples_pat) if f != '__init__.py']
+    examples = [f for f in glob.glob(examples_pat)
+                if not any(f.endswith(a)
+                           for a in ['__init__.py', 'render_all_grammars.py'])]
     for e in examples:
         print("Running example:", e)
         example_dir = os.path.dirname(e)
