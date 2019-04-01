@@ -109,7 +109,6 @@ def generator_description(language_name, target_name):
             .format(language_name, target_name))
 
 
-
 def generator_for_language_target(language_name, target_name):
     """
     Return generator callable for the given language name and target name.

@@ -17,7 +17,7 @@ from textx.lang import language_from_str, python_type, BASE_TYPE_NAMES, ID, \
     BOOL, INT, FLOAT, STRICTFLOAT, STRING, NUMBER, BASETYPE, OBJECT
 from textx.const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, \
     RULE_MATCH, RULE_ABSTRACT
-from textx.exceptions import TextXError, TextXRegistrationError
+from textx.exceptions import TextXError
 from .registration import LanguageDesc, metamodel_for_language
 
 if sys.version < '3':
