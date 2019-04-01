@@ -1,8 +1,8 @@
 #!/bin/sh
 
-pip install --upgrade pip
-pip install -e .
-pip install -e tests/functional/subcommands/example_project
-pip install -e tests/functional/registration/projects/types_dsl
-pip install -e tests/functional/registration/projects/data_dsl
-pip install -e tests/functional/registration/projects/flow_dsl
+pip install --upgrade pip || exit 1
+pip install -e . || exit 1
+pip install -e tests/functional/subcommands/example_project || exit 1
+pip install -e tests/functional/registration/projects/types_dsl || exit 1
+pip install -e tests/functional/registration/projects/data_dsl || exit 1
+pip install -e tests/functional/registration/projects/flow_dsl || exit 1
