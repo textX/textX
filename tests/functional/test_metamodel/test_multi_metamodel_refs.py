@@ -3,42 +3,83 @@ import pytest  # noqa
 import os
 import os.path
 from pytest import raises
-from textx import metamodel_from_str
+from textx import (metamodel_from_str,
+                   LanguageDesc, metamodel_for_language,
+                   register_language, clear_language_registrations)
 import textx.scoping.providers as scoping_providers
 import textx.scoping as scoping
 import textx.scoping.tools as tools
 import textx.exceptions
+
 
 grammarA = """
 Model: a+=A;
 A:'A' name=ID;
 """
 grammarB = """
+reference A
 Model: b+=B;
-B:'B' name=ID '->' a=[A];
+B:'B' name=ID '->' a=[A.A];
 """
 grammarBWithImport = """
+reference A as a
 Model: imports+=Import b+=B;
-B:'B' name=ID '->' a=[A];
+B:'B' name=ID '->' a=[a.A];
 Import: 'import' importURI=STRING;
 """
 
 
-def test_multi_metamodel_references1():
+def register_languages():
+
+    clear_language_registrations()
+
     global_repo = scoping.GlobalModelRepository()
-    mm_A = metamodel_from_str(grammarA, global_repository=global_repo)
-    mm_B = metamodel_from_str(grammarB, global_repository=global_repo,
-                              referenced_metamodels=[mm_A])
-
     global_repo_provider = scoping_providers.PlainNameGlobalRepo()
-    mm_B.register_scope_providers({"*.*": global_repo_provider})
-    mm_A.register_scope_providers({"*.*": global_repo_provider})
 
+    def get_A_mm():
+        mm_A = metamodel_from_str(grammarA, global_repository=global_repo)
+        mm_A.register_scope_providers({"*.*": global_repo_provider})
+        return mm_A
+
+    def get_B_mm():
+        mm_B = metamodel_from_str(grammarB, global_repository=global_repo)
+        mm_B.register_scope_providers({"*.*": global_repo_provider})
+        return mm_B
+
+    def get_BwithImport_mm():
+        mm_B = metamodel_from_str(grammarBWithImport,
+                                  global_repository=global_repo)
+
+        # define a default scope provider supporting the importURI feature
+        mm_B.register_scope_providers(
+            {"*.*": scoping_providers.FQNImportURI()})
+        return mm_B
+
+    register_language(LanguageDesc(name='A',
+                                   pattern="*.a",
+                                   metamodel=get_A_mm))
+    register_language(LanguageDesc(name='B',
+                                   pattern="*.b",
+                                   metamodel=get_B_mm))
+
+    register_language(LanguageDesc(name='BwithImport',
+                                   pattern="*.b",
+                                   metamodel=get_BwithImport_mm))
+
+    return global_repo_provider
+
+
+def test_multi_metamodel_references1():
+
+    global_repo_provider = register_languages()
+
+    mm_A = metamodel_for_language('A')
     mA = mm_A.model_from_str('''
     A a1 A a2 A a3
     ''')
     global_repo_provider.add_model(mA)
 
+    mm_B = metamodel_for_language('B')
     mm_B.model_from_str('''
     B b1 -> a1 B b2 -> a2 B b3 -> a3
     ''')
@@ -52,8 +93,7 @@ def test_multi_metamodel_references1():
 
 def test_multi_metamodel_references2():
     mm_A = metamodel_from_str(grammarA)
-    mm_B = metamodel_from_str(grammarB,
-                              referenced_metamodels=[mm_A])
+    mm_B = metamodel_from_str(grammarB)
 
     global_repo_provider = scoping_providers.PlainNameGlobalRepo()
     mm_B.register_scope_providers({"*.*": global_repo_provider})
@@ -87,22 +127,13 @@ def test_multi_metamodel_references_with_importURI():
     # the meta model is constructed (like in our example, mm_A cannot
     # reference mm_B, if mm_B already references mm_A because one has to
     # constructed first).
-    global_repo = scoping.GlobalModelRepository()
+
+    register_languages()
 
     # Create two meta models with the global repo.
     # The second meta model allows referencing the first one.
-    mm_A = metamodel_from_str(grammarA, global_repository=global_repo)
-    mm_B = metamodel_from_str(grammarBWithImport,
-                              global_repository=global_repo,
-                              referenced_metamodels=[mm_A])
-
-    # define a default scope provider supporting the importURI feature
-    mm_B.register_scope_providers({"*.*": scoping_providers.FQNImportURI()})
-
-    # map file endings to the meta models
-    scoping.MetaModelProvider.clear()
-    scoping.MetaModelProvider.add_metamodel("*.a", mm_A)
-    scoping.MetaModelProvider.add_metamodel("*.b", mm_B)
+    mm_A = metamodel_for_language('A')
+    mm_B = metamodel_for_language('BwithImport')
 
     # load a model from B which includes a model from A.
     current_dir = os.path.dirname(__file__)
@@ -114,9 +145,6 @@ def test_multi_metamodel_references_with_importURI():
     assert model.b[0].__class__ == mm_B[model.b[0].__class__.__name__]
     assert model.b[0].a.__class__ == mm_A[model.b[0].a.__class__.__name__]
 
-    # clean up
-    scoping.MetaModelProvider.clear()
-
 # -------------------------------------
 
 
@@ -126,11 +154,9 @@ class LibTypes:
             type string
     """
 
-    _mm = None
-
     @staticmethod
     def get_metamodel():
-        return LibTypes._mm
+        return metamodel_for_language('types')
 
     @staticmethod
     def library_init(repo_selector):
@@ -141,25 +167,30 @@ class LibTypes:
         else:
             raise Exception("unexpected parameter 'repo_selector={}'"
                             .format(repo_selector))
-        LibTypes._mm = metamodel_from_str(
-            r'''
-                Model: types+=Type;
-                Type: 'type' name=ID;
-                Comment: /\/\/.*$/;
-            ''',
-            global_repository=global_repo)
-        textx.scoping.MetaModelProvider.add_metamodel("*.type",
-                                                      LibTypes.get_metamodel())
 
-        def check_type(t):
-            if t.name[0].isupper():
-                raise textx.exceptions.TextXSyntaxError(
-                    "types must be lowercase",
-                    **tools.get_location(t)
-                )
-        LibTypes._mm.register_obj_processors({
-            'Type': check_type
-        })
+        def get_metamodel():
+            mm = metamodel_from_str(
+                r'''
+                    Model: types+=Type;
+                    Type: 'type' name=ID;
+                    Comment: /\/\/.*$/;
+                ''',
+                global_repository=global_repo)
+
+            def check_type(t):
+                if t.name[0].isupper():
+                    raise textx.exceptions.TextXSyntaxError(
+                        "types must be lowercase",
+                        **tools.get_location(t)
+                    )
+            mm.register_obj_processors({
+                'Type': check_type
+            })
+
+            return mm
+
+        register_language(LanguageDesc(name='types', pattern='*.type',
+                                       metamodel=get_metamodel))
 
 
 class LibData:
@@ -169,11 +200,9 @@ class LibData:
             data Population { count: int}
     """
 
-    _mm = None
-
     @staticmethod
     def get_metamodel():
-        return LibData._mm
+        return metamodel_for_language('data')
 
     @staticmethod
     def library_init(repo_selector):
@@ -185,22 +214,29 @@ class LibData:
         else:
             raise Exception("unexpected parameter 'repo_selector={}'"
                             .format(repo_selector))
-        LibData._mm = metamodel_from_str(
-            r'''
-                Model: includes*=Include data+=Data;
-                Data: 'data' name=ID '{'
-                    attributes+=Attribute
-                '}';
-                Attribute: name=ID ':' type=[Type];
-                Include: '#include' importURI=STRING;
-                Comment: /\/\/.*$/;
-            ''',
-            global_repository=global_repo,
-            referenced_metamodels=[LibTypes.get_metamodel()])
-        LibData._mm.register_scope_providers(
-            {"*.*": scoping_providers.FQNImportURI()})
-        textx.scoping.MetaModelProvider.add_metamodel("*.data",
-                                                      LibData.get_metamodel())
+
+        def get_metamodel():
+            mm = metamodel_from_str(
+                r'''
+                    reference types as t
+                    Model: includes*=Include data+=Data;
+                    Data: 'data' name=ID '{'
+                        attributes+=Attribute
+                    '}';
+                    Attribute: name=ID ':' type=[t.Type];
+                    Include: '#include' importURI=STRING;
+                    Comment: /\/\/.*$/;
+                ''',
+                global_repository=global_repo)
+
+            mm.register_scope_providers(
+                {"*.*": scoping_providers.FQNImportURI()})
+
+            return mm
+
+        register_language(LanguageDesc(name='data',
+                                       pattern='*.data',
+                                       metamodel=get_metamodel))
 
 
 class LibFlow:
@@ -210,11 +246,9 @@ class LibFlow:
             connect A1 -> A2
     """
 
-    _mm = None
-
     @staticmethod
     def get_metamodel():
-        return LibFlow._mm
+        return metamodel_for_language('flow')
 
     @staticmethod
     def library_init(repo_selector):
@@ -227,30 +261,37 @@ class LibFlow:
             raise Exception("unexpected parameter 'repo_selector={}'"
                             .format(repo_selector))
 
-        LibFlow._mm = metamodel_from_str(
-            r'''
-                Model: includes*=Include algos+=Algo flows+=Flow;
-                Algo: 'algo' name=ID ':' inp=[Data] '->' outp=[Data];
-                Flow: 'connect' algo1=[Algo] '->' algo2=[Algo] ;
-                Include: '#include' importURI=STRING;
-                Comment: /\/\/.*$/;
-            ''',
-            global_repository=global_repo,
-            referenced_metamodels=[LibData.get_metamodel()])
-        LibFlow._mm.register_scope_providers(
-            {"*.*": scoping_providers.FQNImportURI()})
-        textx.scoping.MetaModelProvider.add_metamodel("*.flow",
-                                                      LibFlow.get_metamodel())
+        def get_metamodel():
 
-        def check_flow(f):
-            if f.algo1.outp != f.algo2.inp:
-                raise textx.exceptions.TextXSemanticError(
-                    "algo data types must match",
-                    **tools.get_location(f)
-                )
-        LibFlow._mm.register_obj_processors({
-            'Flow': check_flow
-        })
+            mm = metamodel_from_str(
+                r'''
+                    reference data as d
+                    Model: includes*=Include algos+=Algo flows+=Flow;
+                    Algo: 'algo' name=ID ':' inp=[d.Data] '->' outp=[d.Data];
+                    Flow: 'connect' algo1=[Algo] '->' algo2=[Algo] ;
+                    Include: '#include' importURI=STRING;
+                    Comment: /\/\/.*$/;
+                ''',
+                global_repository=global_repo)
+
+            mm.register_scope_providers(
+                {"*.*": scoping_providers.FQNImportURI()})
+
+            def check_flow(f):
+                if f.algo1.outp != f.algo2.inp:
+                    raise textx.exceptions.TextXSemanticError(
+                        "algo data types must match",
+                        **tools.get_location(f)
+                    )
+            mm.register_obj_processors({
+                'Flow': check_flow
+            })
+
+            return mm
+
+        register_language(LanguageDesc(name='flow',
+                                       pattern='*.flow',
+                                       metamodel=get_metamodel))
 
 
 def test_multi_metamodel_types_data_flow1():
@@ -258,7 +299,7 @@ def test_multi_metamodel_types_data_flow1():
     # this stuff normally happens in the python module directly of the
     # third party lib
     selector = "no global scope"
-    textx.scoping.MetaModelProvider.clear()
+    clear_language_registrations()
     LibTypes.library_init(selector)
     LibData.library_init(selector)
     LibFlow.library_init(selector)
@@ -299,7 +340,7 @@ def test_multi_metamodel_types_data_flow2():
     # this stuff normally happens in the python module directly of the
     # third party lib
     selector = "global repo"
-    textx.scoping.MetaModelProvider.clear()
+    clear_language_registrations()
     LibTypes.library_init(selector)
     LibData.library_init(selector)
     LibFlow.library_init(selector)
@@ -335,7 +376,7 @@ def test_multi_metamodel_types_data_flow2():
 def test_multi_metamodel_types_data_flow_validation_error_in_types():
 
     selector = "no global scope"
-    textx.scoping.MetaModelProvider.clear()
+    clear_language_registrations()
     LibTypes.library_init(selector)
     LibData.library_init(selector)
     LibFlow.library_init(selector)
@@ -353,7 +394,7 @@ def test_multi_metamodel_types_data_flow_validation_error_in_types():
 def test_multi_metamodel_types_data_flow_validation_error_in_data_flow():
 
     selector = "no global scope"
-    textx.scoping.MetaModelProvider.clear()
+    clear_language_registrations()
     LibTypes.library_init(selector)
     LibData.library_init(selector)
     LibFlow.library_init(selector)
