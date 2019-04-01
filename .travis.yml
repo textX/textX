@@ -13,11 +13,10 @@ before_install:
     - git clone --depth=1 --branch=master git://github.com/textX/Arpeggio.git
     - cd Arpeggio && python setup.py install
     - cd ../textX
+install:
+    - ./install-all-dev.sh
 script:
     - ./runtests.sh
-    - coverage run --source textx -m py.test tests/functional
-    - coverage report --fail-under 80
-    - flake8
 
 matrix:
   include:
