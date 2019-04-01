@@ -1,27 +1,47 @@
 from __future__ import unicode_literals
-import os
 import fnmatch
-from collections import namedtuple
 import pkg_resources
 
 from textx.exceptions import TextXRegistrationError
 
-# A tuple used in language registration/discovery
-# name - the name/ID of the language (must be unique)
-# pattern - filename pattern for models (e.g. "*.data")
-# description - A short description of the language
-# metamodel - A callable that returns configured meta-model
-LanguageDesc = namedtuple('LanguageDesc',
-                          'name pattern description metamodel')
 
-# A tuple used in generators registration/discovery:
-# language - the name/ID of the language this generator is for.
-#            If the generators is generic (applicable to any model) use "*"
-# description - A short description of the generator
-# generator - A callable of the form:
-#             def generator(model, output_folder)
-GeneratorDesc = namedtuple('GeneratorDesc',
-                           'language target description generator')
+class LanguageDesc:
+    """
+    A class used in language registration/discovery.
+
+    Attributes:
+        name (str): the name/ID of the language (must be unique)
+        pattern (str): filename pattern for models (e.g. "*.data")
+        description (str): A short description of the language
+        metamodel (callable): A callable that returns configured meta-model
+    """
+
+    def __init__(self, name, pattern=None, description='', metamodel=None):
+        self.name = name
+        self.pattern = pattern
+        self.description = description
+        self.metamodel = metamodel
+
+
+class GeneratorDesc:
+    """
+    A class used in generators registration/discovery.
+
+    Attributes:
+        language (str): The name/ID of the language this generator is for.
+                        If the generators is generic (applicable to any model)
+                        use "*".
+        target (str): A short name of the target stack/technology.
+        description (str): A short description of the generator.
+        generator (callable): A callable of the form:
+                              def generator(model, output_folder)
+    """
+    def __init__(self, language, target, description='', generator=None):
+        self.language = language
+        self.target = target
+        self.description = description
+        self.generator = generator
+
 
 metamodels = {}
 languages = None
