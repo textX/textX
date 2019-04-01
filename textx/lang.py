@@ -30,12 +30,14 @@ else:
 
 
 # textX grammar
-def textx_model():          return ZeroOrMore(import_stm), ZeroOrMore(textx_rule), EOF
-
-def import_stm():           return 'import', language_or_grammar,
-def language_or_grammar():  return [language_to_import, grammar_to_import]
-def language_to_import():   return 'language', ':', ident, Optional(language_alias)
+def textx_model():          return (ZeroOrMore(import_or_reference_stm),
+                                    ZeroOrMore(textx_rule), EOF)
+def import_or_reference_stm(): return [import_stm, reference_stm]
+def import_stm():           return 'import', grammar_to_import
+def reference_stm():        return ('reference', language_name,
+                                    Optional(language_alias))
 def language_alias():       return 'as', ident
+def language_name():        return ident
 def grammar_to_import():    return _(r'(\w|\.)+')
 
 # Rules
