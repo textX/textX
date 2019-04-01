@@ -73,12 +73,13 @@ def obj_ref():              return '[', class_name, Optional('|', obj_ref_rule),
 
 def rule_name():            return ident
 def obj_ref_rule():         return ident
-def class_name():           return Optional(ident, '.'), ident
+def class_name():           return qualified_ident
 
 def str_match():            return [("'", _(r"((\\')|[^'])*"),"'"),\
                                     ('"', _(r'((\\")|[^"])*'),'"')]
 def re_match():             return "/", _(r"((\\/)|[^/])*"), "/"
 def ident():                return _(r'\w+')
+def qualified_ident():      return _(r'\w+(\.\w+)?')
 def integer():              return _(r'[-+]?[0-9]+')
 def string_value():         return [_(r"'((\\')|[^'])*'"),
                                     _(r'"((\\")|[^"])*"')]
