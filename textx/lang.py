@@ -140,9 +140,6 @@ class RuleCrossRef(object):
     Attributes:
         rule_name(str): A name of the PEG rule that should be used to match
             this cross-ref. For link rule references it will be ID by default.
-        language_name(str): A name of a language or its alias. Used for fully
-            qualified rule references. If a reference is unqualified this
-            attribute is `None`.
         cls(str or ClassCrossRef): Target class which is matched by the
             rule_name rule or which name is matched by the rule_name rule (for
             link rule references).
@@ -150,9 +147,8 @@ class RuleCrossRef(object):
             determine attribute type.
         position(int): A position in the input string of this cross-ref.
     """
-    def __init__(self, rule_name, language_name, cls, position):
+    def __init__(self, rule_name, cls, position):
         self.rule_name = rule_name
-        self.language_name = language_name
         self.cls = cls
         self.position = position
         self.suppress = False
@@ -609,7 +605,7 @@ class TextXVisitor(PTNodeVisitor):
         rule_name = text(node)
         # Here a name of the meta-class (rule) is expected but to support
         # forward referencing we are postponing resolving to second_pass.
-        return RuleCrossRef(rule_name, None, rule_name, node.position)
+        return RuleCrossRef(rule_name, rule_name, node.position)
 
     def visit_textx_rule_body(self, node, children):
         if len(children) == 1:
@@ -874,10 +870,6 @@ class TextXVisitor(PTNodeVisitor):
         # A reference to some other class instance will be the value of
         # its "name" attribute.
         class_name = children[0]
-        language_name = None
-        if type(class_name) is list:
-            # We have a language name
-            language_name, class_name = class_name
         if class_name in BASE_TYPE_NAMES:
             line, col = self.grammar_parser.pos_to_linecol(node.position)
             raise TextXSemanticError(
@@ -888,9 +880,7 @@ class TextXVisitor(PTNodeVisitor):
         else:
             # Default rule for matching obj cross-refs
             rule_name = 'ID'
-        return ("obj_ref", RuleCrossRef(rule_name,
-                                        language_name, class_name,
-                                        node.position))
+        return ("obj_ref", RuleCrossRef(rule_name, class_name, node.position))
 
     def visit_integer(self, node, children):
         return int(node.value)
