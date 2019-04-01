@@ -403,8 +403,8 @@ class TextXVisitor(PTNodeVisitor):
                 if referenced_cls is None:
                     line, col = grammar_parser.pos_to_linecol(cls.position)
                     raise TextXSemanticError(
-                        'Unknown class/rule "{}" at {}.'
-                        .format(cls.cls_name, (line, col)), line, col)
+                        'Unknown class/rule "{}".'.format(cls.cls_name),
+                        line=line, col=col, filename=metamodel.file_name)
                 cls = referenced_cls
             resolved_classes[to_resolve] = cls
 
