@@ -111,6 +111,15 @@ def register_language(language_desc):
     languages[language_desc.name] = language_desc
 
 
+def clear_language_registrations():
+    """
+    Clear all registered languages.
+    """
+    global languages, metamodels
+    languages = None
+    metamodels = {}
+
+
 def register_generator(generator_desc):
     """
     Programmatically register a generator.
@@ -126,13 +135,28 @@ def register_generator(generator_desc):
     lang_gens[generator_desc.target] = generator_desc
 
 
+def clear_generator_registrations():
+    """
+    Clear all registered generators.
+    """
+    global generators
+    generators = None
+
+
 def metamodel_for_language(language_name):
     """
     Load and return the meta-model for the given language.
     Cache it for further use.
     """
     if language_name not in metamodels:
+        from textx.metamodel import TextXMetaModel, TextXMetaMetaModel
         language = language_description(language_name)
+        metamodel = language.metamodel()
+        if not (isinstance(metamodel, TextXMetaModel) or
+                isinstance(metamodel, TextXMetaMetaModel)):
+            raise TextXRegistrationError(
+                'Meta-model type for language "{}" is "{}".'
+                .format(language_name, type(metamodel).__name__))
         metamodels[language_name] = language.metamodel()
     return metamodels[language_name]
 

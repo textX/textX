@@ -8,6 +8,8 @@ from textx.langapi import get_language, iter_languages
 from textx.scoping.tools import textx_isinstance
 from textx.registration import (LanguageDesc, GeneratorDesc,
                                 register_language, register_generator,
+                                clear_language_registrations,
+                                clear_generator_registrations,
                                 metamodel_for_language,
                                 metamodel_for_file,
                                 metamodels_for_file,
