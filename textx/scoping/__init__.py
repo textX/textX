@@ -13,13 +13,12 @@ from os.path import join, exists
 
 class MetaModelProvider(object):
     """
-    This class has the responsability to provide a meta model
-    for a given file to be loaded.
-    This is a global resource (no objects, just this class).
+    This class has the responsibility to provide a meta model for a given file
+    to be loaded. This is a global resource (no objects, just this class).
 
-    You can register meta model instances for given file patterns.
-    If no pattern matches, the same meta model as for the underlying
-    model is utilized.
+    You can register meta model instances for given file patterns. If no
+    pattern matches, the same meta model as for the underlying model is
+    utilized.
 
     Example:
 
@@ -32,6 +31,7 @@ class MetaModelProvider(object):
 
         scoping.MetaModelProvider.add_metamodel("*.components", mm_components)
         scoping.MetaModelProvider.add_metamodel("*.users", mm_users)
+
     """
     _pattern_to_metamodel = {}  # pattern:metamodel
 
@@ -65,28 +65,24 @@ class MetaModelProvider(object):
                 "unexpected: no meta model found for {}".format(filename))
 
 
-# -------------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Scope helper classes:
-# -------------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 class Postponed(object):
     """
-    return an object of this class to postpone a reference resolution.
+    Return an object of this class to postpone a reference resolution.
     If you get circular dependencies in resolution logic, an error
     is raised.
     """
 
-    def __init__(self):
-        pass
-
 
 class ModelRepository(object):
     """
-    This class has the responsibility to
-    hold a set of (model-identifiers, model) pairs
-    as dictionary.
-    In case of some scoping providers the model-identifier
-    is the absolute filename of the model.
+    This class has the responsibility to hold a set of (model-identifiers,
+    model) pairs as dictionary.
+    In case of some scoping providers the model-identifier is the absolute
+    filename of the model.
     """
 
     def __init__(self):
@@ -98,31 +94,30 @@ class ModelRepository(object):
 
 class GlobalModelRepository(object):
     """
-    This class has the responsability to
-    hold two ModelRepository objects:
-        * one for model-local visible models
-        * one for all models (globally, starting from
-          some root model).
-    The second ModelRepository "all_models" is to cache already
-    loaded models and to prevent to load one model
-    twice.
+    This class has the responsibility to hold two ModelRepository objects:
 
-    The class allows loading local models visible to
-    the current model. The current model is the model
-    which references this GlobalModelRepository as
-    attribute _tx_model_repository
+        - one for model-local visible models
+        - one for all models (globally, starting from some root model).
 
-    When loading a new local model, the current
-    GlobalModelRepository forwards the embedded ModelRepository
-    "all_models" to the new GlobalModelRepository of the
-    next model. This is done using the pre_ref_resolution_callback
-    to set the necessary information before resolving
-    the references in the new loaded model.
+    The second `ModelRepository` `all_models` is to cache already loaded models
+    and to prevent to load one model twice.
+
+    The class allows loading local models visible to the current model. The
+    current model is the model which references this `GlobalModelRepository` as
+    attribute `_tx_model_repository`
+
+    When loading a new local model, the current `GlobalModelRepository`
+    forwards the embedded `ModelRepository` `all_models` to the new
+    `GlobalModelRepository` of the next model. This is done using the
+    `pre_ref_resolution_callback` to set the necessary information before
+    resolving the references in the new loaded model.
+
     """
 
     def __init__(self, all_models=None):
         """
-        create a new repo for a model
+        Create a new repo for a model.
+
         Args:
             all_models: models to be added to this new repository.
         """
@@ -136,7 +131,7 @@ class GlobalModelRepository(object):
             self, filename_pattern, model, glob_args, is_main_model=False,
             encoding='utf-8', add_to_local_models=True):
         """
-        add a new model to all relevant objects
+        Add a new model to all relevant objects.
 
         Args:
             filename_pattern: models to be loaded
@@ -167,7 +162,7 @@ class GlobalModelRepository(object):
             self, filename, model, search_path, is_main_model=False,
             encoding='utf8', add_to_local_models=True):
         """
-        add a new model to all relevant objects
+        Add a new model to all relevant objects
 
         Args:
             filename: models to be loaded
@@ -199,7 +194,7 @@ class GlobalModelRepository(object):
             self, the_metamodel, filename, is_main_model, encoding='utf-8',
             add_to_local_models=True):
         """
-        load a single model
+        Load a single model
 
         Args:
             the_metamodel: the metamodel used to load the model
@@ -232,11 +227,15 @@ class GlobalModelRepository(object):
         self.local_models.filename_to_model[filename] = model
 
     def update_model_in_repo_based_on_filename(self, model):
-        """ Adds a model to the repo (not initially visible)
+        """
+        Adds a model to the repo (not initially visible)
+
         Args:
             model: the model to be added. If the model
             has no filename, a name is invented
-        Returns: the filename of the model added to the repo
+
+        Returns:
+            the filename of the model added to the repo
         """
         if model._tx_filename is None:
             for fn in self.all_models.filename_to_model:
@@ -255,7 +254,7 @@ class GlobalModelRepository(object):
 
     def pre_ref_resolution_callback(self, other_model):
         """
-        (internal: used to store a model after parsing into the repository)
+        internal: used to store a model after parsing into the repository
 
         Args:
             other_model: the parsed model

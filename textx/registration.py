@@ -34,7 +34,7 @@ class GeneratorDesc:
         target (str): A short name of the target stack/technology.
         description (str): A short description of the generator.
         generator (callable): A callable of the form:
-                              def generator(model, output_folder)
+                              def generator(model, output_folder, overwrite)
     """
     def __init__(self, language, target, description='', generator=None):
         self.language = language
@@ -93,9 +93,29 @@ def generator_description(language_name, target_name):
     Return `GeneratorDesc` instance for the given target and language name.
     """
     global generators
-    if generators in None:
+    if generators is None:
         generator_descriptions()
-    return generators[language_name][target_name]
+    try:
+        generators_for_language = generators[language_name]
+    except KeyError:
+        raise TextXRegistrationError(
+            'No generators registered for language "{}".'
+            .format(language_name))
+    try:
+        return generators_for_language[target_name]
+    except KeyError:
+        raise TextXRegistrationError(
+            'No generators registered for language "{}" and target "{}".'
+            .format(language_name, target_name))
+
+
+
+def generator_for_language_target(language_name, target_name):
+    """
+    Return generator callable for the given language name and target name.
+    """
+    generator_desc = generator_description(language_name, target_name)
+    return generator_desc.generator
 
 
 def register_language(language_desc):
@@ -161,41 +181,40 @@ def metamodel_for_language(language_name):
     return metamodels[language_name]
 
 
-def metamodels_for_pattern(pattern):
+def languages_for_file(file_name_or_pattern):
     """
-    Return meta-models registered for the given file pattern.
+    Return a list of `LanguageDesc` registered for the given file pattern.
     """
-    ext_metamodels = []
+    file_languages = []
     for language in language_descriptions().values():
-        if language.pattern == pattern:
-            ext_metamodels.append(metamodel_for_language(language.name))
-    return ext_metamodels
+        if file_name_or_pattern == language.pattern \
+           or fnmatch.fnmatch(file_name_or_pattern, language.pattern):
+            file_languages.append(language)
+    return file_languages
 
 
-def metamodel_for_pattern(pattern):
+def language_for_file(file_or_pattern):
     """
-    Return a meta-model registered for the given pattern or raise
+    Return an instance of `LanguageDesc` that can parse the given file or raise
     `TextXRegistrationError` if more than one is registered.
     """
-    ext_metamodels = metamodels_for_pattern(pattern)
-    if len(ext_metamodels) > 1:
-        raise TextXRegistrationError('Multiple languages registered for "{}"'
-                                     ' pattern.'.format(pattern))
-    elif len(ext_metamodels) == 0:
-        raise TextXRegistrationError('No language registered for "{}"'
-                                     ' pattern.'.format(pattern))
-    return ext_metamodels[0]
+    languages = languages_for_file(file_or_pattern)
+    if len(languages) > 1:
+        raise TextXRegistrationError('Multiple languages can parse "{}".'
+                                     .format(file_or_pattern))
+    elif len(languages) == 0:
+        raise TextXRegistrationError('No language registered that can parse'
+                                     ' "{}".'.format(file_or_pattern))
+
+    return languages[0]
 
 
 def metamodels_for_file(file_name):
     """
     Return meta-models that can parse the given file.
     """
-    file_metamodels = []
-    for language in language_descriptions().values():
-        if fnmatch.fnmatch(file_name, language.pattern):
-            file_metamodels.append(metamodel_for_language(language.name))
-    return file_metamodels
+    return [metamodel_for_language(language.name)
+            for language in languages_for_file(file_name)]
 
 
 def metamodel_for_file(file_name):
@@ -203,12 +222,4 @@ def metamodel_for_file(file_name):
     Return a meta-model that can parse the given file or raise
     `TextXRegistrationError` if more than one is registered.
     """
-    file_metamodels = metamodels_for_file(file_name)
-    if len(file_metamodels) > 1:
-        raise TextXRegistrationError('Multiple languages can parse file "{}".'
-                                     .format(file_name))
-    elif len(file_metamodels) == 0:
-        raise TextXRegistrationError('No language registered that can parse'
-                                     ' file "{}".'.format(file_name))
-
-    return file_metamodels[0]
+    return metamodel_for_language(language_for_file(file_name).name)
