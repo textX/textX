@@ -1,17 +1,25 @@
 from __future__ import unicode_literals
 import os
+import fnmatch
 from collections import namedtuple
 import pkg_resources
 
 from textx.exceptions import TextXRegistrationError
 
 # A tuple used in language registration/discovery
+# name - the name/ID of the language (must be unique)
+# pattern - filename pattern for models (e.g. "*.data")
+# description - A short description of the language
+# metamodel - A callable that returns configured meta-model
 LanguageDesc = namedtuple('LanguageDesc',
-                          'name extension description metamodel')
+                          'name pattern description metamodel')
 
-# A tuple used in generators registration/discovery
-# `generator` attribute is a callable of the form:
-# def generator(model, output_folder)
+# A tuple used in generators registration/discovery:
+# language - the name/ID of the language this generator is for.
+#            If the generators is generic (applicable to any model) use "*"
+# description - A short description of the generator
+# generator - A callable of the form:
+#             def generator(model, output_folder)
 GeneratorDesc = namedtuple('GeneratorDesc',
                            'language target description generator')
 
@@ -109,40 +117,41 @@ def metamodel_for_language(language_name):
     return metamodels[language_name]
 
 
-def metamodels_for_file_extension(file_extension):
+def metamodels_for_pattern(pattern):
     """
-    Return meta-models registered for the given extension.
+    Return meta-models registered for the given file pattern.
     """
     ext_metamodels = []
     for language in language_descriptions().values():
-        if language.extension == file_extension:
+        if language.pattern == pattern:
             ext_metamodels.append(metamodel_for_language(language.name))
     return ext_metamodels
 
 
-def metamodel_for_file_extension(file_extension):
+def metamodel_for_pattern(pattern):
     """
-    Return a meta-model registered for the given extension or raise
+    Return a meta-model registered for the given pattern or raise
     `TextXRegistrationError` if more than one is registered.
     """
-    ext_metamodels = metamodels_for_file_extension(file_extension)
+    ext_metamodels = metamodels_for_pattern(pattern)
     if len(ext_metamodels) > 1:
         raise TextXRegistrationError('Multiple languages registered for "{}"'
-                                     ' extension.'.format(file_extension))
+                                     ' pattern.'.format(pattern))
     elif len(ext_metamodels) == 0:
-        raise TextXRegistrationError('No language registered for "{}" '
-                                     'extension.'.format(file_extension))
-    else:
-        return ext_metamodels[0]
+        raise TextXRegistrationError('No language registered for "{}"'
+                                     ' pattern.'.format(pattern))
+    return ext_metamodels[0]
 
 
 def metamodels_for_file(file_name):
     """
     Return meta-models that can parse the given file.
     """
-    _, file_extension = os.path.splitext(file_name)
-    file_extension = file_extension.strip('.')
-    return metamodels_for_file_extension(file_extension)
+    file_metamodels = []
+    for language in language_descriptions().values():
+        if fnmatch.fnmatch(file_name, language.pattern):
+            file_metamodels.append(metamodel_for_language(language.name))
+    return file_metamodels
 
 
 def metamodel_for_file(file_name):
@@ -150,7 +159,12 @@ def metamodel_for_file(file_name):
     Return a meta-model that can parse the given file or raise
     `TextXRegistrationError` if more than one is registered.
     """
+    file_metamodels = metamodels_for_file(file_name)
+    if len(file_metamodels) > 1:
+        raise TextXRegistrationError('Multiple languages can parse file "{}".'
+                                     .format(file_name))
+    elif len(file_metamodels) == 0:
+        raise TextXRegistrationError('No language registered that can parse'
+                                     ' file "{}".'.format(file_name))
 
-    _, file_extension = os.path.splitext(file_name)
-    file_extension = file_extension.strip('.')
-    return metamodel_for_file_extension(file_extension)
+    return file_metamodels[0]

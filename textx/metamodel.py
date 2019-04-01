@@ -639,6 +639,6 @@ class TextXMetaMetaModel(object):
 
 # Register built-in textX language. See setup.py entry_points
 textx = LanguageDesc(name='textX',
-                     extension='tx',
+                     pattern='*.tx',
                      description='A meta-language for language definition',
                      metamodel=lambda: TextXMetaMetaModel())

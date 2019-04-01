@@ -11,7 +11,7 @@ from textx.registration import (LanguageDesc, GeneratorDesc,
                                 metamodel_for_language,
                                 metamodel_for_file,
                                 metamodels_for_file,
-                                metamodel_for_file_extension,
-                                metamodels_for_file_extension)
+                                metamodel_for_pattern,
+                                metamodels_for_pattern)
 
 __version__ = "1.8.0"
