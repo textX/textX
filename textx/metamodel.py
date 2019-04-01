@@ -128,13 +128,16 @@ class TextXMetaModel(DebugPrinter):
             instead of the dynamically created.
         obj_processors(dict): A dict of user supplied object processors keyed
             by rule/class name (may be a fully qualified name).
-        rootcls(TextXClass): A language class that is a root of the metamodel.
+        rootcls(TextXClass): A language class that is a root of the meta-model.
         root_path(str): The root dir used for the import statement.
         namespaces(dict): A mapping from fully qualified module names to dicts
-            in the form {clsname: cls} that holds meta-classes imported from
-            the given grammar file. Special key '__base__' is used for BASETYPE
-            classes. None key is used for all classes imported from the grammar
-            given as a string.
+            in the form `{clsname: cls}` that holds meta-classes imported from
+            the given grammar file. If `clsname` is a special key `__aliases__`
+            it maps to the dict of `{alias: language}` mappings for the
+            current grammar file. It is used for a fully qualified resolving of
+            references. A special key '__base__' is used for BASETYPE
+            classes. `None` key is used for all classes imported from the
+            grammar given as a string.
         _namespace_stack(list): A stack of namespace names (fully qualified
             module names). Used to keep track of the current namespace.
         _imported_namespaces(dict): A mapping from namespace name to the list
