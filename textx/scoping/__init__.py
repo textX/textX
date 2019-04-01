@@ -147,7 +147,8 @@ class GlobalModelRepository(object):
         Returns:
             the list of loaded models
         """
-        if (model):
+        from textx import metamodel_for_file
+        if model:
             self.update_model_in_repo_based_on_filename(model)
         filenames = glob.glob(filename_pattern, **glob_args)
         if len(filenames) == 0:
@@ -155,7 +156,7 @@ class GlobalModelRepository(object):
                 errno.ENOENT, os.strerror(errno.ENOENT), filename_pattern)
         loaded_models = []
         for filename in filenames:
-            the_metamodel = MetaModelProvider.get_metamodel(model, filename)
+            the_metamodel = metamodel_for_file(filename)
             loaded_models.append(
                 self.load_model(the_metamodel, filename, is_main_model,
                                 encoding=encoding,
@@ -177,14 +178,14 @@ class GlobalModelRepository(object):
         Returns:
             the loaded model
         """
-        if (model):
+        from textx import metamodel_for_file
+        if model:
             self.update_model_in_repo_based_on_filename(model)
         for the_path in search_path:
             full_filename = join(the_path, filename)
             # print(full_filename)
             if exists(full_filename):
-                the_metamodel = \
-                    MetaModelProvider.get_metamodel(model, full_filename)
+                the_metamodel = metamodel_for_file(filename)
                 return self.load_model(the_metamodel,
                                        full_filename,
                                        is_main_model,

@@ -17,8 +17,8 @@ from textx.lang import language_from_str, python_type, BASE_TYPE_NAMES, ID, \
     BOOL, INT, FLOAT, STRICTFLOAT, STRING, NUMBER, BASETYPE, OBJECT
 from textx.const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, \
     RULE_MATCH, RULE_ABSTRACT
-from textx.exceptions import TextXError
-from .registration import LanguageDesc
+from textx.exceptions import TextXError, TextXRegistrationError
+from .registration import LanguageDesc, metamodel_for_language
 
 if sys.version < '3':
     text = unicode  # noqa
@@ -159,7 +159,6 @@ class TextXMetaModel(DebugPrinter):
                  textx_tools_support=False, use_regexp_group=False, **kwargs):
         # evaluate optional parameter "global_repository"
         global_repository = kwargs.pop("global_repository", False)
-        self.referenced_metamodels = kwargs.pop("referenced_metamodels", [])
         if global_repository:
             from textx.scoping import GlobalModelRepository
             if isinstance(global_repository, GlobalModelRepository):
@@ -474,15 +473,6 @@ class TextXMetaModel(DebugPrinter):
         """
         # TODO: Implement complex textX validations.
 
-    def get_metaclass_for_references(self, name):
-        if name in self:
-            return self[name]
-        else:
-            for mm in self.referenced_metamodels:
-                if name in mm:
-                    return mm[name]
-        return None
-
     def __getitem__(self, name):
         """
         Search for and return class and peg_rule with the given name.
@@ -492,7 +482,12 @@ class TextXMetaModel(DebugPrinter):
         if "." in name:
             # Name is fully qualified
             namespace, name = name.rsplit('.', 1)
-            return self.namespaces[namespace][name]
+            if namespace in self.referenced_languages:
+                language = self.referenced_languages[namespace]
+                referenced_metamodel = metamodel_for_language(language)
+                return referenced_metamodel[name]
+            else:
+                return self.namespaces[namespace][name]
         else:
             # If not fully qualified search in the current namespace
             # and after that in the imported_namespaces
@@ -504,7 +499,7 @@ class TextXMetaModel(DebugPrinter):
                 if name in namespace:
                     return namespace[name]
 
-            raise KeyError("{} metaclass does not exists in the metamodel "
+            raise KeyError("{} metaclass does not exists in the meta-model "
                            .format(name))
 
     def __iter__(self):
