@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 import sys
+import os
 import click
 from textx import (metamodel_from_file,
                    metamodel_for_language,
@@ -7,7 +8,7 @@ from textx import (metamodel_from_file,
 from textx.exceptions import TextXError, TextXRegistrationError
 
 
-@click.argument('model_file', type=click.Path(), required=False)
+@click.argument('model_files', type=click.Path(), required=False, nargs=-1)
 @click.option('--language', help='A name of the language model conforms to.')
 @click.option('--grammar',
               help='A file name of the grammar used as a meta-model.')
@@ -15,7 +16,7 @@ from textx.exceptions import TextXError, TextXRegistrationError
               is_flag=True, help='Case-insensitive model parsing. '
               'Used only if "grammar" is provided.')
 @click.pass_context
-def check(ctx, model_file, language=None, grammar=None, ignore_case=False):
+def check(ctx, model_files, language=None, grammar=None, ignore_case=False):
     """
     Validate model given its file path. If grammar is given use it to construct
     the meta-model. If language is given use it to retrieve the registered
@@ -40,30 +41,33 @@ def check(ctx, model_file, language=None, grammar=None, ignore_case=False):
 
         textx check person.txt --language entity
 
+        # Or to check multiple model files and deduce meta-model by extension
+
+        textx check *
+
     """
 
-    if not model_file:
+    if not model_files:
         click.echo(ctx.get_help())
         sys.exit(1)
 
     debug = ctx.obj['debug']
 
-    try:
-        if grammar:
-            metamodel = metamodel_from_file(grammar, debug=debug,
-                                            ignore_case=ignore_case)
-        elif language:
-            metamodel = metamodel_for_language(language)
-        else:
-            metamodel = metamodel_for_file(model_file)
-    except TextXRegistrationError as e:
-        click.echo(e.message)
-        sys.exit(1)
+    for model_file in model_files:
+        try:
+            if grammar:
+                metamodel = metamodel_from_file(grammar, debug=debug,
+                                                ignore_case=ignore_case)
+            elif language:
+                metamodel = metamodel_for_language(language)
+            else:
+                metamodel = metamodel_for_file(model_file)
 
-    try:
-        metamodel.model_from_file(model_file, debug=debug)
-        click.echo("(Meta-)model OK.")
-    except TextXError as e:
-        click.echo("Error in (meta-)model file.")
-        click.echo(e)
-        sys.exit(1)
+            metamodel.model_from_file(model_file, debug=debug)
+            click.echo("{}: OK.".format(os.path.abspath(model_file)))
+
+        except TextXRegistrationError as e:
+            click.echo(e.message)
+
+        except TextXError as e:
+            click.echo(e)
