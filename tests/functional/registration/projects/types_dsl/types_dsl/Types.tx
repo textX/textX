@@ -1,0 +1,3 @@
+Model: types+=Type;
+Type: 'type' name=ID;
+Comment: /\/\/.*$/;

@@ -1,0 +1,9 @@
+reference types-dsl as t
+
+Model: includes*=Include data+=Data;
+Data: 'data' name=ID '{'
+    attributes+=Attribute
+'}';
+Attribute: name=ID ':' type=[t.Type];
+Include: '#include' importURI=STRING;
+Comment: /\/\/.*$/;
