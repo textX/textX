@@ -205,6 +205,9 @@ class TextXMetaModel(DebugPrinter):
         # Imported namespaces
         self._imported_namespaces = {}
 
+        # Referenced languages
+        self.referenced_languages = {}
+
         # Create new namespace for BASETYPE classes
         self._enter_namespace('__base__')
 

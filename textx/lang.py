@@ -449,6 +449,14 @@ class TextXVisitor(PTNodeVisitor):
     def visit_import_stm(self, node, children):
         self.metamodel._new_import(children[0])
 
+    def visit_reference_stm(self, node, children):
+        if len(children) > 1:
+            language_name, language_alias = children
+        else:
+            language_name, language_alias = children[0], children[0]
+
+        self.metamodel.referenced_languages[language_alias] = language_name
+
     def visit_grammar_to_import(self, node, children):
         return text(node)
 
