@@ -616,7 +616,7 @@ class PlainNameGlobalRepo(GlobalRepo):
             self, PlainName(), filename_pattern, glob_args=glob_args)
 
 
-class RelativeName(object):
+class RelativeName(ReferenceNameProposer):
     """
     allows to implement a class-method-instance-like scoping:
      - define a class with methods
@@ -670,6 +670,12 @@ class RelativeName(object):
 
         return list(obj_list)
 
+    def get_reference_name_propositions(self, obj, attr, name_part):
+        lst = self.get_reference_propositions(obj, attr, name_part)
+        if type(lst) is Postponed:
+            return lst
+        return list(map(lambda x: x.name, lst))
+
     def __call__(self, obj, attr, obj_ref):
         lst = self.get_reference_propositions(obj, attr, obj_ref.obj_name)
         if type(lst) is Postponed:
@@ -680,7 +686,7 @@ class RelativeName(object):
             return None
 
 
-class ExtRelativeName(object):
+class ExtRelativeName(ReferenceNameProposer):
     """
     Similar as RelativeName.
     Here you specify separately
@@ -738,6 +744,12 @@ class ExtRelativeName(object):
             obj_list = obj_list + tmp_list
 
         return list(obj_list)
+
+    def get_reference_name_propositions(self, obj, attr, name_part):
+        lst = self.get_reference_propositions(obj, attr, name_part)
+        if type(lst) is Postponed:
+            return lst
+        return list(map(lambda x: x.name, lst))
 
     def __call__(self, obj, attr, obj_ref):
         lst = self.get_reference_propositions(obj, attr, obj_ref.obj_name)

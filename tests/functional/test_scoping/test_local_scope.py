@@ -342,3 +342,54 @@ def test_model_with_local_scope_and_bad_model_path():
         my_meta_model.model_from_file(
             join(abspath(dirname(__file__)),
                  "components_model1", "example.components"))
+
+def test_model_with_local_scope_and_reference_name_proposer():
+    """
+    This is a basic test for the local scope provider (good case).
+    """
+    #################################
+    # META MODEL DEF
+    #################################
+
+    my_meta_model = metamodel_from_file(
+        join(abspath(dirname(__file__)), 'components_model1',
+             'Components.tx'))
+    my_meta_model.register_scope_providers({
+        "*.*": scoping_providers.FQN(),
+        "Connection.from_port":
+            scoping_providers.RelativeName("from_inst.component.slots"),
+        "Connection.to_port":
+            scoping_providers.RelativeName("to_inst.component.slots"),
+    })
+
+    #################################
+    # MODEL PARSING
+    #################################
+
+    my_model = my_meta_model.model_from_file(
+        join(abspath(dirname(__file__)), "components_model1",
+             "example.components"))
+
+    #################################
+    # TEST MODEL
+    #################################
+
+    # test local refs
+    action2 = get_unique_named_object(my_model, "action2")
+    action3 = get_unique_named_object(my_model, "action3")
+    connections = get_children_of_type("Connection", my_model)
+    selected_connections = list(filter(
+        lambda x: x.from_inst == action2 and x.to_inst == action3,
+        connections))
+    assert len(selected_connections) == 1
+    c = selected_connections[0]
+
+    from textx.scoping import get_reference_name_propositions
+    proposed_names = get_reference_name_propositions(
+        c, c._tx_attrs['to_port'], "")
+    assert sorted(["input2"])\
+        == sorted(proposed_names)
+
+    #################################
+    # END
+    #################################
