@@ -1,4 +1,3 @@
-# TextX Exceptions
 class TextXError(Exception):
     def __init__(self, message, line=None, col=None,
                  err_type=None, filename=None):

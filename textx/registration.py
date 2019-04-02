@@ -1,3 +1,6 @@
+"""
+Languages and generators registration and discovery API.
+"""
 from __future__ import unicode_literals
 import fnmatch
 import pkg_resources

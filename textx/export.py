@@ -1,12 +1,7 @@
 # -*- coding: utf-8 -*-
-#######################################################################
-# Name: export.py
-# Purpose: Export of textX based models and metamodels to dot file
-# Author: Igor R. Dejanovic <igor DOT dejanovic AT gmail DOT com>
-# Copyright:
-#    (c) 2014-2017 Igor R. Dejanovic <igor DOT dejanovic AT gmail DOT com>
-# License: MIT License
-#######################################################################
+"""
+Export of textX based models and metamodels to dot file.
+"""
 from __future__ import unicode_literals
 from arpeggio import Match, OrderedChoice, Sequence, OneOrMore, ZeroOrMore,\
     Optional, SyntaxPredicate

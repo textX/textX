@@ -1,11 +1,6 @@
-#######################################################################
-# Name: metamodel.py
-# Purpose: Meta-model construction.
-# Author: Igor R. Dejanovic <igor DOT dejanovic AT gmail DOT com>
-# Copyright:
-#   (c) 2014-2017 Igor R. Dejanovic <igor DOT dejanovic AT gmail DOT com>
-# License: MIT License
-#######################################################################
+"""
+Meta-model construction.
+"""
 from __future__ import absolute_import
 import codecs
 import os
@@ -621,8 +616,9 @@ class TextXMetaModel(DebugPrinter):
 
 class TextXMetaMetaModel(object):
     """
-    A dummy TextX meta-meta-model file that represents the meta-model
-    of the textX language. Used to treat all languages in a consistent way.
+    A basic TextX meta-meta-model class that represents the meta-model
+    of the textX meta-language. Used to treat all languages in a consistent
+    way.
     """
 
     def model_from_str(self, model_str, debug=None):

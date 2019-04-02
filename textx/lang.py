@@ -1,15 +1,11 @@
-#######################################################################
-# Name: textx.py
-# Purpose: Implementation of textX language in Arpeggio.
-# Author: Igor R. Dejanovic <igor DOT dejanovic AT gmail DOT com>
-# Copyright: (c) 2014-2017 Igor R. Dejanovic <igor DOT dejanovic AT gmail DOT com>
-# License: MIT License
-#
-# The idea for this language is shamelessly stolen from the Xtext language
-# but there are some differences in both syntax and semantics.
-# To make things clear I have named this language textX ;)
-#######################################################################
+"""
+Implementation of textX language in Arpeggio.
 
+The idea for this language is shamelessly stolen from the Xtext language but
+there are some differences in both syntax and semantics. To make things clear I
+have named this language textX ;)
+
+"""
 from __future__ import unicode_literals
 import re
 from arpeggio import StrMatch, Optional, ZeroOrMore, OneOrMore, Sequence,\

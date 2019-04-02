@@ -1,11 +1,6 @@
-#######################################################################
-# Name: model.py
-# Purpose: Model construction.
-# Author: Igor R. Dejanovic <igor DOT dejanovic AT gmail DOT com>
-# Copyright:
-#    (c) 2014-2017 Igor R. Dejanovic <igor DOT dejanovic AT gmail DOT com>
-# License: MIT License
-#######################################################################
+"""
+Model construction from parse trees and the model API.
+"""
 
 import sys
 import codecs
@@ -692,7 +687,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
 
 class ReferenceResolver:
     """
-    Responsability: store current model state before reference resolving.
+    Responsibility: store current model state before reference resolving.
     When all models are parsed, start resolving all references in a loop.
     """
 
