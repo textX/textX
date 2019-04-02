@@ -142,16 +142,24 @@ class GlobalModelRepository(object):
         Returns:
             the list of loaded models
         """
-        from textx import metamodel_for_file
+        from textx import metamodel_for_file, get_metamodel
         if model:
             self.update_model_in_repo_based_on_filename(model)
+            the_metamodel = get_metamodel(model) # default metamodel
+        else:
+            the_metamodel = None
         filenames = glob.glob(filename_pattern, **glob_args)
         if len(filenames) == 0:
             raise IOError(
                 errno.ENOENT, os.strerror(errno.ENOENT), filename_pattern)
         loaded_models = []
         for filename in filenames:
-            the_metamodel = metamodel_for_file(filename)
+            try:
+                the_metamodel = metamodel_for_file(filename)
+                # TODO, I would prefer to query if the language was found...
+            except:
+                if the_metamodel is None:  # no metamodel defined...
+                    raise
             loaded_models.append(
                 self.load_model(the_metamodel, filename, is_main_model,
                                 encoding=encoding,
