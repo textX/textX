@@ -2,9 +2,10 @@ from __future__ import unicode_literals
 
 from os.path import dirname, abspath, join
 
-import textx.scoping as scoping
 import textx.scoping.providers as scoping_providers
 from textx import metamodel_from_file, get_children_of_type
+from textx import LanguageDesc, \
+    register_language, clear_language_registrations
 
 
 def test_metamodel_provider_advanced_test():
@@ -43,8 +44,19 @@ def test_metamodel_provider_advanced_test():
     r_mm = get_meta_model(
         global_repo, join(this_folder, "metamodel_provider2", "Recipe.tx"))
 
-    scoping.MetaModelProvider.add_metamodel("*.recipe", r_mm)
-    scoping.MetaModelProvider.add_metamodel("*.ingredient", i_mm)
+    clear_language_registrations()
+    register_language(LanguageDesc(
+        name='recipe-dsl',
+        pattern='*.recipe',
+        description='demo',
+        metamodel=r_mm  # or a factory
+    ))
+    register_language(LanguageDesc(
+        name='ingredient-dsl',
+        pattern='*.ingredient',
+        description='demo',
+        metamodel=i_mm  # or a factory
+    ))
 
     #################################
     # MODEL PARSING

@@ -4,10 +4,11 @@ from os.path import dirname, abspath, join
 
 from pytest import raises
 
-import textx.scoping as scoping
 import textx.scoping.providers as scoping_providers
 from textx import metamodel_from_file
 from textx.scoping.tools import get_unique_named_object_in_all_models
+from textx import LanguageDesc, \
+    register_language, clear_language_registrations
 
 
 def test_metamodel_provider_basic_test():
@@ -17,6 +18,10 @@ def test_metamodel_provider_basic_test():
     are used twice. It is checked that the correct metamodel
     is used to load a model (by loading a model constellation using
     two metamodels).
+
+    Note: the MetaModelProvider is obsolete. This test is fixed
+    in terms of how to handle the filename --> metamodel resolution
+    in textx >= 2.x
     """
     #################################
     # META MODEL DEF
@@ -39,10 +44,26 @@ def test_metamodel_provider_basic_test():
         "*.*": scoping_providers.FQNImportURI(),
     })
 
-    scoping.MetaModelProvider.add_metamodel("*.components", mm_components)
-    scoping.MetaModelProvider.add_metamodel("*.users", mm_users)
-    with raises(Exception, match=r'.*pattern.*already registered.*'):
-        scoping.MetaModelProvider.add_metamodel("*.users", mm_users)
+    clear_language_registrations()
+    register_language(LanguageDesc(
+        name='components-dsl',
+        pattern='*.components',
+        description='demo',
+        metamodel=mm_components  # or a factory
+    ))
+    register_language(LanguageDesc(
+        name='users-dsl',
+        pattern='*.users',
+        description='demo',
+        metamodel=mm_users  # or a factory
+    ))
+    with raises(Exception, match=r'.*already registered.*'):
+        register_language(LanguageDesc(
+            name='users-dsl',
+            pattern='*.users',
+            description='demo',
+            metamodel=mm_users  # or a factory
+        ))
 
     #################################
     # MODEL PARSING

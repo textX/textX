@@ -16,8 +16,9 @@ class LanguageDesc:
         name (str): the name/ID of the language (must be unique)
         pattern (str): filename pattern for models (e.g. "*.data")
         description (str): A short description of the language
-        metamodel (callable): A callable that returns configured meta-model or the
-            metamodel itself (if a single specific instance is desired)
+        metamodel (callable): A callable that returns configured meta-model
+            or the metamodel itself (if a single specific instance is
+            desired)
     """
 
     def __init__(self, name, pattern=None, description='', metamodel=None):
@@ -178,8 +179,8 @@ def metamodel_for_language(language_name):
     if language_name not in metamodels:
         from textx.metamodel import TextXMetaModel, TextXMetaMetaModel
         language = language_description(language_name)
-        if (isinstance(language.metamodel, TextXMetaModel) or
-            isinstance(language.metamodel, TextXMetaMetaModel)):
+        if (isinstance(language.metamodel, TextXMetaModel)
+                or isinstance(language.metamodel, TextXMetaMetaModel)):
             metamodels[language_name] = language.metamodel
         else:
             metamodel = language.metamodel()

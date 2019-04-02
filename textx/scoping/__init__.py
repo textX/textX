@@ -66,11 +66,11 @@ class MetaModelProvider(object):
 
 
 def metamodel_for_file_or_default_metamodel(filename, the_metamodel):
-    from textx import metamodel_for_file, get_metamodel
+    from textx import metamodel_for_file
     try:
         the_metamodel = metamodel_for_file(filename)
         # TODO, I would prefer to query if the language was found...
-    except:
+    except Exception:
         if the_metamodel is None:  # no metamodel defined...
             raise
     return the_metamodel
@@ -156,7 +156,7 @@ class GlobalModelRepository(object):
         from textx import get_metamodel
         if model is not None:
             self.update_model_in_repo_based_on_filename(model)
-            the_metamodel = get_metamodel(model) # default metamodel
+            the_metamodel = get_metamodel(model)  # default metamodel
         else:
             the_metamodel = None
         filenames = glob.glob(filename_pattern, **glob_args)
@@ -188,7 +188,7 @@ class GlobalModelRepository(object):
         Returns:
             the loaded model
         """
-        from textx import metamodel_for_file, get_metamodel
+        from textx import get_metamodel
         if model:
             self.update_model_in_repo_based_on_filename(model)
         for the_path in search_path:
