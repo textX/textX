@@ -11,60 +11,6 @@ import errno
 from os.path import join, exists
 
 
-class MetaModelProvider(object):
-    """
-    This class has the responsibility to provide a meta model for a given file
-    to be loaded. This is a global resource (no objects, just this class).
-
-    You can register meta model instances for given file patterns. If no
-    pattern matches, the same meta model as for the underlying model is
-    utilized.
-
-    Example:
-
-        # create meta models
-
-        mm_components   = metamodel_from_file('Components.tx')
-        mm_users        = metamodel_from_file('Users.tx')
-
-        # register meta models
-
-        scoping.MetaModelProvider.add_metamodel("*.components", mm_components)
-        scoping.MetaModelProvider.add_metamodel("*.users", mm_users)
-
-    """
-    _pattern_to_metamodel = {}  # pattern:metamodel
-
-    @staticmethod
-    def add_metamodel(pattern, the_metamodel):
-        if MetaModelProvider.knows(pattern):
-            raise Exception("pattern {} already registered".format(pattern))
-        MetaModelProvider._pattern_to_metamodel[pattern] = the_metamodel
-
-    @staticmethod
-    def clear():
-        MetaModelProvider._pattern_to_metamodel = {}
-
-    @staticmethod
-    def knows(pattern):
-        return pattern in MetaModelProvider._pattern_to_metamodel.keys()
-
-    @staticmethod
-    def get_metamodel(parent_model, filename):
-        from textx.model import get_metamodel
-        import fnmatch
-        for p, mm in MetaModelProvider._pattern_to_metamodel.items():
-            if fnmatch.fnmatch(filename, p):
-                # print("loading model {} with special mm".format(filename));
-                return mm
-        # print("loading model {} with present mm".format(filename))
-        if parent_model:
-            return get_metamodel(parent_model)
-        else:
-            raise Exception(
-                "unexpected: no meta model found for {}".format(filename))
-
-
 def metamodel_for_file_or_default_metamodel(filename, the_metamodel):
     from textx import metamodel_for_file
     try:

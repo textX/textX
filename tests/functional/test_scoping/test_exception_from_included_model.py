@@ -4,7 +4,6 @@ from os.path import dirname, abspath, join
 
 from pytest import raises
 
-import textx.scoping as scoping
 import textx.scoping.providers as scoping_providers
 from textx import metamodel_from_file, LanguageDesc,\
     register_language, clear_language_registrations
@@ -76,10 +75,28 @@ def test_exception_from_included_model():
     register_language(b_dsl)
     register_language(c_dsl)
 
-    scoping.MetaModelProvider.clear()
-    scoping.MetaModelProvider.add_metamodel("*.a", a_mm)
-    scoping.MetaModelProvider.add_metamodel("*.b", b_mm)
-    scoping.MetaModelProvider.add_metamodel("*.c", c_mm)
+    a_dsl = LanguageDesc(
+        name='a-dsl',
+        pattern='*.a',
+        description='Test Lang A',
+        metamodel=a_mm)
+
+    b_dsl = LanguageDesc(
+        name='b-dsl',
+        pattern='*.b',
+        description='Test Lang B',
+        metamodel=b_mm)
+
+    c_dsl = LanguageDesc(
+        name='c-dsl',
+        pattern='*.c',
+        description='Test Lang C',
+        metamodel=c_mm)
+
+    clear_language_registrations()
+    register_language(a_dsl)
+    register_language(b_dsl)
+    register_language(c_dsl)
 
     #################################
     # MODEL PARSING / TEST
@@ -95,4 +112,4 @@ def test_exception_from_included_model():
     #################################
     # END
     #################################
-    scoping.MetaModelProvider.clear()
+    clear_language_registrations()
