@@ -79,6 +79,7 @@ def language_description(language_name):
     Return `LanguageDesc` for the given language name.
     """
     global languages
+    language_name = language_name.lower()
     if languages is None:
         language_descriptions()
     try:
@@ -93,6 +94,8 @@ def generator_description(language_name, target_name):
     Return `GeneratorDesc` instance for the given target and language name.
     """
     global generators
+    language_name = language_name.lower()
+    target_name = target_name.lower()
     if generators is None:
         generator_descriptions()
     try:
@@ -124,10 +127,10 @@ def register_language(language_desc):
     global languages
     if languages is None:
         language_descriptions()
-    if language_desc.name in languages:
+    if language_desc.name.lower() in languages:
         raise TextXRegistrationError(
             'Language "{}" already registered.'.format(language_desc.name))
-    languages[language_desc.name] = language_desc
+    languages[language_desc.name.lower()] = language_desc
 
 
 def clear_language_registrations():
@@ -146,12 +149,12 @@ def register_generator(generator_desc):
     global generators
     if generators is None:
         generator_descriptions()
-    lang_gens = generators.setdefault(generator_desc.language, {})
-    if generator_desc.target in lang_gens:
+    lang_gens = generators.setdefault(generator_desc.language.lower(), {})
+    if generator_desc.target.lower() in lang_gens:
         raise TextXRegistrationError(
             'Generator "{}->{}" already registered.'.format(
                 generator_desc.language, generator_desc.target))
-    lang_gens[generator_desc.target] = generator_desc
+    lang_gens[generator_desc.target.lower()] = generator_desc
 
 
 def clear_generator_registrations():
@@ -167,6 +170,7 @@ def metamodel_for_language(language_name):
     Load and return the meta-model for the given language.
     Cache it for further use.
     """
+    language_name = language_name.lower()
     if language_name not in metamodels:
         from textx.metamodel import TextXMetaModel, TextXMetaMetaModel
         language = language_description(language_name)
