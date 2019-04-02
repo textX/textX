@@ -16,7 +16,8 @@ class LanguageDesc:
         name (str): the name/ID of the language (must be unique)
         pattern (str): filename pattern for models (e.g. "*.data")
         description (str): A short description of the language
-        metamodel (callable): A callable that returns configured meta-model
+        metamodel (callable): A callable that returns configured meta-model or the
+            metamodel itself (if a single specific instance is desired)
     """
 
     def __init__(self, name, pattern=None, description='', metamodel=None):
@@ -177,13 +178,17 @@ def metamodel_for_language(language_name):
     if language_name not in metamodels:
         from textx.metamodel import TextXMetaModel, TextXMetaMetaModel
         language = language_description(language_name)
-        metamodel = language.metamodel()
-        if not (isinstance(metamodel, TextXMetaModel) or
-                isinstance(metamodel, TextXMetaMetaModel)):
-            raise TextXRegistrationError(
-                'Meta-model type for language "{}" is "{}".'
-                .format(language_name, type(metamodel).__name__))
-        metamodels[language_name] = language.metamodel()
+        if (isinstance(language.metamodel, TextXMetaModel) or
+            isinstance(language.metamodel, TextXMetaMetaModel)):
+            metamodels[language_name] = language.metamodel
+        else:
+            metamodel = language.metamodel()
+            if not (isinstance(metamodel, TextXMetaModel) or
+                    isinstance(metamodel, TextXMetaMetaModel)):
+                raise TextXRegistrationError(
+                    'Meta-model type for language "{}" is "{}".'
+                    .format(language_name, type(metamodel).__name__))
+            metamodels[language_name] = language.metamodel()
     return metamodels[language_name]
 
 
@@ -193,8 +198,8 @@ def languages_for_file(file_name_or_pattern):
     """
     file_languages = []
     for language in language_descriptions().values():
-        if file_name_or_pattern == language.pattern \
-           or fnmatch.fnmatch(file_name_or_pattern, language.pattern):
+        pmatch = fnmatch.fnmatch(file_name_or_pattern, language.pattern)
+        if file_name_or_pattern == language.pattern or pmatch:
             file_languages.append(language)
     return file_languages
 

@@ -65,6 +65,17 @@ class MetaModelProvider(object):
                 "unexpected: no meta model found for {}".format(filename))
 
 
+def metamodel_for_file_or_default_metamodel(filename, the_metamodel):
+    from textx import metamodel_for_file, get_metamodel
+    try:
+        the_metamodel = metamodel_for_file(filename)
+        # TODO, I would prefer to query if the language was found...
+    except:
+        if the_metamodel is None:  # no metamodel defined...
+            raise
+    return the_metamodel
+
+
 # -----------------------------------------------------------------------------
 # Scope helper classes:
 # -----------------------------------------------------------------------------
@@ -142,8 +153,8 @@ class GlobalModelRepository(object):
         Returns:
             the list of loaded models
         """
-        from textx import metamodel_for_file, get_metamodel
-        if model:
+        from textx import get_metamodel
+        if model is not None:
             self.update_model_in_repo_based_on_filename(model)
             the_metamodel = get_metamodel(model) # default metamodel
         else:
@@ -154,12 +165,8 @@ class GlobalModelRepository(object):
                 errno.ENOENT, os.strerror(errno.ENOENT), filename_pattern)
         loaded_models = []
         for filename in filenames:
-            try:
-                the_metamodel = metamodel_for_file(filename)
-                # TODO, I would prefer to query if the language was found...
-            except:
-                if the_metamodel is None:  # no metamodel defined...
-                    raise
+            the_metamodel = metamodel_for_file_or_default_metamodel(
+                filename, the_metamodel)
             loaded_models.append(
                 self.load_model(the_metamodel, filename, is_main_model,
                                 encoding=encoding,
@@ -181,14 +188,19 @@ class GlobalModelRepository(object):
         Returns:
             the loaded model
         """
-        from textx import metamodel_for_file
+        from textx import metamodel_for_file, get_metamodel
         if model:
             self.update_model_in_repo_based_on_filename(model)
         for the_path in search_path:
             full_filename = join(the_path, filename)
             # print(full_filename)
             if exists(full_filename):
-                the_metamodel = metamodel_for_file(filename)
+                if model is not None:
+                    the_metamodel = get_metamodel(model)
+                else:
+                    the_metamodel = None
+                the_metamodel = metamodel_for_file_or_default_metamodel(
+                    filename, the_metamodel)
                 return self.load_model(the_metamodel,
                                        full_filename,
                                        is_main_model,
