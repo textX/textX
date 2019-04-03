@@ -36,18 +36,18 @@ def test_metamodel_provider_utf_16_le_basic_test():
     })
 
     clear_language_registrations()
-    register_language(LanguageDesc(
-        name='components-dsl',
+    register_language(
+        'components-dsl',
         pattern='*.components',
         description='demo',
         metamodel=mm_components  # or a factory
-    ))
-    register_language(LanguageDesc(
-        name='users-dsl',
+    )
+    register_language(
+        'users-dsl',
         pattern='*.users',
         description='demo',
         metamodel=mm_users  # or a factory
-    ))
+    )
 
     #################################
     # MODEL PARSING

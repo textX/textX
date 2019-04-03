@@ -45,18 +45,18 @@ def test_metamodel_provider_advanced_test():
         global_repo, join(this_folder, "metamodel_provider2", "Recipe.tx"))
 
     clear_language_registrations()
-    register_language(LanguageDesc(
-        name='recipe-dsl',
+    register_language(
+        'recipe-dsl',
         pattern='*.recipe',
         description='demo',
         metamodel=r_mm  # or a factory
-    ))
-    register_language(LanguageDesc(
-        name='ingredient-dsl',
+    )
+    register_language(
+        'ingredient-dsl',
         pattern='*.ingredient',
         description='demo',
         metamodel=i_mm  # or a factory
-    ))
+    )
 
     #################################
     # MODEL PARSING

@@ -55,16 +55,16 @@ def register_languages():
             {"*.*": scoping_providers.FQNImportURI()})
         return mm_B
 
-    register_language(LanguageDesc(name='A',
-                                   pattern="*.a",
-                                   metamodel=get_A_mm))
-    register_language(LanguageDesc(name='B',
-                                   pattern="*.b",
-                                   metamodel=get_B_mm))
+    register_language('A',
+                      pattern="*.a",
+                      metamodel=get_A_mm)
+    register_language('B',
+                      pattern="*.b",
+                      metamodel=get_B_mm)
 
-    register_language(LanguageDesc(name='BwithImport',
-                                   pattern="*.b",
-                                   metamodel=get_BwithImport_mm))
+    register_language('BwithImport',
+                      pattern="*.b",
+                      metamodel=get_BwithImport_mm)
 
     return global_repo_provider
 
@@ -189,8 +189,8 @@ class LibTypes:
 
             return mm
 
-        register_language(LanguageDesc(name='types', pattern='*.type',
-                                       metamodel=get_metamodel))
+        register_language('types', pattern='*.type',
+                          metamodel=get_metamodel)
 
 
 class LibData:
@@ -234,9 +234,9 @@ class LibData:
 
             return mm
 
-        register_language(LanguageDesc(name='data',
-                                       pattern='*.data',
-                                       metamodel=get_metamodel))
+        register_language('data',
+                          pattern='*.data',
+                          metamodel=get_metamodel)
 
 
 class LibFlow:
@@ -289,9 +289,9 @@ class LibFlow:
 
             return mm
 
-        register_language(LanguageDesc(name='flow',
-                                       pattern='*.flow',
-                                       metamodel=get_metamodel))
+        register_language('flow',
+                          pattern='*.flow',
+                          metamodel=get_metamodel)
 
 
 def test_multi_metamodel_types_data_flow1():

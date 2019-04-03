@@ -37,21 +37,17 @@ def test_multi_metamodel_obj_proc():
     mm_A.register_obj_processors({"C1": proc})
     mm_B.register_obj_processors({"C1": proc})
 
-    a_dsl = LanguageDesc(
-        name='a-dsl',
+    clear_language_registrations()
+    register_language(
+        'a-dsl',
         pattern='*.a',
         description='Test Lang A',
         metamodel=mm_A)
-
-    b_dsl = LanguageDesc(
-        name='b-dsl',
+    register_language(
+        'b-dsl',
         pattern='*.b',
         description='Test Lang B',
         metamodel=mm_B)
-
-    clear_language_registrations()
-    register_language(a_dsl)
-    register_language(b_dsl)
 
     mm_B.model_from_file(os.path.join(
         os.path.dirname(__file__),

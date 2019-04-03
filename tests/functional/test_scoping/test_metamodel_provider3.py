@@ -48,28 +48,22 @@ def test_metamodel_provider_advanced_test3_global():
         global_repo_provider, join(this_folder,
                                    "metamodel_provider3", "C.tx"))
 
-    a_dsl = LanguageDesc(
-        name='a-dsl',
+    clear_language_registrations()
+    register_language(
+        'a-dsl',
         pattern='*.a',
         description='Test Lang A',
         metamodel=a_mm)
-
-    b_dsl = LanguageDesc(
-        name='b-dsl',
+    register_language(
+        'b-dsl',
         pattern='*.b',
         description='Test Lang B',
         metamodel=b_mm)
-
-    c_dsl = LanguageDesc(
-        name='c-dsl',
+    register_language(
+        'c-dsl',
         pattern='*.c',
         description='Test Lang C',
         metamodel=c_mm)
-
-    clear_language_registrations()
-    register_language(a_dsl)
-    register_language(b_dsl)
-    register_language(c_dsl)
 
     #################################
     # MODEL PARSING
@@ -145,28 +139,22 @@ def test_metamodel_provider_advanced_test3_import():
         import_lookup_provider, join(this_folder,
                                      "metamodel_provider3", "C.tx"))
 
-    a_dsl = LanguageDesc(
-        name='a-dsl',
+    clear_language_registrations()
+    register_language(
+        'a-dsl',
         pattern='*.a',
         description='Test Lang A',
         metamodel=a_mm)
-
-    b_dsl = LanguageDesc(
-        name='b-dsl',
+    register_language(
+        'b-dsl',
         pattern='*.b',
         description='Test Lang B',
         metamodel=b_mm)
-
-    c_dsl = LanguageDesc(
-        name='c-dsl',
+    register_language(
+        'c-dsl',
         pattern='*.c',
         description='Test Lang C',
         metamodel=c_mm)
-
-    clear_language_registrations()
-    register_language(a_dsl)
-    register_language(b_dsl)
-    register_language(c_dsl)
 
     #################################
     # MODEL PARSING
@@ -240,28 +228,22 @@ def test_metamodel_provider_advanced_test3_inheritance():
         import_lookup_provider, join(this_folder,
                                      "metamodel_provider3", "C.tx"))
 
-    a_dsl = LanguageDesc(
-        name='a-dsl',
+    clear_language_registrations()
+    register_language(
+        'a-dsl',
         pattern='*.a',
         description='Test Lang A',
         metamodel=a_mm)
-
-    b_dsl = LanguageDesc(
-        name='b-dsl',
+    register_language(
+        'b-dsl',
         pattern='*.b',
         description='Test Lang B',
         metamodel=b_mm)
-
-    c_dsl = LanguageDesc(
-        name='c-dsl',
+    register_language(
+        'c-dsl',
         pattern='*.c',
         description='Test Lang C',
         metamodel=c_mm)
-
-    clear_language_registrations()
-    register_language(a_dsl)
-    register_language(b_dsl)
-    register_language(c_dsl)
 
     #################################
     # MODEL PARSING
@@ -329,28 +311,22 @@ def test_metamodel_provider_advanced_test3_inheritance2():
         import_lookup_provider, join(this_folder,
                                      "metamodel_provider3", "C.tx"))
 
-    a_dsl = LanguageDesc(
-        name='a-dsl',
+    clear_language_registrations()
+    register_language(
+        'a-dsl',
         pattern='*.a',
         description='Test Lang A',
         metamodel=a_mm)
-
-    b_dsl = LanguageDesc(
-        name='b-dsl',
+    register_language(
+        'b-dsl',
         pattern='*.b',
         description='Test Lang B',
         metamodel=b_mm)
-
-    c_dsl = LanguageDesc(
-        name='c-dsl',
+    register_language(
+        'c-dsl',
         pattern='*.c',
         description='Test Lang C',
         metamodel=c_mm)
-
-    clear_language_registrations()
-    register_language(a_dsl)
-    register_language(b_dsl)
-    register_language(c_dsl)
 
     #################################
     # MODEL PARSING
@@ -426,28 +402,22 @@ def test_metamodel_provider_advanced_test3_diamond():
         import_lookup_provider, join(this_folder,
                                      "metamodel_provider3", "C.tx"))
 
-    a_dsl = LanguageDesc(
-        name='a-dsl',
+    clear_language_registrations()
+    register_language(
+        'a-dsl',
         pattern='*.a',
         description='Test Lang A',
         metamodel=a_mm)
-
-    b_dsl = LanguageDesc(
-        name='b-dsl',
+    register_language(
+        'b-dsl',
         pattern='*.b',
         description='Test Lang B',
         metamodel=b_mm)
-
-    c_dsl = LanguageDesc(
-        name='c-dsl',
+    register_language(
+        'c-dsl',
         pattern='*.c',
         description='Test Lang C',
         metamodel=c_mm)
-
-    clear_language_registrations()
-    register_language(a_dsl)
-    register_language(b_dsl)
-    register_language(c_dsl)
 
     #################################
     # MODEL PARSING

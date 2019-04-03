@@ -52,28 +52,22 @@ def test_exception_from_included_model():
         import_lookup_provider, join(this_folder,
                                      "metamodel_provider3", "C.tx"))
 
-    a_dsl = LanguageDesc(
-        name='a-dsl',
+    clear_language_registrations()
+    register_language(
+        'a-dsl',
         pattern='*.a',
         description='Test Lang A',
         metamodel=a_mm)
-
-    b_dsl = LanguageDesc(
-        name='b-dsl',
+    register_language(
+        'b-dsl',
         pattern='*.b',
         description='Test Lang B',
         metamodel=b_mm)
-
-    c_dsl = LanguageDesc(
-        name='c-dsl',
+    register_language(
+        'c-dsl',
         pattern='*.c',
         description='Test Lang C',
         metamodel=c_mm)
-
-    clear_language_registrations()
-    register_language(a_dsl)
-    register_language(b_dsl)
-    register_language(c_dsl)
 
     #################################
     # MODEL PARSING / TEST
