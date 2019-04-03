@@ -2,10 +2,10 @@ from __future__ import unicode_literals
 
 from os.path import dirname, abspath, join
 
-import textx.scoping as scoping
 import textx.scoping.providers as scoping_providers
-from textx import metamodel_from_file
 from textx.scoping.tools import get_unique_named_object_in_all_models
+from textx import metamodel_from_file, LanguageDesc,\
+    register_language, clear_language_registrations
 
 
 def test_metamodel_provider_utf_16_le_basic_test():
@@ -35,8 +35,19 @@ def test_metamodel_provider_utf_16_le_basic_test():
         "*.*": scoping_providers.FQNImportURI(),
     })
 
-    scoping.MetaModelProvider.add_metamodel("*.components", mm_components)
-    scoping.MetaModelProvider.add_metamodel("*.users", mm_users)
+    clear_language_registrations()
+    register_language(LanguageDesc(
+        name='components-dsl',
+        pattern='*.components',
+        description='demo',
+        metamodel=mm_components  # or a factory
+    ))
+    register_language(LanguageDesc(
+        name='users-dsl',
+        pattern='*.users',
+        description='demo',
+        metamodel=mm_users  # or a factory
+    ))
 
     #################################
     # MODEL PARSING

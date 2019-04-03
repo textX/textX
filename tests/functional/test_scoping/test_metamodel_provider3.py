@@ -2,9 +2,10 @@ from __future__ import unicode_literals
 
 from os.path import dirname, abspath, join
 
-import textx.scoping as scoping
 import textx.scoping.providers as scoping_providers
-from textx import metamodel_from_file, get_children_of_type
+from textx import get_children_of_type
+from textx import metamodel_from_file, LanguageDesc,\
+    register_language, clear_language_registrations
 
 
 def test_metamodel_provider_advanced_test3_global():
@@ -47,10 +48,28 @@ def test_metamodel_provider_advanced_test3_global():
         global_repo_provider, join(this_folder,
                                    "metamodel_provider3", "C.tx"))
 
-    scoping.MetaModelProvider.clear()
-    scoping.MetaModelProvider.add_metamodel("*.a", a_mm)
-    scoping.MetaModelProvider.add_metamodel("*.b", b_mm)
-    scoping.MetaModelProvider.add_metamodel("*.c", c_mm)
+    a_dsl = LanguageDesc(
+        name='a-dsl',
+        pattern='*.a',
+        description='Test Lang A',
+        metamodel=a_mm)
+
+    b_dsl = LanguageDesc(
+        name='b-dsl',
+        pattern='*.b',
+        description='Test Lang B',
+        metamodel=b_mm)
+
+    c_dsl = LanguageDesc(
+        name='c-dsl',
+        pattern='*.c',
+        description='Test Lang C',
+        metamodel=c_mm)
+
+    clear_language_registrations()
+    register_language(a_dsl)
+    register_language(b_dsl)
+    register_language(c_dsl)
 
     #################################
     # MODEL PARSING
@@ -89,7 +108,7 @@ def test_metamodel_provider_advanced_test3_global():
     #################################
     # END
     #################################
-    scoping.MetaModelProvider.clear()
+    clear_language_registrations()
 
 
 def test_metamodel_provider_advanced_test3_import():
@@ -126,10 +145,28 @@ def test_metamodel_provider_advanced_test3_import():
         import_lookup_provider, join(this_folder,
                                      "metamodel_provider3", "C.tx"))
 
-    scoping.MetaModelProvider.clear()
-    scoping.MetaModelProvider.add_metamodel("*.a", a_mm)
-    scoping.MetaModelProvider.add_metamodel("*.b", b_mm)
-    scoping.MetaModelProvider.add_metamodel("*.c", c_mm)
+    a_dsl = LanguageDesc(
+        name='a-dsl',
+        pattern='*.a',
+        description='Test Lang A',
+        metamodel=a_mm)
+
+    b_dsl = LanguageDesc(
+        name='b-dsl',
+        pattern='*.b',
+        description='Test Lang B',
+        metamodel=b_mm)
+
+    c_dsl = LanguageDesc(
+        name='c-dsl',
+        pattern='*.c',
+        description='Test Lang C',
+        metamodel=c_mm)
+
+    clear_language_registrations()
+    register_language(a_dsl)
+    register_language(b_dsl)
+    register_language(c_dsl)
 
     #################################
     # MODEL PARSING
@@ -160,7 +197,7 @@ def test_metamodel_provider_advanced_test3_import():
     #################################
     # END
     #################################
-    scoping.MetaModelProvider.clear()
+    clear_language_registrations()
 
 
 def test_metamodel_provider_advanced_test3_inheritance():
@@ -203,10 +240,28 @@ def test_metamodel_provider_advanced_test3_inheritance():
         import_lookup_provider, join(this_folder,
                                      "metamodel_provider3", "C.tx"))
 
-    scoping.MetaModelProvider.clear()
-    scoping.MetaModelProvider.add_metamodel("*.a", a_mm)
-    scoping.MetaModelProvider.add_metamodel("*.b", b_mm)
-    scoping.MetaModelProvider.add_metamodel("*.c", c_mm)
+    a_dsl = LanguageDesc(
+        name='a-dsl',
+        pattern='*.a',
+        description='Test Lang A',
+        metamodel=a_mm)
+
+    b_dsl = LanguageDesc(
+        name='b-dsl',
+        pattern='*.b',
+        description='Test Lang B',
+        metamodel=b_mm)
+
+    c_dsl = LanguageDesc(
+        name='c-dsl',
+        pattern='*.c',
+        description='Test Lang C',
+        metamodel=c_mm)
+
+    clear_language_registrations()
+    register_language(a_dsl)
+    register_language(b_dsl)
+    register_language(c_dsl)
 
     #################################
     # MODEL PARSING
@@ -238,7 +293,7 @@ def test_metamodel_provider_advanced_test3_inheritance():
     #################################
     # END
     #################################
-    scoping.MetaModelProvider.clear()
+    clear_language_registrations()
 
 
 def test_metamodel_provider_advanced_test3_inheritance2():
@@ -274,10 +329,28 @@ def test_metamodel_provider_advanced_test3_inheritance2():
         import_lookup_provider, join(this_folder,
                                      "metamodel_provider3", "C.tx"))
 
-    scoping.MetaModelProvider.clear()
-    scoping.MetaModelProvider.add_metamodel("*.a", a_mm)
-    scoping.MetaModelProvider.add_metamodel("*.b", b_mm)
-    scoping.MetaModelProvider.add_metamodel("*.c", c_mm)
+    a_dsl = LanguageDesc(
+        name='a-dsl',
+        pattern='*.a',
+        description='Test Lang A',
+        metamodel=a_mm)
+
+    b_dsl = LanguageDesc(
+        name='b-dsl',
+        pattern='*.b',
+        description='Test Lang B',
+        metamodel=b_mm)
+
+    c_dsl = LanguageDesc(
+        name='c-dsl',
+        pattern='*.c',
+        description='Test Lang C',
+        metamodel=c_mm)
+
+    clear_language_registrations()
+    register_language(a_dsl)
+    register_language(b_dsl)
+    register_language(c_dsl)
 
     #################################
     # MODEL PARSING
@@ -316,7 +389,7 @@ def test_metamodel_provider_advanced_test3_inheritance2():
     #################################
     # END
     #################################
-    scoping.MetaModelProvider.clear()
+    clear_language_registrations()
 
 
 def test_metamodel_provider_advanced_test3_diamond():
@@ -353,10 +426,28 @@ def test_metamodel_provider_advanced_test3_diamond():
         import_lookup_provider, join(this_folder,
                                      "metamodel_provider3", "C.tx"))
 
-    scoping.MetaModelProvider.clear()
-    scoping.MetaModelProvider.add_metamodel("*.a", a_mm)
-    scoping.MetaModelProvider.add_metamodel("*.b", b_mm)
-    scoping.MetaModelProvider.add_metamodel("*.c", c_mm)
+    a_dsl = LanguageDesc(
+        name='a-dsl',
+        pattern='*.a',
+        description='Test Lang A',
+        metamodel=a_mm)
+
+    b_dsl = LanguageDesc(
+        name='b-dsl',
+        pattern='*.b',
+        description='Test Lang B',
+        metamodel=b_mm)
+
+    c_dsl = LanguageDesc(
+        name='c-dsl',
+        pattern='*.c',
+        description='Test Lang C',
+        metamodel=c_mm)
+
+    clear_language_registrations()
+    register_language(a_dsl)
+    register_language(b_dsl)
+    register_language(c_dsl)
 
     #################################
     # MODEL PARSING
@@ -395,4 +486,4 @@ def test_metamodel_provider_advanced_test3_diamond():
     #################################
     # END
     #################################
-    scoping.MetaModelProvider.clear()
+    clear_language_registrations()

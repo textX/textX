@@ -11,58 +11,13 @@ import errno
 from os.path import join, exists
 
 
-class MetaModelProvider(object):
-    """
-    This class has the responsibility to provide a meta model for a given file
-    to be loaded. This is a global resource (no objects, just this class).
-
-    You can register meta model instances for given file patterns. If no
-    pattern matches, the same meta model as for the underlying model is
-    utilized.
-
-    Example:
-
-        # create meta models
-
-        mm_components   = metamodel_from_file('Components.tx')
-        mm_users        = metamodel_from_file('Users.tx')
-
-        # register meta models
-
-        scoping.MetaModelProvider.add_metamodel("*.components", mm_components)
-        scoping.MetaModelProvider.add_metamodel("*.users", mm_users)
-
-    """
-    _pattern_to_metamodel = {}  # pattern:metamodel
-
-    @staticmethod
-    def add_metamodel(pattern, the_metamodel):
-        if MetaModelProvider.knows(pattern):
-            raise Exception("pattern {} already registered".format(pattern))
-        MetaModelProvider._pattern_to_metamodel[pattern] = the_metamodel
-
-    @staticmethod
-    def clear():
-        MetaModelProvider._pattern_to_metamodel = {}
-
-    @staticmethod
-    def knows(pattern):
-        return pattern in MetaModelProvider._pattern_to_metamodel.keys()
-
-    @staticmethod
-    def get_metamodel(parent_model, filename):
-        from textx.model import get_metamodel
-        import fnmatch
-        for p, mm in MetaModelProvider._pattern_to_metamodel.items():
-            if fnmatch.fnmatch(filename, p):
-                # print("loading model {} with special mm".format(filename));
-                return mm
-        # print("loading model {} with present mm".format(filename))
-        if parent_model:
-            return get_metamodel(parent_model)
-        else:
-            raise Exception(
-                "unexpected: no meta model found for {}".format(filename))
+def metamodel_for_file_or_default_metamodel(filename, the_metamodel):
+    from textx import metamodel_for_file
+    from textx.exceptions import TextXRegistrationError
+    try:
+        return metamodel_for_file(filename)
+    except TextXRegistrationError:
+        return the_metamodel
 
 
 # -----------------------------------------------------------------------------
@@ -142,16 +97,20 @@ class GlobalModelRepository(object):
         Returns:
             the list of loaded models
         """
-        from textx import metamodel_for_file
-        if model:
+        from textx import get_metamodel
+        if model is not None:
             self.update_model_in_repo_based_on_filename(model)
+            the_metamodel = get_metamodel(model)  # default metamodel
+        else:
+            the_metamodel = None
         filenames = glob.glob(filename_pattern, **glob_args)
         if len(filenames) == 0:
             raise IOError(
                 errno.ENOENT, os.strerror(errno.ENOENT), filename_pattern)
         loaded_models = []
         for filename in filenames:
-            the_metamodel = metamodel_for_file(filename)
+            the_metamodel = metamodel_for_file_or_default_metamodel(
+                filename, the_metamodel)
             loaded_models.append(
                 self.load_model(the_metamodel, filename, is_main_model,
                                 encoding=encoding,
@@ -173,14 +132,19 @@ class GlobalModelRepository(object):
         Returns:
             the loaded model
         """
-        from textx import metamodel_for_file
+        from textx import get_metamodel
         if model:
             self.update_model_in_repo_based_on_filename(model)
         for the_path in search_path:
             full_filename = join(the_path, filename)
             # print(full_filename)
             if exists(full_filename):
-                the_metamodel = metamodel_for_file(filename)
+                if model is not None:
+                    the_metamodel = get_metamodel(model)
+                else:
+                    the_metamodel = None
+                the_metamodel = metamodel_for_file_or_default_metamodel(
+                    filename, the_metamodel)
                 return self.load_model(the_metamodel,
                                        full_filename,
                                        is_main_model,
