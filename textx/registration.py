@@ -199,8 +199,8 @@ def languages_for_file(file_name_or_pattern):
     """
     file_languages = []
     for language in language_descriptions().values():
-        pmatch = fnmatch.fnmatch(file_name_or_pattern, language.pattern)
-        if file_name_or_pattern == language.pattern or pmatch:
+        if file_name_or_pattern == language.pattern \
+                or fnmatch.fnmatch(file_name_or_pattern, language.pattern):
             file_languages.append(language)
     return file_languages
 

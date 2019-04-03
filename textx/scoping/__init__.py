@@ -13,13 +13,11 @@ from os.path import join, exists
 
 def metamodel_for_file_or_default_metamodel(filename, the_metamodel):
     from textx import metamodel_for_file
+    from textx.exceptions import TextXRegistrationError
     try:
-        the_metamodel = metamodel_for_file(filename)
-        # TODO, I would prefer to query if the language was found...
-    except Exception:
-        if the_metamodel is None:  # no metamodel defined...
-            raise
-    return the_metamodel
+        return metamodel_for_file(filename)
+    except TextXRegistrationError:
+        return the_metamodel
 
 
 # -----------------------------------------------------------------------------
