@@ -123,13 +123,30 @@ def generator_for_language_target(language_name, target_name):
     return generator_desc.generator
 
 
-def register_language(language_desc):
+def register_language(language_desc_or_name, pattern=None, description='',
+                      metamodel=None):
     """
     Programmatically register a language.
+
+    Args:
+        language_desc_or_name (LanguageDesc or str): If LanguageDesc is given
+            other parameters are not used.
+        For other parameters see `LanguageDesc`.
     """
     global languages
     if languages is None:
         language_descriptions()
+
+    if type(language_desc_or_name) is not LanguageDesc:
+        language_desc = LanguageDesc(
+            name=language_desc_or_name,
+            pattern=pattern,
+            description=description,
+            metamodel=metamodel
+        )
+    else:
+        language_desc = language_desc_or_name
+
     if language_desc.name.lower() in languages:
         raise TextXRegistrationError(
             'Language "{}" already registered.'.format(language_desc.name))
@@ -145,13 +162,30 @@ def clear_language_registrations():
     metamodels = {}
 
 
-def register_generator(generator_desc):
+def register_generator(generator_desc_or_language, target=None, description='',
+                       generator=None):
     """
     Programmatically register a generator.
+
+    Args:
+        generator_desc_or_language (GeneratorDesc or str): If GeneratorDesc is
+            given other parameters are not used.
+        For other parameters see `GeneratorDesc`.
     """
     global generators
     if generators is None:
         generator_descriptions()
+
+    if type(generator_desc_or_language) is not GeneratorDesc:
+        generator_desc = GeneratorDesc(
+            language=generator_desc_or_language,
+            target=target,
+            description=description,
+            generator=generator
+        )
+    else:
+        generator_desc = generator_desc_or_language
+
     lang_gens = generators.setdefault(generator_desc.language.lower(), {})
     if generator_desc.target.lower() in lang_gens:
         raise TextXRegistrationError(
