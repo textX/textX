@@ -22,6 +22,10 @@ ambiguities, unlimited lookahead, interpreter style of work.
 Quick intro
 ===========
 
+Here is a complete example that shows the definition of a simple DSL for
+drawing. We also show how to define a custom class, interpret models and search
+for instances of a particular type.
+
 .. code:: python
 
     from textx import metamodel_from_str, get_children_of_type
