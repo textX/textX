@@ -8,7 +8,7 @@ import pkg_resources
 from textx.exceptions import TextXRegistrationError
 
 
-class LanguageDesc:
+class LanguageDesc(object):
     """
     A class used in language registration/discovery.
 
@@ -28,7 +28,7 @@ class LanguageDesc:
         self.metamodel = metamodel
 
 
-class GeneratorDesc:
+class GeneratorDesc(object):
     """
     A class used in generators registration/discovery.
 
