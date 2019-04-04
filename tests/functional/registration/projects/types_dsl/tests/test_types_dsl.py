@@ -1,12 +1,24 @@
 from __future__ import unicode_literals
-from pytest import raises
+import pytest
 import os
-from textx import TextXSyntaxError, metamodel_for_language
+from textx import (TextXSyntaxError, metamodel_for_language,
+                   clear_language_registrations)
 
 
-def test_types_dsl():
+current_dir = os.path.dirname(__file__)
+
+
+@pytest.fixture(scope='module')
+def clear_all():
+    clear_language_registrations()
+
+
+def test_types_dsl(clear_all):
+    """
+    Test loading of correct types model.
+    """
+
     mmT = metamodel_for_language('types-dsl')
-    current_dir = os.path.dirname(__file__)
     model = mmT.model_from_file(os.path.join(current_dir,
                                              'models',
                                              'types.etype'))
@@ -14,11 +26,14 @@ def test_types_dsl():
     assert(len(model.types) == 2)
 
 
-def test_types_dsl_valid():
+def test_types_dsl_invalid(clear_all):
+    """
+    Test that types model with semantic error raises the error.
+    """
+
     mmT = metamodel_for_language('types-dsl')
-    current_dir = os.path.dirname(__file__)
-    with raises(TextXSyntaxError,
-                match=r'.*lowercase.*'):
+    with pytest.raises(TextXSyntaxError,
+                       match=r'.*lowercase.*'):
         mmT.model_from_file(os.path.join(current_dir,
                                          'models',
                                          'types_with_error.etype'))

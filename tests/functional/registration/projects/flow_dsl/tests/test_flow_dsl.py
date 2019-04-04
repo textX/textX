@@ -1,12 +1,25 @@
 from __future__ import unicode_literals
 import os
-from pytest import raises
-from textx import TextXSemanticError, TextXSyntaxError, metamodel_for_language
+import pytest
+from textx import (TextXSemanticError, TextXSyntaxError,
+                   metamodel_for_language,
+                   clear_language_registrations)
 
 
-def test_flow_dsl():
+current_dir = os.path.dirname(__file__)
+
+
+@pytest.fixture(scope='module')
+def clear_all():
+    clear_language_registrations()
+
+
+def test_flow_dsl(clear_all):
+    """
+    Test loading of correct flow model.
+    """
+
     mmF = metamodel_for_language('flow-dsl')
-    current_dir = os.path.dirname(__file__)
     model = mmF.model_from_file(os.path.join(current_dir,
                                              'models',
                                              'data_flow.eflow'))
@@ -15,22 +28,27 @@ def test_flow_dsl():
     assert(len(model.flows) == 1)
 
 
-def test_flow_dsl_validation():
+def test_flow_dsl_validation(clear_all):
+    """
+    Test flow model with semantic error raises error.
+    """
+
     mmF = metamodel_for_language('flow-dsl')
-    current_dir = os.path.dirname(__file__)
-    with raises(TextXSemanticError,
-                match=r'.*algo data types must match.*'):
+    with pytest.raises(TextXSemanticError,
+                       match=r'.*algo data types must match.*'):
         mmF.model_from_file(os.path.join(current_dir,
                                          'models',
                                          'data_flow_with_error.eflow'))
 
 
-def test_flow_dsl_types_validation():
+def test_flow_dsl_types_validation(clear_all):
+    """
+    Test flow model including error raises error.
+    """
+
     mmF = metamodel_for_language('flow-dsl')
-    current_dir = os.path.dirname(__file__)
-    current_dir = os.path.dirname(__file__)
-    with raises(TextXSyntaxError,
-                match=r'.*lowercase.*'):
+    with pytest.raises(TextXSyntaxError,
+                       match=r'.*lowercase.*'):
         mmF.model_from_file(os.path.join(current_dir,
                                          'models',
                                          'data_flow_including_error.eflow'))
