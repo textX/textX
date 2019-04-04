@@ -8,11 +8,13 @@ how to check/visualize meta-models and models.
 Example language are:
   - `hello_world` - a very simple language used for [the hello world
     tutorial](http://textx.github.io/textX/tutorials/hello_world/).
-  - `robot` - Simple DSL for moving robot on an imaginary grid. This example
+  - `robot` - A simple DSL for moving robot on an imaginary grid. This example
     shows how to do model interpretation. Used for [the robot
     tutorial](http://textx.github.io/textX/tutorials/robot/).
-  - `Entity` - Simple DSL for modeling data. This example shows how to generate
-    source code from the model. Used for [the Entity
+  - `drawing` - A simple DSL for drawing. It uses interpretation Similarly to
+    the robot DSL.
+  - `Entity` - A simple DSL for modeling data. This example shows how to
+    generate source code from the model. Used for [the Entity
     tutorial](http://textx.github.io/textX/tutorials/entity/).
   - `expression` - Two simple expression languages with variable assignment and
     expression evaluation. `calc.py` - four basic arithmetic operations.
