@@ -223,7 +223,7 @@ def metamodel_for_language(language_name):
                 raise TextXRegistrationError(
                     'Meta-model type for language "{}" is "{}".'
                     .format(language_name, type(metamodel).__name__))
-            metamodels[language_name] = language.metamodel()
+            metamodels[language_name] = metamodel
     return metamodels[language_name]
 
 
