@@ -2,7 +2,8 @@
 Tests for `generate` command.
 """
 import os
-import subprocess
+from textx.cli import textx
+from click.testing import CliRunner
 
 this_folder = os.path.abspath(os.path.dirname(__file__))
 
@@ -11,9 +12,10 @@ def test_generator_registered():
     """
     That that generator from flow to PlantUML is registered
     """
-    output = subprocess.check_output(['textx', 'list-generators'],
-                                     stderr=subprocess.STDOUT)
-    assert b'flow-dsl -> PlantUML' in output
+    runner = CliRunner()
+    result = runner.invoke(textx, ['list-generators'])
+    assert result.exit_code == 0
+    assert 'flow-dsl -> PlantUML' in result.output
 
 
 def test_generating_flow_model():
@@ -23,14 +25,13 @@ def test_generating_flow_model():
     model_file = os.path.join(this_folder,
                               'projects', 'flow_dsl', 'tests',
                               'models', 'data_flow.eflow')
-    output = subprocess.check_output(['textx', 'generate',
-                                      '--target', 'PlantUML',
-                                      '--overwrite',
-                                      model_file],
-                                     stderr=subprocess.STDOUT)
-    assert b'Generating PlantUML target from models' in output
-    assert b'->' in output
-    assert b'models/data_flow.pu'
+    runner = CliRunner()
+    result = runner.invoke(textx, ['generate', '--target', 'PlantUML',
+                                   '--overwrite', model_file])
+    assert result.exit_code == 0
+    assert 'Generating PlantUML target from models' in result.output
+    assert '->' in result.output
+    assert 'models/data_flow.pu' in result.output
     assert os.path.exists(os.path.join(this_folder,
                                        'projects', 'flow_dsl', 'tests',
                                        'models', 'data_flow.pu'))

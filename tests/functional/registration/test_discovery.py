@@ -1,24 +1,27 @@
 """
 Test discovering of registered languages and generators.
 """
-import subprocess
+from textx.cli import textx
+from click.testing import CliRunner
 
 
 def test_list_languages_cli():
     """
     Test list-languages command.
     """
-    output = subprocess.check_output(['textx', 'list-languages'],
-                                     stderr=subprocess.STDOUT)
-    assert b'flow-dsl' in output
-    assert b'*.eflow' in output
-    assert b'data-dsl' in output
+    runner = CliRunner()
+    result = runner.invoke(textx, ['list-languages'])
+    assert result.exit_code == 0
+    assert 'flow-dsl' in result.output
+    assert '*.eflow' in result.output
+    assert 'data-dsl' in result.output
 
 
 def test_list_generators_cli():
     """
     Test list-generators command.
     """
-    output = subprocess.check_output(['textx', 'list-generators'],
-                                     stderr=subprocess.STDOUT)
-    assert b'flow-dsl -> PlantUML' in output
+    runner = CliRunner()
+    result = runner.invoke(textx, ['list-generators'])
+    assert result.exit_code == 0
+    assert 'flow-dsl -> PlantUML' in result.output
