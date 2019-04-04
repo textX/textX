@@ -4,8 +4,8 @@ from os.path import dirname, abspath, join
 
 import textx.scoping.providers as scoping_providers
 from textx.scoping.tools import get_unique_named_object_in_all_models
-from textx import metamodel_from_file, LanguageDesc,\
-    register_language, clear_language_registrations
+from textx import (metamodel_from_file, register_language,
+                   clear_language_registrations)
 
 
 def test_metamodel_provider_utf_16_le_basic_test():

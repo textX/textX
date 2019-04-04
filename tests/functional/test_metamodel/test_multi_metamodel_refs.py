@@ -4,7 +4,7 @@ import os
 import os.path
 from pytest import raises
 from textx import (metamodel_from_str,
-                   LanguageDesc, metamodel_for_language,
+                   metamodel_for_language,
                    register_language, clear_language_registrations)
 import textx.scoping.providers as scoping_providers
 import textx.scoping as scoping

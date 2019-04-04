@@ -4,8 +4,8 @@ from os.path import dirname, abspath, join
 
 import textx.scoping.providers as scoping_providers
 from textx import get_children_of_type
-from textx import metamodel_from_file, LanguageDesc,\
-    register_language, clear_language_registrations
+from textx import (metamodel_from_file, register_language,
+                   clear_language_registrations)
 
 
 def test_metamodel_provider_advanced_test3_global():
