@@ -46,23 +46,19 @@ def generate(ctx, model_files, output_path, language, target, overwrite):
     flow-dsl -> PlantUML  Generating PlantUML visualization from flow-dsl
     """
 
-    if not model_files:
-        click.echo(ctx.get_help())
-        sys.exit(1)
-
     click.echo('Generating {} target from models:'.format(target))
 
     for model_file in model_files:
         click.echo(os.path.abspath(model_file))
-        if language:
-            metamodel = metamodel_for_language(language)
-        else:
-            language = language_for_file(model_file).name
-            metamodel = metamodel_for_file(model_file)
-
-        model = metamodel.model_from_file(model_file)
-
         try:
+            if language:
+                metamodel = metamodel_for_language(language)
+            else:
+                language = language_for_file(model_file).name
+                metamodel = metamodel_for_file(model_file)
+
+            model = metamodel.model_from_file(model_file)
+
             generator = generator_for_language_target(language, target)
         except TextXRegistrationError as e:
             click.echo(e.message)
