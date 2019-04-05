@@ -58,6 +58,9 @@ for instances of a particular type.
             self.y += other.y
             return self
 
+        def clone(self):
+            return Point(self.parent, self.x, self.y)
+
     mm = metamodel_from_str(grammar, classes=[Point])
 
     model_str = """
@@ -83,7 +86,7 @@ for instances of a particular type.
     for command in model.commands:
         if cname(command) == 'MoveTo':
             print('Moving to position', command.position)
-            position = command.position
+            position = command.position.clone()
         elif cname(command) == 'MoveBy':
             position += command.vector
             print('Moving by', command.vector, 'to a new position', position)
@@ -91,7 +94,7 @@ for instances of a particular type.
             print('Drawing circle at', position, 'with radius', command.radius)
         else:
             print('Drawing line from', position, 'to', command.point)
-            position = command.point
+            position = command.point.clone()
     print('End position is', position)
 
     # Output:
@@ -110,7 +113,7 @@ for instances of a particular type.
     # Output:
     # Point: 5,10
     # Point: 10,10
-    # Point: 25,13
+    # Point: 20,20
     # Point: 5,-7
     # Point: 10,10
 
