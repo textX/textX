@@ -56,6 +56,8 @@ for instances of a particular type.
         def __add__(self, other):
             return Point(self.parent, self.x + other.x, self.y + other.y)
 
+    # Create meta-model from the grammar. Provide `Point` class to be used for
+    # the rule `Point` from the grammar.
     mm = metamodel_from_str(grammar, classes=[Point])
 
     model_str = """
