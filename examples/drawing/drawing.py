@@ -28,13 +28,8 @@ def main(debug=False):
         def __str__(self):
             return "{},{}".format(self.x, self.y)
 
-        def __iadd__(self, other):
-            self.x += other.x
-            self.y += other.y
-            return self
-
-        def clone(self):
-            return Point(self.parent, self.x, self.y)
+        def __add__(self, other):
+            return Point(self.parent, self.x + other.x, self.y + other.y)
 
     mm = metamodel_from_str(grammar, classes=[Point])
 
@@ -61,15 +56,15 @@ def main(debug=False):
     for command in model.commands:
         if cname(command) == 'MoveTo':
             print('Moving to position', command.position)
-            position = command.position.clone()
+            position = command.position
         elif cname(command) == 'MoveBy':
-            position += command.vector
+            position = position + command.vector
             print('Moving by', command.vector, 'to a new position', position)
         elif cname(command) == 'Circle':
             print('Drawing circle at', position, 'with radius', command.radius)
         else:
             print('Drawing line from', position, 'to', command.point)
-            position = command.point.clone()
+            position = command.point
     print('End position is', position)
 
     # Output:
