@@ -78,7 +78,8 @@ def generate(ctx, model_files, output_path, language, target, overwrite,
                 language = language_for_file(model_file).name
                 metamodel = metamodel_for_file(model_file)
             model = metamodel.model_from_file(model_file)
-            generator = generator_for_language_target(language, target)
+            generator = generator_for_language_target(
+                language, target, any_permitted=per_file_metamodel)
 
             generator(metamodel, model, output_path, overwrite, debug)
 
