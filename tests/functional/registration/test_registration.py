@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 import pytest
 from textx import (metamodel_from_str,
                    clear_language_registrations, clear_generator_registrations,
-                   register_language, register_generator,
+                   register_language, register_generator, generator,
                    language_description, generator_description,
                    language_for_file, languages_for_file,
                    metamodel_for_language, metamodel_for_file,
@@ -218,6 +218,22 @@ def test_register_generator():
     assert generator.target == 'Java'
     assert generator.description == 'test-lang Java generator'
     assert generator.generator == generator_callable
+
+
+def test_register_generator_with_decorator():
+    """
+    Test using `generator` decorator to register a generator function.
+    """
+    @generator('test-lang', 'Java')
+    def generator_for_test_lang():
+        "Generator description"
+        pass
+
+    assert type(generator_for_test_lang) is GeneratorDesc
+    assert generator_for_test_lang.language == 'test-lang'
+    assert generator_for_test_lang.target == 'Java'
+    assert generator_for_test_lang.description == 'Generator description'
+    assert callable(generator_for_test_lang.generator)
 
 
 def test_asking_for_unregistered_generator_raises_error():
