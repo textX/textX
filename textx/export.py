@@ -17,7 +17,7 @@ else:
 
 
 HEADER = '''
-    digraph xtext {
+    digraph textX {
     fontname = "Bitstream Vera Sans"
     fontsize = 8
     node[

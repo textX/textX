@@ -8,7 +8,7 @@ from os.path import dirname, join
 from textx import metamodel_from_file
 
 HEADER = '''
-    digraph xtext {
+    digraph textX {
     fontname = "Bitstream Vera Sans"
     fontsize = 8
     node[
