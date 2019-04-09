@@ -3,7 +3,7 @@ import os
 from textx import GeneratorDesc
 
 
-def codegen_flow_pu(model, output_path, overwrite):
+def codegen_flow_pu(metamodel, model, output_path, overwrite, debug=False):
     """
     This command transforms *.flow-files to *.pu files (plantuml).
     """
