@@ -1,13 +1,13 @@
 import click
 import os
-from textx import GeneratorDesc
+from textx import generator
 from textx.export import metamodel_export, model_export, PlantUmlRenderer
 
 
+@generator('textX', 'dot')
 def metamodel_generate_dot(metamodel, model, output_path, overwrite, debug):
-    """
-    This generator transforms *.tx file to a *.dot file (GraphViz dot).
-    """
+    "Generating dot visualizations from textX grammars"
+
     input_file = model.file_name
     base_dir = output_path if output_path else os.path.dirname(input_file)
     base_name, _ = os.path.splitext(os.path.basename(input_file))
@@ -22,11 +22,10 @@ def metamodel_generate_dot(metamodel, model, output_path, overwrite, debug):
         click.echo('-- Skipping: {}'.format(output_file))
 
 
+@generator('any', 'dot')
 def model_generate_dot(metamodel, model, output_path, overwrite, debug):
-    """
-    This generator transforms arbitrary textX model to *.dot file
-    (GraphViz dot).
-    """
+    "Generating dot visualizations from arbitrary models"
+
     input_file = model._tx_filename
     base_dir = output_path if output_path else os.path.dirname(input_file)
     base_name, _ = os.path.splitext(os.path.basename(input_file))
@@ -41,11 +40,11 @@ def model_generate_dot(metamodel, model, output_path, overwrite, debug):
         click.echo('-- Skipping: {}'.format(output_file))
 
 
+@generator('textX', 'PlantUML')
 def metamodel_generate_plantuml(metamodel, model, output_path, overwrite,
                                 debug):
-    """
-    This generator transforms *.tx file to a *.pu file (PlantUML).
-    """
+    "Generating PlantUML visualizations from textX grammars"
+
     input_file = model.file_name
     base_dir = output_path if output_path else os.path.dirname(input_file)
     base_name, _ = os.path.splitext(os.path.basename(input_file))
@@ -57,24 +56,3 @@ def metamodel_generate_plantuml(metamodel, model, output_path, overwrite,
         click.echo("To convert to png run 'plantuml {}'".format(output_file))
     else:
         click.echo('-- Skipping: {}'.format(output_file))
-
-
-metamodel_gen_dot = GeneratorDesc(
-    language='textX',
-    target='dot',
-    description='Generating dot visualizations from textX grammars',
-    generator=metamodel_generate_dot)
-
-
-model_gen_dot = GeneratorDesc(
-    language='any',
-    target='dot',
-    description='Generating dot visualizations from arbitrary models',
-    generator=model_generate_dot)
-
-
-metamodel_gen_plantuml = GeneratorDesc(
-    language='textX',
-    target='PlantUML',
-    description='Generating PlantUML visualizations from textX grammars',
-    generator=metamodel_generate_plantuml)

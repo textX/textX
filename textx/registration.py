@@ -274,3 +274,20 @@ def metamodel_for_file(file_name):
     `TextXRegistrationError` if more than one is registered.
     """
     return metamodel_for_language(language_for_file(file_name).name)
+
+
+def generator(language, target):
+    """
+    Decorator factory used to create `GeneratorDesc` instances suitable for
+    entry point registration.
+
+    The target function docstring is used for the description.
+    """
+
+    def _generator(gen_f):
+        return GeneratorDesc(
+            language=language,
+            target=target,
+            description=gen_f.__doc__ if gen_f.__doc__ is not None else '',
+            generator=gen_f)
+    return _generator

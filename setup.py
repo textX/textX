@@ -66,9 +66,9 @@ setup(
             'textx = textx.metamodel:textx',  # textX meta-language is built-in
         ],
         'textx_generators': [
-            'textx_dot = textx.generators:metamodel_gen_dot',
-            'any_dot = textx.generators:model_gen_dot',
-            'textx_plantuml = textx.generators:metamodel_gen_plantuml',
+            'textx_dot = textx.generators:metamodel_generate_dot',
+            'any_dot = textx.generators:model_generate_dot',
+            'textx_plantuml = textx.generators:metamodel_generate_plantuml',
         ]
     },
     classifiers=[
