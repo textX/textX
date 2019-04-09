@@ -48,7 +48,8 @@ def generate(ctx, model_files, output_path, language, target, overwrite,
 
     \b
     # If the language is not registered you can use the .tx grammar file
-    textx generate --grammar Flow.tx --target PlantUML mymodel.flow
+    # for parsing but the language will be `any`.
+    textx generate --grammar Flow.tx --target dot mymodel.flow
 
     \b
     # In all above cases PlantUML generator must be registered:
@@ -65,6 +66,7 @@ def generate(ctx, model_files, output_path, language, target, overwrite,
         if grammar:
             metamodel = metamodel_from_file(grammar, debug=debug,
                                             ignore_case=ignore_case)
+            language = 'any'
         elif language:
             metamodel = metamodel_for_language(language)
         else:
