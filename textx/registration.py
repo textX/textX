@@ -35,7 +35,7 @@ class GeneratorDesc(object):
     Attributes:
         language (str): The name/ID of the language this generator is for.
                         If the generators is generic (applicable to any model)
-                        use "*".
+                        use "any".
         target (str): A short name of the target stack/technology.
         description (str): A short description of the generator.
         generator (callable): A callable of the form:
@@ -94,9 +94,11 @@ def language_description(language_name):
                                      .format(language_name))
 
 
-def generator_description(language_name, target_name):
+def generator_description(language_name, target_name, any_permitted=False):
     """
     Return `GeneratorDesc` instance for the given target and language name.
+    If `any_permitted` is `True` return generator for language `any` if
+    generator for the `language_name` doesn't exist.
     """
     global generators
     language_name = language_name.lower()
@@ -104,24 +106,27 @@ def generator_description(language_name, target_name):
     if generators is None:
         generator_descriptions()
     try:
-        generators_for_language = generators[language_name]
-    except KeyError:
-        raise TextXRegistrationError(
-            'No generators registered for language "{}".'
-            .format(language_name))
-    try:
-        return generators_for_language[target_name]
+        try:
+            generators_for_language = generators[language_name]
+            return generators_for_language[target_name]
+        except KeyError:
+            if not any_permitted:
+                raise
+            generators_for_language = generators['any']
+            return generators_for_language[target_name]
     except KeyError:
         raise TextXRegistrationError(
             'No generators registered for language "{}" and target "{}".'
             .format(language_name, target_name))
 
 
-def generator_for_language_target(language_name, target_name):
+def generator_for_language_target(language_name, target_name,
+                                  any_permitted=False):
     """
     Return generator callable for the given language name and target name.
     """
-    generator_desc = generator_description(language_name, target_name)
+    generator_desc = generator_description(language_name, target_name,
+                                           any_permitted=any_permitted)
     return generator_desc.generator
 
 
