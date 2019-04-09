@@ -1,4 +1,3 @@
-import sys
 import click
 import pkg_resources
 

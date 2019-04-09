@@ -1,4 +1,3 @@
-import sys
 import os
 import click
 from textx import (metamodel_from_file,
