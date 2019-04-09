@@ -14,11 +14,11 @@ this_folder = os.path.abspath(os.path.dirname(__file__))
 def metamodel_file():
     try:
         os.remove(os.path.join(this_folder, 'hello.pu'))
-    except FileNotFoundError:
+    except OSError:
         pass
     try:
         os.remove(os.path.join(this_folder, 'hello.dot'))
-    except FileNotFoundError:
+    except OSError:
         pass
     return os.path.join(this_folder, 'hello.tx')
 
@@ -34,7 +34,7 @@ def test_generate_dot_from_tx(metamodel_file):
     assert result.exit_code == 0
     out_file = os.path.join(this_folder, 'hello.dot')
     assert os.path.exists(out_file)
-    with open(out_file, 'r', encoding='utf-8') as f:
+    with open(out_file, 'r') as f:
         assert 'digraph textX' in f.read()
 
 
@@ -49,7 +49,7 @@ def test_generate_plantuml_from_tx(metamodel_file):
     assert result.exit_code == 0
     out_file = os.path.join(this_folder, 'hello.pu')
     assert os.path.exists(out_file)
-    with open(out_file, 'r', encoding='utf-8') as f:
+    with open(out_file, 'r') as f:
         assert '@startuml' in f.read()
 
 
@@ -66,5 +66,5 @@ def test_generate_dot_from_any_model(metamodel_file):
     assert result.exit_code == 0
     hello_file = os.path.join(this_folder, 'example.dot')
     assert os.path.exists(hello_file)
-    with open(hello_file, 'r', encoding='utf-8') as f:
+    with open(hello_file, 'r') as f:
         assert 'digraph textX' in f.read()
