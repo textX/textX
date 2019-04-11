@@ -11,9 +11,14 @@ this_folder = os.path.abspath(os.path.dirname(__file__))
 
 @pytest.fixture
 def model_file():
-    os.remove(os.path.join(this_folder,
-                           'projects', 'flow_dsl', 'tests',
-                           'models', 'data_flow.pu'))
+
+    try:
+        os.remove(os.path.join(this_folder,
+                               'projects', 'flow_dsl', 'tests',
+                               'models', 'data_flow.pu'))
+    except OSError:
+        pass
+
     return os.path.join(this_folder,
                         'projects', 'flow_dsl', 'tests',
                         'models', 'data_flow.eflow')
