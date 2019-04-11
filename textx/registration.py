@@ -39,7 +39,8 @@ class GeneratorDesc(object):
         target (str): A short name of the target stack/technology.
         description (str): A short description of the generator.
         generator (callable): A callable of the form:
-                              def generator(model, output_folder, overwrite)
+                              def generator(metamodel, model, output_path,
+                                            overwrite, debug, **custom_args)
     """
     def __init__(self, language, target, description='', generator=None):
         self.language = language

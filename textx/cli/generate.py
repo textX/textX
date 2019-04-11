@@ -9,7 +9,9 @@ from textx import (metamodel_from_file,
 
 
 def generate(textx):
-    @textx.command()
+    @textx.command(
+        context_settings=dict(ignore_unknown_options=True)
+    )
     @click.argument('model_files', type=click.Path(), required=True, nargs=-1)
     @click.option('--output-path', '-o', type=click.Path(), default=None,
                   help='The output to generate to. Default = same as input.')
@@ -63,6 +65,9 @@ def generate(textx):
         debug = ctx.obj['debug']
         click.echo('Generating {} target from models:'.format(target))
 
+        custom_args = {}
+        custom_arg_name = None
+
         try:
             per_file_metamodel = False
             if grammar:
@@ -75,6 +80,17 @@ def generate(textx):
                 per_file_metamodel = True
 
             for model_file in model_files:
+
+                # If model_file starts with `--` it must be a custom argument
+                # so the next thing on the command line is its value.
+                if custom_arg_name:
+                    custom_args[custom_arg_name] = model_file.strip('\'"')
+                    custom_arg_name = None
+                    continue
+                if model_file.startswith('--'):
+                    custom_arg_name = model_file[2:]
+                    continue
+
                 click.echo(os.path.abspath(model_file))
 
                 if per_file_metamodel:
@@ -84,7 +100,8 @@ def generate(textx):
                 generator = generator_for_language_target(
                     language, target, any_permitted=per_file_metamodel)
 
-                generator(metamodel, model, output_path, overwrite, debug)
+                generator(metamodel, model, output_path, overwrite, debug,
+                          **custom_args)
 
         except TextXRegistrationError as e:
             click.echo(e.message)

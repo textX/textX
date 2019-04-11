@@ -69,6 +69,31 @@ def test_generate_by_providing_explicit_language_name(model_file):
                                        'models', 'data_flow.pu'))
 
 
+def test_passing_custom_arguments_to_generator(model_file):
+    """
+    Test passing custom arguments from command line to the generator.
+    """
+    runner = CliRunner()
+    result = runner.invoke(textx, ['generate',
+                                   '--language', 'flow-dsl',
+                                   '--target', 'PlantUML',
+                                   '--custom1', '42',
+                                   '--custom2', '"some string"',
+                                   '--overwrite', model_file])
+    assert result.exit_code == 0
+    assert 'Generating PlantUML target from models' in result.output
+    assert '->' in result.output
+    assert 'models/data_flow.pu' in result.output
+    target_file = os.path.join(this_folder,
+                               'projects', 'flow_dsl', 'tests',
+                               'models', 'data_flow.pu')
+    assert os.path.exists(target_file)
+    with open(target_file, 'r') as f:
+        content = f.read()
+    assert 'custom1=42' in content
+    assert 'custom2=some string' in content
+
+
 def test_generate_for_invalid_file_raises_error():
     """
     Test running generator by providing an explicit language name.
