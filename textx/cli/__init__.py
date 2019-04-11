@@ -12,21 +12,16 @@ def textx(ctx, debug):
 
 def register_textx_subcommands():
     """
-    Find and use all textx sub-commands registered through extension points.
-    Extension points for CLI extension are:
-    - `textx_commands` - for registering top-level commands.
-    - `textx_command_groups` - for registering command groups.
+    Find and use all textx sub-commands registered through the extension point.
+
+    Entry point used for commands registration is `textx_commands`.
+    In this entry point you should register a callable that accepts the top
+    level click `textx` command and register additional commands(s) on it.
     """
-    # Register direct sub-commands
     global textx
     for subcommand in pkg_resources.iter_entry_points(group='textx_commands'):
-        textx.command()(subcommand.load())
-
-    # Register sub-command groups
-    for subgroup in pkg_resources.iter_entry_points(
-            group='textx_command_groups'):
-        subgroup.load()(textx)
+        subcommand.load()(textx)
 
 
-# Register sub-commands registered through extension points.
+# Register sub-commands specified through extension points.
 register_textx_subcommands()

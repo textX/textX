@@ -121,25 +121,26 @@ groups to the `textx` command.
 `textx` uses [click](https://github.com/pallets/click/) library for CLI commands
 processing. That makes really easy to create new commands and command groups.
 
-To create a new command you have to create a Python function decorated with
-`click` decorators used for the definition of arguments and options. For more
-information please see [click
-documentation](https://click.palletsprojects.com/en/7.x/).
+To create a new command you need to provide a Python function accepting a
+`click` command group (in this case a top level `textx` command) and use the
+group to register additional commands using `click` decorators.
 
 For example:
 
 ```python
 import click
 
-@click.argument('some_argument', type=click.Path())
-@click.option('--some-option', default=False, is_flag=True,
-              help="Testing option in custom command.")
-def testcommand(some_argument, some_option):
-    """
-    This command will be found as a sub-command of `textx` command once this
-    project is installed.
-    """
-    click.echo("Hello sub-command test!")
+def testcommand(textx):
+  @textx.command()
+  @click.argument('some_argument', type=click.Path())
+  @click.option('--some-option', default=False, is_flag=True,
+                help="Testing option in custom command.")
+  def testcommand(some_argument, some_option):
+      """
+      This command will be found as a sub-command of `textx` command once this
+      project is installed.
+      """
+      click.echo("Hello sub-command test!")
 ```
 
 Register new command in your project's `setup.py` file under the entry point
@@ -179,18 +180,16 @@ $ textx testcommand some_argument
 Hello sub-command test!
 ```
 
-Similarly you can create new command groups. To do that create a function that
-accepts `click` top-level group and registers new group on it with your group's
-commands. You can have a group level options and a command level options and
-arguments.
+Similarly you can create new command groups. You can have a group level options
+and a command level options and arguments.
 
 Here is a full example:
 
 ```python
 import click
 
-def create_testgroup(topgroup):
-    @topgroup.group()
+def create_testgroup(textx):
+    @textx.group()
     @click.option('--group-option', default=False, is_flag=True,
                   help="Some group option.")
     def testgroup(group_option):
@@ -219,7 +218,8 @@ def create_testgroup(topgroup):
 In this example we created a new group called `testgroup`. We use that group in
 the rest of the code to decorate new commands belonging to the group.
 
-We have to register our function in the extension point `textx_command_groups`:
+As usual, we have to register our function in the extension point
+`textx_commands`:
 
 ```python
 setup(
@@ -227,7 +227,7 @@ setup(
     packages=["cli"],
     entry_points={
         ...
-        'textx_command_groups': [
+        'textx_commands': [
             'testgroup = cli:create_testgroup'
         ]
     }
@@ -275,3 +275,6 @@ GroupCommand1: argument: first_argument, option:False
 For a full example please take a look at [this
 test](https://github.com/textX/textX/blob/master/tests/functional/subcommands/test_subcommands.py) and this [example test
 project](https://github.com/textX/textX/tree/master/tests/functional/subcommands/example_project).
+
+For more information please see [click
+documentation](https://click.palletsprojects.com/en/7.x/).

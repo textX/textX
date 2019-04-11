@@ -1,19 +1,21 @@
 import click
 
 
-@click.argument('some_argument', type=click.Path())
-@click.option('--some-option', default=False, is_flag=True,
-              help="Testing option in custom command.")
-def testcommand(some_argument, some_option):
-    """
-    This command will be found as a sub-command of `textx` command once this
-    project is installed.
-    """
-    click.echo("Hello sub-command test!")
+def testcommand(textx):
+    @textx.command()
+    @click.argument('some_argument', type=click.Path())
+    @click.option('--some-option', default=False, is_flag=True,
+                  help="Testing option in custom command.")
+    def testcommand(some_argument, some_option):
+        """
+        This command will be found as a sub-command of `textx` command once
+        this project is installed.
+        """
+        click.echo("Hello sub-command test!")
 
 
-def create_testgroup(topgroup):
-    @topgroup.group()
+def create_testgroup(textx):
+    @textx.group()
     @click.option('--group-option', default=False, is_flag=True,
                   help="Some group option.")
     def testgroup(group_option):
@@ -30,9 +32,6 @@ def create_testgroup(topgroup):
             some_argument, some_option))
 
     @testgroup.command()
-    @click.argument('some_argument', type=click.Path())
-    @click.option('--some-option', default=False, is_flag=True,
-                  help="Testing option in custom command.")
     def groupcommand2(some_argument, some_option):
         """This is another command docs."""
         click.echo("GroupCommand2: argument: {}, option:{}".format(

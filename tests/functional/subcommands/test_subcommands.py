@@ -1,10 +1,9 @@
 import subprocess
 
 
-def test_single_subcommand():
+def test_subcommand():
     """
-    Test that a single top-level command from the example project is
-    registered.
+    Test that a command from the example project is registered.
     """
     output = subprocess.check_output(['textx'], stderr=subprocess.STDOUT)
     assert b'testcommand' in output
