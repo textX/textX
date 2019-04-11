@@ -20,7 +20,8 @@ def test_examples():
                                 '../../examples/*/*.py')
 
     # Filter out __init__.py
-    examples = [f for f in glob.glob(examples_pat) if f != '__init__.py']
+    examples = [f for f in
+                sorted(glob.glob(examples_pat)) if f != '__init__.py']
     for e in examples:
         print("Running example:", e)
         example_dir = os.path.dirname(e)
