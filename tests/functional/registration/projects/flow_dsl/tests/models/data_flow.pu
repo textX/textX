@@ -1,5 +1,0 @@
-@startuml
-component A1
-component A2
-A1 "City" #--# A2
-@enduml
