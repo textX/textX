@@ -65,9 +65,6 @@ def generate(textx):
         debug = ctx.obj['debug']
         click.echo('Generating {} target from models:'.format(target))
 
-        custom_args = {}
-        custom_arg_name = None
-
         try:
             per_file_metamodel = False
             if grammar:
@@ -79,17 +76,19 @@ def generate(textx):
             else:
                 per_file_metamodel = True
 
-            for model_file in model_files:
+            # Find all custom arguments
+            model_files = list(model_files)
+            model_files_without_args = []
+            custom_args = {}
+            while model_files:
+                m = model_files.pop(0)
+                if m.startswith('--'):
+                    custom_args[m[2:]] = model_files.pop(0).strip('"\'')
+                else:
+                    model_files_without_args.append(m)
 
-                # If model_file starts with `--` it must be a custom argument
-                # so the next thing on the command line is its value.
-                if custom_arg_name:
-                    custom_args[custom_arg_name] = model_file.strip('\'"')
-                    custom_arg_name = None
-                    continue
-                if model_file.startswith('--'):
-                    custom_arg_name = model_file[2:]
-                    continue
+            # Call generator for each model file
+            for model_file in model_files_without_args:
 
                 click.echo(os.path.abspath(model_file))
 

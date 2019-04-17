@@ -77,9 +77,10 @@ def test_passing_custom_arguments_to_generator(model_file):
     result = runner.invoke(textx, ['generate',
                                    '--language', 'flow-dsl',
                                    '--target', 'PlantUML',
+                                   model_file,
                                    '--custom1', '42',
                                    '--custom2', '"some string"',
-                                   '--overwrite', model_file])
+                                   '--overwrite'])
     assert result.exit_code == 0
     assert 'Generating PlantUML target from models' in result.output
     assert '->' in result.output
