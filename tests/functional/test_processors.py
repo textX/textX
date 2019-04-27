@@ -247,3 +247,27 @@ def test_nested_match_rules():
     model = mm.model_from_str('3.4 ++ + ++ 6')
     assert model.objects[0] == '#3.4'
     assert model.objects[1] == '#5'
+
+
+def test_multipart_nested_match_rules():
+    """
+    Test calling processors for multipart nested match rules.
+    """
+    grammar = r"""
+    Model: objects*=MyNumber;
+    MyNumber: '#' MyFloat | '--' INT '--';
+    MyFloat:  /[+-]?(((\d+\.(\d*)?|\.\d+)([eE][+-]?\d+)?)|((\d+)([eE][+-]?\d+)))(?<=[\w\.])(?![\w\.])/;
+    """  # noqa
+
+    called = [False]
+
+    def myfloat_processor(x):
+        called[0] = True
+        return float(x)
+
+    mm = metamodel_from_str(grammar)
+    mm.register_obj_processors({'MyFloat': myfloat_processor})
+    model = mm.model_from_str(' # 3.4 -- 6 -- ')
+    assert called[0]
+    assert model.objects[0] == '#3.4'
+    assert model.objects[1] == '--6--'
