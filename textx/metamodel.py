@@ -154,6 +154,16 @@ class TextXMetaModel(DebugPrinter):
         # Registered object processors
         self.obj_processors = {}
 
+        # Match rule and base type conversion callables
+        self.type_convertors = {
+            'BOOL': lambda x: x == '1' or x.lower() == 'true',
+            'INT': lambda x: int(x),
+            'FLOAT': lambda x: float(x),
+            'STRICTFLOAT': lambda x: float(x),
+            'STRING': lambda x: x[1:-1].replace(r'\"',
+                                                r'"').replace(r"\'", "'"),
+        }
+
         # Registered scope provider
         self.scope_providers = {}
 
@@ -423,6 +433,12 @@ class TextXMetaModel(DebugPrinter):
         clazz._tx_attrs[name] = attr
         return attr
 
+    def convert(self, value, _type):
+        """
+        Convert instances of textx types and match rules to python types.
+        """
+        return self.type_convertors.get(_type, lambda x: x)(value)
+
     def validate(self):
         """
         Validates metamodel. Called after construction to check for some
@@ -578,6 +594,7 @@ class TextXMetaModel(DebugPrinter):
                 value=callable
         """
         self.obj_processors = obj_processors
+        self.type_convertors.update(obj_processors)
 
 
 def metamodel_from_str(lang_desc, metamodel=None, **kwargs):
