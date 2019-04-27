@@ -108,6 +108,96 @@ def test_unreferenced_abstract_rule():
     assert mm['Third']._tx_type == RULE_COMMON
 
 
+def test_abstract_rule_with_multiple_match_rule_refs():
+    """
+    Test that a single alternative of abstract rule can reference multiple
+    match rules
+    """
+    grammar = """
+    Rule: STRING|Rule1|ID|Prefix INT Sufix;
+    Rule1: a='a'; // common rule
+    Prefix: '#';
+    Sufix: '--';
+    """
+    meta = metamodel_from_str(grammar)
+    assert meta['Rule']._tx_type is RULE_ABSTRACT
+
+    model = meta.model_from_str('# 23 --')
+    assert model == '#23--'
+
+    model = meta.model_from_str('a')
+    assert type(model).__name__ == 'Rule1'
+    assert model.a == 'a'
+
+
+def test_abstract_rule_with_multiple_rule_refs():
+    """
+    Test that a single alternative of abstract rule can reference multiple
+    match rules with a single common rule.
+    """
+    grammar = """
+    Rule: STRING|Rule1|ID|Prefix Rule1 Sufix;
+    Rule1: a=INT; // common rule
+    Prefix: '#';
+    Sufix: '--';
+    """
+    meta = metamodel_from_str(grammar)
+    model = meta.model_from_str('# 23 --')
+    assert meta['Rule']._tx_type is RULE_ABSTRACT
+    assert model.a == 23
+
+
+def test_abstract_rule_with_multiple_common_rule_refs():
+    """
+    Test that a single alternative of abstract rule can not reference multiple
+    common rules.
+    """
+    grammar = """
+    Rule: STRING|Rule1|ID|Prefix Rule1 Sufix Rule2;  // Reference both Rule1 and Rule2
+    Rule1: a=INT; // common rule
+    Rule2: a=STRING; // common rule
+    Prefix: '#';
+    Sufix: '--';
+    """  # noqa
+    meta = metamodel_from_str(grammar)
+    model = meta.model_from_str('# 23 -- "some string"')
+    assert meta['Rule']._tx_type is RULE_ABSTRACT
+    # Only Rule1 is returned
+    assert model.__class__.__name__ == 'Rule1'
+    assert model.a == 23
+
+
+def test_abstract_rule_with_sequence_top_rule():
+    """
+    """
+    grammar = """
+    Rule: (STRING|Rule1|ID|'#' Rule1) Sufix;
+    Rule1: a=INT; // common rule
+    Prefix: '#';
+    Sufix: '--';
+    """
+    meta = metamodel_from_str(grammar)
+    model = meta.model_from_str('# 23 --')
+    assert meta['Rule']._tx_type is RULE_ABSTRACT
+    assert model.a == 23
+
+
+def test_abstract_rule_with_multiple_references_and_complex_nesting():
+    """
+    """
+    grammar = """
+    Rule: STRING|ID|'#' Rule1 Sufix;
+    Rule1: a=INT; // common rule
+    Prefix: '#';
+    Sufix: ID | SomeOtherSufix;
+    SomeOtherSufix: '--' '#';
+    """
+    meta = metamodel_from_str(grammar)
+    model = meta.model_from_str('# 23 --  #')
+    assert meta['Rule']._tx_type is RULE_ABSTRACT
+    assert model.a == 23
+
+
 def test_match_rule():
     """
     Match rule always returns string.

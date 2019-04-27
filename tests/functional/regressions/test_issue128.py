@@ -5,9 +5,8 @@ See https://github.com/textX/textX/pull/128
 
 """
 from __future__ import unicode_literals
-import pytest
 import sys
-from textx import metamodel_from_str, TextXSemanticError
+from textx import metamodel_from_str
 from textx import textx_isinstance
 
 if sys.version < '3':
@@ -117,8 +116,8 @@ def test_abstract_alternative_multiple_rules_raises_exception():
     """
 
     # In this grammar A is an abstract rule and referencing C D from second
-    # alternative is not allowed as it would be hard to come with a coherent
-    # semantics of such a construct.
+    # alternative would yield just the first common rule object (C in this
+    # case).
     grammar = r'''
     Model: a+=A;
     A: B | '(' C D ')';
@@ -127,6 +126,10 @@ def test_abstract_alternative_multiple_rules_raises_exception():
     D: 'D' x=INT;
     '''
 
-    with pytest.raises(TextXSemanticError,
-                       match=r'.*multiple rules.*'):
-        metamodel_from_str(grammar)
+    meta = metamodel_from_str(grammar)
+    model = meta.model_from_str('B somename 23 ( C othername D 67 )')
+    assert len(model.a) == 2
+    assert model.a[0].name == 'somename'
+    assert model.a[0].x == 23
+    assert type(model.a[1]).__name__ == 'C'
+    assert model.a[1].name == 'othername'
