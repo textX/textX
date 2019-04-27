@@ -235,3 +235,15 @@ def test_nested_match_rules():
     assert model.objects[1] == 5
     assert model.objects[2] == 6
     assert type(model.objects[2]) is int
+
+    # Now we will add another processor for `MyObject` to test if we can change
+    # the result returned from match processors lower in hierarchy.
+    def myobject_processor(x):
+        assert type(x) in [int, float]
+        return '#{}'.format(text(x))
+    mm.register_obj_processors({'HowMany': howmany_processor,
+                                'MyFloat': lambda x: float(x),
+                                'MyObject': myobject_processor})
+    model = mm.model_from_str('3.4 ++ + ++ 6')
+    assert model.objects[0] == '#3.4'
+    assert model.objects[1] == '#5'
