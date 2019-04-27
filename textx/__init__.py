@@ -7,4 +7,4 @@ from textx.exceptions import TextXError, TextXSyntaxError, \
 from textx.langapi import get_language, iter_languages
 from textx.scoping.tools import textx_isinstance
 
-__version__ = "1.8.0"
+__version__ = "2.0.0-dev"
