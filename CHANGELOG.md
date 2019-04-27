@@ -47,6 +47,7 @@ please take a look at related PRs and issues and see if the change affects you.
      
 ### Fixed
 
+  - Calling of match rule object processors ([#183], [#182], [#96])
   - Circular rule references in grammars ([#173], [#159], [#155])
   - Assertion error while calling object processors with multi meta models
     (extended grammars) and custom types ([#141], [#140])
@@ -374,6 +375,8 @@ please take a look at related PRs and issues and see if the change affects you.
   - Export to dot.
 
 
+[#183]: https://github.com/textX/textX/pull/183
+[#182]: https://github.com/textX/textX/issues/182
 [#174]: https://github.com/textX/textX/pull/174
 [#173]: https://github.com/textX/textX/pull/173
 [#168]: https://github.com/textX/textX/pull/168
@@ -406,6 +409,7 @@ please take a look at related PRs and issues and see if the change affects you.
 [#99]: https://github.com/textX/textX/pull/99
 [#98]: https://github.com/textX/textX/pull/98
 [#97]: https://github.com/textX/textX/issues/97
+[#96]: https://github.com/textX/textX/issues/96
 [#93]: https://github.com/textX/textX/pull/93
 [#92]: https://github.com/textX/textX/pull/92
 
