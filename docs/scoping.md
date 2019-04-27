@@ -253,8 +253,8 @@ executed. One **exception** is when calling **object processors for match rules*
 (e.g. regular expressions or rules like 'ID'): these processors are *called bottom up*
 during model construction. Those object processors should generally be a very 
 simple, usually just a type conversions so they don't need a fully constructed model. 
-**Other object processors** (i.e. those operating on common rules) are called 
-as, depicted above, on a constructed model, *in bottom up* fashion.
+**Other object processors** (i.e. those operating on common rules) are called, 
+as depicted above, on a constructed model, *in bottom up* fashion.
 
 #### Use case: reference data in non-textx models
 
