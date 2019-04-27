@@ -117,7 +117,7 @@ def test_object_processor_replace_object():
     assert len(first.seconds) == 3
     assert first.seconds[0] == 17
 
-    assert first.c == '[dfdf]'
+    assert first.c == '["dfdf"]'
 
 
 def test_obj_processor_simple_match_rule():
@@ -180,11 +180,70 @@ def test_base_type_obj_processor_override():
     ;
     """
 
+    def to_float_with_str_check(x):
+        assert type(x) is text
+        return float(x)
+
     processors = {
-        'INT': lambda x: float(x)
+        'INT': to_float_with_str_check
     }
     mm = metamodel_from_str(grammar)
     mm.register_obj_processors(processors)
     m = mm.model_from_str('begin 34 end')
 
     assert type(m.i) is float
+
+
+def test_custom_base_type_with_builtin_alternatives():
+    grammar = r"""
+    Model: i*=MyNumber;
+    MyNumber: MyFloat | INT;
+    MyFloat:  /[+-]?(((\d+\.(\d*)?|\.\d+)([eE][+-]?\d+)?)|((\d+)([eE][+-]?\d+)))(?<=[\w\.])(?![\w\.])/;
+    """  # noqa
+
+    mm = metamodel_from_str(grammar)
+    model = mm.model_from_str('3.4 6')
+    assert type(model.i[0]) is text
+    assert type(model.i[1]) is int
+
+    mm.register_obj_processors({'MyFloat': lambda x: float(x)})
+    model = mm.model_from_str('3.4 6')
+    assert type(model.i[0]) is float
+    assert type(model.i[1]) is int
+
+
+def test_nested_match_rules():
+    """
+    Test calling processors for nested match rules.
+    """
+    grammar = r"""
+    Model: objects*=MyObject;
+    MyObject: HowMany | MyNumber;
+    HowMany: '+'+;  // We will register processor that returns a count of '+'
+    MyNumber: MyFloat | INT;
+    MyFloat:  /[+-]?(((\d+\.(\d*)?|\.\d+)([eE][+-]?\d+)?)|((\d+)([eE][+-]?\d+)))(?<=[\w\.])(?![\w\.])/;
+    """  # noqa
+
+    def howmany_processor(x):
+        return len(x)
+
+    mm = metamodel_from_str(grammar)
+    mm.register_obj_processors({'HowMany': howmany_processor,
+                                'MyFloat': lambda x: float(x)})
+    model = mm.model_from_str('3.4 ++ + ++ 6')
+    assert model.objects[0] == 3.4
+    assert model.objects[1] == 5
+    assert model.objects[2] == 6
+    assert type(model.objects[2]) is int
+
+    # Now we will add another processor for `MyObject` to test if we can change
+    # the result returned from match processors lower in hierarchy.
+    def myobject_processor(x):
+        assert type(x) in [int, float]
+        return '#{}'.format(text(x))
+    mm.register_obj_processors({'HowMany': howmany_processor,
+                                'MyFloat': lambda x: float(x),
+                                'MyObject': myobject_processor})
+    model = mm.model_from_str('3.4 ++ + ++ 6')
+    assert model.objects[0] == '#3.4'
+    assert model.objects[1] == '#5'
