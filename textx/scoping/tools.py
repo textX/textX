@@ -55,14 +55,15 @@ def textx_isinstance(obj, obj_cls):
     return False
 
 
-def get_list_of_concatenated_objects(obj, dot_separated_name,
-                                     lst=None):
+def get_list_of_concatenated_objects(def_obj, path_to_extension):
     """
     get a list of the objects consisting of
     - obj
     - obj+"."+dot_separated_name
     - (obj+"."+dot_separated_name)+"."+dot_separated_name (called recursively)
     Note: lists are expanded
+    Note: this function can be used to find a class-like object and
+    all its base classes (if your DSL model class-like objects).
 
     Args:
         obj: the starting point
@@ -70,26 +71,25 @@ def get_list_of_concatenated_objects(obj, dot_separated_name,
         lst: the initial list (e.g. [])
 
     Returns:
-        the filled list (if one single object is requested, a list with one
+        the list of objects (if one single object is requested, a list with one
         entry is returned).
     """
     from textx.scoping import Postponed
-    if lst is None:
-        lst = []
-    if not obj:
-        return lst
-    if obj in lst:
-        return lst
-    lst.append(obj)
-    if type(obj) is Postponed:
-        return lst
-    ret = get_referenced_object(None, obj, dot_separated_name)
-    if type(ret) is list:
-        for r in ret:
-            lst = get_list_of_concatenated_objects(r, dot_separated_name, lst)
-    else:
-        lst = get_list_of_concatenated_objects(ret, dot_separated_name, lst)
-    return lst
+    def_objs = []
+    assert def_obj is not None
+
+    def rec_walk(obj_or_list):
+        if (obj_or_list is not None):
+            if not isinstance(obj_or_list, list):
+                obj_or_list = [obj_or_list]
+            for o in obj_or_list:
+                def_objs.append(o)
+            for o in obj_or_list:
+                if type(o) is not Postponed:
+                    rec_walk(get_referenced_object(o, path_to_extension))
+
+    rec_walk(def_obj)
+    return def_objs
 
 
 def get_location(model_obj):
@@ -130,94 +130,78 @@ def get_recursive_parent_with_typename(obj, desired_parent_typename):
         return obj
 
 
-def get_referenced_object(prev_obj, obj, dot_separated_name,
-                          desired_type=None):
+def get_named_obj_in_list(obj_list, name):
+    """
+    get a named object from a list (of named objects)
+
+    Args:
+        obj_list: the list to be searched
+        name: the name of the requeted object
+
+    Returns:
+        the object if found (unique name), or None.
+    """
+    lst = list(filter(lambda x: x.name == name, obj_list))
+    if len(lst) == 1:
+        return lst[0]
+    else:
+        return None
+
+
+def get_referenced_object(obj, dot_separated_name,
+                          follow_named_element_in_lists=False):
     """
     get objects based on a path
 
     Args:
-        prev_obj: the object containing obj (req. if obj is a list)
         obj: the current object
         dot_separated_name: the attribute name "a.b.c.d" starting from obj
            Note: the attribute "parent(TYPE)" is a shortcut to jump to the
            parent of type "TYPE" (exact match of type name).
-        desired_type: (optional)
+        follow_named_element_in_lists: follow named elements in list if True
+        override_unresolved_lists: try to follow unresolved lists, if True
 
     Returns:
-        the object if found, None if not found or Postponed() if some postponed
-        refs are found on the path
+        the object if found, or Postponed() if some postponed
+        refs are found on the path / or obj is not found
     """
     from textx.scoping import Postponed
-    assert prev_obj or not type(obj) is list
     names = dot_separated_name.split(".")
     match = re.match(r'parent\((\w+)\)', names[0])
-    if match:
+
+    if obj is None:
+        return None
+    elif type(obj) is Postponed:
+        return obj
+    elif type(obj) is list:
+        if follow_named_element_in_lists:
+            next_obj = get_named_obj_in_list(obj, names[0])
+        else:
+            raise Exception(
+                "unexpected: got list in path for get_referenced_object")
+    elif match:
         next_obj = obj
         desired_parent_typename = match.group(1)
-        next_obj = get_recursive_parent_with_typename(next_obj,
-                                                      desired_parent_typename)
-        if next_obj:
-            return get_referenced_object(None, next_obj, ".".join(names[1:]),
-                                         desired_type)
+        next_obj = get_recursive_parent_with_typename(
+            next_obj,
+            desired_parent_typename,
+            follow_named_element_in_lists)
+        if type(next_obj) is Postponed:
+            return next_obj
+        elif next_obj is not None:
+            return get_referenced_object(next_obj, ".".join(names[1:]))
         else:
             return None
-    elif type(obj) is list:
-        next_obj = None
-        for res in obj:
-            if hasattr(res, "name") and res.name == names[0]:
-                if desired_type is None or textx_isinstance(res, desired_type):
-                    next_obj = res
-                else:
-                    raise TypeError(
-                        "{} has type {} instead of {}.".format(
-                            names[0], type(res).__name__,
-                            desired_type.__name__))
-        if not next_obj:
-            # if prev_obj needs to be resolved: return Postponed.
-            if needs_to_be_resolved(prev_obj, names[0]):
-                return Postponed()
-            else:
-                return None
-    elif type(obj) is Postponed:
-        return Postponed()
     else:
         next_obj = getattr(obj, names[0])
-    if not next_obj:
-        # if obj in in crossref return Postponed, else None
         if needs_to_be_resolved(obj, names[0]):
             return Postponed()
-        else:
+        elif next_obj is None:
             return None
     if len(names) > 1:
-        return get_referenced_object(obj, next_obj, ".".join(
-            names[1:]), desired_type)
-    if type(next_obj) is list and needs_to_be_resolved(obj, names[0]):
-        return Postponed()
+        return get_referenced_object(next_obj, ".".join(
+            names[1:]), follow_named_element_in_lists)
     return next_obj
-
-
-def get_referenced_object_as_list(
-        prev_obj, obj, dot_separated_name, desired_type=None):
-    """
-    Same as get_referenced_object, but always returns a list.
-
-    Args:
-        prev_obj: see get_referenced_object
-        obj: see get_referenced_object
-        dot_separated_name: see get_referenced_object
-        desired_type: see get_referenced_object
-
-    Returns:
-        same as get_referenced_object, but always returns a list
-    """
-    res = get_referenced_object(prev_obj, obj, dot_separated_name,
-                                desired_type)
-    if res is None:
-        return []
-    elif type(res) is list:
-        return res
-    else:
-        return [res]
 
 
 def get_unique_named_object_in_all_models(root, name):

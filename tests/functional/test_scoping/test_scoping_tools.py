@@ -3,7 +3,7 @@ from os.path import dirname, abspath, join
 
 import textx.scoping.providers as scoping_providers
 from textx import metamodel_from_file, metamodel_from_str
-from textx.scoping.tools import get_referenced_object, \
+from textx.scoping.tools import get_referenced_object,\
     get_list_of_concatenated_objects
 from textx.scoping.tools import get_unique_named_object
 from textx import textx_isinstance
@@ -63,13 +63,15 @@ def test_get_referenced_object():
     # TEST MODEL
     #################################
 
-    action2a = get_referenced_object(
-        None, my_model, "packages.usage.instances.action2")
+    action2a = get_referenced_object(my_model,
+                                     "packages.usage.instances.action2",
+                                     True)
     action2b = get_unique_named_object(my_model, "action2")
     assert action2a is action2b
 
-    middle_a = get_referenced_object(
-        None, my_model, "packages.base.components.Middle")
+    middle_a = get_referenced_object(my_model,
+                                     "packages.base.components.Middle",
+                                     True)
     middle_b = get_unique_named_object(my_model, "Middle")
     assert middle_a is middle_b
 

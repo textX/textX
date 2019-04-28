@@ -46,33 +46,43 @@ def test_referencing_attributes():
         val b1: B
         val a: A
     }
-
     instance d: D
     instance a: A
-
     reference d.c.b.a.x
     reference d.b1.a.x
     reference a.x
     '''
 
     def ref_scope(refItem, attr, attr_ref):
-        from textx.scoping.tools import get_referenced_object
+        from textx.scoping.tools import get_named_obj_in_list
         from textx.scoping import Postponed
+        from textx import textx_isinstance
         reference = refItem.parent
         if reference is None:
             return Postponed()
         index = reference.refs.index(refItem)
         assert (index >= 0)
         if index == 0:
-            return get_referenced_object(
-                None, reference,
-                "instance.type.vals.{}".format(attr_ref.obj_name),
-                attr_ref.cls)
+            if reference.instance is None:
+                return Postponed()
+            if reference.instance.type is None:
+                return Postponed()
+            x = get_named_obj_in_list(
+                reference.instance.type.vals,
+                attr_ref.obj_name)
         else:
-            return get_referenced_object(
-                None, reference.refs[index - 1],
-                "valref.type.vals.{}".format(attr_ref.obj_name),
-                attr_ref.cls)
+            if reference.refs[index - 1].valref is None:
+                return Postponed()
+            if reference.refs[index - 1].valref.type is None:
+                return Postponed()
+            x = get_named_obj_in_list(
+                reference.refs[index - 1].valref.type.vals,
+                attr_ref.obj_name)
+        if index == len(reference.refs)-1:
+            if not textx_isinstance(x, attr.cls):
+                print(x)
+                return None
+        return x
 
     mm = metamodel_from_str(grammar)
     mm.register_scope_providers({
@@ -111,7 +121,7 @@ def test_referencing_attributes():
 
     # error: B.a is not of type A
     with raises(textx.exceptions.TextXSemanticError,
-                match=r'.*Unknown object.*x.*'):
+                match=r'.*Unresolvable cross references.*x.*'):
         mm.model_from_str('''
         struct A { val x }
         struct B { val a }

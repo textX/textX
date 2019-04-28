@@ -547,22 +547,33 @@ class RelativeName(object):
         self.path_to_container_object = path_to_container_object
         self.postponed_counter = 0
 
-    def __call__(self, obj, attr, obj_ref):
+    def get_reference_propositions(self, obj, attr, name_part):
+        """
+        (see ReferenceNameProposer)
+        """
         from textx.scoping.tools import get_referenced_object
-        from textx import get_model
-        try:
-            res = get_referenced_object(
-                None, obj,
-                self.path_to_container_object + "." + obj_ref.obj_name,
-                obj_ref.cls)
-            if type(res) is Postponed:
-                self.postponed_counter += 1
-            return res
-        except TypeError as e:
-            from textx.scoping.tools import get_parser
-            line, col = get_parser(obj).pos_to_linecol(obj_ref.position)
-            raise TextXSemanticError('{}'.format(str(e)), line=line, col=col,
-                                     filename=get_model(obj)._tx_filename)
+        from textx import textx_isinstance
+        obj_list = get_referenced_object(obj, self.path_to_container_object)
+        if type(obj_list) is Postponed:
+            self.postponed_counter += 1
+            return obj_list
+        assert obj_list is not None
+        assert isinstance(obj_list, list)
+        for obj in obj_list:
+            assert hasattr(obj, "name")
+        obj_list = filter(lambda x: textx_isinstance(x, attr.cls) and
+                                    x.name.find(name_part) >= 0, obj_list)
+
+        return list(obj_list)
+
+    def __call__(self, obj, attr, obj_ref):
+        lst = self.get_reference_propositions(obj, attr, obj_ref.obj_name)
+        if type(lst) is Postponed:
+            return lst
+        if len(lst) > 0:
+            return lst[0]
+        else:
+            return None
 
 
 class ExtRelativeName(object):
@@ -581,32 +592,43 @@ class ExtRelativeName(object):
         self.path_to_extension = path_to_extension
         self.postponed_counter = 0
 
+    def get_reference_propositions(self, obj, attr, name_part):
+        """
+        (see ReferenceNameProposer)
+        """
+        from textx.scoping.tools import get_referenced_object
+        from textx import textx_isinstance
+        # find all containing objects
+        # (e.g. find all classes: the most derived
+        # class, its base, the base of its base, etc.)
+        from textx.scoping.tools import get_list_of_concatenated_objects
+        def_obj = get_referenced_object(obj, self.path_to_definition_object)
+        def_objs = get_list_of_concatenated_objects(
+            def_obj, self.path_to_extension)
+        # for all containing classes, collect all
+        # objects to be looked up (e.g. methods)
+        obj_list = []
+        for def_obj in def_objs:
+            if type(def_obj) is Postponed:
+                self.postponed_counter += 1
+                return def_obj
+
+            tmp_list = get_referenced_object(def_obj, self.path_to_target)
+            assert tmp_list is not None
+            assert isinstance(tmp_list, list)
+            for obj in tmp_list:
+                assert hasattr(obj, "name")
+            tmp_list = list(filter(lambda x: textx_isinstance(x, attr.cls) and
+                                             x.name.find(name_part) >= 0, tmp_list))
+            obj_list = obj_list + tmp_list
+
+        return list(obj_list)
+
     def __call__(self, obj, attr, obj_ref):
-        from textx.scoping.tools import get_referenced_object, \
-            get_list_of_concatenated_objects
-        from textx import get_model
-        try:
-            # print("DEBUG: ExtRelativeName.__call__(...{})".
-            #      format(obj_ref.obj_name))
-            one_def_obj = get_referenced_object(
-                None, obj, self.path_to_definition_object)
-            def_obj_list = get_list_of_concatenated_objects(
-                one_def_obj, self.path_to_extension, [])
-            # print("DEBUG: {}".format(def_obj_list))
-            for def_obj in def_obj_list:
-                if type(def_obj) is Postponed:
-                    self.postponed_counter += 1
-                    return def_obj
-                res = get_referenced_object(
-                    None, def_obj,
-                    self.path_to_target + "." + obj_ref.obj_name,
-                    obj_ref.cls)
-                if res:
-                    return res  # may be Postponed
+        lst = self.get_reference_propositions(obj, attr, obj_ref.obj_name)
+        if type(lst) is Postponed:
+            return lst
+        if len(lst) > 0:
+            return lst[0]
+        else:
             return None
-        except TypeError as e:
-            from textx.scoping.tools import get_parser
-            line, col = get_parser(obj).pos_to_linecol(obj_ref.position)
-            raise TextXSemanticError(
-                'ExtRelativeName: {}'.format(str(e)), line=line, col=col,
-                filename=get_model(obj)._tx_filename)
