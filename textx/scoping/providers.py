@@ -549,7 +549,14 @@ class RelativeName(object):
 
     def get_reference_propositions(self, obj, attr, name_part):
         """
-        (see ReferenceNameProposer)
+        retrieve a list of reference propositions.
+        Args:
+            obj: parent
+            attr: attribute
+            name_part: The name is used to build the list
+                (e.g. using a substring-like logic).
+        Returns:
+            the list of objects representing the proposed references
         """
         from textx.scoping.tools import get_referenced_object
         from textx import textx_isinstance
@@ -561,8 +568,9 @@ class RelativeName(object):
         assert isinstance(obj_list, list)
         for obj in obj_list:
             assert hasattr(obj, "name")
-        obj_list = filter(lambda x: textx_isinstance(x, attr.cls) and
-                                    x.name.find(name_part) >= 0, obj_list)
+        obj_list = filter(
+            lambda x: textx_isinstance(x, attr.cls) and
+            x.name.find(name_part) >= 0, obj_list)
 
         return list(obj_list)
 
@@ -594,11 +602,18 @@ class ExtRelativeName(object):
 
     def get_reference_propositions(self, obj, attr, name_part):
         """
-        (see ReferenceNameProposer)
+        retrieve a list of reference propositions.
+        Args:
+            obj: parent
+            attr: attribute
+            name_part: The name is used to build the list
+                (e.g. using a substring-like logic).
+        Returns:
+            the list of objects representing the proposed references
         """
         from textx.scoping.tools import get_referenced_object
         from textx import textx_isinstance
-        # find all containing objects
+        # find all all "connected" objects
         # (e.g. find all classes: the most derived
         # class, its base, the base of its base, etc.)
         from textx.scoping.tools import get_list_of_concatenated_objects
@@ -618,8 +633,9 @@ class ExtRelativeName(object):
             assert isinstance(tmp_list, list)
             for obj in tmp_list:
                 assert hasattr(obj, "name")
-            tmp_list = list(filter(lambda x: textx_isinstance(x, attr.cls) and
-                                             x.name.find(name_part) >= 0, tmp_list))
+            tmp_list = list(filter(
+                lambda x: textx_isinstance(x, attr.cls) and
+                x.name.find(name_part) >= 0, tmp_list))
             obj_list = obj_list + tmp_list
 
         return list(obj_list)

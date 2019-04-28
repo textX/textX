@@ -162,7 +162,12 @@ We provide some standard scope providers:
  * `textx.scoping.providers.ExtRelativeName`: The same as `RelativeName` **allowing
    to model inheritance or chained lookups**.
    Example: see [tests/test_scoping/test_local_scope.py](https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_local_scope.py).
-
+    - `RelativeName`: The scope is defined by a model-path from the current object to (typically) 
+        a list containing named objects.
+    - `ExtRelativeName`: The scope is defined by a model-path from the current object and *connected objects*
+        to (typically) a list containing named objects (similar to `RelativeName`). 
+        The *connected objects* are defined again by a model-path from one object 
+        to another named object or a list of named objects.
 
 ### Note on Uniqueness of Model Elements
 
