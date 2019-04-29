@@ -129,7 +129,7 @@ You should get output like this:
 
 To install development (`master` branch) version:
 
-    $ pip install https://github.com/textX/textX/archive/master.zip
+    $ pip install --upgrade https://github.com/textX/textX/archive/master.zip
 
 
 ## Python versions
