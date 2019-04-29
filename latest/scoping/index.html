@@ -441,6 +441,71 @@ references to be resolved until all references are resolved or no progress
 regarding the resolution is observed. In the latter case an error is raised. The
 control flow responsibility of the resolution process is allocated to the
 <code>model.py</code> module.</p>
+<h3 id="using-the-scope-provider-to-modify-a-model">Using the scope provider to modify a model<a class="headerlink" href="#using-the-scope-provider-to-modify-a-model" title="Permanent link">&para;</a></h3>
+<p>Model creation by the metamodel (loading the model) is divided into
+a set of strictly ordered activities. Understanding that order
+makes it clear where in the metamodel and its configuration (e.g.,
+scope providers or object processors) it is allowed to modify the
+model itself and what has to be taken into account.</p>
+<p>The following image sketches these ordered activities:
+<img alt="model_from_file_or_str.pu" src="../images/model_from_file_or_str.png" /></p>
+<p>The image illustrates that, while <strong>resolving references</strong>, all directly modeled
+objects are already loaded and instantiated. Scoping takes place after the model is completely parsed. Thus, 
+while resolving references you can rely on the assumption that all
+model elements already exist.</p>
+<p>It also shows, that <strong>objects processors</strong> kick in when all 
+references are resolved. That means that no references are 
+resolved any more after or while the first object processor has been
+executed. One <strong>exception</strong> is when calling <strong>object processors for match rules</strong> 
+(e.g. regular expressions or rules like 'ID'): these processors are <em>called bottom up</em>
+during model construction. Those object processors should generally be a very 
+simple, usually just a type conversions so they don't need a fully constructed model. 
+<strong>Other object processors</strong> (i.e. those operating on common rules) are called, 
+as depicted above, on a constructed model, <em>in bottom up</em> fashion.</p>
+<h4 id="use-case-reference-data-in-non-textx-models">Use case: reference data in non-textx models<a class="headerlink" href="#use-case-reference-data-in-non-textx-models" title="Permanent link">&para;</a></h4>
+<p>If you want to <strong>reference an element not directly modelled</strong> (instantiated), you need to
+instantiate or load this element or information somewhere. This information can be,
+e.g., information from a non-textx model, such as a JSON file 
+(see: <a href="https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_reference_to_nontextx_attribute.py">test_reference_to_nontextx_attribute.py</a>).
+Since you need to resolve a reference (e.g. to an <code>[OBJECT]</code> in the
+given example), you cannot rely on object processors, since they are executed
+<em>after</em> reference resolution. Thus, scope providers need to take care of
+that (e.g., take care of loading the JSON data).</p>
+<h4 id="use-case-reference-data-defined-by-references">Use case: reference data "defined by references"<a class="headerlink" href="#use-case-reference-data-defined-by-references" title="Permanent link">&para;</a></h4>
+<p>You may have the use case, that you want to
+define/instantiate objects by referencing them (on the fly).
+This may happen, if your meta model allows to define a model element by referencing
+it (like <a href="http://plantuml.com/">PlantUML</a> is doing for, e.g., classes).
+In that case <strong>your scope provider creates (invents) model elements</strong>. </p>
+<p>If you then require to reference these model elements "defined by
+a reference" by another "non-inventing reference", 
+you must take into account that these elements
+may have not yet been created. This can be achieved in the same 
+way as handling unresolved references in a scope provider (with the 
+<code>Postponed</code> mechanism). This use case was motivated by 
+<a href="https://github.com/textX/textX/issues/167">#167</a>.</p>
+<p>An example of such a meta model is given in 
+<a href="https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_model_modification_through_scoping.py">tests/test_model_modification_through_scoping.py</a>:
+Here you can </p>
+<ul>
+<li><strong>define</strong> Persons explicitly (existence) and</li>
+<li><strong>reference</strong> two persons which <strong>know</strong> each other (relationship). 
+ Moreover, <strong>referencing a nonexistent persons</strong> (all person explicitly defined
+ by the grammar have been created at the time of reference resolving)
+ will <strong>create an additional (new) person</strong> (and, thus, modify the model).</li>
+</ul>
+<p>In an extension of the grammar we then also allow </p>
+<ul>
+<li>to <strong>greet</strong> persons. This also happens by referencing a person (like for
+ the "knows"-relationship). 
+ But this time, <strong>nonexistent persons shall not be created</strong>, but should yield 
+ a referencing error. </li>
+</ul>
+<p><strong>Implementation:</strong> Since it is unclear if a
+ nonexistent person may be created by a not yet resolved "knows"-relationship reference, 
+ we have to postpone the resolution of a failed greeting (return <code>Postponed</code>). 
+ The reference resolution mechanism will detect if a state is reached 
+ with only postponed references and will then raise an error, as expected.</p>
               
             </div>
           </div>

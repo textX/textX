@@ -895,6 +895,54 @@ long as there is at least one abstract or common reference. For example:</p>
   OtherRule
 ;
 </code></pre>
+<p>Abstract rules can have multiple references in a single alternative with the
+following rules:
+- If all rule references in a single alternative are match rules the result will
+  be a concatenation of all match rule results,
+- If there is a common rule reference than it would be the result and all
+  surrounding match rules are used only for parsing
+- If there are multiple common rules than the first will be used as a result and
+  the rest only for parsing</p>
+<p>For example:</p>
+<pre><code>Model: STRING | ID | '#' Rule1 Sufix;  // abstract rule
+Rule1: a=INT;  // common rule
+Prefix: '#';
+Sufix: ID | SomeOtherSufix;
+SomeOtherSufix: '--' '#';
+</code></pre>
+<p>In this example matching <code># 42 -- #</code> at input would yield and instance of
+<code>Rule1</code> with attribute <code>a</code> set to integer <code>42</code>. This comes from a third
+alternative <code>'#' Rule1 Sufix</code> that succeeds and the <code>#</code> and <code>Sufix</code> would be
+used just for parsing and the result would be discarded.</p>
+<p>Another example:</p>
+<pre><code>Model: (STRING | ID | '#' Rule1) Sufix;
+Rule1: a=INT; // common rule
+Sufix: '--';
+</code></pre>
+<p>This is also abstract rule as we are referencing <code>Rule1</code> which is a common rule
+and we have no assignments. Matching <code># 42 --</code> as input will give an instance of
+<code>Rule1</code> with attribute <code>a</code> set to integer <code>42</code>.</p>
+<p>In this example:</p>
+<pre><code>Model: STRING|Rule1|ID|Prefix INT Sufix;
+Rule1: a='a';  // a common rule
+Prefix: '#';
+Sufix: '--';
+</code></pre>
+<p>we see that input <code># 42 --</code> would be recognized by the last alternative and the
+result will be string <code>#42--</code>, i.e. all match rule results would be concatenated.
+But if we give <code>a</code> as input than the result will be an instance of <code>Rule1</code> with
+attribute <code>a</code> set to string <code>'a'</code>.</p>
+<p>In the following example we see what happens if we have multiple common rule references:</p>
+<pre><code>Model: STRING|Rule1|ID|Prefix Rule1 Sufix Rule2;  // Reference both Rule1 and Rule2
+Rule1: a=INT; // common rule
+Rule2: a=STRING; // common rule
+Prefix: '#';
+Sufix: '--';
+</code></pre>
+<p>For input <code># 42 -- "some string"</code> the model will be an instance of <code>Rule1</code> with
+attribute <code>a</code> set to <code>42</code> as it is the first common rule reference in the last
+alternative (the one that succeeds) but <code>Rule2</code>, despite being discarded, must
+also be satisfied during parsing or syntax error would be produced.</p>
 <p><strong>Match rules</strong> are rules that have no assignments either direct or indirect,
 i.e. all referenced rules are match rules too. They are usually used to specify
 enumerated values or some complex string matches that can't be done with regular
