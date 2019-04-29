@@ -125,6 +125,12 @@ You should get output like this:
     textX checker and visualizer
 
     ...
+    
+
+To install development (`master` branch) version:
+
+    $ pip install https://github.com/textX/textX/archive/master.zip
+
 
 ## Python versions
 
