@@ -192,12 +192,6 @@ Here is a non-complete list of projects using textX.
     - textX is used as a part of [Typhoon-HIL's](https://www.typhoon-hil.com/?utm_campaign=1604_HIL402%20Campaign&utm_content=Igor_github&utm_source=email)
       schematic editor for the description of power electronic and DSP schemes and
       components.
-    - [JournaKit Followship .ows](https://journakit.chirale.org/) - A new
-      language for social media management with an interactive console to follow
-      and discover Twitter users (code released under GNU GPL 3). Read an
-      announcement
-      at
-      [author's blog post](https://chirale.org/2017/09/17/a-new-language-for-social-media-managers-on-twitter/).
 
 If you are using textX to build some cool stuff drop me a line at igor dot
 dejanovic at gmail. I would like to hear from you!
