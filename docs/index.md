@@ -206,17 +206,17 @@ auto-generate VCS plugin with syntax highlighting, outline, InteliSense,
 navigation, visualization. The input for the generator would be your language
 grammar and additional information specified using various DSLs.
 
-You can follow the progress
-at [the textX-tools GitHub organization](https://github.com/textX-tools).
-
 Projects that are currently in progress are:
 
-- [viewX](https://github.com/danielkupco/viewX-vscode) - creating visualizators
+- [textX-LS](https://github.com/textX/textX-LS) - support for Language Server
+  Protocol and VS Code for any textX based language. This project is about to
+  supersede the following projects:
+  - [textX-languageserver](https://github.com/textX/textX-languageserver) -
+    Language Server Protocol support for textX languages
+  - [textX-extensions](https://github.com/textX/textX-extensions) - syntax
+    highlighting, code outline
+- [viewX](https://github.com/danielkupco/viewX-vscode) - creating visualizers
   for textX languages
-- [textX-languageserver](https://github.com/textX-tools/textX-languageserver) -
-  Language Server Protocol support for textX languages
-- [textX-extensions](https://github.com/textX-tools/textX-extensions) - syntax
-  highlighting, code outline
 
 Stay tuned ;)
 
@@ -226,8 +226,8 @@ Stay tuned ;)
 If you are a vim editor user check
 out [support for vim](https://github.com/textX/textx.vim/).
 
-For emacs there is [textx-mode](https://github.com/novakboskov/textx-mode) which
-is also available in [MELPA](https://melpa.org/#/textx-mode).
+For emacs there is [textx-mode](https://github.com/textX/textx-mode) which is
+also available in [MELPA](https://melpa.org/#/textx-mode).
 
 You can also check
 out [textX-ninja project](https://github.com/textX/textX-ninja). It is
