@@ -36,7 +36,10 @@ please take a look at related PRs and issues and see if the change affects you.
 ### Changed
 
   - Improved handling of abstract rules references. Improved the definition of
-    rules for various cases. Docs + tests ([#185], [#166])
+    rules for various cases. Docs + tests ([#185], [#166]) **(BIC)**
+  - Changed the time of call of match rule object processors to be during the
+    model construction. This enable proper override of base types processors and
+    calls on nested match rules ([#183], [#182], [#96]). Possible **(BIC)**
   - CLI migrated to the [click] library ([#162])
   - Docs improvements ([#146], [#153], [#151]). Thanks simkimsia@GitHub.
   - `FQN` constuctor param `follow_loaded_models` removed and introduced
