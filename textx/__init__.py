@@ -17,6 +17,6 @@ from textx.registration import (LanguageDesc, GeneratorDesc,
                                 metamodel_for_file,
                                 metamodels_for_file,
                                 generator_for_language_target,
-                                generator)
+                                generator, language)
 
 __version__ = "1.8.0"

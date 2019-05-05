@@ -292,3 +292,20 @@ def generator(language, target):
             description=gen_f.__doc__ if gen_f.__doc__ is not None else '',
             generator=gen_f)
     return _generator
+
+
+def language(name, pattern=None):
+    """
+    Decorator factory used to create `LanguageDesc` instances suitable for
+    entry point registration.
+
+    The target function docstring is used for the description.
+    """
+
+    def language(gen_f):
+        return LanguageDesc(
+            name=name,
+            pattern=pattern,
+            description=gen_f.__doc__ if gen_f.__doc__ is not None else '',
+            metamodel=gen_f)
+    return language

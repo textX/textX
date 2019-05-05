@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 import pytest
 from textx import (metamodel_from_str,
                    clear_language_registrations, clear_generator_registrations,
-                   register_language, register_generator, generator,
+                   register_language, language, register_generator, generator,
                    language_description, generator_description,
                    language_for_file, languages_for_file,
                    metamodel_for_language, metamodel_for_file,
@@ -58,6 +58,25 @@ def test_register_language():
     assert language.pattern == '*.test'
     assert language.description == 'test-lang description'
     assert language.metamodel == mymetamodel_callable
+
+
+def test_register_language_with_decorator():
+    """
+    Test using `language` decorator to register a language definition.
+    """
+
+    clear_language_registrations()
+
+    @language('test-lang', '*.test')
+    def test_lang():
+        "This is a test language"
+        return mymetamodel_callable()
+
+    assert type(test_lang) is LanguageDesc
+    assert test_lang.name == 'test-lang'
+    assert test_lang.pattern == '*.test'
+    assert test_lang.description == 'This is a test language'
+    assert callable(test_lang.metamodel)
 
 
 def test_asking_for_unregistered_language_raises_error():
