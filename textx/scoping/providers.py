@@ -564,7 +564,6 @@ class RelativeName(object):
         if type(obj_list) is Postponed:
             self.postponed_counter += 1
             return obj_list
-        assert obj_list is not None
         # the referenced element must be a list
         # (else it is a design error in the path passed to
         # the RelativeName object).
