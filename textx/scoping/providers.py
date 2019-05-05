@@ -572,8 +572,6 @@ class RelativeName(object):
             raise TextXError(
                 "expected path to list in the model ({})".format(
                     self.path_to_container_object))
-        for obj in obj_list:
-            assert hasattr(obj, "name")
         obj_list = filter(
             lambda x: textx_isinstance(x, attr.cls) and
             x.name.find(name_part) >= 0, obj_list)
