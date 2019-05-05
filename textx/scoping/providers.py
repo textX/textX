@@ -640,8 +640,6 @@ class ExtRelativeName(object):
                 raise TextXError(
                     "expected path to list in the model ({})".format(
                         self.path_to_target))
-            for obj in tmp_list:
-                assert hasattr(obj, "name")
             tmp_list = list(filter(
                 lambda x: textx_isinstance(x, attr.cls) and
                 x.name.find(name_part) >= 0, tmp_list))

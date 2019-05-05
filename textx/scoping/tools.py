@@ -169,9 +169,7 @@ def get_referenced_object(obj, dot_separated_name,
     names = dot_separated_name.split(".")
     match = re.match(r'parent\((\w+)\)', names[0])
 
-    if obj is None:
-        return None
-    elif type(obj) is Postponed:
+    if obj is None or type(obj) is Postponed:
         return obj
     elif type(obj) is list:
         if follow_named_element_in_lists:
