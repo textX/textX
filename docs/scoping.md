@@ -163,7 +163,7 @@ We provide some standard scope providers:
     concrete referenced object (e.g. the model-method, owned by a model-class).
     Example: see [tests/test_scoping/test_local_scope.py](https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_local_scope.py).
 
-    The scope is defined by a model-path from the current object to (typically) 
+    The scope is defined by a model-path from the current object to 
     a list containing named objects.
 
  * `textx.scoping.providers.ExtRelativeName`: The same as `RelativeName` **allowing
@@ -171,9 +171,9 @@ We provide some standard scope providers:
     Example: see [tests/test_scoping/test_local_scope.py](https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_local_scope.py).
 
     The scope is defined by a model-path from the current object and *connected objects*
-    to (typically) a list containing named objects (similar to `RelativeName`). 
+    to a list containing named objects (similar to `RelativeName`). 
     The *connected objects* are defined again by a model-path from one object 
-to another named object or a list of named objects.
+    to another named object or a list of named objects.
 
 ### Note on Uniqueness of Model Elements
 
