@@ -1,10 +1,14 @@
 import os
-from textx import metamodel_from_file, LanguageDesc, TextXSemanticError
+from textx import metamodel_from_file, language, TextXSemanticError
 import textx.scoping.tools as tools
 import textx.scoping.providers as scoping_providers
 
 
-def flow_metamodel():
+@language('flow-dsl', '*.eflow')
+def flow_dsl():
+    """
+    An example DSL for data flow processing definition
+    """
     current_dir = os.path.dirname(__file__)
     p = os.path.join(current_dir, 'Flow.tx')
     flow_mm = metamodel_from_file(p, global_repository=True)
@@ -24,10 +28,3 @@ def flow_metamodel():
     })
 
     return flow_mm
-
-
-flow_dsl = LanguageDesc(
-    name='flow-dsl',
-    pattern='*.eflow',
-    description='An example DSL for data flow processing definition',
-    metamodel=flow_metamodel)

@@ -1,9 +1,13 @@
 import os
-from textx import metamodel_from_file, LanguageDesc
+from textx import metamodel_from_file, language
 import textx.scoping.providers as scoping_providers
 
 
-def data_metamodel():
+@language('data-dsl', '*.edata')
+def data_dsl():
+    """
+    An example DSL for data definition
+    """
     current_dir = os.path.dirname(__file__)
     p = os.path.join(current_dir, 'Data.tx')
     data_mm = metamodel_from_file(p, global_repository=True)
@@ -12,10 +16,3 @@ def data_metamodel():
         {"*.*": scoping_providers.FQNImportURI()})
 
     return data_mm
-
-
-data_dsl = LanguageDesc(
-    name='data-dsl',
-    pattern='*.edata',
-    description='An example DSL for data definition',
-    metamodel=data_metamodel)
