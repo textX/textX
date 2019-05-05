@@ -63,7 +63,8 @@ def test_referencing_attributes():
         index = reference.refs.index(refItem)
         assert (index >= 0)
 
-        base = reference.instance if index == 0 else reference.refs[index - 1].valref
+        base = reference.instance if index == 0 \
+            else reference.refs[index - 1].valref
         if base is None or base.type is None:
             return Postponed()
         x = get_named_obj_in_list(base.type.vals, attr_ref.obj_name)

@@ -310,3 +310,35 @@ def test_model_with_local_scope_wrong_type():
         my_meta_model.model_from_file(
             join(abspath(dirname(__file__)),
                  "components_model1", "example_wrong_type.components"))
+
+
+def test_model_with_local_scope_and_bad_model_path():
+    """
+    This is a basic test for the local scope provider
+    """
+    #################################
+    # META MODEL DEF
+    #################################
+
+    my_meta_model = metamodel_from_file(
+        join(abspath(dirname(__file__)),
+             'components_model1', 'Components.tx'))
+    my_meta_model.register_scope_providers({
+        "*.*": scoping_providers.FQN(),
+        "Connection.from_port":
+            # error (component is not a list)
+            scoping_providers.RelativeName("from_inst.component"),
+        "Connection.to_port":
+            scoping_providers.RelativeName("to_inst.component.slots"),
+    })
+
+    #################################
+    # MODEL PARSING
+    #################################
+
+    with raises(textx.exceptions.TextXError,
+                match=r'.*expected path to list in the model '
+                      + r'\(from_inst.component\).*'):
+        my_meta_model.model_from_file(
+            join(abspath(dirname(__file__)),
+                 "components_model1", "example.components"))

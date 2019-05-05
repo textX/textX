@@ -565,7 +565,14 @@ class RelativeName(object):
             self.postponed_counter += 1
             return obj_list
         assert obj_list is not None
-        assert isinstance(obj_list, list)
+        # the referenced element must be a list
+        # (else it is a design error in the path passed to
+        # the RelativeName object).
+        if not isinstance(obj_list, list):
+            from textx.exceptions import TextXError
+            raise TextXError(
+                "expected path to list in the model ({})".format(
+                    self.path_to_container_object))
         for obj in obj_list:
             assert hasattr(obj, "name")
         obj_list = filter(
