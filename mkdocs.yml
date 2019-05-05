@@ -17,6 +17,7 @@ nav:
   - Scoping: scoping.md
   - Multi meta-model: multimetamodel.md
   - Parser configuration: parser_config.md
+  - Registration/Discovery: registration.md
   - Visualization: visualization.md
   - Error handling: error_handling.md
   - Debugging: debugging.md
