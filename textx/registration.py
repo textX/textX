@@ -306,6 +306,7 @@ def language(name, pattern=None):
         return LanguageDesc(
             name=name,
             pattern=pattern,
-            description=gen_f.__doc__ if gen_f.__doc__ is not None else '',
+            description=gen_f.__doc__.strip()
+            if gen_f.__doc__ is not None else '',
             metamodel=gen_f)
     return language
