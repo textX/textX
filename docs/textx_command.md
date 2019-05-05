@@ -1,15 +1,44 @@
 # textx command/tool
 
-To check and visualize (meta)models from the command line.
+Executing textX related CLI commands
 
 ---
 
+textX has an extensible CLI tool which is a central hub for all textX CLI commands.
+
+When you install textX you get a CLI command `textx` which you call to execute
+any of the registered sub-commands.
+
+textX registers several sub-commands:
+
+- `check` - used to check models and meta-models for syntax and semantic validity
+- `generate` - used to call registered generators and transform given models to
+  other target languages. This command is also used to visualize models and
+  meta-models by generating visualizations. To see how to register your own
+  generators head over to [registration/discover section](registration.md).
+- `list-languages`/`list-generators` - used to list registered languages and
+  generators (see the [registration/discover feature](registration.md) for more
+  explanations)
+
+
+!!! tip
+
+    We eat our own dog food so all sub-commands are registered using the same
+    mechanism and there is no distinction between the core commands provided by the
+    textX itself and the commands provided by third-party Python packages.
+
+    Please, see [Extending textx command](#extending-textx-command) section
+    bellow on how to define your own sub-commands investigate `setup.py` of textX project. 
+
+
+
 ## Using the tool
 
-To get basic help:
+
+To see all available sub-commands just call the `textx`:
 
 ```sh
-$ textx --help
+$ textx               
 Usage: textx [OPTIONS] COMMAND [ARGS]...
 
 Options:
@@ -17,8 +46,12 @@ Options:
   --help   Show this message and exit.
 
 Commands:
-  check        Check validity of meta-model and optionally model.
-  visualize    Generate .dot file(s) from meta-model and optionally model.
+  check            Check/validate model given its file path.
+  generate         Run code generator on a provided model(s).
+  list-generators  List all registered generators
+  list-languages   List all registered languages
+  testcommand      This command will be found as a sub-command of `textx`...
+  testgroup        Here we write group explanation.
 ```
       
 
@@ -26,88 +59,35 @@ To get a help on a specific command:
 
 ```sh
 $ textx check --help
-Usage: textx check [OPTIONS] META_MODEL_FILE [MODEL_FILE]
+Usage: textx check [OPTIONS] MODEL_FILES...
 
-  Check validity of meta-model and optionally model.
+  Check/validate model given its file path. If grammar is given use it to
+  construct the meta-model. If language is given use it to retrieve the
+  registered meta-model.
+
+  Examples:
+
+  # textX language is built-in, so always registered:
+  textx check entity.tx
+
+  # If the language is not registered you must provide the grammar:
+  textx check person.ent --grammar entity.tx
+
+  # or if we have language registered (see: text list-languages) it's just:
+  textx check person.ent
+
+  # Use "--language" if meta-model can't be deduced by file extension:
+  textx check person.txt --language entity
+
+  # Or to check multiple model files and deduce meta-model by extension
+  textx check *
 
 Options:
-  -i, --ignore-case  case-insensitive parsing.
+  --language TEXT    A name of the language model conforms to.
+  --grammar TEXT     A file name of the grammar used as a meta-model.
+  -i, --ignore-case  Case-insensitive model parsing. Used only if "grammar" is
+                     provided.
   --help             Show this message and exit.
-```
-
-
-You can check and visualize (generate a .dot file) your meta-model or model using
-this tool.
-
-Check also the detailed help (to, e.g., choose the output format: "dot" or "plantuml"):
-
-    $ textx visualize --help
-    Usage: textx visualize [OPTIONS] META_MODEL_FILE [MODEL_FILE]
-    
-      Generate .dot file(s) from meta-model and optionally model.
-    
-    Options:
-      -i, --ignore-case               case-insensitive parsing.
-      -f, --output-format [dot|plantuml]
-                                      select the output format (plantuml not
-                                      available for model files, yet.
-      --help                          Show this message and exit.
-
-
-For example, to check and visualize a metamodel you could issue:
-
-```sh
-$ textx visualize robot.tx
-Meta-model OK.
-Generating 'robot.tx.dot' file for meta-model.
-To convert to png run 'dot -Tpng -O robot.tx.dot'
-```
-
-
-Create an image from the .dot file:
-
-```sh
-$ dot -Tpng -O robot.tx.dot
-```
-
-
-Or use some `dot` viewer. For example:
-
-```sh
-$ xdot robot.tx.dot
-```
-
-
-Visualize model:
-
-```sh
-$ textx visualize robot.tx program.rbt
-Meta-model OK.
-Model OK.
-Generating 'robot.tx.dot' file for meta-model.
-To convert to png run 'dot -Tpng -O robot.tx.dot'
-Generating 'program.rbt.dot' file for model.
-To convert to png run 'dot -Tpng -O program.rbt.dot'
-```
-
-
-To only check (meta)models use `check` command:
-
-```sh
-$ textx check robot.tx program.rbt
-Meta-model OK.
-Model OK.
-```
-
-
-If there is an error you will get a nice error report:
-
-```sh
-$ textx check robot.tx program.rbt
-Meta-model OK.
-Error in model file.
-Expected 'initial' or 'up' or 'down' or 'left' or
-  'right' or 'end' at program.rbt:(3, 3) => 'al 3, 1   *gore 4    '.
 ```
 
 
