@@ -634,7 +634,12 @@ class ExtRelativeName(object):
 
             tmp_list = get_referenced_object(def_obj, self.path_to_target)
             assert tmp_list is not None
-            assert isinstance(tmp_list, list)
+            # expected to point to  alist
+            if not isinstance(tmp_list, list):
+                from textx.exceptions import TextXError
+                raise TextXError(
+                    "expected path to list in the model ({})".format(
+                        self.path_to_target))
             for obj in tmp_list:
                 assert hasattr(obj, "name")
             tmp_list = list(filter(
