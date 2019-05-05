@@ -90,32 +90,32 @@ We provide some standard scope providers:
    name loopup**.
    Example: see [tests/test_scoping/test_full_qualified_name.py](https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_full_qualified_name.py).
    
-   A central feature of this scope provider is, that it **traverses the model
-   tree and searches for a matching sequence of named objects** (objects with
-   an attribute name matching parts of the full qualified name separated by 
-   dots). You can also provide a **callback** (`scope_redirection_logic`) to specify
-   that certain named objects are not searched recursively, but are replaced
-   by a list of objects instead, which are searched in place of the current object.
-   With this feature you can create, e.g., **namespace/package aliases** in your 
-   language. You can also activate a **python like module import behavior** 
-   for your language (with `textx.scoping.providers.FQNImportURI`), which is based 
-   on this callback.
-   Example: see [tests/functional/regressions/test_issue103_python_like_import.py](https://github.com/textX/textX/blob/master/tests/functional/regressions/test_issue103_python_like_import.py).
-
-        package p1 {
-            package p2 {
-                class a {};
+       A central feature of this scope provider is, that it **traverses the model
+       tree and searches for a matching sequence of named objects** (objects with
+       an attribute name matching parts of the full qualified name separated by 
+       dots). You can also provide a **callback** (`scope_redirection_logic`) to specify
+       that certain named objects are not searched recursively, but are replaced
+       by a list of objects instead, which are searched in place of the current object.
+       With this feature you can create, e.g., **namespace/package aliases** in your 
+       language. You can also activate a **python like module import behavior** 
+       for your language (with `textx.scoping.providers.FQNImportURI`), which is based 
+       on this callback.
+       Example: see [tests/functional/regressions/test_issue103_python_like_import.py](https://github.com/textX/textX/blob/master/tests/functional/regressions/test_issue103_python_like_import.py).
+    
+            package p1 {
+                package p2 {
+                    class a {};
+                }
             }
-        }
-        using p1.p2 as main
-        var x = new p1.p2.a()
-        var y = new main.a()
-        
-   Note: Except in the context of the scope_redirection_logic (see above), the FQN does
-   not take Postponed (unresolved) references into account. The reason is that
-   this would create a much more complex decision logic to decide which reference
-   needs to be resolved first. The purpose of the FQN is to identify direct instances
-   of model objects, and no references.
+            using p1.p2 as main
+            var x = new p1.p2.a()
+            var y = new main.a()
+            
+       Note: Except in the context of the scope_redirection_logic (see above), the FQN does
+       not take Postponed (unresolved) references into account. The reason is that
+       this would create a much more complex decision logic to decide which reference
+       needs to be resolved first. The purpose of the FQN is to identify direct instances
+       of model objects, and no references.
    
  * `textx.scoping.providers.ImportURI`: This a provider which **allows to load
    additional modules** for lookup.
@@ -127,17 +127,19 @@ We provide some standard scope providers:
    additional attribute `_tx_loaded_models` which is a list of the loaded
    models by this rule instance.
    Example: see [tests/test_scoping/test_import_module.py](https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_import_module.py).
+   
     - `FQNImportURI` (decorated scope provider)
     - `PlainNameImportURI` (decorated scope provider)
 
-   You can use ***globbing*** (import "*.data") with the ImportURI feature.
-   This is implemented via the python "glob" module. Arguments can be passed to
-   the glob.glob function (glob_args), e.g., to enable recursive globbing.
-   Alternatively, you can also specify a list of ***search directories***.
-   In this case globbing is not allowed and is disabled (reason: it is
-   unclear if the user wants to glob over all search path entries or to stop
-   after the first match).
-   Example: see [tests/test_scoping/test_import_module_search_path_issue66.py](https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_import_module_search_path_issue66.py).
+       You can use ***globbing*** (import "*.data") with the ImportURI feature.
+       This is implemented via the python "glob" module. Arguments can be passed to
+       the glob.glob function (glob_args), e.g., to enable recursive globbing.
+       Alternatively, you can also specify a list of ***search directories***.
+       In this case globbing is not allowed and is disabled (reason: it is
+       unclear if the user wants to glob over all search path entries or to stop
+       after the first match).
+       Example: see [tests/test_scoping/test_import_module_search_path_issue66.py](https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_import_module_search_path_issue66.py).
+
  * `textx.scoping.providers.GlobalRepo`: This is a provider where **you initially
    need to specifiy the model files to be loaded and used for lookup**. Like
    for `ImportURI` you need to provide another scope provider for the concrete
@@ -153,21 +155,25 @@ We provide some standard scope providers:
        see ([tests/test_scoping/importURI_variations/test_importURI_variations.py](https://github.com/textX/textX/blob/master/tests/functional/test_scoping/importURI_variations/test_importURI_variations.py).
        
     - `textx.scoping.providers.PlainNameGlobalRepo` (decorated scope provider)
+
  * `textx.scoping.providers.RelativeName`: This is a scope provider to **resolve
-   relative lookups**: e.g., model-methods of a model-instance, defined by the
-   class associated with the model-instance. Typically, another reference (the
-   reference to the model-class of a model-instance) is used to determine the
-   concrete referenced object (e.g. the model-method, owned by a model-class).
-   Example: see [tests/test_scoping/test_local_scope.py](https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_local_scope.py).
+    relative lookups**: e.g., model-methods of a model-instance, defined by the
+    class associated with the model-instance. Typically, another reference (the
+    reference to the model-class of a model-instance) is used to determine the
+    concrete referenced object (e.g. the model-method, owned by a model-class).
+    Example: see [tests/test_scoping/test_local_scope.py](https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_local_scope.py).
+
+    The scope is defined by a model-path from the current object to (typically) 
+    a list containing named objects.
+
  * `textx.scoping.providers.ExtRelativeName`: The same as `RelativeName` **allowing
-   to model inheritance or chained lookups**.
-   Example: see [tests/test_scoping/test_local_scope.py](https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_local_scope.py).
-    - `RelativeName`: The scope is defined by a model-path from the current object to (typically) 
-        a list containing named objects.
-    - `ExtRelativeName`: The scope is defined by a model-path from the current object and *connected objects*
-        to (typically) a list containing named objects (similar to `RelativeName`). 
-        The *connected objects* are defined again by a model-path from one object 
-        to another named object or a list of named objects.
+    to model inheritance or chained lookups**.
+    Example: see [tests/test_scoping/test_local_scope.py](https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_local_scope.py).
+
+    The scope is defined by a model-path from the current object and *connected objects*
+    to (typically) a list containing named objects (similar to `RelativeName`). 
+    The *connected objects* are defined again by a model-path from one object 
+to another named object or a list of named objects.
 
 ### Note on Uniqueness of Model Elements
 
