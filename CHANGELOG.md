@@ -38,7 +38,7 @@ please take a look at related PRs and issues and see if the change affects you.
   - Made scope provider implementation of `RelativeName` and `ExtRelativeName`
     more readable ([#186]). Minor functional changes, not very probable to have
     any impact (only affects model-paths containing a list not at the end of the
-    path; see [#186]).
+    path; see [#186]). Possible **(BIC)**.
   - CLI migrated to the [click] library ([#162])
   - Docs improvements ([#146], [#153], [#151]). Thanks simkimsia@GitHub.
   - `FQN` constuctor param `follow_loaded_models` removed and introduced
