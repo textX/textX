@@ -175,7 +175,8 @@ def get_referenced_object(obj, dot_separated_name,
         if follow_named_element_in_lists:
             next_obj = get_named_obj_in_list(obj, names[0])
         else:
-            raise Exception(
+            from textx.exceptions import TextXError
+            raise TextXError(
                 "unexpected: got list in path for get_referenced_object")
     elif match:
         next_obj = obj
