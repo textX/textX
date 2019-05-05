@@ -62,22 +62,12 @@ def test_referencing_attributes():
             return Postponed()
         index = reference.refs.index(refItem)
         assert (index >= 0)
-        if index == 0:
-            if reference.instance is None:
-                return Postponed()
-            if reference.instance.type is None:
-                return Postponed()
-            x = get_named_obj_in_list(
-                reference.instance.type.vals,
-                attr_ref.obj_name)
-        else:
-            if reference.refs[index - 1].valref is None:
-                return Postponed()
-            if reference.refs[index - 1].valref.type is None:
-                return Postponed()
-            x = get_named_obj_in_list(
-                reference.refs[index - 1].valref.type.vals,
-                attr_ref.obj_name)
+
+        base = reference.instance if index == 0 else reference.refs[index - 1].valref
+        if base is None or base.type is None:
+            return Postponed()
+        x = get_named_obj_in_list(base.type.vals, attr_ref.obj_name)
+
         if index == len(reference.refs)-1:
             if not textx_isinstance(x, attr.cls):
                 print(x)
