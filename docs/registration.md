@@ -326,13 +326,13 @@ Usage: textx generate [OPTIONS] MODEL_FILES...
   # Use --overwrite to overwrite target files
   textx generate mymodel.flow --target PlantUML --overwrite
 
-  # If the language is not registered you can use the .tx grammar file
-  # for parsing but the language will be `any`.
-  textx generate --grammar Flow.tx --target dot mymodel.flow
-
-  # In all above cases PlantUML generator must be registered:
+  # In all above cases PlantUML generator must be registered, i.e.:
   $ textx list-generators
   flow-dsl -> PlantUML  Generating PlantUML visualization from flow-dsl
+
+  # If the source language is not registered you can use the .tx grammar
+  # file for parsing but the language name used will be `any`.
+  textx generate --grammar Flow.tx --target dot mymodel.flow
 
 Options:
   -o, --output-path PATH  The output to generate to. Default = same as input.

@@ -51,14 +51,15 @@ def generate(textx):
         textx generate mymodel.flow --target PlantUML --overwrite
 
         \b
-        # If the language is not registered you can use the .tx grammar file
-        # for parsing but the language will be `any`.
-        textx generate --grammar Flow.tx --target dot mymodel.flow
-
-        \b
-        # In all above cases PlantUML generator must be registered:
+        # In all above cases PlantUML generator must be registered, i.e.:
         $ textx list-generators
         flow-dsl -> PlantUML  Generating PlantUML visualization from flow-dsl
+
+        \b
+        # If the source language is not registered you can use the .tx grammar
+        # file for parsing but the language name used will be `any`.
+        textx generate --grammar Flow.tx --target dot mymodel.flow
+
 
         """
 
