@@ -75,9 +75,15 @@ def test_resolved_model_path_with_lists():
     middle_b = get_unique_named_object(my_model, "Middle")
     assert middle_a is middle_b
 
+    # test parent(...) with lists
     action2a_with_parent = resolved_model_path(
         action2a, "parent(Model).packages.usage.instances.action2", True)
     assert action2a_with_parent == action2a
+
+    # test "normal" parent with lists
+    action2a_with_parent2 = resolved_model_path(
+        action2a, "parent.instances.action2", True)
+    assert action2a_with_parent2 == action2a
 
     with raises(Exception, match=r'.*unexpected: got list in path for get_referenced_object.*'):
         resolved_model_path(my_model,
@@ -115,6 +121,7 @@ def test_resolved_model_path_simple_case():
     # TEST MODEL
     #################################
 
+    # test normal functionality
     outerA = resolved_model_path(model, "a")
     assert outerA.name == "OuterA"
     level0B = resolved_model_path(model, "b")
@@ -125,9 +132,16 @@ def test_resolved_model_path_simple_case():
     assert level2B.name == "Level2_B"
     innerA = resolved_model_path(model, "b.b.b.a")
     assert innerA.name == "InnerA"
+
+    # test parent(TYPE)
     outerA2 = resolved_model_path(model, "b.b.b.parent(Model).a")
     assert outerA2 == outerA
 
+    # test "normal" parent
+    outerA3 = resolved_model_path(model, "b.b.parent.parent.a")
+    assert outerA3 == outerA
+
+    # test "None"
     level3B_none = resolved_model_path(model, "b.b.b.b")
     assert level3B_none is None
     innerA_none1 = resolved_model_path(model, "b.b.b.b.a")
@@ -163,6 +177,7 @@ def test_resolved_model_path_simple_case_with_refs():
     # TEST MODEL
     #################################
 
+    # test normal functionality (with refs)
     level0B = resolved_model_path(model, "b")
     assert level0B.name == "Level0_B"
     level1B = resolved_model_path(model, "b.b")
