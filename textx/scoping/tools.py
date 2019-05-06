@@ -86,7 +86,7 @@ def get_list_of_concatenated_objects(def_obj, path_to_extension):
                 def_objs.append(o)
             for o in obj_or_list:
                 if type(o) is not Postponed:
-                    rec_walk(get_referenced_object(o, path_to_extension))
+                    rec_walk(resolved_model_path(o, path_to_extension))
 
     rec_walk(def_obj)
     return def_objs
@@ -148,10 +148,20 @@ def get_named_obj_in_list(obj_list, name):
         return None
 
 
-def get_referenced_object(obj, dot_separated_name,
-                          follow_named_element_in_lists=False):
+def resolved_model_path(obj, dot_separated_name,
+                        follow_named_element_in_lists=False):
     """
-    get objects based on a path
+    Get a model object based on a model-path starting from some
+    model object. It can be used in the same way you would
+    navigate through a normal instance of a model object, except:
+     - "parent(TYPE)" can be used to navigate to the parent of an
+       element, until a certain type is reached (see unittest).
+     - lists of named objects (e.g. lists of named packages) can be
+       traversed, as if the named objects were part of the model
+       grammar (see unittest: Syntax,
+       "name_of_model_list.name_of_named_obj_in_list").
+     - None/Postponed values are intercepted and lead to an overall
+       return value None/Postponed.
 
     Args:
         obj: the current object
@@ -159,7 +169,7 @@ def get_referenced_object(obj, dot_separated_name,
            Note: the attribute "parent(TYPE)" is a shortcut to jump to the
            parent of type "TYPE" (exact match of type name).
         follow_named_element_in_lists: follow named elements in list if True
-        override_unresolved_lists: try to follow unresolved lists, if True
+           override_unresolved_lists: try to follow unresolved lists, if True
 
     Returns:
         the object if found, or Postponed() if some postponed
@@ -183,12 +193,12 @@ def get_referenced_object(obj, dot_separated_name,
         desired_parent_typename = match.group(1)
         next_obj = get_recursive_parent_with_typename(
             next_obj,
-            desired_parent_typename,
-            follow_named_element_in_lists)
+            desired_parent_typename)
         if type(next_obj) is Postponed:
             return next_obj
         elif next_obj is not None:
-            return get_referenced_object(next_obj, ".".join(names[1:]))
+            return resolved_model_path(next_obj, ".".join(names[1:]),
+                                       follow_named_element_in_lists)
         else:
             return None
     else:
@@ -198,7 +208,7 @@ def get_referenced_object(obj, dot_separated_name,
         elif next_obj is None:
             return None
     if len(names) > 1:
-        return get_referenced_object(next_obj, ".".join(
+        return resolved_model_path(next_obj, ".".join(
             names[1:]), follow_named_element_in_lists)
     return next_obj
 

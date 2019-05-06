@@ -558,9 +558,9 @@ class RelativeName(object):
         Returns:
             the list of objects representing the proposed references
         """
-        from textx.scoping.tools import get_referenced_object
+        from textx.scoping.tools import resolved_model_path
         from textx import textx_isinstance
-        obj_list = get_referenced_object(obj, self.path_to_container_object)
+        obj_list = resolved_model_path(obj, self.path_to_container_object)
         if type(obj_list) is Postponed:
             self.postponed_counter += 1
             return obj_list
@@ -615,13 +615,13 @@ class ExtRelativeName(object):
         Returns:
             the list of objects representing the proposed references
         """
-        from textx.scoping.tools import get_referenced_object
+        from textx.scoping.tools import resolved_model_path
         from textx import textx_isinstance
         # find all all "connected" objects
         # (e.g. find all classes: the most derived
         # class, its base, the base of its base, etc.)
         from textx.scoping.tools import get_list_of_concatenated_objects
-        def_obj = get_referenced_object(obj, self.path_to_definition_object)
+        def_obj = resolved_model_path(obj, self.path_to_definition_object)
         def_objs = get_list_of_concatenated_objects(
             def_obj, self.path_to_extension)
         # for all containing classes, collect all
@@ -632,7 +632,7 @@ class ExtRelativeName(object):
                 self.postponed_counter += 1
                 return def_obj
 
-            tmp_list = get_referenced_object(def_obj, self.path_to_target)
+            tmp_list = resolved_model_path(def_obj, self.path_to_target)
             assert tmp_list is not None
             # expected to point to  alist
             if not isinstance(tmp_list, list):
