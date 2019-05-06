@@ -125,6 +125,12 @@ You should get output like this:
     textX checker and visualizer
 
     ...
+    
+
+To install development (`master` branch) version:
+
+    $ pip install --upgrade https://github.com/textX/textX/archive/master.zip
+
 
 ## Python versions
 
@@ -186,12 +192,6 @@ Here is a non-complete list of projects using textX.
     - textX is used as a part of [Typhoon-HIL's](https://www.typhoon-hil.com/?utm_campaign=1604_HIL402%20Campaign&utm_content=Igor_github&utm_source=email)
       schematic editor for the description of power electronic and DSP schemes and
       components.
-    - [JournaKit Followship .ows](https://journakit.chirale.org/) - A new
-      language for social media management with an interactive console to follow
-      and discover Twitter users (code released under GNU GPL 3). Read an
-      announcement
-      at
-      [author's blog post](https://chirale.org/2017/09/17/a-new-language-for-social-media-managers-on-twitter/).
 
 If you are using textX to build some cool stuff drop me a line at igor dot
 dejanovic at gmail. I would like to hear from you!
@@ -206,17 +206,17 @@ auto-generate VCS plugin with syntax highlighting, outline, InteliSense,
 navigation, visualization. The input for the generator would be your language
 grammar and additional information specified using various DSLs.
 
-You can follow the progress
-at [the textX-tools GitHub organization](https://github.com/textX-tools).
-
 Projects that are currently in progress are:
 
-- [viewX](https://github.com/danielkupco/viewX-vscode) - creating visualizators
+- [textX-LS](https://github.com/textX/textX-LS) - support for Language Server
+  Protocol and VS Code for any textX based language. This project is about to
+  supersede the following projects:
+  - [textX-languageserver](https://github.com/textX/textX-languageserver) -
+    Language Server Protocol support for textX languages
+  - [textX-extensions](https://github.com/textX/textX-extensions) - syntax
+    highlighting, code outline
+- [viewX](https://github.com/danielkupco/viewX-vscode) - creating visualizers
   for textX languages
-- [textX-languageserver](https://github.com/textX-tools/textX-languageserver) -
-  Language Server Protocol support for textX languages
-- [textX-extensions](https://github.com/textX-tools/textX-extensions) - syntax
-  highlighting, code outline
 
 Stay tuned ;)
 
@@ -226,8 +226,8 @@ Stay tuned ;)
 If you are a vim editor user check
 out [support for vim](https://github.com/textX/textx.vim/).
 
-For emacs there is [textx-mode](https://github.com/novakboskov/textx-mode) which
-is also available in [MELPA](https://melpa.org/#/textx-mode).
+For emacs there is [textx-mode](https://github.com/textX/textx-mode) which is
+also available in [MELPA](https://melpa.org/#/textx-mode).
 
 You can also check
 out [textX-ninja project](https://github.com/textX/textX-ninja). It is

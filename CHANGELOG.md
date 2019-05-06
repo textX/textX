@@ -39,6 +39,11 @@ please take a look at related PRs and issues and see if the change affects you.
     more readable ([#186]). Minor functional changes, not very probable to have
     any impact (only affects model-paths containing a list not at the end of the
     path; see [#186]). Possible **(BIC)**.
+  - Improved handling of abstract rules references. Improved the definition of
+    rules for various cases. Docs + tests ([#185], [#166]) **(BIC)**
+  - Changed the time of call of match rule object processors to be during the
+    model construction. This enable proper override of base types processors and
+    calls on nested match rules ([#183], [#182], [#96]). Possible **(BIC)**
   - CLI migrated to the [click] library ([#162])
   - Docs improvements ([#146], [#153], [#151]). Thanks simkimsia@GitHub.
   - `FQN` constuctor param `follow_loaded_models` removed and introduced
@@ -379,11 +384,13 @@ please take a look at related PRs and issues and see if the change affects you.
   - Export to dot.
 
 
+[#185]: https://github.com/textX/textX/pull/185
 [#183]: https://github.com/textX/textX/pull/183
 [#182]: https://github.com/textX/textX/issues/182
 [#174]: https://github.com/textX/textX/pull/174
 [#173]: https://github.com/textX/textX/pull/173
 [#168]: https://github.com/textX/textX/pull/168
+[#166]: https://github.com/textX/textX/issues/166
 [#165]: https://github.com/textX/textX/pull/165
 [#164]: https://github.com/textX/textX/pull/164
 [#162]: https://github.com/textX/textX/pull/162

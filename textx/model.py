@@ -345,8 +345,14 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                 # with matched concrete meta-class down the inheritance tree.
                 # Abstract meta-class should never be instantiated.
                 if len(node) > 1:
-                    return process_node(next(n for n in node
-                                             if type(n) is not Terminal))
+                    try:
+                        return process_node(
+                            next(n for n in node
+                                 if type(n) is not Terminal
+                                 and n.rule._tx_class is not RULE_MATCH))
+                    except StopIteration:
+                        # All nodes are match rules, do concatenation
+                        return ''.join(text(n) for n in node)
                 else:
                     return process_node(node[0])
             elif mclass._tx_type == RULE_MATCH:

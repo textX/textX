@@ -733,6 +733,63 @@ A rule with a single reference to an abstract or common rule is also abstract:
     Value:
       OtherRule
     ;
+    
+Abstract rules can have multiple references in a single alternative with the
+following rules:
+- If all rule references in a single alternative are match rules the result will
+  be a concatenation of all match rule results,
+- If there is a common rule reference than it would be the result and all
+  surrounding match rules are used only for parsing
+- If there are multiple common rules than the first will be used as a result and
+  the rest only for parsing
+
+For example:
+
+    Model: STRING | ID | '#' Rule1 Sufix;  // abstract rule
+    Rule1: a=INT;  // common rule
+    Prefix: '#';
+    Sufix: ID | SomeOtherSufix;
+    SomeOtherSufix: '--' '#';
+
+In this example matching `# 42 -- #` at input would yield and instance of
+`Rule1` with attribute `a` set to integer `42`. This comes from a third
+alternative `'#' Rule1 Sufix` that succeeds and the `#` and `Sufix` would be
+used just for parsing and the result would be discarded.
+
+Another example:
+
+    Model: (STRING | ID | '#' Rule1) Sufix;
+    Rule1: a=INT; // common rule
+    Sufix: '--';
+    
+This is also abstract rule as we are referencing `Rule1` which is a common rule
+and we have no assignments. Matching `# 42 --` as input will give an instance of
+`Rule1` with attribute `a` set to integer `42`.
+
+In this example:
+
+    Model: STRING|Rule1|ID|Prefix INT Sufix;
+    Rule1: a='a';  // a common rule
+    Prefix: '#';
+    Sufix: '--';
+
+we see that input `# 42 --` would be recognized by the last alternative and the
+result will be string `#42--`, i.e. all match rule results would be concatenated.
+But if we give `a` as input than the result will be an instance of `Rule1` with
+attribute `a` set to string `'a'`.
+
+In the following example we see what happens if we have multiple common rule references:
+
+    Model: STRING|Rule1|ID|Prefix Rule1 Sufix Rule2;  // Reference both Rule1 and Rule2
+    Rule1: a=INT; // common rule
+    Rule2: a=STRING; // common rule
+    Prefix: '#';
+    Sufix: '--';
+    
+For input `# 42 -- "some string"` the model will be an instance of `Rule1` with
+attribute `a` set to `42` as it is the first common rule reference in the last
+alternative (the one that succeeds) but `Rule2`, despite being discarded, must
+also be satisfied during parsing or syntax error would be produced.
 
 **Match rules** are rules that have no assignments either direct or indirect,
 i.e. all referenced rules are match rules too. They are usually used to specify
