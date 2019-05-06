@@ -245,36 +245,36 @@ def languages_for_file(file_name_or_pattern):
     return file_languages
 
 
-def language_for_file(file_or_pattern):
+def language_for_file(file_name_or_pattern):
     """
     Return an instance of `LanguageDesc` that can parse the given file or raise
     `TextXRegistrationError` if more than one is registered.
     """
-    languages = languages_for_file(file_or_pattern)
+    languages = languages_for_file(file_name_or_pattern)
     if len(languages) > 1:
         raise TextXRegistrationError('Multiple languages can parse "{}".'
-                                     .format(file_or_pattern))
+                                     .format(file_name_or_pattern))
     elif len(languages) == 0:
         raise TextXRegistrationError('No language registered that can parse'
-                                     ' "{}".'.format(file_or_pattern))
+                                     ' "{}".'.format(file_name_or_pattern))
 
     return languages[0]
 
 
-def metamodels_for_file(file_name):
+def metamodels_for_file(file_name_or_pattern):
     """
-    Return meta-models that can parse the given file.
+    Return meta-models that can parse the given file .
     """
     return [metamodel_for_language(language.name)
-            for language in languages_for_file(file_name)]
+            for language in languages_for_file(file_name_or_pattern)]
 
 
-def metamodel_for_file(file_name):
+def metamodel_for_file(file_name_or_pattern):
     """
     Return a meta-model that can parse the given file or raise
     `TextXRegistrationError` if more than one is registered.
     """
-    return metamodel_for_language(language_for_file(file_name).name)
+    return metamodel_for_language(language_for_file(file_name_or_pattern).name)
 
 
 def generator(language, target):
