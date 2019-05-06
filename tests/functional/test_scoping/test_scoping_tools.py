@@ -3,7 +3,7 @@ from os.path import dirname, abspath, join
 
 import textx.scoping.providers as scoping_providers
 from textx import metamodel_from_file, metamodel_from_str
-from textx.scoping.tools import resolved_model_path,\
+from textx.scoping.tools import resolve_model_path,\
     get_list_of_concatenated_objects
 from textx.scoping.tools import get_unique_named_object
 from textx import textx_isinstance
@@ -31,7 +31,7 @@ def test_textx_isinstace():
     assert textx_isinstance(c, A)
 
 
-def test_resolved_model_path_with_lists():
+def test_resolve_model_path_with_lists():
     #################################
     # META MODEL DEF
     #################################
@@ -63,35 +63,35 @@ def test_resolved_model_path_with_lists():
     # TEST MODEL
     #################################
 
-    action2a = resolved_model_path(my_model,
+    action2a = resolve_model_path(my_model,
                                      "packages.usage.instances.action2",
-                                   True)
+                                  True)
     action2b = get_unique_named_object(my_model, "action2")
     assert action2a is action2b
 
-    middle_a = resolved_model_path(my_model,
+    middle_a = resolve_model_path(my_model,
                                      "packages.base.components.Middle",
-                                   True)
+                                  True)
     middle_b = get_unique_named_object(my_model, "Middle")
     assert middle_a is middle_b
 
     # test parent(...) with lists
-    action2a_with_parent = resolved_model_path(
+    action2a_with_parent = resolve_model_path(
         action2a, "parent(Model).packages.usage.instances.action2", True)
     assert action2a_with_parent == action2a
 
     # test "normal" parent with lists
-    action2a_with_parent2 = resolved_model_path(
+    action2a_with_parent2 = resolve_model_path(
         action2a, "parent.instances.action2", True)
     assert action2a_with_parent2 == action2a
 
     with raises(Exception, match=r'.*unexpected: got list in path for get_referenced_object.*'):
-        resolved_model_path(my_model,
+        resolve_model_path(my_model,
                             "packages.usage.instances.action2",
-                            False)
+                           False)
 
 
-def test_resolved_model_path_simple_case():
+def test_resolve_model_path_simple_case():
     #################################
     # META MODEL DEF
     #################################
@@ -122,35 +122,35 @@ def test_resolved_model_path_simple_case():
     #################################
 
     # test normal functionality
-    outerA = resolved_model_path(model, "a")
+    outerA = resolve_model_path(model, "a")
     assert outerA.name == "OuterA"
-    level0B = resolved_model_path(model, "b")
+    level0B = resolve_model_path(model, "b")
     assert level0B.name == "Level0_B"
-    level1B = resolved_model_path(model, "b.b")
+    level1B = resolve_model_path(model, "b.b")
     assert level1B.name == "Level1_B"
-    level2B = resolved_model_path(model, "b.b.b")
+    level2B = resolve_model_path(model, "b.b.b")
     assert level2B.name == "Level2_B"
-    innerA = resolved_model_path(model, "b.b.b.a")
+    innerA = resolve_model_path(model, "b.b.b.a")
     assert innerA.name == "InnerA"
 
     # test parent(TYPE)
-    outerA2 = resolved_model_path(model, "b.b.b.parent(Model).a")
+    outerA2 = resolve_model_path(model, "b.b.b.parent(Model).a")
     assert outerA2 == outerA
 
     # test "normal" parent
-    outerA3 = resolved_model_path(model, "b.b.parent.parent.a")
+    outerA3 = resolve_model_path(model, "b.b.parent.parent.a")
     assert outerA3 == outerA
 
     # test "None"
-    level3B_none = resolved_model_path(model, "b.b.b.b")
+    level3B_none = resolve_model_path(model, "b.b.b.b")
     assert level3B_none is None
-    innerA_none1 = resolved_model_path(model, "b.b.b.b.a")
+    innerA_none1 = resolve_model_path(model, "b.b.b.b.a")
     assert innerA_none1 is None
-    innerA_none2 = resolved_model_path(model, "b.b.a")
+    innerA_none2 = resolve_model_path(model, "b.b.a")
     assert innerA_none2 is None
 
 
-def test_resolved_model_path_simple_case_with_refs():
+def test_resolve_model_path_simple_case_with_refs():
     #################################
     # META MODEL DEF
     #################################
@@ -178,11 +178,11 @@ def test_resolved_model_path_simple_case_with_refs():
     #################################
 
     # test normal functionality (with refs)
-    level0B = resolved_model_path(model, "b")
+    level0B = resolve_model_path(model, "b")
     assert level0B.name == "Level0_B"
-    level1B = resolved_model_path(model, "b.b")
+    level1B = resolve_model_path(model, "b.b")
     assert level1B.name == "Level1_B"
-    bref = resolved_model_path(model, "b.b.bref")
+    bref = resolve_model_path(model, "b.b.bref")
     assert bref.name == "Level0_B"
     assert bref == level0B
 

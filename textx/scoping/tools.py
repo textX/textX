@@ -86,7 +86,7 @@ def get_list_of_concatenated_objects(def_obj, path_to_extension):
                 def_objs.append(o)
             for o in obj_or_list:
                 if type(o) is not Postponed:
-                    rec_walk(resolved_model_path(o, path_to_extension))
+                    rec_walk(resolve_model_path(o, path_to_extension))
 
     rec_walk(def_obj)
     return def_objs
@@ -148,20 +148,24 @@ def get_named_obj_in_list(obj_list, name):
         return None
 
 
-def resolved_model_path(obj, dot_separated_name,
-                        follow_named_element_in_lists=False):
+def resolve_model_path(obj, dot_separated_name,
+                       follow_named_element_in_lists=False):
     """
     Get a model object based on a model-path starting from some
     model object. It can be used in the same way you would
     navigate through a normal instance of a model object, except:
      - "parent(TYPE)" can be used to navigate to the parent of an
-       element, until a certain type is reached (see unittest).
+       element repeatedly, until a certain type is reached (see
+       unittest).
      - lists of named objects (e.g. lists of named packages) can be
        traversed, as if the named objects were part of the model
        grammar (see unittest: Syntax,
        "name_of_model_list.name_of_named_obj_in_list").
      - None/Postponed values are intercepted and lead to an overall
        return value None/Postponed.
+    A use case for this function is, when a model path needs to be
+    stored and executed on a previously unknown object and/or the
+    Postpone/None-logic is required.
 
     Args:
         obj: the current object
@@ -197,8 +201,8 @@ def resolved_model_path(obj, dot_separated_name,
         if type(next_obj) is Postponed:
             return next_obj
         elif next_obj is not None:
-            return resolved_model_path(next_obj, ".".join(names[1:]),
-                                       follow_named_element_in_lists)
+            return resolve_model_path(next_obj, ".".join(names[1:]),
+                                      follow_named_element_in_lists)
         else:
             return None
     else:
@@ -208,7 +212,7 @@ def resolved_model_path(obj, dot_separated_name,
         elif next_obj is None:
             return None
     if len(names) > 1:
-        return resolved_model_path(next_obj, ".".join(
+        return resolve_model_path(next_obj, ".".join(
             names[1:]), follow_named_element_in_lists)
     return next_obj
 
