@@ -10,6 +10,7 @@ from textx import textx_isinstance
 from textx import get_children_of_type
 from pytest import raises
 
+
 def test_textx_isinstace():
     grammar = \
         '''
@@ -64,13 +65,13 @@ def test_resolve_model_path_with_lists():
     #################################
 
     action2a = resolve_model_path(my_model,
-                                     "packages.usage.instances.action2",
+                                  "packages.usage.instances.action2",
                                   True)
     action2b = get_unique_named_object(my_model, "action2")
     assert action2a is action2b
 
     middle_a = resolve_model_path(my_model,
-                                     "packages.base.components.Middle",
+                                  "packages.base.components.Middle",
                                   True)
     middle_b = get_unique_named_object(my_model, "Middle")
     assert middle_a is middle_b
@@ -85,9 +86,10 @@ def test_resolve_model_path_with_lists():
         action2a, "parent.instances.action2", True)
     assert action2a_with_parent2 == action2a
 
-    with raises(Exception, match=r'.*unexpected: got list in path for get_referenced_object.*'):
+    with raises(Exception, match=r'.*unexpected: got list in path for '
+                                 r'get_referenced_object.*'):
         resolve_model_path(my_model,
-                            "packages.usage.instances.action2",
+                           "packages.usage.instances.action2",
                            False)
 
 
@@ -109,7 +111,7 @@ def test_resolve_model_path_simple_case():
     #################################
 
     model = mm.model_from_str(r'''
-        My_Model 
+        My_Model
             A: OuterA
             B: Level0_B
              -> B: Level1_B
@@ -167,7 +169,7 @@ def test_resolve_model_path_simple_case_with_refs():
     #################################
 
     model = mm.model_from_str(r'''
-        My_Model 
+        My_Model
             B: Level0_B
              -> B: Level1_B
              --> Level0_B
