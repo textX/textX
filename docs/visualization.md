@@ -3,6 +3,8 @@
 A meta-model, model and parse-tree can be exported to dot files ([GraphViz]) for
 visualization. Module `textx.export` contains functions `metamodel_export` and
 `model_export` that can export meta-model and model to dot files respectively.
+But, it is usually more convenient to produce visualization using the [`textx`
+command](textx_command.md).
 
 If [debugging](debugging.md) is enabled, meta-model, model and parse trees will
 automatically get exported to dot.
@@ -22,15 +24,15 @@ have this tool included (e.g. Ubuntu: `apt install platuml`).
 
 
 
-## Calling generators to produce (meta)model visualizations
+## Producing (meta)model visualizations using the `textx` command
 
 This section describes how to use [`textx` command and registered
 generators](textx_command.md) to produce model and meta-model visualizations.
 
-Visualizations of models and meta-models is implemented by registering
+Visualizations of models and meta-models are implemented by registering
 generators from `textX` (for meta-models) or `any` (for all models) to `dot` or
-`PlantUML` file format. These generators are provided by textX itself. You can
-list them by:
+`PlantUML` file format. Several of these generators are provided by textX. You
+can list them by:
 
 ```nohighlight
 $ textx list-generators
@@ -41,8 +43,9 @@ flow-dsl -> PlantUML          Generating PlantUML visualization from flow-dsl
 ```
 
 You see that we have two generators from `textX` language (i.e. textX grammar
-language): `dot` and `PlantUML`. These generators will produce `dot` (part of
-[GraphViz]) or `pu` ([PlantUML]) file respectively.
+language). The first as a target uses `dot` and the second uses `PlantUML`.
+These generators will produce `dot` (part of [GraphViz]) or `pu` ([PlantUML])
+file respectively.
 
 Also, you can see that there is `any` -> `dot` generator. This generator can be
 applied to any model and will produce `dot` output.
@@ -50,13 +53,10 @@ applied to any model and will produce `dot` output.
 You can also see in this example that we have a specific visualization for
 language `flow-dsl` that produces `PlantUML` code. You can register visualizers
 for your own language by registering a generator from your language to some
-output that represents visual rendering. See the [registration/discovery
-feature](registration.md) on how to do that.
+output that represents visual rendering. Also, you could provide rendering to
+some different format for all models (`any`) or for textX grammars. See the
+[registration/discovery feature](registration.md) on how to do that.
 
-!!! tip
-
-    For producing visualizations programmatically see
-    [the next section](#visualize-metamodels-programmatically).
 
 !!! note
 
@@ -76,8 +76,8 @@ Generating dot target from models:
    To convert to png run "dot -Tpng -O robot.dot"
 ```
 
-Now you can view `dot` file using some of the available viewers. For example, if
-you install [xdot]:
+Now you can view `dot` file using some of available viewers. For example, if you
+install [xdot]:
 
 ```nohighlight
 $ xdot robot.dot
@@ -131,25 +131,24 @@ Generating dot target from models:
 
 In this example we had to supply `--grammar` option to `generate` command as the
 `robot` language is not registered by the [registration API](registration.md).
-In we registered the robot language, meta-model could be discovered by file
-extension.
+If we had the robot language registered, meta-model could be discovered by the
+file extension.
 
 We could as usual visualize the `dot` file by some of the available viewers or
-transform it to `png`. The produced image will look like this:
+transform it to `png` format. The produced image will look like this:
 
 ![Robot program](./images/program.dot.png)
 
 
 !!! note
-    PlantUML output is not yet available for model files.
+    [PlantUML] output is not yet available for model files.
 
 
 ## Visualize meta-models programmatically
 
 
-To visualize a meta-model (see [Entity
-example](https://github.com/textX/textX/tree/master/examples/Entity))
-do:
+To visualize a meta-model programmatically do (see [Entity
+example](https://github.com/textX/textX/tree/master/examples/Entity)):
 
 ```python
 from textx import metamodel_from_file
@@ -161,16 +160,18 @@ metamodel_export(entity_mm, 'entity.dot')
 ```
 
 `entity.dot` file will be created. You can visualize this file by using various
-dot viewers or convert it to various image formats using the 'dot' tool.
+dot viewers or convert it to various image formats using the `dot` tool.
 
-    $ dot -Tpng -O entity.dot
+```nohighlight
+$ dot -Tpng -O entity.dot
+```
 
 The following image is generated:
 
 ![Entity meta-model](https://raw.githubusercontent.com/textX/textX/master/examples/Entity/dotexport/entity_meta.dot.png)
 
-Alternatively, you can also specify an alternative renderer to export your 
-meta model for the PlantUML tool (http://plantuml.com/).
+Alternatively, you can also specify an alternative renderer to export your meta
+model for the [PlantUML] tool.
 
 ```python
 from textx import metamodel_from_file
@@ -181,10 +182,12 @@ entity_mm = metamodel_from_file('entity.tx')
 metamodel_export(entity_mm, 'entity.pu',renderer=PlantUmlRenderer())
 ```
 
-`entity.pu` file will be created. You can convert it to various image 
-formats using the 'plantuml' tool.
+`entity.pu` file will be created. You can convert it to various image formats
+using the `plantuml` tool.
 
-    $ plantuml -Tpng entity.pu
+```nohighlight
+$ plantuml -Tpng entity.pu
+```
 
 The following image is generated:
 
@@ -207,7 +210,9 @@ model_export(person_model, 'person.dot')
 
 Convert this `dot` file to `png` with:
 
-    $ dot -Tpng -O person.dot
+```nohighlight
+$ dot -Tpng -O person.dot
+```
 
 The following image is generated:
 
