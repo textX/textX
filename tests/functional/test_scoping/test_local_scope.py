@@ -343,6 +343,7 @@ def test_model_with_local_scope_and_bad_model_path():
             join(abspath(dirname(__file__)),
                  "components_model1", "example.components"))
 
+
 def test_model_with_local_scope_and_reference_name_proposer():
     """
     This is a basic test for the local scope provider (good case).
