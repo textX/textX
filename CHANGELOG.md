@@ -35,6 +35,10 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ### Changed
 
+  - Made scope provider implementation of `RelativeName` and `ExtRelativeName`
+    more readable ([#186]). Minor functional changes, not very probable to have
+    any impact (only affects model-paths containing a list not at the end of the
+    path; see [#186]). Possible **(BIC)**.
   - Improved handling of abstract rules references. Improved the definition of
     rules for various cases. Docs + tests ([#185], [#166]) **(BIC)**
   - Changed the time of call of match rule object processors to be during the
