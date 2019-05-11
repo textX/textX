@@ -33,7 +33,7 @@ def import_stm():           return 'import', grammar_to_import
 def reference_stm():        return ('reference', language_name,
                                     Optional(language_alias))
 def language_alias():       return 'as', ident
-def language_name():        return _(r'(\w|\.|-)+')
+def language_name():        return _(r'(\w|-)+')
 def grammar_to_import():    return _(r'(\w|\.)+')
 
 # Rules
