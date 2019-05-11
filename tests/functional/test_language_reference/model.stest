@@ -1,0 +1,4 @@
+include "model.ftest"
+
+ref first1
+ref first2
