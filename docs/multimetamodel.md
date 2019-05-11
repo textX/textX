@@ -1,90 +1,161 @@
 # Multi meta-model support
 
-As a feature of some [scope providers](scoping.md), there is the possibility to
-define a file extension based allocation of model files to meta models. This
-global data is stored in the class `textx.scoping.MetaModelProvider`: Here, you
-can register meta models associated to files patterns. Thus, you can control
-which meta model to use when loading a file in a scope provider using the
-`ImportURI`-feature (e.g., `FQNImportURI`) or with global scope providers (e.g.,
-`PlainNameGlobalRepo`). If no file pattern matches, the meta model of the current
-model is utilized.
+There are different ways to combine meta models: **(1)** a meta model can use
+another meta model to compose its own structures (extending a meta model) or
+**(2)** a meta model can reference elements from another meta model.
 
-
-There are different ways to combine meta models: **(1)** a meta model can use 
-another meta model to compose its own structures (extending a meta model) 
-or **(2)** a meta model can reference elements from another meta model.
-
-**Extending an existing meta model** can be realized in TextX by defining 
-a grammar extending an existing grammar. All user classes, scope providers 
-and processors must be manually added to the new meta model. Such extended 
-meta models can also reference elements of models created with the original 
-meta model. Although the meta classes corresponding to inherited rules are 
-redefined by the extending meta model, scope providers match the object 
-types correctly. This is implemented by comparing the types by their name 
-(see textx.textx_isinstance). Simple examples: see 
+**Extending an existing meta model** can be realized in TextX by defining a
+grammar extending an existing grammar. All user classes, scope providers and
+processors must be manually added to the new meta model. Such extended meta
+models can also reference elements of models created with the original meta
+model. Although the meta classes corresponding to inherited rules are redefined
+by the extending meta model, scope providers match the object types correctly.
+This is implemented by comparing the types by their name (see
+textx.textx_isinstance). Simple examples: see
 [tests/functional/test_scoping/test_metamodel_provider*.py](https://github.com/textX/textX/tree/master/tests/functional/test_scoping).
 
 
-**Referencing elements from another meta model** can be achieved without 
-having the original grammar, nor any other details like scope providers, etc. 
-Such references can, thus, be enabled while having access only to the 
-meta model object of the meta model to be referenced. This object may 
-originate from a library installed on the system (without sources, like 
-the grammar). The meta model to be referenced is passed to the referencing 
-meta model while constructing it. The referencing grammar can then reference 
-the types (rules) of the referenced meta model. Rule lookup takes care of 
-choosing the correct types. Simple examples: see 
+**Referencing elements from another meta model** can be achieved without having
+the original grammar, nor any other details like scope providers, etc. Such
+references can, thus, be enabled by using just a referenced language name in a
+`reference` statement of referring grammar. Target language meta-model may
+originate from a library installed on the system (without sources, like the
+grammar). The referencing grammar can reference the types (rules) of the
+referenced meta model. Rule lookup takes care of choosing the correct types.
+Simple examples: see
 [tests/functional/test_metamodel/test_multi_metamodel_refs.py](https://github.com/textX/textX/tree/master/tests/functional/test_metamodel/test_multi_metamodel_refs.py).
 
 
-Thus, when designing a domain model (e.g., from the software test domain) to 
-reference elements of another domain model (e.g., from the 
-interface/communication domain), the second possibility (referencing) 
-is probably a cleaner way to achieve the task than the first possibility 
+Thus, when designing a domain model (e.g., from the software test domain) to
+reference elements of another domain model (e.g., from the
+interface/communication domain), the second possibility (referencing) is
+probably a cleaner way to achieve the task than the first possibility
 (extending).
 
 
 ## Use Case: meta model referencing another meta model
 
-We have two grammars (grammar A nd B). "grammarA" defines named elements of 
-type A:
+!!! note
+    The example in this section is based on the
+    [tests/functional/test_metamodel/test_multi_metamodel_refs.py](https://github.com/textX/textX/tree/master/tests/functional/test_metamodel/test_multi_metamodel_refs.py).
 
-    Model: a+=A;
-    A:'A' name=ID;
+We have two languages/grammars (grammar `A` and `B`). `grammarA` string defines
+named elements of type `A`:
 
-"GrammarBWithImportURI" defines named elements of type B referencing elements
-of type A (from "grammarA"). It also allows importing other model files.
+```nohighlight
+Model: a+=A;
+A:'A' name=ID;
+```
 
-    Model: imports+=Import b+=B;
-    B:'B' name=ID '->' a=[A];
-    Import: 'import' importURI=STRING;
+`GrammarBWithImportURI` string defines named elements of type `B` referencing
+elements of type `A` (from `grammarA`). This is achieved by using `reference`
+statement with alias. It also allows importing other model files by using
+`importURI`.
+
+```nohighlight
+reference A as a
+Model: imports+=Import b+=B;
+B:'B' name=ID '->' a=[a.A];
+Import: 'import' importURI=STRING;
+```
 
 
-Here, we create two meta models, where
-the second meta model allows referencing the first one
-(**referenced_metamodels=[mm_A]**).
+We now proceed by registering languages using [registration
+API](registration.md):
 
-    mm_A = metamodel_from_str(grammarA)
+```python
+global_repo = scoping.GlobalModelRepository()
+global_repo_provider = scoping_providers.PlainNameGlobalRepo()
+
+def get_A_mm():
+    mm_A = metamodel_from_str(grammarA, global_repository=global_repo)
+    mm_A.register_scope_providers({"*.*": global_repo_provider})
+    return mm_A
+
+def get_BwithImport_mm():
     mm_B = metamodel_from_str(grammarBWithImport,
-                              referenced_metamodels=[mm_A])
+                              global_repository=global_repo)
 
-Then we define a default scope provider supporting the importURI-feature:
+    # define a default scope provider supporting the importURI feature
+    mm_B.register_scope_providers(
+        {"*.*": scoping_providers.FQNImportURI()})
+    return mm_B
 
-    mm_B.register_scope_providers({"*.*": scoping_providers.FQNImportURI()})
+register_language('A',
+                  pattern="*.a",
+                  metamodel=get_A_mm)
 
-and we map file endings to the meta models:
+register_language('BwithImport',
+                  pattern="*.b",
+                  metamodel=get_BwithImport_mm)
+```
 
-    scoping.MetaModelProvider.add_metamodel("*.a", mm_A)
-    scoping.MetaModelProvider.add_metamodel("*.b", mm_B)
+Note that we are using a global repository and `FQNImportURI` scoping provider
+for `B` language to support importing of `A` models inside `B` models and
+referencing its model objects.
 
-Full example (also with a globally shared repository discussion): see 
-[tests/test_metamodel/test_multi_metamodel_refs.py](https://github.com/textX/textX/tree/master/tests/test_metamodel/test_multi_metamodel_refs.py).
+!!! tip
+    In practice we would usually register our languages using declarative
+    extension points. See [the registration API docs](registration.md) for more
+    information.
+
+After the languages are registered we can access the meta-models of registered
+languages using [the registration API](registration.md). Given the model in
+language `A` in file `myA_model.a`:
+
+```nohighlight
+A a1 A a2 A a3
+```
+
+and model in language `B` (with support for `ImportURI`) in file `myB_model.b`:
+
+```nohighlight
+import 'myA_model.a'
+B b1 -> a1 B b2 -> a2 B b3 -> a3
+```
+
+we can instantiate model `myB_model.b` like this:
+
+```python
+mm_B = metamodel_for_language('BwithImport')
+model_file_name = os.path.join(os.path.dirname(__file__), 'myB_model.b')
+model = mm_B.model_from_file(model_file_name)
+```
+
+In another, way we could use global model repository directly to instantiate
+models directly from Python code without resorting to `ImportURI` machinery. For
+this we shall modify the grammar of language `B` to be:
+
+```nohighlight
+reference A
+Model: b+=B;
+B:'B' name=ID '->' a=[A.A];
+```
+
+Notice that we are not using `ImportURI` here. We register this language as we
+did above. Now, the code can look like this:
+
+```python
+mm_A = metamodel_for_language('A')
+mA = mm_A.model_from_str('''
+A a1 A a2 A a3
+''')
+global_repo_provider.add_model(mA)
+
+mm_B = metamodel_for_language('B')
+mB = mm_B.model_from_str('''
+B b1 -> a1 B b2 -> a2 B b3 -> a3
+''')
+```
+
+See how we explicitly added model `mA` to the global repository. This enabled
+model `mB` to find and resolve references to objects from `mA`.
 
 
 ## Use Case: Recipes and Ingredients with global model sharing
 
 In this use case we define recipes (food preparation) including a list of
-ingredients. The ingredients of a recipe model element are defined by
+ingredients. The ingredients of a recipe model element are defined by:
 
  * a count (e.g. 100),
  * a unit (e.g. gram),
