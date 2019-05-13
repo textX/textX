@@ -169,14 +169,15 @@ We provide some standard scope providers:
    Example: see [tests/test_scoping/test_local_scope.py](https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_local_scope.py).
 
 
-### Note on Uniqueness of Model Elements
+### Note on Uniqueness of Model Elements (global repository)
 
 Two different models created using one single meta model (not using a scope
 provider like `GlobalRepo`, but by directly loading the models from file) have
 different instances of the same model elements. If you need two such models to
 share their model element instances, you can specify this, while creating the
-meta model (`global_repository=True`). Then, the meta model will store an own
-instance of a `GlobalModelRepository` as a base for all loaded models.
+meta model (`global_repository=True` or 
+`global_repository=instance_of_a_global_repo`). Then, the meta model will store 
+an own instance of a `GlobalModelRepository` as a base for all loaded models.
 
 Model elements in models including other parts of the model (possibly circular)
 have unique model elements (no double instances).

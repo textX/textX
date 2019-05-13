@@ -168,6 +168,10 @@ model `mB` to find and resolve references to objects from `mA`.
 
 ## Use Case: Recipes and Ingredients with global model sharing
 
+!!! note
+    The example in this section is based on the
+    [test_metamodel_provider2.py](https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_metamodel_provider2.py).
+
 In this use case we define recipes (food preparation) including a list of
 ingredients. The ingredients of a recipe model element are defined by:
 
@@ -176,8 +180,8 @@ ingredients. The ingredients of a recipe model element are defined by:
  * and an ingredient reference (e.g. sugar).
 
 In a separate model the ingredients are defined: Here we can define multiple
-units to be used for each ingerdient (e.g. `60 gram of sugar` or `1 cup of
-sugar`). Moreover some ingredients may inherit features of other ingredients
+units to be used for each ingerdient (e.g. `60 gram of sugar` or 
+`1 cup of sugar`). Moreover some ingredients may inherit features of other ingredients
 (e.g. salt may have the same units as sugar).
 
 Here, two meta models are defined to handle ingredient definitions (grammar
