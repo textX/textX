@@ -180,24 +180,34 @@ units to be used for each ingerdient (e.g. `60 gram of sugar` or `1 cup of
 sugar`). Moreover some ingredients may inherit features of other ingredients
 (e.g. salt may have the same units as sugar).
 
-Here, two meta models are defined to handle ingredient definitions (e.g.
-`fruits.ingredient`) and recipes (e.g. `fruit_salad.recipe`).
+Here, two meta models are defined to handle ingredient definitions (grammar
+`Ingredient.tx` for e.g. `fruits.ingredient`) and recipes (grammar
+`Recipe.tx`,for e.g. `fruit_salad.recipe`).
 
-The `MetaModelProvider` is utilized to allocate the file extensions to the meta
-models
-(see
+The [registration API](registration.md) is utilized to allocate the file
+extensions to the meta models (see
 [test_metamodel_provider2.py](https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_metamodel_provider2.py)).
 Importantly, a common model repository (`global_repo`) is defined to share all
 model elements among both meta models:
 
     i_mm = get_meta_model(
-        global_repo, this_folder + "/metamodel_provider2/Ingredient.tx")
+        global_repo, join(this_folder, "metamodel_provider2", "Ingredient.tx"))
     r_mm = get_meta_model(
-        global_repo, this_folder + "/metamodel_provider2/Recipe.tx")
+        global_repo, join(this_folder, "metamodel_provider2", "Recipe.tx"))
 
-    scoping.MetaModelProvider.add_metamodel("*.recipe", r_mm)
-    scoping.MetaModelProvider.add_metamodel("*.ingredient", i_mm)
-
+    clear_language_registrations()
+    register_language(
+        'recipe-dsl',
+        pattern='*.recipe',
+        description='demo',
+        metamodel=r_mm
+    )
+    register_language(
+        'ingredient-dsl',
+        pattern='*.ingredient',
+        description='demo',
+        metamodel=i_mm
+    )
 
 ## Use Case: meta model sharing with the ImportURI-feature
 
