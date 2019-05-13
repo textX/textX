@@ -127,9 +127,9 @@ model_file_name = os.path.join(os.path.dirname(__file__), 'myB_model.b')
 model = mm_B.model_from_file(model_file_name)
 ```
 
-In another way we could use global model repository directly to instantiate
-models directly from Python code without resorting to `ImportURI` machinery. For
-this we shall modify the grammar of language `B` to be:
+In another way we could use a global model repository directly to instantiate
+models directly from Python code without resorting to `ImportURI` machinery.
+For this we shall modify the grammar of language `B` to be:
 
 ```nohighlight
 reference A
