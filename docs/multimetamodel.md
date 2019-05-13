@@ -4,7 +4,7 @@ There are different ways to combine meta models: **(1)** a meta model can use
 another meta model to compose its own structures (extending a meta model) or
 **(2)** a meta model can reference elements from another meta model.
 
-**Extending an existing meta model** can be realized in TextX by defining a
+**Extending an existing meta model** can be realized in textX by defining a
 grammar extending an existing grammar. All user classes, scope providers and
 processors must be manually added to the new meta model. Such extended meta
 models can also reference elements of models created with the original meta
@@ -25,12 +25,15 @@ referenced meta model. Rule lookup takes care of choosing the correct types.
 Simple examples: see
 [tests/functional/test_metamodel/test_multi_metamodel_refs.py](https://github.com/textX/textX/tree/master/tests/functional/test_metamodel/test_multi_metamodel_refs.py).
 
+To identify a referenced grammar you need to register the grammar to be
+referenced with the [registration API](registration.md).
 
-Thus, when designing a domain model (e.g., from the software test domain) to
-reference elements of another domain model (e.g., from the
-interface/communication domain), the second possibility (referencing) is
-probably a cleaner way to achieve the task than the first possibility
-(extending).
+!!! tip
+    Thus, when designing a domain model (e.g., from the software test domain) to
+    reference elements of another domain model (e.g., from the
+    interface/communication domain), the second possibility (referencing) is
+    probably a cleaner way to achieve the task than the first possibility
+    (extending).
 
 
 ## Use Case: meta model referencing another meta model
@@ -122,7 +125,7 @@ model_file_name = os.path.join(os.path.dirname(__file__), 'myB_model.b')
 model = mm_B.model_from_file(model_file_name)
 ```
 
-In another, way we could use global model repository directly to instantiate
+In another way we could use global model repository directly to instantiate
 models directly from Python code without resorting to `ImportURI` machinery. For
 this we shall modify the grammar of language `B` to be:
 
@@ -132,8 +135,13 @@ Model: b+=B;
 B:'B' name=ID '->' a=[A.A];
 ```
 
-Notice that we are not using `ImportURI` here. We register this language as we
-did above. Now, the code can look like this:
+Notice that we are not using the `ImportURI` functionality to load the 
+referenced model here. Since both metamodels share the same global
+repository, we can directly add a model object to the global_repo_provider 
+(```add_model```) of language A. 
+This model object will then be visible to the scope provider
+of the second model and make the model object available.
+We register this language as we did above. Now, the code can look like this:
 
 ```python
 mm_A = metamodel_for_language('A')
@@ -150,6 +158,12 @@ B b1 -> a1 B b2 -> a2 B b3 -> a3
 
 See how we explicitly added model `mA` to the global repository. This enabled
 model `mB` to find and resolve references to objects from `mA`.
+
+!!! note
+    It is crucial to use a scope provider which supports the global repository,
+    such as the ImporUri or the GlobalRepo based providers, to allow the described
+    mechanism to add a model object directly to a global repository.
+
 
 
 ## Use Case: Recipes and Ingredients with global model sharing
