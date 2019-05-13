@@ -31,11 +31,11 @@ To identify a referenced grammar you need to register the grammar to be
 referenced with the [registration API](registration.md).
 
 !!! tip
-    Thus, when designing a domain model (e.g., from the software test domain) to
+    When designing a domain model (e.g., from the software test domain) to
     reference elements of another domain model (e.g., from the
-    interface/communication domain), the second possibility (see **(2)** referencing) is
-    probably a cleaner way to achieve the task than the first possibility
-    (see **(1)** extending).
+    interface/communication domain), the second possibility (see **(2)** 
+    **referencing**) is probably a **cleaner way** to achieve the task than the 
+    first possibility (see **(1)** extending).
 
 
 ## Use Case: meta model referencing another meta model
@@ -232,19 +232,20 @@ components defned in the first model.
 The grammar for the user meta-model is given as follows (including the ability
 to import a component model file).
 
-    import Components
+```nohighlight
+import Components
 
-    Model:
-        imports+=Import
-        users+=User
-    ;
+Model:
+    imports+=Import
+    users+=User
+;
 
-    User:
-        "user" name=ID "uses" instance=[Instance|FQN] // Instance, FQN from other grammar
-    ;
+User:
+    "user" name=ID "uses" instance=[Instance|FQN] // Instance, FQN from other grammar
+;
 
-    Import: 'import' importURI=STRING;
-
+Import: 'import' importURI=STRING;
+```
 
 The [registration API](registration.md) is utilized to allocate the file
 extension to the corresponding meta model:
@@ -264,28 +265,36 @@ extension to the corresponding meta model:
 
 With this construct we can define a user model referencing a component model:
 
-    import "example.components"
-    user pi uses usage.action1
+```nohighlight
+import "example.components"
+user pi uses usage.action1
+```
 
 !!! tip
     In practice we would usually register our languages using declarative
     extension points. See [the registration API docs](registration.md) for more
     information.
 
-## Use Case: referencing non-textx meta-models/models
+## Use Case: referencing non-textX meta-models/models
+
+!!! note
+    The example in this section is based on the
+    [test_reference_to_buildin_attribute.py](https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_reference_to_buildin_attribute.py).
 
 You can reference an arbitrary python object using the `OBJECT` rule (see:
 [test_reference_to_buildin_attribute.py](https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_reference_to_buildin_attribute.py))
 
-    Access:
-        'access' name=ID pyobj=[OBJECT] ('.' pyattr=[OBJECT])?
-
+```nohighlight
+Access:
+    'access' name=ID pyobj=[OBJECT] ('.' pyattr=[OBJECT])?
+```
 
 In this case the referenced object is a python dictionary (`pyobj`) and the
 entry of such a dictionary (`pyattr`). An example model will look like:
 
-    access AccessName1 foreign_model.name_of_entry
-
+```nohighlight
+access AccessName1 foreign_model.name_of_entry
+```
 
 A custom scope provider is used to achieve this mapping:
 
@@ -304,12 +313,12 @@ The scope provider is linked to the `pyattr` attribute of the rule `Access`:
     })
 
 
-With this, we can reference non-textx data elements from within our language.
-This can be used to, e.g., use a non-textx AST object and reference it from a
-textx model.
+With this, we can reference non-texX data elements from within our language.
+This can be used to, e.g., use a non-textX AST object and reference it from a
+textX model.
 
 
-## Use Case: referencing non-textx meta-models/models with a json file
+## Use Case: referencing non-textX meta-models/models with a json file
 
 !!! note
     The example in this section is based on the
@@ -335,6 +344,6 @@ Where the json file `othermodel.json` consists of:
 ## Conclusion
 
 We provide a pragmatic way to define meta-models using other meta models.
-Mostly, we focus on textx meta-models using other textx meta-models. But scope
-providers may be used to also link a textx meta model to an arbitrary non-textx
+Mostly, we focus on textX meta-models using other textX meta-models. But scope
+providers may be used to also link a textX meta model to an arbitrary non-textX
 data structure. 
