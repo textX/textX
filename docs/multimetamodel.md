@@ -2,9 +2,11 @@
 
 There are different ways to combine meta models: **(1)** a meta model can use
 another meta model to compose its own structures (extending a meta model) or
-**(2)** a meta model can reference elements from another meta model.
+**(2)** a meta model can reference elements from another meta model. 
+**(3)** Moreover, we also demonstrate, that we can combine textX metamodels 
+with arbitrary non-textX metamodels/models available in python.
 
-**Extending an existing meta model** can be realized in textX by defining a
+**(1) Extending an existing meta model** can be realized in textX by defining a
 grammar extending an existing grammar. All user classes, scope providers and
 processors must be manually added to the new meta model. Such extended meta
 models can also reference elements of models created with the original meta
@@ -15,7 +17,7 @@ textx.textx_isinstance). Simple examples: see
 [tests/functional/test_scoping/test_metamodel_provider*.py](https://github.com/textX/textX/tree/master/tests/functional/test_scoping).
 
 
-**Referencing elements from another meta model** can be achieved without having
+**(2) Referencing elements from another meta model** can be achieved without having
 the original grammar, nor any other details like scope providers, etc. Such
 references can, thus, be enabled by using just a referenced language name in a
 `reference` statement of referring grammar. Target language meta-model may
@@ -31,9 +33,9 @@ referenced with the [registration API](registration.md).
 !!! tip
     Thus, when designing a domain model (e.g., from the software test domain) to
     reference elements of another domain model (e.g., from the
-    interface/communication domain), the second possibility (referencing) is
+    interface/communication domain), the second possibility (see **(2)** referencing) is
     probably a cleaner way to achieve the task than the first possibility
-    (extending).
+    (see **(1)** extending).
 
 
 ## Use Case: meta model referencing another meta model
@@ -307,7 +309,11 @@ This can be used to, e.g., use a non-textx AST object and reference it from a
 textx model.
 
 
-### Referencing non-textx meta-models/models with a json file
+## Use Case: referencing non-textx meta-models/models with a json file
+
+!!! note
+    The example in this section is based on the
+    [test_reference_to_nontextx_attribute.py](https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_reference_to_nontextx_attribute.py).
 
 In
 [test_reference_to_nontextx_attribute.py](https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_reference_to_nontextx_attribute.py) we
