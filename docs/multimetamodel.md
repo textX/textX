@@ -164,8 +164,6 @@ model `mB` to find and resolve references to objects from `mA`.
     such as the ImporUri or the GlobalRepo based providers, to allow the described
     mechanism to add a model object directly to a global repository.
 
-
-
 ## Use Case: Recipes and Ingredients with global model sharing
 
 !!! note
@@ -213,7 +211,16 @@ model elements among both meta models:
         metamodel=i_mm
     )
 
+!!! tip
+    In practice we would usually register our languages using declarative
+    extension points. See [the registration API docs](registration.md) for more
+    information.
+
 ## Use Case: meta model sharing with the ImportURI-feature
+
+!!! note
+    The example in this section is based on the
+    [test_metamodel_provider.py](https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_metamodel_provider.py).
 
 In this use case we have a given meta model to define components and instances
 of components. A second model is added to define users to use instances of such
@@ -237,17 +244,31 @@ to import a component model file).
     Import: 'import' importURI=STRING;
 
 
-The global `MetaModelProvider` class is utilized to allocate the file extension to
-the corresponding meta model:
+The [registration API](registration.md) is utilized to allocate the file
+extension to the corresponding meta model:
 
-        scoping.MetaModelProvider.add_metamodel("*.components", mm_components)
-        scoping.MetaModelProvider.add_metamodel("*.users", mm_users)
+    register_language(
+        'components-dsl',
+        pattern='*.components',
+        description='demo',
+        metamodel=mm_components  # or a factory
+    )
+    register_language(
+        'users-dsl',
+        pattern='*.users',
+        description='demo',
+        metamodel=mm_users  # or a factory
+    )
 
 With this construct we can define a user model referencing a component model:
 
     import "example.components"
     user pi uses usage.action1
 
+!!! tip
+    In practice we would usually register our languages using declarative
+    extension points. See [the registration API docs](registration.md) for more
+    information.
 
 ## Use Case: referencing non-textx meta-models/models
 
