@@ -145,7 +145,7 @@ def register_language(language_desc_or_name, pattern=None, description='',
     if languages is None:
         language_descriptions()
 
-    if type(language_desc_or_name) is not LanguageDesc:
+    if not isinstance(language_desc_or_name, LanguageDesc):
         language_desc = LanguageDesc(
             name=language_desc_or_name,
             pattern=pattern,
@@ -184,7 +184,7 @@ def register_generator(generator_desc_or_language, target=None, description='',
     if generators is None:
         generator_descriptions()
 
-    if type(generator_desc_or_language) is not GeneratorDesc:
+    if not isinstance(generator_desc_or_language, GeneratorDesc):
         generator_desc = GeneratorDesc(
             language=generator_desc_or_language,
             target=target,

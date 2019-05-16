@@ -38,11 +38,11 @@ models.
 ### Registering a new language
 
 To register a new language first you have to create an instance of
-`LanguageDesc` class providing the name of the language, the file pattern of
-files using the language (e.g. `*.ent`), the description of the language and
-finally a callable that should be called to get the instance of the language
-meta-model. Alternatively, you can provide the instance of the meta-model
-instead of the callable.
+`LanguageDesc` class (or its subclass) providing the name of the language, the
+file pattern of files using the language (e.g. `*.ent`), the description of the
+language and finally a callable that should be called to get the instance of the
+language meta-model. Alternatively, you can provide the instance of the
+meta-model instead of the callable.
 
 For example:
 
@@ -148,10 +148,10 @@ programmatically or from CLI using `textx` command.
 
 
 To register a new generator first you have to create an instance of
-`GeneratorDesc` class providing the name of the source language, the name of the
-target language, a short one-line description of the generator and finally a
-callable that should be called to perform code generation. The callable is if
-the form:
+`GeneratorDesc` class (or its subclass) providing the name of the source
+language, the name of the target language, a short one-line description of the
+generator and finally a callable that should be called to perform code
+generation. The callable is if the form:
 
 ```python
 def generator(metamodel, model, output_path, overwrite, debug, **custom_args)
