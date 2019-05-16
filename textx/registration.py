@@ -61,7 +61,7 @@ def language_descriptions():
     global languages
     if languages is None:
         languages = {}
-        for language in pkg_resources.iter_entry_points(
+        for language in pkg_resources.WorkingSet().iter_entry_points(
                 group='textx_languages'):
             register_language(language.load())
     return languages
@@ -74,7 +74,7 @@ def generator_descriptions():
     global generators
     if generators is None:
         generators = {}
-        for generator in pkg_resources.iter_entry_points(
+        for generator in pkg_resources.WorkingSet().iter_entry_points(
                 group='textx_generators'):
             register_generator(generator.load())
     return generators
