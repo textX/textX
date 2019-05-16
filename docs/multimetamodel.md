@@ -137,13 +137,12 @@ Model: b+=B;
 B:'B' name=ID '->' a=[A.A];
 ```
 
-Notice that we are not using the `ImportURI` functionality to load the 
-referenced model here. Since both metamodels share the same global
-repository, we can directly add a model object to the global_repo_provider 
-(```add_model```) of language A. 
-This model object will then be visible to the scope provider
-of the second model and make the model object available.
-We register this language as we did above. Now, the code can look like this:
+Notice that we are not using the `ImportURI` functionality to load the
+referenced model here. Since both meta-models share the same global repository,
+we can directly add a model object to the `global_repo_provider` (`add_model`)
+of language A. This model object will then be visible to the scope provider of
+the second model and make the model object available. We register this language
+as we did above. Now, the code can look like this:
 
 ```python
 mm_A = metamodel_for_language('A')
@@ -163,8 +162,9 @@ model `mB` to find and resolve references to objects from `mA`.
 
 !!! note
     It is crucial to use a scope provider which supports the global repository,
-    such as the ImporUri or the GlobalRepo based providers, to allow the described
+    such as the `ImporUri` or the `GlobalRepo` based providers, to allow the described
     mechanism to add a model object directly to a global repository.
+
 
 ## Use Case: Recipes and Ingredients with global model sharing
 
@@ -184,39 +184,44 @@ units to be used for each ingerdient (e.g. `60 gram of sugar` or
 `1 cup of sugar`). Moreover some ingredients may inherit features of other ingredients
 (e.g. salt may have the same units as sugar).
 
-Here, two meta models are defined to handle ingredient definitions (grammar
-`Ingredient.tx` for e.g. `fruits.ingredient`) and recipes (grammar
-`Recipe.tx`,for e.g. `fruit_salad.recipe`).
+Here, two meta-models are defined: 
 
-The [registration API](registration.md) is utilized to allocate the file
-extensions to the meta models (see
+ - `Ingredient.tx`, to handle ingredient definitions (e.g. `fruits.ingredient`
+   model) and
+ - `Recipe.tx`, for recipe definitions (e.g. `fruit_salad.recipe` model).
+
+The [registration API](registration.md) is utilized to bind the file extensions
+to the meta-models (see
 [test_metamodel_provider2.py](https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_metamodel_provider2.py)).
 Importantly, a common model repository (`global_repo`) is defined to share all
 model elements among both meta models:
 
-    i_mm = get_meta_model(
-        global_repo, join(this_folder, "metamodel_provider2", "Ingredient.tx"))
-    r_mm = get_meta_model(
-        global_repo, join(this_folder, "metamodel_provider2", "Recipe.tx"))
+```python
+i_mm = get_meta_model(
+    global_repo, join(this_folder, "metamodel_provider2", "Ingredient.tx"))
+r_mm = get_meta_model(
+    global_repo, join(this_folder, "metamodel_provider2", "Recipe.tx"))
 
-    clear_language_registrations()
-    register_language(
-        'recipe-dsl',
-        pattern='*.recipe',
-        description='demo',
-        metamodel=r_mm
-    )
-    register_language(
-        'ingredient-dsl',
-        pattern='*.ingredient',
-        description='demo',
-        metamodel=i_mm
-    )
+clear_language_registrations()
+register_language(
+    'recipe-dsl',
+    pattern='*.recipe',
+    description='demo',
+    metamodel=r_mm
+)
+register_language(
+    'ingredient-dsl',
+    pattern='*.ingredient',
+    description='demo',
+    metamodel=i_mm
+)
+```
 
 !!! tip
     In practice we would usually register our languages using declarative
     extension points. See [the registration API docs](registration.md) for more
     information.
+
 
 ## Use Case: meta model sharing with the ImportURI-feature
 
@@ -224,9 +229,9 @@ model elements among both meta models:
     The example in this section is based on the
     [test_metamodel_provider.py](https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_metamodel_provider.py).
 
-In this use case we have a given meta model to define components and instances
-of components. A second model is added to define users to use instances of such
-components defned in the first model.
+In this use case we have a given meta-model to define components and instances
+of components. A second model is added to define users which use instances of
+components defined in the first model.
 
 
 The grammar for the user meta-model is given as follows (including the ability
@@ -247,8 +252,8 @@ User:
 Import: 'import' importURI=STRING;
 ```
 
-The [registration API](registration.md) is utilized to allocate the file
-extension to the corresponding meta model:
+The [registration API](registration.md) is utilized to bind a file extension to
+the corresponding meta-model:
 
     register_language(
         'components-dsl',
@@ -275,6 +280,7 @@ user pi uses usage.action1
     extension points. See [the registration API docs](registration.md) for more
     information.
 
+
 ## Use Case: referencing non-textX meta-models/models
 
 !!! note
@@ -289,28 +295,47 @@ Access:
     'access' name=ID pyobj=[OBJECT] ('.' pyattr=[OBJECT])?
 ```
 
-In this case the referenced object is a python dictionary (`pyobj`) and the
-entry of such a dictionary (`pyattr`). An example model will look like:
+In this case the referenced object will be a python dictionary referenced by
+`pyobj` and the entry of such a dictionary will be referenced by `pyattr`. An
+example model will look like:
 
 ```nohighlight
 access AccessName1 foreign_model.name_of_entry
 ```
 
-A custom scope provider is used to achieve this mapping:
+`foreign_model` in this case is a plain Python dictionary provided as a [custom
+built-in](metamodel.md#built-in-objects) and registered during meta-model
+construction:
 
-    def my_scope_provider(obj, attr, attr_ref):
-        pyobj = obj.pyobj
-        if attr_ref.obj_name in pyobj:
-            return pyobj[attr_ref.obj_name]
-        else:
-            raise Exception("{} not found".format(attr_ref.obj_name))
+```python
+foreign_model = {
+    "name": "Test",
+    "value": 3
+}
+my_metamodel = metamodel_from_str(metamodel_str,
+                                  builtins={
+                                      'foreign_model': foreign_model})
+```
 
+A custom scope provider is used to achieve mapping of `pyobj/pyattr` to the
+entry in the `foreign_model` dict:
+
+```python
+def my_scope_provider(obj, attr, attr_ref):
+    pyobj = obj.pyobj
+    if attr_ref.obj_name in pyobj:
+        return pyobj[attr_ref.obj_name]
+    else:
+        raise Exception("{} not found".format(attr_ref.obj_name))
+```
 
 The scope provider is linked to the `pyattr` attribute of the rule `Access`:
 
-    my_metamodel.register_scope_providers({
-        "Access.pyattr": my_scope_provider,
-    })
+```python
+my_metamodel.register_scope_providers({
+    "Access.pyattr": my_scope_provider,
+})
+```
 
 
 With this, we can reference non-texX data elements from within our language.
@@ -329,21 +354,69 @@ In
 also demonstrate how such an external model can be loaded with our own language
 (using a json file as external model).
 
-    import "test_reference_to_nontextx_attribute/othermodel.json" as data
-    access A1 data.name
-    access A2 data.gender
+We want to access elements of JSON file from our model like this:
+
+```nohighlight
+import "test_reference_to_nontextx_attribute/othermodel.json" as data
+access A1 data.name
+access A2 data.gender
+```
 
 Where the json file `othermodel.json` consists of:
 
-    {
-      "name": "pierre",
-      "gender": "male"
-    }
+```nohighlight
+{
+  "name": "pierre",
+  "gender": "male"
+}
+```
+    
+We start with the following meta-model:
+
+```nohighlight
+Model:
+    imports+=Json
+    access+=Access
+;
+Access:
+    'access' name=ID pyobj=[Json] '.' pyattr=[OBJECT]?
+;
+
+Json: 'import' filename=STRING 'as' name=ID;
+Comment: /\/\/.*$/;
+
+```
+
+Now when resolving `pyobj/pyattr` combo of the `Access` rule we want to search
+in the imported JSON file. To achieve this we will write and register a scope
+provider that will load the referenced JSON file first time it is accessed and
+that lookup for the `pyattr` key in that file:
+
+```python
+def generic_scope_provider(obj, attr, attr_ref):
+    if not obj.pyobj:
+        from textx.scoping import Postponed
+        return Postponed()
+    if not hasattr(obj.pyobj, "data"):
+        import json
+        obj.pyobj.data = json.load(open(
+            join(abspath(dirname(__file__)), obj.pyobj.filename)))
+    if attr_ref.obj_name in obj.pyobj.data:
+        return obj.pyobj.data[attr_ref.obj_name]
+    else:
+        raise Exception("{} not found".format(attr_ref.obj_name))
+
+# create meta model
+my_metamodel = metamodel_from_str(metamodel_str)
+my_metamodel.register_scope_providers({
+    "Access.pyattr": generic_scope_provider,
+})
+```
 
 
 ## Conclusion
 
-We provide a pragmatic way to define meta-models using other meta models.
+We provide a pragmatic way to define meta-models that use other meta-models.
 Mostly, we focus on textX meta-models using other textX meta-models. But scope
 providers may be used to also link a textX meta model to an arbitrary non-textX
 data structure. 
