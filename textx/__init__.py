@@ -19,4 +19,4 @@ from textx.registration import (LanguageDesc, GeneratorDesc,
                                 generator_for_language_target,
                                 generator, language)
 
-__version__ = "1.8.0"
+__version__ = "2.0.0-dev"

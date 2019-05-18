@@ -349,18 +349,9 @@ class TextXVisitor(PTNodeVisitor):
                                 if rule._tx_class._tx_type != RULE_MATCH and\
                                         rule._tx_class not in inh_by:
                                     inh_by.append(rule._tx_class)
-                            return 1
                         else:
-                            rule_references = 0
                             for r in rule.nodes:
-                                rule_references += \
-                                    _add_reffered_classes(r, inh_by)
-                            if rule_references > 1:
-                                raise TextXSemanticError(
-                                    'Referencing multiple rules from '
-                                    'a single choice of abstract rule "{}" '
-                                    'is not allowed.'.format(cls.__name__))
-                            return rule_references
+                                _add_reffered_classes(r, inh_by)
 
                     if type(rule) is OrderedChoice:
                         for r in rule.nodes:

@@ -122,20 +122,6 @@ def get_children_of_type(typ, root):
     return get_children(lambda x: x.__class__.__name__ == typ, root)
 
 
-def convert(value, _type):
-    """
-    Convert instances of textx types to python types.
-    """
-    return {
-            'BOOL': lambda x: x == '1' or x.lower() == 'true',
-            'INT': lambda x: int(x),
-            'FLOAT': lambda x: float(x),
-            'STRICTFLOAT': lambda x: float(x),
-            'STRING': lambda x: x[1:-1].replace(r'\"',
-                                                r'"').replace(r"\'", "'"),
-            }.get(_type, lambda x: x)(value)
-
-
 class ObjCrossRef(object):
     """
     Used for object cross reference resolving.
@@ -312,14 +298,19 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
         Process subtree for match rules.
         """
         if isinstance(nt, Terminal):
-            return convert(nt.value, nt.rule_name)
+            return metamodel.convert(nt.value, nt.rule_name)
         else:
             # If RHS of assignment is NonTerminal it is a product of
             # complex match rule. Convert nodes to text and do the join.
             if len(nt) > 1:
-                return "".join([text(process_match(n)) for n in nt])
+                result = "".join([text(process_match(n)) for n in nt])
             else:
-                return process_match(nt[0])
+                result = process_match(nt[0])
+            obj_processor = metamodel.obj_processors.get(nt.rule_name, None)
+            if obj_processor:
+                return obj_processor(result)
+            else:
+                return result
 
     def process_node(node):
         if isinstance(node, Terminal):
@@ -328,11 +319,11 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                     isinstance(node.rule, RegExMatch):
                 if node.rule.regex.groups == 1:
                     value = node.extra_info.group(1)
-                    return convert(value, node.rule_name)
+                    return metamodel.convert(value, node.rule_name)
                 else:
-                    return convert(node.value, node.rule_name)
+                    return metamodel.convert(node.value, node.rule_name)
             else:
-                return convert(node.value, node.rule_name)
+                return metamodel.convert(node.value, node.rule_name)
 
         assert node.rule.root, \
             "Not a root node: {}".format(node.rule.rule_name)
@@ -349,8 +340,14 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                 # with matched concrete meta-class down the inheritance tree.
                 # Abstract meta-class should never be instantiated.
                 if len(node) > 1:
-                    return process_node(next(n for n in node
-                                             if type(n) is not Terminal))
+                    try:
+                        return process_node(
+                            next(n for n in node
+                                 if type(n) is not Terminal
+                                 and n.rule._tx_class is not RULE_MATCH))
+                    except StopIteration:
+                        # All nodes are match rules, do concatenation
+                        return ''.join(text(n) for n in node)
                 else:
                     return process_node(node[0])
             elif mclass._tx_type == RULE_MATCH:
@@ -531,6 +528,11 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
             raise TextXSemanticError(
                 'Unknown meta-class "{}".'
                 .format(model.obj.__class__.__name__))
+
+        if metaclass_of_grammar_rule._tx_type is RULE_MATCH:
+            # Object processors for match rules are already called
+            # in `process_match`
+            return
 
         many = [MULT_ONEORMORE, MULT_ZEROORMORE]
 
