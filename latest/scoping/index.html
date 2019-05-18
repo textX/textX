@@ -111,6 +111,10 @@
                 </li>
                 <li class="">
                     
+    <a class="" href="../registration/">Registration/Discovery</a>
+                </li>
+                <li class="">
+                    
     <a class="" href="../visualization/">Visualization</a>
                 </li>
                 <li class="">
@@ -242,15 +246,17 @@
 <p>The scope provider is responsible for the reference resolution of such a
 reference.</p>
 <p>The default behavior (default scope provider) is looking for the referenced name
-globally. Other scope providers will take namespaces into account, support
-references to parts of the model stored in different files or even models
-defined by other metamodels (imported into the current metamodel). Moreover,
-scope providers exist allowing to reference model elements relative to other
-referenced model elements. For example, this can be a referenced method defined
-in a referenced class of an instance (with a meta-model defining classes,
-methods and instances of classes).</p>
+globally (not taking any nested model structures into account, such as nested
+model-packages, model-namespaces or similar).</p>
+<p>Other scope providers will take namespaces into account, support references to
+parts of the model stored in different files or even models defined by other
+metamodels (imported into the current metamodel). Moreover, scope providers
+exist that allow to reference model elements relative to other referenced model
+elements. For example, this can be a referenced method defined in a referenced
+class of an instance (with a metamodel defining classes, methods and instances
+of classes).</p>
 <h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
-<p>The scope providers are registered to the metamodel and can be bound to specific
+<p>The scope providers are registered with a metamodel and can be bound to specific
 attributes of grammar rules:</p>
 <ul>
 <li>e.g., <code>my_meta_model.register_scope_providers({"*.*": scoping.providers.FQN()})</code>
@@ -263,7 +269,7 @@ attributes of grammar rules:</p>
    bounds <code>FQN</code> provider to all attributes of <code>MyAttribute</code> grammar rule</li>
 </ul>
 <p>Example (from <a href="https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_local_scope.py">tests/test_scoping/test_local_scope.py</a>):</p>
-<pre><code># Grammar snippet (Components.tx)
+<pre><code class="nohighlight"># Grammar snippet (Components.tx)
 Component:
     'component' name=ID ('extends' extends+=[Component|FQN][','])? '{'
         slots*=Slot
@@ -279,22 +285,24 @@ Connection:
     'to'
       to_inst=[Instance|ID] '.' to_port=[SlotIn|ID]
 ;
+</code></pre>
 
-# Python snippet
+<pre><code class="python"># Python snippet
 my_meta_model = metamodel_from_file(
     os.path.join(abspath(dirname(__file__)), 'components_model1', 'Components.tx')
 
 my_meta_model.register_scope_providers({
-    "*.*": scoping_providers.FQN(),
-    "Connection.from_port": scoping_providers.RelativeName(
-        "from_inst.component.slots"),
-    "Connection.to_port": scoping_providers.RelativeName(
-        "to_inst.component.slots"),
+    &quot;*.*&quot;: scoping_providers.FQN(),
+    &quot;Connection.from_port&quot;: scoping_providers.RelativeName(
+        &quot;from_inst.component.slots&quot;),
+    &quot;Connection.to_port&quot;: scoping_providers.RelativeName(
+        &quot;to_inst.component.slots&quot;),
 })
 </code></pre>
+
 <p>This example selects the fully qualified name provider as default provider
 (<code>"*.*"</code>). Moreover, for special attributes of a <code>Connection</code> a relative name
-lookup is specified: Here the <code>path</code> from the rule <code>Connection</code> containing the
+lookup is specified: here the <code>path</code> from the rule <code>Connection</code> containing the
 attribute of interest (e.g. <code>Connection.from_port</code>) to the referenced element is
 specified (the slot contained in <code>from_inst.component.slots</code>). Since this
 attribute is a list, the list is searched to find the referenced name.</p>
@@ -307,23 +315,27 @@ to wildcard selection (e.e, <code>"*.*"</code>).</p>
 <p>We provide some standard scope providers:</p>
 <ul>
 <li><code>textx.scoping.providers.PlainName</code>: This is the <strong>default provider</strong> of
-   textX.</li>
-<li><code>textx.scoping.providers.FQN</code>: This is a <strong>provider similar to Java or Xtext
-   name loopup</strong>.
-   Example: see <a href="https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_full_qualified_name.py">tests/test_scoping/test_full_qualified_name.py</a>.</li>
-</ul>
+   textX. It implements global naming within one model (model file/string) 
+   without namespaces.</li>
+<li>
+<p><code>textx.scoping.providers.FQN</code>: This is a <strong>provider similar to Java or Xtext
+    name loopup</strong> within one model (model file/string).
+    Example: see <a href="https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_full_qualified_name.py">tests/test_scoping/test_full_qualified_name.py</a>.</p>
 <p>A central feature of this scope provider is, that it <strong>traverses the model
-   tree and searches for a matching sequence of named objects</strong> (objects with
-   an attribute name matching parts of the full qualified name separated by 
-   dots). You can also provide a <strong>callback</strong> (<code>scope_redirection_logic</code>) to specify
-   that certain named objects are not searched recursively, but are replaced
-   by a list of objects instead, which are searched in place of the current object.
-   With this feature you can create, e.g., <strong>namespace/package aliases</strong> in your 
-   language. You can also activate a <strong>python like module import behavior</strong> 
-   for your language (with <code>textx.scoping.providers.FQNImportURI</code>), which is based 
-   on this callback.
-   Example: see <a href="https://github.com/textX/textX/blob/master/tests/functional/regressions/test_issue103_python_like_import.py">tests/functional/regressions/test_issue103_python_like_import.py</a>.</p>
-<pre><code>    package p1 {
+tree and searches for a matching sequence of named objects</strong> (objects with
+an attribute name matching parts of the full qualified name separated by
+dots). You can also provide a <strong>callback</strong> (<code>scope_redirection_logic</code>) to
+specify that certain named objects are not searched recursively, but are
+replaced by a list of objects instead, which are searched in place of the
+current object. With this feature you can create, e.g., <strong>namespace/package
+aliases</strong> in your language. You can also activate a <strong>python like module
+import behavior</strong> for your language (with
+<code>textx.scoping.providers.FQNImportURI</code>), which is based on this callback.
+Example: see
+<a href="https://github.com/textX/textX/blob/master/tests/functional/regressions/test_issue103_python_like_import.py">tests/functional/regressions/test_issue103_python_like_import.py</a>.</p>
+</li>
+</ul>
+<pre><code class="nohighlight">    package p1 {
         package p2 {
             class a {};
         }
@@ -332,73 +344,85 @@ to wildcard selection (e.e, <code>"*.*"</code>).</p>
     var x = new p1.p2.a()
     var y = new main.a()
 </code></pre>
-<p>Note: Except in the context of the scope_redirection_logic (see above), the FQN does
-   not take Postponed (unresolved) references into account. The reason is that
-   this would create a much more complex decision logic to decide which reference
-   needs to be resolved first. The purpose of the FQN is to identify direct instances
-   of model objects, and no references.</p>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Except in the context of the <code>scope_redirection_logic</code> (see above),
+the FQN does not take Postponed (unresolved) references into account. The
+reason is that this would create a much more complex decision logic to
+decide which reference needs to be resolved first. The purpose of the FQN is
+to identify direct instances of model objects, and no references.</p>
+</div>
 <ul>
-<li><code>textx.scoping.providers.ImportURI</code>: This a provider which <strong>allows to load
-   additional modules</strong> for lookup.
-   You need to define a rule with an attribute <code>importURI</code> as string (like in
-   Xtext). This string is then used to load other models. Moreover, you need
-   to provide another scope provider to manage the concrete lookup, e.g., the
-   <code>scope_provider_plain_names</code> or the <code>scope_provider_fully_qualified_names</code>.
-   Model objects formed by the rules with an <code>importURI</code> attribute get an
-   additional attribute <code>_tx_loaded_models</code> which is a list of the loaded
-   models by this rule instance.
-   Example: see <a href="https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_import_module.py">tests/test_scoping/test_import_module.py</a>.<ul>
+<li>
+<p><code>textx.scoping.providers.ImportURI</code>: This a provider which <strong>allows to load
+    additional modules</strong> for lookup.
+    You need to define a rule with an attribute <code>importURI</code> as string (like in
+    Xtext). This string is then used to load other models. Moreover, you need
+    to provide another scope provider to manage the concrete lookup, e.g., the
+    <code>scope_provider_plain_names</code> or the <code>scope_provider_fully_qualified_names</code>.
+    Model objects formed by the rules with an <code>importURI</code> attribute get an
+    additional attribute <code>_tx_loaded_models</code> which is a list of the loaded
+    models by this rule instance.
+    Example: see <a href="https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_import_module.py">tests/test_scoping/test_import_module.py</a>.</p>
+<ul>
 <li><code>FQNImportURI</code> (decorated scope provider)</li>
 <li><code>PlainNameImportURI</code> (decorated scope provider)</li>
 </ul>
+<p>You can use <strong><em>globbing</em></strong> (e.g. <code>import "*.data"</code>) with the ImportURI
+feature. This is implemented via the Python <code>glob</code> module. Arguments can be
+passed to the <code>glob.glob</code> function (<code>glob_args</code>), e.g., to enable recursive
+globbing. Alternatively, you can also specify a list of <strong><em>search
+directories</em></strong>. In this case globbing is not allowed and is disabled
+(reason: it is unclear if the user wants to glob over all search path
+entries or to stop after the first match). Example: see
+<a href="https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_import_module_search_path_issue66.py">tests/test_scoping/test_import_module_search_path_issue66.py</a>.</p>
 </li>
-</ul>
-<p>You can use <strong><em>globbing</em></strong> (import "*.data") with the ImportURI feature.
-   This is implemented via the python "glob" module. Arguments can be passed to
-   the glob.glob function (glob_args), e.g., to enable recursive globbing.
-   Alternatively, you can also specify a list of <strong><em>search directories</em></strong>.
-   In this case globbing is not allowed and is disabled (reason: it is
-   unclear if the user wants to glob over all search path entries or to stop
-   after the first match).
-   Example: see <a href="https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_import_module_search_path_issue66.py">tests/test_scoping/test_import_module_search_path_issue66.py</a>.
- * <code>textx.scoping.providers.GlobalRepo</code>: This is a provider where <strong>you initially
+<li>
+<p><code>textx.scoping.providers.GlobalRepo</code>: This is a provider where <strong>you initially
    need to specifiy the model files to be loaded and used for lookup</strong>. Like
    for <code>ImportURI</code> you need to provide another scope provider for the concrete
    lookup.
-   Example: see <a href="https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_global_import_modules.py">tests/test_scoping/test_global_import_modules.py</a>.
-    - <code>textx.scoping.providers.FQNGlobalRepo</code> (decorated scope provider)</p>
-<pre><code>   Here, you can also activate the "importAs" feature to allow to make
-   imported models not visible in your root namespace, but related to
-   a named importURI element ([tests/test_scoping/importURI_variations/test_importURI_variations.py](https://github.com/textX/textX/blob/master/tests/functional/test_scoping/importURI_variations/test_importURI_variations.py))
-
-   You can also transform the importURI attribute to a filename:
-   see ([tests/test_scoping/importURI_variations/test_importURI_variations.py](https://github.com/textX/textX/blob/master/tests/functional/test_scoping/importURI_variations/test_importURI_variations.py).
-
-- `textx.scoping.providers.PlainNameGlobalRepo` (decorated scope provider)
-</code></pre>
+   Example: see <a href="https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_global_import_modules.py">tests/test_scoping/test_global_import_modules.py</a>.</p>
 <ul>
-<li><code>textx.scoping.providers.RelativeName</code>: This is a scope provider to <strong>resolve
+<li><code>textx.scoping.providers.FQNGlobalRepo</code> (decorated scope provider)</li>
+</ul>
+<p>Here, you can also activate the "importAs" feature to allow to make
+   imported models not visible in your root namespace, but related to
+   a named importURI element (<a href="https://github.com/textX/textX/blob/master/tests/functional/test_scoping/importURI_variations/test_importURI_variations.py">tests/test_scoping/importURI_variations/test_importURI_variations.py</a>)</p>
+<p>You can also transform the importURI attribute to a filename:
+   see (<a href="https://github.com/textX/textX/blob/master/tests/functional/test_scoping/importURI_variations/test_importURI_variations.py">tests/test_scoping/importURI_variations/test_importURI_variations.py</a>.</p>
+<ul>
+<li><code>textx.scoping.providers.PlainNameGlobalRepo</code> (decorated scope provider)</li>
+</ul>
+</li>
+<li>
+<p><code>textx.scoping.providers.RelativeName</code>: This is a scope provider to <strong>resolve
    relative lookups</strong>: e.g., model-methods of a model-instance, defined by the
    class associated with the model-instance. Typically, another reference (the
    reference to the model-class of a model-instance) is used to determine the
    concrete referenced object (e.g. the model-method, owned by a model-class).
-   Example: see <a href="https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_local_scope.py">tests/test_scoping/test_local_scope.py</a>.</li>
-<li><code>textx.scoping.providers.ExtRelativeName</code>: The same as <code>RelativeName</code> <strong>allowing
+   Example: see <a href="https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_local_scope.py">tests/test_scoping/test_local_scope.py</a>.</p>
+</li>
+<li>
+<p><code>textx.scoping.providers.ExtRelativeName</code>: The same as <code>RelativeName</code> <strong>allowing
    to model inheritance or chained lookups</strong>.
-   Example: see <a href="https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_local_scope.py">tests/test_scoping/test_local_scope.py</a>.</li>
+   Example: see <a href="https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_local_scope.py">tests/test_scoping/test_local_scope.py</a>.</p>
+</li>
 </ul>
-<h3 id="note-on-uniqueness-of-model-elements">Note on Uniqueness of Model Elements<a class="headerlink" href="#note-on-uniqueness-of-model-elements" title="Permanent link">&para;</a></h3>
-<p>Two different models created using one single meta model (not using a scope
+<h3 id="note-on-uniqueness-of-model-elements-global-repository">Note on Uniqueness of Model Elements (global repository)<a class="headerlink" href="#note-on-uniqueness-of-model-elements-global-repository" title="Permanent link">&para;</a></h3>
+<p>Two different models created using one single meta-model (not using a scope
 provider like <code>GlobalRepo</code>, but by directly loading the models from file) have
 different instances of the same model elements. If you need two such models to
 share their model element instances, you can specify this, while creating the
-meta model (<code>global_repository=True</code>). Then, the meta model will store an own
-instance of a <code>GlobalModelRepository</code> as a base for all loaded models.</p>
+meta model (<code>global_repository=True</code> or
+<code>global_repository=instance_of_a_global_repo</code>). Then, the meta model will store
+an own instance of a <code>GlobalModelRepository</code> as a base for all loaded models.</p>
 <p>Model elements in models including other parts of the model (possibly circular)
 have unique model elements (no double instances).</p>
 <p>Examples see <a href="https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_import_module.py">tests/test_scoping/test_import_module.py</a>.</p>
 <h2 id="technical-aspects-and-implementation-details">Technical aspects and implementation details<a class="headerlink" href="#technical-aspects-and-implementation-details" title="Permanent link">&para;</a></h2>
-<p>The scope providers are python callables accepting <code>obj, attr, obj_ref</code>:</p>
+<p>The scope providers are Python callables accepting <code>obj, attr, obj_ref</code>:</p>
 <ul>
 <li><code>obj</code>     : the object representing the start of the search (e.g., a rule,
                like<code>MyAttribute</code> in the example above, or the model)</li>
@@ -456,12 +480,7 @@ model elements already exist.</p>
 <p>It also shows, that <strong>objects processors</strong> kick in when all 
 references are resolved. That means that no references are 
 resolved any more after or while the first object processor has been
-executed. One <strong>exception</strong> is when calling <strong>object processors for match rules</strong> 
-(e.g. regular expressions or rules like 'ID'): these processors are <em>called bottom up</em>
-during model construction. Those object processors should generally be a very 
-simple, usually just a type conversions so they don't need a fully constructed model. 
-<strong>Other object processors</strong> (i.e. those operating on common rules) are called, 
-as depicted above, on a constructed model, <em>in bottom up</em> fashion.</p>
+executed.</p>
 <h4 id="use-case-reference-data-in-non-textx-models">Use case: reference data in non-textx models<a class="headerlink" href="#use-case-reference-data-in-non-textx-models" title="Permanent link">&para;</a></h4>
 <p>If you want to <strong>reference an element not directly modelled</strong> (instantiated), you need to
 instantiate or load this element or information somewhere. This information can be,
