@@ -14,8 +14,16 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ## [Unreleased]
 
+
+## [v2.0.0] (released: 2019-05-20)
+
 ### Added
 
+  - [Registration and discovery] of languages and generators ([#187])
+  - New textx CLI commands for listing generators and languages
+    (`list-generators`, `list-languages`) and calling a generator (`generate`) ([#187])
+  - Meta-models may now [reference other registered meta-models] using the
+    `reference` statement ([#187])
   - Adding examples and documentation related to scope providers (related to
     model modification through scope providers) ([#168])
   - metamodel export feature for [PlantUML] ([#165])
@@ -35,6 +43,10 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ### Changed
 
+  - All textX commands implemented using textX CLI extensibility. `check`
+    command reworked to support the new registration feature ([#187]) **(BIC)**
+  - (Meta-)model visualization reworked as a set of textX generators ([#187]).
+    **(BIC)**
   - Made scope provider implementation of `RelativeName` and `ExtRelativeName`
     more readable ([#186]). Minor functional changes, not very probable to have
     any impact (only affects model-paths containing a list not at the end of the
@@ -53,6 +65,7 @@ please take a look at related PRs and issues and see if the change affects you.
     to `metamodel._parser_blueprint`). ([#93]) **(BIC)**
   - Started using _[Keep a Changelog][keepachangelog]_ ([#174])
   - Started using _[Semantic Versioning][semver]_ ([#174])
+  - Dropped support for Python 3.3
      
 ### Fixed
 
@@ -386,6 +399,8 @@ please take a look at related PRs and issues and see if the change affects you.
 
 
 [#188]: https://github.com/textX/textX/issues/188
+[#187]: https://github.com/textX/textX/pull/187
+[#186]: https://github.com/textX/textX/pull/186
 [#185]: https://github.com/textX/textX/pull/185
 [#183]: https://github.com/textX/textX/pull/183
 [#182]: https://github.com/textX/textX/issues/182
@@ -463,3 +478,5 @@ please take a look at related PRs and issues and see if the change affects you.
 [PlantUML]: http://plantuml.com/
 [semver]: https://semver.org/spec/v2.0.0.html
 [textXDocs]: http://textx.github.io/textX/latest/
+[Registration and discovery]: http://textx.github.io/textX/latest/registration/
+[reference other registered meta-models]: http://textx.github.io/textX/latest/multimetamodel/#use-case-meta-model-referencing-another-meta-model
