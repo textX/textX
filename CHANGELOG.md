@@ -56,6 +56,7 @@ please take a look at related PRs and issues and see if the change affects you.
      
 ### Fixed
 
+  - White-spaces in string matches were erroneously stripped ([#188])
   - Calling of match rule object processors ([#183], [#182], [#96])
   - Circular rule references in grammars ([#173], [#159], [#155])
   - Assertion error while calling object processors with multi meta models
@@ -384,6 +385,7 @@ please take a look at related PRs and issues and see if the change affects you.
   - Export to dot.
 
 
+[#188]: https://github.com/textX/textX/issues/188
 [#185]: https://github.com/textX/textX/pull/185
 [#183]: https://github.com/textX/textX/pull/183
 [#182]: https://github.com/textX/textX/issues/182

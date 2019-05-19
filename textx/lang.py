@@ -71,8 +71,7 @@ def rule_name():            return ident
 def obj_ref_rule():         return ident
 def class_name():           return qualified_ident
 
-def str_match():            return [("'", _(r"((\\')|[^'])*"),"'"),\
-                                    ('"', _(r'((\\")|[^"])*'),'"')]
+def str_match():            return string_value
 def re_match():             return "/", _(r"((\\/)|[^/])*"), "/"
 def ident():                return _(r'\w+')
 def qualified_ident():      return _(r'\w+(\.\w+)?')
@@ -829,7 +828,7 @@ class TextXVisitor(PTNodeVisitor):
 
     def visit_str_match(self, node, children):
         try:
-            to_match = children[0]
+            to_match = children[0][1:-1]
         except IndexError:
             to_match = ''
 
@@ -881,7 +880,7 @@ class TextXVisitor(PTNodeVisitor):
         return int(node.value)
 
     def visit_string_value(self, node, children):
-        return node.value.strip("\"'")
+        return node.value[1:-1]
 
     def bracketed_choice(self, node, children):
         return children[0]
