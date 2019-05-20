@@ -116,6 +116,7 @@ def test_declaratively_registered_languages_always_available():
 
     assert tx_lang.name == 'textX'
     assert tx_lang.pattern == '*.tx'
+    assert tx_lang.project_name == 'textX'
 
 
 def test_language_for_file():
@@ -296,3 +297,4 @@ def test_declaratively_registered_generator_always_available():
     assert generator.language == 'flow-dsl'
     assert generator.target == 'PlantUML'
     assert callable(generator.generator)
+    assert generator.project_name == 'flow-codegen'

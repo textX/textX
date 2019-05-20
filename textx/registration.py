@@ -19,6 +19,9 @@ class LanguageDesc(object):
         metamodel (callable): A callable that returns configured meta-model
             or the metamodel itself (if a single specific instance is
             desired)
+        project_name (str): Read-only attribute available on registrations from
+            `setup.py`. Keeps the Python project name of the project that
+            registered this language.
     """
 
     def __init__(self, name, pattern=None, description='', metamodel=None):
@@ -26,6 +29,7 @@ class LanguageDesc(object):
         self.pattern = pattern
         self.description = description
         self.metamodel = metamodel
+        self.project_name = None
 
 
 class GeneratorDesc(object):
@@ -41,12 +45,16 @@ class GeneratorDesc(object):
         generator (callable): A callable of the form:
                               def generator(metamodel, model, output_path,
                                             overwrite, debug, **custom_args)
+        project_name (str): Read-only attribute available on registrations from
+            `setup.py`. Keeps the Python project name of the project that
+            registered this generator.
     """
     def __init__(self, language, target, description='', generator=None):
         self.language = language
         self.target = target
         self.description = description
         self.generator = generator
+        self.project_name = None
 
 
 metamodels = {}
@@ -63,7 +71,8 @@ def language_descriptions():
         languages = {}
         for language in pkg_resources.WorkingSet().iter_entry_points(
                 group='textx_languages'):
-            register_language(language.load())
+            register_language_with_project(language.load(),
+                                           language.dist.project_name)
     return languages
 
 
@@ -76,7 +85,8 @@ def generator_descriptions():
         generators = {}
         for generator in pkg_resources.WorkingSet().iter_entry_points(
                 group='textx_generators'):
-            register_generator(generator.load())
+            register_generator_with_project(generator.load(),
+                                            generator.dist.project_name)
     return generators
 
 
@@ -161,6 +171,14 @@ def register_language(language_desc_or_name, pattern=None, description='',
     languages[language_desc.name.lower()] = language_desc
 
 
+def register_language_with_project(language_desc, project_name):
+    """
+    Register language with Python project name.
+    """
+    language_desc.project_name = project_name
+    register_language(language_desc)
+
+
 def clear_language_registrations():
     """
     Clear all registered languages.
@@ -200,6 +218,14 @@ def register_generator(generator_desc_or_language, target=None, description='',
             'Generator "{}->{}" already registered.'.format(
                 generator_desc.language, generator_desc.target))
     lang_gens[generator_desc.target.lower()] = generator_desc
+
+
+def register_generator_with_project(generator_desc, project_name):
+    """
+    Register generator with Python project name.
+    """
+    generator_desc.project_name = project_name
+    register_generator(generator_desc)
 
 
 def clear_generator_registrations():
