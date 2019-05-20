@@ -11,10 +11,11 @@ def list_languages(textx):
         List all registered languages
         """
         for language in language_descriptions().values():
-            click.echo("{:<30}{}".format("{} ({})"
-                                         .format(language.name,
-                                                 language.pattern),
-                                         language.description))
+            click.echo("{:<30}{:<30}{}".format("{} ({})"
+                                               .format(language.name,
+                                                       language.pattern),
+                                               language.project_name,
+                                               language.description))
 
 
 def list_generators(textx):
@@ -25,7 +26,8 @@ def list_generators(textx):
         """
         for language in generator_descriptions().values():
             for generator in language.values():
-                click.echo("{:<30}{}".format("{} -> {}"
-                                             .format(generator.language,
-                                                     generator.target),
-                                             generator.description))
+                click.echo("{:<30}{:<30}{}".format("{} -> {}"
+                                                   .format(generator.language,
+                                                           generator.target),
+                                                   generator.project_name,
+                                                   generator.description))

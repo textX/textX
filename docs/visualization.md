@@ -32,20 +32,20 @@ generators](textx_command.md) to produce model and meta-model visualizations.
 Visualizations of models and meta-models are implemented by registering
 generators from `textX` (for meta-models) or `any` (for all models) to `dot` or
 `PlantUML` file format. Several of these generators are provided by textX. You
-can list them by:
+can list them by [list-generators command](registration.md#listing-generators):
 
 ```nohighlight
 $ textx list-generators
-textX -> dot                  Generating dot visualizations from textX grammars
-textX -> PlantUML             Generating PlantUML visualizations from textX grammars
-any -> dot                    Generating dot visualizations from arbitrary models
-flow-dsl -> PlantUML          Generating PlantUML visualization from flow-dsl
+textX -> dot         textX               Generating dot visualizations from textX grammars
+textX -> PlantUML    textX               Generating PlantUML visualizations from textX grammars
+any -> dot           textX               Generating dot visualizations from arbitrary models
+flow-dsl -> PlantUML flow-codegen        Generating PlantUML visualization from flow-dsl
 ```
 
 You see that we have two generators from `textX` language (i.e. textX grammar
-language). The first as a target uses `dot` and the second uses `PlantUML`.
-These generators will produce `dot` (part of [GraphViz]) or `pu` ([PlantUML])
-file respectively.
+language) registered by the `textX` project. The first as a target uses `dot`
+and the second uses `PlantUML`. These generators will produce `dot` (part of
+[GraphViz]) or `pu` ([PlantUML]) file respectively.
 
 Also, you can see that there is `any` -> `dot` generator. This generator can be
 applied to any model and will produce `dot` output.

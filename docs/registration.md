@@ -118,12 +118,16 @@ grammar language is registered as a language using the same mechanism.
 
 ```nohighlight
 $ textx list-languages
-txcl (*.txcl)                 A language for syntax highlight definition.
-textX (*.tx)                  A meta-language for language definition
-types-dsl (*.etype)           An example DSL for simple types definition
-data-dsl (*.edata)            An example DSL for data definition
-flow-dsl (*.eflow)            An example DSL for data flow processing definition
+txcl (*.txcl)         textx-gen-coloring    A language for syntax highlight definition.
+textX (*.tx)          textX                 A meta-language for language definition
+types-dsl (*.etype)   types-dsl             An example DSL for simple types definition
+data-dsl (*.edata)    data-dsl              An example DSL for data definition
+flow-dsl (*.eflow)    flow-dsl              An example DSL for data flow processing definition
 ```
+
+The first column gives the language unique name and filename pattern, the second
+column is the Python project which registered the language and the third column
+is a short description.
 
 You can get a reference to a registered language meta-model in your programs by
 using the [registration API] `metamodel_for_language` call. For example:
@@ -261,23 +265,28 @@ def model_generate_dot(metamodel, model, output_path, overwrite, debug):
 ### Listing generators
 
 textX provides a core command `list-generators` that lists all registered
-generators in the current environment. We eat our own dog food so even [`textX`
-visualization](visualization.md) is done as using the generator mechanism.
-
+generators in the current environment. 
 
 ```nohighlight
 $ textx list-generators
-textX -> dot                  Generating dot visualizations from textX grammars
-textX -> PlantUML             Generating PlantUML visualizations from textX grammars
-any -> dot                    Generating dot visualizations from arbitrary models
-flow-dsl -> PlantUML          Generating PlantUML visualization from flow-dsl
+textX -> dot         textX               Generating dot visualizations from textX grammars
+textX -> PlantUML    textX               Generating PlantUML visualizations from textX grammars
+any -> dot           textX               Generating dot visualizations from arbitrary models
+flow-dsl -> PlantUML flow-codegen        Generating PlantUML visualization from flow-dsl
 ```
+
+The first column gives the generator identifier, the second column is the Python
+project which registered the generator and the third column is a short
+description.
 
 Generators are identified by pair `(<source language name>, <target language
 name>)`. The source language must be registered in the environment for the
 generator to be able to parse the input. The target output is produced by the
 generator itself so the target language doesn't have to registered.
 
+!!! note
+    We eat our own dog food so even [`textX` visualization](visualization.md) is
+    done as using the generator mechanism.
 
 
 ### Calling a generator
