@@ -15,7 +15,7 @@ please take a look at related PRs and issues and see if the change affects you.
 ## [Unreleased]
 
 
-## [v2.0.0] (released: 2019-05-20)
+## [v2.0.1] (released: 2019-05-20)
 
 ### Added
 
