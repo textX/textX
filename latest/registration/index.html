@@ -330,13 +330,16 @@ prefix, <code>mycompanyname-entity</code> instead of just <code>entity</code>).<
 languages in the current environment. We eat our own dog food so even <code>textX</code>
 grammar language is registered as a language using the same mechanism.</p>
 <pre><code class="nohighlight">$ textx list-languages
-txcl (*.txcl)                 A language for syntax highlight definition.
-textX (*.tx)                  A meta-language for language definition
-types-dsl (*.etype)           An example DSL for simple types definition
-data-dsl (*.edata)            An example DSL for data definition
-flow-dsl (*.eflow)            An example DSL for data flow processing definition
+txcl (*.txcl)         textx-gen-coloring    A language for syntax highlight definition.
+textX (*.tx)          textX                 A meta-language for language definition
+types-dsl (*.etype)   types-dsl             An example DSL for simple types definition
+data-dsl (*.edata)    data-dsl              An example DSL for data definition
+flow-dsl (*.eflow)    flow-dsl              An example DSL for data flow processing definition
 </code></pre>
 
+<p>The first column gives the language unique name and filename pattern, the second
+column is the Python project which registered the language and the third column
+is a short description.</p>
 <p>You can get a reference to a registered language meta-model in your programs by
 using the <a href="#registration-api">registration API</a> <code>metamodel_for_language</code> call. For example:</p>
 <pre><code class="python">from textx import metamodel_for_language
@@ -443,19 +446,26 @@ def model_generate_dot(metamodel, model, output_path, overwrite, debug):
 
 <h3 id="listing-generators">Listing generators<a class="headerlink" href="#listing-generators" title="Permanent link">&para;</a></h3>
 <p>textX provides a core command <code>list-generators</code> that lists all registered
-generators in the current environment. We eat our own dog food so even <a href="../visualization/"><code>textX</code>
-visualization</a> is done as using the generator mechanism.</p>
+generators in the current environment. </p>
 <pre><code class="nohighlight">$ textx list-generators
-textX -&gt; dot                  Generating dot visualizations from textX grammars
-textX -&gt; PlantUML             Generating PlantUML visualizations from textX grammars
-any -&gt; dot                    Generating dot visualizations from arbitrary models
-flow-dsl -&gt; PlantUML          Generating PlantUML visualization from flow-dsl
+textX -&gt; dot         textX               Generating dot visualizations from textX grammars
+textX -&gt; PlantUML    textX               Generating PlantUML visualizations from textX grammars
+any -&gt; dot           textX               Generating dot visualizations from arbitrary models
+flow-dsl -&gt; PlantUML flow-codegen        Generating PlantUML visualization from flow-dsl
 </code></pre>
 
+<p>The first column gives the generator identifier, the second column is the Python
+project which registered the generator and the third column is a short
+description.</p>
 <p>Generators are identified by pair <code>(&lt;source language name&gt;, &lt;target language
 name&gt;)</code>. The source language must be registered in the environment for the
 generator to be able to parse the input. The target output is produced by the
 generator itself so the target language doesn't have to registered.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>We eat our own dog food so even <a href="../visualization/"><code>textX</code> visualization</a> is
+done as using the generator mechanism.</p>
+</div>
 <h3 id="calling-a-generator">Calling a generator<a class="headerlink" href="#calling-a-generator" title="Permanent link">&para;</a></h3>
 <p>You can get a reference to a generator by using the <a href="#registration-api">registration API</a>. For
 example <code>generator_for_language_target</code> call will return the generator for the

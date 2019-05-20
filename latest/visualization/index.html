@@ -260,18 +260,18 @@ generators</a> to produce model and meta-model visualizations.</p>
 <p>Visualizations of models and meta-models are implemented by registering
 generators from <code>textX</code> (for meta-models) or <code>any</code> (for all models) to <code>dot</code> or
 <code>PlantUML</code> file format. Several of these generators are provided by textX. You
-can list them by:</p>
+can list them by <a href="../registration/#listing-generators">list-generators command</a>:</p>
 <pre><code class="nohighlight">$ textx list-generators
-textX -&gt; dot                  Generating dot visualizations from textX grammars
-textX -&gt; PlantUML             Generating PlantUML visualizations from textX grammars
-any -&gt; dot                    Generating dot visualizations from arbitrary models
-flow-dsl -&gt; PlantUML          Generating PlantUML visualization from flow-dsl
+textX -&gt; dot         textX               Generating dot visualizations from textX grammars
+textX -&gt; PlantUML    textX               Generating PlantUML visualizations from textX grammars
+any -&gt; dot           textX               Generating dot visualizations from arbitrary models
+flow-dsl -&gt; PlantUML flow-codegen        Generating PlantUML visualization from flow-dsl
 </code></pre>
 
 <p>You see that we have two generators from <code>textX</code> language (i.e. textX grammar
-language). The first as a target uses <code>dot</code> and the second uses <code>PlantUML</code>.
-These generators will produce <code>dot</code> (part of <a href="http://www.graphviz.org/">GraphViz</a>) or <code>pu</code> (<a href="http://plantuml.com/">PlantUML</a>)
-file respectively.</p>
+language) registered by the <code>textX</code> project. The first as a target uses <code>dot</code>
+and the second uses <code>PlantUML</code>. These generators will produce <code>dot</code> (part of
+<a href="http://www.graphviz.org/">GraphViz</a>) or <code>pu</code> (<a href="http://plantuml.com/">PlantUML</a>) file respectively.</p>
 <p>Also, you can see that there is <code>any</code> -&gt; <code>dot</code> generator. This generator can be
 applied to any model and will produce <code>dot</code> output.</p>
 <p>You can also see in this example that we have a specific visualization for
