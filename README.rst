@@ -1,6 +1,6 @@
 .. image:: https://raw.githubusercontent.com/textX/textX/master/art/textX-logo.png
 
-|pypi-badge| |license| |build-status| |docs|
+|pypi-badge| |license| |build-status| |coverage| |docs|
 
 textX is a meta-language for building Domain-Specific Languages (DSLs) in Python.
 It is inspired by `Xtext`_.
@@ -185,6 +185,10 @@ Tested for 2.7, 3.4+
 
 .. |build-status| image:: https://travis-ci.org/textX/textX.svg?branch=master
    :target: https://travis-ci.org/textX/textX
+
+.. |coverage| image:: https://coveralls.io/repos/github/textX/textX/badge.svg?branch=master
+   :target: https://coveralls.io/github/textX/textX?branch=master
+
 
 .. |docs| image:: https://img.shields.io/badge/docs-latest-green.svg
    :target: http://textx.github.io/textX/latest/
