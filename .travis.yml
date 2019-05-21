@@ -18,6 +18,9 @@ install:
 script:
     - ./runtests.sh
 
+after_success:
+    - coveralls
+
 matrix:
   include:
     - python: 3.7
