@@ -14,7 +14,7 @@ for line in open(VERSIONFILE, "r").readlines():
 if not VERSION:
     raise RuntimeError('No version defined in textx.__init__.py')
 
-README = codecs.open(os.path.join(os.path.dirname(__file__), 'README.rst'),
+README = codecs.open(os.path.join(os.path.dirname(__file__), 'README.md'),
                      'r', encoding='utf-8').read()
 
 
@@ -40,6 +40,7 @@ setup(
     version=VERSION,
     description='Meta-language for DSL implementation inspired by Xtext',
     long_description=README,
+    long_description_content_type='text/markdown',
     author='Igor R. Dejanovic',
     author_email='igor.dejanovic@gmail.com',
     license='MIT',
