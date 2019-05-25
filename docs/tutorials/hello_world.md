@@ -35,12 +35,13 @@ These are the steps to build a very basic Hello World - like language.
     rules.
 
 2. At this point you can check and visualise meta-model using following command
-   from command line:
+   from the command line:
 
-        $ textx visualize hello.tx
-        Meta-model OK.
-        Generating 'hello.tx.dot' file for meta-model.
-        To convert to png run 'dot -Tpng -O hello.tx.dot'
+        $ textx generate hello.tx --target dot
+        Generating dot target from models:
+        /home/igor/repos/textX/textX/examples/hello_world/hello.tx
+        -> /home/igor/repos/textX/textX/examples/hello_world/hello.dot
+          To convert to png run "dot -Tpng -O hello.dot"
 
     ![hello meta-model](../images/hello_meta.dot.png)
 
@@ -79,19 +80,16 @@ These are the steps to build a very basic Hello World - like language.
 
 6. You can optionally export model to `dot` file to visualize it. Run following
    from the command line:
-
-        $ textx visualize hello.tx example.hello
-        Meta-model OK.
-        Model OK.
-        Generating 'hello.tx.dot' file for meta-model.
-        To convert to png run 'dot -Tpng -O hello.tx.dot'
-        Generating 'example.hello.dot' file for model.
-        To convert to png run 'dot -Tpng -O example.hello.dot'
+   
+        $ textx generate example.hello --grammar hello.tx --target dot
+        Generating dot target from models:
+        /home/igor/repos/textX/textX/examples/hello_world/example.hello
+        -> /home/igor/repos/textX/textX/examples/hello_world/example.dot
+          To convert to png run "dot -Tpng -O example.dot"
 
     ![Example hello model](../images/example.dot.png)
 
-    This is an object graph automatically constructed from `example.hello`
-    file.
+    This is an object graph automatically constructed from `example.hello` file.
 
     We see that each `Who` object is contained in the python attribute
     `to_greet` of list type which is defined by the grammar.

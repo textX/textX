@@ -119,13 +119,18 @@ To verify that textX is properly installed run:
 
 You should get output like this:
 
-    error: the following arguments are required: cmd, metamodel
-    usage: textx [-h] [-i] [-d] cmd metamodel [model]
+    Usage: textx [OPTIONS] COMMAND [ARGS]...
 
-    textX checker and visualizer
+    Options:
+      --debug  Debug/trace output.
+      --help   Show this message and exit.
 
-    ...
-    
+    Commands:
+      check            Check/validate model given its file path.
+      generate         Run code generator on a provided model(s).
+      list-generators  List all registered generators
+      list-languages   List all registered languages
+
 
 To install development (`master` branch) version:
 

@@ -9,16 +9,17 @@ Language meta-model is given in `pyflies.tx` file. An example experiment is give
 
 To check and visualize meta-model and model issue command:
 
-    $ textx visualize pyflies.tx experiment.pf
+    $ textx generate pyflies.tx --target dot
+    Generating dot target from models:
+    /home/igor/repos/textX/textX/examples/pyFlies/pyflies.tx
+    -> /home/igor/repos/textX/textX/examples/pyFlies/pyflies.dot
+      To convert to png run "dot -Tpng -O pyflies.dot"
 
-You will get following output:
-
-    Meta-model OK.
-    Model OK.
-    Generating 'pyflies.tx.dot' file for meta-model.
-    To convert to png run 'dot -Tpng -O pyflies.tx.dot'
-    Generating 'experiment.pf.dot' file for model.
-    To convert to png run 'dot -Tpng -O experiment.pf.dot'
+    $ textx generate experiment.pf --grammar pyflies.tx --target dot
+    Generating dot target from models:
+    /home/igor/repos/textX/textX/examples/pyFlies/experiment.pf
+    -> /home/igor/repos/textX/textX/examples/pyFlies/experiment.dot
+      To convert to png run "dot -Tpng -O experiment.dot"
 
 Now, you can use some `dot` viewer to view meta-model and model diagrams.
 Alternativelly, you can convert `dot` files to some other graphical format as

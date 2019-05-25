@@ -9,7 +9,8 @@ Example taken from https://github.com/mansam/exploring-rhapsody/blob/master/Ligh
 
 To check and visualize meta-model and test model:
 
-    $ textx visualize rhapsody.tx LightSwitch.rpy
+    $ textx generate rhapsody.tx --target dot
+    $ textx generate LightSwitch.rpy --grammar rhapsody.tx --target dot
     $ dot -Tpdf -O *dot
 
 Load from code:
