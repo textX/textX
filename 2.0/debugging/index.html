@@ -244,9 +244,9 @@ created from the input as well as the model will be exported to dot files.</p>
 <pre><code class="python">  robot_program = robot_metamodel.model_from_file('program.rbt', debug=True)
 </code></pre>
 
-<p>Alternatively, you can use <a href="../textx_command/">textx check or visualize command</a>
+<p>Alternatively, you can use <a href="../textx_command/">textx check or generate command</a>
 in debug mode.</p>
-<pre><code>$ textx -d visualize robot.tx program.rbt
+<pre><code>$ textx --debug generate --grammar robot.tx program.rbt --target dot
 
 *** PARSING LANGUAGE DEFINITION ***
 New rule: grammar_to_import -&gt; RegExMatch

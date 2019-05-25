@@ -401,15 +401,16 @@ excellent <a href="http://www.graphviz.org/">GraphViz</a> software package and i
 graph specification called <em>dot</em>. It is a textual language for visual graph
 definition.</p>
 <p>Lets check our meta-model and export it to the dot language.</p>
-<pre><code>$ textx visualize robot.tx
-Meta-model OK.
-Generating 'robot.tx.dot' file for meta-model.
-To convert to png run 'dot -Tpng -O robot.tx.dot'
+<pre><code>$ textx generate robot.tx --target dot
+Generating dot target from models:
+/home/igor/repos/textX/textX/examples/robot/robot.tx
+-&gt; /home/igor/repos/textX/textX/examples/robot/robot.dot
+  To convert to png run "dot -Tpng -O robot.dot"
 </code></pre>
 <p><code>dot</code> file can be opened with dot viewer (there are many to choose from) or
 transformed with <code>dot</code> tool to raster or vector graphics.</p>
 <p>For example:</p>
-<pre><code>dot -Tpng robot_meta.dot -O robot_meta.png
+<pre><code>dot -Tpng robot.dot -O robot.png
 </code></pre>
 <p>This command will create <code>png</code> image out of <code>dot</code> file.</p>
 <p><img alt="Robot meta-model" src="../../images/robot.tx.dot.png" /></p>
@@ -439,13 +440,11 @@ textual files. Extend your <code>robot.py</code> with:</p>
 In this file does not match our language a syntax error will be raised on the
 first error encountered.</p>
 <p>In the same manner as meta-model visualization we can visualize our model too.</p>
-<pre><code>$ textx visualize robot.tx program.rbt
-Meta-model OK.
-Model OK.
-Generating 'robot.tx.dot' file for meta-model.
-To convert to png run 'dot -Tpng -O robot.tx.dot'
-Generating 'program.rbt.dot' file for model.
-To convert to png run 'dot -Tpng -O program.rbt.dot'
+<pre><code>$ textx generate program.rbt --grammar robot.tx --target dot
+Generating dot target from models:
+/home/igor/repos/textX/textX/examples/robot/program.rbt
+-&gt; /home/igor/repos/textX/textX/examples/robot/program.dot
+  To convert to png run "dot -Tpng -O program.dot"
 </code></pre>
 <p>This will create <code>program.dot</code> file that can be visualized using proper viewer
 or transformed to image.</p>

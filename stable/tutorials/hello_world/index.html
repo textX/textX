@@ -261,11 +261,12 @@ rules.</p>
 </li>
 <li>
 <p>At this point you can check and visualise meta-model using following command
-   from command line:</p>
-<pre><code>$ textx visualize hello.tx
-Meta-model OK.
-Generating 'hello.tx.dot' file for meta-model.
-To convert to png run 'dot -Tpng -O hello.tx.dot'
+   from the command line:</p>
+<pre><code>$ textx generate hello.tx --target dot
+Generating dot target from models:
+/home/igor/repos/textX/textX/examples/hello_world/hello.tx
+-&gt; /home/igor/repos/textX/textX/examples/hello_world/hello.dot
+  To convert to png run "dot -Tpng -O hello.dot"
 </code></pre>
 <p><img alt="hello meta-model" src="../../images/hello_meta.dot.png" /></p>
 <p>You can see that for each rule from language description an appropriate
@@ -301,17 +302,14 @@ Python object graph. Object classes are those defined by the meta-model.</p>
 <li>
 <p>You can optionally export model to <code>dot</code> file to visualize it. Run following
    from the command line:</p>
-<pre><code>$ textx visualize hello.tx example.hello
-Meta-model OK.
-Model OK.
-Generating 'hello.tx.dot' file for meta-model.
-To convert to png run 'dot -Tpng -O hello.tx.dot'
-Generating 'example.hello.dot' file for model.
-To convert to png run 'dot -Tpng -O example.hello.dot'
+<pre><code>$ textx generate example.hello --grammar hello.tx --target dot
+Generating dot target from models:
+/home/igor/repos/textX/textX/examples/hello_world/example.hello
+-&gt; /home/igor/repos/textX/textX/examples/hello_world/example.dot
+  To convert to png run "dot -Tpng -O example.dot"
 </code></pre>
 <p><img alt="Example hello model" src="../../images/example.dot.png" /></p>
-<p>This is an object graph automatically constructed from <code>example.hello</code>
-file.</p>
+<p>This is an object graph automatically constructed from <code>example.hello</code> file.</p>
 <p>We see that each <code>Who</code> object is contained in the python attribute
 <code>to_greet</code> of list type which is defined by the grammar.</p>
 </li>

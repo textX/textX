@@ -354,12 +354,17 @@ installed.</p>
 <pre><code>$ textx
 </code></pre>
 <p>You should get output like this:</p>
-<pre><code>error: the following arguments are required: cmd, metamodel
-usage: textx [-h] [-i] [-d] cmd metamodel [model]
+<pre><code>Usage: textx [OPTIONS] COMMAND [ARGS]...
 
-textX checker and visualizer
+Options:
+  --debug  Debug/trace output.
+  --help   Show this message and exit.
 
-...
+Commands:
+  check            Check/validate model given its file path.
+  generate         Run code generator on a provided model(s).
+  list-generators  List all registered generators
+  list-languages   List all registered languages
 </code></pre>
 <p>To install development (<code>master</code> branch) version:</p>
 <pre><code>$ pip install --upgrade https://github.com/textX/textX/archive/master.zip
@@ -522,5 +527,5 @@ Knowledge-Based Systems, 115, 1-4.</p>
 
 <!--
 MkDocs version : 1.0.4
-Build Date UTC : 2019-05-20 14:24:16
+Build Date UTC : 2019-05-25 14:21:19
 -->
