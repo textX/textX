@@ -18,19 +18,23 @@ GraphViz dot tool.
 For example:
 
 ```
-$ textx visualize json.tx example1.json
-Meta-model OK.
-Model OK.
-Generating 'json.tx.dot' file for meta-model.
-To convert to png run 'dot -Tpng -O json.tx.dot'
-Generating 'example1.json.dot' file for model.
-To convert to png run 'dot -Tpng -O example1.json.dot'
+$ textx generate json.tx --target dot 
+Generating dot target from models:
+/home/igor/repos/textX/textX/examples/json/json.tx
+-> /home/igor/repos/textX/textX/examples/json/json.dot
+   To convert to png run "dot -Tpng -O json.dot"
 
-$ dot -Tpng -O example1.json.dot
+$ textx generate example1.json --grammar json.tx --target dot
+Generating dot target from models:
+/home/igor/repos/textX/textX/examples/json/example1.json
+-> /home/igor/repos/textX/textX/examples/json/example1.dot
+   To convert to png run "dot -Tpng -O example1.dot"
+
+$ dot -Tpng -O example1.dot
 ```
 
 **Note:** This is just an example that textX can be used to parse arbitrary
 textual format/language not just to build DSLs. It is always better to use
-specialised parsers if exists. For the purpose of JSON parsing in Python use
+specialized parsers if available. For the purpose of JSON parsing in Python use
 `json` module. It is optimized for that purpose and thus performance will be
 much better.

@@ -22,10 +22,10 @@ created from the input as well as the model will be exported to dot files.
   robot_program = robot_metamodel.model_from_file('program.rbt', debug=True)
 ```
 
-Alternatively, you can use [textx check or visualize command](textx_command.md)
+Alternatively, you can use [textx check or generate command](textx_command.md)
 in debug mode.
 
-    $ textx -d visualize robot.tx program.rbt
+    $ textx --debug generate --grammar robot.tx program.rbt --target dot
 
     *** PARSING LANGUAGE DEFINITION ***
     New rule: grammar_to_import -> RegExMatch

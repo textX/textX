@@ -15,10 +15,10 @@ Our main concept will be `Entity`. Each entity will have one or more
 Let's sketch out a model in our language.
 
     entity Person {
-      name : string       
-      address: Address   
-      age: integer      
-    }                  
+      name : string
+      address: Address
+      age: integer
+    }
 
     entity Address {
       street : string
@@ -47,8 +47,8 @@ type's name. This can be written as:
         name=ID ':' type=ID
     ;
 
-Now, grammar defined in this way will parse a single `Entity`. We haven't stated yet
-that our model consists of many `Entity` instances.
+Now, grammar defined in this way will parse a single `Entity`. We haven't stated
+yet that our model consists of many `Entity` instances.
 
 Let's specify that. We are introducing a rule for the whole model which states
 that each entity model contains one or more `entities`.
@@ -62,16 +62,17 @@ considered a `root rule`.
 
 This grammar will parse the example model from the beginning.
 
-At any time you can check and visualize entity meta-model and person model
-using command:
+At any time you can check and visualize entity meta-model and person model using
+commands:
 
-    $ textx visualize entity.tx person.ent
+    $ textx generate entity.tx --target dot
+    $ textx generate person.ent --grammar entity.tx --target dot
 
 Given grammar in file `entity.tx` and example Person model in file
 `person.ent`.
 
-This command will produce `entity.tx.dot` and `person.ent.dot` files which can
-be viewed by any dot viewer or converted to e.g. PNG format using command:
+These commands will produce `entity.dot` and `person.dot` files which can be
+viewed by any dot viewer or converted to e.g. PNG format using command:
 
     $ dot -Tpng -O *.dot
 
@@ -98,12 +99,12 @@ To do so, we shall change our `Property` rule to be:
     ;
 
 Now, we state that type is a reference (we are using `[]`) to an object of the `Entity`
-class. This instructs textX to search for the name of the `Entity` after the 
+class. This instructs textX to search for the name of the `Entity` after the
 colon and when it is found to resolve it to an `Entity` instance with the same name
 defined elsewhere in the model.
 
 But, we have a problem now. There are no entities called `string` and `integer`
-which we used for several properties in our model. To remedy this, we must 
+which we used for several properties in our model. To remedy this, we must
 introduce dummy entities with those names and change `properties` attribute
 assignment to be `zero or more` (`*=`) since our dummy entities will have no
 attributes.
@@ -114,7 +115,7 @@ which as the generalization of simple types (like `integer` and `string`) and
 complex types (like `Entity`).
 
     Type:
-      SimpleType | Entity 
+      SimpleType | Entity
     ;
 
 This is called abstract rule, and it means that `Type` is either a `SimpleType`
@@ -191,7 +192,7 @@ Now, we can make a dict of builtin objects.
 
 And register our custom class and two builtins on the meta-model:
 
-    meta = metamodel_from_file('entity.tx', 
+    meta = metamodel_from_file('entity.tx',
                                classes=[SimpleType],
                                builtins=myobjs)
 
@@ -218,7 +219,7 @@ First, install jinja2 using pip:
 
     $ pip install Jinja2
 
-Now, for each entity in our model we will render one Java file with a pair of 
+Now, for each entity in our model we will render one Java file with a pair of
 getters and setters for each property.
 
 Let's write Jinja2 template (file `java.template`):
@@ -243,7 +244,7 @@ Let's write Jinja2 template (file `java.template`):
     }
 
 
-Templates have static parts that will be rendered as they are, and variable parts 
+Templates have static parts that will be rendered as they are, and variable parts
 whose content depends on the model. Variable parts are written inside
 `{{}}`. For example `{{entity.name}}` from the second line is the name of
 the current entity.
@@ -266,7 +267,7 @@ that will transform our types (`integer` and `string`) to proper Java types
 (`int` and `String`).
 
 Now, let's see how we can put this together. We need to initialize the Jinja2
-engine, instantiate our meta-model, load our model and then iterate over 
+engine, instantiate our meta-model, load our model and then iterate over
 the entities from our model and generate a Java file for each entity:
 
     from os import mkdir

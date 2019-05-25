@@ -19,14 +19,18 @@ export them to dot files. To run it do:
 Checking and exporting to dot can also be done with `textx` command line tool:
 
 ```
-$ textx visualize workflow.tx example.wf
-Meta-model OK.
-Model OK.
-Generating 'workflow.tx.dot' file for meta-model.
-To convert to png run 'dot -Tpng -O workflow.tx.dot'
-Generating 'example.wf.dot' file for model.
-To convert to png run 'dot -Tpng -O example.wf.dot'
+$ textx generate workflow.tx --target dot
+Generating dot target from models:
+/home/igor/repos/textX/textX/examples/workflow/workflow.tx
+-> /home/igor/repos/textX/textX/examples/workflow/workflow.dot
+   To convert to png run "dot -Tpng -O workflow.dot"
 
-$ dot -Tpng -O workflow.tx.dot
-$ dot -Tpng -O example.wf.dot
+$ textx generate example.wf --grammar workflow.tx --target dot
+Generating dot target from models:
+/home/igor/repos/textX/textX/examples/workflow/example.wf
+-> /home/igor/repos/textX/textX/examples/workflow/example.dot
+   To convert to png run "dot -Tpng -O example.dot"
+
+$ dot -Tpng -O workflow.dot
+$ dot -Tpng -O example.dot
 ```

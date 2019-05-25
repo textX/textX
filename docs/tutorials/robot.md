@@ -196,17 +196,18 @@ definition.
 
 Lets check our meta-model and export it to the dot language.
 
-    $ textx visualize robot.tx
-    Meta-model OK.
-    Generating 'robot.tx.dot' file for meta-model.
-    To convert to png run 'dot -Tpng -O robot.tx.dot'
+    $ textx generate robot.tx --target dot
+    Generating dot target from models:
+    /home/igor/repos/textX/textX/examples/robot/robot.tx
+    -> /home/igor/repos/textX/textX/examples/robot/robot.dot
+      To convert to png run "dot -Tpng -O robot.dot"
 
 `dot` file can be opened with dot viewer (there are many to choose from) or
 transformed with `dot` tool to raster or vector graphics.
 
 For example:
 
-    dot -Tpng robot_meta.dot -O robot_meta.png
+    dot -Tpng robot.dot -O robot.png
 
 This command will create `png` image out of `dot` file.
 
@@ -247,13 +248,11 @@ first error encountered.
 
 In the same manner as meta-model visualization we can visualize our model too.
 
-    $ textx visualize robot.tx program.rbt
-    Meta-model OK.
-    Model OK.
-    Generating 'robot.tx.dot' file for meta-model.
-    To convert to png run 'dot -Tpng -O robot.tx.dot'
-    Generating 'program.rbt.dot' file for model.
-    To convert to png run 'dot -Tpng -O program.rbt.dot'
+    $ textx generate program.rbt --grammar robot.tx --target dot
+    Generating dot target from models:
+    /home/igor/repos/textX/textX/examples/robot/program.rbt
+    -> /home/igor/repos/textX/textX/examples/robot/program.dot
+      To convert to png run "dot -Tpng -O program.dot"
 
 This will create `program.dot` file that can be visualized using proper viewer
 or transformed to image.
