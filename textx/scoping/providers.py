@@ -163,17 +163,19 @@ class FQN(ReferenceNameProposer):
                 current_name_stack.pop()
 
             elif len(args) == 1:
+                print("** ENTER with {}".format(str(args)))
                 if len(current_name_stack) == 0:
                     current_name_stack.append(
                         get_full_current_name(None))
                 else:
                     if not hasattr(args[0], 'name'):
-                        return False
+                        return False  # Problem when visiting an imported model ("importAs") --> which has no name and must be skipped!
                     current_name_stack.append(
                         get_full_current_name(args[0].name))
                     # print("enter: ", current_name_stack[-1])
 
                 if self.scope_redirection_logic is not None:
+                    print("** ENTER self.scope_redirection_logic")
                     return self.scope_redirection_logic(args[0])
             else:
                 raise Exception(
@@ -476,6 +478,7 @@ def follow_loaded_models_scope_redirection_logic(obj, scope_redirection_logic):
             return lst
     if hasattr(obj, "_tx_loaded_models"):
         lst = lst + obj._tx_loaded_models
+        print("** follow_loaded_models_scope_redirection_logic {} {}".format(str(obj),str(lst)))
     return lst
 
 

@@ -99,7 +99,7 @@ def get_children(decider, root, visitor=None):
                 return
             elif isinstance(ret, list):
                 for x in ret:
-                    follow(decider, x, visitor)
+                    follow(x)
 
         if hasattr(cls, '_tx_attrs'):
             for attr_name, attr in cls._tx_attrs.items():

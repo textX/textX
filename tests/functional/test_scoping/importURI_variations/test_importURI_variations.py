@@ -198,3 +198,46 @@ def test_importURI_variations_import_as_error():
     #################################
     # END
     #################################
+
+
+def test_importURI_variations_import_as_multi_import_name_propositions():
+    #################################
+    # META MODEL DEF
+    #################################
+
+    my_meta_model = metamodel_from_str(grammar)
+
+    def conv(i):
+        return i.replace(".", "/")+".model"
+
+    my_meta_model.register_scope_providers(
+        {"*.*": scoping_providers.FQNImportURI(importURI_converter=conv,
+                                               importAs=True)})
+
+    #################################
+    # MODEL PARSING
+    #################################
+
+    my_model = my_meta_model.model_from_file(
+        join(abspath(dirname(__file__)), "importAs", "b_multi_import.model"))
+
+    #################################
+    # TEST MODEL
+    #################################
+
+    obj = my_model.packages[0].objects[0];
+    from textx.scoping import get_reference_name_propositions
+    propositions = get_reference_name_propositions(
+        obj,
+        obj._tx_attrs['ref'],
+        "")
+    assert sorted([
+        'multi.packageA1.A',  # imported
+        'multi.packageC1.A',  # imported
+        'A1', 'A2',  # from same file (b_multi_import.model)
+        'B.A1', 'B.A2'  # from same file (b_multi_import.model)
+    ]) == sorted(propositions)
+
+    #################################
+    # END
+    #################################
