@@ -158,6 +158,10 @@ For specific information read various `User Guide` sections.
 Also, you can
 check out [examples](https://github.com/textX/textX/tree/master/examples/).
 
+A full example project that shows how multi-meta-modeling feature can be used is
+also available in [a separate git
+repository](https://github.com/textX/textx-multi-metamodel-example).
+
 
 ## Discussion and help
 

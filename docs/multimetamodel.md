@@ -36,6 +36,11 @@ referenced with the [registration API](registration.md).
     interface/communication domain), the second possibility (see **(2)** 
     **referencing**) is probably a **cleaner way** to achieve the task than the 
     first possibility (see **(1)** extending).
+    
+!!! note
+    A full example project that shows how multi-meta-modeling feature can be used is
+    also available in [a separate git
+    repository](https://github.com/textX/textx-multi-metamodel-example).
 
 
 ## Use Case: meta model referencing another meta model
