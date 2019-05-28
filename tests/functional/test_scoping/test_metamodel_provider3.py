@@ -457,3 +457,83 @@ def test_metamodel_provider_advanced_test3_diamond():
     # END
     #################################
     clear_language_registrations()
+
+
+def test_metamodel_provider_advanced_test3_inheritance2_name_propositions():
+    """
+    Test the name propositions with the ExtRelativeName scope provider
+    """
+    #################################
+    # META MODEL DEF
+    #################################
+    this_folder = dirname(abspath(__file__))
+
+    def get_meta_model(provider, grammar_file_name):
+        mm = metamodel_from_file(join(this_folder, grammar_file_name),
+                                 debug=False)
+        mm.register_scope_providers({
+            "*.*": provider,
+            "Call.method": scoping_providers.ExtRelativeName("obj.ref",
+                                                             "methods",
+                                                             "extends")
+        })
+        return mm
+
+    import_lookup_provider = scoping_providers.FQNImportURI()
+
+    a_mm = get_meta_model(
+        import_lookup_provider, join(this_folder,
+                                     "metamodel_provider3", "A.tx"))
+    b_mm = get_meta_model(
+        import_lookup_provider, join(this_folder,
+                                     "metamodel_provider3", "B.tx"))
+    c_mm = get_meta_model(
+        import_lookup_provider, join(this_folder,
+                                     "metamodel_provider3", "C.tx"))
+
+    clear_language_registrations()
+    register_language(
+        'a-dsl',
+        pattern='*.a',
+        description='Test Lang A',
+        metamodel=a_mm)
+    register_language(
+        'b-dsl',
+        pattern='*.b',
+        description='Test Lang B',
+        metamodel=b_mm)
+    register_language(
+        'c-dsl',
+        pattern='*.c',
+        description='Test Lang C',
+        metamodel=c_mm)
+
+    #################################
+    # MODEL PARSING
+    #################################
+
+    m = a_mm.model_from_file(
+        join(this_folder, "metamodel_provider3",
+             "inheritance2", "model_a.a"))
+    model_repo = m._tx_model_repository.all_models
+
+    #################################
+    # TEST MODEL (inheritance)
+    # - check some name propositions
+    #################################
+
+    the_call0 = m.call[0]
+    assert the_call0.name == 'the_call0'
+    from textx.scoping import get_reference_name_propositions
+    propositions = get_reference_name_propositions(
+        the_call0,
+        the_call0._tx_attrs['method'],
+        "")
+
+    assert sorted(propositions)\
+           == sorted(['a1','a2','b1','c1','d1'])  # see model_a.a
+
+    #################################
+    # END
+    #################################
+    clear_language_registrations()

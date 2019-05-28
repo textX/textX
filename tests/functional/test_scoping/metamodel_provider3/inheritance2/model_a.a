@@ -9,7 +9,7 @@ class A2 {
 
 obj my_obj:D
 
-call the_call1: my_obj.a1
+call the_call0: my_obj.a1
 call the_call1: my_obj.a2
 call the_call1: my_obj.b1
 call the_call1: my_obj.c1
