@@ -480,7 +480,12 @@ model elements already exist.</p>
 <p>It also shows, that <strong>objects processors</strong> kick in when all 
 references are resolved. That means that no references are 
 resolved any more after or while the first object processor has been
-executed.</p>
+executed. One <strong>exception</strong> is when calling <strong>object processors for match rules</strong> 
+(e.g. regular expressions or rules like 'ID'): these processors are <em>called bottom up</em>
+during model construction. Those object processors should generally be a very 
+simple, usually just a type conversions so they don't need a fully constructed model. 
+<strong>Other object processors</strong> (i.e. those operating on common rules) are called, 
+as depicted above, on a constructed model, <em>in bottom up</em> fashion.</p>
 <h4 id="use-case-reference-data-in-non-textx-models">Use case: reference data in non-textx models<a class="headerlink" href="#use-case-reference-data-in-non-textx-models" title="Permanent link">&para;</a></h4>
 <p>If you want to <strong>reference an element not directly modelled</strong> (instantiated), you need to
 instantiate or load this element or information somewhere. This information can be,
