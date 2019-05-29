@@ -515,7 +515,6 @@ def test_metamodel_provider_advanced_test3_inheritance2_name_propositions():
     m = a_mm.model_from_file(
         join(this_folder, "metamodel_provider3",
              "inheritance2", "model_a.a"))
-    model_repo = m._tx_model_repository.all_models
 
     #################################
     # TEST MODEL (inheritance)
@@ -530,8 +529,8 @@ def test_metamodel_provider_advanced_test3_inheritance2_name_propositions():
         the_call0._tx_attrs['method'],
         "")
 
-    assert sorted(propositions)\
-           == sorted(['a1','a2','b1','c1','d1'])  # see model_a.a
+    assert sorted(propositions) == sorted(
+        ['a1', 'a2', 'b1', 'c1', 'd1'])  # see model_a.a
 
     #################################
     # END

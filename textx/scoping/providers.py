@@ -226,19 +226,19 @@ class FQN(ReferenceNameProposer):
             return_list = list(
                 map(lambda x: (x.name, x), find_obj(current_obj)))
             active_list = return_list
-            while len(active_list)>0:
+            while len(active_list) > 0:
                 recursive_list = []
                 for outer in active_list:
                     tmp = list(
                         map(lambda x: (x.name, x), find_obj(outer[1])))
                     for inner in tmp:
-                        recursive_list.append((outer[0] + '.' + inner[0], inner[1]))
+                        recursive_list.append(
+                            (outer[0] + '.' + inner[0], inner[1]))
                 active_list = recursive_list
                 return_list = list(chain(return_list, recursive_list))
             from textx import textx_isinstance
-            return list(filter(lambda x: textx_isinstance(x[1], cls)
-                                         and x[0].find(fqn_name) >= 0,
-                               return_list))
+            return list(filter(lambda x: textx_isinstance(
+                x[1], cls) and x[0].find(fqn_name) >= 0, return_list))
         else:
             p = current_obj
             for n in fqn_name.split('.'):
@@ -269,7 +269,7 @@ class FQN(ReferenceNameProposer):
                 return temp_list
             return_list += temp_list
         return list(filter(lambda x: x.find(name_part) >= 0,
-                           map(lambda x:x[0], return_list)))
+                           map(lambda x: x[0], return_list)))
 
     def __call__(self, current_obj, attr, obj_ref):
         """

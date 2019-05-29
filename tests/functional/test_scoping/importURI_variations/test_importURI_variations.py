@@ -225,7 +225,7 @@ def test_importURI_variations_import_as_multi_import_name_propositions():
     # TEST MODEL
     #################################
 
-    obj = my_model.packages[0].objects[0];
+    obj = my_model.packages[0].objects[0]
     from textx.scoping import get_reference_name_propositions
     propositions = get_reference_name_propositions(
         obj,
