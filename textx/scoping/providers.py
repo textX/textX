@@ -134,7 +134,7 @@ class FQN(ReferenceNameProposer):
             is required to return a list of elements,
             in which the FQN provider continues to
             search for named elements (you may also
-            return an empty list of a list with one
+            return an empty list or a list with one
             element). **(b)** The scope_redirection_logic may
             also return a Postponed object. **(c)** The
             scope_redirection_logic is not applied for the
@@ -143,68 +143,133 @@ class FQN(ReferenceNameProposer):
         """
         self.scope_redirection_logic = scope_redirection_logic
 
+    def _find_obj_fqn(self, current_obj, fqn_name, cls, search_list=None):
+        """
+        Helper function:
+        find a named object based on a qualified name ("."-separated
+        names) starting from object p.
+
+        Args:
+            p: the container where to start the search
+            fqn_name: the "."-separated name
+            search_list: search for the object (instead of following the
+               model path defined by the name) if a list is passed.
+               The search result is inserted gere.
+
+        Returns:
+            the object or None if search_list is None
+            a list of possible matches consisting of tuples
+               (FQN-name, object) if search_list!=None
+        """
+
+        def find_obj(parent, name=None):
+            """
+            Helper function: find a named element (name!=None)
+            or find all named elements.
+
+            Args:
+                parent: (where to search)
+                name: optional, name to be searched
+
+            Returns:
+                the object or None (if name!=None)
+                or a list of named objects
+            """
+            if search_list is not None:
+                if parent in search_list:
+                    return []
+                else:
+                    search_list.append(parent)
+            return_list = []
+            if parent is not current_obj and \
+                    self.scope_redirection_logic is not None:
+                from textx.scoping import Postponed
+                res = self.scope_redirection_logic(parent)
+                assert res is not None, \
+                    "scope_redirection_logic must not return None"
+                if type(res) is Postponed:
+                    return res
+                if name is None:
+                    for m in res:
+                        return_list += find_obj(m)
+                else:
+                    for m in res:
+                        return_value = find_obj(m, name)
+                        if return_value is not None:
+                            return return_value
+            for attr in [a for a in parent.__dict__ if
+                         not a.startswith('__') and not
+                         a.startswith('_tx_') and not
+                         callable(getattr(parent, a))]:
+                obj = getattr(parent, attr)
+                if isinstance(obj, (list, tuple)):
+                    for innerobj in obj:
+                        if name is None:
+                            if hasattr(innerobj, "name"):
+                                return_list.append(innerobj)
+                        else:
+                            if hasattr(innerobj, "name") \
+                                    and innerobj.name == name:
+                                return innerobj
+                else:
+                    if name is None:
+                        if hasattr(obj, "name") and obj.name == name:
+                            return_list.append(obj)
+                    else:
+                        if hasattr(obj, "name") and obj.name == name:
+                            return obj
+            if name is None:
+                return return_list
+
+        if search_list is not None:
+            from itertools import chain
+            return_list = list(
+                map(lambda x: (x.name, x), find_obj(current_obj)))
+            active_list = return_list
+            while len(active_list)>0:
+                recursive_list = []
+                for outer in active_list:
+                    tmp = list(
+                        map(lambda x: (x.name, x), find_obj(outer[1])))
+                    for inner in tmp:
+                        recursive_list.append((outer[0] + '.' + inner[0], inner[1]))
+                active_list = recursive_list
+                return_list = list(chain(return_list, recursive_list))
+            from textx import textx_isinstance
+            return list(filter(lambda x: textx_isinstance(x[1], cls)
+                                         and x[0].find(fqn_name) >= 0,
+                               return_list))
+        else:
+            p = current_obj
+            for n in fqn_name.split('.'):
+                obj = find_obj(p, n)
+                if obj:
+                    if type(obj) is Postponed:
+                        return obj
+                    p = obj
+                else:
+                    return None
+            from textx import textx_isinstance
+            if textx_isinstance(obj, cls):
+                return p
+
     def get_reference_name_propositions(self, obj, attr, name_part):
         """
         (see ReferenceNameProposer)
         """
-        from textx import get_children
-        current_name_stack = []
-        return_list = []
-
-        def get_full_current_name(n):
-            if len(current_name_stack) <= 1:
-                return n
-            else:
-                return current_name_stack[-1] + "." + n
-
-        def visit(*args):
-            if len(args) == 0:
-                # print("leave: ", current_name_stack[-1])
-                current_name_stack.pop()
-
-            elif len(args) == 1:
-                print("** ENTER with {}".format(str(args)))
-                if len(current_name_stack) == 0:
-                    current_name_stack.append(
-                        get_full_current_name(None))
-                else:
-                    if not hasattr(args[0], 'name'):
-                        return False  # Problem when visiting an imported model ("importAs") --> which has no name and must be skipped!
-                    current_name_stack.append(
-                        get_full_current_name(args[0].name))
-                    # print("enter: ", current_name_stack[-1])
-
-                if self.scope_redirection_logic is not None:
-                    print("** ENTER self.scope_redirection_logic")
-                    return self.scope_redirection_logic(args[0])
-            else:
-                raise Exception(
-                    "unexpected call with more than one argument")
-
-        def decider(x):
-            from textx import textx_isinstance
-            if hasattr(x,  'name') and textx_isinstance(x, attr.cls):
-                n = get_full_current_name(x.name)
-                if n.find(name_part) >= 0:
-                    # print("added", n)
-                    return_list.append(n)
-                    return True
-                else:
-                    return False
-            else:
-                return False
-
-        lst = get_children(decider, obj, visit)
-        count = len(lst)
-        assert len(return_list) == count
-
-        while hasattr(obj, "parent"):
-            obj = obj.parent
-            lst = get_children(decider, obj, visit)
-            count += len(lst)
-            assert len(return_list) == count
-
-        return return_list
+        p = obj
+        return_list = self._find_obj_fqn(p, "", attr.cls, [])
+        if type(return_list) is Postponed:
+            return return_list
+        while hasattr(p, "parent"):
+            p = p.parent
+            temp_list = self._find_obj_fqn(
+                p, "", attr.cls, [])
+            if type(temp_list) is Postponed:
+                return temp_list
+            return_list += temp_list
+        return list(filter(lambda x: x.find(name_part) >= 0,
+                           map(lambda x:x[0], return_list)))
 
     def __call__(self, current_obj, attr, obj_ref):
         """
@@ -222,63 +287,6 @@ class FQN(ReferenceNameProposer):
         Returns: None or the referenced object
         """
 
-        def _find_obj_fqn(p, fqn_name, cls):
-            """
-            Helper function:
-            find a named object based on a qualified name ("."-separated
-            names) starting from object p.
-
-            Args:
-                p: the container where to start the search
-                fqn_name: the "."-separated name
-
-            Returns:
-                the object or None
-            """
-
-            def find_obj(parent, name):
-                if parent is not current_obj and \
-                        self.scope_redirection_logic is not None:
-                    from textx.scoping import Postponed
-                    res = self.scope_redirection_logic(parent)
-                    assert res is not None, \
-                        "scope_redirection_logic must not return None"
-                    if type(res) is Postponed:
-                        return res
-                    for m in res:
-                        return_value = find_obj(m, name)
-                        if return_value is not None:
-                            return return_value
-                for attr in [a for a in parent.__dict__ if
-                             not a.startswith('__') and not
-                             a.startswith('_tx_') and not
-                             callable(getattr(parent, a))]:
-                    obj = getattr(parent, attr)
-                    if isinstance(obj, (list, tuple)):
-                        for innerobj in obj:
-                            if hasattr(innerobj, "name") \
-                                    and innerobj.name == name:
-                                return innerobj
-                    else:
-                        if hasattr(obj, "name") and obj.name == name:
-                            return obj
-                return None
-
-            for n in fqn_name.split('.'):
-                obj = find_obj(p, n)
-                if obj:
-                    if type(obj) is Postponed:
-                        return obj
-                    p = obj
-                else:
-                    return None
-
-            from textx import textx_isinstance
-            if textx_isinstance(obj, cls):
-                return p
-            else:
-                return None
-
         def _find_referenced_obj(p, name, cls):
             """
             Helper function:
@@ -293,12 +301,12 @@ class FQN(ReferenceNameProposer):
             Returns:
                 None or the found object
             """
-            ret = _find_obj_fqn(p, name, cls)
+            ret = self._find_obj_fqn(p, name, cls)
             if ret:
                 return ret
             while hasattr(p, "parent"):
                 p = p.parent
-                ret = _find_obj_fqn(p, name, cls)
+                ret = self._find_obj_fqn(p, name, cls)
                 if ret:
                     return ret
                 # else continue to next parent or return None
@@ -380,7 +388,7 @@ class ImportURI(scoping.ModelLoader, scoping.ReferenceNameProposer):
             add_to_local_models = True
             if self.importURI_to_scope_name is not None:
                 obj.name = self.importURI_to_scope_name(obj)
-                print("setting name to {}".format(obj.name))
+                # print("setting name to {}".format(obj.name))
             if hasattr(obj, "name"):
                 if obj.name is not None and obj.name != "":
                     add_to_local_models = not self.importAs
@@ -478,7 +486,6 @@ def follow_loaded_models_scope_redirection_logic(obj, scope_redirection_logic):
             return lst
     if hasattr(obj, "_tx_loaded_models"):
         lst = lst + obj._tx_loaded_models
-        print("** follow_loaded_models_scope_redirection_logic {} {}".format(str(obj),str(lst)))
     return lst
 
 

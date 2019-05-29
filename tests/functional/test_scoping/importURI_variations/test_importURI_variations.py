@@ -234,6 +234,12 @@ def test_importURI_variations_import_as_multi_import_name_propositions():
     assert sorted([
         'multi.packageA1.A',  # imported
         'multi.packageC1.A',  # imported
+        'multi.packageC2.A',  # imported, see folder/c.model
+        'multi.packageC2.B',  # imported, see folder/c.model
+        'multi.packageC2.C',  # imported, see folder/c.model
+        'multi.packageA2.A',  # imported, see folder/a.model
+        'multi.packageA2.B',  # imported, see folder/a.model
+        'multi.packageA2.C',  # imported, see folder/a.model
         'A1', 'A2',  # from same file (b_multi_import.model)
         'B.A1', 'B.A2'  # from same file (b_multi_import.model)
     ]) == sorted(propositions)
