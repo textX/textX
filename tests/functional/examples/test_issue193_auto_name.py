@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 import textx
 from textx.scoping import Postponed
 from textx.scoping.providers import default_name_resolver_of_model_object
