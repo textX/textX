@@ -196,6 +196,7 @@ class FQN(object):
                         return_value = find_obj(m, name)
                         if return_value is not None:
                             return return_value
+                postponed = None  # TODO: how to handle "double names"?
                 for attr in [a for a in parent.__dict__ if
                              not a.startswith('__') and not
                              a.startswith('_tx_') and not
@@ -206,17 +207,17 @@ class FQN(object):
                             if self.name_resolver_logic(innerobj) is not None:
                                 myname = self.name_resolver_logic(innerobj)
                                 if type(myname) is Postponed:
-                                    return Postponed()
+                                    postponed = Postponed()
                                 elif myname == name:
                                     return innerobj
                     else:
                         if self.name_resolver_logic(obj) is not None:
                             myname = self.name_resolver_logic(obj)
                             if type(myname) is Postponed:
-                                return Postponed()
+                                postponed = Postponed()
                             elif myname == name:
                                 return obj
-                return None
+                return postponed
 
             for n in fqn_name.split('.'):
                 obj = find_obj(p, n)
@@ -562,7 +563,8 @@ class RelativeName(object):
     components/slots...
     """
 
-    def __init__(self, path_to_container_object):
+    def __init__(self, path_to_container_object,
+                 name_resolver_logic=default_name_resolver_of_model_object):
         """
         Here, you specify the path from the instance to the methods:
         The path is given in a dot-separated way: "classref.methods". Then a
@@ -574,6 +576,7 @@ class RelativeName(object):
         """
         self.path_to_container_object = path_to_container_object
         self.postponed_counter = 0
+        self.name_resolver_logic = name_resolver_logic
 
     def get_reference_propositions(self, obj, attr, name_part):
         """
@@ -600,6 +603,8 @@ class RelativeName(object):
             raise TextXError(
                 "expected path to list in the model ({})".format(
                     self.path_to_container_object))
+        name_obj_tuples = map(lambda x:(self.name_resolver_logic(x), x),
+                              obj_list)
         obj_list = filter(
             lambda x: textx_isinstance(x, attr.cls) and
             x.name.find(name_part) >= 0, obj_list)
@@ -626,11 +631,13 @@ class ExtRelativeName(object):
     """
 
     def __init__(self, path_to_definition_object, path_to_target,
-                 path_to_extension):
+                 path_to_extension,
+                 name_resolver_logic=default_name_resolver_of_model_object):
         self.path_to_definition_object = path_to_definition_object
         self.path_to_target = path_to_target
         self.path_to_extension = path_to_extension
         self.postponed_counter = 0
+        self.name_resolver_logic=name_resolver_logic
 
     def get_reference_propositions(self, obj, attr, name_part):
         """
