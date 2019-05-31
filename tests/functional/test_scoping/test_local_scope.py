@@ -102,6 +102,49 @@ def test_model_with_local_scope():
     #################################
 
 
+def test_model_with_local_scope_with_uppercase():
+    """
+    This is a basic test for the local scope provider (good case).
+    Test if the name resolver works for a simple case (to upper)
+    """
+    #################################
+    # META MODEL DEF
+    #################################
+
+    def uppercase_name_resolver(obj):
+        if obj is None:
+            return None
+        elif hasattr(obj, "name"):
+            return obj.name.upper()
+
+    my_meta_model = metamodel_from_file(
+        join(abspath(dirname(__file__)), 'components_model1',
+             'Components.tx'))
+    my_meta_model.register_scope_providers({
+        "*.*": scoping_providers.FQN(),
+        "Connection.from_port":
+            scoping_providers.RelativeName(
+                "from_inst.component.slots",
+                name_resolver_logic=uppercase_name_resolver),
+        "Connection.to_port":
+            scoping_providers.RelativeName(
+                "to_inst.component.slots",
+                name_resolver_logic=uppercase_name_resolver),
+    })
+
+    #################################
+    # MODEL PARSING
+    #################################
+
+    my_meta_model.model_from_file(
+        join(abspath(dirname(__file__)), "components_model1",
+             "example_uppercase.components"))
+
+    #################################
+    # END
+    #################################
+
+
 def test_model_with_local_scope_and_error():
     """
     This is a basic test for the local scope provider (bad case).

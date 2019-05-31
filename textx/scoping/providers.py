@@ -683,10 +683,21 @@ class ExtRelativeName(object):
                 raise TextXError(
                     "expected path to list in the model ({})".format(
                         self.path_to_target))
-            tmp_list = list(filter(
-                lambda x: textx_isinstance(x, attr.cls) and
-                x.name.find(name_part) >= 0, tmp_list))
-            obj_list = obj_list + tmp_list
+            name_obj_tuples = list(map(
+                lambda x: (self.name_resolver_logic(x), x),
+                tmp_list))
+
+            if len(list(filter(lambda x: type(x[0]) is Postponed,
+                               name_obj_tuples))) > 0:
+                self.postponed_counter += 1
+                return Postponed()
+
+            name_obj_tuples = list(filter(
+                lambda x: textx_isinstance(
+                    x[1], attr.cls) and x[0].find(
+                    name_part) >= 0, name_obj_tuples))
+
+            obj_list = obj_list + name_obj_tuples
 
         return list(obj_list)
 
@@ -695,6 +706,6 @@ class ExtRelativeName(object):
         if type(lst) is Postponed:
             return lst
         if len(lst) > 0:
-            return lst[0]
+            return lst[0][1]
         else:
             return None
