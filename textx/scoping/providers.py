@@ -18,6 +18,25 @@ See docs/scoping.md
 
 """
 
+def default_name_resolver_of_model_object(obj):
+    """
+    Determines if an object has a name, and the name itself (if it has a name).
+    (This function is passed to some scope providers. If you implement an own
+    version, you may call this default implementementation in some cases to
+    fall back to the default behavior.
+
+    Args: the object we request a name for.
+    Returns:
+        A string (the name of the object), if the name can be deduced.
+        Postponed() if no name can be deduced yet, because other references
+          need to be resolved first.
+        None, else.
+    """
+    if obj is None:
+        return None
+    if hasattr(obj, "name"):
+        return obj.name
+
 
 class PlainName(object):
     """
@@ -115,22 +134,24 @@ class FQN(object):
     fully qualified name scope provider
     """
 
-    def __init__(self, scope_redirection_logic=None):
+    def __init__(self, scope_redirection_logic=None, name_resolver_logic=default_name_resolver_of_model_object):
         """
         Args:
             scope_redirection_logic: this callable gets a
-            named model being processed. **(a)** This callable
-            is required to return a list of elements,
-            in which the FQN provider continues to
-            search for named elements (you may also
-            return an empty list of a list with one
-            element). **(b)** The scope_redirection_logic may
-            also return a Postponed object. **(c)** The
-            scope_redirection_logic is not applied for the
-            object containing the reference to be resolved
-            (in order to prevent getting circular dependencies).
+                named model being processed. **(a)** This callable
+                is required to return a list of elements,
+                in which the FQN provider continues to
+                search for named elements (you may also
+                return an empty list of a list with one
+                element). **(b)** The scope_redirection_logic may
+                also return a Postponed object. **(c)** The
+                scope_redirection_logic is not applied for the
+                object containing the reference to be resolved
+                (in order to prevent getting circular dependencies).
+            name_resolver_logic: determines the name of an object.
         """
         self.scope_redirection_logic = scope_redirection_logic
+        self.name_resolver_logic = name_resolver_logic
 
     def __call__(self, current_obj, attr, obj_ref):
         """
@@ -165,7 +186,6 @@ class FQN(object):
             def find_obj(parent, name):
                 if parent is not current_obj and \
                         self.scope_redirection_logic is not None:
-                    from textx.scoping import Postponed
                     res = self.scope_redirection_logic(parent)
                     assert res is not None, \
                         "scope_redirection_logic must not return None"
@@ -182,12 +202,19 @@ class FQN(object):
                     obj = getattr(parent, attr)
                     if isinstance(obj, (list, tuple)):
                         for innerobj in obj:
-                            if hasattr(innerobj, "name") \
-                                    and innerobj.name == name:
-                                return innerobj
+                            if self.name_resolver_logic(innerobj) is not None:
+                                myname = self.name_resolver_logic(innerobj)
+                                if type(myname) is Postponed:
+                                    return Postponed()
+                                elif myname == name:
+                                    return innerobj
                     else:
-                        if hasattr(obj, "name") and obj.name == name:
-                            return obj
+                        if self.name_resolver_logic(obj) is not None:
+                            myname = self.name_resolver_logic(obj)
+                            if type(myname) is Postponed:
+                                return Postponed()
+                            elif myname == name:
+                                return obj
                 return None
 
             for n in fqn_name.split('.'):

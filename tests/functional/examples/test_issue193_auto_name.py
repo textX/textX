@@ -1,7 +1,10 @@
 import textx
+from textx.scoping import Postponed
+from textx.scoping.providers import default_name_resolver_of_model_object
+from textx.scoping.tools import resolve_model_path
 
 
-MyLanguage = """
+MyLanguage = r"""
     Model
         :   (locations+=Location)*
             (employees+=Employee)*
@@ -62,20 +65,27 @@ MyCode = """
     }
 """
 
-
-def position_name_generator(obj):
-    if "" == obj.name:
-        obj.name = obj.employee.name + "At" + obj.location.name
-
-
 def test_issue193_auto_name():
     meta_model = textx.metamodel_from_str(MyLanguage)
-    meta_model.register_scope_providers({
-        "Position.location": textx.scoping.providers.FQN(),
-    })
 
-    meta_model.register_obj_processors({
-        "Position": position_name_generator,
+    def position_name_generator(obj):
+        if obj is None:
+            return None
+        elif textx.textx_isinstance(obj, meta_model["Position"]):
+            if obj.name is not None and len(obj.name)>0:
+                return obj.name
+            location = resolve_model_path(obj, "location")
+            employee = resolve_model_path(obj, "employee")
+            if type(location) is Postponed or type(employee) is Postponed:
+                return Postponed()
+            assert location is not None and employee is not None
+            return employee.name + "At" + location.name
+        else:
+            return default_name_resolver_of_model_object(obj)
+
+    meta_model.register_scope_providers({
+        "*.*": textx.scoping.providers.FQN(
+            name_resolver_logic=position_name_generator),
     })
 
     model = meta_model.model_from_str(MyCode)
