@@ -15,8 +15,8 @@ This module defines scope providers to be used in conjunctions with a
 textx.metamodel meta model.
 
 See docs/scoping.md
-
 """
+
 
 def default_name_resolver_of_model_object(obj):
     """
@@ -134,7 +134,8 @@ class FQN(object):
     fully qualified name scope provider
     """
 
-    def __init__(self, scope_redirection_logic=None, name_resolver_logic=default_name_resolver_of_model_object):
+    def __init__(self, scope_redirection_logic=None,
+                 name_resolver_logic=default_name_resolver_of_model_object):
         """
         Args:
             scope_redirection_logic: this callable gets a
