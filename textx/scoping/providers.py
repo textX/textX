@@ -603,20 +603,28 @@ class RelativeName(object):
             raise TextXError(
                 "expected path to list in the model ({})".format(
                     self.path_to_container_object))
-        name_obj_tuples = map(lambda x:(self.name_resolver_logic(x), x),
-                              obj_list)
-        obj_list = filter(
-            lambda x: textx_isinstance(x, attr.cls) and
-            x.name.find(name_part) >= 0, obj_list)
 
-        return list(obj_list)
+        name_obj_tuples = list(map(
+            lambda x: (self.name_resolver_logic(x), x),
+            obj_list))
+
+        if len(list(filter(lambda x: type(x[0]) is Postponed,
+                           name_obj_tuples))) > 0:
+            self.postponed_counter += 1
+            return Postponed()
+
+        name_obj_tuples = list(filter(
+            lambda x: textx_isinstance(x[1], attr.cls) and
+            x[0].find(name_part) >= 0, name_obj_tuples))
+
+        return name_obj_tuples
 
     def __call__(self, obj, attr, obj_ref):
         lst = self.get_reference_propositions(obj, attr, obj_ref.obj_name)
         if type(lst) is Postponed:
             return lst
         if len(lst) > 0:
-            return lst[0]
+            return lst[0][1]
         else:
             return None
 
@@ -637,7 +645,7 @@ class ExtRelativeName(object):
         self.path_to_target = path_to_target
         self.path_to_extension = path_to_extension
         self.postponed_counter = 0
-        self.name_resolver_logic=name_resolver_logic
+        self.name_resolver_logic = name_resolver_logic
 
     def get_reference_propositions(self, obj, attr, name_part):
         """
