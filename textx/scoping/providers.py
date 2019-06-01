@@ -430,7 +430,8 @@ class FQNImportURI(ImportURI):
 
     def __init__(self, glob_args=None, search_path=None, importAs=False,
                  importURI_converter=None, importURI_to_scope_name=None,
-                 scope_redirection_logic=None):
+                 scope_redirection_logic=None,
+                 name_resolver_logic=default_name_resolver_of_model_object):
         if importAs:
             def my_scope_redirection_logic_def(obj):
                 return follow_loaded_models_scope_redirection_logic(
@@ -439,7 +440,8 @@ class FQNImportURI(ImportURI):
         else:
             my_scope_redirection_logic = scope_redirection_logic
         ImportURI.__init__(self, FQN(
-            scope_redirection_logic=my_scope_redirection_logic),
+            scope_redirection_logic=my_scope_redirection_logic,
+            name_resolver_logic=name_resolver_logic),
                            glob_args=glob_args,
                            search_path=search_path, importAs=importAs,
                            importURI_converter=importURI_converter,
@@ -538,8 +540,11 @@ class FQNGlobalRepo(GlobalRepo):
     scope provider with FQN and global repo
     """
 
-    def __init__(self, filename_pattern=None, glob_args=None):
-        GlobalRepo.__init__(self, FQN(), filename_pattern,
+    def __init__(self, filename_pattern=None, glob_args=None,
+                 name_resolver_logic=default_name_resolver_of_model_object):
+        GlobalRepo.__init__(self,
+                            FQN(name_resolver_logic=name_resolver_logic),
+                            filename_pattern,
                             glob_args=glob_args)
 
 
@@ -551,6 +556,28 @@ class PlainNameGlobalRepo(GlobalRepo):
     def __init__(self, filename_pattern=None, glob_args=None):
         GlobalRepo.__init__(
             self, PlainName(), filename_pattern, glob_args=glob_args)
+
+
+def _objects_list_to_tuples_of_name_and_objects(
+        obj_list, name_resolver_logic, name_part, cls):
+    from textx import textx_isinstance
+    name_obj_tuples = list(map(
+        lambda x: (name_resolver_logic(x), x),
+        obj_list))
+
+    name_obj_tuples = list(filter(
+        lambda x: textx_isinstance(x[1], cls) and (
+                type(x[0]) is Postponed or
+                x[0].find(name_part) >= 0),
+        name_obj_tuples))
+
+    return name_obj_tuples
+
+
+def _filter_postponed_from_tuples_of_name_and_objects(
+        name_obj_tuples):
+    return list(filter(lambda x: type(x[0]) is not Postponed,
+                       name_obj_tuples))
 
 
 class RelativeName(object):
@@ -590,7 +617,6 @@ class RelativeName(object):
             the list of objects representing the proposed references
         """
         from textx.scoping.tools import resolve_model_path
-        from textx import textx_isinstance
         obj_list = resolve_model_path(obj, self.path_to_container_object)
         if type(obj_list) is Postponed:
             self.postponed_counter += 1
@@ -604,27 +630,22 @@ class RelativeName(object):
                 "expected path to list in the model ({})".format(
                     self.path_to_container_object))
 
-        name_obj_tuples = list(map(
-            lambda x: (self.name_resolver_logic(x), x),
-            obj_list))
-
-        if len(list(filter(lambda x: type(x[0]) is Postponed,
-                           name_obj_tuples))) > 0:
-            self.postponed_counter += 1
-            return Postponed()
-
-        name_obj_tuples = list(filter(
-            lambda x: textx_isinstance(x[1], attr.cls) and
-            x[0].find(name_part) >= 0, name_obj_tuples))
+        name_obj_tuples = _objects_list_to_tuples_of_name_and_objects(
+            obj_list, self.name_resolver_logic, name_part, attr.cls
+        )
 
         return name_obj_tuples
 
     def __call__(self, obj, attr, obj_ref):
-        lst = self.get_reference_propositions(obj, attr, obj_ref.obj_name)
-        if type(lst) is Postponed:
-            return lst
+        lst_raw = self.get_reference_propositions(
+            obj, attr, obj_ref.obj_name)
+        if type(lst_raw) is Postponed:
+            return Postponed()
+        lst = _filter_postponed_from_tuples_of_name_and_objects(lst_raw)
         if len(lst) > 0:
             return lst[0][1]
+        elif len(lst_raw) > len(lst):
+            return Postponed()
         else:
             return None
 
@@ -659,7 +680,6 @@ class ExtRelativeName(object):
             the list of objects representing the proposed references
         """
         from textx.scoping.tools import resolve_model_path
-        from textx import textx_isinstance
         # find all all "connected" objects
         # (e.g. find all classes: the most derived
         # class, its base, the base of its base, etc.)
@@ -669,7 +689,7 @@ class ExtRelativeName(object):
             def_obj, self.path_to_extension)
         # for all containing classes, collect all
         # objects to be looked up (e.g. methods)
-        obj_list = []
+        tuples_list = []
         for def_obj in def_objs:
             if type(def_obj) is Postponed:
                 self.postponed_counter += 1
@@ -683,29 +703,23 @@ class ExtRelativeName(object):
                 raise TextXError(
                     "expected path to list in the model ({})".format(
                         self.path_to_target))
-            name_obj_tuples = list(map(
-                lambda x: (self.name_resolver_logic(x), x),
-                tmp_list))
+            name_obj_tuples = _objects_list_to_tuples_of_name_and_objects(
+                tmp_list, self.name_resolver_logic, name_part, attr.cls
+            )
 
-            if len(list(filter(lambda x: type(x[0]) is Postponed,
-                               name_obj_tuples))) > 0:
-                self.postponed_counter += 1
-                return Postponed()
+            tuples_list = tuples_list + name_obj_tuples
 
-            name_obj_tuples = list(filter(
-                lambda x: textx_isinstance(
-                    x[1], attr.cls) and x[0].find(
-                    name_part) >= 0, name_obj_tuples))
-
-            obj_list = obj_list + name_obj_tuples
-
-        return list(obj_list)
+        return list(tuples_list)
 
     def __call__(self, obj, attr, obj_ref):
-        lst = self.get_reference_propositions(obj, attr, obj_ref.obj_name)
-        if type(lst) is Postponed:
-            return lst
+        lst_raw = self.get_reference_propositions(
+            obj, attr, obj_ref.obj_name)
+        if type(lst_raw) is Postponed:
+            return Postponed()
+        lst = _filter_postponed_from_tuples_of_name_and_objects(lst_raw)
         if len(lst) > 0:
             return lst[0][1]
+        elif len(lst_raw) > len(lst):
+            return Postponed()
         else:
             return None

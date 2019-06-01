@@ -180,6 +180,36 @@ We provide some standard scope providers:
    to model inheritance or chained lookups**.
    Example: see [tests/test_scoping/test_local_scope.py](https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_local_scope.py).
 
+### Custom name resolution
+
+In some cases, the name of an element needs to be derived from some model data (instead of
+being specified explicitly via a ```name``` attribute). The FQN based scope providers and 
+the RelativeName and RelativeNameExt scope providers can get an additional argument 
+```name_resolver_logic```, which is a callable to determine the name of an object 
+(see ```textx.scoping.providers.default_name_resolver_of_model_object``` for the
+default implementation and documentation). In short, this function allows to **deduce 
+the name of an object** and also to **postpone the name resolution**, if the name depends 
+on unresolved references.
+
+**Functionality:** When reference resolution searches for a name in a given context 
+(e.g. within a package-like container or the root of a model), **all non-postponed names 
+are taken into account on that level**. 
+**(1)** If a match is found, that object is used. 
+**(2)** Else, if no match is found *and* postponed names are found on that level,
+the reference to be resolved it Postponed.
+**(3)** Else, no match is found on that level.
+
+Custom name resolution is not available for PlainName based scope providers.
+
+
+### Note on Uniqueness of Model Element Names
+
+If the model-string provides non unique names of elements, the created model
+object is undefined with respect to references involving these non-unique names.
+The model object in taht case is a valid, and the uniqueness of element names
+can (must!) be checked using a validator (object processor) after model parsing and
+scope resolution.
+
 
 ### Note on Uniqueness of Model Elements (global repository)
 
