@@ -183,8 +183,15 @@ class FQN(object):
             Returns:
                 the object or None
             """
+            from textx import textx_isinstance
 
-            def find_obj(parent, name):
+            def find_obj(parent, name, apply_name_resolver, cls):
+
+                the_name_resolver_logic = \
+                    scoping.providers.default_name_resolver_of_model_object
+                if apply_name_resolver:
+                    the_name_resolver_logic = self.name_resolver_logic
+
                 if parent is not current_obj and \
                         self.scope_redirection_logic is not None:
                     res = self.scope_redirection_logic(parent)
@@ -193,10 +200,9 @@ class FQN(object):
                     if type(res) is Postponed:
                         return res
                     for m in res:
-                        return_value = find_obj(m, name)
+                        return_value = find_obj(m, name, apply_name_resolver, cls)
                         if return_value is not None:
                             return return_value
-                postponed = None  # TODO: how to handle "double names"?
                 for attr in [a for a in parent.__dict__ if
                              not a.startswith('__') and not
                              a.startswith('_tx_') and not
@@ -204,23 +210,33 @@ class FQN(object):
                     obj = getattr(parent, attr)
                     if isinstance(obj, (list, tuple)):
                         for innerobj in obj:
-                            if self.name_resolver_logic(innerobj) is not None:
-                                myname = self.name_resolver_logic(innerobj)
-                                if type(myname) is Postponed:
-                                    postponed = Postponed()
-                                elif myname == name:
-                                    return innerobj
+                            if cls is None or\
+                                    textx_isinstance(innerobj, cls):
+                                if the_name_resolver_logic(innerobj)\
+                                        is not None:
+                                    myname =\
+                                        the_name_resolver_logic(innerobj)
+                                    if type(myname) is Postponed:
+                                        return Postponed()
+                                    elif myname == name:
+                                        return innerobj
                     else:
-                        if self.name_resolver_logic(obj) is not None:
-                            myname = self.name_resolver_logic(obj)
-                            if type(myname) is Postponed:
-                                postponed = Postponed()
-                            elif myname == name:
-                                return obj
-                return postponed
+                        if cls is None or \
+                                textx_isinstance(obj, cls):
+                            if the_name_resolver_logic(obj) is not None:
+                                myname = the_name_resolver_logic(obj)
+                                if type(myname) is Postponed:
+                                    return Postponed()
+                                elif myname == name:
+                                    return obj
 
-            for n in fqn_name.split('.'):
-                obj = find_obj(p, n)
+            names = fqn_name.split('.')
+            for idx, n in enumerate(names):
+                last_name_part = idx == len(names)-1
+                if last_name_part:
+                    obj = find_obj(p, n, apply_name_resolver=True, cls=cls)
+                else:
+                    obj = find_obj(p, n, apply_name_resolver=False, cls=None)
                 if obj:
                     if type(obj) is Postponed:
                         return obj
@@ -228,7 +244,6 @@ class FQN(object):
                 else:
                     return None
 
-            from textx import textx_isinstance
             if textx_isinstance(obj, cls):
                 return p
             else:
@@ -642,10 +657,10 @@ class RelativeName(object):
         if type(lst_raw) is Postponed:
             return Postponed()
         lst = _filter_postponed_from_tuples_of_name_and_objects(lst_raw)
-        if len(lst) > 0:
-            return lst[0][1]
-        elif len(lst_raw) > len(lst):
+        if len(lst_raw) > len(lst):
             return Postponed()
+        elif len(lst) > 0:
+            return lst[0][1]
         else:
             return None
 
@@ -717,9 +732,9 @@ class ExtRelativeName(object):
         if type(lst_raw) is Postponed:
             return Postponed()
         lst = _filter_postponed_from_tuples_of_name_and_objects(lst_raw)
-        if len(lst) > 0:
-            return lst[0][1]
-        elif len(lst_raw) > len(lst):
+        if len(lst_raw) > len(lst):
             return Postponed()
+        elif len(lst) > 0:
+            return lst[0][1]
         else:
             return None

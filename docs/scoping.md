@@ -191,13 +191,22 @@ default implementation and documentation). In short, this function allows to **d
 the name of an object** and also to **postpone the name resolution**, if the name depends 
 on unresolved references.
 
-**Functionality:** When reference resolution searches for a name in a given context 
-(e.g. within a package-like container or the root of a model), **all non-postponed names 
-are taken into account on that level**. 
-**(1)** If a match is found, that object is used. 
-**(2)** Else, if no match is found *and* postponed names are found on that level,
-the reference to be resolved it Postponed.
-**(3)** Else, no match is found on that level.
+ * The FQN scope providers make a type unspecific search of named containers to guide their
+   way through the model. To **prevent circular deperendencies** (of references waiting for
+   a postponed name to be resolved), we **restrict the name resolution logic to be 
+   applied to the final element only of a FQN reference string**: E.g., for 
+   ```"pack1.pack2.class1"```, the name resolution logic will only 
+   be applied to the final element (```"class1"```). 
+ * The RelativeName and the RelativeNameExt scope providers do not need such a restriction,
+   since they operate on a small set of reference names.
+
+**Functionality:** When reference resolution searches for a name for which the scope resoltion
+logic is applied, **all non-postponed names are taken into account**. 
+
+ * **(1)** If postponed names are found,
+   the reference to be resolved it Postponed.
+ * **(2)** Else, if a match is found, that object is used. 
+ * **(3)** Else, no match is found on that level.
 
 Custom name resolution is not available for PlainName based scope providers.
 
@@ -205,11 +214,10 @@ Custom name resolution is not available for PlainName based scope providers.
 ### Note on Uniqueness of Model Element Names
 
 If the model-string provides non unique names of elements, the created model
-object is undefined with respect to references involving these non-unique names.
-The model object in taht case is a valid, and the uniqueness of element names
-can (must!) be checked using a validator (object processor) after model parsing and
-scope resolution.
-
+is undefined with respect to references involving these non-unique names.
+The model object in that case is a valid, and the uniqueness of element names
+can (and must!) be checked using a validator (object processor) after model 
+parsing and scope resolution.
 
 ### Note on Uniqueness of Model Elements (global repository)
 
