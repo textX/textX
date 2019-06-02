@@ -108,11 +108,12 @@ package usage {
 }
 '''
 
+
 def test_name_resolver_basic_functionality():
     mm = metamodel_from_str(mygrammar)
 
     def my_name_resolver_slots(obj):
-        if hasattr(obj,"name") and len(obj.name)>0:
+        if hasattr(obj, "name") and len(obj.name) > 0:
             return scoping_providers.default_name_resolver_of_model_object(
                 obj)
         elif textx_isinstance(obj, mm["SlotIn"]):
@@ -175,10 +176,10 @@ def test_name_resolver_basic_functionality():
 
     # check note
     assert model1.packages[2].notes[0].connection\
-           == model1.packages[2].connections[1]
+        == model1.packages[2].connections[1]
 
     # check **line1**
     assert model1.packages[2].connections[1].from_port\
-           == model1.packages[1].components[0].slots[1]
+        == model1.packages[1].components[0].slots[1]
     assert model1.packages[2].connections[1].to_port\
-           == model1.packages[1].components[1].slots[0]
+        == model1.packages[1].components[1].slots[0]

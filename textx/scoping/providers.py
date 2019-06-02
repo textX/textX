@@ -200,7 +200,8 @@ class FQN(object):
                     if type(res) is Postponed:
                         return res
                     for m in res:
-                        return_value = find_obj(m, name, apply_name_resolver, cls)
+                        return_value = find_obj(
+                            m, name, apply_name_resolver, cls)
                         if return_value is not None:
                             return return_value
                 for attr in [a for a in parent.__dict__ if
