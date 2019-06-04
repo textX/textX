@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 import textx.scoping.providers as scoping_providers
 from textx import metamodel_from_str
-from textx.scoping.tools import textx_isinstance, resolve_model_path
+from textx.scoping.tools import textx_isinstance
 from textx.scoping import Postponed
 
 mygrammar = r'''
@@ -12,7 +12,7 @@ Package:
         'package' name=ID '{'
         (
         packages+=Package
-        |        
+        |
         components+=Component
         |
         instances+=Instance
@@ -37,7 +37,7 @@ package p1 {
   component unnamed_0;
   component unnamed_1;
   component unnamed_4;
-  
+
   package p2 {
     component unnamed_2;
     component unnamed_3;
@@ -45,7 +45,7 @@ package p1 {
        component; // unnamed_0
        component; // unnamed_1
        component; // unnamed_2
-       
+
        instance i0: unnamed_0
        instance i1: unnamed_1
        instance i2: unnamed_2
@@ -57,8 +57,9 @@ package p1 {
 '''
 
 
-postpone_level=2
-postpone_counter=0
+postpone_level = 2
+postpone_counter = 0
+
 
 def test_name_resolver_postponed_fqn_and_multiple_names_on_different_levels():
     mm = metamodel_from_str(mygrammar)
@@ -72,7 +73,7 @@ def test_name_resolver_postponed_fqn_and_multiple_names_on_different_levels():
                 obj)
         elif textx_isinstance(obj, mm["Component"]):
             idx = obj.parent.components.index(obj)
-            if idx>=postpone_level:
+            if idx >= postpone_level:
                 return "unnamed_{}".format(idx)
             else:
                 postpone_counter += 1
