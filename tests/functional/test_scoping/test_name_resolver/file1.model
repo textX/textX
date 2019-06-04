@@ -1,0 +1,26 @@
+import "file2.model"
+
+package p1 {
+  component;
+  component unnamed_1;
+  component unnamed_4;
+
+  package p2 {
+    component unnamed_2;
+    component unnamed_3;
+    package p3 {
+       component; // unnamed_0
+       component; // unnamed_1
+       component; // unnamed_2
+
+       instance i0: unnamed_0
+       instance i1: unnamed_1
+       instance i2: unnamed_2
+       instance i3: unnamed_3 // from p2
+       instance i4: unnamed_4 // from p1
+       instance i5: p1.unnamed_4 // from p1
+       instance i6: p1.unnamed_0 // from p1
+       instance i7: p1.unnamed_3 // from p1 (other file)
+    }
+  }
+}
