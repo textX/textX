@@ -408,7 +408,7 @@ class ImportURI(scoping.ModelLoader):
 
         # 1) try to find object locally
         ret = self.scope_provider(obj, attr, obj_ref)
-        if ret:
+        if ret:  # also includes Postponed (!=None)
             return ret
 
         # 2) do we have loaded models?
