@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 import textx
 from textx.scoping import Postponed
-from textx.scoping.providers import default_name_resolver_of_model_object
+from textx.scoping.providers import default_name_resolver
 from textx.scoping.tools import resolve_model_path
 
 
@@ -85,11 +85,11 @@ def test_issue193_auto_name():
             assert location is not None and employee is not None
             return employee.name + "At" + location.name
         else:
-            return default_name_resolver_of_model_object(obj)
+            return default_name_resolver(obj)
 
     meta_model.register_scope_providers({
         "*.*": textx.scoping.providers.FQN(
-            name_resolver_logic=position_name_generator),
+            name_resolver=position_name_generator),
     })
 
     model = meta_model.model_from_str(MyCode)

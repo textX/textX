@@ -18,7 +18,7 @@ See docs/scoping.md
 """
 
 
-def default_name_resolver_of_model_object(obj):
+def default_name_resolver(obj):
     """
     Determines if an object has a name, and the name itself (if it has a name).
     (This function is passed to some scope providers. If you implement an own
@@ -135,7 +135,7 @@ class FQN(object):
     """
 
     def __init__(self, scope_redirection_logic=None,
-                 name_resolver_logic=default_name_resolver_of_model_object):
+                 name_resolver=default_name_resolver):
         """
         Args:
             scope_redirection_logic: this callable gets a
@@ -149,10 +149,10 @@ class FQN(object):
                 scope_redirection_logic is not applied for the
                 object containing the reference to be resolved
                 (in order to prevent getting circular dependencies).
-            name_resolver_logic: determines the name of an object.
+            name_resolver: determines the name of an object.
         """
         self.scope_redirection_logic = scope_redirection_logic
-        self.name_resolver_logic = name_resolver_logic
+        self.name_resolver = name_resolver
 
     def __call__(self, current_obj, attr, obj_ref):
         """
@@ -187,10 +187,10 @@ class FQN(object):
 
             def find_obj(parent, name, apply_name_resolver, cls):
 
-                the_name_resolver_logic = \
-                    scoping.providers.default_name_resolver_of_model_object
+                the_name_resolver = \
+                    scoping.providers.default_name_resolver
                 if apply_name_resolver:
-                    the_name_resolver_logic = self.name_resolver_logic
+                    the_name_resolver = self.name_resolver
 
                 if parent is not current_obj and \
                         self.scope_redirection_logic is not None:
@@ -213,10 +213,9 @@ class FQN(object):
                         for innerobj in obj:
                             if cls is None or\
                                     textx_isinstance(innerobj, cls):
-                                if the_name_resolver_logic(innerobj)\
-                                        is not None:
-                                    myname =\
-                                        the_name_resolver_logic(innerobj)
+                                myname = \
+                                    the_name_resolver(innerobj)
+                                if myname is not None:
                                     if type(myname) is Postponed:
                                         return Postponed()
                                     elif myname == name:
@@ -224,8 +223,8 @@ class FQN(object):
                     else:
                         if cls is None or \
                                 textx_isinstance(obj, cls):
-                            if the_name_resolver_logic(obj) is not None:
-                                myname = the_name_resolver_logic(obj)
+                            myname = the_name_resolver(obj)
+                            if myname is not None:
                                 if type(myname) is Postponed:
                                     return Postponed()
                                 elif myname == name:
@@ -447,7 +446,7 @@ class FQNImportURI(ImportURI):
     def __init__(self, glob_args=None, search_path=None, importAs=False,
                  importURI_converter=None, importURI_to_scope_name=None,
                  scope_redirection_logic=None,
-                 name_resolver_logic=default_name_resolver_of_model_object):
+                 name_resolver=default_name_resolver):
         if importAs:
             def my_scope_redirection_logic_def(obj):
                 return follow_loaded_models_scope_redirection_logic(
@@ -457,7 +456,7 @@ class FQNImportURI(ImportURI):
             my_scope_redirection_logic = scope_redirection_logic
         ImportURI.__init__(self, FQN(
             scope_redirection_logic=my_scope_redirection_logic,
-            name_resolver_logic=name_resolver_logic),
+            name_resolver=name_resolver),
                            glob_args=glob_args,
                            search_path=search_path, importAs=importAs,
                            importURI_converter=importURI_converter,
@@ -557,9 +556,9 @@ class FQNGlobalRepo(GlobalRepo):
     """
 
     def __init__(self, filename_pattern=None, glob_args=None,
-                 name_resolver_logic=default_name_resolver_of_model_object):
+                 name_resolver=default_name_resolver):
         GlobalRepo.__init__(self,
-                            FQN(name_resolver_logic=name_resolver_logic),
+                            FQN(name_resolver=name_resolver),
                             filename_pattern,
                             glob_args=glob_args)
 
@@ -575,10 +574,10 @@ class PlainNameGlobalRepo(GlobalRepo):
 
 
 def _objects_list_to_tuples_of_name_and_objects(
-        obj_list, name_resolver_logic, name_part, cls):
+        obj_list, name_resolver, name_part, cls):
     from textx import textx_isinstance
     name_obj_tuples = list(map(
-        lambda x: (name_resolver_logic(x), x),
+        lambda x: (name_resolver(x), x),
         obj_list))
 
     name_obj_tuples = list(filter(
@@ -607,7 +606,7 @@ class RelativeName(object):
     """
 
     def __init__(self, path_to_container_object,
-                 name_resolver_logic=default_name_resolver_of_model_object):
+                 name_resolver=default_name_resolver):
         """
         Here, you specify the path from the instance to the methods:
         The path is given in a dot-separated way: "classref.methods". Then a
@@ -616,10 +615,11 @@ class RelativeName(object):
         Args:
             path_to_container_object: This identifies (starting from the
             instance) how to find the methods.
+            name_resolver: the name resolver for the referenced elements
         """
         self.path_to_container_object = path_to_container_object
         self.postponed_counter = 0
-        self.name_resolver_logic = name_resolver_logic
+        self.name_resolver = name_resolver
 
     def get_reference_propositions(self, obj, attr, name_part):
         """
@@ -647,7 +647,7 @@ class RelativeName(object):
                     self.path_to_container_object))
 
         name_obj_tuples = _objects_list_to_tuples_of_name_and_objects(
-            obj_list, self.name_resolver_logic, name_part, attr.cls
+            obj_list, self.name_resolver, name_part, attr.cls
         )
 
         return name_obj_tuples
@@ -677,12 +677,12 @@ class ExtRelativeName(object):
 
     def __init__(self, path_to_definition_object, path_to_target,
                  path_to_extension,
-                 name_resolver_logic=default_name_resolver_of_model_object):
+                 name_resolver=default_name_resolver):
         self.path_to_definition_object = path_to_definition_object
         self.path_to_target = path_to_target
         self.path_to_extension = path_to_extension
         self.postponed_counter = 0
-        self.name_resolver_logic = name_resolver_logic
+        self.name_resolver = name_resolver
 
     def get_reference_propositions(self, obj, attr, name_part):
         """
@@ -720,7 +720,7 @@ class ExtRelativeName(object):
                     "expected path to list in the model ({})".format(
                         self.path_to_target))
             name_obj_tuples = _objects_list_to_tuples_of_name_and_objects(
-                tmp_list, self.name_resolver_logic, name_part, attr.cls
+                tmp_list, self.name_resolver, name_part, attr.cls
             )
 
             tuples_list = tuples_list + name_obj_tuples

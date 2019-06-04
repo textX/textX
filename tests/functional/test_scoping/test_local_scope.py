@@ -125,11 +125,11 @@ def test_model_with_local_scope_with_uppercase():
         "Connection.from_port":
             scoping_providers.RelativeName(
                 "from_inst.component.slots",
-                name_resolver_logic=uppercase_name_resolver),
+                name_resolver=uppercase_name_resolver),
         "Connection.to_port":
             scoping_providers.RelativeName(
                 "to_inst.component.slots",
-                name_resolver_logic=uppercase_name_resolver),
+                name_resolver=uppercase_name_resolver),
     })
 
     #################################

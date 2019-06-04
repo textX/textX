@@ -183,10 +183,10 @@ We provide some standard scope providers:
 ### Custom name resolution
 
 In some cases, the name of an element needs to be derived from some model data (instead of
-being specified explicitly via a ```name``` attribute). The FQN based scope providers and 
-the RelativeName and RelativeNameExt scope providers can get an additional argument 
-```name_resolver_logic```, which is a callable to determine the name of an object 
-(see ```textx.scoping.providers.default_name_resolver_of_model_object``` for the
+being specified explicitly via a `name` attribute). The FQN based scope providers and 
+the `RelativeName` and `RelativeNameExt` scope providers can get an additional argument 
+`name_resolver`, which is a callable to determine the name of an object 
+(see `textx.scoping.providers.default_name_resolver` for the
 default implementation and documentation). In short, this function allows to **deduce 
 the name of an object** and also to **postpone the name resolution**, if the name depends 
 on unresolved references.
@@ -195,20 +195,20 @@ on unresolved references.
    way through the model. To **prevent circular deperendencies** (of references waiting for
    a postponed name to be resolved), we **restrict the name resolution logic to be 
    applied to the final element only of a FQN reference string**: E.g., for 
-   ```"pack1.pack2.class1"```, the name resolution logic will only 
-   be applied to the final element (```"class1"```). 
- * The RelativeName and the RelativeNameExt scope providers do not need such a restriction,
+   `"pack1.pack2.class1"`, the name resolution logic will only 
+   be applied to the final element (`"class1"`). 
+ * The `RelativeName` and the `RelativeNameExt` scope providers do not need such a restriction,
    since they operate on a small set of reference names.
 
-**Functionality:** When reference resolution searches for a name for which the scope resoltion
-logic is applied, **all non-postponed names are taken into account**. 
+**Functionality:** When reference resolution searches for a name for which the scope 
+resolution logic is applied, **all non-postponed names are taken into account**. 
 
  * **(1)** If postponed names are found,
    the reference to be resolved it Postponed.
  * **(2)** Else, if a match is found, that object is used. 
  * **(3)** Else, no match is found on that level.
 
-Custom name resolution is not available for PlainName based scope providers.
+Custom name resolution is not available for `PlainName` based scope providers.
 
 
 ### Note on Uniqueness of Model Element Names
@@ -318,7 +318,7 @@ If you want to **reference an element not directly modelled** (instantiated), yo
 instantiate or load this element or information somewhere. This information can be,
 e.g., information from a non-textx model, such as a JSON file 
 (see: [test_reference_to_nontextx_attribute.py](https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_reference_to_nontextx_attribute.py)).
-Since you need to resolve a reference (e.g. to an ```[OBJECT]``` in the
+Since you need to resolve a reference (e.g. to an `[OBJECT]` in the
 given example), you cannot rely on object processors, since they are executed
 *after* reference resolution. Thus, scope providers need to take care of
 that (e.g., take care of loading the JSON data).
@@ -336,7 +336,7 @@ a reference" by another "non-inventing reference",
 you must take into account that these elements
 may have not yet been created. This can be achieved in the same 
 way as handling unresolved references in a scope provider (with the 
-```Postponed``` mechanism). This use case was motivated by 
+`Postponed` mechanism). This use case was motivated by 
 [#167](https://github.com/textX/textX/issues/167).
 
 An example of such a meta model is given in 
@@ -358,6 +358,6 @@ In an extension of the grammar we then also allow
  
    **Implementation:** Since it is unclear if a
  nonexistent person may be created by a not yet resolved "knows"-relationship reference, 
- we have to postpone the resolution of a failed greeting (return ```Postponed```). 
+ we have to postpone the resolution of a failed greeting (return `Postponed`). 
  The reference resolution mechanism will detect if a state is reached 
  with only postponed references and will then raise an error, as expected.

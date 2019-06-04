@@ -114,7 +114,7 @@ def test_name_resolver_basic_functionality():
 
     def my_name_resolver_slots(obj):
         if hasattr(obj, "name") and len(obj.name) > 0:
-            return scoping_providers.default_name_resolver_of_model_object(
+            return scoping_providers.default_name_resolver(
                 obj)
         elif textx_isinstance(obj, mm["SlotIn"]):
             idx = obj.parent.slots.index(obj)
@@ -123,7 +123,7 @@ def test_name_resolver_basic_functionality():
             idx = obj.parent.slots.index(obj)
             return "OUT_{}".format(idx)
         else:
-            return scoping_providers.default_name_resolver_of_model_object(
+            return scoping_providers.default_name_resolver(
                 obj)
 
     def my_name_resolver_fqn(obj):
@@ -153,23 +153,23 @@ def test_name_resolver_basic_functionality():
                 to_inst.name, to_port_name,
             )
         else:
-            return scoping_providers.default_name_resolver_of_model_object(
+            return scoping_providers.default_name_resolver(
                 obj)
 
     mm.register_scope_providers({
-        "*.*": scoping_providers.FQN(name_resolver_logic=my_name_resolver_fqn),
+        "*.*": scoping_providers.FQN(name_resolver=my_name_resolver_fqn),
         "Connection.from_port":
             scoping_providers.ExtRelativeName(
                 "from_inst.component",
                 "slots",
                 "extends",
-                name_resolver_logic=my_name_resolver_slots),
+                name_resolver=my_name_resolver_slots),
         "Connection.to_port":
             scoping_providers.ExtRelativeName(
                 "to_inst.component",
                 "slots",
                 "extends",
-                name_resolver_logic=my_name_resolver_slots),
+                name_resolver=my_name_resolver_slots),
     })
 
     model1 = mm.model_from_str(mymodel1text)
