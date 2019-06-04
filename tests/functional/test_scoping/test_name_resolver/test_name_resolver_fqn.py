@@ -19,6 +19,7 @@ Package:
         |
         instances+=Instance
         )+
+        ('+' component=Component)?
         '}'
 ;
 
@@ -40,10 +41,13 @@ package p1 {
   component unnamed_0;
   component unnamed_1;
   component unnamed_4;
-
+  
   package p2 {
     component unnamed_2;
     component unnamed_3;
+    
+    instance unnamed_4: unnamed_2
+    
     package p3 {
        component; // unnamed_0
        component; // unnamed_1
@@ -54,8 +58,10 @@ package p1 {
        instance i2: unnamed_2
        instance i3: unnamed_3 // from p2
        instance i4: unnamed_4 // from p1
+       instance i5: unnamed_X // from p1
     }
   }
+  + component; // unnamed_X, coverage (return Postponed)
 }
 '''
 
@@ -74,9 +80,15 @@ def _my_name_resolver_component(obj):
         return scoping_providers.default_name_resolver(
             obj)
     elif textx_isinstance(obj, _mm["Component"]):
-        idx = obj.parent.components.index(obj)
+        try:
+            idx = obj.parent.components.index(obj)
+        except:
+            idx=-1
         if idx <= _postpone_level:
-            return "unnamed_{}".format(idx)
+            if (idx<0):
+                return "unnamed_X"
+            else:
+                return "unnamed_{}".format(idx)
         else:
             _postpone_counter += 1
             _postpone_level += 1
@@ -92,7 +104,7 @@ def test_name_resolver_postponed_fqn_and_multiple_names_on_different_levels():
     global _postpone_level
 
     _mm = metamodel_from_str(mygrammar)
-    _postpone_level = 0
+    _postpone_level = -1
     _postpone_counter = 0
 
     _mm.register_scope_providers({
@@ -102,7 +114,7 @@ def test_name_resolver_postponed_fqn_and_multiple_names_on_different_levels():
 
     model1 = _mm.model_from_str(mymodel1text)
 
-    assert _postpone_counter == 2
+    assert _postpone_counter == 3
 
     p1 = model1.packages[0]
     p2 = p1.packages[0]
