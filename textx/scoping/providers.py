@@ -244,10 +244,8 @@ class FQN(object):
                 else:
                     return None
 
-            if textx_isinstance(obj, cls):
-                return p
-            else:
-                return None
+            assert textx_isinstance(p, cls)
+            return p  # p is an instance of cls (checked by "cls=cls" above
 
         def _find_referenced_obj(p, name, cls):
             """
