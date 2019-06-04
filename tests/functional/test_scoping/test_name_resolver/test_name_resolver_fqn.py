@@ -41,13 +41,13 @@ package p1 {
   component unnamed_0;
   component unnamed_1;
   component unnamed_4;
-  
+
   package p2 {
     component unnamed_2;
     component unnamed_3;
-    
+
     instance unnamed_4: unnamed_2
-    
+
     package p3 {
        component; // unnamed_0
        component; // unnamed_1
@@ -82,10 +82,10 @@ def _my_name_resolver_component(obj):
     elif textx_isinstance(obj, _mm["Component"]):
         try:
             idx = obj.parent.components.index(obj)
-        except:
-            idx=-1
+        except Exception:
+            idx = -1
         if idx <= _postpone_level:
-            if (idx<0):
+            if (idx < 0):
                 return "unnamed_X"
             else:
                 return "unnamed_{}".format(idx)
