@@ -144,3 +144,15 @@ def test_inclusion_check_2():
     #################################
     # END
     #################################
+
+
+def test_no_tx_model_repos():
+    from textx import metamodel_from_str
+    mm = metamodel_from_str("Model: 'A';")
+    m = mm.model_from_str("A")
+
+    assert not is_file_included_by_model(
+        join(abspath(dirname(__file__)), 'issue66', 'local',
+             'mylib', 'position.tasks'),
+        m
+    )

@@ -281,6 +281,8 @@ def is_file_included_by_model(filename, model):
 
     Returns:
         True if the file is included, else False
+        (Note: if no _tx_model_repository is present,
+        the function always returns False)
     """
     if (hasattr(model, "_tx_model_repository")):
         all_entries = model._tx_model_repository.all_models
