@@ -254,6 +254,22 @@ def get_all_models_including_attached_models(model):
     get a list of all models stored within a model
     (including the owning model).
 
+    @deprecated (BIC): use model_object.get_included_models()
+
+    Args:
+        model: the owning model
+
+    Returns:
+        a list of all models
+    """
+    return get_included_models(model)
+
+
+def get_included_models(model):
+    """
+    get a list of all models stored within a model
+    (including the owning model).
+
     Args:
         model: the owning model
 
@@ -270,7 +286,7 @@ def get_all_models_including_attached_models(model):
     return models
 
 
-def is_file_included_by_model(filename, model):
+def is_file_included(filename, model):
     """
     Determines if a file is included by a model. Also checks
     for indirect inclusions (files included by included files).
