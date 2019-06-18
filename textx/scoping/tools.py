@@ -239,7 +239,7 @@ def get_unique_named_object_in_all_models(root, name):
 
     a = []
     for m in src:
-        print("analyzing {}".format(m._tx_filename))
+        # print("analyzing {}".format(m._tx_filename))
         a = a + get_children(
             lambda x: hasattr(x, 'name') and x.name == name, m)
 

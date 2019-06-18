@@ -661,6 +661,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
             del m._tx_reference_resolver
 
         # final check that everything went ok
+        first_error = None
         for m in models:
             assert 0 == len(get_children_of_type(Postponed.__class__, m))
 
@@ -670,7 +671,24 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
             if m._tx_metamodel.obj_processors:
                 if parser.debug:
                     parser.dprint("CALLING OBJECT PROCESSORS")
-                call_obj_processors(m._tx_metamodel, m)
+                try:
+                    call_obj_processors(m._tx_metamodel, m)
+                except BaseException as e:
+                    # print("OBJ PROCESSOR ERROR {}".format(str(e)))
+                    if first_error is None:
+                        first_error = e
+
+        if first_error is not None:
+            # remove all processed models from (global) repo (if present)
+            # (remove all of them, not only the model with errors,
+            # since, models with errors may be included in other models)
+            for m in models:
+                for m2 in models:
+                    if hasattr(m2._tx_metamodel, "_tx_model_repository"):
+                        m2._tx_metamodel._tx_model_repository.remove_model(m)
+                    if hasattr(m2, "_tx_model_repository"):
+                        m2._tx_model_repository.remove_model(m)
+            raise first_error
 
     if metamodel.textx_tools_support \
             and type(model) not in PRIMITIVE_PYTHON_TYPES:

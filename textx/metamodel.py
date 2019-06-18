@@ -586,7 +586,7 @@ class TextXMetaModel(DebugPrinter):
                     from textx.scoping import GlobalModelRepository
                     filename = other_model._tx_filename
                     assert filename
-                    # print("METAMODEL PRE-CALLBACK{}".format(filename))
+                    # print("METAMODEL PRE-CALLBACK => {}".format(filename))
                     other_model._tx_model_repository = GlobalModelRepository(
                         self._tx_model_repository.all_models)
                     self._tx_model_repository.all_models\

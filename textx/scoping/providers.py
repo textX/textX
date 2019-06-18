@@ -306,7 +306,7 @@ class ImportURI(scoping.ModelLoader):
             add_to_local_models = True
             if self.importURI_to_scope_name is not None:
                 obj.name = self.importURI_to_scope_name(obj)
-                print("setting name to {}".format(obj.name))
+                # print("setting name to {}".format(obj.name))
             if hasattr(obj, "name"):
                 if obj.name is not None and obj.name != "":
                     add_to_local_models = not self.importAs
