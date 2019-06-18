@@ -46,6 +46,15 @@ class ModelRepository(object):
     def has_model(self, filename):
         return abspath(filename) in self.filename_to_model
 
+    def remove_model(self, model):
+        filename = None
+        for f, m in self.filename_to_model.items():
+            if m == model:
+                filename = f
+        if filename:
+            # print("*** delete {}".format(filename))
+            del self.filename_to_model[filename]
+
 
 class GlobalModelRepository(object):
     """
@@ -81,6 +90,10 @@ class GlobalModelRepository(object):
             self.all_models = all_models  # used to reuse already loaded models
         else:
             self.all_models = ModelRepository()
+
+    def remove_model(self, model):
+        self.all_models.remove_model(model)
+        self.local_models.remove_model(model)
 
     def load_models_using_filepattern(
             self, filename_pattern, model, glob_args, is_main_model=False,
@@ -171,6 +184,7 @@ class GlobalModelRepository(object):
         filename = abspath(filename)
         if not self.local_models.has_model(filename):
             if self.all_models.has_model(filename):
+                # print("CACHED {}".format(filename))
                 new_model = self.all_models.filename_to_model[filename]
             else:
                 # print("LOADING {}".format(filename))
@@ -184,11 +198,16 @@ class GlobalModelRepository(object):
             # print("ADDING {}".format(filename))
             if add_to_local_models:
                 self.local_models.filename_to_model[filename] = new_model
+        else:
+            # print("LOCALLY CACHED {}".format(filename))
+            pass
+
         assert self.all_models.has_model(filename)  # to be sure...
         return self.all_models.filename_to_model[filename]
 
     def _add_model(self, model):
         filename = self.update_model_in_repo_based_on_filename(model)
+        # print("ADDED {}".format(filename))
         self.local_models.filename_to_model[filename] = model
 
     def update_model_in_repo_based_on_filename(self, model):
@@ -205,6 +224,7 @@ class GlobalModelRepository(object):
         if model._tx_filename is None:
             for fn in self.all_models.filename_to_model:
                 if self.all_models.filename_to_model[fn] == model:
+                    # print("UPDATED/CACHED {}".format(fn))
                     return fn
             i = 0
             while self.all_models.has_model("anonymous{}".format(i)):
@@ -215,6 +235,7 @@ class GlobalModelRepository(object):
             myfilename = abspath(model._tx_filename)
             if (not self.all_models.has_model(myfilename)):
                 self.all_models.filename_to_model[myfilename] = model
+        # print("UPDATED/ADDED/CACHED {}".format(myfilename))
         return myfilename
 
     def pre_ref_resolution_callback(self, other_model):
@@ -227,8 +248,8 @@ class GlobalModelRepository(object):
         Returns:
             nothing
         """
-        # print("PRE-CALLBACK{}".format(filename))
         filename = other_model._tx_filename
+        # print("PRE-CALLBACK -> {}".format(filename))
         assert (filename)
         filename = abspath(filename)
         other_model._tx_model_repository = \
