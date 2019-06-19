@@ -7,7 +7,7 @@ import pytest
 current_dir = os.path.dirname(__file__)
 
 
-def test_flow():
+def test_issue196_example():
     mmF = metamodel_for_language('flow-dsl')
 
     print("-----------------------------------1---")
@@ -33,6 +33,7 @@ def test_flow():
 
     with pytest.raises(TextXError,
                        match=r'.*Unknown object "A" of class "Algo".*'):
+        print("loading MODEL_WITH_TYPE_ERROR")
         mmF.model_from_file(os.path.join(current_dir,
                                          'models',
                                          'MODEL_WITH_TYPE_ERROR.eflow'))
