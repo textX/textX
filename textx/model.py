@@ -599,105 +599,124 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
             return return_value_grammar  # may be None
 
     model = process_node(parse_tree)
-    # Register filename of the model for later use (e.g. imports/scoping).
-    is_primitive_type = False
+
     try:
-        model._tx_filename = file_name
-    except AttributeError:
-        # model is some primitive python type (e.g. str)
-        is_primitive_type = True
-        pass
+        # Register filename of the model for later use (e.g. imports/scoping).
+        is_primitive_type = False
+        try:
+            model._tx_filename = file_name
+            # mark model as "model being constructed":
+            model._tx_reference_resolver = None
+        except AttributeError:
+            # model is some primitive python type (e.g. str)
+            is_primitive_type = True
+            pass
 
-    if pre_ref_resolution_callback:
-        pre_ref_resolution_callback(model)
+        if pre_ref_resolution_callback:
+            pre_ref_resolution_callback(model)
 
-    for scope_provider in metamodel.scope_providers.values():
-        from textx.scoping import ModelLoader
-        if isinstance(scope_provider, ModelLoader):
-            scope_provider.load_models(model, encoding=encoding)
+        for scope_provider in metamodel.scope_providers.values():
+            from textx.scoping import ModelLoader
+            if isinstance(scope_provider, ModelLoader):
+                scope_provider.load_models(model, encoding=encoding)
 
-    if not is_primitive_type:
-        model._tx_reference_resolver = ReferenceResolver(
-            parser, model, pos_crossref_list)
-        model._tx_parser = parser
+        if not is_primitive_type:
+            model._tx_reference_resolver = ReferenceResolver(
+                parser, model, pos_crossref_list)
+            model._tx_parser = parser
 
-    if is_main_model:
+        if is_main_model:
+            from textx.scoping import get_all_models_including_attached_models
+            models = get_all_models_including_attached_models(model)
+            try:
+                # filter out all models w/o resolver:
+                models = list(filter(
+                    lambda x: hasattr(x, "_tx_reference_resolver"), models))
+
+                resolved_count = 1
+                unresolved_count = 1
+                while unresolved_count > 0 and resolved_count > 0:
+                    resolved_count = 0
+                    unresolved_count = 0
+                    # print("***RESOLVING {} models".format(len(models)))
+                    for m in models:
+                        resolved_count_for_this_model, delayed_crossrefs = \
+                            m._tx_reference_resolver.resolve_one_step()
+                        resolved_count += resolved_count_for_this_model
+                        unresolved_count += len(delayed_crossrefs)
+                    # print("DEBUG: delayed #:{} unresolved #:{}".
+                    #      format(unresolved_count,unresolved_count))
+                if (unresolved_count > 0):
+                    error_text = "Unresolvable cross references:"
+
+                    for m in models:
+                        for _, _, delayed \
+                                in m._tx_reference_resolver.delayed_crossrefs:
+                            line, col = parser.pos_to_linecol(delayed.position)
+                            error_text += ' "{}" of class "{}" at {}'.format(
+                                delayed.obj_name, delayed.cls.__name__, (
+                                    line, col))
+                    raise TextXSemanticError(error_text, line=line, col=col)
+
+                for m in models:
+                    # TODO: what does this check?
+                    assert not m._tx_reference_resolver.parser._inst_stack
+
+                # cleanup
+                for m in models:
+                    del m._tx_reference_resolver
+
+                # final check that everything went ok
+                for m in models:
+                    assert 0 == len(get_children_of_type(Postponed.__class__, m))
+
+                    # We have model loaded and all link resolved
+                    # So we shall do a depth-first call of object
+                    # processors if any processor is defined.
+                    if m._tx_metamodel.obj_processors:
+                        if parser.debug:
+                            parser.dprint("CALLING OBJECT PROCESSORS")
+                        call_obj_processors(m._tx_metamodel, m)
+
+            except BaseException as e:
+                # remove all processed models from (global) repo (if present)
+                # (remove all of them, not only the model with errors,
+                # since, models with errors may be included in other models)
+                for m in models:
+                    for m2 in models:
+                        if hasattr(m2._tx_metamodel, "_tx_model_repository"):
+                            m2._tx_metamodel._tx_model_repository.remove_model(m)
+                        if hasattr(m2, "_tx_model_repository"):
+                            m2._tx_model_repository.remove_model(m)
+                raise e
+
+        if metamodel.textx_tools_support \
+                and type(model) not in PRIMITIVE_PYTHON_TYPES:
+            # Cross-references for go-to definition language server support
+            # Already sorted based on ref_pos_start attr
+            # (required for binary search)
+            model._pos_crossref_list = pos_crossref_list
+
+            # Dict for storing rules where key is position of rule instance in text
+            # Sorted based on nested rules
+            model._pos_rule_dict = OrderedDict(sorted(pos_rule_dict.items(),
+                                                      key=lambda x: x[0],
+                                                      reverse=True))
+    # exception occurred during model creation
+    except BaseException as e:
+        # remove all models beeing constructed
         from textx.scoping import get_all_models_including_attached_models
         models = get_all_models_including_attached_models(model)
-        try:
-            # filter out all models w/o resolver:
-            models = list(filter(
-                lambda x: hasattr(x, "_tx_reference_resolver"), models))
+        for m in filter(lambda x:hasattr(x,"_tx_reference_resolver"), models):
+            for m2 in models:
+                if hasattr(m2._tx_metamodel, "_tx_model_repository"):
+                    m2._tx_metamodel._tx_model_repository.remove_model(m)
+                if hasattr(m2, "_tx_model_repository"):
+                    m2._tx_model_repository.remove_model(m)
+        for m in filter(lambda x:hasattr(x,"_tx_reference_resolver"), models):
+            del m._tx_reference_resolver
+        raise e
 
-            resolved_count = 1
-            unresolved_count = 1
-            while unresolved_count > 0 and resolved_count > 0:
-                resolved_count = 0
-                unresolved_count = 0
-                # print("***RESOLVING {} models".format(len(models)))
-                for m in models:
-                    resolved_count_for_this_model, delayed_crossrefs = \
-                        m._tx_reference_resolver.resolve_one_step()
-                    resolved_count += resolved_count_for_this_model
-                    unresolved_count += len(delayed_crossrefs)
-                # print("DEBUG: delayed #:{} unresolved #:{}".
-                #      format(unresolved_count,unresolved_count))
-            if (unresolved_count > 0):
-                error_text = "Unresolvable cross references:"
-
-                for m in models:
-                    for _, _, delayed \
-                            in m._tx_reference_resolver.delayed_crossrefs:
-                        line, col = parser.pos_to_linecol(delayed.position)
-                        error_text += ' "{}" of class "{}" at {}'.format(
-                            delayed.obj_name, delayed.cls.__name__, (
-                                line, col))
-                raise TextXSemanticError(error_text, line=line, col=col)
-
-            for m in models:
-                # TODO: what does this check?
-                assert not m._tx_reference_resolver.parser._inst_stack
-
-            # cleanup
-            for m in models:
-                del m._tx_reference_resolver
-
-            # final check that everything went ok
-            for m in models:
-                assert 0 == len(get_children_of_type(Postponed.__class__, m))
-
-                # We have model loaded and all link resolved
-                # So we shall do a depth-first call of object
-                # processors if any processor is defined.
-                if m._tx_metamodel.obj_processors:
-                    if parser.debug:
-                        parser.dprint("CALLING OBJECT PROCESSORS")
-                    call_obj_processors(m._tx_metamodel, m)
-
-        except BaseException as e:
-            # remove all processed models from (global) repo (if present)
-            # (remove all of them, not only the model with errors,
-            # since, models with errors may be included in other models)
-            for m in models:
-                for m2 in models:
-                    if hasattr(m2._tx_metamodel, "_tx_model_repository"):
-                        m2._tx_metamodel._tx_model_repository.remove_model(m)
-                    if hasattr(m2, "_tx_model_repository"):
-                        m2._tx_model_repository.remove_model(m)
-            raise e
-
-    if metamodel.textx_tools_support \
-            and type(model) not in PRIMITIVE_PYTHON_TYPES:
-        # Cross-references for go-to definition language server support
-        # Already sorted based on ref_pos_start attr
-        # (required for binary search)
-        model._pos_crossref_list = pos_crossref_list
-
-        # Dict for storing rules where key is position of rule instance in text
-        # Sorted based on nested rules
-        model._pos_rule_dict = OrderedDict(sorted(pos_rule_dict.items(),
-                                                  key=lambda x: x[0],
-                                                  reverse=True))
     return model
 
 
