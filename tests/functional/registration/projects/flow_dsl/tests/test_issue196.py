@@ -10,12 +10,13 @@ current_dir = os.path.dirname(__file__)
 def test_issue196_example():
     mmF = metamodel_for_language('flow-dsl')
 
-    print("-----------------------------------1---")
-    print(metamodel_for_language('flow-dsl')._tx_model_repository.all_models.filename_to_model.keys())
+    # print("-----------------------------------1---")
+    # print(metamodel_for_language('flow-dsl').
+    #      _tx_model_repository.all_models.filename_to_model.keys())
 
     cached_model_count = len(
         metamodel_for_language('flow-dsl').
-            _tx_model_repository.all_models.filename_to_model.keys())
+        _tx_model_repository.all_models.filename_to_model.keys())
 
     with pytest.raises(TextXError,
                        match=r'.*types must be lowercase.*'):
@@ -23,13 +24,14 @@ def test_issue196_example():
                                          'models',
                                          'MODEL_WITH_IMPORT_ERROR.eflow'))
 
-    print("-----------------------------------2---")
-    print(metamodel_for_language('flow-dsl')._tx_model_repository.all_models.filename_to_model.keys())
+    # print("-----------------------------------2---")
+    # print(metamodel_for_language('flow-dsl').
+    #      _tx_model_repository.all_models.filename_to_model.keys())
 
     # error while reading, no file cached!
     assert cached_model_count == len(
         metamodel_for_language('flow-dsl').
-            _tx_model_repository.all_models.filename_to_model.keys())
+        _tx_model_repository.all_models.filename_to_model.keys())
 
     with pytest.raises(TextXError,
                        match=r'.*Unknown object "A" of class "Algo".*'):
@@ -38,13 +40,14 @@ def test_issue196_example():
                                          'models',
                                          'MODEL_WITH_TYPE_ERROR.eflow'))
 
-    print("-----------------------------------3---")
-    print(metamodel_for_language('flow-dsl')._tx_model_repository.all_models.filename_to_model.keys())
+    # print("-----------------------------------3---")
+    # print(metamodel_for_language('flow-dsl').
+    #      _tx_model_repository.all_models.filename_to_model.keys())
 
     # error while reading, no file cached!
     assert cached_model_count == len(
         metamodel_for_language('flow-dsl').
-            _tx_model_repository.all_models.filename_to_model.keys())
+        _tx_model_repository.all_models.filename_to_model.keys())
 
     with pytest.raises(TextXError,
                        match=r'.*types must be lowercase.*'):
@@ -55,4 +58,4 @@ def test_issue196_example():
     # error while reading, no file cached!
     assert cached_model_count == len(
         metamodel_for_language('flow-dsl').
-            _tx_model_repository.all_models.filename_to_model.keys())
+        _tx_model_repository.all_models.filename_to_model.keys())
