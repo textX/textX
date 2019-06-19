@@ -57,6 +57,8 @@ def test_flow_dsl_types_validation(clear_all):
                                          'models',
                                          'data_flow_including_error.eflow'))
 
+    # When reading a second time, the error must be reported again:
+
     # print("-----------------------------------2---")
     # print(metamodel_for_language('flow-dsl')._tx_model_repository.all_models.filename_to_model.keys())
     # print("----------------- #={}".format(
