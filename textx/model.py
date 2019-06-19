@@ -650,7 +650,8 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                             in m._tx_reference_resolver.delayed_crossrefs:
                         line, col = parser.pos_to_linecol(delayed.position)
                         error_text += ' "{}" of class "{}" at {}'.format(
-                            delayed.obj_name, delayed.cls.__name__, (line, col))
+                            delayed.obj_name, delayed.cls.__name__, (
+                                line, col))
                 raise TextXSemanticError(error_text, line=line, col=col)
 
             for m in models:
