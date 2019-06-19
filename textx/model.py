@@ -622,63 +622,58 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
         model._tx_parser = parser
 
     if is_main_model:
-        from textx.scoping import get_included_models
-        models = get_included_models(model)
-        # filter out all models w/o resolver:
-        models = list(filter(
-            lambda x: hasattr(x, "_tx_reference_resolver"), models))
+        from textx.scoping import get_all_models_including_attached_models
+        models = get_all_models_including_attached_models(model)
+        try:
+            # filter out all models w/o resolver:
+            models = list(filter(
+                lambda x: hasattr(x, "_tx_reference_resolver"), models))
 
-        resolved_count = 1
-        unresolved_count = 1
-        while unresolved_count > 0 and resolved_count > 0:
-            resolved_count = 0
-            unresolved_count = 0
-            # print("***RESOLVING {} models".format(len(models)))
+            resolved_count = 1
+            unresolved_count = 1
+            while unresolved_count > 0 and resolved_count > 0:
+                resolved_count = 0
+                unresolved_count = 0
+                # print("***RESOLVING {} models".format(len(models)))
+                for m in models:
+                    resolved_count_for_this_model, delayed_crossrefs = \
+                        m._tx_reference_resolver.resolve_one_step()
+                    resolved_count += resolved_count_for_this_model
+                    unresolved_count += len(delayed_crossrefs)
+                # print("DEBUG: delayed #:{} unresolved #:{}".
+                #      format(unresolved_count,unresolved_count))
+            if (unresolved_count > 0):
+                error_text = "Unresolvable cross references:"
+
+                for m in models:
+                    for _, _, delayed \
+                            in m._tx_reference_resolver.delayed_crossrefs:
+                        line, col = parser.pos_to_linecol(delayed.position)
+                        error_text += ' "{}" of class "{}" at {}'.format(
+                            delayed.obj_name, delayed.cls.__name__, (line, col))
+                raise TextXSemanticError(error_text, line=line, col=col)
+
             for m in models:
-                resolved_count_for_this_model, delayed_crossrefs = \
-                    m._tx_reference_resolver.resolve_one_step()
-                resolved_count += resolved_count_for_this_model
-                unresolved_count += len(delayed_crossrefs)
-            # print("DEBUG: delayed #:{} unresolved #:{}".
-            #      format(unresolved_count,unresolved_count))
-        if (unresolved_count > 0):
-            error_text = "Unresolvable cross references:"
+                # TODO: what does this check?
+                assert not m._tx_reference_resolver.parser._inst_stack
 
+            # cleanup
             for m in models:
-                for _, _, delayed \
-                        in m._tx_reference_resolver.delayed_crossrefs:
-                    line, col = parser.pos_to_linecol(delayed.position)
-                    error_text += ' "{}" of class "{}" at {}'.format(
-                        delayed.obj_name, delayed.cls.__name__, (line, col))
-            raise TextXSemanticError(error_text, line=line, col=col)
+                del m._tx_reference_resolver
 
-        for m in models:
-            # TODO: what does this check?
-            assert not m._tx_reference_resolver.parser._inst_stack
+            # final check that everything went ok
+            for m in models:
+                assert 0 == len(get_children_of_type(Postponed.__class__, m))
 
-        # cleanup
-        for m in models:
-            del m._tx_reference_resolver
-
-        # final check that everything went ok
-        first_error = None
-        for m in models:
-            assert 0 == len(get_children_of_type(Postponed.__class__, m))
-
-            # We have model loaded and all link resolved
-            # So we shall do a depth-first call of object
-            # processors if any processor is defined.
-            if m._tx_metamodel.obj_processors:
-                if parser.debug:
-                    parser.dprint("CALLING OBJECT PROCESSORS")
-                try:
+                # We have model loaded and all link resolved
+                # So we shall do a depth-first call of object
+                # processors if any processor is defined.
+                if m._tx_metamodel.obj_processors:
+                    if parser.debug:
+                        parser.dprint("CALLING OBJECT PROCESSORS")
                     call_obj_processors(m._tx_metamodel, m)
-                except BaseException as e:
-                    # print("OBJ PROCESSOR ERROR {}".format(str(e)))
-                    if first_error is None:
-                        first_error = e
 
-        if first_error is not None:
+        except BaseException as e:
             # remove all processed models from (global) repo (if present)
             # (remove all of them, not only the model with errors,
             # since, models with errors may be included in other models)
@@ -688,7 +683,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                         m2._tx_metamodel._tx_model_repository.remove_model(m)
                     if hasattr(m2, "_tx_model_repository"):
                         m2._tx_model_repository.remove_model(m)
-            raise first_error
+            raise e
 
     if metamodel.textx_tools_support \
             and type(model) not in PRIMITIVE_PYTHON_TYPES:
