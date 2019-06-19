@@ -52,7 +52,7 @@ class ModelRepository(object):
             if m == model:
                 filename = f
         if filename:
-            print("*** delete {}".format(filename))
+            # print("*** delete {}".format(filename))
             del self.filename_to_model[filename]
 
 
