@@ -668,7 +668,8 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
 
                 # final check that everything went ok
                 for m in models:
-                    assert 0 == len(get_children_of_type(Postponed.__class__, m))
+                    assert 0 == len(get_children_of_type(
+                        Postponed.__class__, m))
 
                     # We have model loaded and all link resolved
                     # So we shall do a depth-first call of object
@@ -685,7 +686,8 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                 for m in models:
                     for m2 in models:
                         if hasattr(m2._tx_metamodel, "_tx_model_repository"):
-                            m2._tx_metamodel._tx_model_repository.remove_model(m)
+                            m2._tx_metamodel.\
+                                _tx_model_repository.remove_model(m)
                         if hasattr(m2, "_tx_model_repository"):
                             m2._tx_model_repository.remove_model(m)
                 raise e
@@ -697,8 +699,8 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
             # (required for binary search)
             model._pos_crossref_list = pos_crossref_list
 
-            # Dict for storing rules where key is position of rule instance in text
-            # Sorted based on nested rules
+            # Dict for storing rules where key is position of rule instance in
+            # text. Sorted based on nested rules.
             model._pos_rule_dict = OrderedDict(sorted(pos_rule_dict.items(),
                                                       key=lambda x: x[0],
                                                       reverse=True))
@@ -707,13 +709,15 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
         # remove all models beeing constructed
         from textx.scoping import get_all_models_including_attached_models
         models = get_all_models_including_attached_models(model)
-        for m in filter(lambda x:hasattr(x,"_tx_reference_resolver"), models):
+        for m in filter(
+                lambda x: hasattr(x, "_tx_reference_resolver"), models):
             for m2 in models:
                 if hasattr(m2._tx_metamodel, "_tx_model_repository"):
                     m2._tx_metamodel._tx_model_repository.remove_model(m)
                 if hasattr(m2, "_tx_model_repository"):
                     m2._tx_model_repository.remove_model(m)
-        for m in filter(lambda x:hasattr(x,"_tx_reference_resolver"), models):
+        for m in filter(
+                lambda x: hasattr(x, "_tx_reference_resolver"), models):
             del m._tx_reference_resolver
         raise e
 
