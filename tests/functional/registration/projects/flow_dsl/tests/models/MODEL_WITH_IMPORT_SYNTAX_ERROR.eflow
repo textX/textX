@@ -1,0 +1,6 @@
+#include "data_structures.edata"
+#include "types_with_syntax_error.etype"
+
+algo A1 : Point -> City
+algo A2 : City -> Population
+connect A1 -> A2

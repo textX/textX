@@ -1,0 +1,2 @@
+UNEXPECTED_type Int // Syntax error
+type string
