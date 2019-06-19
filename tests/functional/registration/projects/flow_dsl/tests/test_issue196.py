@@ -61,7 +61,6 @@ def test_issue196_errors_in_scope_provider_and_obj_processor():
         _tx_model_repository.all_models.filename_to_model.keys())
 
 
-
 def test_issue196_syntax_error_1():
     mmF = metamodel_for_language('flow-dsl')
 
@@ -75,9 +74,10 @@ def test_issue196_syntax_error_1():
 
     with pytest.raises(TextXError,
                        match=r'.*error: Expected.*'):
-        mmF.model_from_file(os.path.join(current_dir,
-                                         'models',
-                                         'MODEL_WITH_IMPORT_SYNTAX_ERROR.eflow'))
+        mmF.model_from_file(
+            os.path.join(current_dir,
+                         'models',
+                         'MODEL_WITH_IMPORT_SYNTAX_ERROR.eflow'))
 
     # print("-----------------------------------2---")
     # print(metamodel_for_language('flow-dsl').
