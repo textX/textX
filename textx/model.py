@@ -598,14 +598,25 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
         else:
             return return_value_grammar  # may be None
 
+    # load model from file (w/o reference resolution)
+    # Note: if an exception happens here, the model was not yet
+    # added to any repository. Thus, we have no special exception
+    # safety handling at this point...
     model = process_node(parse_tree)
 
+    # Now, the initial version of the model is created.
+    # We catch any exceptions here, to clean up cached models
+    # introduced by, e.g., scope providers. Models will
+    # be marked as "model being constructed" if they represent
+    # a non-trivial model (e.g. are not just a string), see
+    # below ("model being constructed").
     try:
         # Register filename of the model for later use (e.g. imports/scoping).
         is_primitive_type = False
         try:
             model._tx_filename = file_name
-            # mark model as "model being constructed":
+            # mark model as "model being constructed" (see "except"-block
+            # of current "try"-block):
             model._tx_reference_resolver = None
         except AttributeError:
             # model is some primitive python type (e.g. str)
