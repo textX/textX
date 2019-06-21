@@ -545,8 +545,8 @@ class TextXMetaModel(DebugPrinter):
     def _current_namespace(self):
         return self.namespaces[self._namespace_stack[-1]]
 
-    def model_from_str(self, model_str, debug=None,
-                       pre_ref_resolution_callback=None):
+    def model_from_str(self, model_str, file_name=None, debug=None,
+                       pre_ref_resolution_callback=None, encoding='utf-8'):
         """
         Instantiates model from the given string.
         :param pre_ref_resolution_callback: called before references are
@@ -557,11 +557,17 @@ class TextXMetaModel(DebugPrinter):
         if type(model_str) is not text:
             raise TextXError("textX accepts only unicode strings.")
 
-        model = self._parser_blueprint.clone().get_model_from_str(
-            model_str, debug=debug,
-            pre_ref_resolution_callback=pre_ref_resolution_callback)
-        for p in self._model_processors:
-            p(model, self)
+        if file_name is None:
+            model = self._parser_blueprint.clone().get_model_from_str(
+                model_str, debug=debug,
+                pre_ref_resolution_callback=pre_ref_resolution_callback)
+
+            for p in self._model_processors:
+                p(model, self)
+        else:
+            model = self.internal_model_from_file(file_name, encoding, debug,
+                                                  model_str=model_str)
+
         return model
 
     def model_from_file(self, file_name, encoding='utf-8', debug=None):
@@ -569,7 +575,8 @@ class TextXMetaModel(DebugPrinter):
 
     def internal_model_from_file(
             self, file_name, encoding='utf-8', debug=None,
-            pre_ref_resolution_callback=None, is_main_model=True):
+            pre_ref_resolution_callback=None, is_main_model=True,
+            model_str=None):
         """
         Instantiates model from the given file.
         :param pre_ref_resolution_callback: called before references are
@@ -598,14 +605,19 @@ class TextXMetaModel(DebugPrinter):
                     .filename_to_model[file_name]
 
         if not model:
+            # Read model from file
+            if not model_str:
+                with codecs.open(file_name, 'r', encoding) as f:
+                    model_str = f.read()
             # model not present (from global repo) -> load it
-            model = self._parser_blueprint.clone().get_model_from_file(
-                file_name, encoding, debug=debug,
+            model = self._parser_blueprint.clone().get_model_from_str(
+                model_str, file_name, debug=debug, encoding=encoding,
                 pre_ref_resolution_callback=callback,
                 is_main_model=is_main_model)
 
         for p in self._model_processors:
             p(model, self)
+
         return model
 
     def register_model_processor(self, model_processor):
@@ -638,17 +650,18 @@ class TextXMetaMetaModel(object):
     way.
     """
 
-    def model_from_str(self, model_str, debug=None):
+    def model_from_str(self, model_str, debug=None, **kwargs):
         """
         Instantiates meta-model (a.k.a. textX model) from the given string.
         """
-        return metamodel_from_str(model_str, debug=debug)
+        return metamodel_from_str(model_str, debug=debug, **kwargs)
 
-    def model_from_file(self, file_name, encoding='utf-8', debug=None):
+    def model_from_file(self, file_name, encoding='utf-8', debug=None,
+                        **kwargs):
         """
         Instantiates meta-model (a.k.a. textX model) from the given file.
         """
-        return metamodel_from_file(file_name, debug=debug)
+        return metamodel_from_file(file_name, debug=debug, **kwargs)
 
 
 # Register built-in textX language. See setup.py entry_points
