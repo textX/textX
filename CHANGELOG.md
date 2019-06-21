@@ -23,6 +23,8 @@ please take a look at related PRs and issues and see if the change affects you.
   - Changed function name `textx.scoping.get_all_models_including_attached_models`
     to `textx.scoping.get_included_models` [#197] (marked old function
     as deprecated).
+  - Delete all models touched while loading a model, when an error occurs 
+    while loading in all repositories (strong exception safety guarantee). [#200]
 
 ## [v2.0.1] (released: 2019-05-20)
 
