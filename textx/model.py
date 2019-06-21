@@ -626,8 +626,8 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
             model._tx_parser = parser
 
         if is_main_model:
-            from textx.scoping import get_all_models_including_attached_models
-            models = get_all_models_including_attached_models(model)
+            from textx.scoping import get_included_models
+            models = get_included_models(model)
             try:
                 # filter out all models w/o resolver:
                 models = list(filter(
@@ -707,8 +707,8 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
     # exception occurred during model creation
     except BaseException as e:
         # remove all models beeing constructed
-        from textx.scoping import get_all_models_including_attached_models
-        models = get_all_models_including_attached_models(model)
+        from textx.scoping import get_included_models
+        models = get_included_models(model)
         for m in filter(
                 lambda x: hasattr(x, "_tx_reference_resolver"), models):
             for m2 in models:
