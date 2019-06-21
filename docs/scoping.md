@@ -197,6 +197,20 @@ have unique model elements (no double instances).
 Examples see [tests/test_scoping/test_import_module.py](https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_import_module.py).
 
 
+### Included model retrieval
+
+When a model includes or references other model (model files), the scope 
+providers in `textx.scoping.providers` use the field `_tx_model_repository`
+of the model object to keep track of the included models.
+
+ * You can get a list of all included model objects of a model
+   and the model itself with
+   `textx.scoping.providers.get_all_models_including_attached_models`.
+ * You can check if a model file is included by a model with
+   `textx.scoping.providers.is_file_included_by_model`.
+ 
+
+
 ## Technical aspects and implementation details
 
 The scope providers are Python callables accepting `obj, attr, obj_ref`:

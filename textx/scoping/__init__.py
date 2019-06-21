@@ -8,7 +8,7 @@
 import glob
 import os
 import errno
-from os.path import join, exists
+from os.path import join, exists, abspath
 
 
 def metamodel_for_file_or_default_metamodel(filename, the_metamodel):
@@ -44,7 +44,7 @@ class ModelRepository(object):
         self.filename_to_model = {}
 
     def has_model(self, filename):
-        return filename in self.filename_to_model
+        return abspath(filename) in self.filename_to_model
 
 
 class GlobalModelRepository(object):
@@ -168,6 +168,7 @@ class GlobalModelRepository(object):
             the loaded/cached model
         """
 
+        filename = abspath(filename)
         if not self.local_models.has_model(filename):
             if self.all_models.has_model(filename):
                 new_model = self.all_models.filename_to_model[filename]
@@ -211,7 +212,7 @@ class GlobalModelRepository(object):
             myfilename = "anonymous{}".format(i)
             self.all_models.filename_to_model[myfilename] = model
         else:
-            myfilename = model._tx_filename
+            myfilename = abspath(model._tx_filename)
             if (not self.all_models.has_model(myfilename)):
                 self.all_models.filename_to_model[myfilename] = model
         return myfilename
@@ -229,6 +230,7 @@ class GlobalModelRepository(object):
         # print("PRE-CALLBACK{}".format(filename))
         filename = other_model._tx_filename
         assert (filename)
+        filename = abspath(filename)
         other_model._tx_model_repository = \
             GlobalModelRepository(self.all_models)
         self.all_models.filename_to_model[filename] = other_model
@@ -252,6 +254,22 @@ def get_all_models_including_attached_models(model):
     get a list of all models stored within a model
     (including the owning model).
 
+    @deprecated (BIC): use model_object.get_included_models()
+
+    Args:
+        model: the owning model
+
+    Returns:
+        a list of all models
+    """
+    return get_included_models(model)
+
+
+def get_included_models(model):
+    """
+    get a list of all models stored within a model
+    (including the owning model).
+
     Args:
         model: the owning model
 
@@ -266,3 +284,24 @@ def get_all_models_including_attached_models(model):
     else:
         models = [model]
     return models
+
+
+def is_file_included(filename, model):
+    """
+    Determines if a file is included by a model. Also checks
+    for indirect inclusions (files included by included files).
+
+    Args:
+        filename: the file to be checked (filename is normalized)
+        model: the owning model
+
+    Returns:
+        True if the file is included, else False
+        (Note: if no _tx_model_repository is present,
+        the function always returns False)
+    """
+    if (hasattr(model, "_tx_model_repository")):
+        all_entries = model._tx_model_repository.all_models
+        return all_entries.has_model(filename)
+    else:
+        return False
