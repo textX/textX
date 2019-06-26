@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from textx import metamodel_from_str, textx_isinstance
 from textx.scoping.providers import FQN, RelativeName
 
