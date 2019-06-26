@@ -3,6 +3,11 @@ from textx.scoping.providers import FQN, RelativeName
 
 
 class MyScope(object):
+    """
+    Demo of a combined scope provider:
+    Dependent of the underlying data structure an appropriate
+    provider is selected...
+    """
     def __init__(self, meta):
         self.meta = meta
         self.pStart = RelativeName('parent.event.parameters')
