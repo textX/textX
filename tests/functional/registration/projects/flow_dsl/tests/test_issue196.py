@@ -28,7 +28,7 @@ def test_issue196_errors_in_scope_provider_and_obj_processor():
     # print(metamodel_for_language('flow-dsl').
     #      _tx_model_repository.all_models.filename_to_model.keys())
 
-    # error while reading, no file cached!
+    # error while reading, no file cached (cached_model_count unchanged)!
     assert cached_model_count == len(
         metamodel_for_language('flow-dsl').
         _tx_model_repository.all_models.filename_to_model.keys())
