@@ -12,7 +12,8 @@ from textx.const import MULT_OPTIONAL, MULT_ONE, MULT_ONEORMORE, \
     MULT_ZEROORMORE, RULE_ABSTRACT, RULE_MATCH, MULT_ASSIGN_ERROR, \
     UNKNOWN_OBJ_ERROR
 from textx.lang import PRIMITIVE_PYTHON_TYPES
-from textx.scoping import Postponed
+from textx.scoping import Postponed, remove_models_from_repositories, \
+    get_included_models
 from textx.scoping.providers import PlainName as DefaultScopeProvider
 
 if sys.version < '3':
@@ -637,7 +638,6 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
             model._tx_parser = parser
 
         if is_main_model:
-            from textx.scoping import get_included_models
             models = get_included_models(model)
             try:
                 # filter out all models w/o resolver:
@@ -694,13 +694,9 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                 # remove all processed models from (global) repo (if present)
                 # (remove all of them, not only the model with errors,
                 # since, models with errors may be included in other models)
+                models_to_be_removed = models
                 for m in models:
-                    for m2 in models:
-                        if hasattr(m2._tx_metamodel, "_tx_model_repository"):
-                            m2._tx_metamodel.\
-                                _tx_model_repository.remove_model(m)
-                        if hasattr(m2, "_tx_model_repository"):
-                            m2._tx_model_repository.remove_model(m)
+                    remove_models_from_repositories(m, models_to_be_removed)
                 raise e
 
         if metamodel.textx_tools_support \
@@ -718,18 +714,11 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
     # exception occurred during model creation
     except BaseException as e:
         # remove all models beeing constructed
-        from textx.scoping import get_included_models
-        models = get_included_models(model)
-        for m in filter(
-                lambda x: hasattr(x, "_tx_reference_resolver"), models):
-            for m2 in models:
-                if hasattr(m2._tx_metamodel, "_tx_model_repository"):
-                    m2._tx_metamodel._tx_model_repository.remove_model(m)
-                if hasattr(m2, "_tx_model_repository"):
-                    m2._tx_model_repository.remove_model(m)
-        for m in filter(
-                lambda x: hasattr(x, "_tx_reference_resolver"), models):
-            del m._tx_reference_resolver
+        all_affected_models = get_included_models(model)
+        models_to_be_removed = filter(
+                lambda x: hasattr(x, "_tx_reference_resolver"), all_affected_models)
+        for m in all_affected_models:
+            remove_models_from_repositories(m, models_to_be_removed)
         raise e
 
     return model

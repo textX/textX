@@ -95,6 +95,10 @@ class GlobalModelRepository(object):
         self.all_models.remove_model(model)
         self.local_models.remove_model(model)
 
+    def remove_models(self, models):
+        for m in models:
+            self.remove_model(m)
+
     def load_models_using_filepattern(
             self, filename_pattern, model, glob_args, is_main_model=False,
             encoding='utf-8', add_to_local_models=True):
@@ -326,3 +330,20 @@ def is_file_included(filename, model):
         return all_entries.has_model(filename)
     else:
         return False
+
+def remove_models_from_repositories(model, models_to_be_removed):
+    """
+    Removed models from all relevant repositories.
+
+    Args:
+        model: the model from which has to be removed
+        models_to_be_removed: models to be removed
+
+    Returns:
+        None
+    """
+    if hasattr(model._tx_metamodel, "_tx_model_repository"):
+        model._tx_metamodel. \
+            _tx_model_repository.remove_models(models_to_be_removed)
+    if hasattr(model, "_tx_model_repository"):
+        model._tx_model_repository.remove_models(models_to_be_removed)
