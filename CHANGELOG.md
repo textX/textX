@@ -409,6 +409,8 @@ please take a look at related PRs and issues and see if the change affects you.
   - Export to dot.
 
 
+[#200]: https://github.com/textX/textX/issues/200
+[#197]: https://github.com/textX/textX/issues/197
 [#188]: https://github.com/textX/textX/issues/188
 [#187]: https://github.com/textX/textX/pull/187
 [#186]: https://github.com/textX/textX/pull/186
