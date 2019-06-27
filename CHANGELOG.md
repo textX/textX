@@ -16,15 +16,15 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ### Added
 
-  - Added new function `textx.scoping.is_file_included` [#197]
+  - Added new function `textx.scoping.is_file_included` ([#197]).
 
 ### Changed
 
   - Changed function name `textx.scoping.get_all_models_including_attached_models`
-    to `textx.scoping.get_included_models` [#197] (marked old function
-    as deprecated).
+    to `textx.scoping.get_included_models` (marked old function
+    as deprecated) ([#197]).
   - Delete all models touched while loading a model, when an error occurs 
-    while loading in all repositories (strong exception safety guarantee). [#200]
+    while loading in all repositories (strong exception safety guarantee) ([#200]).
 
 ## [v2.0.1] (released: 2019-05-20)
 
