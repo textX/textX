@@ -715,9 +715,9 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
     except BaseException as e:
         # remove all models beeing constructed
         all_affected_models = get_included_models(model)
-        models_to_be_removed = filter(
+        models_to_be_removed = list(filter(
                 lambda x: hasattr(x, "_tx_reference_resolver"),
-                all_affected_models)
+                all_affected_models))
         for m in all_affected_models:
             remove_models_from_repositories(m, models_to_be_removed)
         raise e
