@@ -332,24 +332,21 @@ def is_file_included(filename, model):
         return False
 
 
-def remove_models_from_repositories(model_or_list_of_models,
+def remove_models_from_repositories(models,
                                     models_to_be_removed):
     """
     Remove models from all relevant repositories (_tx_model_repository
-    of model_or_list_of_models and related metamodel(s), if applicable).
+    of models and related metamodel(s), if applicable).
 
     Args:
-        model_or_list_of_models: the model (or a list of models) from
+        models: the list of models from
                which the models_to_be_removed have to be removed.
         models_to_be_removed: models to be removed
 
     Returns:
         None
     """
-    if isinstance(model_or_list_of_models, list):
-        models = model_or_list_of_models
-    else:
-        models = [model_or_list_of_models]
+    assert isinstance(models, list)
     for model in models:
         if hasattr(model._tx_metamodel, "_tx_model_repository"):
             model._tx_metamodel. \
