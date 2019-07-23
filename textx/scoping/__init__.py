@@ -334,7 +334,7 @@ def is_file_included(filename, model):
 
 def remove_models_from_repositories(model, models_to_be_removed):
     """
-    Removed models from all relevant repositories (_tx_model_repository
+    Remove models from all relevant repositories (_tx_model_repository
     of models and metamodel, if applicable).
 
     Args:
