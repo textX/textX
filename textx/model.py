@@ -693,9 +693,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                 # remove all processed models from (global) repo (if present)
                 # (remove all of them, not only the model with errors,
                 # since, models with errors may be included in other models)
-                models_to_be_removed = models
-                for m in models:
-                    remove_models_from_repositories(m, models_to_be_removed)
+                remove_models_from_repositories(models, models)
                 raise e
 
         if metamodel.textx_tools_support \
@@ -742,8 +740,8 @@ def _remove_all_affected_models_in_construction(model):
     models_to_be_removed = list(filter(
         lambda x: hasattr(x, "_tx_reference_resolver"),
         all_affected_models))
-    for m in all_affected_models:
-        remove_models_from_repositories(m, models_to_be_removed)
+    remove_models_from_repositories(all_affected_models,
+                                    models_to_be_removed)
 
 
 class ReferenceResolver:
