@@ -616,9 +616,8 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
         is_primitive_type = False
         try:
             model._tx_filename = file_name
-            # mark model as "model being constructed" (see "except"-block
-            # of current "try"-block):
-            model._tx_reference_resolver = None
+            # mark model as "model being constructed"
+            _start_model_construction(model)
         except AttributeError:
             # model is some primitive python type (e.g. str)
             is_primitive_type = True
@@ -719,6 +718,17 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
     return model
 
 
+def _start_model_construction(model):
+    """
+    Start model construction (internal design: use
+    the attribute _tx_reference_resolver to mark a
+    model being in construction).
+    See: _remove_all_affected_models_in_construction
+    """
+    assert not hasattr(model, "_tx_reference_resolver")
+    model._tx_reference_resolver = None
+
+
 def _remove_all_affected_models_in_construction(model):
     """
     Remove all models related to model being constructed
@@ -726,6 +736,7 @@ def _remove_all_affected_models_in_construction(model):
     This function is private to model.py, since the models
     being constructed are identified by having a reference
     resolver (this is an internal design decision of model.py).
+    See: _start_model_construction
     """
     all_affected_models = get_included_models(model)
     models_to_be_removed = list(filter(
