@@ -713,16 +713,26 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                                                       reverse=True))
     # exception occurred during model creation
     except BaseException as e:
-        # remove all models beeing constructed
-        all_affected_models = get_included_models(model)
-        models_to_be_removed = list(filter(
-                lambda x: hasattr(x, "_tx_reference_resolver"),
-                all_affected_models))
-        for m in all_affected_models:
-            remove_models_from_repositories(m, models_to_be_removed)
+        _remove_all_affected_models_in_construction(model)
         raise e
 
     return model
+
+
+def _remove_all_affected_models_in_construction(model):
+    """
+    Remove all models related to model being constructed
+    from any model repository.
+    This function is private to model.py, since the models
+    being constructed are identified by having a reference
+    resolver (this is an internal design decision of model.py).
+    """
+    all_affected_models = get_included_models(model)
+    models_to_be_removed = list(filter(
+        lambda x: hasattr(x, "_tx_reference_resolver"),
+        all_affected_models))
+    for m in all_affected_models:
+        remove_models_from_repositories(m, models_to_be_removed)
 
 
 class ReferenceResolver:
