@@ -674,7 +674,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
 
                 # cleanup
                 for m in models:
-                    del m._tx_reference_resolver
+                    _end_model_construction(m)
 
                 # final check that everything went ok
                 for m in models:
@@ -725,6 +725,13 @@ def _start_model_construction(model):
     """
     assert not hasattr(model, "_tx_reference_resolver")
     model._tx_reference_resolver = None
+
+
+def _end_model_construction(model):
+    """
+    End model construction (see _start_model_construction).
+    """
+    del model._tx_reference_resolver
 
 
 def _remove_all_affected_models_in_construction(model):
