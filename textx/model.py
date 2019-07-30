@@ -12,7 +12,8 @@ from textx.const import MULT_OPTIONAL, MULT_ONE, MULT_ONEORMORE, \
     MULT_ZEROORMORE, RULE_ABSTRACT, RULE_MATCH, MULT_ASSIGN_ERROR, \
     UNKNOWN_OBJ_ERROR
 from textx.lang import PRIMITIVE_PYTHON_TYPES
-from textx.scoping import Postponed
+from textx.scoping import Postponed, remove_models_from_repositories, \
+    get_included_models
 from textx.scoping.providers import PlainName as DefaultScopeProvider
 
 if sys.version < '3':
@@ -598,93 +599,156 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
         else:
             return return_value_grammar  # may be None
 
+    # load model from file (w/o reference resolution)
+    # Note: if an exception happens here, the model was not yet
+    # added to any repository. Thus, we have no special exception
+    # safety handling at this point...
     model = process_node(parse_tree)
-    # Register filename of the model for later use (e.g. imports/scoping).
-    is_primitive_type = False
+
+    # Now, the initial version of the model is created.
+    # We catch any exceptions here, to clean up cached models
+    # introduced by, e.g., scope providers. Models will
+    # be marked as "model being constructed" if they represent
+    # a non-trivial model (e.g. are not just a string), see
+    # below ("model being constructed").
     try:
-        model._tx_filename = file_name
-    except AttributeError:
-        # model is some primitive python type (e.g. str)
-        is_primitive_type = True
-        pass
+        # Register filename of the model for later use (e.g. imports/scoping).
+        is_primitive_type = False
+        try:
+            model._tx_filename = file_name
+            # mark model as "model being constructed"
+            _start_model_construction(model)
+        except AttributeError:
+            # model is some primitive python type (e.g. str)
+            is_primitive_type = True
+            pass
 
-    if pre_ref_resolution_callback:
-        pre_ref_resolution_callback(model)
+        if pre_ref_resolution_callback:
+            pre_ref_resolution_callback(model)
 
-    for scope_provider in metamodel.scope_providers.values():
-        from textx.scoping import ModelLoader
-        if isinstance(scope_provider, ModelLoader):
-            scope_provider.load_models(model, encoding=encoding)
+        for scope_provider in metamodel.scope_providers.values():
+            from textx.scoping import ModelLoader
+            if isinstance(scope_provider, ModelLoader):
+                scope_provider.load_models(model, encoding=encoding)
 
-    if not is_primitive_type:
-        model._tx_reference_resolver = ReferenceResolver(
-            parser, model, pos_crossref_list)
-        model._tx_parser = parser
+        if not is_primitive_type:
+            model._tx_reference_resolver = ReferenceResolver(
+                parser, model, pos_crossref_list)
+            model._tx_parser = parser
 
-    if is_main_model:
-        from textx.scoping import get_included_models
-        models = get_included_models(model)
-        # filter out all models w/o resolver:
-        models = list(filter(
-            lambda x: hasattr(x, "_tx_reference_resolver"), models))
+        if is_main_model:
+            models = get_included_models(model)
+            try:
+                # filter out all models w/o resolver:
+                models = list(filter(
+                    lambda x: hasattr(x, "_tx_reference_resolver"), models))
 
-        resolved_count = 1
-        unresolved_count = 1
-        while unresolved_count > 0 and resolved_count > 0:
-            resolved_count = 0
-            unresolved_count = 0
-            # print("***RESOLVING {} models".format(len(models)))
-            for m in models:
-                resolved_count_for_this_model, delayed_crossrefs = \
-                    m._tx_reference_resolver.resolve_one_step()
-                resolved_count += resolved_count_for_this_model
-                unresolved_count += len(delayed_crossrefs)
-            # print("DEBUG: delayed #:{} unresolved #:{}".
-            #      format(unresolved_count,unresolved_count))
-        if (unresolved_count > 0):
-            error_text = "Unresolvable cross references:"
+                resolved_count = 1
+                unresolved_count = 1
+                while unresolved_count > 0 and resolved_count > 0:
+                    resolved_count = 0
+                    unresolved_count = 0
+                    # print("***RESOLVING {} models".format(len(models)))
+                    for m in models:
+                        resolved_count_for_this_model, delayed_crossrefs = \
+                            m._tx_reference_resolver.resolve_one_step()
+                        resolved_count += resolved_count_for_this_model
+                        unresolved_count += len(delayed_crossrefs)
+                    # print("DEBUG: delayed #:{} unresolved #:{}".
+                    #      format(unresolved_count,unresolved_count))
+                if (unresolved_count > 0):
+                    error_text = "Unresolvable cross references:"
 
-            for m in models:
-                for _, _, delayed \
-                        in m._tx_reference_resolver.delayed_crossrefs:
-                    line, col = parser.pos_to_linecol(delayed.position)
-                    error_text += ' "{}" of class "{}" at {}'.format(
-                        delayed.obj_name, delayed.cls.__name__, (line, col))
-            raise TextXSemanticError(error_text, line=line, col=col)
+                    for m in models:
+                        for _, _, delayed \
+                                in m._tx_reference_resolver.delayed_crossrefs:
+                            line, col = parser.pos_to_linecol(delayed.position)
+                            error_text += ' "{}" of class "{}" at {}'.format(
+                                delayed.obj_name, delayed.cls.__name__, (
+                                    line, col))
+                    raise TextXSemanticError(error_text, line=line, col=col)
 
-        for m in models:
-            # TODO: what does this check?
-            assert not m._tx_reference_resolver.parser._inst_stack
+                for m in models:
+                    # TODO: what does this check?
+                    assert not m._tx_reference_resolver.parser._inst_stack
 
-        # cleanup
-        for m in models:
-            del m._tx_reference_resolver
+                # cleanup
+                for m in models:
+                    _end_model_construction(m)
 
-        # final check that everything went ok
-        for m in models:
-            assert 0 == len(get_children_of_type(Postponed.__class__, m))
+                # final check that everything went ok
+                for m in models:
+                    assert 0 == len(get_children_of_type(
+                        Postponed.__class__, m))
 
-            # We have model loaded and all link resolved
-            # So we shall do a depth-first call of object
-            # processors if any processor is defined.
-            if m._tx_metamodel.obj_processors:
-                if parser.debug:
-                    parser.dprint("CALLING OBJECT PROCESSORS")
-                call_obj_processors(m._tx_metamodel, m)
+                    # We have model loaded and all link resolved
+                    # So we shall do a depth-first call of object
+                    # processors if any processor is defined.
+                    if m._tx_metamodel.obj_processors:
+                        if parser.debug:
+                            parser.dprint("CALLING OBJECT PROCESSORS")
+                        call_obj_processors(m._tx_metamodel, m)
 
-    if metamodel.textx_tools_support \
-            and type(model) not in PRIMITIVE_PYTHON_TYPES:
-        # Cross-references for go-to definition language server support
-        # Already sorted based on ref_pos_start attr
-        # (required for binary search)
-        model._pos_crossref_list = pos_crossref_list
+            except BaseException as e:
+                # remove all processed models from (global) repo (if present)
+                # (remove all of them, not only the model with errors,
+                # since, models with errors may be included in other models)
+                remove_models_from_repositories(models, models)
+                raise e
 
-        # Dict for storing rules where key is position of rule instance in text
-        # Sorted based on nested rules
-        model._pos_rule_dict = OrderedDict(sorted(pos_rule_dict.items(),
-                                                  key=lambda x: x[0],
-                                                  reverse=True))
+        if metamodel.textx_tools_support \
+                and type(model) not in PRIMITIVE_PYTHON_TYPES:
+            # Cross-references for go-to definition language server support
+            # Already sorted based on ref_pos_start attr
+            # (required for binary search)
+            model._pos_crossref_list = pos_crossref_list
+
+            # Dict for storing rules where key is position of rule instance in
+            # text. Sorted based on nested rules.
+            model._pos_rule_dict = OrderedDict(sorted(pos_rule_dict.items(),
+                                                      key=lambda x: x[0],
+                                                      reverse=True))
+    # exception occurred during model creation
+    except BaseException as e:
+        _remove_all_affected_models_in_construction(model)
+        raise e
+
     return model
+
+
+def _start_model_construction(model):
+    """
+    Start model construction (internal design: use
+    the attribute _tx_reference_resolver to mark a
+    model being in construction).
+    See: _remove_all_affected_models_in_construction
+    """
+    assert not hasattr(model, "_tx_reference_resolver")
+    model._tx_reference_resolver = None
+
+
+def _end_model_construction(model):
+    """
+    End model construction (see _start_model_construction).
+    """
+    del model._tx_reference_resolver
+
+
+def _remove_all_affected_models_in_construction(model):
+    """
+    Remove all models related to model being constructed
+    from any model repository.
+    This function is private to model.py, since the models
+    being constructed are identified by having a reference
+    resolver (this is an internal design decision of model.py).
+    See: _start_model_construction
+    """
+    all_affected_models = get_included_models(model)
+    models_to_be_removed = list(filter(
+        lambda x: hasattr(x, "_tx_reference_resolver"),
+        all_affected_models))
+    remove_models_from_repositories(all_affected_models,
+                                    models_to_be_removed)
 
 
 class ReferenceResolver:

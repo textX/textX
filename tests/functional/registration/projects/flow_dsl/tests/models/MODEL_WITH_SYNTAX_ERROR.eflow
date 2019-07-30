@@ -1,0 +1,6 @@
+UNEXPECTED_#include "data_structures_including_error.edata"
+#include "types.etype"
+
+algo A1 : Point -> City
+algo A2 : City -> Population
+connect A1 -> A                                     // <--- Unknown object "A" of class "Algo"
