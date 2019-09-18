@@ -820,11 +820,11 @@ def test_empty_strmatch():
 def test_empty_regexmatch():
     """
     Test emtpy regex match.
-    Note, there must be at least one space between slashes or else it will be
-    parsed as line comment.
+    Note, there must be some regex-code between slashes or else it will be
+    parsed as line comment, e.g. "()".
     """
     grammar = """
-    Rule: first=/ / 'a';
+    Rule: first=/()/ 'a';
     """
     mm = metamodel_from_str(grammar)
     model = mm.model_from_str('a')
