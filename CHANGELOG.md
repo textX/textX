@@ -22,7 +22,7 @@ please take a look at related PRs and issues and see if the change affects you.
 
   - Changed the parser rule for regex matches. Spaces are not stripped any more form 
     the beginning and the end of the regexp-pattern. This could be possible
-    **BIC** for some special cases. Here, it is handled as bug [#208].
+    **BIC** for some special cases [#208].
   - Changed function name `textx.scoping.get_all_models_including_attached_models`
     to `textx.scoping.get_included_models` (marked old function
     as deprecated) ([#197]).
