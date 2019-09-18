@@ -845,10 +845,7 @@ class TextXVisitor(PTNodeVisitor):
         return StrMatch(to_match, ignore_case=self.metamodel.ignore_case)
 
     def visit_re_match(self, node, children):
-        try:
-            to_match = node.extra_info.group(1)
-        except IndexError:
-            to_match = ''
+        to_match = node.extra_info.group(1)
         # print("**** visit_re_match, to_match == '{}'".format(to_match))
         regex = RegExMatch(to_match,
                            ignore_case=self.metamodel.ignore_case)
