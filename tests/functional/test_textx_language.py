@@ -819,7 +819,7 @@ def test_empty_strmatch():
 
 def test_empty_regexmatch():
     """
-    Test emtpy regex match.
+    Test empty regex match.
     Note, there must be some regex-code between slashes or else it will be
     parsed as line comment, e.g. "()".
     """
@@ -829,6 +829,12 @@ def test_empty_regexmatch():
     mm = metamodel_from_str(grammar)
     model = mm.model_from_str('a')
     assert model
+
+    grammar = """
+    Rule: first=// 'a';
+    """
+    with pytest.raises(TextXSyntaxError):
+        metamodel_from_str(grammar)
 
 
 def test_default_attribute_values():
