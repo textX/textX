@@ -72,7 +72,7 @@ def obj_ref_rule():         return ident
 def class_name():           return qualified_ident
 
 def str_match():            return string_value
-def re_match():             return "/", _(r"((\\/)|[^/])*"), "/"
+def re_match():             return _(r"/((?:(?:\\/)|[^/])*)/")
 def ident():                return _(r'\w+')
 def qualified_ident():      return _(r'\w+(\.\w+)?')
 def integer():              return _(r'[-+]?[0-9]+')
@@ -845,10 +845,8 @@ class TextXVisitor(PTNodeVisitor):
         return StrMatch(to_match, ignore_case=self.metamodel.ignore_case)
 
     def visit_re_match(self, node, children):
-        try:
-            to_match = children[0]
-        except IndexError:
-            to_match = ''
+        to_match = node.extra_info.group(1)
+        # print("**** visit_re_match, to_match == '{}'".format(to_match))
         regex = RegExMatch(to_match,
                            ignore_case=self.metamodel.ignore_case)
         try:

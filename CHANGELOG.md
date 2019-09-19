@@ -20,11 +20,15 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ### Changed
 
+  - Changed the parser rule for regex matches. Spaces are not stripped any more
+    from the beginning and the end of the regexp-pattern. This could be possible
+    **BIC** for some special cases [#208].
   - Changed function name `textx.scoping.get_all_models_including_attached_models`
     to `textx.scoping.get_included_models` (marked old function
     as deprecated) ([#197]).
   - Delete all models touched while loading a model, when an error occurs 
     while loading in all repositories (strong exception safety guarantee) ([#200]).
+
 
 ## [v2.0.1] (released: 2019-05-20)
 
@@ -409,6 +413,7 @@ please take a look at related PRs and issues and see if the change affects you.
   - Export to dot.
 
 
+[#208]: https://github.com/textX/textX/pull/208
 [#200]: https://github.com/textX/textX/issues/200
 [#197]: https://github.com/textX/textX/issues/197
 [#188]: https://github.com/textX/textX/issues/188
