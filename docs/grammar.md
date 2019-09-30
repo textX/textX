@@ -824,6 +824,10 @@ specified in brackets (`[ ]`) at the beginning of the rule's definition after
 the rule's name. Currently, they are used to alter parser configuration for
 whitespace handling on the rule level.
 
+Rule modifiers act on the current rule and all rules referenced inside the rule 
+(recursively): unless a refrenced rule has an explicit rule modifier, the currently
+active modifier state is propagated to referenced rules.
+
 There are two rule modifiers at the moment:
 
 * **skipws, noskipws** - are used to enable/disable whitespace skipping during
