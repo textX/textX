@@ -61,7 +61,7 @@
       ```
 
   10. In case of errors repeat steps 3-10.
-  11. Create git tag in the form of `v<version>` (e.g. `v2.1.0`)
+  11. Create git tag in the form of `v<version>` (e.g. `v2.1.0`). Push the tag.
   12. Merge PR and delete PR branch (`release-preparation`).
   13. Change the version in `textX/__init__.py` to next minor version with
       `.dev0` addition (e.g. `v2.2.0.dev0`).
@@ -70,6 +70,7 @@
 
 !!! note
     For supporting previous versions only bugfix releases will be made. The
-    process is similar. The difference is that we base our release process of
-    the `support` branch instead of `master`. Thus we skip step 1, in step 5 we
-    create PR against the support branch, and we don't do steps 13 and 14.
+    process is similar. The difference for support release would be that release
+    process would be based of the `support` branch instead of the `master`
+    branch as is done for regular releases. Thus we would skip step 1, in step 5 we
+    would create PR against the support branch, and we won't do steps 13 and 14.
