@@ -66,11 +66,21 @@
   13. Change the version in `textX/__init__.py` to next minor version with
       `.dev0` addition (e.g. `v2.2.0.dev0`).
   14. Merge `master` to `next-version` to keep it up-to-date.
-
+  15. Update/release the docs
+      ```
+      # mike deploy latest
+      mike deploy latest -p
+      
+      # For major/minor version release
+      # mike delete stable  # this deletes alias stable
+      # mike deploy 1.9 stable   # and adds it to 1.9 minor version
+      mike deploy 1.9 stable -p
+      ```
 
 !!! note
     For supporting previous versions only bugfix releases will be made. The
     process is similar. The difference for support release would be that release
     process would be based of the `support` branch instead of the `master`
     branch as is done for regular releases. Thus we would skip step 1, in step 5 we
-    would create PR against the support branch, and we won't do steps 13 and 14.
+    would create PR against the support branch, and we won't do steps 13, 14 and
+    15.
