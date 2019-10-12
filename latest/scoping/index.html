@@ -421,6 +421,17 @@ an own instance of a <code>GlobalModelRepository</code> as a base for all loaded
 <p>Model elements in models including other parts of the model (possibly circular)
 have unique model elements (no double instances).</p>
 <p>Examples see <a href="https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_import_module.py">tests/test_scoping/test_import_module.py</a>.</p>
+<h3 id="included-model-retrieval">Included model retrieval<a class="headerlink" href="#included-model-retrieval" title="Permanent link">&para;</a></h3>
+<p>When a model includes or references other model (model files), the scope 
+providers in <code>textx.scoping.providers</code> use the field <code>_tx_model_repository</code>
+of the model object to keep track of the included models.</p>
+<ul>
+<li>You can get a list of all included model objects of a model
+   and the model itself with
+   <code>textx.scoping.providers.get_all_models_including_attached_models</code>.</li>
+<li>You can check if a model file is included by a model with
+   <code>textx.scoping.providers.is_file_included_by_model</code>.</li>
+</ul>
 <h2 id="technical-aspects-and-implementation-details">Technical aspects and implementation details<a class="headerlink" href="#technical-aspects-and-implementation-details" title="Permanent link">&para;</a></h2>
 <p>The scope providers are Python callables accepting <code>obj, attr, obj_ref</code>:</p>
 <ul>

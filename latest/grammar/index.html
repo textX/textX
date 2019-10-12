@@ -973,6 +973,9 @@ python types (<code>str</code>, <code>int</code>, <code>bool</code>, <code>float
 specified in brackets (<code>[ ]</code>) at the beginning of the rule's definition after
 the rule's name. Currently, they are used to alter parser configuration for
 whitespace handling on the rule level.</p>
+<p>Rule modifiers act on the current rule and all rules referenced inside the rule 
+(recursively): unless a refrenced rule has an explicit rule modifier, the currently
+active modifier state is propagated to referenced rules.</p>
 <p>There are two rule modifiers at the moment:</p>
 <ul>
 <li>
