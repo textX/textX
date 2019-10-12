@@ -30,9 +30,11 @@ nav:
   - State Machine: tutorials/state_machine.md
   - Toy language compiler: tutorials/toylanguage.md
   - self-dsl: tutorials/self-dsl.md
+- Development:
+  - Contributing: https://github.com/textX/textX/blob/master/CONTRIBUTING.md
+  - Release process: process.md
 - About:
   - Comparison: about/comparison.md
-  - Contributing: https://github.com/textX/textX/blob/master/CONTRIBUTING.md
   - License: https://github.com/textX/textX/blob/master/LICENSE.txt
 - What's new:
   - Release 1.5: whatsnew/release_1_5.md
