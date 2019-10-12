@@ -64,7 +64,7 @@
   11. Create git tag in the form of `v<version>` (e.g. `v2.1.0`)
   12. Merge PR and delete PR branch (`release-preparation`).
   13. Change the version in `textX/__init__.py` to next minor version with
-      `-dev` addition (e.g. `v2.2.0-dev`).
+      `.dev0` addition (e.g. `v2.2.0.dev0`).
   14. Merge `master` to `next-version` to keep it up-to-date.
 
 
