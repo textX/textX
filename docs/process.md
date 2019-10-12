@@ -31,7 +31,7 @@
  
 # textX release checklist
 
-  1. If minor/major version increase create maintenance/support branch from the
+  1. If minor/major version increase, create maintenance/support branch from the
      current master. The name is `support/v<previous major.minor.x>` (e.g.
      `support/v2.0.x`).
   2. Create a temporary branch for preparing the next release called
@@ -78,9 +78,8 @@
       ```
 
 !!! note
-    For supporting previous versions only bugfix releases will be made. The
-    process is similar. The difference for support release would be that release
-    process would be based of the `support` branch instead of the `master`
-    branch as is done for regular releases. Thus we would skip step 1, in step 5 we
-    would create PR against the support branch, and we won't do steps 13, 14 and
-    15.
+    For supporting previous versions only bugfix releases will be made. The process
+    is similar. The difference for support release would be that release process
+    would be based of the `support` branch instead of the `master` branch as is done
+    for regular releases. Thus, for support release, we would skip step 1, in step 5
+    we would create PR against the support branch, and we won't do steps 13-15.
