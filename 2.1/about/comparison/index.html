@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="Igor Dejanović">
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <title>Comparison - textX</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+  <link href="../../style.css" rel="stylesheet">
+  <link href="../../css/version-select.css" rel="stylesheet">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Comparison";
+    var mkdocs_page_input_path = "about/comparison.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+  <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-68681917-1', 'igordejanovic.net');
+      ga('send', 'pageview');
+  </script>
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href="../.." class="icon icon-home"> textX</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../..">Home</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">User Guide</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../../grammar/">Grammar</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../metamodel/">Meta-model</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../model/">Model</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../scoping/">Scoping</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../multimetamodel/">Multi meta-model</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../parser_config/">Parser configuration</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../registration/">Registration/Discovery</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../visualization/">Visualization</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../error_handling/">Error handling</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../debugging/">Debugging</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../textx_command/">textx command</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../howto/">Howtos</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Tutorials</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../../tutorials/hello_world/">Hello World</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../tutorials/robot/">Robot</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../tutorials/entity/">Entity</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../tutorials/state_machine/">State Machine</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../tutorials/toylanguage/">Toy language compiler</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../tutorials/self-dsl/">self-dsl</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">About</span>
+    <ul class="subnav">
+                <li class=" current">
+                    
+    <a class="current" href="./">Comparison</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l3"><a href="#comparing-textx-to-other-tools">Comparing textX to other tools</a></li>
+    
+
+    <li class="toctree-l3"><a href="#difference-to-xtext-grammar-language">Difference to Xtext grammar language</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l4" href="#lexer-and-terminal-rules">Lexer and terminal rules</a></li>
+        
+            <li><a class="toctree-l4" href="#types-used-for-rules">Types used for rules</a></li>
+        
+            <li><a class="toctree-l4" href="#assignments">Assignments</a></li>
+        
+            <li><a class="toctree-l4" href="#regular-expression-match">Regular expression match</a></li>
+        
+            <li><a class="toctree-l4" href="#repetition-modifiers">Repetition modifiers</a></li>
+        
+            <li><a class="toctree-l4" href="#rule-modifiers">Rule modifiers</a></li>
+        
+            <li><a class="toctree-l4" href="#unordered-groups">Unordered groups</a></li>
+        
+            <li><a class="toctree-l4" href="#syntactic-predicates">Syntactic predicates</a></li>
+        
+            <li><a class="toctree-l4" href="#hidden-rules">Hidden rules</a></li>
+        
+            <li><a class="toctree-l4" href="#parent-child-relationships">Parent-child relationships</a></li>
+        
+            <li><a class="toctree-l4" href="#enums">Enums</a></li>
+        
+            <li><a class="toctree-l4" href="#scoping">Scoping</a></li>
+        
+        </ul>
+    
+
+    <li class="toctree-l3"><a href="#additional-differences-in-the-tool-usage">Additional differences in the tool usage</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l4" href="#repl">REPL</a></li>
+        
+            <li><a class="toctree-l4" href="#post-processing">Post-processing</a></li>
+        
+            <li><a class="toctree-l4" href="#parser-control">Parser control</a></li>
+        
+            <li><a class="toctree-l4" href="#mapping-to-host-language-types">Mapping to host language types</a></li>
+        
+            <li><a class="toctree-l4" href="#built-in-objects">Built-in objects</a></li>
+        
+            <li><a class="toctree-l4" href="#additional-languages">Additional languages</a></li>
+        
+            <li><a class="toctree-l4" href="#template-engines">Template engines</a></li>
+        
+            <li><a class="toctree-l4" href="#ide-integration">IDE integration</a></li>
+        
+        </ul>
+    
+
+    </ul>
+                </li>
+                <li class="">
+                    
+    <a class="" href="https://github.com/textX/textX/blob/master/CONTRIBUTING.md">Contributing</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="https://github.com/textX/textX/blob/master/LICENSE.txt">License</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">What's new</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../../whatsnew/release_1_5/">Release 1.5</a>
+                </li>
+    </ul>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../..">textX</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>About &raquo;</li>
+        
+      
+    
+    <li>Comparison</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/textX/textX/edit/master/docs/about/comparison.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="comparing-textx-to-other-tools">Comparing textX to other tools<a class="headerlink" href="#comparing-textx-to-other-tools" title="Permanent link">&para;</a></h1>
+<p>There are generally two classes of textual DSL tools textX could be compared to.</p>
+<p>The first class comprises tools that use traditional parsing technologies, i.e.
+given a grammar (usually a <a href="https://en.wikipedia.org/wiki/Context-free_grammar">context-free
+grammar</a>) they produce
+program code capable of recognizing whether a given textual input conforms to
+the given grammar. Furthermore, they enable either transformation of textual
+input to a tree structure (i.e. parse tree), that is processed afterwards, or
+definition of actions that should be executed during parsing if a particular
+pattern is recognized. Most popular representatives in this class are <a href="http://dinosaur.compilertools.net/">lex and
+yacc</a>, <a href="http://www.antlr.org/">ANTLR</a>, <a href="https://www.gnu.org/software/bison/">GNU
+bison</a>, These kind of tools are generally
+known by the name <a href="https://en.wikipedia.org/wiki/Compiler-compiler">Parser Generators</a>.</p>
+<p>textX's differences in regard to this first class are following:</p>
+<ul>
+<li>textX works as grammar interpreter i.e. parser code is not generated by the
+  tool but the tools is configured by the grammar to recognize textual input on
+  the language specified by the grammar. You can even embed your grammar as a
+  Python string. This enables faster round-trip from grammar to the working
+  parsers as the parser don't need to be regenerated but only reconfigured.</li>
+<li>Most of the classical parsing tools use context-free grammars while textX
+  uses <a href="https://en.wikipedia.org/wiki/Parsing_expression_grammar">PEG
+  grammars</a>. The
+  consequences are that lookahead is unlimited and there are no ambiguities
+  possible as the <a href="../grammar#ordered-choice">alternative operator is ordered</a>.
+  Additionally, there is no need for a separate lexer.</li>
+<li>textX uses a single textual specification (grammar) to define not only the
+  syntax of the language but also its meta-model (a.k.a. abstract syntax). The
+  textX's meta-language is inspired by Xtext. This is very important feature
+  which enables automatic construction of the model (a.k.a. abstract semantic
+  graph - ASG or semantic model) without further work from the language
+  designer. In traditional parsing tools transformation to the model usually
+  involves coding of parse actions or manually written parse tree
+  transformation.</li>
+</ul>
+<p>The second class of textual DSL tools are more powerful tools geared especially
+towards DSL construction. These kind of tools are generally known by the name
+<a href="http://martinfowler.com/articles/languageWorkbench.html"><strong>Language Workbenches</strong> coined by Martin
+Fowler</a>. Most popular
+representatives of this class are <a href="http://www.eclipse.org/Xtext/">Xtext</a>,
+<a href="http://www.metaborg.org/en/latest/">Spoofax</a> and
+<a href="https://www.jetbrains.com/mps/">MPS</a>. These tools are much more complex,
+highly integrated to the particular development environment (IDE) but provide
+powerful tooling infrastructure for language development, debugging and
+evolving. These tools will build not only parser but also a language-specific
+editor, debugger, validator, visualiser etc.</p>
+<p>textX is positioned between these two classes of DSL tools. The goal of textX
+project is not a highly sophisticated DSL engineering platform but a simple DSL
+Python library that can be used in various Python applications and development
+environment. It can also be used for non-Python development using code
+generation from textX models (see <a href="../tutorials/entity">Entity tutorial</a>).
+Tooling infrastructure, editor support etc. will be developed as independent
+projects (see for example
+<a href="https://github.com/textX/textx-tools">textx-tools</a>).</p>
+<h1 id="difference-to-xtext-grammar-language">Difference to Xtext grammar language<a class="headerlink" href="#difference-to-xtext-grammar-language" title="Permanent link">&para;</a></h1>
+<p>textX grammar language is inspired by Xtext and thus there are a lot of
+similarities between these tools when it come to grammar specification. But,
+there are also differences in several places. In this section we shall outline
+those differences to give users already familiar with Xtext a brief overview.</p>
+<h2 id="lexer-and-terminal-rules">Lexer and terminal rules<a class="headerlink" href="#lexer-and-terminal-rules" title="Permanent link">&para;</a></h2>
+<p>textX uses PEG parsing which doesn't needs separate lexing phase.  This
+eliminate the need to define lexemes in the grammar.  Therefore, there is no
+<code>terminal</code> keyword in the textX nor any of special terminal definition rules
+used by Xtext.</p>
+<h2 id="types-used-for-rules">Types used for rules<a class="headerlink" href="#types-used-for-rules" title="Permanent link">&para;</a></h2>
+<p>Xtext integrates tightly with Java and Ecore typing system providing keyword
+<code>returns</code> in rule definition by which language designer might define a class
+used to instantiate objects recognized by the parser.</p>
+<p>textX integrates with Python typing system. In textX there is no keyword
+<code>returns</code>. The class used for the rule will be dynamically created Python class
+for all <a href="../grammar#rule-types">non-match rules</a>. Language designer can
+provide class using <a href="">user classes</a> registration on meta-model.  If the rule
+is of [match type] than it will always return Python string or some of base
+Python types for <a href="../grammar#textx-base-types">BASETYPES inherited rules</a>.</p>
+<h2 id="assignments">Assignments<a class="headerlink" href="#assignments" title="Permanent link">&para;</a></h2>
+<p>In textX there are two types of <code>many</code> assignments (<code>*=</code> - zero or more, <code>+=</code> -
+one or more) whereas in Xtext there is only one (<code>+=</code>) which defines the type
+of the inferred attribute but doesn't specify any information for the parser.
+Thus, if there should be zero or more matched elements you must additionally
+wrap your expression in <code>zero or more</code> match:</p>
+<p>In Xtext:</p>
+<pre><code>Domainmodel :
+    (elements+=Type)*;
+</code></pre>
+<p>In textX:</p>
+<pre><code>Domainmodel :
+    elements*=Type;
+</code></pre>
+<p>Similarly, optional assignment in Xtext is written as:</p>
+<pre><code>static?='static'?
+</code></pre>
+<p>In textX a '?' at the end of the expression is implied, i.e. rhs of the
+assignment will be optional:</p>
+<pre><code>static?='static'
+</code></pre>
+<h2 id="regular-expression-match">Regular expression match<a class="headerlink" href="#regular-expression-match" title="Permanent link">&para;</a></h2>
+<p>In Xtext <a href="http://www.eclipse.org/Xtext/documentation/301_grammarlanguage.html#extended-backus-naur-form-expressions">terminal rules are described using
+EBNF</a>.</p>
+<p>In textX there is no difference between parser and terminal rules so you can
+use the full textX language to define terminals. Furthermore, textX gives you
+the full power of <a href="https://docs.python.org/3/howto/regex.html#regex-howto">Python regular
+expressions</a> through
+<a href="../grammar#matches">regular expression match</a>. Regex matches are defined
+inside <code>/ /</code>. Anything you can use in Python <a href="https://docs.python.org/3/library/re.html">re
+module</a> you can use here.  This
+gives you quite powerful sublanguage for pattern definition.</p>
+<p>In Xtext:</p>
+<pre><code>terminal ASCII:
+    '0x' ('0'..'7') ('0'..'9'|'A'..'F');
+</code></pre>
+<p>In textX:</p>
+<pre><code>ASCII:
+    /0x[0-7]([0-9]|[A-F])/;
+</code></pre>
+<p>Literal Regex match can be used anywhere a regular match rule can be used.</p>
+<p>For example:</p>
+<pre><code>Person:
+    name=/[a-zA-Z]+/ age=INT;
+</code></pre>
+<h2 id="repetition-modifiers">Repetition modifiers<a class="headerlink" href="#repetition-modifiers" title="Permanent link">&para;</a></h2>
+<p>textX provides a syntactic construct called <a href="../grammar#repetition-modifiers">repetition
+modifier</a> which enables parser to be altered
+during parsing of a specific repetition expression.</p>
+<p>For example, there is often a need to define a separated list of elements.</p>
+<p>To match a list of integers separated by comma in Xtext you would write:</p>
+<pre><code>list_of_ints+=INT (',' list_of_ints+=INT)*
+</code></pre>
+<p>In textX the same expression can be written as:</p>
+<pre><code>list_of_inst+=INT[',']
+</code></pre>
+<p>The parser is instructed to parse one or more INT with commas in between.
+Repetition modifier can be a regular expression match too.</p>
+<p>For example, to match one or more integer separated by comma or semi-colon:</p>
+<pre><code>list_of_ints+=INT[/,|;/]
+</code></pre>
+<p>Inside square brackets more than one repetition modifier can be defined.  See
+<a href="../grammar#repetition-modifiers">section in the docs</a> for additional
+explanations.</p>
+<p>We are not aware of the similar feature in Xtext.</p>
+<h2 id="rule-modifiers">Rule modifiers<a class="headerlink" href="#rule-modifiers" title="Permanent link">&para;</a></h2>
+<p>Similarly to repetition modifiers, in textX parser can be altered at the rule
+level too. Currently, only white-space alteration can be defined on the rule
+level:</p>
+<p>For example:</p>
+<pre><code>    Rule:
+        'entity' name=ID /\s*/ call=Rule2;
+    Rule2[noskipws]:
+        'first' 'second';
+</code></pre>
+<p>Parser will be altered for <code>Rule2</code> not to skip white-spaces. All rules down the
+call chain inherit modifiers.</p>
+<p>There are hidden rules in Xtext which can achieve the similar effect, even
+define different kind of tokens that can be hidden from the semantic model, but
+the rule modifier in textX serve different purpose. It is a general mechanism
+for parser alteration per rule that can be used in the future to define some
+other alteration (e.g. case sensitivity).</p>
+<h2 id="unordered-groups">Unordered groups<a class="headerlink" href="#unordered-groups" title="Permanent link">&para;</a></h2>
+<p>Xtext support unordered groups using <code>&amp;</code> operator.</p>
+<p>For example:</p>
+<pre><code>Modifier: 
+    static?='static'? &amp; final?='final'? &amp; visibility=Visibility;
+
+enum Visibility:
+    PUBLIC='public' | PRIVATE='private' | PROTECTED='protected';
+</code></pre>
+<p>In textX unordered groups are specified as a special kind of repetitions. Thus,
+repetition modifiers can be applied also:</p>
+<pre><code>Modifier: 
+    (static?='static' final?='final' visibility=Visibility)#[',']
+
+Visibility:
+    'public' | 'private' | 'protected';
+</code></pre>
+<p>Previous example will match any of the following:</p>
+<pre><code>private, static, final
+static, private, final
+...
+</code></pre>
+<p>Notice the use of <code>,</code> separator as a repetition modifier.</p>
+<h2 id="syntactic-predicates">Syntactic predicates<a class="headerlink" href="#syntactic-predicates" title="Permanent link">&para;</a></h2>
+<p>textX is based on PEG grammars. Unlike CFGs, PEGs can't be ambiguous, i.e. if
+an input parses it has exactly one parse tree. textX is backtracking parser and
+will try each alternative in predetermined order until it succeeds. Thus, textX
+grammar can't be ambiguous. Nevertheless, sometimes it is not possible to
+specify desired parse tree by reordering alternatives. In that case syntactic
+predicates are used. textX implements both <a href="../grammar#syntactic-predicates">and- and not- syntactic
+predicates</a>.</p>
+<p>On the other hand, predictive non-backtracking parsers (as is ANTLR used by
+Xtext) must make a decision which alternative to chose. Thus, grammar might be
+ambiguous and additional specification is needed by a language designer to
+resolve ambiguity and choose desired parse tree. Xtext uses a positive
+lookahead syntactic predicates (=&gt; and -&gt;).  See
+<a href="http://www.eclipse.org/Xtext/documentation/301_grammarlanguage.html#syntactic-predicates">here</a>.</p>
+<h2 id="hidden-rules">Hidden rules<a class="headerlink" href="#hidden-rules" title="Permanent link">&para;</a></h2>
+<p>Xtext uses <a href="http://www.eclipse.org/Xtext/documentation/301_grammarlanguage.html#hidden-terminals">hidden terminal
+symbols</a>
+to suppress non-important parts of the input from the semantic model. This is
+used for comments, whitespaces etc.  Terminal rules are referenced from the
+<code>hidden</code> list in the parser rules. All rules called from the one using hidden
+terminals inherits them.</p>
+<p>textX provides support for whitespaces alteration on the parser level and rule
+level and a special <a href="../grammar#language-comments">Comment match rule</a> that can
+be used to describe comments pattern which are suppressed from the model.
+Comment rule is currently defined for the whole grammar, i.e. can't be altered
+on a per-rule basis.</p>
+<h2 id="parent-child-relationships">Parent-child relationships<a class="headerlink" href="#parent-child-relationships" title="Permanent link">&para;</a></h2>
+<p>textX will provide explicit <code>parent</code> reference on all objects that are
+<em>contained</em> inside some other objects.  This attribute is a plain Python
+attribute. The relationship is imposed by the grammar.</p>
+<p>Xtext, begin based on Ecore, provides similar mechanism through Ecore API.</p>
+<h2 id="enums">Enums<a class="headerlink" href="#enums" title="Permanent link">&para;</a></h2>
+<p>Xtext support <a href="http://www.eclipse.org/Xtext/documentation/301_grammarlanguage.html#enum-rules">Enum
+rules</a>
+while textX does not. In textX you use match rule with ordered choice to mimic
+enums.</p>
+<h2 id="scoping">Scoping<a class="headerlink" href="#scoping" title="Permanent link">&para;</a></h2>
+<p>At present stage textX doesn't provide builtin mechanism for scoping definition.
+However, this can be done in Python using object processors but there is no
+specific scoping API that could help language developer in resolving links.</p>
+<p>Xtext does provide a <a href="http://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#scoping">Scoping
+API</a>
+which can be used by the Xtend code to specify scoping rules.</p>
+<h1 id="additional-differences-in-the-tool-usage">Additional differences in the tool usage<a class="headerlink" href="#additional-differences-in-the-tool-usage" title="Permanent link">&para;</a></h1>
+<p>Some of the differences in tools usage are outlined here.</p>
+<h2 id="repl">REPL<a class="headerlink" href="#repl" title="Permanent link">&para;</a></h2>
+<p>textX is Python based, thus it is easy to interactively play with it on the
+Python console.</p>
+<p>Example ipython session:</p>
+<pre><code class="ipython">In [1]: from textx import metamodel_from_str
+
+In [2]: mm = metamodel_from_str(&quot;&quot;&quot;
+...: Model: points+=Point;
+...: Point: x=INT ',' y=INT ';';
+...: &quot;&quot;&quot;)
+
+In [3]: model = mm.model_from_str(&quot;&quot;&quot;
+...: 34, 45; 56, 78; 88, 12;&quot;&quot;&quot;)
+
+In [4]: model.points
+Out[4]: 
+[&lt;textx:Point object at 0x7fdfb4cda828&gt;,
+&lt;textx:Point object at 0x7fdfb4cdada0&gt;,
+&lt;textx:Point object at 0x7fdfb4cdacf8&gt;]
+
+In [5]: model.points[1].x
+Out[5]: 56
+
+In [6]: model.points[1].y
+Out[6]: 78
+</code></pre>
+
+<p>Xtext is Java based and works as generator thus it is not possible, as far as
+we know, to experiment in this way.</p>
+<h2 id="post-processing">Post-processing<a class="headerlink" href="#post-processing" title="Permanent link">&para;</a></h2>
+<p>textX provide model objects post processing by registering a Python callable
+that will receive object as it is constructed. Post-processing is used for
+all sorts of things, from model semantic validation to model augmentation.</p>
+<p>An approach to augment model after loading in Xtext is given
+<a href="http://xtextcasts.org/episodes/18-model-optimization">here</a>.</p>
+<h2 id="parser-control">Parser control<a class="headerlink" href="#parser-control" title="Permanent link">&para;</a></h2>
+<p>In textX several aspect of <a href="../../parser_config/">parsing can be controlled</a>:</p>
+<ul>
+<li>Whitespaces</li>
+<li>Case sensitivity</li>
+<li>Keyword handling</li>
+</ul>
+<p>These settings are altered during meta-model construction.  Whitespaces can be
+further controlled on a per-rule basis.</p>
+<p>Xtext enable <a href="http://www.eclipse.org/Xtext/documentation/301_grammarlanguage.html#hidden-terminals">hidden terminal
+symbols</a>
+which can be used for whitespace handling. Case sensitivity can be altered
+for <a href="http://stackoverflow.com/questions/30889847/match-string-in-xtext-regardless-of-upper-lower-case">parser rules but not for lexer
+rules</a>.</p>
+<h2 id="mapping-to-host-language-types">Mapping to host language types<a class="headerlink" href="#mapping-to-host-language-types" title="Permanent link">&para;</a></h2>
+<p>textX will dynamically create ordinary Python classes from the grammar rules.
+You can <a href="../metamodel#custom-classes">register your own classes</a> during
+meta-model construction which will be used instead. Thus, it is easy to provide
+your domain model in the form of Python classes.</p>
+<p>Xtext is based on ECore model, thus all concepts will be instances of ECore
+classes. Additionally, there is <a href="http://www.eclipse.org/Xtext/documentation/305_xbase.html">an
+API</a> which can be
+used to dynamically build JVM types from the DSL concepts providing tight
+integration with JVM.</p>
+<h2 id="built-in-objects">Built-in objects<a class="headerlink" href="#built-in-objects" title="Permanent link">&para;</a></h2>
+<p>In textX you can provide objects that will be available to every model. It is
+used to provide, e.g. built-in types of the language. For more details see
+<a href="../metamodel#built-in-objects">built-in objects section</a> in the docs.</p>
+<p>An approach to augment model after loading in Xtext is given
+<a href="http://xtextcasts.org/episodes/18-model-optimization">here</a>.</p>
+<h2 id="additional-languages">Additional languages<a class="headerlink" href="#additional-languages" title="Permanent link">&para;</a></h2>
+<p>Xtext use two additional DSLs:</p>
+<ul>
+<li>Xbase - a general expression language</li>
+<li>Xtend - a modern Java dialect which can be used in various places in the
+  Xtext framework</li>
+</ul>
+<p>The only additional DSL used in textX is genconf which is a DSL for generator
+configuration and has been developed as a part of
+<a href="https://github.com/textX/textx-tools">textx-tools project</a>.</p>
+<h2 id="template-engines">Template engines<a class="headerlink" href="#template-engines" title="Permanent link">&para;</a></h2>
+<p>textX doesn't impose a particular template engine to be used for code
+generation. Although we use <a href="http://jinja.pocoo.org/">Jinja2</a> in some of the
+examples, there is nothing in textX that is Jinja2 specific. You can use any
+template engine you like.</p>
+<p>Xtext provide it's own template language as a part of Xtend DSL. This language
+nicely integrates in the overall platform.</p>
+<h2 id="ide-integration">IDE integration<a class="headerlink" href="#ide-integration" title="Permanent link">&para;</a></h2>
+<p>Xtext is integrated in Eclipse and InteliJ IDEs and generates full
+language-specific tool-chain from the grammar description and additional
+specifications.</p>
+<p>textX does not provide IDE integrations. There
+is <a href="https://github.com/textX/textx-tools">textx-tools</a> project which
+provide pluggable platform for developing textX languages and generators with
+project scaffolding. Integration for popular code editors is planned. There is
+some basic <a href="https://github.com/textX/textx.vim">support for vim</a>
+and <a href="https://github.com/novakboskov/textx-mode">emacs</a> at the moment. There is a
+support for visualization of grammars (meta-models) and models but the model
+visualization is generic, i.e. it will show you the object graph of your model
+objects. We plan to develop language-specific model visualization support.</p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../../whatsnew/release_1_5/" class="btn btn-neutral float-right" title="Release 1.5">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../../tutorials/self-dsl/" class="btn btn-neutral" title="self-dsl"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>Copyright &copy; <a href="http://www.igordejanovic.net/">Igor Dejanović</a>.</p>
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+          <a href="https://github.com/textX/textX/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
+      
+      
+        <span><a href="../../tutorials/self-dsl/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../../whatsnew/release_1_5/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '../..';</script>
+    <script src="../../js/theme.js" defer></script>
+      <script src="../../js/version-select.js" defer></script>
+      <script src="../../search/main.js" defer></script>
+
+</body>
+</html>

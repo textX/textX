@@ -1,0 +1,14 @@
+EntityModel:
+    entities+=Entity
+;
+
+Entity:
+    'entity' name=ID '{'
+        properties+=Property
+    '}'
+;
+
+Property:
+    name=ID ':' type=ID
+;
+
