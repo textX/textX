@@ -14,6 +14,9 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ## [Unreleased]
 
+
+## [v2.1.0] (released: 2019-10-12)
+
 ### Added
 
   - Added new function `textx.scoping.is_file_included` ([#197]).
@@ -462,7 +465,8 @@ please take a look at related PRs and issues and see if the change affects you.
 [#93]: https://github.com/textX/textX/pull/93
 [#92]: https://github.com/textX/textX/pull/92
 
-[Unreleased]: https://github.com/textX/textX/compare/v2.0.1...HEAD
+[Unreleased]: https://github.com/textX/textX/compare/v2.1.0...HEAD
+[v2.1.0]: https://github.com/textX/textX/compare/v2.0.1...v2.1.0
 [v2.0.1]: https://github.com/textX/textX/compare/v1.8.0...v2.0.1
 [v1.8.0]: https://github.com/textX/textX/compare/v1.7.1...v1.8.0
 [v1.7.1]: https://github.com/textX/textX/compare/v1.7.0...v1.7.1
