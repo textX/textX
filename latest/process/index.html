@@ -8,7 +8,7 @@
   
   <meta name="author" content="Igor Dejanović">
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Parser configuration - textX</title>
+  <title>Release process - textX</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../css/theme.css" type="text/css" />
@@ -19,8 +19,8 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Parser configuration";
-    var mkdocs_page_input_path = "parser_config.md";
+    var mkdocs_page_name = "Release process";
+    var mkdocs_page_input_path = "process.md";
     var mkdocs_page_url = null;
   </script>
   
@@ -89,27 +89,9 @@
                     
     <a class="" href="../multimetamodel/">Multi meta-model</a>
                 </li>
-                <li class=" current">
+                <li class="">
                     
-    <a class="current" href="./">Parser configuration</a>
-    <ul class="subnav">
-            
-    <li class="toctree-l3"><a href="#parser-configuration">Parser configuration</a></li>
-    
-        <ul>
-        
-            <li><a class="toctree-l4" href="#case-sensitivity">Case sensitivity</a></li>
-        
-            <li><a class="toctree-l4" href="#whitespace-handling">Whitespace handling</a></li>
-        
-            <li><a class="toctree-l4" href="#automatic-keywords">Automatic keywords</a></li>
-        
-            <li><a class="toctree-l4" href="#memoization-aka-packrat-parsing">Memoization (a.k.a. packrat parsing)</a></li>
-        
-        </ul>
-    
-
-    </ul>
+    <a class="" href="../parser_config/">Parser configuration</a>
                 </li>
                 <li class="">
                     
@@ -177,9 +159,18 @@
                     
     <a class="" href="https://github.com/textX/textX/blob/master/CONTRIBUTING.md">Contributing</a>
                 </li>
-                <li class="">
+                <li class=" current">
                     
-    <a class="" href="../process/">Release process</a>
+    <a class="current" href="./">Release process</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l3"><a href="#textx-release-process">textX release process</a></li>
+    
+
+    <li class="toctree-l3"><a href="#textx-release-checklist">textX release checklist</a></li>
+    
+
+    </ul>
                 </li>
     </ul>
 	    </li>
@@ -232,14 +223,14 @@
     
       
         
-          <li>User Guide &raquo;</li>
+          <li>Development &raquo;</li>
         
       
     
-    <li>Parser configuration</li>
+    <li>Release process</li>
     <li class="wy-breadcrumbs-aside">
       
-        <a href="https://github.com/textX/textX/edit/master/docs/parser_config.md"
+        <a href="https://github.com/textX/textX/edit/master/docs/process.md"
           class="icon icon-github"> Edit on GitHub</a>
       
     </li>
@@ -249,57 +240,88 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="parser-configuration">Parser configuration<a class="headerlink" href="#parser-configuration" title="Permanent link">&para;</a></h1>
-<h2 id="case-sensitivity">Case sensitivity<a class="headerlink" href="#case-sensitivity" title="Permanent link">&para;</a></h2>
-<p>Parser is by default case sensitive. For DSLs that should be case insensitive
-use <code>ignore_case</code> parameter of the meta-model constructor call.</p>
-<pre><code class="python">from textx import metamodel_from_file
-
-my_metamodel = metamodel_from_file('mygrammar.tx', ignore_case=True)
-</code></pre>
-
-<h2 id="whitespace-handling">Whitespace handling<a class="headerlink" href="#whitespace-handling" title="Permanent link">&para;</a></h2>
-<p>The parser will skip whitespaces by default. Whitespaces are spaces, tabs and
-newlines by default. Skipping of the whitespaces can be disabled by <code>skipws</code> bool
-parameter in the constructor call. Also, what is a whitespace can be redefined by
-the <code>ws</code> string parameter.</p>
-<pre><code class="python">from textx import metamodel_from_file
-my_metamodel = metamodel_from_file('mygrammar.tx', skipws=False, ws='\s\n')
-</code></pre>
-
-<p>Whitespaces and whitespace skipping can be defined in the grammar on the level
-of a single rule by <a href="../grammar/#rule-modifiers">rule modifiers</a>.</p>
-<h2 id="automatic-keywords">Automatic keywords<a class="headerlink" href="#automatic-keywords" title="Permanent link">&para;</a></h2>
-<p>When designing a DSL, it is usually desirable to match keywords on word
-boundaries. For example, if we have Entity grammar from the above, then a word
-<code>entity</code> will be considered a keyword and should be matched on word boundaries
-only. If we have a word <code>entity2</code> in the input string at the place where
-<code>entity</code> should be matched, the match should not succeed.</p>
-<p>We could achieve this by using a regular expression match and the word
-boundaries regular expression rule for each keyword-like match.</p>
-<pre><code>Enitity:
-  /\bentity\b/ name=ID ...
-</code></pre>
-<p>But the grammar will be cumbersome to read.</p>
-<p>textX can do automatic word boundary match for all keyword-like string matches.
-To enable this feature set parameter <code>autokwd</code> to <code>True</code> in the constructor
-call.</p>
-<pre><code class="python">from textx import metamodel_from_file
-my_metamodel = metamodel_from_file('mygrammar.tx', autokwd=True)
-</code></pre>
-
-<p>Any simple match from the grammar that is matched by the
-regular expression <code>[^\d\W]\w*</code> is considered to be a keyword.</p>
-<h2 id="memoization-aka-packrat-parsing">Memoization (a.k.a. packrat parsing)<a class="headerlink" href="#memoization-aka-packrat-parsing" title="Permanent link">&para;</a></h2>
-<p>This technique is based on memoizing result on each parsing expression rule. For
-some grammars with a lot of backtracking this can yield a significant speed
-increase at the expense of some memory used for the memoization cache.</p>
-<p>Starting with textX 1.4 this feature is disabled by default. If you think that
-parsing is slow, try to enable memoization by setting <code>memoization</code> parameter to
-<code>True</code> during meta-model instantiation.</p>
-<pre><code class="python">from textx import metamodel_from_file
-my_metamodel = metamodel_from_file('mygrammar.tx', memoization=True)
-</code></pre>
+                <h1 id="textx-release-process">textX release process<a class="headerlink" href="#textx-release-process" title="Permanent link">&para;</a></h1>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For the background see <a href="https://github.com/textX/textX/issues/176">here</a>.</p>
+</div>
+<ul>
+<li>We are using semantic versioning and a standard format to keep changelogs (see
+  <a href="https://github.com/textX/textX/blob/master/CHANGELOG.md">CHANGELOG.md</a>).</li>
+<li>We develop features on feature branches. Feature branches are named
+  <code>feature/&lt;feature name&gt;</code>.</li>
+<li>We fix bugs on bugfix branches named as <code>bugfix/&lt;issue no&gt;-&lt;name&gt;</code></li>
+<li>We have a branch for the upcoming major release -- <code>next-release</code> (red in the
+  picture bellow).</li>
+<li>If the feature is backward incompatible (BIC) the PR is made against the
+  <code>next-release</code> branch (not against the <code>master</code> branch)</li>
+<li>If the feature is backward compatible PR is made against the <code>master</code>.</li>
+<li>Thus, <code>Unreleased</code> section in the changelog on the <code>master</code> branch will never
+  have any BIC change. All BIC changes should go to the changelog on the
+  <code>next-release</code> branch.</li>
+<li>We constantly merge <code>master</code> branch to <code>next-release</code> branch. Thus,
+  <code>next-release</code> branch is the latest and greatest version with <strong>all</strong> finished
+  features applied.</li>
+<li>When the time for minor release come we follow <a href="./#textx-release-checklist">textX release
+  checklist</a> defined bellow.</li>
+<li>When the time for major release come we merge <code>next-release</code> branch to
+  <code>master</code> and follow <a href="./#textx-release-checklist">textX release checklist</a>
+  defined bellow.</li>
+</ul>
+<p><img alt="process" src="../images/process.png" /></p>
+<h1 id="textx-release-checklist">textX release checklist<a class="headerlink" href="#textx-release-checklist" title="Permanent link">&para;</a></h1>
+<ol>
+<li>If minor/major version increase, create maintenance/support branch from the
+     current master. The name is <code>support/v&lt;previous major.minor.x&gt;</code> (e.g.
+     <code>support/v2.0.x</code>).</li>
+<li>Create a temporary branch for preparing the next release called
+     <code>release-preparation</code> and switch to that branch.</li>
+<li>Update version in the <code>textX/__init__.py</code>.</li>
+<li>Update CHANGELOG (create new section for the release, update github links,
+     give credits to contributors).</li>
+<li>Push release branch and create PR. Wait for tests to pass. Wait for the
+     review process to complete.</li>
+<li>Delete all previous distributions in the <code>dist</code> folder.</li>
+<li>
+<p>Create whl/tar.gz packages</p>
+<p><code>python setup.py bdist_wheel sdist</code></p>
+</li>
+<li>
+<p>Release to PyPI testing</p>
+<p><code>python setup.py publishtest</code></p>
+</li>
+<li>
+<p>Release to PyPI</p>
+<p><code>python setup.py publish</code></p>
+</li>
+<li>
+<p>In case of errors repeat steps 3-10.</p>
+</li>
+<li>Create git tag in the form of <code>v&lt;version&gt;</code> (e.g. <code>v2.1.0</code>). Push the tag.</li>
+<li>Merge PR and delete PR branch (<code>release-preparation</code>).</li>
+<li>Change the version in <code>textX/__init__.py</code> to next minor version with
+      <code>.dev0</code> addition (e.g. <code>v2.2.0.dev0</code>).</li>
+<li>Merge <code>master</code> to <code>next-version</code> to keep it up-to-date.</li>
+<li>
+<p>Update/release the docs
+      ```
+      # mike deploy latest
+      mike deploy latest -p</p>
+<p># For major/minor version release
+  # mike delete stable  # this deletes alias stable
+  # mike deploy 1.9 stable   # and adds it to 1.9 minor version
+  mike deploy 1.9 stable -p
+  ```</p>
+</li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For supporting previous versions only bugfix releases will be made. The process
+is similar. The difference for support release would be that release process
+would be based of the <code>support</code> branch instead of the <code>master</code> branch as is done
+for regular releases. Thus, for support release, we would skip step 1, in step 5
+we would create PR against the support branch, and we won't do steps 13-15.</p>
+</div>
               
             </div>
           </div>
@@ -307,10 +329,10 @@ my_metamodel = metamodel_from_file('mygrammar.tx', memoization=True)
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../registration/" class="btn btn-neutral float-right" title="Registration/Discovery">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../about/comparison/" class="btn btn-neutral float-right" title="Comparison">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../multimetamodel/" class="btn btn-neutral" title="Multi meta-model"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../tutorials/self-dsl/" class="btn btn-neutral" title="self-dsl"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -340,10 +362,10 @@ my_metamodel = metamodel_from_file('mygrammar.tx', memoization=True)
           <a href="https://github.com/textX/textX/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
       
       
-        <span><a href="../multimetamodel/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../tutorials/self-dsl/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../registration/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../about/comparison/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>
