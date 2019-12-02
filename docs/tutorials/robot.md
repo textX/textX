@@ -243,7 +243,7 @@ robot_model = robot_mm.model_from_file('program.rbt')
 ```
 
 This command will parse file `program.rbt` and constructs our robot model.
-In this file does not match our language a syntax error will be raised on the
+If this file does not match our language a syntax error will be raised on the
 first error encountered.
 
 In the same manner as meta-model visualization we can visualize our model too.
