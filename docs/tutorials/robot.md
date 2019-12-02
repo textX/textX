@@ -242,7 +242,7 @@ textual files. Extend your `robot.py` with:
 robot_model = robot_mm.model_from_file('program.rbt')
 ```
 
-This command will parse file `program.rbt` and constructs our robot model.
+This command will parse the file `program.rbt` and construct our robot model.
 If this file does not match our language a syntax error will be raised on the
 first error encountered.
 
