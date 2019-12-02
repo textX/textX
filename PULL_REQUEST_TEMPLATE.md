@@ -8,7 +8,8 @@
 - [ ] Tests have been included and/or updated
 - [ ] Docstrings have been included and/or updated, as appropriate
 - [ ] Standalone docs have been updated accordingly
-- [ ] Changelog(s) has/have been updated, as needed (see `CHANGELOG.md`).
+- [ ] Changelog(s) has/have been updated, as needed (see `CHANGELOG.md`, no need
+      to update for typo fixes and such).
 
 
 [commit messages]: https://chris.beams.io/posts/git-commit/
