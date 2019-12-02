@@ -14,6 +14,10 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix a typo and wording in the robot tutorial
+
 
 ## [v2.1.0] (released: 2019-10-12)
 
