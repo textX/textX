@@ -43,6 +43,8 @@ def textx_isinstance(obj, obj_cls):
     Returns:
         True if obj is an instance of obj_cls.
     """
+    if obj_cls.__name__ == "OBJECT":
+        return True
     if isinstance(obj, obj_cls):
         return True
     if hasattr(obj_cls, "_tx_fqn") and hasattr(obj, "_tx_fqn"):
