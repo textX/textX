@@ -7,14 +7,18 @@ from textx import metamodel_from_str
 
 metamodel_str = '''
 Model:
+    persons*=Person
     things+=Thing
+    refs*=PersonRef
 ;
-
+Person: 'person' name=ID;
+PersonRef: 'ref' ref=[Person];
 Thing:
     'thing' name=ID '{'
     inner*=[Thing]
     '}'
 ;
+
 '''
 
 
@@ -33,6 +37,7 @@ def test_buildins():
     - one model w/o buildins
     - one model with buildins
     - one model with unknown references (errors)
+    - one model with references to builtins of wrong type
     """
     #################################
     # META MODEL DEF
@@ -50,15 +55,23 @@ def test_buildins():
     #################################
 
     my_metamodel.model_from_str('''
+    person P
+    person I
     thing A {}
     thing B {}
     thing C {A B}
+    ref P
+    ref I
     ''')
 
     my_metamodel.model_from_str('''
+    person P
+    person I
     thing A {}
     thing B {}
     thing C {A B OneThing OtherThing}
+    ref P
+    ref I
     ''')
 
     with raises(textx.exceptions.TextXSemanticError,
@@ -67,6 +80,18 @@ def test_buildins():
         thing A {}
         thing B {}
         thing C {A B OneThing OtherThing UnknownPart}
+        ''')
+
+    with raises(textx.exceptions.TextXSemanticError,
+                match=r'.*Unknown object "OneThing" of class "Person".*'):
+        my_metamodel.model_from_str('''
+            person P
+            person I
+            thing A {}
+            thing B {}
+            thing C {A B OneThing OtherThing}
+            ref OneThing
+            ref OtherThing
         ''')
 
     #################################
@@ -84,6 +109,7 @@ def test_buildins_fully_qualified_name():
     - one model w/o buildins
     - one model with buildins
     - one model with unknown references (errors)
+    - one model with references to builtins of wrong type
     """
     #################################
     # META MODEL DEF
@@ -102,15 +128,23 @@ def test_buildins_fully_qualified_name():
     #################################
 
     my_metamodel.model_from_str('''
+    person P
+    person I
     thing A {}
     thing B {}
     thing C {A B}
+    ref P
+    ref I
     ''')
 
     my_metamodel.model_from_str('''
+    person P
+    person I
     thing A {}
     thing B {}
     thing C {A B OneThing OtherThing}
+    ref P
+    ref I
     ''')
 
     with raises(textx.exceptions.TextXSemanticError,
@@ -119,6 +153,18 @@ def test_buildins_fully_qualified_name():
         thing A {}
         thing B {}
         thing C {A B OneThing OtherThing UnknownPart}
+        ''')
+
+    with raises(textx.exceptions.TextXSemanticError,
+                match=r'.*Unknown object "OneThing" of class "Person".*'):
+        my_metamodel.model_from_str('''
+            person P
+            person I
+            thing A {}
+            thing B {}
+            thing C {A B OneThing OtherThing}
+            ref OneThing
+            ref OtherThing
         ''')
 
     #################################

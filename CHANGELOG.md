@@ -23,6 +23,7 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ### Changed
 
+  - Fixed type checking for references to builtin elements ([#218])
   - Allow passing kwargs (specially - file_name) argument when loading metamodel
     from string (needed for `textX-LS v0.1.0`) ([#211]).
   - Changed the parser rule for regex matches. Spaces are not stripped any more
@@ -418,6 +419,7 @@ please take a look at related PRs and issues and see if the change affects you.
   - Export to dot.
 
 
+[#218]: https://github.com/textX/textX/pull/218
 [#211]: https://github.com/textX/textX/pull/211
 [#208]: https://github.com/textX/textX/pull/208
 [#200]: https://github.com/textX/textX/issues/200

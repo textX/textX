@@ -831,8 +831,13 @@ class ReferenceResolver:
                     # As a fall-back search builtins if given
                     if metamodel.builtins:
                         if crossref.obj_name in metamodel.builtins:
-                            # TODO: Classes must match
-                            resolved = metamodel.builtins[crossref.obj_name]
+                            from textx import textx_isinstance
+                            if textx_isinstance(
+                                    metamodel.builtins[crossref.obj_name],
+                                    crossref.cls
+                            ):
+                                resolved = metamodel.builtins[
+                                    crossref.obj_name]
 
                 if not resolved:
                     line, col = self.parser.pos_to_linecol(crossref.position)
