@@ -32,10 +32,10 @@ HEADER = '''
 '''
 
 
-def match_abstract_str(cls):
+def dot_match_str(cls):
     """
-    For a given abstract or match rule meta-class returns a nice string
-    representation for the body.
+    For a given match rule meta-class returns a nice string representation for
+    the body.
     """
     def r(s):
         if s.root:
@@ -62,9 +62,8 @@ def match_abstract_str(cls):
         return "{}{}".format(result, "-" if s.suppress else "")
 
     mstr = ""
-    if cls.__name__ not in ALL_TYPE_NAMES and \
-            not (cls._tx_type is RULE_ABSTRACT and
-                 cls.__name__ != cls._tx_peg_rule.rule_name):
+    if not (cls._tx_type is RULE_ABSTRACT and
+            cls.__name__ != cls._tx_peg_rule.rule_name):
         e = cls._tx_peg_rule
         visited = set()
         if not isinstance(e, Match):
@@ -76,8 +75,6 @@ def match_abstract_str(cls):
             mstr = " ".join([r(x) for x in e.nodes])
         else:
             mstr = r(e)
-
-        mstr = dot_escape(mstr)
 
     return mstr
 
@@ -103,18 +100,33 @@ def dot_repr(o):
 
 class DotRenderer(object):
 
+    def __init__(self):
+        self.match_rules = []
+
     def get_header(self):
         return HEADER
 
     def get_trailer(self):
-        return '\n}\n'
+        trailer = ''
+        if self.match_rules:
+            trailer = 'match_rules [ shape=plaintext, label=< <table>\n'
+            for cls in sorted(self.match_rules, key=lambda x: x._tx_fqn):
+                trailer += '\t<tr>\n'
+                attrs = dot_match_str(cls)
+                trailer += '\t\t<td><b>{}</b></td><td>{}</td>\n'.format(
+                    cls.__name__, attrs)
+                trailer += '\t</tr>\n'
+            trailer += '</table> >]\n\n'
+
+        return trailer + '\n}\n'
 
     def render_class(self, cls):
         name = cls.__name__
         attrs = ""
-        if cls._tx_type is not RULE_COMMON:
-            attrs = match_abstract_str(cls)
-        else:
+        if cls._tx_type is RULE_MATCH:
+            self.match_rules.append(cls)
+            return ''
+        elif cls._tx_type is not RULE_ABSTRACT:
             for attr in cls._tx_attrs.values():
                 required = attr.mult in [MULT_ONE, MULT_ONEORMORE]
                 mult_list = attr.mult in [MULT_ZEROORMORE, MULT_ONEORMORE]
@@ -124,8 +136,9 @@ class DotRenderer(object):
                     pass
                 else:
                     # If it is plain type
-                    attrs += "{}: {}\\l".format(
-                        attr.name, attr_type if required else "optional\<{}\>".format(attr_type))
+                    attrs += '{}: {}\\l'.format(
+                        attr.name, attr_type
+                        if required else r'optional\<{}\>'.format(attr_type))
         return '{}[ label="{{{}|{}}}"]\n\n'.format(
                 id(cls), "*{}".format(name)
                 if cls._tx_type is RULE_ABSTRACT else name, attrs)
@@ -208,10 +221,11 @@ def metamodel_export_tofile(metamodel, f, renderer=None):
     if renderer is None:
         renderer = DotRenderer()
     f.write(renderer.get_header())
-    for cls in metamodel:
+    classes = [c for c in metamodel if c._tx_fqn not in ALL_TYPE_NAMES]
+    for cls in classes:
         f.write(renderer.render_class(cls))
     f.write("\n\n")
-    for cls in metamodel:
+    for cls in classes:
         if cls._tx_type is not RULE_COMMON:
             pass
         else:
