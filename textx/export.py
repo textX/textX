@@ -116,8 +116,7 @@ class DotRenderer(object):
             attrs = match_abstract_str(cls)
         else:
             for attr in cls._tx_attrs.values():
-                required = "+" if attr.mult in \
-                    [MULT_ONE, MULT_ONEORMORE] else ""
+                required = attr.mult in [MULT_ONE, MULT_ONEORMORE]
                 mult_list = attr.mult in [MULT_ZEROORMORE, MULT_ONEORMORE]
                 attr_type = "list[{}]".format(attr.cls.__name__) \
                     if mult_list else attr.cls.__name__
@@ -125,8 +124,8 @@ class DotRenderer(object):
                     pass
                 else:
                     # If it is plain type
-                    attrs += "{}{}:{}\\l".format(required,
-                                                 attr.name, attr_type)
+                    attrs += "{}: {}\\l".format(
+                        attr.name, attr_type if required else "optional\<{}\>".format(attr_type))
         return '{}[ label="{{{}|{}}}"]\n\n'.format(
                 id(cls), "*{}".format(name)
                 if cls._tx_type is RULE_ABSTRACT else name, attrs)
