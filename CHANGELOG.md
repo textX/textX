@@ -14,6 +14,10 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ## [Unreleased]
 
+### Added
+
+  - `textx version` command ([#219])
+
 
 ## [v2.1.0] (released: 2019-10-12)
 
@@ -419,6 +423,7 @@ please take a look at related PRs and issues and see if the change affects you.
   - Export to dot.
 
 
+[#219]: https://github.com/textX/textX/pull/219
 [#218]: https://github.com/textX/textX/pull/218
 [#211]: https://github.com/textX/textX/pull/211
 [#208]: https://github.com/textX/textX/pull/208
