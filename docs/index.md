@@ -130,6 +130,7 @@ You should get output like this:
       generate         Run code generator on a provided model(s).
       list-generators  List all registered generators
       list-languages   List all registered languages
+      version          Print version info.
 
 
 To install development (`master` branch) version:

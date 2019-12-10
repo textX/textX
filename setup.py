@@ -58,6 +58,7 @@ setup(
             'textx = textx.cli:textx'
         ],
         'textx_commands': [
+            'version = textx.cli:version',
             'list_languages = textx.cli.discover:list_languages',
             'list_generators = textx.cli.discover:list_generators',
             'generate = textx.cli.generate:generate',
