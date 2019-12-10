@@ -10,6 +10,16 @@ def textx(ctx, debug):
     ctx.obj = {'debug': debug}
 
 
+def version(textx):
+    @textx.command()
+    def version():
+        """
+        Print version info.
+        """
+        import textx
+        click.echo('textX {}'.format(textx.__version__))
+
+
 def register_textx_subcommands():
     """
     Find and use all textx sub-commands registered through the extension point.
