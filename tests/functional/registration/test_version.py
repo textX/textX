@@ -1,8 +1,6 @@
 """
 Test `version` command.
 """
-import os
-import re
 from pkg_resources import parse_version
 from textx.cli import textx
 from click.testing import CliRunner
