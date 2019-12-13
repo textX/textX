@@ -70,7 +70,10 @@ def check(textx):
                 click.echo("{}: OK.".format(os.path.abspath(model_file)))
 
         except TextXRegistrationError as e:
-            click.echo(e.message)
+            raise click.ClickException(e.message)
 
         except TextXError as e:
-            click.echo(e)
+            raise click.ClickException(str(e))
+
+        except Exception as e:
+            raise click.ClickException(str(e))
