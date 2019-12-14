@@ -17,6 +17,12 @@ please take a look at related PRs and issues and see if the change affects you.
 ### Added
 
   - `textx version` command ([#219])
+  
+### Fixed
+
+  - Fixed return value of textx generate and check commands: we return a failure
+    on error now ([#222])
+  - Fixed type checking for references to builtin elements ([#218])
 
 
 ## [v2.1.0] (released: 2019-10-12)
@@ -27,8 +33,6 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ### Changed
 
-  - Fixed return value of textx generate and check commands: we return a failure on error now ([#222])
-  - Fixed type checking for references to builtin elements ([#218])
   - Allow passing kwargs (specially - file_name) argument when loading metamodel
     from string (needed for `textX-LS v0.1.0`) ([#211]).
   - Changed the parser rule for regex matches. Spaces are not stripped any more
