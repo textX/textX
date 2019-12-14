@@ -71,7 +71,7 @@ def test_check_invalid_model():
                               'models', 'data_flow_including_error.eflow')
     runner = CliRunner()
     result = runner.invoke(textx, ['check', model_file])
-    assert result.exit_code == 0
+    assert result.exit_code != 0
     assert 'error: types must be lowercase' in result.output
 
 

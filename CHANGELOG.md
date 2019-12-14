@@ -27,6 +27,7 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ### Changed
 
+  - Fixed return value of textx generate and check commands: we return a failure on error now ([#222])
   - Fixed type checking for references to builtin elements ([#218])
   - Allow passing kwargs (specially - file_name) argument when loading metamodel
     from string (needed for `textX-LS v0.1.0`) ([#211]).
@@ -423,6 +424,7 @@ please take a look at related PRs and issues and see if the change affects you.
   - Export to dot.
 
 
+[#222]: https://github.com/textX/textX/pull/222
 [#219]: https://github.com/textX/textX/pull/219
 [#218]: https://github.com/textX/textX/pull/218
 [#211]: https://github.com/textX/textX/pull/211
