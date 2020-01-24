@@ -383,20 +383,31 @@ All classes and functions documented here are directly importable from `textx` m
   parameters
 - `clear_language_registrations()` - deletes all languages registered
   programmatically. Note: languages registered through `setup.py` won't be removed
-- `metamodel_for_language(language_name)` - returns a meta-model for the given language name
+- `metamodel_for_language(language_name, **kwargs)` - returns a meta-model for
+  the given language name. `kwargs` are additional keyword arguments passed to
+  meta-model factory callable, similarly to `metamodel_from_str/file`.
 - `language_for_file(file_name_or_pattern)` - returns an instance of `LanguageDesc`
   for the given file name or file name pattern. Raises `TextXRegistrationError`
   if no language or multiple languages can parse the given file
 - `languages_for_file(file_name_or_pattern)` - returns a list of `LanguageDesc`
   for the given file name or file name pattern
-- `metamodel_for_file(file_name_or_pattern)` - returns a language meta-model for
-  a language that can parse the given file name or file name pattern. Raises
+- `metamodel_for_file(file_name_or_pattern, **kwargs)` - returns a language
+  meta-model for a language that can parse the given file name or file name
+  pattern. `kwargs` are additional keyword arguments passed to meta-model
+  factory callable, similarly to `metamodel_from_str/file`. Raises
   `TextXRegistrationError` if no language or multiple languages can parse the
   given file
 - `metamodels_for_file(file_name_or_pattern)` - returns a list of meta-models
   for languages that can parse the given file name or file pattern
 - `language` - a decorator used for [language registration](#registering-a-new-language)
 
+
+!!! warning
+
+    meta-model instances are cached with a given `kwargs` so the same instance
+    can be retrieved in further calls without giving `kwargs`. Whenever `kwargs`
+    is given in `metamodel_for_file/language` call, a brand new meta-model will 
+    be created and cached for further use.
 
 
 ### Generator registration API

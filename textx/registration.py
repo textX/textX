@@ -236,20 +236,20 @@ def clear_generator_registrations():
     generators = None
 
 
-def metamodel_for_language(language_name):
+def metamodel_for_language(language_name, **kwargs):
     """
     Load and return the meta-model for the given language.
     Cache it for further use.
     """
     language_name = language_name.lower()
-    if language_name not in metamodels:
+    if language_name not in metamodels or kwargs:
         from textx.metamodel import TextXMetaModel, TextXMetaMetaModel
         language = language_description(language_name)
         if (isinstance(language.metamodel, TextXMetaModel)
                 or isinstance(language.metamodel, TextXMetaMetaModel)):
             metamodels[language_name] = language.metamodel
         else:
-            metamodel = language.metamodel()
+            metamodel = language.metamodel(**kwargs)
             if not (isinstance(metamodel, TextXMetaModel) or
                     isinstance(metamodel, TextXMetaMetaModel)):
                 raise TextXRegistrationError(
@@ -295,12 +295,13 @@ def metamodels_for_file(file_name_or_pattern):
             for language in languages_for_file(file_name_or_pattern)]
 
 
-def metamodel_for_file(file_name_or_pattern):
+def metamodel_for_file(file_name_or_pattern, **kwargs):
     """
     Return a meta-model that can parse the given file or raise
     `TextXRegistrationError` if more than one is registered.
     """
-    return metamodel_for_language(language_for_file(file_name_or_pattern).name)
+    return metamodel_for_language(language_for_file(file_name_or_pattern).name,
+                                  **kwargs)
 
 
 def generator(language, target):
