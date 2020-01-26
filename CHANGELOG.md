@@ -23,6 +23,11 @@ please take a look at related PRs and issues and see if the change affects you.
   - Fixed return value of textx generate and check commands: we return a failure
     on error now ([#222])
   - Fixed type checking for references to builtin elements ([#218])
+  
+### Changed
+
+  - Allow passing kwargs in `metamodel_for_file/language` registration API
+    calls. ([#224])
 
 
 ## [v2.1.0] (released: 2019-10-12)
@@ -428,6 +433,7 @@ please take a look at related PRs and issues and see if the change affects you.
   - Export to dot.
 
 
+[#224]: https://github.com/textX/textX/pull/224
 [#222]: https://github.com/textX/textX/pull/222
 [#219]: https://github.com/textX/textX/pull/219
 [#218]: https://github.com/textX/textX/pull/218
