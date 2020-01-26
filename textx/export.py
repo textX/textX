@@ -4,7 +4,7 @@ Export of textX based models and metamodels to dot file.
 """
 from __future__ import unicode_literals
 from arpeggio import Match, OrderedChoice, Sequence, OneOrMore, ZeroOrMore,\
-    Optional, SyntaxPredicate
+    Optional
 from textx.const import MULT_ZEROORMORE, MULT_ONEORMORE, MULT_ONE, \
     RULE_ABSTRACT, RULE_COMMON, RULE_MATCH
 from textx.lang import PRIMITIVE_PYTHON_TYPES, BASE_TYPE_NAMES, ALL_TYPE_NAMES
@@ -32,16 +32,21 @@ HEADER = '''
 '''
 
 
-def dot_match_str(cls):
+def dot_match_str(cls, other_match_rules=None):
     """
     For a given match rule meta-class returns a nice string representation for
     the body.
     """
     def r(s):
+        # print("==>" + str(s) + " " + s.rule_name)
         if s.root:
+            # breakpoint()
             if s in visited or s.rule_name in ALL_TYPE_NAMES or \
                     (hasattr(s, '_tx_class') and
-                     s._tx_class._tx_type is not RULE_MATCH):
+                     (s._tx_class._tx_type is not RULE_MATCH
+                     or (s._tx_class in other_match_rules
+                         and s._tx_class is not cls))):
+                # print("==> NAME " + s.rule_name)
                 return s.rule_name
 
         visited.add(s)
@@ -57,15 +62,22 @@ def dot_match_str(cls):
             result = "({})+".format(r(s.nodes[0]))
         elif isinstance(s, Optional):
             result = "{}?".format(r(s.nodes[0]))
-        elif isinstance(s, SyntaxPredicate):
-            result = ""
+        else:
+            # breakpoint()
+            # print("#### {}".format(s.__class__.__name__))
+            result = "{}({})".format(
+                s.__class__.__name__,
+                ','.join([r(x) for x in s.nodes]))
         return "{}{}".format(result, "-" if s.suppress else "")
 
     mstr = ""
+    # print("---------- "+str(cls))
     if not (cls._tx_type is RULE_ABSTRACT and
             cls.__name__ != cls._tx_peg_rule.rule_name):
         e = cls._tx_peg_rule
         visited = set()
+        if other_match_rules is None:
+            other_match_rules = set()
         if not isinstance(e, Match):
             visited.add(e)
         if isinstance(e, OrderedChoice):
@@ -112,7 +124,7 @@ class DotRenderer(object):
             trailer = 'match_rules [ shape=plaintext, label=< <table>\n'
             for cls in sorted(self.match_rules, key=lambda x: x._tx_fqn):
                 trailer += '\t<tr>\n'
-                attrs = dot_match_str(cls)
+                attrs = dot_match_str(cls, self.match_rules)
                 trailer += '\t\t<td><b>{}</b></td><td>{}</td>\n'.format(
                     cls.__name__, attrs)
                 trailer += '\t</tr>\n'
@@ -160,18 +172,37 @@ class DotRenderer(object):
 
 class PlantUmlRenderer(object):
 
+    def __init__(self):
+        self.match_rules = []
+
     def get_header(self):
         return '''@startuml
 set namespaceSeparator .
 '''
 
     def get_trailer(self):
-        return '@enduml\n'
+        trailer = ''
+        if self.match_rules:
+            trailer += '\nlegend\n'
+            trailer += '  Match rules:\n'
+            trailer += '  |= Name  |= Rule details |\n'
+            for cls in self.match_rules:
+                # print("-*-> " + cls.__name__)
+                trailer += '  | {} | {} |\n'.format(
+                    cls.__name__,
+                    dot_escape(dot_match_str(cls, self.match_rules))  # reuse
+                )
+            trailer += "end legend\n\n"
+        trailer += '@enduml\n'
+        return trailer
 
     def render_class(self, cls):
         attrs = ""
         stereotype = ""
-        if cls._tx_type is not RULE_COMMON:
+        if cls._tx_type is RULE_MATCH:
+            self.match_rules.append(cls)
+            return ''
+        elif cls._tx_type is not RULE_COMMON:
             stereotype += cls._tx_type
         else:
             for attr in cls._tx_attrs.values():
@@ -183,10 +214,10 @@ set namespaceSeparator .
                     pass
                 else:
                     if required:
-                        attrs += "  {} {}\n".format(attr_type, attr.name)
+                        attrs += "  {} : {}\n".format(attr.name, attr_type)
                     else:
-                        attrs += "  optional<{}> {}\n".format(attr_type,
-                                                              attr.name)
+                        attrs += "  {} : optional<{}>\n".format(attr.name,
+                                                                attr_type)
         if len(stereotype) > 0:
             stereotype = "<<"+stereotype+">>"
         return '\n\nclass {} {} {{\n{}}}\n'.format(
