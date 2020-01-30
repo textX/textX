@@ -3,6 +3,7 @@ from textx import metamodel_from_file
 from textx.export import metamodel_export, PlantUmlRenderer
 import fnmatch
 import os
+import sys
 from os.path import sep, join, dirname, exists
 
 
@@ -67,4 +68,7 @@ def main(path=None, debug=False, reportfilename=None):
 
 
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) == 2:
+        main(sys.argv[1])
+    else:
+        main()

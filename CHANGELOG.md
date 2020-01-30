@@ -26,6 +26,9 @@ please take a look at related PRs and issues and see if the change affects you.
   
 ### Changed
 
+  - Dot/PlantUML rendering of meta-models: remove rendering of base types,
+    improve rendering of required/optional, render match rules as a single
+    table. ([#225])
   - Allow passing kwargs in `metamodel_for_file/language` registration API
     calls. ([#224])
 
@@ -433,6 +436,7 @@ please take a look at related PRs and issues and see if the change affects you.
   - Export to dot.
 
 
+[#225]: https://github.com/textX/textX/pull/225
 [#224]: https://github.com/textX/textX/pull/224
 [#222]: https://github.com/textX/textX/pull/222
 [#219]: https://github.com/textX/textX/pull/219

@@ -4,7 +4,7 @@ Export of textX based models and metamodels to dot file.
 """
 from __future__ import unicode_literals
 from arpeggio import Match, OrderedChoice, Sequence, OneOrMore, ZeroOrMore,\
-    Optional, SyntaxPredicate
+    Optional
 from textx.const import MULT_ZEROORMORE, MULT_ONEORMORE, MULT_ONE, \
     RULE_ABSTRACT, RULE_COMMON, RULE_MATCH
 from textx.lang import PRIMITIVE_PYTHON_TYPES, BASE_TYPE_NAMES, ALL_TYPE_NAMES
@@ -32,16 +32,21 @@ HEADER = '''
 '''
 
 
-def match_abstract_str(cls):
+def dot_match_str(cls, other_match_rules=None):
     """
-    For a given abstract or match rule meta-class returns a nice string
-    representation for the body.
+    For a given match rule meta-class returns a nice string representation for
+    the body.
     """
     def r(s):
+        # print("==>" + str(s) + " " + s.rule_name)
         if s.root:
+            # breakpoint()
             if s in visited or s.rule_name in ALL_TYPE_NAMES or \
                     (hasattr(s, '_tx_class') and
-                     s._tx_class._tx_type is not RULE_MATCH):
+                     (s._tx_class._tx_type is not RULE_MATCH
+                     or (s._tx_class in other_match_rules
+                         and s._tx_class is not cls))):
+                # print("==> NAME " + s.rule_name)
                 return s.rule_name
 
         visited.add(s)
@@ -57,16 +62,22 @@ def match_abstract_str(cls):
             result = "({})+".format(r(s.nodes[0]))
         elif isinstance(s, Optional):
             result = "{}?".format(r(s.nodes[0]))
-        elif isinstance(s, SyntaxPredicate):
-            result = ""
+        else:
+            # breakpoint()
+            # print("#### {}".format(s.__class__.__name__))
+            result = "{}({})".format(
+                s.__class__.__name__,
+                ','.join([r(x) for x in s.nodes]))
         return "{}{}".format(result, "-" if s.suppress else "")
 
     mstr = ""
-    if cls.__name__ not in ALL_TYPE_NAMES and \
-            not (cls._tx_type is RULE_ABSTRACT and
-                 cls.__name__ != cls._tx_peg_rule.rule_name):
+    # print("---------- "+str(cls))
+    if not (cls._tx_type is RULE_ABSTRACT and
+            cls.__name__ != cls._tx_peg_rule.rule_name):
         e = cls._tx_peg_rule
         visited = set()
+        if other_match_rules is None:
+            other_match_rules = set()
         if not isinstance(e, Match):
             visited.add(e)
         if isinstance(e, OrderedChoice):
@@ -76,8 +87,6 @@ def match_abstract_str(cls):
             mstr = " ".join([r(x) for x in e.nodes])
         else:
             mstr = r(e)
-
-        mstr = dot_escape(mstr)
 
     return mstr
 
@@ -103,21 +112,36 @@ def dot_repr(o):
 
 class DotRenderer(object):
 
+    def __init__(self):
+        self.match_rules = set()
+
     def get_header(self):
         return HEADER
 
     def get_trailer(self):
-        return '\n}\n'
+        trailer = ''
+        if self.match_rules:
+            trailer = 'match_rules [ shape=plaintext, label=< <table>\n'
+            for cls in sorted(self.match_rules, key=lambda x: x._tx_fqn):
+                trailer += '\t<tr>\n'
+                attrs = dot_match_str(cls, self.match_rules)
+                trailer += '\t\t<td><b>{}</b></td><td>{}</td>\n'.format(
+                    cls.__name__, attrs)
+                trailer += '\t</tr>\n'
+            trailer += '</table> >]\n\n'
+
+        return trailer + '\n}\n'
 
     def render_class(self, cls):
         name = cls.__name__
         attrs = ""
-        if cls._tx_type is not RULE_COMMON:
-            attrs = match_abstract_str(cls)
-        else:
+        if cls._tx_type is RULE_MATCH:
+            if cls.__name__ not in BASE_TYPE_NAMES:
+                self.match_rules.add(cls)
+            return ''
+        elif cls._tx_type is not RULE_ABSTRACT:
             for attr in cls._tx_attrs.values():
-                required = "+" if attr.mult in \
-                    [MULT_ONE, MULT_ONEORMORE] else ""
+                required = attr.mult in [MULT_ONE, MULT_ONEORMORE]
                 mult_list = attr.mult in [MULT_ZEROORMORE, MULT_ONEORMORE]
                 attr_type = "list[{}]".format(attr.cls.__name__) \
                     if mult_list else attr.cls.__name__
@@ -125,8 +149,9 @@ class DotRenderer(object):
                     pass
                 else:
                     # If it is plain type
-                    attrs += "{}{}:{}\\l".format(required,
-                                                 attr.name, attr_type)
+                    attrs += '{}: {}\\l'.format(
+                        attr.name, attr_type
+                        if required else r'optional\<{}\>'.format(attr_type))
         return '{}[ label="{{{}|{}}}"]\n\n'.format(
                 id(cls), "*{}".format(name)
                 if cls._tx_type is RULE_ABSTRACT else name, attrs)
@@ -148,18 +173,38 @@ class DotRenderer(object):
 
 class PlantUmlRenderer(object):
 
+    def __init__(self):
+        self.match_rules = set()
+
     def get_header(self):
         return '''@startuml
 set namespaceSeparator .
 '''
 
     def get_trailer(self):
-        return '@enduml\n'
+        trailer = ''
+        if self.match_rules:
+            trailer += '\nlegend\n'
+            trailer += '  Match rules:\n'
+            trailer += '  |= Name  |= Rule details |\n'
+            for cls in self.match_rules:
+                # print("-*-> " + cls.__name__)
+                trailer += '  | {} | {} |\n'.format(
+                    cls.__name__,
+                    dot_escape(dot_match_str(cls, self.match_rules))  # reuse
+                )
+            trailer += "end legend\n\n"
+        trailer += '@enduml\n'
+        return trailer
 
     def render_class(self, cls):
         attrs = ""
         stereotype = ""
-        if cls._tx_type is not RULE_COMMON:
+        if cls._tx_type is RULE_MATCH:
+            if cls.__name__ not in BASE_TYPE_NAMES:
+                self.match_rules.add(cls)
+            return ''
+        elif cls._tx_type is not RULE_COMMON:
             stereotype += cls._tx_type
         else:
             for attr in cls._tx_attrs.values():
@@ -171,10 +216,10 @@ set namespaceSeparator .
                     pass
                 else:
                     if required:
-                        attrs += "  {} {}\n".format(attr_type, attr.name)
+                        attrs += "  {} : {}\n".format(attr.name, attr_type)
                     else:
-                        attrs += "  optional<{}> {}\n".format(attr_type,
-                                                              attr.name)
+                        attrs += "  {} : optional<{}>\n".format(attr.name,
+                                                                attr_type)
         if len(stereotype) > 0:
             stereotype = "<<"+stereotype+">>"
         return '\n\nclass {} {} {{\n{}}}\n'.format(
@@ -209,16 +254,19 @@ def metamodel_export_tofile(metamodel, f, renderer=None):
     if renderer is None:
         renderer = DotRenderer()
     f.write(renderer.get_header())
-    for cls in metamodel:
+    classes = [c for c in metamodel if c._tx_fqn not in ALL_TYPE_NAMES]
+    for cls in classes:
         f.write(renderer.render_class(cls))
     f.write("\n\n")
-    for cls in metamodel:
+    for cls in classes:
         if cls._tx_type is not RULE_COMMON:
             pass
         else:
             for attr in cls._tx_attrs.values():
                 if attr.ref and attr.cls.__name__ != 'OBJECT':
                     f.write(renderer.render_attr_link(cls, attr))
+                if attr.cls not in classes:
+                    f.write(renderer.render_class(attr.cls))
         for inherited_by in cls._tx_inh_by:
             f.write(renderer.render_inherited_by(cls, inherited_by))
     f.write("{}".format(renderer.get_trailer()))
