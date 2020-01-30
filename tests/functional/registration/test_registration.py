@@ -10,8 +10,8 @@ from textx import (metamodel_from_str,
 from textx.metamodel import TextXMetaModel
 
 
-def mymetamodel_callable():
-    return metamodel_from_str('MyModel: INT;')
+def mymetamodel_callable(**kwargs):
+    return metamodel_from_str('MyModel: INT;', **kwargs)
 
 
 def generator_callable():
@@ -140,6 +140,31 @@ def test_metamodel_for_language(language_registered):
     assert isinstance(mm, TextXMetaModel)
 
 
+def test_metamodel_for_language_with_params(language_registered):
+    """
+    Test that passing in kwargs to `metamodel_for_language` call will create a
+    brand new meta-model while the old instance will be returned if no `kwargs`
+    are given.
+    """
+    class MyModel:
+        pass
+
+    mm = metamodel_for_language('test-lang', ignore_case=True,
+                                classes=[MyModel])
+    assert mm.ignore_case
+    assert 'MyModel' in mm.user_classes
+
+    # Now we can call without kwargs and we still get the same instance
+    mm2 = metamodel_for_language('test-lang')
+    assert mm is mm2
+
+    # But, passing kwargs again creates a new meta-model
+    mm3 = metamodel_for_language('test-lang', ignore_case=False,
+                                 classes=[MyModel])
+    assert not mm3.ignore_case
+    assert 'MyModel' in mm.user_classes
+
+
 def test_metamodel_for_file(language_registered):
     """
     Test finding a meta-model for the given file or file pattern.
@@ -152,6 +177,29 @@ def test_metamodel_for_file(language_registered):
 
     mm = metamodel_for_file('somefile*.test')
     assert isinstance(mm, TextXMetaModel)
+
+
+def test_metamodel_for_file_with_params(language_registered):
+    """
+    Test that passing in kwargs to `metamodel_for_file` call will create a
+    brand new meta-model while the old instance will be returned if no `kwargs`
+    are given.
+    """
+    class MyModel:
+        pass
+
+    mm = metamodel_for_file('*.test', ignore_case=True, classes=[MyModel])
+    assert mm.ignore_case
+    assert 'MyModel' in mm.user_classes
+
+    # Now we can call without kwargs and we still get the same instance
+    mm2 = metamodel_for_file('*.test')
+    assert mm is mm2
+
+    # But, passing kwargs again creates a new meta-model
+    mm3 = metamodel_for_file('*.test', ignore_case=False, classes=[MyModel])
+    assert not mm3.ignore_case
+    assert 'MyModel' in mm.user_classes
 
 
 def test_multiple_languages_for_the_same_pattern():
