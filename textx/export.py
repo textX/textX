@@ -263,6 +263,8 @@ def metamodel_export_tofile(metamodel, f, renderer=None):
             for attr in cls._tx_attrs.values():
                 if attr.ref and attr.cls.__name__ != 'OBJECT':
                     f.write(renderer.render_attr_link(cls, attr))
+                if attr.cls not in classes:
+                    f.write(renderer.render_class(attr.cls))
         for inherited_by in cls._tx_inh_by:
             f.write(renderer.render_inherited_by(cls, inherited_by))
     f.write("{}".format(renderer.get_trailer()))
