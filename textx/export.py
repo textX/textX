@@ -113,7 +113,7 @@ def dot_repr(o):
 class DotRenderer(object):
 
     def __init__(self):
-        self.match_rules = []
+        self.match_rules = set()
 
     def get_header(self):
         return HEADER
@@ -136,7 +136,8 @@ class DotRenderer(object):
         name = cls.__name__
         attrs = ""
         if cls._tx_type is RULE_MATCH:
-            self.match_rules.append(cls)
+            if cls.__name__ not in BASE_TYPE_NAMES:
+                self.match_rules.add(cls)
             return ''
         elif cls._tx_type is not RULE_ABSTRACT:
             for attr in cls._tx_attrs.values():
@@ -173,7 +174,7 @@ class DotRenderer(object):
 class PlantUmlRenderer(object):
 
     def __init__(self):
-        self.match_rules = []
+        self.match_rules = set()
 
     def get_header(self):
         return '''@startuml
@@ -200,7 +201,8 @@ set namespaceSeparator .
         attrs = ""
         stereotype = ""
         if cls._tx_type is RULE_MATCH:
-            self.match_rules.append(cls)
+            if cls.__name__ not in BASE_TYPE_NAMES:
+                self.match_rules.add(cls)
             return ''
         elif cls._tx_type is not RULE_COMMON:
             stereotype += cls._tx_type
