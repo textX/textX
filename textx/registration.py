@@ -22,6 +22,9 @@ class LanguageDesc(object):
         project_name (str): Read-only attribute available on registrations from
             `setup.py`. Keeps the Python project name of the project that
             registered this language.
+        project_version (str): Read-only attribute available on registrations
+            from `setup.py`. Keeps the Python project name of the project that
+            registered this language.
     """
 
     def __init__(self, name, pattern=None, description='', metamodel=None):
@@ -30,6 +33,7 @@ class LanguageDesc(object):
         self.description = description
         self.metamodel = metamodel
         self.project_name = None
+        self.project_version = None
 
 
 class GeneratorDesc(object):
@@ -48,6 +52,9 @@ class GeneratorDesc(object):
         project_name (str): Read-only attribute available on registrations from
             `setup.py`. Keeps the Python project name of the project that
             registered this generator.
+        project_version (str): Read-only attribute available on registrations
+            from `setup.py`. Keeps the Python project name of the project that
+            registered this language.
     """
     def __init__(self, language, target, description='', generator=None):
         self.language = language
@@ -55,6 +62,7 @@ class GeneratorDesc(object):
         self.description = description
         self.generator = generator
         self.project_name = None
+        self.project_version = None
 
 
 metamodels = {}
@@ -72,7 +80,8 @@ def language_descriptions():
         for language in pkg_resources.WorkingSet().iter_entry_points(
                 group='textx_languages'):
             register_language_with_project(language.load(),
-                                           language.dist.project_name)
+                                           language.dist.project_name,
+                                           language.dist.version)
     return languages
 
 
@@ -86,7 +95,8 @@ def generator_descriptions():
         for generator in pkg_resources.WorkingSet().iter_entry_points(
                 group='textx_generators'):
             register_generator_with_project(generator.load(),
-                                            generator.dist.project_name)
+                                            generator.dist.project_name,
+                                            generator.dist.version)
     return generators
 
 
@@ -171,11 +181,13 @@ def register_language(language_desc_or_name, pattern=None, description='',
     languages[language_desc.name.lower()] = language_desc
 
 
-def register_language_with_project(language_desc, project_name):
+def register_language_with_project(language_desc, project_name,
+                                   project_version):
     """
     Register language with Python project name.
     """
     language_desc.project_name = project_name
+    language_desc.project_version = project_version
     register_language(language_desc)
 
 
@@ -220,11 +232,13 @@ def register_generator(generator_desc_or_language, target=None, description='',
     lang_gens[generator_desc.target.lower()] = generator_desc
 
 
-def register_generator_with_project(generator_desc, project_name):
+def register_generator_with_project(generator_desc, project_name,
+                                    project_version):
     """
     Register generator with Python project name.
     """
     generator_desc.project_name = project_name
+    generator_desc.project_version = project_version
     register_generator(generator_desc)
 
 
