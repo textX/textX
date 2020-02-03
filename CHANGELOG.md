@@ -17,6 +17,8 @@ please take a look at related PRs and issues and see if the change affects you.
 ### Added
 
   - `textx version` command ([#219])
+  - Versions for languages/packages in `list-languages` and `list-generators`
+    commands ([#228])
   
 ### Fixed
 
@@ -436,6 +438,7 @@ please take a look at related PRs and issues and see if the change affects you.
   - Export to dot.
 
 
+[#228]: https://github.com/textX/textX/pull/228
 [#225]: https://github.com/textX/textX/pull/225
 [#224]: https://github.com/textX/textX/pull/224
 [#222]: https://github.com/textX/textX/pull/222
