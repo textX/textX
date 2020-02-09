@@ -1,6 +1,5 @@
 from __future__ import unicode_literals
 from textx import metamodel_from_str
-from os.path import dirname, abspath, join
 from pytest import raises
 from textx.scoping.tools import get_unique_named_object
 
@@ -21,7 +20,7 @@ class PythonScopeProvider:
         self.dict_with_objects = dict_with_objects
 
     def __call__(self, obj, attr, attr_ref):
-        if attr.name=="pyobj":
+        if attr.name == "pyobj":
             if attr_ref.obj_name in self.dict_with_objects:
                 return self.dict_with_objects[attr_ref.obj_name]
             else:
