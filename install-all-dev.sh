@@ -1,11 +1,7 @@
 #!/bin/sh
 
 pip install --upgrade pip || exit 1
-pip install python-coveralls
-pip install Jinja2
-pip install coverage
-pip install flake8
-pip install -e . || exit 1
+pip install -e .[dev,test] || exit 1
 pip install -e tests/functional/subcommands/example_project || exit 1
 pip install -e tests/functional/registration/projects/types_dsl || exit 1
 pip install -e tests/functional/registration/projects/data_dsl || exit 1

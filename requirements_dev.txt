@@ -1,6 +1,0 @@
-pytest
-flake8
-coverage
-jinja2
-mkdocs
-mike
