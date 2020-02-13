@@ -82,15 +82,13 @@ Ready to contribute? Here's how to set up `textX` for local development.
 
         $ git clone git@github.com:your_name_here/textX.git
 
-3. Install your local copy into a virtualenv. Assuming you have
-   [virtualenv](https://virtualenv.pypa.io/en/latest) installed, this is how you
-   set up your fork for local development:
+3. Install your local copy into a virtualenv. This is how you set up your fork
+   for local development:
 
         $ cd textX/
-        $ virtualenv venv
+        $ python -m venv venv
         $ source venv/bin/activate
-        $ pip install -r requirements_dev.txt
-        $ pip install -e .
+        $ ./install-dev.sh 
         
     Previous stuff is needed only the first time. To continue working on textX
     later you just do:
@@ -123,6 +121,10 @@ Ready to contribute? Here's how to set up `textX` for local development.
         $ py.test tests/functional/
         $ coverage run --source textx -m py.test tests/functional
         $ coverage report
+        
+   You can run all this at once with provided script `runtests.sh`
+   
+        $ ./runtests.sh
 
    In case you have doubts, have also a look at the html rendered version of
    the coverage results:
