@@ -3,8 +3,17 @@
 import os
 import sys
 from setuptools import setup
-from pathlib import Path
-this_dir = Path(__file__).absolute().parent
+
+this_dir = os.path.abspath(os.path.dirname(__file__))
+
+VERSIONFILE = os.path.join(this_dir, "textx", "__init__.py")
+VERSION = None
+for line in open(VERSIONFILE, "r").readlines():
+    if line.startswith('__version__'):
+        VERSION = line.split('"')[1]
+
+if not VERSION:
+    raise RuntimeError('No version defined in textx.__init__.py')
 
 if sys.argv[-1].startswith('publish'):
     if os.system("pip list | grep wheel"):
@@ -20,7 +29,4 @@ if sys.argv[-1].startswith('publish'):
         os.system("twine upload dist/*")
     sys.exit()
 
-setup(use_scm_version={
-        "write_to": str(this_dir / "textx" / "version.py"),
-        "write_to_template": '__version__ = "{version}"\n',
-    })
+setup(version=VERSION)
