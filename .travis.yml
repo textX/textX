@@ -15,7 +15,7 @@ before_install:
     - cd ../textX
 
 install:
-    - ./install-all-dev.sh
+    - ./install-test.sh
 
 script:
     - ./runtests.sh
