@@ -27,6 +27,9 @@ if sys.argv[-1].startswith('publish'):
         os.system("twine upload -r test dist/*")
     else:
         os.system("twine upload dist/*")
+        print("You probably want to also tag the version now:")
+        print("  git tag -a {0} -m 'version {0}'".format(VERSION))
+        print("  git push --tags")
     sys.exit()
 
 setup(version=VERSION)
