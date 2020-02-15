@@ -1,13 +1,3 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
-setup(name='flow_dsl',
-      version='1.0.0',
-      packages=find_packages(),
-      package_data={'': ['*.tx']},
-      install_requires=["textx"],
-      entry_points={
-        'textx_languages': [
-            'flow_dsl = flow_dsl:flow_dsl',
-          ]
-      },
-      )
+setup()
