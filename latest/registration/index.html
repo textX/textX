@@ -131,6 +131,10 @@
                 </li>
                 <li class="">
                     
+    <a class="" href="../scaffolding/">Project scaffolding</a>
+                </li>
+                <li class="">
+                    
     <a class="" href="../howto/">Howtos</a>
                 </li>
     </ul>
@@ -563,20 +567,31 @@ Options:
   parameters</li>
 <li><code>clear_language_registrations()</code> - deletes all languages registered
   programmatically. Note: languages registered through <code>setup.py</code> won't be removed</li>
-<li><code>metamodel_for_language(language_name)</code> - returns a meta-model for the given language name</li>
+<li><code>metamodel_for_language(language_name, **kwargs)</code> - returns a meta-model for
+  the given language name. <code>kwargs</code> are additional keyword arguments passed to
+  meta-model factory callable, similarly to <code>metamodel_from_str/file</code>.</li>
 <li><code>language_for_file(file_name_or_pattern)</code> - returns an instance of <code>LanguageDesc</code>
   for the given file name or file name pattern. Raises <code>TextXRegistrationError</code>
   if no language or multiple languages can parse the given file</li>
 <li><code>languages_for_file(file_name_or_pattern)</code> - returns a list of <code>LanguageDesc</code>
   for the given file name or file name pattern</li>
-<li><code>metamodel_for_file(file_name_or_pattern)</code> - returns a language meta-model for
-  a language that can parse the given file name or file name pattern. Raises
+<li><code>metamodel_for_file(file_name_or_pattern, **kwargs)</code> - returns a language
+  meta-model for a language that can parse the given file name or file name
+  pattern. <code>kwargs</code> are additional keyword arguments passed to meta-model
+  factory callable, similarly to <code>metamodel_from_str/file</code>. Raises
   <code>TextXRegistrationError</code> if no language or multiple languages can parse the
   given file</li>
 <li><code>metamodels_for_file(file_name_or_pattern)</code> - returns a list of meta-models
   for languages that can parse the given file name or file pattern</li>
 <li><code>language</code> - a decorator used for <a href="#registering-a-new-language">language registration</a></li>
 </ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>meta-model instances are cached with a given <code>kwargs</code> so the same instance
+can be retrieved in further calls without giving <code>kwargs</code>. Whenever <code>kwargs</code>
+is given in <code>metamodel_for_file/language</code> call, a brand new meta-model will 
+be created and cached for further use.</p>
+</div>
 <h3 id="generator-registration-api">Generator registration API<a class="headerlink" href="#generator-registration-api" title="Permanent link">&para;</a></h3>
 <ul>
 <li>

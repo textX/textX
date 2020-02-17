@@ -115,6 +115,10 @@
                 </li>
                 <li class="">
                     
+    <a class="" href="../../scaffolding/">Project scaffolding</a>
+                </li>
+                <li class="">
+                    
     <a class="" href="../../howto/">Howtos</a>
                 </li>
     </ul>
@@ -447,8 +451,8 @@ textual files. Extend your <code>robot.py</code> with:</p>
 <pre><code class="python">robot_model = robot_mm.model_from_file('program.rbt')
 </code></pre>
 
-<p>This command will parse file <code>program.rbt</code> and constructs our robot model.
-In this file does not match our language a syntax error will be raised on the
+<p>This command will parse the file <code>program.rbt</code> and construct our robot model.
+If this file does not match our language a syntax error will be raised on the
 first error encountered.</p>
 <p>In the same manner as meta-model visualization we can visualize our model too.</p>
 <pre><code>$ textx generate program.rbt --grammar robot.tx --target dot
