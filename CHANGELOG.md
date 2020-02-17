@@ -28,6 +28,7 @@ please take a look at related PRs and issues and see if the change affects you.
   
 ### Changed
 
+  - Cleanup of setup configuration and install scripts [#231]
   - Dot/PlantUML rendering of meta-models: remove rendering of base types,
     improve rendering of required/optional, render match rules as a single
     table. ([#225])
@@ -438,6 +439,7 @@ please take a look at related PRs and issues and see if the change affects you.
   - Export to dot.
 
 
+[#231]: https://github.com/textX/textX/pull/231
 [#228]: https://github.com/textX/textX/pull/228
 [#225]: https://github.com/textX/textX/pull/225
 [#224]: https://github.com/textX/textX/pull/224
