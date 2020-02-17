@@ -1,7 +1,7 @@
 import click
 import os
 from functools import partial
-from textx import generator
+from textx.registration import generator
 from textx.export import metamodel_export, model_export, PlantUmlRenderer
 
 

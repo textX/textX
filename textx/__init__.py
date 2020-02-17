@@ -5,6 +5,7 @@ from textx.model import get_children_of_type, get_parent_of_type, \
 from textx.exceptions import TextXError, TextXSyntaxError, \
     TextXSemanticError, TextXRegistrationError
 from textx.scoping.tools import textx_isinstance
+from textx.generators import get_output_filename, gen_file
 from textx.registration import (LanguageDesc, GeneratorDesc,
                                 register_language, register_generator,
                                 language_descriptions, language_description,
