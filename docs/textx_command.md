@@ -29,7 +29,12 @@ textX registers several sub-commands:
 
     Please, see [Extending textx command](#extending-textx-command) section
     bellow on how to define your own sub-commands investigate `setup.py` of textX project. 
-
+    
+    Some of development commands/tools are registered by
+    [textX-dev](https://github.com/textX/textX-dev) project which is an optional dev
+    dependency of textX. In order to have all these commands available you can
+    either install `textX-dev` project or install textX dev dependencies with `pip
+    install textX[dev]`.
 
 
 ## Using the tool
@@ -50,8 +55,6 @@ Commands:
   generate         Run code generator on a provided model(s).
   list-generators  List all registered generators
   list-languages   List all registered languages
-  testcommand      This command will be found as a sub-command of `textx`...
-  testgroup        Here we write group explanation.
 ```
       
 
@@ -138,6 +141,13 @@ setup(
     }
 )
 ```
+
+!!! tip
+
+    If you prefer a more declarative approach you can use `setup.cfg` instead of
+    `setup.py` to configure your project and register textx commands. For an
+    idea see how [textX project registers its commands](https://github.com/textX/textX/blob/master/setup.cfg).
+
 
 If you install now your project in the same Python environment where `textX` is
 installed you will see that `textx` command now has your command registered.
