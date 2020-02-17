@@ -16,7 +16,8 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ### Added
 
-  - Initial `startproject` scaffolding docs ([#234])
+  - Initial `startproject` scaffolding (from
+    [textX-dev](https://github.com/textX/textX-dev)) docs ([#234])
   - Generator helper functions `get_output_filename` and `gen_file` ([#233])
   - `textx version` command ([#219])
   - Versions for languages/packages in `list-languages` and `list-generators`
