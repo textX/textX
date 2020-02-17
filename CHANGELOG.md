@@ -16,6 +16,7 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ### Added
 
+  - Initial `startproject` scaffolding docs ([#234])
   - Generator helper functions `get_output_filename` and `gen_file` ([#233])
   - `textx version` command ([#219])
   - Versions for languages/packages in `list-languages` and `list-generators`
@@ -440,6 +441,7 @@ please take a look at related PRs and issues and see if the change affects you.
   - Export to dot.
 
 
+[#234]: https://github.com/textX/textX/pull/234
 [#233]: https://github.com/textX/textX/pull/233
 [#231]: https://github.com/textX/textX/pull/231
 [#228]: https://github.com/textX/textX/pull/228
