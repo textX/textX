@@ -1,0 +1,185 @@
+TextxModel:
+    import_or_reference*=ImportOrReferenceStm
+    rules*=TextxRule
+;
+
+ImportOrReferenceStm:
+    ImportStm | ReferenceStm
+;
+
+ImportStm:
+    'import' grammar_to_import=GrammarToImport
+;
+
+ReferenceStm:
+    'reference' language_name=LanguageName (language_alias=LanguageAlias)?
+;
+
+GrammarToImport:
+    /(\w|\.)+/
+;
+
+LanguageName:
+    /(\w|-)+/
+;
+
+LanguageAlias:
+    'as' ID
+;
+
+// Rules
+TextxRule:
+    name=RuleName params=RuleParams? ':' body=TextxRuleBody ';'
+;
+
+RuleParams:
+    '[' RuleParam+[','] ']'
+;
+
+RuleParam:
+    name=ParamName ('=' value=StringValue)?
+;
+
+ParamName:
+    Ident
+;
+
+TextxRuleBody:
+    Choice
+;
+
+Choice:
+    sequences+=Sequence['|']
+;
+
+Sequence:
+    repeatable_expr+=RepeatableExpr
+;
+
+RepeatableExpr:
+    expr=Expression operator=RepeatOperator? ('-')?
+;
+
+Expression:
+    assignment=Assignment
+    |
+    (predicate=SyntacticPredicate? (simple_match=SimpleMatch | rule_ref=RuleRef | bracketed_choice=BracketedChoice ))
+;
+
+
+BracketedChoice:
+    '(' choice=Choice ')'
+;
+
+RepeatOperator:
+    op_sign=OperatorSign ('[' modifiers=RepeatModifiers ']')?
+;
+
+OperatorSign:
+	"*" | "?" | "+" | "#"
+;
+
+RepeatModifiers:
+      (SimpleMatch+ | 'eolterm')
+;
+
+
+SyntacticPredicate:
+    "!" | "&"
+;
+
+SimpleMatch:
+    str_match=StrMatch | re_match=ReMatch
+;
+
+// Assignment
+Assignment:
+    attribute=Attribute operator=AssignmentOp rhs=AssignmentRhs
+;
+
+Attribute:
+    Ident
+;
+
+AssignmentOp:
+    "=" | "*=" | "+=" | "?="
+;
+
+AssignmentRhs:
+    (simple=SimpleMatch | reference=Reference)  ('[' modifiers=RepeatModifiers ']')?
+;
+
+// References
+Reference:
+    rule=RuleRef | obj=ObjRef
+;
+
+RuleRef:
+    builtin=BuiltinRuleRef | plain=PlainRuleRef
+;
+
+PlainRuleRef:
+    Ident
+;
+
+BuiltinRuleRef:
+    'ID' | 'BOOL' | 'INT' | 'FLOAT' | 'STRING' | 'NUMBER' | 'BASETYPE'
+;
+
+ObjRef:
+    '[' name=ClassName ('|' obj_ref_rule=ObjRefRule)? ']'
+;
+
+RuleName:
+    Ident
+;
+
+ObjRefRule:
+    Ident
+;
+
+ClassName:
+    QualifiedIdent
+;
+
+
+StrMatch:
+    ("'" match=/((\\')|[^'])*/ "'")
+    |
+    ('"' match=/((\\")|[^"])*/ '"')
+;
+
+ReMatch:
+    '/' match=/((\\/)|[^\/])*/ '/'
+;
+
+Ident:
+    /\w+/
+;
+
+QualifiedIdent:
+    /\w+(\.\w+)?/
+;
+
+Integer:
+    /[-+]?[0-9]+/
+;
+
+StringValue:
+    (/'value=((\\')|[^'])*'/)
+    |
+    (/"value=((\\")|[^"])*"/)
+;
+
+// Comments
+Comment:
+    CommentLine | CommentBlock
+;
+
+CommentLine:
+    /\/\/.*?$/
+;
+
+CommentBlock:
+    /\/\*(.|\n)*?\*\//
+;
