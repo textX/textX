@@ -16,6 +16,8 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ### Added
 
+  - Analyzing grammars programmatically as plain textX models
+    (`grammar_model_from_str/file`) ([#235])
   - Initial `startproject` scaffolding (from
     [textX-dev](https://github.com/textX/textX-dev)) docs ([#234])
   - Generator helper functions `get_output_filename` and `gen_file` ([#233])
@@ -442,6 +444,7 @@ please take a look at related PRs and issues and see if the change affects you.
   - Export to dot.
 
 
+[#235]: https://github.com/textX/textX/pull/235
 [#234]: https://github.com/textX/textX/pull/234
 [#233]: https://github.com/textX/textX/pull/233
 [#231]: https://github.com/textX/textX/pull/231
