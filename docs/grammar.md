@@ -951,3 +951,39 @@ referring object.
 
 `List` from `component.types` is matched/instantiated and set to `a` attribute.
 
+
+## Inspecting textX grammars programmatically
+
+Since textX is a meta-language (a language for language definition) any textual
+language can be specified using it, even [textX grammar language
+itself](https://github.com/textX/textX/blob/master/textx/textx.tx).
+
+This definition enable loading of textX grammar as a plain Python model which
+can be further analyzed for various purposes. This can be used, e.g. for tooling
+which need to analyze the grammar beyond of just syntactic and semantic checks
+(e.g. syntax highlighting may analyze grammar to discover keywords that needs to
+be colored).
+
+To load grammar model first get the textX language meta-model with:
+
+```python
+textx_mm = metamodel_for_language('textx')
+```
+
+and then call either `grammar_model_from_str` or `grammar_model_from_file`
+method on this meta-model object:
+
+```
+grammar_model = textx_mm.grammar_model_from_file(
+    join(abspath(dirname(__file__)), 'pyflies.tx'))
+```
+
+Then investigate this model as you would do with any other model:
+
+```
+assert len(grammar_model.imports_or_references) == 3
+assert len(grammar_model.rules) == 45
+
+str_matches = get_children_of_type("SimpleMatch", grammar_model)
+...
+```
