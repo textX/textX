@@ -1,5 +1,9 @@
+/*
+    Specification of textX grammar language in textX.
+*/
+
 TextxModel:
-    import_or_reference*=ImportOrReferenceStm
+    imports_or_references*=ImportOrReferenceStm
     rules*=TextxRule
 ;
 
@@ -12,7 +16,7 @@ ImportStm:
 ;
 
 ReferenceStm:
-    'reference' language_name=LanguageName (language_alias=LanguageAlias)?
+    'reference' language_name=LanguageName ('as' language_alias=ID)?
 ;
 
 GrammarToImport:
@@ -23,25 +27,15 @@ LanguageName:
     /(\w|-)+/
 ;
 
-LanguageAlias:
-    'as' ID
-;
-
 // Rules
 TextxRule:
-    name=RuleName params=RuleParams? ':' body=TextxRuleBody ';'
-;
-
-RuleParams:
-    '[' RuleParam+[','] ']'
+    name=ID ('[' params+=RuleParam[','] ']')? ':'
+        body=TextxRuleBody
+    ';'
 ;
 
 RuleParam:
-    name=ParamName ('=' value=StringValue)?
-;
-
-ParamName:
-    Ident
+    name=ID ('=' value=STRING)?
 ;
 
 TextxRuleBody:
@@ -53,7 +47,7 @@ Choice:
 ;
 
 Sequence:
-    repeatable_expr+=RepeatableExpr
+    repeatable_exprs+=RepeatableExpr
 ;
 
 RepeatableExpr:
@@ -62,8 +56,10 @@ RepeatableExpr:
 
 Expression:
     assignment=Assignment
-    |
-    (predicate=SyntacticPredicate? (simple_match=SimpleMatch | rule_ref=RuleRef | bracketed_choice=BracketedChoice ))
+    | (predicate=SyntacticPredicate?
+       (simple_match=SimpleMatch
+        | rule_ref=RuleRef
+        | bracketed_choice=BracketedChoice ))
 ;
 
 
@@ -89,16 +85,12 @@ SyntacticPredicate:
 ;
 
 SimpleMatch:
-    str_match=StrMatch | re_match=ReMatch
+    str_match=STRING | re_match=ReMatch
 ;
 
 // Assignment
 Assignment:
-    attribute=Attribute operator=AssignmentOp rhs=AssignmentRhs
-;
-
-Attribute:
-    Ident
+    attribute=ID operator=AssignmentOp rhs=AssignmentRhs
 ;
 
 AssignmentOp:
@@ -115,11 +107,7 @@ Reference:
 ;
 
 RuleRef:
-    builtin=BuiltinRuleRef | plain=PlainRuleRef
-;
-
-PlainRuleRef:
-    Ident
+    builtin=BuiltinRuleRef | plain=ID
 ;
 
 BuiltinRuleRef:
@@ -127,15 +115,7 @@ BuiltinRuleRef:
 ;
 
 ObjRef:
-    '[' name=ClassName ('|' obj_ref_rule=ObjRefRule)? ']'
-;
-
-RuleName:
-    Ident
-;
-
-ObjRefRule:
-    Ident
+    '[' name=ClassName ('|' obj_ref_rule=ID)? ']'
 ;
 
 ClassName:
@@ -143,32 +123,12 @@ ClassName:
 ;
 
 
-StrMatch:
-    ("'" match=/((\\')|[^'])*/ "'")
-    |
-    ('"' match=/((\\")|[^"])*/ '"')
-;
-
 ReMatch:
     '/' match=/((\\/)|[^\/])*/ '/'
 ;
 
-Ident:
-    /\w+/
-;
-
 QualifiedIdent:
     /\w+(\.\w+)?/
-;
-
-Integer:
-    /[-+]?[0-9]+/
-;
-
-StringValue:
-    (/'value=((\\')|[^'])*'/)
-    |
-    (/"value=((\\")|[^"])*"/)
 ;
 
 // Comments

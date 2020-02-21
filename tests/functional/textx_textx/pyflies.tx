@@ -1,0 +1,253 @@
+/*
+    This grammar is used for testing of grammar parsing
+    by textX defined textX language.
+*/
+import SomeOtherGrammar
+reference some-language
+reference some-other-language as o
+
+PyFliesModel:
+  "experiment" name=STRING
+  (description=STRING)?
+  ("basepath" basepath=STRING)?
+  blocks+=BlockType
+  structure=Structure
+  targets*=Target
+;
+
+BlockType:
+  TestType|ScreenType|SubjectType
+;
+
+TestType[noskipws,my_param="some value"]:
+  "test" name=ID "{"
+    conditions = Conditions
+    stimuli = Stimuli
+  "}"
+;
+
+Conditions:
+  'conditions' '{'
+    // Strip all whitespaces before next WORD
+    // becouse next rule is eolterm and
+    // terminates on newlines.
+    /\s*/
+
+    // Parameter names are in the first line of condition specification
+    varNames+=WORD[eolterm]    // match var names until end of line
+
+    // The rest of the description are conditions, one per line
+    // The order of condition values match the param name positions.
+    conditions+=Condition
+  '}'
+;
+
+Condition:
+  /\s*/
+  varValues+=WORD[eolterm]  // match values until end of line
+;
+
+Stimuli:
+  'stimuli' '{'
+      condStimuli+=ConditionStimuli
+      ('duration' dmin=INT (dmax=INT)?)?
+  '}'
+;
+
+ConditionStimuli:
+  // Condition stimuli is given in the form of
+  // condition match expression : stimuli definitions
+  conditionMatch=ConditionMatch ':' stimuli+=Stimulus
+;
+
+ConditionMatch:
+  expression=ConditionMatchExpression
+;
+
+ConditionMatchExpression:
+   FixedCondition|OrdinalCondition|ExpressionCondition
+;
+
+FixedCondition:
+  expression = FixedConditionEnum
+;
+
+FixedConditionEnum:
+  "all"|"error"|"fixation"|"correct"
+;
+
+OrdinalCondition:
+  expression = INT
+;
+
+ExpressionCondition:
+  expression = OrExpression
+;
+
+OrExpression: operand=AndExpression ('or' operand=AndExpression)*;
+AndExpression: operand=NotEqualsExpression ('and' operand=NotEqualsExpression)*;
+
+NotEqualsExpression:
+  NotExpression | EqualsExpression;
+
+NotExpression: 'not' operand=EqualsExpression;
+EqualsExpression: varName=WORD '=' varValue=WORD;
+
+
+Stimulus:
+  Image|Shape|Sound|Audio|Text
+;
+
+Image:
+  'image' '(' file=STRING
+   (','
+        ( ('position' x=WORD (y=INT)?)
+          |('duration' dmin=WORD (dmax=INT)?)
+          |('keep')
+          |('size' width=WORD (height=INT)?)
+        )*[','])?
+  ')'
+;
+
+Shape:
+  'shape' '(' shape=ShapeType
+   (','
+        ( ('position' x=WORD (y=INT)?)
+          |('duration' dmin=WORD (dmax=INT)?)
+          |('keep')
+          |('size' width=WORD (height=INT)?)
+          |('color' color=WORD)
+          |('fillcolor' fillcolor=WORD)
+          |('linewidth' lineWidth=WORD)
+        )*[','])?
+  ')'
+;
+
+ShapeType:
+  "rectangle"|"circle"|"triangle"|"cross"
+;
+
+Text:
+  'text' '(' text=TextType
+   (','
+        ( ('position' x=WORD (y=INT)?)
+          |('duration' dmin=WORD (dmax=INT)?)
+          |('keep')
+          |('size' width=WORD (height=INT)?)
+          |('color' color=WORD)
+        )*[','])?
+  ')'
+;
+
+TextType:
+  STRING|/\w*\b/
+;
+
+WORD:
+  /[-\w]*\b/
+;
+
+Sound:
+  'sound' '(' frequency=INT
+   (',' ('duration' dmin=WORD (dmax=INT)?))?
+  ')'
+;
+
+Audio:
+  'audio' '(' file=STRING
+   (',' ('duration' dmin=WORD (dmax=INT)?))?
+  ')'
+;
+
+
+Block:
+  Sequence|Randomize
+;
+
+TestInstance:
+  'test' type=[TestType] trials=INT (practice?="practice"|randomize?="randomize")#
+;
+
+ScreenInstance:
+  'screen' type=[ScreenType]
+;
+
+SubjectInstance:
+  'subject' type=[SubjectType]
+;
+
+Reference:
+  TestInstance|ScreenInstance|SubjectInstance
+;
+
+StructureElement:
+  Reference|Block
+;
+
+
+Structure:
+  'structure' '{'
+    elements*=StructureElement
+  '}'
+;
+
+Sequence:
+  'sequence' '{'
+    elements*=StructureElement
+  '}'
+;
+
+Randomize:
+  'randomize' '{'
+    elements*=StructureElement
+  '}'
+;
+
+ScreenType:
+  'screen' name=ID "{"
+  /*    content=/(.|\n)*?(?=})/  */
+      content=/[^}]*/
+  '}'
+;
+
+SubjectType:
+  'subject' name=ID '{'
+    attribute+=SubjectAttribute
+  '}'
+;
+
+SubjectAttribute:
+  type=SubjectAttributeType name=ID (label=STRING)?
+;
+
+SubjectAttributeType:
+  "int"|"string"|"float"|Enum
+;
+
+Enum:
+  '[' values+=ID[','] ']'
+;
+
+Target:
+  'target' name=ID '{'
+    'output' '=' output=STRING
+    'responses' '{'
+        responseMap*=ResponseMap
+    '}'
+    targetParam*=TargetParam
+  '}'
+;
+
+TargetParam:
+  name=ID '=' value=BASETYPE
+;
+
+ResponseMap:
+  name=ID '=' target=BASETYPE
+;
+
+// Special rule for comments
+Comment:
+  /\/\/.*$/|/\/\*(.|\n)*?\*\//  // Non-greedy match of block component content
+;
+
