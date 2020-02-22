@@ -85,8 +85,17 @@ SyntacticPredicate:
 ;
 
 SimpleMatch:
-    str_match=STRING | re_match=ReMatch
+    StrMatch | ReMatch
 ;
+
+StrMatch:
+    match=STRING
+;
+
+ReMatch:
+    '/' match=/((\\/)|[^\/])*/ '/'
+;
+
 
 // Assignment
 Assignment:
@@ -122,10 +131,6 @@ ClassName:
     QualifiedIdent
 ;
 
-
-ReMatch:
-    '/' match=/((\\/)|[^\/])*/ '/'
-;
 
 QualifiedIdent:
     /\w+(\.\w+)?/

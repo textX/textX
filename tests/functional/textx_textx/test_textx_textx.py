@@ -24,15 +24,15 @@ def test_textx_textx():
     assert p[1].value == 'some value'
 
     # Check string matches in the rule
-    str_matches = get_children_of_type('SimpleMatch', rule_with_params)
+    str_matches = get_children_of_type('StrMatch', rule_with_params)
     assert len(str_matches) == 3
-    assert str_matches[1].str_match == '{'
+    assert str_matches[1].match == '{'
 
     # Check match ordered choice
     rule = get_rule_by_name('FixedConditionEnum')
     assert len(rule.body.sequences) == 4
     assert rule.body.sequences[0].repeatable_exprs[0]\
-                                 .expr.simple_match.str_match == 'all'
+                                 .expr.simple_match.match == 'all'
 
     # Referencing languages
     assert len(grammar_model.imports_or_references) == 3
