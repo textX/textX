@@ -1,0 +1,145 @@
+/*
+    Specification of textX grammar language in textX.
+*/
+
+TextxModel:
+    imports_or_references*=ImportOrReferenceStm
+    rules*=TextxRule
+;
+
+ImportOrReferenceStm:
+    ImportStm | ReferenceStm
+;
+
+ImportStm:
+    'import' grammar_to_import=GrammarToImport
+;
+
+ReferenceStm:
+    'reference' language_name=LanguageName ('as' language_alias=ID)?
+;
+
+GrammarToImport:
+    /(\w|\.)+/
+;
+
+LanguageName:
+    /(\w|-)+/
+;
+
+// Rules
+TextxRule:
+    name=ID ('[' params+=RuleParam[','] ']')? ':'
+        body=TextxRuleBody
+    ';'
+;
+
+RuleParam:
+    name=ID ('=' value=STRING)?
+;
+
+TextxRuleBody:
+    Choice
+;
+
+Choice:
+    sequences+=Sequence['|']
+;
+
+Sequence:
+    repeatable_exprs+=RepeatableExpr
+;
+
+RepeatableExpr:
+    expr=Expression operator=RepeatOperator? ('-')?
+;
+
+Expression:
+    assignment=Assignment
+    | (predicate=SyntacticPredicate?
+       (simple_match=SimpleMatch
+        | rule_ref=RuleRef
+        | bracketed_choice=BracketedChoice ))
+;
+
+
+BracketedChoice:
+    '(' choice=Choice ')'
+;
+
+RepeatOperator:
+    op_sign=OperatorSign ('[' modifiers=RepeatModifiers ']')?
+;
+
+OperatorSign:
+	"*" | "?" | "+" | "#"
+;
+
+RepeatModifiers:
+      (SimpleMatch+ | 'eolterm')
+;
+
+
+SyntacticPredicate:
+    "!" | "&"
+;
+
+SimpleMatch:
+    str_match=STRING | re_match=ReMatch
+;
+
+// Assignment
+Assignment:
+    attribute=ID operator=AssignmentOp rhs=AssignmentRhs
+;
+
+AssignmentOp:
+    "=" | "*=" | "+=" | "?="
+;
+
+AssignmentRhs:
+    (simple=SimpleMatch | reference=Reference)  ('[' modifiers=RepeatModifiers ']')?
+;
+
+// References
+Reference:
+    rule=RuleRef | obj=ObjRef
+;
+
+RuleRef:
+    builtin=BuiltinRuleRef | plain=ID
+;
+
+BuiltinRuleRef:
+    'ID' | 'BOOL' | 'INT' | 'FLOAT' | 'STRING' | 'NUMBER' | 'BASETYPE'
+;
+
+ObjRef:
+    '[' name=ClassName ('|' obj_ref_rule=ID)? ']'
+;
+
+ClassName:
+    QualifiedIdent
+;
+
+
+ReMatch:
+    '/' match=/((\\/)|[^\/])*/ '/'
+;
+
+QualifiedIdent:
+    /\w+(\.\w+)?/
+;
+
+// Comments
+Comment:
+    CommentLine | CommentBlock
+;
+
+CommentLine:
+    /\/\/.*?$/
+;
+
+CommentBlock:
+    /\/\*(.|\n)*?\*\//
+;

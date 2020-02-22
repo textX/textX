@@ -5,6 +5,7 @@ from __future__ import absolute_import
 import codecs
 import os
 import sys
+from os.path import join, abspath, dirname
 from collections import OrderedDict
 from arpeggio import DebugPrinter
 from textx.six import add_metaclass
@@ -645,10 +646,19 @@ class TextXMetaModel(DebugPrinter):
 
 class TextXMetaMetaModel(object):
     """
-    A basic TextX meta-meta-model class that represents the meta-model
-    of the textX meta-language. Used to treat all languages in a consistent
-    way.
+    A basic TextX meta-meta-model class that represents the meta-model of the
+    textX meta-language.  Used to treat all languages in a consistent way.
     """
+
+    def __init__(self):
+        self._metamodel = None
+
+    @property
+    def metamodel(self):
+        if self._metamodel is None:
+            self._metamodel = metamodel_from_file(
+                join(abspath(dirname(__file__)), 'textx.tx'))
+        return self._metamodel
 
     def model_from_str(self, model_str, debug=None, **kwargs):
         """
@@ -662,6 +672,21 @@ class TextXMetaMetaModel(object):
         Instantiates meta-model (a.k.a. textX model) from the given file.
         """
         return metamodel_from_file(file_name, debug=debug, **kwargs)
+
+    def grammar_model_from_str(self, model_str, debug=None, **kwargs):
+        """
+        Instantiates textX grammar model from the given string.  Used to
+        programmatically inspect textX grammar.
+        """
+        return self.metamodel.model_from_str(model_str, debug=debug, **kwargs)
+
+    def grammar_model_from_file(self, file_name, encoding='utf-8', debug=None,
+                                **kwargs):
+        """
+        Instantiates textX grammar model from the given file.  Used to
+        programmatically inspect textX grammar.
+        """
+        return self.metamodel.model_from_file(file_name, debug=debug, **kwargs)
 
 
 # Register built-in textX language. See setup.py entry_points
