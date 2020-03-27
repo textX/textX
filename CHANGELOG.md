@@ -27,6 +27,7 @@ please take a look at related PRs and issues and see if the change affects you.
   
 ### Fixed
 
+  - Fixed exception on calling `check` CLI command with relative path name.
   - Fixed return value of textx generate and check commands: we return a failure
     on error now ([#222])
   - Fixed type checking for references to builtin elements ([#218])
