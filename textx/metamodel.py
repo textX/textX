@@ -584,6 +584,7 @@ class TextXMetaModel(DebugPrinter):
                resolved. This can be useful to manage models distributed
                across files (scoping)
         """
+        file_name = abspath(file_name)
         model = None
         callback = pre_ref_resolution_callback
 
