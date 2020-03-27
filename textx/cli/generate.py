@@ -108,6 +108,3 @@ def generate(textx):
 
         except TextXError as e:
             raise click.ClickException(str(e))
-
-        except Exception as e:
-            raise click.ClickException(str(e))
