@@ -26,7 +26,7 @@
   defined bellow.
 
 
-![process](../images/process.png)
+![process](./images/process.png)
 
  
 # textX release checklist
@@ -67,15 +67,14 @@
       `.dev0` addition (e.g. `v2.2.0.dev0`).
   14. Merge `master` to `next-version` to keep it up-to-date.
   15. Update/release the docs
-      ```
-      # mike deploy latest
-      mike deploy latest -p
-      
-      # For major/minor version release
-      # mike delete stable  # this deletes alias stable
-      # mike deploy 1.9 stable   # and adds it to 1.9 minor version
-      mike deploy 1.9 stable -p
-      ```
+
+        # mike deploy latest
+        mike deploy latest -p
+
+        # For major/minor version release
+        # mike delete stable  # this deletes alias stable
+        # mike deploy 1.9 stable   # and adds it to 1.9 minor version
+        mike deploy 1.9 stable -p
 
 !!! note
     For supporting previous versions only bugfix releases will be made. The process
