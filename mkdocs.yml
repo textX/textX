@@ -30,6 +30,7 @@ nav:
   - State Machine: tutorials/state_machine.md
   - Toy language compiler: tutorials/toylanguage.md
   - self-dsl: tutorials/self-dsl.md
+  - Turtle graphics: tutorials/turtle.md
 - Development:
   - Contributing: https://github.com/textX/textX/blob/master/CONTRIBUTING.md
   - Release process: process.md
