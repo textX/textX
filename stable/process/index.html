@@ -306,16 +306,14 @@
 <li>Change the version in <code>textX/__init__.py</code> to next minor version with
       <code>.dev0</code> addition (e.g. <code>v2.2.0.dev0</code>).</li>
 <li>Merge <code>master</code> to <code>next-version</code> to keep it up-to-date.</li>
-<li>
-<p>Update/release the docs
-      ```
-      # mike deploy latest
-      mike deploy latest -p</p>
-<p># For major/minor version release
-  # mike delete stable  # this deletes alias stable
-  # mike deploy 1.9 stable   # and adds it to 1.9 minor version
-  mike deploy 1.9 stable -p
-  ```</p>
+<li>Update/release the docs<pre><code># mike deploy latest
+mike deploy latest -p
+
+# For major/minor version release
+# mike delete stable  # this deletes alias stable
+# mike deploy 1.9 stable   # and adds it to 1.9 minor version
+mike deploy 1.9 stable -p
+</code></pre>
 </li>
 </ol>
 <div class="admonition note">
