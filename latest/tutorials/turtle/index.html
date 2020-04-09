@@ -8,7 +8,7 @@
   
   <meta name="author" content="Igor Dejanović">
   <link rel="shortcut icon" href="../../img/favicon.ico">
-  <title>What's new in textX 1.7 - textX</title>
+  <title>Turtle graphics - textX</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../../css/theme.css" type="text/css" />
@@ -19,8 +19,8 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "What's new in textX 1.7";
-    var mkdocs_page_input_path = "whatsnew/release_1_7.md";
+    var mkdocs_page_name = "Turtle graphics";
+    var mkdocs_page_input_path = "tutorials/turtle.md";
     var mkdocs_page_url = null;
   </script>
   
@@ -130,31 +130,37 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="../../tutorials/hello_world/">Hello World</a>
+    <a class="" href="../hello_world/">Hello World</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../../tutorials/robot/">Robot</a>
+    <a class="" href="../robot/">Robot</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../../tutorials/entity/">Entity</a>
+    <a class="" href="../entity/">Entity</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../../tutorials/state_machine/">State Machine</a>
+    <a class="" href="../state_machine/">State Machine</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../../tutorials/toylanguage/">Toy language compiler</a>
+    <a class="" href="../toylanguage/">Toy language compiler</a>
                 </li>
                 <li class="">
                     
-    <a class="" href="../../tutorials/self-dsl/">self-dsl</a>
+    <a class="" href="../self-dsl/">self-dsl</a>
                 </li>
-                <li class="">
+                <li class=" current">
                     
-    <a class="" href="../../tutorials/turtle/">Turtle graphics</a>
+    <a class="current" href="./">Turtle graphics</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l3"><a href="#turtle-graphics-language">Turtle graphics language</a></li>
+    
+
+    </ul>
                 </li>
     </ul>
 	    </li>
@@ -195,7 +201,7 @@
     <ul class="subnav">
                 <li class="">
                     
-    <a class="" href="../release_1_5/">Release 1.5</a>
+    <a class="" href="../../whatsnew/release_1_5/">Release 1.5</a>
                 </li>
     </ul>
 	    </li>
@@ -221,11 +227,15 @@
     <li><a href="../..">Docs</a> &raquo;</li>
     
       
+        
+          <li>Tutorials &raquo;</li>
+        
+      
     
-    <li>What's new in textX 1.7</li>
+    <li>Turtle graphics</li>
     <li class="wy-breadcrumbs-aside">
       
-        <a href="https://github.com/textX/textX/edit/master/docs/whatsnew/release_1_7.md"
+        <a href="https://github.com/textX/textX/edit/master/docs/tutorials/turtle.md"
           class="icon icon-github"> Edit on GitHub</a>
       
     </li>
@@ -235,38 +245,29 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="whats-new-in-textx-17">What's new in textX 1.7<a class="headerlink" href="#whats-new-in-textx-17" title="Permanent link">&para;</a></h1>
-<p>This version is a huge one thanks to Pierre (goto40@GitHub) who did an amazing
-job on scoping and multi-meta-model support.</p>
-<h2 id="configurable-scoping-support">Configurable scoping support<a class="headerlink" href="#configurable-scoping-support" title="Permanent link">&para;</a></h2>
-<h2 id="multi-meta-model-support">Multi-meta-model support<a class="headerlink" href="#multi-meta-model-support" title="Permanent link">&para;</a></h2>
-<h2 id="change-in-the-way-object-processors-work">Change in the way object processors work<a class="headerlink" href="#change-in-the-way-object-processors-work" title="Permanent link">&para;</a></h2>
-<p>Previously object processors could do validation of the object and alter its
-content but could not replace the given object. This prevented processors for
-being used in e.g. expression evaluation or model interpretation (as a form of
-visitors/semantic actions). In this version it is now possible to return an
-arbitrary object from the processor and it will be used instead of the original.</p>
-<p>This change obsoletes <code>match filters</code> so in this version the support for match
-filters is removed which is a backward incompatible change.</p>
-<p>Luckily, upgrade is simple, just register your match filters as object
-processors like this:</p>
-<p>Before:</p>
-<pre><code>match_filters = {
-    'MyRule': my_match_filter
-}
-mm = metamodel_from_file(..., match_filters=match_filters)
-</code></pre>
-<p>Now:</p>
-<pre><code>object_processors = {
-     'MyRule': my_match_filter
-}
-mm = metamodel_from_file(...)
-mm.register_obj_processors(object_processors)
-</code></pre>
+                <h1 id="turtle-graphics-language">Turtle graphics language<a class="headerlink" href="#turtle-graphics-language" title="Permanent link">&para;</a></h1>
+<p>A turtle graphics language interpreter with VS Code support</p>
+<hr />
+<p><a href="https://github.com/alessiostalla">Allesio Stalla</a> from
+<a href="https://strumenta.com/">Strumenta</a> wrote <a href="https://tomassetti.me/quick-domain-specific-languages-in-python-with-textx/">an excellent
+tutorial</a>
+on building a Turtle graphics language, an interpreter and a plugin for VS Code
+using <a href="https://github.com/textX/textX-LS">textX-LS</a> project. This is a complete
+step-by-step tutorial on how to create a textX language project and a supporting
+VS Code plugin.</p>
               
             </div>
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../../process/" class="btn btn-neutral float-right" title="Release process">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../self-dsl/" class="btn btn-neutral" title="self-dsl"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>
@@ -294,6 +295,10 @@ mm.register_obj_processors(object_processors)
           <a href="https://github.com/textX/textX/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
       
       
+        <span><a href="../self-dsl/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../../process/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>
