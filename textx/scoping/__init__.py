@@ -120,7 +120,8 @@ class GlobalModelRepository(object):
             the_metamodel = get_metamodel(model)  # default metamodel
         else:
             the_metamodel = None
-        filenames = glob.glob(filename_pattern, **glob_args)
+        
+        filenames = self._filenames_at_models_locations(filename_pattern, **glob_args)
         if len(filenames) == 0:
             raise IOError(
                 errno.ENOENT, os.strerror(errno.ENOENT), filename_pattern)
@@ -133,6 +134,23 @@ class GlobalModelRepository(object):
                                 encoding=encoding,
                                 add_to_local_models=add_to_local_models))
         return loaded_models
+
+    def _filenames_at_models_locations(self, filename_pattern, **glob_args):
+        if os.path.isabs(filename_pattern):
+            return [filename_pattern]
+
+        # look at locations where existing models are
+        for model_path in self.all_models.filename_to_model.keys():
+            model_path_dir = os.path.dirname(model_path)
+            # loop until root directory
+            while model_path_dir != os.path.dirname(model_path_dir):
+                filenames = glob.glob(os.path.join(model_path_dir, filename_pattern), **glob_args)
+                if filenames:
+                    return filenames
+                # go one directory up
+                model_path_dir = os.path.dirname(model_path_dir)
+
+        return glob.glob(filename_pattern, **glob_args) # look at `os.getcwd()` location
 
     def load_model_using_search_path(
             self, filename, model, search_path, is_main_model=False,
