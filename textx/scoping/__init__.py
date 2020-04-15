@@ -5,10 +5,10 @@
 # License: MIT License
 #######################################################################
 
+import errno
 import glob
 import os
-import errno
-from os.path import join, exists, abspath
+from os.path import abspath, exists, join
 
 
 def metamodel_for_file_or_default_metamodel(filename, the_metamodel):
@@ -78,18 +78,27 @@ class GlobalModelRepository(object):
 
     """
 
-    def __init__(self, all_models=None):
+    def __init__(self, all_models=None, project_root=None):
         """
         Create a new repo for a model.
 
         Args:
             all_models: models to be added to this new repository.
+            project_root: root directory where to look for models
         """
         self.local_models = ModelRepository()  # used for current model
         if all_models:
             self.all_models = all_models  # used to reuse already loaded models
         else:
             self.all_models = ModelRepository()
+
+        if project_root is None:
+            project_root = os.getcwd()
+        elif not os.path.exists(project_root):
+            raise ValueError('project_root path "{}" does not exists'
+                             .format(project_root))
+
+        self.project_root = project_root
 
     def remove_model(self, model):
         self.all_models.remove_model(model)
@@ -120,10 +129,13 @@ class GlobalModelRepository(object):
             the_metamodel = get_metamodel(model)  # default metamodel
         else:
             the_metamodel = None
-        filenames = glob.glob(filename_pattern, **glob_args)
+
+        filenames = glob.glob(
+            os.path.join(self.project_root, filename_pattern), **glob_args)
         if len(filenames) == 0:
             raise IOError(
                 errno.ENOENT, os.strerror(errno.ENOENT), filename_pattern)
+
         loaded_models = []
         for filename in filenames:
             the_metamodel = metamodel_for_file_or_default_metamodel(
