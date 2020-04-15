@@ -335,7 +335,7 @@ class ImportURI(scoping.ModelLoader):
                         glob_args=self.glob_args, encoding=encoding,
                         add_to_local_models=add_to_local_models)
 
-    def load_models(self, model, encoding='utf-8'):
+    def load_models(self, model, encoding='utf-8', project_root=None):
         from textx.model import get_metamodel
         from textx.scoping import GlobalModelRepository
         # do we already have loaded models (analysis)? No -> check/load them
@@ -343,10 +343,12 @@ class ImportURI(scoping.ModelLoader):
             pass
         else:
             if hasattr(get_metamodel(model), "_tx_model_repository"):
-                model_repository = GlobalModelRepository(get_metamodel(
-                    model)._tx_model_repository.all_models)
+                model_repository = GlobalModelRepository(
+                    get_metamodel(model)._tx_model_repository.all_models,
+                    project_root=project_root)
             else:
-                model_repository = GlobalModelRepository()
+                model_repository = GlobalModelRepository(
+                    project_root=project_root)
             model._tx_model_repository = model_repository
         self._load_referenced_models(model, encoding=encoding)
 
@@ -478,7 +480,7 @@ class GlobalRepo(ImportURI):
         self.models_to_be_added_directly.append(model)
 
     def load_models_in_model_repo(self, global_model_repo=None,
-                                  encoding='utf-8'):
+                                  encoding='utf-8', project_root=None):
         """
         load all registered models (called explicitly from
         the user and not as an automatic activity).
@@ -495,7 +497,8 @@ class GlobalRepo(ImportURI):
         """
         import textx.scoping
         if not global_model_repo:
-            global_model_repo = textx.scoping.GlobalModelRepository()
+            global_model_repo = textx.scoping.GlobalModelRepository(
+                project_root=project_root)
         for filename_pattern in self.filename_pattern_list:
             global_model_repo.load_models_using_filepattern(
                 filename_pattern, model=None, glob_args=self.glob_args,

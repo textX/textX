@@ -207,9 +207,11 @@ class GlobalModelRepository(object):
                 # all models loaded here get their references resolved from the
                 # root model
                 new_model = the_metamodel.internal_model_from_file(
-                    filename, pre_ref_resolution_callback=lambda
-                    other_model: self.pre_ref_resolution_callback(other_model),
-                    is_main_model=is_main_model, encoding=encoding)
+                    filename,
+                    pre_ref_resolution_callback=\
+                        self.pre_ref_resolution_callback,
+                    is_main_model=is_main_model, encoding=encoding,
+                    project_root=self.project_root)
                 self.all_models.filename_to_model[filename] = new_model
             # print("ADDING {}".format(filename))
             if add_to_local_models:
@@ -254,12 +256,13 @@ class GlobalModelRepository(object):
         # print("UPDATED/ADDED/CACHED {}".format(myfilename))
         return myfilename
 
-    def pre_ref_resolution_callback(self, other_model):
+    def pre_ref_resolution_callback(self, other_model, project_root=None):
         """
         internal: used to store a model after parsing into the repository
 
         Args:
             other_model: the parsed model
+            project_root: root directory where to look for models
 
         Returns:
             nothing
@@ -269,7 +272,7 @@ class GlobalModelRepository(object):
         assert (filename)
         filename = abspath(filename)
         other_model._tx_model_repository = \
-            GlobalModelRepository(self.all_models)
+            GlobalModelRepository(self.all_models, project_root=project_root)
         self.all_models.filename_to_model[filename] = other_model
 
 
@@ -282,7 +285,7 @@ class ModelLoader(object):
     def __init__(self):
         pass
 
-    def load_models(self, model):
+    def load_models(self, model, project_root=None):
         pass
 
 

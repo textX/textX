@@ -547,7 +547,8 @@ class TextXMetaModel(DebugPrinter):
         return self.namespaces[self._namespace_stack[-1]]
 
     def model_from_str(self, model_str, file_name=None, debug=None,
-                       pre_ref_resolution_callback=None, encoding='utf-8'):
+                       pre_ref_resolution_callback=None, encoding='utf-8',
+                       project_root=None):
         """
         Instantiates model from the given string.
         :param pre_ref_resolution_callback: called before references are
@@ -561,23 +562,31 @@ class TextXMetaModel(DebugPrinter):
         if file_name is None:
             model = self._parser_blueprint.clone().get_model_from_str(
                 model_str, debug=debug,
-                pre_ref_resolution_callback=pre_ref_resolution_callback)
+                pre_ref_resolution_callback=pre_ref_resolution_callback,
+                project_root=project_root)
 
             for p in self._model_processors:
                 p(model, self)
         else:
-            model = self.internal_model_from_file(file_name, encoding, debug,
-                                                  model_str=model_str)
+            model = self.internal_model_from_file(file_name,
+                                                  encoding=encoding,
+                                                  debug=debug,
+                                                  model_str=model_str,
+                                                  project_root=project_root)
 
         return model
 
-    def model_from_file(self, file_name, encoding='utf-8', debug=None):
-        return self.internal_model_from_file(file_name, encoding, debug)
+    def model_from_file(self, file_name, encoding='utf-8', debug=None,
+                        project_root=None):
+        return self.internal_model_from_file(file_name,
+                                             encoding=encoding,
+                                             debug=debug,
+                                             project_root=project_root)
 
     def internal_model_from_file(
             self, file_name, encoding='utf-8', debug=None,
             pre_ref_resolution_callback=None, is_main_model=True,
-            model_str=None):
+            model_str=None, project_root=None):
         """
         Instantiates model from the given file.
         :param pre_ref_resolution_callback: called before references are
@@ -591,13 +600,15 @@ class TextXMetaModel(DebugPrinter):
         if hasattr(self, "_tx_model_repository"):
             # metamodel has a global repo
             if not callback:
-                def _pre_ref_resolution_callback(other_model):
+                def _pre_ref_resolution_callback(other_model,
+                                                 project_root=None):
                     from textx.scoping import GlobalModelRepository
                     filename = other_model._tx_filename
                     assert filename
                     # print("METAMODEL PRE-CALLBACK => {}".format(filename))
                     other_model._tx_model_repository = GlobalModelRepository(
-                        self._tx_model_repository.all_models)
+                        all_models=self._tx_model_repository.all_models,
+                        project_root=project_root)
                     self._tx_model_repository.all_models\
                         .filename_to_model[filename] = other_model
 
@@ -615,7 +626,7 @@ class TextXMetaModel(DebugPrinter):
             model = self._parser_blueprint.clone().get_model_from_str(
                 model_str, file_name, debug=debug, encoding=encoding,
                 pre_ref_resolution_callback=callback,
-                is_main_model=is_main_model)
+                is_main_model=is_main_model, project_root=project_root)
 
         for p in self._model_processors:
             p(model, self)
