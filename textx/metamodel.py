@@ -15,7 +15,7 @@ from textx.const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, \
     RULE_MATCH, RULE_ABSTRACT
 from textx.exceptions import TextXError
 from .registration import LanguageDesc, metamodel_for_language
-from .model_kwargs import ModelKwargs
+from .model_kwargs import ModelKwargs, ModelKwargDefinitions
 
 if sys.version < '3':
     text = unicode  # noqa
@@ -165,6 +165,7 @@ class TextXMetaModel(DebugPrinter):
 
         super(TextXMetaModel, self).__init__(**kwargs)
 
+        self._tx_model_kwarg_definitions = ModelKwargDefinitions()
         self.file_name = file_name
         self.rootcls = None
 
@@ -560,6 +561,9 @@ class TextXMetaModel(DebugPrinter):
                 is set while executing pre_ref_resolution_callback (see
                 scoping.md)
         """
+        self._tx_model_kwarg_definitions.check_kwargs_and_raise_on_error(
+            'from_str', **kwargs)
+
         if type(model_str) is not text:
             raise TextXError("textX accepts only unicode strings.")
 
@@ -587,6 +591,8 @@ class TextXMetaModel(DebugPrinter):
 
     def model_from_file(self, file_name, encoding='utf-8', debug=None,
                         **kwargs):
+        self._tx_model_kwarg_definitions.check_kwargs_and_raise_on_error(
+            file_name, **kwargs)
 
         return self.internal_model_from_file(
             file_name, encoding, debug,

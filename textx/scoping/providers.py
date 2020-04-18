@@ -500,11 +500,18 @@ class GlobalRepo(ImportURI):
 
         The metamodels must be identifiable via the MetaModelProvider.
 
+        kwargs are passed (like for `model_from_str' or
+        `model_from_file`, but no checks are performed.
+        You have to call the check manually, if you want
+        to check for undefined parameters (else, undefined
+        parameters passed via kwargs here are ignored).
+
         Returns:
             a GlobalModelRepository with the loaded models
         """
         import textx.scoping
         from textx.model_kwargs import ModelKwargs
+
         if not global_model_repo:
             global_model_repo = textx.scoping.GlobalModelRepository()
         for filename_pattern in self.filename_pattern_list:

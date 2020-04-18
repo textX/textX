@@ -186,7 +186,8 @@ class GlobalModelRepository(object):
         Returns:
             the loaded/cached model
         """
-        assert model_kwargs is not None, "model_kwargs needs to be specified"
+        assert model_kwargs is not None,\
+            "model_kwargs needs to be specified"
 
         filename = abspath(filename)
         if not self.local_models.has_model(filename):
