@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 from textx import (metamodel_from_str)
+import os.path
 
 
 grammar = r"""
@@ -44,3 +45,14 @@ def test_model_kwargs_empty():
     assert len(m._tx_model_kwargs) == 0
 
     assert m._tx_model_kwargs.have_all_parameters_been_used()
+
+
+def test_model_kwargs_file_based():
+    mm = metamodel_from_str(grammar)
+    current_dir = os.path.dirname(__file__)
+    m = mm.model_from_file(
+        os.path.join(current_dir, 'test_model_kwargs','model.txt'),
+        parameter1='P1', parameter2='P2')
+    assert m.name == 'file_based'
+    assert hasattr(m, '_tx_model_kwargs')
+    assert len(m._tx_model_kwargs) == 2
