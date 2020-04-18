@@ -547,13 +547,23 @@ class TextXMetaModel(DebugPrinter):
         return self.namespaces[self._namespace_stack[-1]]
 
     def model_from_str(self, model_str, file_name=None, debug=None,
-                       pre_ref_resolution_callback=None, encoding='utf-8'):
+                       pre_ref_resolution_callback=None, encoding='utf-8',
+                       **kwargs):
         """
         Instantiates model from the given string.
         :param pre_ref_resolution_callback: called before references are
                resolved. This can be useful to manage models distributed
                across files (scoping)
+        :param **kwargs additional arguments available through _tx_model_kwargs after
+                initiating the model. The attribute is set while executing
+                pre_ref_resolution_callback (see scoping.md)
         """
+
+        def kwargs_callback(the_model):
+            if hasattr(the_model, '_tx_metamodel'):
+                the_model._tx_model_kwargs = kwargs
+            if pre_ref_resolution_callback:
+                pre_ref_resolution_callback(the_model)
 
         if type(model_str) is not text:
             raise TextXError("textX accepts only unicode strings.")
@@ -561,18 +571,26 @@ class TextXMetaModel(DebugPrinter):
         if file_name is None:
             model = self._parser_blueprint.clone().get_model_from_str(
                 model_str, debug=debug,
-                pre_ref_resolution_callback=pre_ref_resolution_callback)
+                pre_ref_resolution_callback=kwargs_callback)
 
             for p in self._model_processors:
                 p(model, self)
         else:
-            model = self.internal_model_from_file(file_name, encoding, debug,
-                                                  model_str=model_str)
+            model = self.internal_model_from_file(
+                file_name, encoding, debug,
+                model_str=model_str,
+                pre_ref_resolution_callback=kwargs_callback)
 
         return model
 
-    def model_from_file(self, file_name, encoding='utf-8', debug=None):
-        return self.internal_model_from_file(file_name, encoding, debug)
+    def model_from_file(self, file_name, encoding='utf-8', debug=None, **kwargs):
+        def kwargs_callback(the_model):
+            if hasattr(the_model, '_tx_metamodel'):
+                the_model._tx_model_kwargs = kwargs
+
+        return self.internal_model_from_file(
+            file_name, encoding, debug,
+            pre_ref_resolution_callback=kwargs_callback)
 
     def internal_model_from_file(
             self, file_name, encoding='utf-8', debug=None,
