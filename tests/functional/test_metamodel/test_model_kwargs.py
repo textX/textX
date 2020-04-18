@@ -36,6 +36,11 @@ def test_model_kwargs():
 
     assert m._tx_model_kwargs.have_all_parameters_been_used()
 
+    assert m._tx_model_kwargs.get_with_default(
+        'missing_params', 'default value') == 'default value'
+    assert m._tx_model_kwargs.get_with_default(
+        'parameter1', 'default value') == 'P1'
+
 
 def test_model_kwargs_empty():
     mm = metamodel_from_str(grammar)
