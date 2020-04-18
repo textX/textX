@@ -320,7 +320,8 @@ class ImportURI(scoping.ModelLoader):
                     model._tx_model_repository.load_model_using_search_path(
                         self.importURI_converter(obj.importURI), model=model,
                         search_path=my_search_path, encoding=encoding,
-                        add_to_local_models=add_to_local_models)
+                        add_to_local_models=add_to_local_models,
+                        model_kwargs=model._tx_model_kwargs)
                 obj._tx_loaded_models = [loaded_model]
 
             else:
@@ -333,7 +334,8 @@ class ImportURI(scoping.ModelLoader):
                     model._tx_model_repository.load_models_using_filepattern(
                         filename_pattern, model=model,
                         glob_args=self.glob_args, encoding=encoding,
-                        add_to_local_models=add_to_local_models)
+                        add_to_local_models=add_to_local_models,
+                        model_kwargs=model._tx_model_kwargs)
 
     def load_models(self, model, encoding='utf-8'):
         from textx.model import get_metamodel
@@ -472,7 +474,7 @@ class GlobalRepo(ImportURI):
                     model._tx_model_kwargs['project_root'], filename_pattern)
             model._tx_model_repository.load_models_using_filepattern(
                 filename_pattern, model=model, glob_args=self.glob_args,
-                encoding=encoding)
+                encoding=encoding, model_kwargs=model._tx_model_kwargs)
         for m in self.models_to_be_added_directly:
             model._tx_model_repository._add_model(m)
 
@@ -486,7 +488,7 @@ class GlobalRepo(ImportURI):
         self.models_to_be_added_directly.append(model)
 
     def load_models_in_model_repo(self, global_model_repo=None,
-                                  encoding='utf-8'):
+                                  encoding='utf-8', **kwargs):
         """
         load all registered models (called explicitly from
         the user and not as an automatic activity).
@@ -502,12 +504,14 @@ class GlobalRepo(ImportURI):
             a GlobalModelRepository with the loaded models
         """
         import textx.scoping
+        from textx.model_kwargs import ModelKwargs
         if not global_model_repo:
             global_model_repo = textx.scoping.GlobalModelRepository()
         for filename_pattern in self.filename_pattern_list:
             global_model_repo.load_models_using_filepattern(
                 filename_pattern, model=None, glob_args=self.glob_args,
-                is_main_model=True, encoding=encoding
+                is_main_model=True, encoding=encoding,
+                model_kwargs=ModelKwargs(kwargs)
             )
         return global_model_repo
 

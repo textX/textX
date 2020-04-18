@@ -101,7 +101,7 @@ class GlobalModelRepository(object):
 
     def load_models_using_filepattern(
             self, filename_pattern, model, glob_args, is_main_model=False,
-            encoding='utf-8', add_to_local_models=True):
+            encoding='utf-8', add_to_local_models=True, model_kwargs=None):
         """
         Add a new model to all relevant objects.
 
@@ -131,12 +131,13 @@ class GlobalModelRepository(object):
             loaded_models.append(
                 self.load_model(the_metamodel, filename, is_main_model,
                                 encoding=encoding,
-                                add_to_local_models=add_to_local_models))
+                                add_to_local_models=add_to_local_models,
+                                model_kwargs=model_kwargs))
         return loaded_models
 
     def load_model_using_search_path(
             self, filename, model, search_path, is_main_model=False,
-            encoding='utf8', add_to_local_models=True):
+            encoding='utf8', add_to_local_models=True, model_kwargs=None):
         """
         Add a new model to all relevant objects
 
@@ -166,14 +167,15 @@ class GlobalModelRepository(object):
                                        full_filename,
                                        is_main_model,
                                        encoding=encoding,
-                                       add_to_local_models=add_to_local_models)
+                                       add_to_local_models=add_to_local_models,
+                                       model_kwargs=model_kwargs)
 
         raise IOError(
             errno.ENOENT, os.strerror(errno.ENOENT), filename)
 
     def load_model(
             self, the_metamodel, filename, is_main_model, encoding='utf-8',
-            add_to_local_models=True):
+            add_to_local_models=True, model_kwargs=None):
         """
         Load a single model
 
@@ -184,6 +186,7 @@ class GlobalModelRepository(object):
         Returns:
             the loaded/cached model
         """
+        assert model_kwargs is not None, "model_kwargs needs to be specified"
 
         filename = abspath(filename)
         if not self.local_models.has_model(filename):
@@ -197,7 +200,8 @@ class GlobalModelRepository(object):
                 new_model = the_metamodel.internal_model_from_file(
                     filename, pre_ref_resolution_callback=lambda
                     other_model: self.pre_ref_resolution_callback(other_model),
-                    is_main_model=is_main_model, encoding=encoding)
+                    is_main_model=is_main_model, encoding=encoding,
+                    model_kwargs=model_kwargs)
                 self.all_models.filename_to_model[filename] = new_model
             # print("ADDING {}".format(filename))
             if add_to_local_models:
