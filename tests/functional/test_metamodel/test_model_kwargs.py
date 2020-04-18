@@ -54,8 +54,8 @@ def test_model_kwargs():
         mm.model_from_str(text, parameter1='P1', myerror2='P2')
 
     assert len(mm._tx_model_kwarg_definitions) == 2
-    assert mm._tx_model_kwarg_definitions['parameter1'].description ==\
-           "an example param (1)"
+    assert mm._tx_model_kwarg_definitions[
+               'parameter1'].description == "an example param (1)"
 
 
 def test_model_kwargs_empty():
