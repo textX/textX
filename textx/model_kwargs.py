@@ -2,8 +2,12 @@
 Management of parameters passed to model_from_str or model_from_file.
 """
 
-from collections.abc import Mapping
+import sys
 from functools import reduce
+if sys.version < '3':
+    from collections import Mapping
+else:
+    from collections.abc import Mapping
 
 
 class ModelKwargs(Mapping):
