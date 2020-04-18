@@ -5,7 +5,7 @@
 # License: MIT License
 #######################################################################
 
-from os.path import dirname, abspath, join
+from os.path import dirname, abspath, join, isabs
 from textx.exceptions import TextXSemanticError
 import textx.scoping as scoping
 from textx.scoping import Postponed
@@ -439,6 +439,10 @@ class GlobalRepo(ImportURI):
       * create FQNGlobalRepo
       * register models used for lookup into the scope provider
     Then the scope provider is ready to be registered and used.
+
+    The model parameter `project_root` (see _tx_model_kwargs) can be used to
+    set a project directory, where all file patterns not referring to an
+    absolute file position are looked up.
     """
 
     def __init__(self, scope_provider, filename_pattern=None, glob_args=None):
@@ -462,6 +466,10 @@ class GlobalRepo(ImportURI):
 
     def _load_referenced_models(self, model, encoding):
         for filename_pattern in self.filename_pattern_list:
+            if not isabs(filename_pattern) and \
+                    'project_root' in model._tx_model_kwargs:
+                filename_pattern = join(
+                    model._tx_model_kwargs['project_root'], filename_pattern)
             model._tx_model_repository.load_models_using_filepattern(
                 filename_pattern, model=model, glob_args=self.glob_args,
                 encoding=encoding)
