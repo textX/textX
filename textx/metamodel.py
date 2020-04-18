@@ -555,9 +555,10 @@ class TextXMetaModel(DebugPrinter):
         :param pre_ref_resolution_callback: called before references are
                resolved. This can be useful to manage models distributed
                across files (scoping)
-        :param **kwargs additional arguments available through _tx_model_kwargs after
-                initiating the model. The attribute is set while executing
-                pre_ref_resolution_callback (see scoping.md)
+        :param **kwargs additional arguments available through
+                _tx_model_kwargs after initiating the model. The attribute
+                is set while executing pre_ref_resolution_callback (see
+                scoping.md)
         """
 
         def kwargs_callback(the_model):
@@ -584,7 +585,8 @@ class TextXMetaModel(DebugPrinter):
 
         return model
 
-    def model_from_file(self, file_name, encoding='utf-8', debug=None, **kwargs):
+    def model_from_file(self, file_name, encoding='utf-8', debug=None,
+                        **kwargs):
         def kwargs_callback(the_model):
             if hasattr(the_model, '_tx_metamodel'):
                 the_model._tx_model_kwargs = ModelKwargs(kwargs)

@@ -3,6 +3,7 @@ Management of parameters passed to model_from_str or model_from_file.
 """
 
 from collections.abc import Mapping
+from functools import reduce
 
 
 class ModelKwargs(Mapping):
@@ -33,3 +34,8 @@ class ModelKwargs(Mapping):
 
     def __keytransform__(self, key):
         return key
+
+    def have_all_parameters_been_used(self):
+        return reduce(
+            lambda r, k: r and (k in self.used_keys),
+            self.store.keys(), True)

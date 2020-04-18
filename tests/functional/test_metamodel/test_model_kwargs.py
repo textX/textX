@@ -1,15 +1,5 @@
 from __future__ import unicode_literals
-import pytest  # noqa
-import os
-import os.path
-from pytest import raises
-from textx import (metamodel_from_str,
-                   metamodel_for_language,
-                   register_language, clear_language_registrations)
-import textx.scoping.providers as scoping_providers
-import textx.scoping as scoping
-import textx.scoping.tools as tools
-import textx.exceptions
+from textx import (metamodel_from_str)
 
 
 grammar = r"""
@@ -20,6 +10,7 @@ text = r"""
 MyModel test1
 """
 
+
 def test_model_kwargs():
     mm = metamodel_from_str(grammar)
     m = mm.model_from_str(text, parameter1='P1', parameter2='P2')
@@ -28,12 +19,28 @@ def test_model_kwargs():
     assert len(m._tx_model_kwargs) == 2
     assert len(m._tx_model_kwargs.used_keys) == 0
 
+    assert not m._tx_model_kwargs.have_all_parameters_been_used()
+
     assert m._tx_model_kwargs['parameter1'] == 'P1'
     assert len(m._tx_model_kwargs.used_keys) == 1
     assert 'parameter1' in m._tx_model_kwargs.used_keys
     assert 'parameter2' not in m._tx_model_kwargs.used_keys
 
+    assert not m._tx_model_kwargs.have_all_parameters_been_used()
+
     assert m._tx_model_kwargs['parameter2'] == 'P2'
     assert len(m._tx_model_kwargs.used_keys) == 2
     assert 'parameter1' in m._tx_model_kwargs.used_keys
     assert 'parameter2' in m._tx_model_kwargs.used_keys
+
+    assert m._tx_model_kwargs.have_all_parameters_been_used()
+
+
+def test_model_kwargs_empty():
+    mm = metamodel_from_str(grammar)
+    m = mm.model_from_str(text)
+    assert m.name == 'test1'
+    assert hasattr(m, '_tx_model_kwargs')
+    assert len(m._tx_model_kwargs) == 0
+
+    assert m._tx_model_kwargs.have_all_parameters_been_used()
