@@ -175,7 +175,7 @@ def test_globalimports_with_project_root_model_parameter():
     # MODEL PARSING
     #################################
 
-    with raises(FileNotFoundError):
+    with raises(IOError):
         _ = my_meta_model.model_from_file(
             join(abspath(dirname(__file__)), "interface_model2",
                  "model_a", "all_in_one.if"))
