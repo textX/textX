@@ -51,7 +51,8 @@ def test_model_kwargs_file_based():
     mm = metamodel_from_str(grammar)
     current_dir = os.path.dirname(__file__)
     m = mm.model_from_file(
-        os.path.join(current_dir, 'test_model_kwargs','model.txt'),
+        os.path.join(current_dir, 'test_model_kwargs',
+                     'model.txt'),
         parameter1='P1', parameter2='P2')
     assert m.name == 'file_based'
     assert hasattr(m, '_tx_model_kwargs')
