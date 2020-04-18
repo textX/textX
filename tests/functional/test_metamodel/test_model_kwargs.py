@@ -26,5 +26,14 @@ def test_model_kwargs():
     assert m.name == 'test1'
     assert hasattr(m, '_tx_model_kwargs')
     assert len(m._tx_model_kwargs) == 2
+    assert len(m._tx_model_kwargs.used_keys) == 0
+
     assert m._tx_model_kwargs['parameter1'] == 'P1'
+    assert len(m._tx_model_kwargs.used_keys) == 1
+    assert 'parameter1' in m._tx_model_kwargs.used_keys
+    assert 'parameter2' not in m._tx_model_kwargs.used_keys
+
     assert m._tx_model_kwargs['parameter2'] == 'P2'
+    assert len(m._tx_model_kwargs.used_keys) == 2
+    assert 'parameter1' in m._tx_model_kwargs.used_keys
+    assert 'parameter2' in m._tx_model_kwargs.used_keys

@@ -15,6 +15,7 @@ from textx.const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, \
     RULE_MATCH, RULE_ABSTRACT
 from textx.exceptions import TextXError
 from .registration import LanguageDesc, metamodel_for_language
+from .model_kwargs import ModelKwargs
 
 if sys.version < '3':
     text = unicode  # noqa
@@ -561,7 +562,7 @@ class TextXMetaModel(DebugPrinter):
 
         def kwargs_callback(the_model):
             if hasattr(the_model, '_tx_metamodel'):
-                the_model._tx_model_kwargs = kwargs
+                the_model._tx_model_kwargs = ModelKwargs(kwargs)
             if pre_ref_resolution_callback:
                 pre_ref_resolution_callback(the_model)
 
@@ -586,7 +587,7 @@ class TextXMetaModel(DebugPrinter):
     def model_from_file(self, file_name, encoding='utf-8', debug=None, **kwargs):
         def kwargs_callback(the_model):
             if hasattr(the_model, '_tx_metamodel'):
-                the_model._tx_model_kwargs = kwargs
+                the_model._tx_model_kwargs = ModelKwargs(kwargs)
 
         return self.internal_model_from_file(
             file_name, encoding, debug,
