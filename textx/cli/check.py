@@ -59,7 +59,7 @@ def check(textx):
                   type=click.STRING, multiple=True)
     @click.pass_context
     def check(ctx, model_files, language=None, grammar=None,
-              ignore_case=False):
+              ignore_case=False, x=None):
         """
         Check/validate model given its file path. If grammar is given use it to
         construct the meta-model. If language is given use it to retrieve the
