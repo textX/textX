@@ -59,7 +59,7 @@ Class describing a model parameter.
 """
 ModelKwargDefinition = namedtuple(
     'ModelKwargDefinition',
-    ['name', 'description'])
+    ['name', 'description', 'possible_values'])
 
 
 class ModelKwargDefinitions(Mapping):
@@ -91,8 +91,9 @@ class ModelKwargDefinitions(Mapping):
     def __keytransform__(self, key):
         return key
 
-    def add_definition(self, name, description):
-        self.store[name] = ModelKwargDefinition(name, description)
+    def add_definition(self, name, description, possible_values=None):
+        self.store[name] = ModelKwargDefinition(name, description,
+                                                possible_values)
 
     def check_kwargs_and_raise_on_error(self, source, **kwargs):
         for k in kwargs.keys():
