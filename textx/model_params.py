@@ -91,10 +91,10 @@ class ModelParamDefinitions(Mapping):
     def __keytransform__(self, key):
         return key
 
-    def add_definition(self, name, description):
+    def add(self, name, description):
         self.store[name] = ModelParamDefinition(name, description)
 
-    def check_kwargs_and_raise_on_error(self, source, **kwargs):
+    def check_params_and_raise_on_error(self, source, **kwargs):
         for k in kwargs.keys():
             if k not in self.store.keys():
                 raise TextXError("unknown parameter {} ({})".format(k, source))
