@@ -627,7 +627,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
             pre_ref_resolution_callback(model)
 
         if hasattr(model, '_tx_metamodel'):
-            assert hasattr(model, '_tx_model_kwargs')
+            assert hasattr(model, '_tx_model_params')
 
         for scope_provider in metamodel.scope_providers.values():
             from textx.scoping import ModelLoader

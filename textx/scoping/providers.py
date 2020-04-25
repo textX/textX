@@ -321,7 +321,7 @@ class ImportURI(scoping.ModelLoader):
                         self.importURI_converter(obj.importURI), model=model,
                         search_path=my_search_path, encoding=encoding,
                         add_to_local_models=add_to_local_models,
-                        model_kwargs=model._tx_model_kwargs)
+                        model_params=model._tx_model_params)
                 obj._tx_loaded_models = [loaded_model]
 
             else:
@@ -335,7 +335,7 @@ class ImportURI(scoping.ModelLoader):
                         filename_pattern, model=model,
                         glob_args=self.glob_args, encoding=encoding,
                         add_to_local_models=add_to_local_models,
-                        model_kwargs=model._tx_model_kwargs)
+                        model_params=model._tx_model_params)
 
     def load_models(self, model, encoding='utf-8'):
         from textx.model import get_metamodel
@@ -442,7 +442,7 @@ class GlobalRepo(ImportURI):
       * register models used for lookup into the scope provider
     Then the scope provider is ready to be registered and used.
 
-    The model parameter `project_root` (see _tx_model_kwargs) can be used to
+    The model parameter `project_root` (see _tx_model_params) can be used to
     set a project directory, where all file patterns not referring to an
     absolute file position are looked up.
     """
@@ -469,12 +469,12 @@ class GlobalRepo(ImportURI):
     def _load_referenced_models(self, model, encoding):
         for filename_pattern in self.filename_pattern_list:
             if not isabs(filename_pattern) and \
-                    'project_root' in model._tx_model_kwargs:
+                    'project_root' in model._tx_model_params:
                 filename_pattern = join(
-                    model._tx_model_kwargs['project_root'], filename_pattern)
+                    model._tx_model_params['project_root'], filename_pattern)
             model._tx_model_repository.load_models_using_filepattern(
                 filename_pattern, model=model, glob_args=self.glob_args,
-                encoding=encoding, model_kwargs=model._tx_model_kwargs)
+                encoding=encoding, model_params=model._tx_model_params)
         for m in self.models_to_be_added_directly:
             model._tx_model_repository._add_model(m)
 
@@ -510,7 +510,7 @@ class GlobalRepo(ImportURI):
             a GlobalModelRepository with the loaded models
         """
         import textx.scoping
-        from textx.model_kwargs import ModelKwargs
+        from textx.model_params import ModelParams
 
         if not global_model_repo:
             global_model_repo = textx.scoping.GlobalModelRepository()
@@ -518,7 +518,7 @@ class GlobalRepo(ImportURI):
             global_model_repo.load_models_using_filepattern(
                 filename_pattern, model=None, glob_args=self.glob_args,
                 is_main_model=True, encoding=encoding,
-                model_kwargs=ModelKwargs(kwargs)
+                model_params=ModelParams(kwargs)
             )
         return global_model_repo
 
