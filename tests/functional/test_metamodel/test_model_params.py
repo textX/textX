@@ -29,26 +29,26 @@ def test_model_params():
     assert len(m._tx_model_params) == 2
     assert len(m._tx_model_params.used_keys) == 0
 
-    assert not m._tx_model_params.have_all_parameters_been_used()
+    assert not m._tx_model_params.all_been_used
 
     assert m._tx_model_params['parameter1'] == 'P1'
     assert len(m._tx_model_params.used_keys) == 1
     assert 'parameter1' in m._tx_model_params.used_keys
     assert 'parameter2' not in m._tx_model_params.used_keys
 
-    assert not m._tx_model_params.have_all_parameters_been_used()
+    assert not m._tx_model_params.all_been_used
 
     assert m._tx_model_params['parameter2'] == 'P2'
     assert len(m._tx_model_params.used_keys) == 2
     assert 'parameter1' in m._tx_model_params.used_keys
     assert 'parameter2' in m._tx_model_params.used_keys
 
-    assert m._tx_model_params.have_all_parameters_been_used()
+    assert m._tx_model_params.all_been_used
 
-    assert m._tx_model_params.get_with_default(
-        'missing_params', 'default value') == 'default value'
-    assert m._tx_model_params.get_with_default(
-        'parameter1', 'default value') == 'P1'
+    assert m._tx_model_params.get(
+        'missing_params', default='default value') == 'default value'
+    assert m._tx_model_params.get(
+        'parameter1', default='default value') == 'P1'
 
     with raises(TextXError, match=".*unknown parameter myerror2.*"):
         mm.model_from_str(text, parameter1='P1', myerror2='P2')
@@ -72,7 +72,7 @@ def test_model_params_empty():
     assert hasattr(m, '_tx_model_params')
     assert len(m._tx_model_params) == 0
 
-    assert m._tx_model_params.have_all_parameters_been_used()
+    assert m._tx_model_params.all_been_used
 
 
 def test_model_params_file_based():

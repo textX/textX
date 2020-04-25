@@ -42,16 +42,14 @@ class ModelParams(Mapping):
     def __keytransform__(self, key):
         return key
 
-    def have_all_parameters_been_used(self):
+    def _have_all_parameters_been_used(self):
         return reduce(
             lambda r, k: r and (k in self.used_keys),
             self.store.keys(), True)
 
-    def get_with_default(self, key, default_value=None):
-        if key in self.store:
-            return self.store[key]
-        else:
-            return default_value
+    all_been_used = property(
+        lambda self: self._have_all_parameters_been_used(),
+        doc="returns if all parameters have been used by the meta model")
 
 
 """
