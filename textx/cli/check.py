@@ -25,7 +25,7 @@ def _autocomplete_x(ctx, args, incomplete):
     if 'language' in ctx.params:
         mm = metamodel_for_language(ctx.params['language'])
         all_values = []
-        for name, info in mm._tx_model_kwarg_definitions.items():
+        for name, info in mm._tx_model_param_definitions.items():
             if info.possible_values is None:
                 all_values.append(('"'+name+'="', info.description))
             else:

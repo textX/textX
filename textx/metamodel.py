@@ -15,7 +15,7 @@ from textx.const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, \
     RULE_MATCH, RULE_ABSTRACT
 from textx.exceptions import TextXError
 from .registration import LanguageDesc, metamodel_for_language
-from .model_kwargs import ModelKwargs, ModelKwargDefinitions
+from .model_params import ModelParams, ModelParamDefinitions
 
 if sys.version < '3':
     text = unicode  # noqa
@@ -165,7 +165,7 @@ class TextXMetaModel(DebugPrinter):
 
         super(TextXMetaModel, self).__init__(**kwargs)
 
-        self._tx_model_kwarg_definitions = ModelKwargDefinitions()
+        self._tx_model_param_definitions = ModelParamDefinitions()
         self.file_name = file_name
         self.rootcls = None
 
@@ -557,11 +557,11 @@ class TextXMetaModel(DebugPrinter):
                resolved. This can be useful to manage models distributed
                across files (scoping)
         :param **kwargs additional arguments available through
-                _tx_model_kwargs after initiating the model. The attribute
+                _tx_model_params after initiating the model. The attribute
                 is set while executing pre_ref_resolution_callback (see
                 scoping.md)
         """
-        self._tx_model_kwarg_definitions.check_kwargs_and_raise_on_error(
+        self._tx_model_param_definitions.check_kwargs_and_raise_on_error(
             'from_str', **kwargs)
 
         if type(model_str) is not text:
@@ -570,7 +570,7 @@ class TextXMetaModel(DebugPrinter):
         if file_name is None:
             def kwargs_callback(other_model):
                 if hasattr(other_model, '_tx_metamodel'):
-                    other_model._tx_model_kwargs = ModelKwargs(kwargs)
+                    other_model._tx_model_params = ModelParams(kwargs)
                 if pre_ref_resolution_callback:
                     pre_ref_resolution_callback(other_model)
 
@@ -585,31 +585,31 @@ class TextXMetaModel(DebugPrinter):
                 file_name, encoding, debug,
                 model_str=model_str,
                 pre_ref_resolution_callback=pre_ref_resolution_callback,
-                model_kwargs=ModelKwargs(kwargs))
+                model_params=ModelParams(kwargs))
 
         return model
 
     def model_from_file(self, file_name, encoding='utf-8', debug=None,
                         **kwargs):
-        self._tx_model_kwarg_definitions.check_kwargs_and_raise_on_error(
+        self._tx_model_param_definitions.check_kwargs_and_raise_on_error(
             file_name, **kwargs)
 
         return self.internal_model_from_file(
             file_name, encoding, debug,
-            model_kwargs=ModelKwargs(kwargs))
+            model_params=ModelParams(kwargs))
 
     def internal_model_from_file(
             self, file_name, encoding='utf-8', debug=None,
             pre_ref_resolution_callback=None, is_main_model=True,
-            model_str=None, model_kwargs=None):
+            model_str=None, model_params=None):
         """
         Instantiates model from the given file.
         :param pre_ref_resolution_callback: called before references are
                resolved. This can be useful to manage models distributed
                across files (scoping)
         """
-        assert model_kwargs is not None,\
-            "model_kwargs are required in all cases"
+        assert model_params is not None,\
+            "model_params are required in all cases"
         file_name = abspath(file_name)
         model = None
         callback = pre_ref_resolution_callback
@@ -634,7 +634,7 @@ class TextXMetaModel(DebugPrinter):
 
         def kwargs_callback(other_model):
             if hasattr(other_model, '_tx_metamodel'):
-                other_model._tx_model_kwargs = model_kwargs
+                other_model._tx_model_params = model_params
             if callback:
                 callback(other_model)
 

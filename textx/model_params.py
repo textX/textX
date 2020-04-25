@@ -13,7 +13,7 @@ else:
     from collections.abc import Mapping
 
 
-class ModelKwargs(Mapping):
+class ModelParams(Mapping):
     """A read only dictionary that protocols
     accessing the values.
 
@@ -57,12 +57,12 @@ class ModelKwargs(Mapping):
 """
 Class describing a model parameter.
 """
-ModelKwargDefinition = namedtuple(
+ModelParamDefinition = namedtuple(
     'ModelKwargDefinition',
     ['name', 'description', 'possible_values'])
 
 
-class ModelKwargDefinitions(Mapping):
+class ModelParamDefinitions(Mapping):
     """
     A class to hold possible model parameters
     together with a definition.
@@ -92,7 +92,7 @@ class ModelKwargDefinitions(Mapping):
         return key
 
     def add_definition(self, name, description, possible_values=None):
-        self.store[name] = ModelKwargDefinition(name, description,
+        self.store[name] = ModelParamDefinition(name, description,
                                                 possible_values)
 
     def check_kwargs_and_raise_on_error(self, source, **kwargs):
