@@ -45,10 +45,10 @@ def test_model_params():
 
     assert m._tx_model_params.have_all_parameters_been_used()
 
-    assert m._tx_model_params.get_with_default(
-        'missing_params', 'default value') == 'default value'
-    assert m._tx_model_params.get_with_default(
-        'parameter1', 'default value') == 'P1'
+    assert m._tx_model_params.get(
+        'missing_params', default='default value') == 'default value'
+    assert m._tx_model_params.get(
+        'parameter1', default='default value') == 'P1'
 
     with raises(TextXError, match=".*unknown parameter myerror2.*"):
         mm.model_from_str(text, parameter1='P1', myerror2='P2')

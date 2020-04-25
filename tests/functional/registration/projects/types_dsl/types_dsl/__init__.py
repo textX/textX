@@ -19,8 +19,8 @@ def types_dsl():
     )
 
     def check_type(t):
-        type_name_check = get_model(t)._tx_model_params.get_with_default(
-            'type_name_check', 'on'
+        type_name_check = get_model(t)._tx_model_params.get(
+            'type_name_check', default='on'
         )
         if type_name_check == 'on':
             if t.name[0].isupper():

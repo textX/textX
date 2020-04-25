@@ -47,12 +47,6 @@ class ModelParams(Mapping):
             lambda r, k: r and (k in self.used_keys),
             self.store.keys(), True)
 
-    def get_with_default(self, key, default_value=None):
-        if key in self.store:
-            return self.store[key]
-        else:
-            return default_value
-
 
 """
 Class describing a model parameter.
