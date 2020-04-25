@@ -170,7 +170,7 @@ def test_globalimports_with_project_root_model_parameter():
     my_meta_model.register_scope_providers(
         {"*.*": scoping_providers.FQNGlobalRepo(
             join("model_a", "*.if"))})
-    my_meta_model._tx_model_param_definitions.add(
+    my_meta_model._tx_model_kwarg_definitions.add_definition(
         "project_root", "the project root")
 
     #################################
