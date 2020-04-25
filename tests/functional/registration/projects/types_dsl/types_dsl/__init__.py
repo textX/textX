@@ -12,7 +12,7 @@ def types_dsl():
     current_dir = os.path.dirname(__file__)
     p = os.path.join(current_dir, 'Types.tx')
     types_mm = metamodel_from_file(p, global_repository=True)
-    types_mm._tx_model_param_definitions.add_definition(
+    types_mm._tx_model_param_definitions.add(
         'type_name_check',
         'enabled checks on the type name',
         possible_values=['on', 'off']

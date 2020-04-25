@@ -16,10 +16,10 @@ MyModel test1
 
 def test_model_params():
     mm = metamodel_from_str(grammar)
-    mm._tx_model_param_definitions.add_definition(
+    mm._tx_model_param_definitions.add(
         "parameter1", "an example param (1)"
     )
-    mm._tx_model_param_definitions.add_definition(
+    mm._tx_model_param_definitions.add(
         "parameter2", "an example param (2)"
     )
 
@@ -60,10 +60,10 @@ def test_model_params():
 
 def test_model_params_empty():
     mm = metamodel_from_str(grammar)
-    mm._tx_model_param_definitions.add_definition(
+    mm._tx_model_param_definitions.add(
         "parameter1", "an example param (1)"
     )
-    mm._tx_model_param_definitions.add_definition(
+    mm._tx_model_param_definitions.add(
         "parameter2", "an example param (2)"
     )
 
@@ -77,10 +77,10 @@ def test_model_params_empty():
 
 def test_model_params_file_based():
     mm = metamodel_from_str(grammar)
-    mm._tx_model_param_definitions.add_definition(
+    mm._tx_model_param_definitions.add(
         "parameter1", "an example param (1)"
     )
-    mm._tx_model_param_definitions.add_definition(
+    mm._tx_model_param_definitions.add(
         "parameter2", "an example param (2)"
     )
 
