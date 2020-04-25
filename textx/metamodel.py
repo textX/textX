@@ -561,7 +561,7 @@ class TextXMetaModel(DebugPrinter):
                 is set while executing pre_ref_resolution_callback (see
                 scoping.md)
         """
-        self._tx_model_kwarg_definitions.check_kwargs_and_raise_on_error(
+        self._tx_model_param_definitions.check_params_and_raise_on_error(
             'from_str', **kwargs)
 
         if type(model_str) is not text:
@@ -591,7 +591,7 @@ class TextXMetaModel(DebugPrinter):
 
     def model_from_file(self, file_name, encoding='utf-8', debug=None,
                         **kwargs):
-        self._tx_model_kwarg_definitions.check_kwargs_and_raise_on_error(
+        self._tx_model_param_definitions.check_params_and_raise_on_error(
             file_name, **kwargs)
 
         return self.internal_model_from_file(
