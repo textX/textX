@@ -34,10 +34,10 @@ def test_user_class_with_slots():
     end
     """
 
-    mm = metamodel_from_str(grammar, classes=[Point], auto_init_attributes=False)
+    mm = metamodel_from_str(grammar, classes=[Point],
+                            auto_init_attributes=False)
     model = mm.model_from_str(modelstr)
     # Test that user class is instantiated
-
     point = model.points[0]
 
     assert type(point).__name__ == "Point"
