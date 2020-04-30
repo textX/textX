@@ -12,6 +12,7 @@ from textx.const import MULT_OPTIONAL, MULT_ONE, MULT_ONEORMORE, \
     MULT_ZEROORMORE, RULE_ABSTRACT, RULE_MATCH, MULT_ASSIGN_ERROR, \
     UNKNOWN_OBJ_ERROR
 from textx.lang import PRIMITIVE_PYTHON_TYPES
+from textx.metamodel import _setattr, _getattr, _hasattr
 from textx.scoping import Postponed, remove_models_from_repositories, \
     get_included_models
 from textx.scoping.providers import PlainName as DefaultScopeProvider
@@ -30,8 +31,8 @@ def get_model(obj):
     Finds model root element for the given object.
     """
     p = obj
-    while hasattr(p, 'parent'):
-        p = p.parent
+    while _hasattr(p, 'parent'):
+        p = _getattr(p, 'parent')
     return p
 
 
@@ -56,8 +57,8 @@ def get_parent_of_type(typ, obj):
     if type(typ) is not text:
         typ = typ.__name__
 
-    while hasattr(obj, 'parent'):
-        obj = obj.parent
+    while _hasattr(obj, 'parent'):
+        obj = _getattr(obj, 'parent')
         if obj.__class__.__name__ == typ:
             return obj
 
@@ -91,11 +92,11 @@ def get_children(decider, root):
                 # Follow only attributes with containment semantics
                 if attr.cont:
                     if attr.mult in (MULT_ONE, MULT_OPTIONAL):
-                        new_elem = getattr(elem, attr_name)
+                        new_elem = _getattr(elem, attr_name)
                         if new_elem:
                             follow(new_elem)
                     else:
-                        new_elem_list = getattr(elem, attr_name)
+                        new_elem_list = _getattr(elem, attr_name)
                         if new_elem_list:
                             for new_elem in new_elem_list:
                                 follow(new_elem)
@@ -368,6 +369,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                 # At this point we need object to be allocated
                 # So that nested object get correct reference
                 inst = user_class.__new__(user_class)
+                user_class._tx_obj_attrs[id(inst)] = {}
 
                 # Initialize object attributes for user class
                 parser.metamodel._init_obj_attrs(inst, user=True)
@@ -382,8 +384,12 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
             # Collect attributes directly on meta-class instance
             obj_attrs = inst
 
-            inst._tx_position = node.position
-            inst._tx_position_end = node.position_end
+            try:
+                inst._tx_position = node.position
+                inst._tx_position_end = node.position_end
+            except AttributeError:
+                # Skip if class doesn't allow to set these attributes
+                pass
 
             # Push real obj. and dummy attr obj on the instance stack
             parser._inst_stack.append((inst, obj_attrs))
@@ -398,39 +404,34 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
 
             # If this object is nested add 'parent' reference
             if parser._inst_stack:
-                if node.rule_name in metamodel.user_classes:
-                    obj_attrs._txa_parent = parser._inst_stack[-1][0]
-                else:
-                    obj_attrs.parent = parser._inst_stack[-1][0]
+                _setattr(
+                    obj_attrs, 'parent', parser._inst_stack[-1][0])
 
-            # If the class is user supplied we need to do
-            # a proper initialization at this point.
-            if node.rule_name in metamodel.user_classes:
-                try:
-                    # Get only attributes defined by the grammar as well
-                    # as `parent` if exists
-                    attrs = {}
-                    if hasattr(obj_attrs, '_txa_parent'):
-                        attrs['parent'] = obj_attrs._txa_parent
-                        del obj_attrs._txa_parent
-                    for a in obj_attrs.__class__._tx_attrs:
-                        attrs[a] = getattr(obj_attrs, "_txa_%s" % a)
-                        delattr(obj_attrs, "_txa_%s" % a)
-                    inst.__init__(**attrs)
-                except TypeError as e:
-                    # Add class name information in case of
-                    # wrong constructor parameters
-                    e.args += ("for class %s" %
-                               inst.__class__.__name__,)
-                    parser.dprint(traceback.print_exc())
-                    raise e
+            # # If the the attributes to the class have been collected in
+            # # _tx_obj_attrs we need to do a proper initialization at
+            # # this point.
+            # if hasattr(obj.__class__, '_tx_obj_attrs'):
+            #     try:
+            #         # Get the attributes which have been collected in
+            #         # metamodel.obj and remove them from this dict.
+            #         attrs = obj.__class__._tx_obj_attrs.pop(
+            #             id(obj))
+            #         inst.__init__(**attrs)
+            #     except TypeError as e:
+            #         # Add class name information in case of
+            #         # wrong constructor parameters
+            #         e.args += ("for class %s" %
+            #                    inst.__class__.__name__,)
+            #         parser.dprint(traceback.print_exc())
+            #         raise e
 
             # Special case for 'name' attrib. It is used for cross-referencing
-            if hasattr(inst, 'name') and inst.name:
+            if _hasattr(inst, 'name') and _getattr(inst, 'name'):
                 # Objects of each class are in its own namespace
                 if not id(inst.__class__) in parser._instances:
                     parser._instances[id(inst.__class__)] = {}
-                parser._instances[id(inst.__class__)][inst.name] = inst
+                parser._instances[id(inst.__class__)][_getattr(inst, 'name')]\
+                    = inst
 
             if parser.debug:
                 parser.dprint("LEAVING INSTANCE {}".format(node.rule_name))
@@ -443,22 +444,15 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
             cls = type(model_obj)
             metaattr = cls._tx_attrs[attr_name]
 
-            # Mangle attribute name to prevent name clashing with property
-            # setters on user classes
-            if cls.__name__ in metamodel.user_classes:
-                txa_attr_name = "_txa_%s" % attr_name
-            else:
-                txa_attr_name = attr_name
-
             if parser.debug:
                 parser.dprint('Handling assignment: {} {}...'
-                              .format(op, txa_attr_name))
+                              .format(op, attr_name))
 
             if op == 'optional':
-                setattr(obj_attr, txa_attr_name, True)
+                _setattr(obj_attr, attr_name, True)
 
             elif op == 'plain':
-                attr_value = getattr(obj_attr, txa_attr_name)
+                attr_value = _getattr(obj_attr, attr_name)
                 if attr_value and type(attr_value) is not list:
                     fmt = "Multiple assignments to attribute {} at {}"
                     raise TextXSemanticError(
@@ -479,7 +473,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                 if type(attr_value) is list:
                     attr_value.append(value)
                 else:
-                    setattr(obj_attr, txa_attr_name, value)
+                    _setattr(obj_attr, attr_name, value)
 
             elif op in ['list', 'oneormore', 'zeroormore']:
                 for n in node:
@@ -501,10 +495,10 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                                                       value))
                             continue
 
-                        if not hasattr(obj_attr, txa_attr_name) or \
-                                getattr(obj_attr, txa_attr_name) is None:
-                            setattr(obj_attr, txa_attr_name, [])
-                        getattr(obj_attr, txa_attr_name).append(value)
+                        if not _hasattr(obj_attr, attr_name) or \
+                                _getattr(obj_attr, attr_name) is None:
+                            _setattr(obj_attr, attr_name, [])
+                        _getattr(obj_attr, attr_name).append(value)
             else:
                 # This shouldn't happen
                 assert False
@@ -549,7 +543,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
             for metaattr in current_metaclass_of_obj._tx_attrs.values():
                 # If attribute is base type or containment reference go down
                 if metaattr.cont:
-                    attr = getattr(model_obj, metaattr.name)
+                    attr = _getattr(model_obj, metaattr.name)
                     if attr:
                         if metaattr.mult in many:
                             for idx, obj in enumerate(attr):
@@ -563,7 +557,8 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                             result = call_obj_processors(metamodel,
                                                          attr, metaattr.cls)
                             if result is not None:
-                                setattr(model_obj, metaattr.name, result)
+                                _setattr(
+                                    model_obj, metaattr.name, result)
 
             # call obj_proc of the current meta_class if type == RULE_ABSTRACT
             if current_metaclass_of_obj._tx_fqn !=\
@@ -689,6 +684,27 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                             parser.dprint("CALLING OBJECT PROCESSORS")
                         call_obj_processors(m._tx_metamodel, m)
 
+                for m in models:
+                    for obj in get_children(
+                            lambda x:
+                            hasattr(x.__class__, '_tx_obj_attrs'), m):
+                        # If the the attributes to the class have been
+                        # collected in _tx_obj_attrs we need to do a proper
+                        # initialization at this point.
+                        try:
+                            # Get the attributes which have been collected
+                            # in metamodel.obj and remove them from this dict.
+                            attrs = obj.__class__._tx_obj_attrs.pop(
+                                id(obj))
+                            obj.__init__(**attrs)
+                        except TypeError as e:
+                            # Add class name information in case of wrong
+                            # constructor parameters
+                            e.args += ("for class %s" %
+                                       obj.__class__.__name__,)
+                            parser.dprint(traceback.print_exc())
+                            raise e
+
             except BaseException as e:
                 # remove all processed models from (global) repo (if present)
                 # (remove all of them, not only the model with errors,
@@ -801,7 +817,7 @@ class ReferenceResolver:
         default_scope = DefaultScopeProvider()
         for obj, attr, crossref in current_crossrefs:
             if (get_model(obj) == self.model):
-                attr_value = getattr(obj, attr.name)
+                attr_value = _getattr(obj, attr.name)
                 attr_refs = [obj.__class__.__name__ + "." + attr.name,
                              "*." + attr.name, obj.__class__.__name__ + ".*",
                              "*.*"]
@@ -856,7 +872,7 @@ class ReferenceResolver:
                     if attr.mult in [MULT_ONEORMORE, MULT_ZEROORMORE]:
                         attr_value.append(resolved)
                     else:
-                        setattr(obj, attr.name, resolved)
+                        _setattr(obj, attr.name, resolved)
             else:  # crossref not in model
                 new_crossrefs.append((obj, attr, crossref))
         # -------------------------

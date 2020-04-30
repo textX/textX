@@ -89,6 +89,30 @@ class MetaAttr(object):
         self.position = position
 
 
+def _setattr(obj, name, value):
+    if hasattr(obj.__class__, '_tx_obj_attrs')\
+            and id(obj) in obj.__class__._tx_obj_attrs:
+        obj.__class__._tx_obj_attrs[id(obj)][name] = value
+    else:
+        setattr(obj, name, value)
+
+
+def _getattr(obj, name, *args):
+    if hasattr(obj.__class__, '_tx_obj_attrs')\
+            and id(obj) in obj.__class__._tx_obj_attrs:
+        return obj.__class__._tx_obj_attrs[id(obj)][name]
+    else:
+        return getattr(obj, name, *args)
+
+
+def _hasattr(obj, name):
+    if hasattr(obj.__class__, '_tx_obj_attrs')\
+            and id(obj) in obj.__class__._tx_obj_attrs:
+        return name in obj.__class__._tx_obj_attrs[id(obj)]
+    else:
+        return hasattr(obj, name)
+
+
 class TextXMetaModel(DebugPrinter):
     """
     Meta-model contains all information about language abstract syntax.
@@ -379,7 +403,8 @@ class TextXMetaModel(DebugPrinter):
         return cls
 
     def _init_class(self, cls, peg_rule, position, position_end=None,
-                    inherits=None, root=False, rule_type=RULE_MATCH):
+                    inherits=None, root=False, rule_type=RULE_MATCH,
+                    external_attributes=False):
         """
         Setup meta-class special attributes, namespaces etc. This is called
         both for textX created classes as well as user classes.
@@ -413,6 +438,9 @@ class TextXMetaModel(DebugPrinter):
 
         if root:
             self.rootcls = cls
+            
+        if external_attributes:
+            cls._tx_obj_attrs = {}
 
     def _cls_fqn(self, cls):
         """
@@ -430,39 +458,33 @@ class TextXMetaModel(DebugPrinter):
         Initialize obj attributes.
         Args:
             obj(object): A python object to set attributes to.
-            user(bool): If this object is a user object mangle attribute names.
+            user(bool): If this object is a user object store attributes
+                outside the object.
         """
         for attr in obj.__class__._tx_attrs.values():
-
-            if user:
-                # Mangle name to prvent name clashing
-                attr_name = "_txa_%s" % attr.name
-            else:
-                attr_name = attr.name
-
             if attr.mult in [MULT_ZEROORMORE, MULT_ONEORMORE]:
                 # list
-                setattr(obj, attr_name, [])
+                _setattr(obj, attr.name, [])
             elif attr.cls.__name__ in BASE_TYPE_NAMES:
                 # Instantiate base python type
                 if self.auto_init_attributes:
-                    setattr(obj, attr_name,
-                            python_type(attr.cls.__name__)())
+                    _setattr(obj, attr.name,
+                                 python_type(attr.cls.__name__)())
                 else:
                     # See https://github.com/textX/textX/issues/11
                     if attr.bool_assignment:
                         # Only ?= assignments shall have default
                         # value of False.
-                        setattr(obj, attr_name, False)
+                        _setattr(obj, attr.name, False)
                     else:
                         # Set base type attribute to None initially
                         # in order to be able to detect if an optional
                         # values are given in the model. Default values
                         # can be specified using object processors.
-                        setattr(obj, attr_name, None)
+                        _setattr(obj, attr.name, None)
             else:
                 # Reference to other obj
-                setattr(obj, attr_name, None)
+                _setattr(obj, attr.name, None)
 
     def _new_cls_attr(self, clazz, name, cls=None, mult=MULT_ONE, cont=True,
                       ref=False, bool_assignment=False, position=0):

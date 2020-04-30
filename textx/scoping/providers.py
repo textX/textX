@@ -8,6 +8,7 @@
 from os.path import dirname, abspath, join
 from textx.exceptions import TextXSemanticError
 import textx.scoping as scoping
+from textx.metamodel import _hasattr, _getattr
 from textx.scoping import Postponed
 
 """
@@ -90,7 +91,7 @@ class PlainName(object):
             from textx import textx_isinstance
             result_lst = get_children(
                 lambda x:
-                hasattr(x, "name") and x.name == obj_ref.obj_name
+                _hasattr(x, "name") and _getattr(x, "name") == obj_ref.obj_name
                 and textx_isinstance(x, obj_ref.cls), get_model(obj))
             if len(result_lst) == 1:
                 result = result_lst[0]
@@ -182,11 +183,12 @@ class FQN(object):
                     obj = getattr(parent, attr)
                     if isinstance(obj, (list, tuple)):
                         for innerobj in obj:
-                            if hasattr(innerobj, "name") \
-                                    and innerobj.name == name:
+                            if _hasattr(innerobj, "name") \
+                                    and _getattr(innerobj, "name") == name:
                                 return innerobj
                     else:
-                        if hasattr(obj, "name") and obj.name == name:
+                        if _hasattr(obj, "name") \
+                                and _getattr(obj, "name") == name:
                             return obj
                 return None
 
@@ -222,8 +224,8 @@ class FQN(object):
             ret = _find_obj_fqn(p, name, cls)
             if ret:
                 return ret
-            while hasattr(p, "parent"):
-                p = p.parent
+            while _hasattr(p, "parent"):
+                p = _getattr(p, "parent")
                 ret = _find_obj_fqn(p, name, cls)
                 if ret:
                     return ret
@@ -307,8 +309,9 @@ class ImportURI(scoping.ModelLoader):
             if self.importURI_to_scope_name is not None:
                 obj.name = self.importURI_to_scope_name(obj)
                 # print("setting name to {}".format(obj.name))
-            if hasattr(obj, "name"):
-                if obj.name is not None and obj.name != "":
+            if _hasattr(obj, "name"):
+                if _getattr(obj, "name") is not None \
+                        and _getattr(obj, "name") != "":
                     add_to_local_models = not self.importAs
 
             visited.append(obj)
