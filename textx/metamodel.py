@@ -438,6 +438,7 @@ class TextXMetaModel(DebugPrinter):
 
         if root:
             self.rootcls = cls
+            
 
         if external_attributes:
             cls._tx_obj_attrs = {}
@@ -469,7 +470,7 @@ class TextXMetaModel(DebugPrinter):
                 # Instantiate base python type
                 if self.auto_init_attributes:
                     _setattr(obj, attr.name,
-                             python_type(attr.cls.__name__)())
+                            python_type(attr.cls.__name__)())
                 else:
                     # See https://github.com/textX/textX/issues/11
                     if attr.bool_assignment:
