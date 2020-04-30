@@ -192,7 +192,7 @@ class FQN(object):
 
             for n in fqn_name.split('.'):
                 obj = find_obj(p, n)
-                if obj:
+                if obj is not None:
                     if type(obj) is Postponed:
                         return obj
                     p = obj

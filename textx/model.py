@@ -510,7 +510,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                 assert False
 
         # Collect rules for textx-tools
-        if inst and metamodel.textx_tools_support:
+        if inst is not None and metamodel.textx_tools_support:
             pos = (inst._tx_position, inst._tx_position_end)
             pos_rule_dict[pos] = inst
 
@@ -553,7 +553,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                     if attr:
                         if metaattr.mult in many:
                             for idx, obj in enumerate(attr):
-                                if obj:
+                                if obj is not None:
                                     result = call_obj_processors(metamodel,
                                                                  obj,
                                                                  metaattr.cls)

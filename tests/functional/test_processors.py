@@ -92,6 +92,37 @@ def test_object_processors():
     assert call_order == [2, 2, 2, 1]
 
 
+def test_object_processor_falsy():
+    """
+    Test that object processors are called for falsy objects.
+    """
+
+    def second_obj_processor(second):
+        second._second_called = True
+
+    obj_processors = {
+        'Second': second_obj_processor,
+        }
+
+    class Second(object):
+        def __init__(self, parent, sec):
+            self.parent = parent
+            self.sec = sec
+            self._second_called = False
+
+        def __len__(self):
+            return 0
+
+    metamodel = metamodel_from_str(grammar, classes=[Second])
+    metamodel.register_obj_processors(obj_processors)
+
+    model_str = 'first 34 45 7 A 45 65 B true C "dfdf"'
+    first = metamodel.model_from_str(model_str)
+
+    for s in first.seconds:
+        assert s._second_called == True
+
+
 def test_object_processor_replace_object():
     """
     Test that what is returned from object processor is value used in the
