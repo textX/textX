@@ -407,24 +407,6 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                 _setattr(
                     obj_attrs, 'parent', parser._inst_stack[-1][0])
 
-            # # If the the attributes to the class have been collected in
-            # # _tx_obj_attrs we need to do a proper initialization at
-            # # this point.
-            # if hasattr(obj.__class__, '_tx_obj_attrs'):
-            #     try:
-            #         # Get the attributes which have been collected in
-            #         # metamodel.obj and remove them from this dict.
-            #         attrs = obj.__class__._tx_obj_attrs.pop(
-            #             id(obj))
-            #         inst.__init__(**attrs)
-            #     except TypeError as e:
-            #         # Add class name information in case of
-            #         # wrong constructor parameters
-            #         e.args += ("for class %s" %
-            #                    inst.__class__.__name__,)
-            #         parser.dprint(traceback.print_exc())
-            #         raise e
-
             # Special case for 'name' attrib. It is used for cross-referencing
             if _hasattr(inst, 'name') and _getattr(inst, 'name'):
                 # Objects of each class are in its own namespace
@@ -667,23 +649,6 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                     # TODO: what does this check?
                     assert not m._tx_reference_resolver.parser._inst_stack
 
-                # cleanup
-                for m in models:
-                    _end_model_construction(m)
-
-                # final check that everything went ok
-                for m in models:
-                    assert 0 == len(get_children_of_type(
-                        Postponed.__class__, m))
-
-                    # We have model loaded and all link resolved
-                    # So we shall do a depth-first call of object
-                    # processors if any processor is defined.
-                    if m._tx_metamodel.obj_processors:
-                        if parser.debug:
-                            parser.dprint("CALLING OBJECT PROCESSORS")
-                        call_obj_processors(m._tx_metamodel, m)
-
                 for m in models:
                     for obj in get_children(
                             lambda x:
@@ -704,6 +669,23 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                                        obj.__class__.__name__,)
                             parser.dprint(traceback.print_exc())
                             raise e
+
+                # cleanup
+                for m in models:
+                    _end_model_construction(m)
+
+                # final check that everything went ok
+                for m in models:
+                    assert 0 == len(get_children_of_type(
+                        Postponed.__class__, m))
+
+                    # We have model loaded and all link resolved
+                    # So we shall do a depth-first call of object
+                    # processors if any processor is defined.
+                    if m._tx_metamodel.obj_processors:
+                        if parser.debug:
+                            parser.dprint("CALLING OBJECT PROCESSORS")
+                        call_obj_processors(m._tx_metamodel, m)
 
             except BaseException as e:
                 # remove all processed models from (global) repo (if present)

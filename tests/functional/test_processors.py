@@ -92,6 +92,54 @@ def test_object_processors():
     assert call_order == [2, 2, 2, 1]
 
 
+def test_object_processors_user_classes():
+    """
+    Test that object processors are called.
+    They should be called after each model object construction.
+    """
+
+    def first_obj_processor(first):
+        first._first_called = True
+        first._a_copy = first.a
+
+    def second_obj_processor(second):
+        second._second_called = True
+        second._sec_copy = second.sec
+
+        # test that parent is fully initialised.
+        # b should be True
+        assert second.parent.b is not None
+
+    obj_processors = {
+        'First': first_obj_processor,
+        'Second': second_obj_processor,
+        }
+
+    class First(object):
+        def __init__(self, seconds, a, b, c):
+            self.seconds = seconds
+            self.a = a
+            self.b = b
+            self.c = c
+
+    class Second(object):
+        def __init__(self, sec, parent):
+            self.sec = sec
+            self.parent = parent
+
+    metamodel = metamodel_from_str(grammar, classes=[First, Second])
+    metamodel.register_obj_processors(obj_processors)
+
+    model_str = 'first 34 45 7 A 45 65 B true C "dfdf"'
+    first = metamodel.model_from_str(model_str)
+
+    assert hasattr(first, '_first_called')
+    assert first._a_copy == first.a
+    for s in first.seconds:
+        assert hasattr(s, '_second_called')
+        assert s._sec_copy == s.sec
+
+
 def test_object_processor_replace_object():
     """
     Test that what is returned from object processor is value used in the
