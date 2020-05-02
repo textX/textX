@@ -683,26 +683,6 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                             parser.dprint(traceback.print_exc())
                             raise e
 
-                for m in models:
-                    for obj in get_children(
-                            lambda x:
-                            hasattr(x.__class__, '_tx_obj_attrs'), m):
-                        # If the the attributes to the class have been
-                        # collected in _tx_obj_attrs we need to do a proper
-                        # initialization at this point.
-                        try:
-                            # Get the attributes which have been collected
-                            # in metamodel.obj and remove them from this dict.
-                            attrs = obj.__class__._tx_obj_attrs.pop(
-                                id(obj))
-                            obj.__init__(**attrs)
-                        except TypeError as e:
-                            # Add class name information in case of wrong
-                            # constructor parameters
-                            e.args += ("for class %s" %
-                                       obj.__class__.__name__,)
-                            parser.dprint(traceback.print_exc())
-                            raise e
 
                 # cleanup
                 for m in models:
