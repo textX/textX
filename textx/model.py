@@ -650,9 +650,9 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                     assert not m._tx_reference_resolver.parser._inst_stack
 
                 for m in models:
-                    for obj in get_children(
+                    for obj in reversed(get_children(
                             lambda x:
-                            hasattr(x.__class__, '_tx_obj_attrs'), m):
+                            hasattr(x.__class__, '_tx_obj_attrs'), m)):
                         # If the the attributes to the class have been
                         # collected in _tx_obj_attrs we need to do a proper
                         # initialization at this point.
