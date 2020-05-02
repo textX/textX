@@ -88,10 +88,9 @@ def get_children(decider, root, children_first=False):
         # Use meta-model to search for all contained child elements.
         cls = elem.__class__
 
-        if not children_first:
-            if hasattr(cls, '_tx_attrs') and decider(elem):
-                collected.append(elem)
-                collected_ids.add(id(elem))
+        if hasattr(cls, '_tx_attrs') and decider(elem):
+            collected.append(elem)
+            collected_ids.add(id(elem))
 
         if hasattr(cls, '_tx_attrs'):
             for attr_name, attr in cls._tx_attrs.items():
