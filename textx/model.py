@@ -683,23 +683,6 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                             parser.dprint(traceback.print_exc())
                             raise e
 
-                # cleanup
-                for m in models:
-                    _end_model_construction(m)
-
-                # final check that everything went ok
-                for m in models:
-                    assert 0 == len(get_children_of_type(
-                        Postponed.__class__, m))
-
-                    # We have model loaded and all link resolved
-                    # So we shall do a depth-first call of object
-                    # processors if any processor is defined.
-                    if m._tx_metamodel.obj_processors:
-                        if parser.debug:
-                            parser.dprint("CALLING OBJECT PROCESSORS")
-                        call_obj_processors(m._tx_metamodel, m)
-
                 for m in models:
                     for obj in get_children(
                             lambda x:
@@ -720,6 +703,23 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                                        obj.__class__.__name__,)
                             parser.dprint(traceback.print_exc())
                             raise e
+
+                # cleanup
+                for m in models:
+                    _end_model_construction(m)
+
+                # final check that everything went ok
+                for m in models:
+                    assert 0 == len(get_children_of_type(
+                        Postponed.__class__, m))
+
+                    # We have model loaded and all link resolved
+                    # So we shall do a depth-first call of object
+                    # processors if any processor is defined.
+                    if m._tx_metamodel.obj_processors:
+                        if parser.debug:
+                            parser.dprint("CALLING OBJECT PROCESSORS")
+                        call_obj_processors(m._tx_metamodel, m)
 
             except BaseException as e:
                 # remove all processed models from (global) repo (if present)
