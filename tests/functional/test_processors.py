@@ -17,6 +17,7 @@ First:
     ('A' a+=INT)?
     ('B' b?=BOOL)?
     ('C' c=STRING)?
+    ('Falsy' falsy=Second)?
 ;
 
 Second:
@@ -116,11 +117,13 @@ def test_object_processor_falsy():
     metamodel = metamodel_from_str(grammar, classes=[Second])
     metamodel.register_obj_processors(obj_processors)
 
-    model_str = 'first 34 45 7 A 45 65 B true C "dfdf"'
+    model_str = 'first 34 45 7 A 45 65 B true C "dfdf" Falsy 5'
     first = metamodel.model_from_str(model_str)
 
     for s in first.seconds:
-        assert s._second_called == True
+        assert s._second_called
+
+    assert first.falsy._second_called
 
 
 def test_object_processor_replace_object():

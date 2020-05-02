@@ -550,7 +550,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                 # If attribute is base type or containment reference go down
                 if metaattr.cont:
                     attr = getattr(model_obj, metaattr.name)
-                    if attr:
+                    if attr is not None:
                         if metaattr.mult in many:
                             for idx, obj in enumerate(attr):
                                 if obj is not None:
