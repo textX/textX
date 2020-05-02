@@ -75,10 +75,12 @@ def get_children(decider, root):
             search process.
     """
     collected = []
+    collected_ids = set()
 
     def follow(elem):
 
-        if id(elem) in map(lambda x: id(x), collected):
+        if id(elem) in collected_ids:
+            # Use id to avoid relying on __eq__ of user class
             return
 
         # Use meta-model to search for all contained child elements.
@@ -86,6 +88,7 @@ def get_children(decider, root):
 
         if hasattr(cls, '_tx_attrs') and decider(elem):
             collected.append(elem)
+            collected_ids.add(id(elem))
 
         if hasattr(cls, '_tx_attrs'):
             for attr_name, attr in cls._tx_attrs.items():
