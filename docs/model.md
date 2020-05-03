@@ -198,4 +198,4 @@ restricted by the `metamodel._tx_model_param_definitions` object, which is
 controlled by the metamodel designer.
 
 See also:
-[model and object processors](metamodel.md#Optional model parameter definitions).
+[model and object processors](metamodel.md#optional-model-parameter-definitions).
