@@ -167,7 +167,7 @@ class TextXMetaModel(DebugPrinter):
 
         self._tx_model_param_definitions = ModelParamDefinitions()
         self._tx_model_param_definitions.add(
-            "project_root", "the project root")
+            "project_root", "the project root path")
 
         self.file_name = file_name
         self.rootcls = None
@@ -564,8 +564,7 @@ class TextXMetaModel(DebugPrinter):
                 is set while executing pre_ref_resolution_callback (see
                 scoping.md)
         """
-        self._tx_model_param_definitions.check_params_and_raise_on_error(
-            'from_str', **kwargs)
+        self._tx_model_param_definitions.check_params('from_str', **kwargs)
 
         if type(model_str) is not text:
             raise TextXError("textX accepts only unicode strings.")
@@ -594,8 +593,7 @@ class TextXMetaModel(DebugPrinter):
 
     def model_from_file(self, file_name, encoding='utf-8', debug=None,
                         **kwargs):
-        self._tx_model_param_definitions.check_params_and_raise_on_error(
-            file_name, **kwargs)
+        self._tx_model_param_definitions.check_params(file_name, **kwargs)
 
         return self.internal_model_from_file(
             file_name, encoding, debug,
