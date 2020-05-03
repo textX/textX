@@ -166,6 +166,9 @@ class TextXMetaModel(DebugPrinter):
         super(TextXMetaModel, self).__init__(**kwargs)
 
         self._tx_model_param_definitions = ModelParamDefinitions()
+        self._tx_model_param_definitions.add(
+            "project_root", "the project root")
+
         self.file_name = file_name
         self.rootcls = None
 

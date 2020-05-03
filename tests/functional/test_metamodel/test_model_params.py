@@ -53,7 +53,9 @@ def test_model_params():
     with raises(TextXError, match=".*unknown parameter myerror2.*"):
         mm.model_from_str(text, parameter1='P1', myerror2='P2')
 
-    assert len(mm._tx_model_param_definitions) == 2
+    assert len(mm._tx_model_param_definitions) >= 2
+    assert 'parameter1' in mm._tx_model_param_definitions
+    assert 'parameter1' in mm._tx_model_param_definitions
     assert mm._tx_model_param_definitions[
                'parameter1'].description == "an example param (1)"
 
