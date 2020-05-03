@@ -81,8 +81,7 @@ def get_children(decider, root, children_first=False):
 
     def follow(elem):
 
-        if id(elem) in collected_ids:
-            # Use id to avoid relying on __eq__ of user class
+        if id(elem) in map(lambda x:id(x), collected):
             return
 
         # Use meta-model to search for all contained child elements.
