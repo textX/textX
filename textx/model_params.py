@@ -47,9 +47,10 @@ class ModelParams(Mapping):
             lambda r, k: r and (k in self.used_keys),
             self.store.keys(), True)
 
-    all_been_used = property(
-        lambda self: self._have_all_parameters_been_used(),
-        doc="returns if all parameters have been used by the meta model")
+    @property
+    def all_used(self):
+        "returns if all parameters have been used by the meta model"
+        return not (set(self.store.keys()) - set(self.used_keys))
 
 
 """
