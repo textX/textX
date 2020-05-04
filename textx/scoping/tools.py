@@ -5,7 +5,7 @@
 # License: MIT License
 #######################################################################
 from textx import get_children, get_model
-from textx.metamodel import _getattr
+from textx.metamodel import _getattr, _hasattr
 import re
 
 
@@ -124,9 +124,9 @@ def get_parser(model_obj):
 
 
 def get_recursive_parent_with_typename(obj, desired_parent_typename):
-    while type(obj).__name__ != desired_parent_typename and hasattr(obj,
+    while type(obj).__name__ != desired_parent_typename and _hasattr(obj,
                                                                     "parent"):
-        obj = obj.parent
+        obj = _getattr(obj, "parent")
     if type(obj).__name__ != desired_parent_typename:
         return None
     else:
