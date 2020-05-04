@@ -144,7 +144,7 @@ def get_named_obj_in_list(obj_list, name):
     Returns:
         the object if found (unique name), or None.
     """
-    lst = list(filter(lambda x: x.name == name, obj_list))
+    lst = list(filter(lambda x: _getattr(x, "name") == name, obj_list))
     if len(lst) == 1:
         return lst[0]
     else:
@@ -244,7 +244,7 @@ def get_unique_named_object_in_all_models(root, name):
     for m in src:
         # print("analyzing {}".format(m._tx_filename))
         a = a + get_children(
-            lambda x: hasattr(x, 'name') and x.name == name, m)
+            lambda x: hasattr(x, 'name') and _getattr(x, "name") == name, m)
 
     assert len(a) == 1
     return a[0]
@@ -261,7 +261,8 @@ def get_unique_named_object(root, name):
     Returns:
         the object (if not unique, raises an error)
     """
-    a = get_children(lambda x: hasattr(x, 'name') and x.name == name, root)
+    a = get_children(
+        lambda x: hasattr(x, 'name') and _getattr(x, "name") == name, root)
     assert len(a) == 1
     return a[0]
 
