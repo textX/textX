@@ -7,9 +7,9 @@ import attr
 
 @attr.s(frozen=True)
 class Instance:
-    parent=attr.ib()
-    name=attr.ib()
-    type=attr.ib()
+    parent = attr.ib()
+    name = attr.ib()
+    type = attr.ib()
 
 
 @attr.s(frozen=True)
@@ -76,9 +76,9 @@ def test_referencing_attributes():
     reference a.x
     '''
 
-    for classes in [ [], [Instance, Reference, RefItem] ]:
+    for classes in [[], [Instance, Reference, RefItem]]:
 
-        def ref_scope(refItem, attr, attr_ref):
+        def ref_scope(refItem, myattr, attr_ref):
             from textx.scoping.tools import get_named_obj_in_list
             from textx.scoping import Postponed
             from textx import textx_isinstance
@@ -101,8 +101,8 @@ def test_referencing_attributes():
                 index = reference.refs.index(refItem)
             else:
                 index = list(map(
-                    lambda x:id(x), _getattr(
-                        reference,"refs"))).index(id(refItem))
+                    lambda x: id(x), _getattr(
+                        reference, "refs"))).index(id(refItem))
 
             assert (index >= 0)
 
@@ -113,7 +113,7 @@ def test_referencing_attributes():
                     return Postponed()
                 x = get_named_obj_in_list(base.type.vals, attr_ref.obj_name)
                 if index == len(reference.refs) - 1:
-                    if not textx_isinstance(x, attr.cls):
+                    if not textx_isinstance(x, myattr.cls):
                         print(x)
                         return None
             else:
@@ -126,10 +126,9 @@ def test_referencing_attributes():
                     _getattr(_getattr(base, "type"), "vals"),
                     attr_ref.obj_name)
                 if index == len(_getattr(reference, "refs")) - 1:
-                    if not textx_isinstance(x, attr.cls):
+                    if not textx_isinstance(x, myattr.cls):
                         print(x)
                         return None
-
 
             return x
 

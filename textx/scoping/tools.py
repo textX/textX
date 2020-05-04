@@ -125,7 +125,7 @@ def get_parser(model_obj):
 
 def get_recursive_parent_with_typename(obj, desired_parent_typename):
     while type(obj).__name__ != desired_parent_typename and _hasattr(obj,
-                                                                    "parent"):
+                                                                     "parent"):
         obj = _getattr(obj, "parent")
     if type(obj).__name__ != desired_parent_typename:
         return None

@@ -8,19 +8,20 @@ from textx import (metamodel_from_file, register_language,
                    clear_language_registrations)
 import attr
 
+
 @attr.s(frozen=True)
 class Cls:
-    parent=attr.ib()
-    name=attr.ib()
-    extends=attr.ib()
-    methods=attr.ib()
+    parent = attr.ib()
+    name = attr.ib()
+    extends = attr.ib()
+    methods = attr.ib()
 
 
 @attr.s(frozen=True)
 class Obj:
-    parent=attr.ib()
-    name=attr.ib()
-    ref=attr.ib()
+    parent = attr.ib()
+    name = attr.ib()
+    ref = attr.ib()
 
 
 def test_metamodel_provider_advanced_test3_global():
