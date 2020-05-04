@@ -2,6 +2,27 @@ from __future__ import unicode_literals
 from textx import metamodel_from_str
 from pytest import raises
 import textx.exceptions
+import attr
+
+
+@attr.s(frozen=True)
+class Instance:
+    parent=attr.ib()
+    name=attr.ib()
+    type=attr.ib()
+
+
+@attr.s(frozen=True)
+class Reference:
+    parent = attr.ib()
+    instance = attr.ib()
+    refs = attr.ib()
+
+
+@attr.s(frozen=True)
+class RefItem:
+    parent = attr.ib()
+    valref = attr.ib()
 
 
 def test_referencing_attributes():
@@ -13,6 +34,8 @@ def test_referencing_attributes():
     With this, the list "refs" to "RefItem"s in the "Reference" object is
     build completely during initial parsing. The references inside the
     "RefItem"s, can the be resolved on after the other...
+
+    We also show how to handle custom classes here.
     """
     grammar = '''
     Model:
@@ -53,73 +76,108 @@ def test_referencing_attributes():
     reference a.x
     '''
 
-    def ref_scope(refItem, attr, attr_ref):
-        from textx.scoping.tools import get_named_obj_in_list
-        from textx.scoping import Postponed
-        from textx import textx_isinstance
-        reference = refItem.parent
-        if reference is None:
-            return Postponed()
-        index = reference.refs.index(refItem)
-        assert (index >= 0)
+    for classes in [ [], [Instance, Reference, RefItem] ]:
 
-        base = reference.instance if index == 0 \
-            else reference.refs[index - 1].valref
-        if base is None or base.type is None:
-            return Postponed()
-        x = get_named_obj_in_list(base.type.vals, attr_ref.obj_name)
+        def ref_scope(refItem, attr, attr_ref):
+            from textx.scoping.tools import get_named_obj_in_list
+            from textx.scoping import Postponed
+            from textx import textx_isinstance
+            from textx.metamodel import _getattr
 
-        if index == len(reference.refs)-1:
-            if not textx_isinstance(x, attr.cls):
-                print(x)
-                return None
-        return x
+            # Howto access elements while resolving scopes...
+            if len(classes) == 0:
+                reference = refItem.parent
+            else:
+                reference = _getattr(refItem, "parent")
 
-    mm = metamodel_from_str(grammar)
-    mm.register_scope_providers({
-        "RefItem.valref": ref_scope
-    })
-    m = mm.model_from_str(model_text)
+            if reference is None:
+                return Postponed()
 
-    assert m.references[0].refs[-1].valref.name == 'x'
-    assert m.references[0].refs[-1].valref == m.structs[0].vals[0]
+            # Howto access elements while resolving scopes...
+            # Becareful: you cannot compare a custom object
+            # with another before scope resolution has terminated
+            # (use id(obj) to look for an instance)
+            if len(classes) == 0:
+                index = reference.refs.index(refItem)
+            else:
+                index = list(map(
+                    lambda x:id(x), _getattr(
+                        reference,"refs"))).index(id(refItem))
 
-    assert m.references[0].refs[-2].valref.name == 'a'
-    assert m.references[0].refs[-2].valref == m.structs[1].vals[0]
+            assert (index >= 0)
 
-    assert m.references[0].refs[-3].valref.name == 'b'
-    assert m.references[0].refs[-3].valref == m.structs[2].vals[0]
+            if len(classes) == 0:
+                base = reference.instance if index == 0 \
+                    else reference.refs[index - 1].valref
+                if base is None or base.type is None:
+                    return Postponed()
+                x = get_named_obj_in_list(base.type.vals, attr_ref.obj_name)
+                if index == len(reference.refs) - 1:
+                    if not textx_isinstance(x, attr.cls):
+                        print(x)
+                        return None
+            else:
+                base = _getattr(reference, "instance") if index == 0 \
+                    else _getattr(
+                    _getattr(reference, "refs")[index - 1], "valref")
+                if base is None or _getattr(base, "type") is None:
+                    return Postponed()
+                x = get_named_obj_in_list(
+                    _getattr(_getattr(base, "type"), "vals"),
+                    attr_ref.obj_name)
+                if index == len(_getattr(reference, "refs")) - 1:
+                    if not textx_isinstance(x, attr.cls):
+                        print(x)
+                        return None
 
-    assert m.references[1].refs[-1].valref == m.structs[0].vals[0]
 
-    assert m.references[2].refs[0].valref.name == 'x'
-    assert m.references[2].refs[0].valref == m.structs[0].vals[0]
+            return x
 
-    # negative tests
-    # error: "not_there" not pasrt of A
-    with raises(textx.exceptions.TextXSemanticError,
-                match=r'.*Unknown object.*not_there.*'):
-        mm.model_from_str('''
-        struct A { val x }
-        struct B { val a: A}
-        struct C {
-            val b: B
-            val a: A
-        }
-        instance c: C
-        reference c.b.a.not_there
-        ''')
+        mm = metamodel_from_str(grammar, classes=classes)
+        mm.register_scope_providers({
+            "RefItem.valref": ref_scope
+        })
+        m = mm.model_from_str(model_text)
 
-    # error: B.a is not of type A
-    with raises(textx.exceptions.TextXSemanticError,
-                match=r'.*Unresolvable cross references.*x.*'):
-        mm.model_from_str('''
-        struct A { val x }
-        struct B { val a }
-        struct C {
-            val b: B
-            val a: A
-        }
-        instance c: C
-        reference c.b.a.x
-        ''')
+        assert m.references[0].refs[-1].valref.name == 'x'
+        assert m.references[0].refs[-1].valref == m.structs[0].vals[0]
+
+        assert m.references[0].refs[-2].valref.name == 'a'
+        assert m.references[0].refs[-2].valref == m.structs[1].vals[0]
+
+        assert m.references[0].refs[-3].valref.name == 'b'
+        assert m.references[0].refs[-3].valref == m.structs[2].vals[0]
+
+        assert m.references[1].refs[-1].valref == m.structs[0].vals[0]
+
+        assert m.references[2].refs[0].valref.name == 'x'
+        assert m.references[2].refs[0].valref == m.structs[0].vals[0]
+
+        # negative tests
+        # error: "not_there" not pasrt of A
+        with raises(textx.exceptions.TextXSemanticError,
+                    match=r'.*Unknown object.*not_there.*'):
+            mm.model_from_str('''
+            struct A { val x }
+            struct B { val a: A}
+            struct C {
+                val b: B
+                val a: A
+            }
+            instance c: C
+            reference c.b.a.not_there
+            ''')
+
+        # error: B.a is not of type A
+        with raises(textx.exceptions.TextXSemanticError,
+                    match=r'.*Unresolvable cross references.*x.*'):
+            mm.model_from_str('''
+            struct A { val x }
+            struct B { val a }
+            struct C {
+                val b: B
+                val a: A
+            }
+            instance c: C
+            reference c.b.a.x
+            ''')
