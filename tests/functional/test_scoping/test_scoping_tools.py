@@ -7,8 +7,76 @@ from textx.scoping.tools import resolve_model_path,\
     get_list_of_concatenated_objects
 from textx.scoping.tools import get_unique_named_object
 from textx import textx_isinstance
-from textx import get_children_of_type
+from textx import get_children_of_type, get_model
+from textx.metamodel import _getattr
 from pytest import raises
+import attr
+
+
+def test_textx_tools_with_frozen_classes():
+
+    @attr.s(frozen=True)
+    class Content:
+        parent = attr.ib()
+        elementsA = attr.ib()
+        elementsB = attr.ib()
+        ref = attr.ib()
+
+    @attr.s(frozen=True)
+    class Element:
+        parent = attr.ib()
+        name = attr.ib()
+
+    grammar = r'''
+    Model:
+        'use' use=Use
+        data=Content;
+    Content:
+        'A:' elementsA+=Element
+        'B:' elementsB+=Element
+        'ref' ref=[Element];
+    Element: '*' name=ID;
+    Use: 'A'|'B';
+    '''
+    text_ok1 = r'''
+        use A
+        A: *a *b *c
+        B: *d *e *f
+        ref b
+    '''
+    text_ok2 = r'''
+        use B
+        A: *a *b *c
+        B: *d *e *f
+        ref d
+    '''
+    text_not_ok = r'''
+        use B
+        A: *a *b *c
+        B: *d *e *f
+        ref b
+    '''
+    for classes in [[], [Content, Element]]:
+        print("Test Loop, classes==", classes)
+
+        def ref_scope(refItem, myattr, attr_ref):
+            if _getattr(get_model(refItem), "use") == 'A':
+                return resolve_model_path(
+                    refItem, "parent(Model).data.elementsA.{}".format(
+                        attr_ref.obj_name), True)
+            else:
+                return resolve_model_path(
+                    refItem, "parent(Model).data.elementsB.{}".format(
+                        attr_ref.obj_name), True)
+
+        mm = metamodel_from_str(grammar, classes=classes)
+        mm.register_scope_providers({
+            "Content.ref": ref_scope
+        })
+        mm.model_from_str(text_ok1)
+        mm.model_from_str(text_ok2)
+        with raises(Exception, match=r'.*Unknown object "b".*'):
+            mm.model_from_str(text_not_ok)
 
 
 def test_textx_isinstace():
