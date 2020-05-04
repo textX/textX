@@ -104,10 +104,7 @@ class PlainName(object):
         else:
             result = _inner_resolve_link_rule_ref(obj_ref.cls,
                                                   obj_ref.obj_name)
-        if result:
-            return result
-
-        return None  # error handled outside
+        return result  # error handled outside
 
 
 class FQN(object):
