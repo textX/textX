@@ -16,6 +16,11 @@ import attr
 def test_textx_tools_with_frozen_classes():
 
     @attr.s(frozen=True)
+    class Model:
+        use = attr.ib()
+        data = attr.ib()
+
+    @attr.s(frozen=True)
     class Content:
         parent = attr.ib()
         elementsA = attr.ib()
@@ -56,6 +61,8 @@ def test_textx_tools_with_frozen_classes():
         B: *d *e *f
         ref b
     '''
+    #  TODO: Model as custom class breaks the test
+    #  for classes in [[], [Model, Content, Element]]:
     for classes in [[], [Content, Element]]:
         print("Test Loop, classes==", classes)
 
