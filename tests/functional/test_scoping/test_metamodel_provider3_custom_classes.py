@@ -10,7 +10,7 @@ import attr
 
 
 @attr.s(frozen=True)
-class Cls:
+class Cls(object):
     parent = attr.ib()
     name = attr.ib()
     extends = attr.ib()
@@ -18,7 +18,7 @@ class Cls:
 
 
 @attr.s(frozen=True)
-class Obj:
+class Obj(object):
     parent = attr.ib()
     name = attr.ib()
     ref = attr.ib()

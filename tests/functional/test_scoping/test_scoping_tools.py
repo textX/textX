@@ -16,19 +16,19 @@ import attr
 def test_textx_tools_with_frozen_classes():
 
     @attr.s(frozen=True)
-    class Model:
+    class Model(object):
         use = attr.ib()
         data = attr.ib()
 
     @attr.s(frozen=True)
-    class Content:
+    class Content(object):
         parent = attr.ib()
         elementsA = attr.ib()
         elementsB = attr.ib()
         ref = attr.ib()
 
     @attr.s(frozen=True)
-    class Element:
+    class Element(object):
         parent = attr.ib()
         name = attr.ib()
 

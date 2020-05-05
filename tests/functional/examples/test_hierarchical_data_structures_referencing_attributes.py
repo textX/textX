@@ -6,21 +6,21 @@ import attr
 
 
 @attr.s(frozen=True)
-class Instance:
+class Instance(object):
     parent = attr.ib()
     name = attr.ib()
     type = attr.ib()
 
 
 @attr.s(frozen=True)
-class Reference:
+class Reference(object):
     parent = attr.ib()
     instance = attr.ib()
     refs = attr.ib()
 
 
 @attr.s(frozen=True)
-class RefItem:
+class RefItem(object):
     parent = attr.ib()
     valref = attr.ib()
 
