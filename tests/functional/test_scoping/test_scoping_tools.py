@@ -87,11 +87,13 @@ def test_textx_tools_with_frozen_classes():
         #    mm.model_from_str(text_not_ok)
         #
         # Workaround:
+        ok = False
         try:
-            mm.model_from_str(text_not_ok)
-            assert False
+            m = mm.model_from_str(text_not_ok)
+            print(m)
         except Exception:
-            assert True
+            ok = True
+        assert ok
 
 
 def test_textx_isinstace():
