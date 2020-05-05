@@ -5,7 +5,7 @@
 # License: MIT License
 #######################################################################
 
-from os.path import dirname, abspath, join
+from os.path import dirname, abspath, join, isabs
 from textx.exceptions import TextXSemanticError
 import textx.scoping as scoping
 from textx.scoping import Postponed
@@ -320,7 +320,8 @@ class ImportURI(scoping.ModelLoader):
                     model._tx_model_repository.load_model_using_search_path(
                         self.importURI_converter(obj.importURI), model=model,
                         search_path=my_search_path, encoding=encoding,
-                        add_to_local_models=add_to_local_models)
+                        add_to_local_models=add_to_local_models,
+                        model_params=model._tx_model_params)
                 obj._tx_loaded_models = [loaded_model]
 
             else:
@@ -333,7 +334,8 @@ class ImportURI(scoping.ModelLoader):
                     model._tx_model_repository.load_models_using_filepattern(
                         filename_pattern, model=model,
                         glob_args=self.glob_args, encoding=encoding,
-                        add_to_local_models=add_to_local_models)
+                        add_to_local_models=add_to_local_models,
+                        model_params=model._tx_model_params)
 
     def load_models(self, model, encoding='utf-8'):
         from textx.model import get_metamodel
@@ -439,6 +441,10 @@ class GlobalRepo(ImportURI):
       * create FQNGlobalRepo
       * register models used for lookup into the scope provider
     Then the scope provider is ready to be registered and used.
+
+    The model parameter `project_root` (see _tx_model_params) can be used to
+    set a project directory, where all file patterns not referring to an
+    absolute file position are looked up.
     """
 
     def __init__(self, scope_provider, filename_pattern=None, glob_args=None):
@@ -462,9 +468,13 @@ class GlobalRepo(ImportURI):
 
     def _load_referenced_models(self, model, encoding):
         for filename_pattern in self.filename_pattern_list:
+            if not isabs(filename_pattern) and \
+                    'project_root' in model._tx_model_params:
+                filename_pattern = join(
+                    model._tx_model_params['project_root'], filename_pattern)
             model._tx_model_repository.load_models_using_filepattern(
                 filename_pattern, model=model, glob_args=self.glob_args,
-                encoding=encoding)
+                encoding=encoding, model_params=model._tx_model_params)
         for m in self.models_to_be_added_directly:
             model._tx_model_repository._add_model(m)
 
@@ -478,7 +488,7 @@ class GlobalRepo(ImportURI):
         self.models_to_be_added_directly.append(model)
 
     def load_models_in_model_repo(self, global_model_repo=None,
-                                  encoding='utf-8'):
+                                  encoding='utf-8', **kwargs):
         """
         load all registered models (called explicitly from
         the user and not as an automatic activity).
@@ -490,16 +500,25 @@ class GlobalRepo(ImportURI):
 
         The metamodels must be identifiable via the MetaModelProvider.
 
+        kwargs are passed (like for `model_from_str' or
+        `model_from_file`, but no checks are performed.
+        You have to call the check manually, if you want
+        to check for undefined parameters (else, undefined
+        parameters passed via kwargs here are ignored).
+
         Returns:
             a GlobalModelRepository with the loaded models
         """
         import textx.scoping
+        from textx.model_params import ModelParams
+
         if not global_model_repo:
             global_model_repo = textx.scoping.GlobalModelRepository()
         for filename_pattern in self.filename_pattern_list:
             global_model_repo.load_models_using_filepattern(
                 filename_pattern, model=None, glob_args=self.glob_args,
-                is_main_model=True, encoding=encoding
+                is_main_model=True, encoding=encoding,
+                model_params=ModelParams(kwargs)
             )
         return global_model_repo
 

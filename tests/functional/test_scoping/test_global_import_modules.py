@@ -7,6 +7,8 @@ from textx import metamodel_from_file
 from textx.scoping.tools import get_unique_named_object, \
     check_unique_named_object_has_class
 
+from pytest import raises
+
 
 def test_globalimports_basic_test_with_single_model_file():
     """
@@ -147,6 +149,42 @@ def test_globalimports_basic_test_with_distributed_model():
     a = get_unique_named_object(inner_model, "socket")
     s1 = get_unique_named_object(inner_model, "s1")
     assert a == s1.ref
+
+    #################################
+    # END
+    #################################
+
+
+def test_globalimports_with_project_root_model_parameter():
+    """
+    Basic test for the FQNGlobalRepo.
+    Tests that "project_root" model parameter has an effect.
+    """
+    #################################
+    # META MODEL DEF
+    #################################
+
+    my_meta_model = metamodel_from_file(
+        join(abspath(dirname(__file__)), 'interface_model2',
+             'Interface.tx'))
+    my_meta_model.register_scope_providers(
+        {"*.*": scoping_providers.FQNGlobalRepo(
+            join("model_a", "*.if"))})
+
+    #################################
+    # MODEL PARSING
+    #################################
+
+    with raises(IOError):
+        _ = my_meta_model.model_from_file(
+            join(abspath(dirname(__file__)), "interface_model2",
+                 "model_a", "all_in_one.if"))
+
+    _ = my_meta_model.model_from_file(
+        join(abspath(dirname(__file__)), "interface_model2",
+             "model_a", "all_in_one.if"),
+        project_root=join(
+            abspath(dirname(__file__)), "interface_model2"))
 
     #################################
     # END
