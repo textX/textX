@@ -63,7 +63,7 @@ def get_parent_of_type(typ, obj):
             return obj
 
 
-def get_children(decider, root):
+def get_children(decider, root, children_first=False):
     """
     Returns a list of all model elements of type 'typ' starting from model
     element 'root'. The search process will follow containment links only.
@@ -73,6 +73,8 @@ def get_children(decider, root):
         decider(obj): a callable returning True if the object is of interest.
         root (model object): Python model object which is the start of the
             search process.
+        children_first (bool): a flag indicating whether children will be
+            returned before their parents (default=False)
     """
     collected = []
     collected_ids = set()
@@ -86,9 +88,10 @@ def get_children(decider, root):
         # Use meta-model to search for all contained child elements.
         cls = elem.__class__
 
-        if hasattr(cls, '_tx_attrs') and decider(elem):
-            collected.append(elem)
-            collected_ids.add(id(elem))
+        if not children_first:
+            if hasattr(cls, '_tx_attrs') and decider(elem):
+                collected.append(elem)
+                collected_ids.add(id(elem))
 
         if hasattr(cls, '_tx_attrs'):
             for attr_name, attr in cls._tx_attrs.items():
@@ -103,6 +106,11 @@ def get_children(decider, root):
                         if new_elem_list:
                             for new_elem in new_elem_list:
                                 follow(new_elem)
+
+        if children_first:
+            if hasattr(cls, '_tx_attrs') and decider(elem):
+                collected.append(elem)
+                collected_ids.add(id(elem))
 
     follow(root)
     return collected
@@ -653,9 +661,11 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                     assert not m._tx_reference_resolver.parser._inst_stack
 
                 for m in models:
-                    for obj in reversed(get_children(
-                            lambda x:
-                            hasattr(x.__class__, '_tx_obj_attrs'), m)):
+                    for obj in get_children(
+                        lambda x: hasattr(x.__class__, '_tx_obj_attrs'),
+                        m,
+                        children_first=True,
+                    ):
                         # If the the attributes to the class have been
                         # collected in _tx_obj_attrs we need to do a proper
                         # initialization at this point.
