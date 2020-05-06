@@ -5,6 +5,7 @@ Export of textX based models and metamodels to dot file.
 from __future__ import unicode_literals
 from arpeggio import Match, OrderedChoice, Sequence, OneOrMore, ZeroOrMore,\
     Optional
+from textx import textx_isinstance
 from textx.const import MULT_ZEROORMORE, MULT_ONEORMORE, MULT_ONE, \
     RULE_ABSTRACT, RULE_COMMON, RULE_MATCH
 from textx.lang import PRIMITIVE_PYTHON_TYPES, BASE_TYPE_NAMES, ALL_TYPE_NAMES
@@ -50,17 +51,17 @@ def dot_match_str(cls, other_match_rules=None):
                 return s.rule_name
 
         visited.add(s)
-        if isinstance(s, Match):
+        if textx_isinstance(s, Match):
             result = text(s)
-        elif isinstance(s, OrderedChoice):
+        elif textx_isinstance(s, OrderedChoice):
             result = "|".join([r(x) for x in s.nodes])
-        elif isinstance(s, Sequence):
+        elif textx_isinstance(s, Sequence):
             result = " ".join([r(x) for x in s.nodes])
-        elif isinstance(s, ZeroOrMore):
+        elif textx_isinstance(s, ZeroOrMore):
             result = "({})*".format(r(s.nodes[0]))
-        elif isinstance(s, OneOrMore):
+        elif textx_isinstance(s, OneOrMore):
             result = "({})+".format(r(s.nodes[0]))
-        elif isinstance(s, Optional):
+        elif textx_isinstance(s, Optional):
             result = "{}?".format(r(s.nodes[0]))
         else:
             # breakpoint()
@@ -78,12 +79,12 @@ def dot_match_str(cls, other_match_rules=None):
         visited = set()
         if other_match_rules is None:
             other_match_rules = set()
-        if not isinstance(e, Match):
+        if not textx_isinstance(e, Match):
             visited.add(e)
-        if isinstance(e, OrderedChoice):
+        if textx_isinstance(e, OrderedChoice):
             mstr = "|".join([r(x) for x in e.nodes
                              if x.rule_name in BASE_TYPE_NAMES or not x.root])
-        elif isinstance(e, Sequence):
+        elif textx_isinstance(e, Sequence):
             mstr = " ".join([r(x) for x in e.nodes])
         else:
             mstr = r(e)

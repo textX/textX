@@ -5,7 +5,7 @@
 # License: MIT License
 #######################################################################
 from textx import get_children, get_model
-from textx.metamodel import _getattr
+from textx.metamodel import unwrap_attrs, get_attrs_class
 import re
 
 
@@ -39,11 +39,21 @@ def textx_isinstance(obj, obj_cls):
      textx class.
     Args:
         obj: the object to be analyzed
-        obj_cls: the class to be checked
+        obj_cls: the class to be checked, if this is a tuple the obj is
+            checked for each element
 
     Returns:
         True if obj is an instance of obj_cls.
     """
+    obj = unwrap_attrs(obj)
+
+    if isinstance(obj_cls, tuple):
+        for elem in obj_cls:
+            if textx_isinstance(obj, elem):
+                return True
+
+        return False
+
     if obj_cls.__name__ == "OBJECT":
         return True
     if isinstance(obj, obj_cls):
@@ -83,12 +93,12 @@ def get_list_of_concatenated_objects(def_obj, path_to_extension):
 
     def rec_walk(obj_or_list):
         if (obj_or_list is not None):
-            if not isinstance(obj_or_list, list):
+            if not textx_isinstance(obj_or_list, list):
                 obj_or_list = [obj_or_list]
             for o in obj_or_list:
                 def_objs.append(o)
             for o in obj_or_list:
-                if type(o) is not Postponed:
+                if get_attrs_class(o) is not Postponed:
                     rec_walk(resolve_model_path(o, path_to_extension))
 
     rec_walk(def_obj)
@@ -186,9 +196,9 @@ def resolve_model_path(obj, dot_separated_name,
     names = dot_separated_name.split(".")
     match = re.match(r'parent\((\w+)\)', names[0])
 
-    if obj is None or type(obj) is Postponed:
+    if obj is None or (obj) is Postponed:
         return obj
-    elif type(obj) is list:
+    elif textx_isinstance(obj, list):
         if follow_named_element_in_lists:
             next_obj = get_named_obj_in_list(obj, names[0])
         else:
@@ -201,7 +211,7 @@ def resolve_model_path(obj, dot_separated_name,
         next_obj = get_recursive_parent_with_typename(
             next_obj,
             desired_parent_typename)
-        if type(next_obj) is Postponed:
+        if get_attrs_class(next_obj) is Postponed:
             return next_obj
         elif next_obj is not None:
             return resolve_model_path(next_obj, ".".join(names[1:]),
@@ -209,7 +219,7 @@ def resolve_model_path(obj, dot_separated_name,
         else:
             return None
     else:
-        next_obj = _getattr(obj, names[0])
+        next_obj = getattr(obj, names[0])
         if needs_to_be_resolved(obj, names[0]):
             return Postponed()
         elif next_obj is None:

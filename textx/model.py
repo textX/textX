@@ -12,7 +12,8 @@ from textx.const import MULT_OPTIONAL, MULT_ONE, MULT_ONEORMORE, \
     MULT_ZEROORMORE, RULE_ABSTRACT, RULE_MATCH, MULT_ASSIGN_ERROR, \
     UNKNOWN_OBJ_ERROR
 from textx.lang import PRIMITIVE_PYTHON_TYPES
-from textx.metamodel import _setattr, _getattr, _hasattr
+from textx.metamodel import _setattr, _getattr, _hasattr, wrap_attrs, \
+    unwrap_attrs, is_wrapped_attrs, get_attrs_class
 from textx.scoping import Postponed, remove_models_from_repositories, \
     get_included_models
 from textx.scoping.providers import PlainName as DefaultScopeProvider
@@ -76,7 +77,12 @@ def get_children(decider, root, children_first=False):
         children_first (bool): a flag indicating whether children will be
             returned before their parents (default=False)
     """
-    collected = []
+    if is_wrapped_attrs(root):
+        root = unwrap_attrs(root)
+        collected = wrap_attrs([])
+    else:
+        collected = []
+
     collected_ids = set()
 
     def follow(elem):
@@ -89,7 +95,7 @@ def get_children(decider, root, children_first=False):
         cls = elem.__class__
 
         if not children_first:
-            if hasattr(cls, '_tx_attrs') and decider(elem):
+            if hasattr(cls, '_tx_attrs') and decider(wrap_attrs(elem)):
                 collected.append(elem)
                 collected_ids.add(id(elem))
 
@@ -108,7 +114,7 @@ def get_children(decider, root, children_first=False):
                                 follow(new_elem)
 
         if children_first:
-            if hasattr(cls, '_tx_attrs') and decider(elem):
+            if hasattr(cls, '_tx_attrs') and decider(wrap_attrs(elem)):
                 collected.append(elem)
                 collected_ids.add(id(elem))
 
@@ -132,7 +138,7 @@ def get_children_of_type(typ, root):
     if type(typ) is not text:
         typ = typ.__name__
 
-    return get_children(lambda x: x.__class__.__name__ == typ, root)
+    return get_children(lambda x: get_attrs_class(x).__name__ == typ, root)
 
 
 class ObjCrossRef(object):
@@ -434,7 +440,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
             attr_name = node.rule._attr_name
             op = node.rule_name.split('_')[-1]
             model_obj, obj_attr = parser._inst_stack[-1]
-            cls = type(model_obj)
+            cls = get_attrs_class(model_obj)
             metaattr = cls._tx_attrs[attr_name]
 
             if parser.debug:
@@ -662,7 +668,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
 
                 for m in models:
                     for obj in get_children(
-                        lambda x: hasattr(x.__class__, '_tx_obj_attrs'),
+                        lambda x: hasattr(get_attrs_class(x), '_tx_obj_attrs'),
                         m,
                         children_first=True,
                     ):
@@ -784,12 +790,14 @@ class ReferenceResolver:
         Returns:
             True (has unresolved crossrefs) or False (else)
         """
+        real_obj = unwrap_attrs(obj)
+
         if get_model(obj) != self.model:
             return get_model(obj). \
                 _tx_reference_resolver.has_unresolved_crossrefs(obj)
         else:
             for crossref_obj, attr, crossref in self.parser._crossrefs:
-                if crossref_obj is obj:
+                if crossref_obj is real_obj:
                     if (not attr_name) or attr_name == attr.name:
                         return True
             return False
@@ -822,13 +830,15 @@ class ReferenceResolver:
                         if self.parser.debug:
                             self.parser.dprint(" FOUND {}".format(attr_ref))
                         resolved = metamodel.scope_providers[attr_ref](
-                            obj, attr, crossref)
+                            wrap_attrs(obj), attr, crossref)
                         break
                 else:
-                    resolved = default_scope(obj, attr, crossref)
+                    resolved = default_scope(wrap_attrs(obj), attr, crossref)
+
+                resolved = unwrap_attrs(resolved)
 
                 # Collect cross-references for textx-tools
-                if resolved and not type(resolved) is Postponed:
+                if resolved and not resolved.__class__ is Postponed:
                     if metamodel.textx_tools_support:
                         self.pos_crossref_list.append(
                             RefRulePosition(
@@ -860,7 +870,7 @@ class ReferenceResolver:
                         expected_obj_cls=crossref.cls,
                         filename=self.model._tx_filename)
 
-                if type(resolved) is Postponed:
+                if resolved.__class__ is Postponed:
                     self.delayed_crossrefs.append((obj, attr, crossref))
                     new_crossrefs.append((obj, attr, crossref))
                 else:

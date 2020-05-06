@@ -8,7 +8,7 @@
 from os.path import dirname, abspath, join
 from textx.exceptions import TextXSemanticError
 import textx.scoping as scoping
-from textx.metamodel import _hasattr, _getattr
+from textx.metamodel import get_attrs_dict
 from textx.scoping import Postponed
 
 """
@@ -91,7 +91,7 @@ class PlainName(object):
             from textx import textx_isinstance
             result_lst = get_children(
                 lambda x:
-                _hasattr(x, "name") and _getattr(x, "name") == obj_ref.obj_name
+                hasattr(x, "name") and x.name == obj_ref.obj_name
                 and textx_isinstance(x, obj_ref.cls), get_model(obj))
             if len(result_lst) == 1:
                 result = result_lst[0]
@@ -176,19 +176,20 @@ class FQN(object):
                         return_value = find_obj(m, name)
                         if return_value is not None:
                             return return_value
-                for attr in [a for a in parent.__dict__ if
+                for attr in [a for a in get_attrs_dict(parent) if
                              not a.startswith('__') and not
                              a.startswith('_tx_') and not
                              callable(getattr(parent, a))]:
                     obj = getattr(parent, attr)
-                    if isinstance(obj, (list, tuple)):
+                    from textx import textx_isinstance
+                    if textx_isinstance(obj, (list, tuple)):
                         for innerobj in obj:
-                            if _hasattr(innerobj, "name") \
-                                    and _getattr(innerobj, "name") == name:
+                            if hasattr(innerobj, "name") \
+                                    and innerobj.name == name:
                                 return innerobj
                     else:
-                        if _hasattr(obj, "name") \
-                                and _getattr(obj, "name") == name:
+                        if hasattr(obj, "name") \
+                                and obj.name == name:
                             return obj
                 return None
 
@@ -224,8 +225,8 @@ class FQN(object):
             ret = _find_obj_fqn(p, name, cls)
             if ret:
                 return ret
-            while _hasattr(p, "parent"):
-                p = _getattr(p, "parent")
+            while hasattr(p, "parent"):
+                p = p.parent
                 ret = _find_obj_fqn(p, name, cls)
                 if ret:
                     return ret
@@ -309,9 +310,9 @@ class ImportURI(scoping.ModelLoader):
             if self.importURI_to_scope_name is not None:
                 obj.name = self.importURI_to_scope_name(obj)
                 # print("setting name to {}".format(obj.name))
-            if _hasattr(obj, "name"):
-                if _getattr(obj, "name") is not None \
-                        and _getattr(obj, "name") != "":
+            if hasattr(obj, "name"):
+                if obj.name is not None \
+                        and obj.name != "":
                     add_to_local_models = not self.importAs
 
             visited.append(obj)
@@ -570,7 +571,7 @@ class RelativeName(object):
         # the referenced element must be a list
         # (else it is a design error in the path passed to
         # the RelativeName object).
-        if not isinstance(obj_list, list):
+        if not textx_isinstance(obj_list, list):
             from textx.exceptions import TextXError
             raise TextXError(
                 "expected path to list in the model ({})".format(
@@ -638,7 +639,7 @@ class ExtRelativeName(object):
             tmp_list = resolve_model_path(def_obj, self.path_to_target)
             assert tmp_list is not None
             # expected to point to  alist
-            if not isinstance(tmp_list, list):
+            if not textx_isinstance(tmp_list, list):
                 from textx.exceptions import TextXError
                 raise TextXError(
                     "expected path to list in the model ({})".format(

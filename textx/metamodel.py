@@ -5,8 +5,12 @@ from __future__ import absolute_import
 import codecs
 import os
 import sys
+from abc import ABCMeta
 from os.path import join, abspath, dirname
-from collections import OrderedDict
+from collections import OrderedDict, MutableMapping
+from typing import MutableSequence, Protocol, Generic
+
+import six
 from arpeggio import DebugPrinter
 from textx.six import add_metaclass
 from textx.lang import language_from_str, python_type, BASE_TYPE_NAMES, ID, \
@@ -98,19 +102,233 @@ def _setattr(obj, name, value):
 
 
 def _getattr(obj, name, *args):
-    if hasattr(obj.__class__, '_tx_obj_attrs')\
-            and id(obj) in obj.__class__._tx_obj_attrs:
-        return obj.__class__._tx_obj_attrs[id(obj)][name]
+    if hasattr(get_attrs_class(obj), '_tx_obj_attrs')\
+            and id(obj) in get_attrs_class(obj)._tx_obj_attrs:
+        try:
+            return get_attrs_class(obj)._tx_obj_attrs[id(obj)][name]
+        except KeyError:
+            raise AttributeError(
+                "Can't find pre-init attribute '{}' of object '{}'"
+                "".format(name, obj)
+            )
     else:
         return getattr(obj, name, *args)
 
 
 def _hasattr(obj, name):
-    if hasattr(obj.__class__, '_tx_obj_attrs')\
-            and id(obj) in obj.__class__._tx_obj_attrs:
-        return name in obj.__class__._tx_obj_attrs[id(obj)]
+    if hasattr(get_attrs_class(obj), '_tx_obj_attrs')\
+            and id(obj) in get_attrs_class(obj)._tx_obj_attrs:
+        return name in get_attrs_class(obj)._tx_obj_attrs[id(obj)]
     else:
         return hasattr(obj, name)
+
+
+def get_attrs_dict(obj):
+    obj = unwrap_attrs(obj)
+    cls = obj.__class__
+
+    if hasattr(cls, '_tx_obj_attrs')\
+            and id(obj) in cls._tx_obj_attrs:
+        return cls._tx_obj_attrs[id(obj)]
+    else:
+        return obj.__dict__
+
+
+def get_attrs_class(obj):
+    obj = unwrap_attrs(obj)
+    return obj.__class__
+
+
+def wrap_attrs(obj):
+    if is_wrapped_attrs(obj):
+        return obj
+    if isinstance(obj, (list, tuple)):
+        return AttrsWrapperSequence(obj)
+    if isinstance(obj, dict):
+        return AttrsWrapperMapping(obj)
+    if hasattr(obj.__class__, '_tx_attrs'):
+        return AttrsWrapper(obj)
+
+    return obj
+
+
+def is_wrapped_attrs(obj):
+    try:
+        return obj.__is_wrapped__
+    except AttributeError:
+        return False
+
+
+def unwrap_attrs(obj):
+    if is_wrapped_attrs(obj):
+        return obj.__real_obj__
+
+    return obj
+
+
+class WrappingError(RuntimeError):
+    pass
+
+
+class WrapperMeta(ABCMeta):
+    def __init__(self, name, bases, dict):
+        super(ABCMeta, self).__init__(name, bases, dict)
+        self.whitelist = ('__new__', '__init__', '_tx_instancecheck',
+                          '__name__', '_abc_impl', '__subclasshook__',
+                          '__subclasses__')
+        self.__is_wrapped__ = True
+
+    def __eq__(self, other):
+        if other in (Generic, Protocol):
+            return False
+        raise WrappingError("A wrapper class should never be compared to "
+                            "another class.")
+
+    def __getattribute__(self, item):
+        try:
+            whitelist = super(WrapperMeta, self).__getattribute__('whitelist')
+        except AttributeError:
+            whitelisted = True
+        else:
+            whitelisted = item in whitelist
+
+        if whitelisted:
+            return super(WrapperMeta, self).__getattribute__(item)
+        else:
+            raise WrappingError("The attributes of a wrapper class should "
+                                "never be accessed. {}".format(item))
+
+    def _tx_instancecheck(cls, instance):
+        return super(ABCMeta, cls).__instancecheck__(instance)
+
+
+class AttrsWrapper(six.with_metaclass(WrapperMeta, object)):
+    def __init__(self, obj):
+        super(AttrsWrapper, self).__setattr__('__real_obj__', obj)
+
+    def __getattribute__(self, item):
+        if item == '__real_obj__':
+            return super(AttrsWrapper, self).__getattribute__(item)
+
+        if item == '__is_wrapped__':
+            return True
+
+        if item == '__class__':
+            raise WrappingError('Can\'t call __class__ on wrapped object '
+                                'use get_attrs_class instead.')
+
+        if item == '__dict__':
+            raise WrappingError('Can\'t call __dict__ on wrapped object '
+                                'use get_attrs_dict instead.')
+
+        return wrap_attrs(_getattr(self.__real_obj__, item))
+
+    def __setattr__(self, key, value):
+        _setattr(self.__real_obj__, key, unwrap_attrs(value))
+
+    def __eq__(self, other):
+        try:
+            other_real = other.__real_obj__
+        except AttributeError:
+            other_real = other
+
+        return self.__real_obj__ == other_real
+
+    def __repr__(self):
+        return "[wrapped {}]".format(repr(self.__real_obj__))
+
+
+class AttrsWrapperSequence(six.with_metaclass(WrapperMeta, MutableSequence)):
+    def __init__(self, obj):
+        self.__real_obj__ = obj
+
+    def __getattribute__(self, item):
+        if item == '__real_obj__':
+            return super(AttrsWrapperSequence, self).__getattribute__(item)
+
+        if item == '__is_wrapped__':
+            return True
+
+        if item == '__class__':
+            raise WrappingError('Can\'t call __class__ on wrapped object '
+                                'use get_attrs_class instead.')
+
+        if item == '__dict__':
+            raise WrappingError('Can\'t call __dict__ on wrapped object '
+                                'use get_attrs_dict instead.')
+
+        return wrap_attrs(_getattr(self.__real_obj__, item))
+
+    def __iter__(self):
+        for x in self.__real_obj__:
+            yield wrap_attrs(x)
+
+    def __getitem__(self, key):
+        return wrap_attrs(self.__real_obj__[key])
+
+    def __setitem__(self, key, value):
+        self.__real_obj__[key] = unwrap_attrs(value)
+
+    def __delitem__(self, key):
+        del self.__real_obj__[key]
+
+    def __len__(self):
+        return len(self.__real_obj__)
+
+    def __repr__(self):
+        return "[wrapped {}]".format(repr(self.__real_obj__))
+
+    def __add__(self, other):
+        return wrap_attrs(self.__real_obj__ + other)
+
+    def __radd__(self, other):
+        return wrap_attrs(other + self.__real_obj__)
+
+    def insert(self, index, element):
+        self.__real_obj__.insert(index, unwrap_attrs(element))
+
+
+class AttrsWrapperMapping(six.with_metaclass(WrapperMeta, MutableMapping)):
+
+    def __init__(self, obj):
+        self.__real_obj__ = obj
+        self.__is_wrapped__ = True
+
+    def __getattribute__(self, item):
+        if item == '__real_obj__':
+            return super(AttrsWrapperMapping, self).__getattribute__(item)
+
+        if item == '__is_wrapped__':
+            return True
+
+        if item == '__class__':
+            raise WrappingError('Can\'t call __class__ on wrapped object '
+                                'use get_attrs_class instead.')
+
+        if item == '__dict__':
+            raise WrappingError('Can\'t call __dict__ on wrapped object '
+                                'use get_attrs_dict instead.')
+
+        return wrap_attrs(_getattr(self.__real_obj__, item))
+
+    def __getitem__(self, key):
+        return wrap_attrs(self.__real_obj__[key])
+
+    def __setitem__(self, key, value):
+        self.__real_obj__[key] = unwrap_attrs(value)
+
+    def __delitem__(self, key):
+        del self.__real_obj__[key]
+
+    def __len__(self):
+        return len(self.__real_obj__)
+
+    def __repr__(self):
+        return "[wrapped {}]".format(repr(self.__real_obj__))
+
+    def __iter__(self):
+        for x in self.__real_obj__:
+            yield wrap_attrs(x)
 
 
 class TextXMetaModel(DebugPrinter):
