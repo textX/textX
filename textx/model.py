@@ -639,7 +639,8 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                     # print("***RESOLVING {} models".format(len(models)))
                     for m in models:
                         resolved_count_for_this_model, delayed_crossrefs = \
-                            _getattr(m, "_tx_reference_resolver").resolve_one_step()
+                            _getattr(m, "_tx_reference_resolver"
+                                     ).resolve_one_step()
                         resolved_count += resolved_count_for_this_model
                         unresolved_count += len(delayed_crossrefs)
                     # print("DEBUG: delayed #:{} unresolved #:{}".
@@ -649,7 +650,8 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
 
                     for m in models:
                         for _, _, delayed \
-                                in _getattr(m, "_tx_reference_resolver").delayed_crossrefs:
+                                in _getattr(m, "_tx_reference_resolver"
+                                            ).delayed_crossrefs:
                             line, col = parser.pos_to_linecol(delayed.position)
                             error_text += ' "{}" of class "{}" at {}'.format(
                                 delayed.obj_name, delayed.cls.__name__, (
@@ -658,7 +660,8 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
 
                 for m in models:
                     # TODO: what does this check?
-                    assert not _getattr(m, "_tx_reference_resolver").parser._inst_stack
+                    assert not _getattr(m, "_tx_reference_resolver"
+                                        ).parser._inst_stack
 
                 # cleanup
                 for m in models:
@@ -685,15 +688,16 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                             # attr skips underscores for __init__ params
                             # (https://www.attrs.org/en/stable/examples.html)
                             # How do we handle this?
-                            # We could add a metamodel.transform_keys_for_constructing_user_objects ???????
+                            # We could add a metamodel.transform_keys_for_con-
+                            #  structing_user_objects ???????
 
                             # One option:
                             # attrs = dict([(k.lstrip('_'),v)
                             #              for (k,v) in attrs.items()])
 
                             # Another option
-                            attrs = dict([(k,v)
-                                          for (k,v) in filter(
+                            attrs = dict([(k, v)
+                                          for (k, v) in filter(
                                     lambda p: not p[0].startswith('_tx_'),
                                     attrs.items())])
 
@@ -804,7 +808,8 @@ class ReferenceResolver:
         """
         if get_model(obj) is not self.model:
             return _getattr(get_model(obj),
-                "_tx_reference_resolver").has_unresolved_crossrefs(obj)
+                            "_tx_reference_resolver"
+                            ).has_unresolved_crossrefs(obj)
         else:
             for crossref_obj, attr, crossref in self.parser._crossrefs:
                 if crossref_obj is obj:

@@ -17,8 +17,8 @@ def test_textx_tools_with_frozen_classes():
 
     @attr.s(frozen=True)
     class Model(object):
-        #_tx_filename = attr.ib()
-        #_tx_parser = attr.ib()
+        # _tx_filename = attr.ib()
+        # _tx_parser = attr.ib()
         use = attr.ib()
         data = attr.ib()
 
@@ -66,11 +66,11 @@ def test_textx_tools_with_frozen_classes():
     for classes in [[], [Model, Content, Element]]:
         print("Test Loop, classes==", classes)
 
-        ref_scope_was_used = False
+        ref_scope_was_used = [False]
 
         def ref_scope(refItem, myattr, attr_ref):
-            nonlocal ref_scope_was_used
-            ref_scope_was_used = True
+            # python3: nonlocal ref_scope_was_used
+            ref_scope_was_used[0] = True
             if _getattr(get_model(refItem), "use") == 'A':
                 return resolve_model_path(
                     refItem, "parent(Model).data.elementsA.{}".format(
@@ -84,18 +84,18 @@ def test_textx_tools_with_frozen_classes():
         mm.register_scope_providers({
             "Content.ref": ref_scope
         })
-        ref_scope_was_used = False
+        ref_scope_was_used[0] = False
         mm.model_from_str(text_ok1)
-        assert ref_scope_was_used
+        assert ref_scope_was_used[0]
 
-        ref_scope_was_used = False
+        ref_scope_was_used[0] = False
         mm.model_from_str(text_ok2)
-        assert ref_scope_was_used
+        assert ref_scope_was_used[0]
 
-        ref_scope_was_used = False
+        ref_scope_was_used[0] = False
         with raises(Exception, match=r'.*Unknown object "b".*'):
             mm.model_from_str(text_not_ok)
-        assert ref_scope_was_used
+        assert ref_scope_was_used[0]
 
 
 def test_textx_isinstace():
