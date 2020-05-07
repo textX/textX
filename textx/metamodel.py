@@ -113,6 +113,14 @@ def _hasattr(obj, name):
         return hasattr(obj, name)
 
 
+def _delattr(obj, name):
+    if hasattr(obj.__class__, '_tx_obj_attrs')\
+            and id(obj) in obj.__class__._tx_obj_attrs:
+        del obj.__class__._tx_obj_attrs[id(obj)][name]
+    else:
+        delattr(obj, name)
+
+
 class TextXMetaModel(DebugPrinter):
     """
     Meta-model contains all information about language abstract syntax.

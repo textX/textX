@@ -17,6 +17,8 @@ def test_textx_tools_with_frozen_classes():
 
     @attr.s(frozen=True)
     class Model(object):
+        #_tx_filename = attr.ib()
+        #_tx_parser = attr.ib()
         use = attr.ib()
         data = attr.ib()
 
@@ -61,11 +63,14 @@ def test_textx_tools_with_frozen_classes():
         B: *d *e *f
         ref b
     '''
-    #  TODO: Model as custom class breaks the test
     for classes in [[], [Model, Content, Element]]:
         print("Test Loop, classes==", classes)
 
+        ref_scope_was_used = False
+
         def ref_scope(refItem, myattr, attr_ref):
+            nonlocal ref_scope_was_used
+            ref_scope_was_used = True
             if _getattr(get_model(refItem), "use") == 'A':
                 return resolve_model_path(
                     refItem, "parent(Model).data.elementsA.{}".format(
@@ -79,21 +84,18 @@ def test_textx_tools_with_frozen_classes():
         mm.register_scope_providers({
             "Content.ref": ref_scope
         })
+        ref_scope_was_used = False
         mm.model_from_str(text_ok1)
-        mm.model_from_str(text_ok2)
+        assert ref_scope_was_used
 
-        # Somehow, raises does not work here...
-        # with raises(Exception, match=r'.*Unknown object "b".*'):
-        #    mm.model_from_str(text_not_ok)
-        #
-        # Workaround:
-        ok = False
-        try:
-            m = mm.model_from_str(text_not_ok)
-            print(m)
-        except Exception:
-            ok = True
-        assert ok
+        ref_scope_was_used = False
+        mm.model_from_str(text_ok2)
+        assert ref_scope_was_used
+
+        ref_scope_was_used = False
+        with raises(Exception, match=r'.*Unknown object "b".*'):
+            mm.model_from_str(text_not_ok)
+        assert ref_scope_was_used
 
 
 def test_textx_isinstace():

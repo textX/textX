@@ -12,7 +12,7 @@ from textx.const import MULT_OPTIONAL, MULT_ONE, MULT_ONEORMORE, \
     MULT_ZEROORMORE, RULE_ABSTRACT, RULE_MATCH, MULT_ASSIGN_ERROR, \
     UNKNOWN_OBJ_ERROR
 from textx.lang import PRIMITIVE_PYTHON_TYPES
-from textx.metamodel import _setattr, _getattr, _hasattr
+from textx.metamodel import _setattr, _getattr, _hasattr, _delattr
 from textx.scoping import Postponed, remove_models_from_repositories, \
     get_included_models
 from textx.scoping.providers import PlainName as DefaultScopeProvider
@@ -603,7 +603,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
         # Register filename of the model for later use (e.g. imports/scoping).
         is_primitive_type = False
         try:
-            model._tx_filename = file_name
+            _setattr(model, "_tx_filename", file_name)
             # mark model as "model being constructed"
             _start_model_construction(model)
         except AttributeError:
@@ -620,16 +620,16 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                 scope_provider.load_models(model, encoding=encoding)
 
         if not is_primitive_type:
-            model._tx_reference_resolver = ReferenceResolver(
-                parser, model, pos_crossref_list)
-            model._tx_parser = parser
+            _setattr(model, "_tx_reference_resolver", ReferenceResolver(
+                parser, model, pos_crossref_list))
+            _setattr(model, "_tx_parser", parser)
 
         if is_main_model:
             models = get_included_models(model)
             try:
                 # filter out all models w/o resolver:
                 models = list(filter(
-                    lambda x: hasattr(x, "_tx_reference_resolver"), models))
+                    lambda x: _hasattr(x, "_tx_reference_resolver"), models))
 
                 resolved_count = 1
                 unresolved_count = 1
@@ -639,7 +639,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                     # print("***RESOLVING {} models".format(len(models)))
                     for m in models:
                         resolved_count_for_this_model, delayed_crossrefs = \
-                            m._tx_reference_resolver.resolve_one_step()
+                            _getattr(m, "_tx_reference_resolver").resolve_one_step()
                         resolved_count += resolved_count_for_this_model
                         unresolved_count += len(delayed_crossrefs)
                     # print("DEBUG: delayed #:{} unresolved #:{}".
@@ -649,7 +649,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
 
                     for m in models:
                         for _, _, delayed \
-                                in m._tx_reference_resolver.delayed_crossrefs:
+                                in _getattr(m, "_tx_reference_resolver").delayed_crossrefs:
                             line, col = parser.pos_to_linecol(delayed.position)
                             error_text += ' "{}" of class "{}" at {}'.format(
                                 delayed.obj_name, delayed.cls.__name__, (
@@ -658,8 +658,13 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
 
                 for m in models:
                     # TODO: what does this check?
-                    assert not m._tx_reference_resolver.parser._inst_stack
+                    assert not _getattr(m, "_tx_reference_resolver").parser._inst_stack
 
+                # cleanup
+                for m in models:
+                    _end_model_construction(m)
+
+                # finally terminate constructing objects
                 for m in models:
                     for obj in get_children(
                         lambda x: hasattr(x.__class__, '_tx_obj_attrs'),
@@ -674,6 +679,24 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                             # in metamodel.obj and remove them from this dict.
                             attrs = obj.__class__._tx_obj_attrs.pop(
                                 id(obj))
+
+                            # Transform attr
+                            # --------------
+                            # attr skips underscores for __init__ params
+                            # (https://www.attrs.org/en/stable/examples.html)
+                            # How do we handle this?
+                            # We could add a metamodel.transform_keys_for_constructing_user_objects ???????
+
+                            # One option:
+                            # attrs = dict([(k.lstrip('_'),v)
+                            #              for (k,v) in attrs.items()])
+
+                            # Another option
+                            attrs = dict([(k,v)
+                                          for (k,v) in filter(
+                                    lambda p: not p[0].startswith('_tx_'),
+                                    attrs.items())])
+
                             obj.__init__(**attrs)
                         except TypeError as e:
                             # Add class name information in case of wrong
@@ -683,10 +706,6 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                             parser.dprint(traceback.print_exc())
                             raise e
 
-                # cleanup
-                for m in models:
-                    _end_model_construction(m)
-
                 # final check that everything went ok
                 for m in models:
                     assert 0 == len(get_children_of_type(
@@ -695,7 +714,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                     # We have model loaded and all link resolved
                     # So we shall do a depth-first call of object
                     # processors if any processor is defined.
-                    if m._tx_metamodel.obj_processors:
+                    if _getattr(m, "_tx_metamodel").obj_processors:
                         if parser.debug:
                             parser.dprint("CALLING OBJECT PROCESSORS")
                         call_obj_processors(m._tx_metamodel, m)
@@ -734,15 +753,15 @@ def _start_model_construction(model):
     model being in construction).
     See: _remove_all_affected_models_in_construction
     """
-    assert not hasattr(model, "_tx_reference_resolver")
-    model._tx_reference_resolver = None
+    assert not _hasattr(model, "_tx_reference_resolver")
+    _setattr(model, "_tx_reference_resolver", None)
 
 
 def _end_model_construction(model):
     """
     End model construction (see _start_model_construction).
     """
-    del model._tx_reference_resolver
+    _delattr(model, "_tx_reference_resolver")
 
 
 def _remove_all_affected_models_in_construction(model):
@@ -756,7 +775,7 @@ def _remove_all_affected_models_in_construction(model):
     """
     all_affected_models = get_included_models(model)
     models_to_be_removed = list(filter(
-        lambda x: hasattr(x, "_tx_reference_resolver"),
+        lambda x: _hasattr(x, "_tx_reference_resolver"),
         all_affected_models))
     remove_models_from_repositories(all_affected_models,
                                     models_to_be_removed)
@@ -783,9 +802,9 @@ class ReferenceResolver:
         Returns:
             True (has unresolved crossrefs) or False (else)
         """
-        if get_model(obj) != self.model:
-            return get_model(obj). \
-                _tx_reference_resolver.has_unresolved_crossrefs(obj)
+        if get_model(obj) is not self.model:
+            return _getattr(get_model(obj),
+                "_tx_reference_resolver").has_unresolved_crossrefs(obj)
         else:
             for crossref_obj, attr, crossref in self.parser._crossrefs:
                 if crossref_obj is obj:
@@ -811,7 +830,7 @@ class ReferenceResolver:
         # -------------------------
         default_scope = DefaultScopeProvider()
         for obj, attr, crossref in current_crossrefs:
-            if (get_model(obj) == self.model):
+            if get_model(obj) is self.model:
                 attr_value = _getattr(obj, attr.name)
                 attr_refs = [obj.__class__.__name__ + "." + attr.name,
                              "*." + attr.name, obj.__class__.__name__ + ".*",
@@ -857,7 +876,7 @@ class ReferenceResolver:
                             crossref.obj_name, crossref.cls.__name__),
                         line=line, col=col, err_type=UNKNOWN_OBJ_ERROR,
                         expected_obj_cls=crossref.cls,
-                        filename=self.model._tx_filename)
+                        filename=_getattr(self.model, "_tx_filename"))
 
                 if type(resolved) is Postponed:
                     self.delayed_crossrefs.append((obj, attr, crossref))
