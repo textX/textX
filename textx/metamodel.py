@@ -8,7 +8,7 @@ import sys
 from abc import ABCMeta
 from os.path import join, abspath, dirname
 from collections import OrderedDict, MutableMapping
-from typing import MutableSequence, Protocol, Generic
+from typing import MutableSequence
 
 import six
 from arpeggio import DebugPrinter
@@ -179,8 +179,20 @@ class WrapperMeta(ABCMeta):
         self.__is_wrapped__ = True
 
     def __eq__(self, other):
-        if other in (Generic, Protocol):
-            return False
+        try:
+            from typing import Generic
+        except ImportError:
+            pass
+        else:
+            if other == Generic:
+                return False
+        try:
+            from typing import Protocol
+        except ImportError:
+            pass
+        else:
+            if other == Protocol:
+                return False
         raise WrappingError("A wrapper class should never be compared to "
                             "another class.")
 
