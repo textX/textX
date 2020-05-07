@@ -691,6 +691,10 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                             # We could add a metamodel.transform_keys_for_con-
                             #  structing_user_objects ???????
 
+                            # TODO: we need to find an elegant way to solve
+                            # this in a flexible (controllable by outside-
+                            # manner)!
+
                             # One option:
                             # attrs = dict([(k.lstrip('_'),v)
                             #              for (k,v) in attrs.items()])
