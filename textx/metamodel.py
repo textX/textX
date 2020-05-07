@@ -442,9 +442,6 @@ class TextXMetaModel(DebugPrinter):
         if external_attributes:
             cls._tx_obj_attrs = {}
 
-        if external_attributes:
-            cls._tx_obj_attrs = {}
-
     def _cls_fqn(self, cls):
         """
         Returns fully qualified name for the class based on current namespace

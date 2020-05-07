@@ -81,15 +81,17 @@ def get_children(decider, root, children_first=False):
 
     def follow(elem):
 
-        if id(elem) in map(lambda x: id(x), collected):
+        if id(elem) in collected_ids:
+            # Use id to avoid relying on __eq__ of user class
             return
 
         # Use meta-model to search for all contained child elements.
         cls = elem.__class__
 
-        if hasattr(cls, '_tx_attrs') and decider(elem):
-            collected.append(elem)
-            collected_ids.add(id(elem))
+        if not children_first:
+            if hasattr(cls, '_tx_attrs') and decider(elem):
+                collected.append(elem)
+                collected_ids.add(id(elem))
 
         if hasattr(cls, '_tx_attrs'):
             for attr_name, attr in cls._tx_attrs.items():
@@ -659,9 +661,11 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                     assert not m._tx_reference_resolver.parser._inst_stack
 
                 for m in models:
-                    for obj in reversed(get_children(
-                            lambda x:
-                            hasattr(x.__class__, '_tx_obj_attrs'), m)):
+                    for obj in get_children(
+                        lambda x: hasattr(x.__class__, '_tx_obj_attrs'),
+                        m,
+                        children_first=True,
+                    ):
                         # If the the attributes to the class have been
                         # collected in _tx_obj_attrs we need to do a proper
                         # initialization at this point.
