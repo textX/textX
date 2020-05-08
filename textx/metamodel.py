@@ -429,13 +429,11 @@ class TextXMetaModel(DebugPrinter):
         else:
             return ns + '.' + cls.__name__
 
-    def _init_obj_attrs(self, obj, user=False):
+    def _init_obj_attrs(self, obj):
         """
         Initialize obj attributes.
         Args:
             obj(object): A python object to set attributes to.
-            user(bool): If this object is a user object store attributes
-                outside the object.
         """
         for attr in obj.__class__._tx_attrs.values():
             if attr.mult in [MULT_ZEROORMORE, MULT_ONEORMORE]:

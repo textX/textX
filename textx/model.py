@@ -271,6 +271,12 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                     self.dprint("*** PARSING MODEL ***")
 
                 self.parse(model_str, file_name=file_name)
+
+                # Used to keep track of user class instances
+                self._user_class_inst = []
+
+                self._replace_user_attr_methods()
+
                 # Transform parse tree to model. Skip root node which
                 # represents the whole file ending in EOF.
                 model = parse_tree_to_objgraph(
@@ -278,6 +284,9 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                     pre_ref_resolution_callback=pre_ref_resolution_callback,
                     is_main_model=is_main_model, encoding=encoding)
             finally:
+                # Restore of user classes replaced attr methods
+                self._restore_user_attr_methods()
+
                 if debug is not None:
                     self.debug = old_debug_state
 
@@ -287,6 +296,62 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                 # model is some primitive python type (e.g. str)
                 pass
             return model
+
+        # Custom attr dunder methods used for user classes during loading
+        def _hasattr(obj, name):
+            try:
+                obj_attrs = obj.__class__._tx_obj_attrs
+                return name in obj_attrs[id(obj)]
+            except AttributeError:
+                return False
+
+        def _getattr(obj, name):
+            try:
+                return obj._tx_obj_attrs[id(obj)][name]
+            except KeyError:
+                raise AttributeError
+
+        def _setattr(obj, name, value):
+            obj._tx_obj_attrs[id(obj)][name] = value
+
+        def _delattr(obj, name):
+            obj._tx_obj_attrs[id(obj)].pop(name)
+
+        def _replace_user_attr_methods(self):
+            """
+            Replace has/get/set/del(attr) methods on user classes
+            to support postponing of user obj initialization.
+            """
+            for user_class in self.metamodel.user_classes.values():
+                if not hasattr(user_class, '_tx_instrumented'):
+                    for a_name in ('has', 'get', 'set', 'del'):
+                        real_name = '__{}attr__'.format(a_name)
+                        cached_name = '_tx_old_{}attr'.format(a_name)
+                        setattr(user_class, cached_name,
+                                getattr(user_class, real_name, None))
+                        setattr(user_class, real_name,
+                                getattr(self.__class__,
+                                        '_{}attr'.format(a_name)))
+                    setattr(user_class, '_tx_instrumented', True)
+
+        def _restore_user_attr_methods(self):
+            """
+            Restore original has/get/set/del(attr) methods on user
+            classes.
+            """
+            for user_class in self.metamodel.user_classes.values():
+                if hasattr(user_class, '_tx_instrumented'):
+                    for a_name in ('has', 'get', 'set', 'del'):
+                        cached_name = '_tx_old_{}attr'.format(a_name)
+                        real_name = '__{}attr__'.format(a_name)
+                        if hasattr(user_class, cached_name):
+                            cached_meth = getattr(user_class, cached_name)
+                            if cached_meth is not None:
+                                setattr(user_class, real_name, cached_meth)
+                            else:
+                                delattr(user_class, real_name)
+                            delattr(user_class, cached_name)
+                    delattr(user_class, '_tx_instrumented')
 
     return TextXModelParser(**kwargs)
 
@@ -372,6 +437,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
 
             # If user class is given
             # use it instead of generic one
+            is_user = False
             if node.rule_name in metamodel.user_classes:
                 user_class = metamodel.user_classes[node.rule_name]
 
@@ -380,26 +446,21 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                 # So that nested object get correct reference
                 inst = user_class.__new__(user_class)
                 user_class._tx_obj_attrs[id(inst)] = {}
+                is_user = True
 
-                # Initialize object attributes for user class
-                parser.metamodel._init_obj_attrs(inst, user=True)
             else:
                 # Generic class will call attributes init
                 # from the constructor
                 inst = mclass.__new__(mclass)
 
-                # Initialize object attributes
-                parser.metamodel._init_obj_attrs(inst)
+            # Initialize object attributes
+            parser.metamodel._init_obj_attrs(inst)
 
             # Collect attributes directly on meta-class instance
             obj_attrs = inst
 
-            try:
-                inst._tx_position = node.position
-                inst._tx_position_end = node.position_end
-            except AttributeError:
-                # Skip if class doesn't allow to set these attributes
-                pass
+            inst._tx_position = node.position
+            inst._tx_position_end = node.position_end
 
             # Push real obj. and dummy attr obj on the instance stack
             parser._inst_stack.append((inst, obj_attrs))
@@ -411,6 +472,9 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                 process_node(n)
 
             parser._inst_stack.pop()
+
+            if is_user:
+                parser._user_class_inst.append(inst)
 
             # If this object is nested add 'parent' reference
             if parser._inst_stack:
@@ -653,31 +717,44 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                     raise TextXSemanticError(error_text, line=line, col=col)
 
                 for m in models:
-                    # TODO: what does this check?
                     assert not m._tx_reference_resolver.parser._inst_stack
 
-                for m in models:
-                    for obj in get_children(
-                        lambda x: hasattr(x.__class__, '_tx_obj_attrs'),
-                        m,
-                        children_first=True,
-                    ):
-                        # If the the attributes to the class have been
-                        # collected in _tx_obj_attrs we need to do a proper
-                        # initialization at this point.
-                        try:
-                            # Get the attributes which have been collected
-                            # in metamodel.obj and remove them from this dict.
-                            attrs = obj.__class__._tx_obj_attrs.pop(
-                                id(obj))
-                            obj.__init__(**attrs)
-                        except TypeError as e:
-                            # Add class name information in case of wrong
-                            # constructor parameters
-                            e.args += ("for class %s" %
-                                       obj.__class__.__name__,)
-                            parser.dprint(traceback.print_exc())
-                            raise e
+                # At this point we should restore original user attr methods as
+                # attribute collection is over and we should switch back to
+                # "normal" behavior
+                parser._restore_user_attr_methods()
+
+                # If the the attributes to the class have been
+                # collected in _tx_obj_attrs we need to do a proper
+                # initialization at this point.
+                for obj in parser._user_class_inst:
+                    try:
+                        # Get the attributes which have been collected
+                        # in metamodel.obj and remove them from this dict.
+                        attrs = obj.__class__._tx_obj_attrs.pop(id(obj))
+
+                        # First try to apply attributes directly. It might
+                        # not be possible for some (e.g. __slots__ are used)
+                        for name, value in attrs.items():
+                            try:
+                                setattr(obj, name, value)
+                            except AttributeError:
+                                # Not possible to set the attribute
+                                pass
+
+                        attrs = {k: v for k, v in attrs.items()
+                                 if not k.startswith('_tx_')}
+
+                        # Call constructor for custom initialization
+                        obj.__init__(**attrs)
+
+                    except TypeError as e:
+                        # Add class name information in case of wrong
+                        # constructor parameters
+                        e.args += ("for class %s" %
+                                   obj.__class__.__name__,)
+                        parser.dprint(traceback.print_exc())
+                        raise e
 
                 # cleanup
                 for m in models:
