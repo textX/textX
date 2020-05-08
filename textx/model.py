@@ -12,7 +12,6 @@ from textx.const import MULT_OPTIONAL, MULT_ONE, MULT_ONEORMORE, \
     MULT_ZEROORMORE, RULE_ABSTRACT, RULE_MATCH, MULT_ASSIGN_ERROR, \
     UNKNOWN_OBJ_ERROR
 from textx.lang import PRIMITIVE_PYTHON_TYPES
-from textx.metamodel import _setattr, _getattr, _hasattr
 from textx.scoping import Postponed, remove_models_from_repositories, \
     get_included_models
 from textx.scoping.providers import PlainName as DefaultScopeProvider
@@ -31,8 +30,8 @@ def get_model(obj):
     Finds model root element for the given object.
     """
     p = obj
-    while _hasattr(p, 'parent'):
-        p = _getattr(p, 'parent')
+    while hasattr(p, 'parent'):
+        p = p.parent
     return p
 
 
@@ -57,8 +56,8 @@ def get_parent_of_type(typ, obj):
     if type(typ) is not text:
         typ = typ.__name__
 
-    while _hasattr(obj, 'parent'):
-        obj = _getattr(obj, 'parent')
+    while hasattr(obj, 'parent'):
+        obj = getattr(obj, 'parent')
         if obj.__class__.__name__ == typ:
             return obj
 
@@ -98,11 +97,11 @@ def get_children(decider, root, children_first=False):
                 # Follow only attributes with containment semantics
                 if attr.cont:
                     if attr.mult in (MULT_ONE, MULT_OPTIONAL):
-                        new_elem = _getattr(elem, attr_name)
+                        new_elem = getattr(elem, attr_name)
                         if new_elem:
                             follow(new_elem)
                     else:
-                        new_elem_list = _getattr(elem, attr_name)
+                        new_elem_list = getattr(elem, attr_name)
                         if new_elem_list:
                             for new_elem in new_elem_list:
                                 follow(new_elem)
@@ -415,16 +414,14 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
 
             # If this object is nested add 'parent' reference
             if parser._inst_stack:
-                _setattr(
-                    obj_attrs, 'parent', parser._inst_stack[-1][0])
+                setattr(obj_attrs, 'parent', parser._inst_stack[-1][0])
 
             # Special case for 'name' attrib. It is used for cross-referencing
-            if _hasattr(inst, 'name') and _getattr(inst, 'name'):
+            if hasattr(inst, 'name') and inst.name:
                 # Objects of each class are in its own namespace
                 if not id(inst.__class__) in parser._instances:
                     parser._instances[id(inst.__class__)] = {}
-                parser._instances[id(inst.__class__)][_getattr(inst, 'name')]\
-                    = inst
+                parser._instances[id(inst.__class__)][inst.name] = inst
 
             if parser.debug:
                 parser.dprint("LEAVING INSTANCE {}".format(node.rule_name))
@@ -442,10 +439,10 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                               .format(op, attr_name))
 
             if op == 'optional':
-                _setattr(obj_attr, attr_name, True)
+                setattr(obj_attr, attr_name, True)
 
             elif op == 'plain':
-                attr_value = _getattr(obj_attr, attr_name)
+                attr_value = getattr(obj_attr, attr_name)
                 if attr_value and type(attr_value) is not list:
                     fmt = "Multiple assignments to attribute {} at {}"
                     raise TextXSemanticError(
@@ -466,7 +463,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                 if type(attr_value) is list:
                     attr_value.append(value)
                 else:
-                    _setattr(obj_attr, attr_name, value)
+                    setattr(obj_attr, attr_name, value)
 
             elif op in ['list', 'oneormore', 'zeroormore']:
                 for n in node:
@@ -488,10 +485,10 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                                                       value))
                             continue
 
-                        if not _hasattr(obj_attr, attr_name) or \
-                                _getattr(obj_attr, attr_name) is None:
-                            _setattr(obj_attr, attr_name, [])
-                        _getattr(obj_attr, attr_name).append(value)
+                        if not hasattr(obj_attr, attr_name) or \
+                                getattr(obj_attr, attr_name) is None:
+                            setattr(obj_attr, attr_name, [])
+                        getattr(obj_attr, attr_name).append(value)
             else:
                 # This shouldn't happen
                 assert False
@@ -536,7 +533,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
             for metaattr in current_metaclass_of_obj._tx_attrs.values():
                 # If attribute is base type or containment reference go down
                 if metaattr.cont:
-                    attr = _getattr(model_obj, metaattr.name)
+                    attr = getattr(model_obj, metaattr.name)
                     if attr:
                         if metaattr.mult in many:
                             for idx, obj in enumerate(attr):
@@ -550,8 +547,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                             result = call_obj_processors(metamodel,
                                                          attr, metaattr.cls)
                             if result is not None:
-                                _setattr(
-                                    model_obj, metaattr.name, result)
+                                setattr(model_obj, metaattr.name, result)
 
             # call obj_proc of the current meta_class if type == RULE_ABSTRACT
             if current_metaclass_of_obj._tx_fqn !=\
@@ -812,7 +808,7 @@ class ReferenceResolver:
         default_scope = DefaultScopeProvider()
         for obj, attr, crossref in current_crossrefs:
             if (get_model(obj) == self.model):
-                attr_value = _getattr(obj, attr.name)
+                attr_value = getattr(obj, attr.name)
                 attr_refs = [obj.__class__.__name__ + "." + attr.name,
                              "*." + attr.name, obj.__class__.__name__ + ".*",
                              "*.*"]
@@ -867,7 +863,7 @@ class ReferenceResolver:
                     if attr.mult in [MULT_ONEORMORE, MULT_ZEROORMORE]:
                         attr_value.append(resolved)
                     else:
-                        _setattr(obj, attr.name, resolved)
+                        setattr(obj, attr.name, resolved)
             else:  # crossref not in model
                 new_crossrefs.append((obj, attr, crossref))
         # -------------------------
