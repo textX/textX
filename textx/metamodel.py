@@ -89,30 +89,6 @@ class MetaAttr(object):
         self.position = position
 
 
-def _setattr(obj, name, value):
-    if hasattr(obj.__class__, '_tx_obj_attrs')\
-            and id(obj) in obj.__class__._tx_obj_attrs:
-        obj.__class__._tx_obj_attrs[id(obj)][name] = value
-    else:
-        setattr(obj, name, value)
-
-
-def _getattr(obj, name, *args):
-    if hasattr(obj.__class__, '_tx_obj_attrs')\
-            and id(obj) in obj.__class__._tx_obj_attrs:
-        return obj.__class__._tx_obj_attrs[id(obj)][name]
-    else:
-        return getattr(obj, name, *args)
-
-
-def _hasattr(obj, name):
-    if hasattr(obj.__class__, '_tx_obj_attrs')\
-            and id(obj) in obj.__class__._tx_obj_attrs:
-        return name in obj.__class__._tx_obj_attrs[id(obj)]
-    else:
-        return hasattr(obj, name)
-
-
 class TextXMetaModel(DebugPrinter):
     """
     Meta-model contains all information about language abstract syntax.
@@ -464,27 +440,27 @@ class TextXMetaModel(DebugPrinter):
         for attr in obj.__class__._tx_attrs.values():
             if attr.mult in [MULT_ZEROORMORE, MULT_ONEORMORE]:
                 # list
-                _setattr(obj, attr.name, [])
+                setattr(obj, attr.name, [])
             elif attr.cls.__name__ in BASE_TYPE_NAMES:
                 # Instantiate base python type
                 if self.auto_init_attributes:
-                    _setattr(obj, attr.name,
-                             python_type(attr.cls.__name__)())
+                    setattr(obj, attr.name,
+                            python_type(attr.cls.__name__)())
                 else:
                     # See https://github.com/textX/textX/issues/11
                     if attr.bool_assignment:
                         # Only ?= assignments shall have default
                         # value of False.
-                        _setattr(obj, attr.name, False)
+                        setattr(obj, attr.name, False)
                     else:
                         # Set base type attribute to None initially
                         # in order to be able to detect if an optional
                         # values are given in the model. Default values
                         # can be specified using object processors.
-                        _setattr(obj, attr.name, None)
+                        setattr(obj, attr.name, None)
             else:
                 # Reference to other obj
-                _setattr(obj, attr.name, None)
+                setattr(obj, attr.name, None)
 
     def _new_cls_attr(self, clazz, name, cls=None, mult=MULT_ONE, cont=True,
                       ref=False, bool_assignment=False, position=0):

@@ -5,7 +5,6 @@
 # License: MIT License
 #######################################################################
 from textx import get_children, get_model
-from textx.metamodel import _getattr
 import re
 
 
@@ -209,7 +208,7 @@ def resolve_model_path(obj, dot_separated_name,
         else:
             return None
     else:
-        next_obj = _getattr(obj, names[0])
+        next_obj = getattr(obj, names[0])
         if needs_to_be_resolved(obj, names[0]):
             return Postponed()
         elif next_obj is None:
