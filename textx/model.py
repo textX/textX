@@ -746,6 +746,10 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                 for m in models:
                     assert not m._tx_reference_resolver.parser._inst_stack
 
+                # cleanup
+                for m in models:
+                    _end_model_construction(m)
+
                 # At this point we should restore original user attr methods as
                 # attribute collection is over and we should switch back to
                 # "normal" behavior
@@ -782,10 +786,6 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                                    obj.__class__.__name__,)
                         parser.dprint(traceback.print_exc())
                         raise e
-
-                # cleanup
-                for m in models:
-                    _end_model_construction(m)
 
                 # final check that everything went ok
                 for m in models:
