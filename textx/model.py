@@ -283,9 +283,13 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                     self, self.parse_tree[0], file_name=file_name,
                     pre_ref_resolution_callback=pre_ref_resolution_callback,
                     is_main_model=is_main_model, encoding=encoding)
-            finally:
+
+            except BaseException as e:
                 # Restore of user classes replaced attr methods
                 self._restore_user_attr_methods()
+                raise e
+
+            finally:
 
                 if debug is not None:
                     self.debug = old_debug_state
@@ -300,8 +304,12 @@ def get_model_parser(top_rule, comments_model, **kwargs):
         # Custom attr dunder methods used for user classes during loading
         def _hasattr(obj, name):
             try:
-                obj_attrs = obj.__class__._tx_obj_attrs
-                return name in obj_attrs[id(obj)]
+                return name in obj._tx_obj_attrs[id(obj)]
+            except KeyError:
+                if obj._tx_real_hasattr:
+                    return obj._tx_real_hasattr(name)
+                else:
+                    return super(type(obj), obj).__hasattr__(name)
             except AttributeError:
                 return False
 
@@ -309,13 +317,28 @@ def get_model_parser(top_rule, comments_model, **kwargs):
             try:
                 return obj._tx_obj_attrs[id(obj)][name]
             except KeyError:
-                raise AttributeError
+                if obj._tx_real_getattr:
+                    return obj._tx_real_getattr(name)
+                else:
+                    return super(type(obj), obj).__getattr__(name)
 
         def _setattr(obj, name, value):
-            obj._tx_obj_attrs[id(obj)][name] = value
+            try:
+                obj._tx_obj_attrs[id(obj)][name] = value
+            except KeyError:
+                if obj._tx_real_setattr:
+                    return obj._tx_real_setattr(name, value)
+                else:
+                    return super(type(obj), obj).__setattr__(name, value)
 
         def _delattr(obj, name):
-            obj._tx_obj_attrs[id(obj)].pop(name)
+            try:
+                obj._tx_obj_attrs[id(obj)].pop(name)
+            except KeyError:
+                if obj._tx_real_delattr:
+                    return obj._tx_real_delattr(name)
+                else:
+                    return super(type(obj), obj).__delattr__(name)
 
         def _replace_user_attr_methods(self):
             """
@@ -326,13 +349,15 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                 if not hasattr(user_class, '_tx_instrumented'):
                     for a_name in ('has', 'get', 'set', 'del'):
                         real_name = '__{}attr__'.format(a_name)
-                        cached_name = '_tx_old_{}attr'.format(a_name)
+                        cached_name = '_tx_real_{}attr'.format(a_name)
                         setattr(user_class, cached_name,
                                 getattr(user_class, real_name, None))
                         setattr(user_class, real_name,
                                 getattr(self.__class__,
                                         '_{}attr'.format(a_name)))
-                    setattr(user_class, '_tx_instrumented', True)
+                    user_class._tx_instrumented = 1
+                else:
+                    user_class._tx_instrumented += 1
 
         def _restore_user_attr_methods(self):
             """
@@ -341,17 +366,19 @@ def get_model_parser(top_rule, comments_model, **kwargs):
             """
             for user_class in self.metamodel.user_classes.values():
                 if hasattr(user_class, '_tx_instrumented'):
-                    for a_name in ('has', 'get', 'set', 'del'):
-                        cached_name = '_tx_old_{}attr'.format(a_name)
-                        real_name = '__{}attr__'.format(a_name)
-                        if hasattr(user_class, cached_name):
-                            cached_meth = getattr(user_class, cached_name)
-                            if cached_meth is not None:
-                                setattr(user_class, real_name, cached_meth)
-                            else:
-                                delattr(user_class, real_name)
-                            delattr(user_class, cached_name)
-                    delattr(user_class, '_tx_instrumented')
+                    user_class._tx_instrumented -= 1
+                    if user_class._tx_instrumented == 0:
+                        delattr(user_class, '_tx_instrumented')
+                        for a_name in ('has', 'get', 'set', 'del'):
+                            cached_name = '_tx_real_{}attr'.format(a_name)
+                            real_name = '__{}attr__'.format(a_name)
+                            if hasattr(user_class, cached_name):
+                                cached_meth = getattr(user_class, cached_name)
+                                if cached_meth is not None:
+                                    setattr(user_class, real_name, cached_meth)
+                                else:
+                                    delattr(user_class, real_name)
+                                delattr(user_class, cached_name)
 
     return TextXModelParser(**kwargs)
 
