@@ -297,6 +297,15 @@ def get_model_parser(top_rule, comments_model, **kwargs):
             return model
 
         # Custom attr dunder methods used for user classes during loading
+        def _getattribute(obj, name):
+            if name == '__dict__':
+                try:
+                    return type(obj)._tx_obj_attrs[id(obj)]
+                except KeyError:
+                    pass
+            return super(type(obj), obj).__getattribute__(name)
+
+
         def _getattr(obj, name):
             try:
                 return obj._tx_obj_attrs[id(obj)][name]
@@ -331,14 +340,13 @@ def get_model_parser(top_rule, comments_model, **kwargs):
             """
             for user_class in self.metamodel.user_classes.values():
                 if not hasattr(user_class, '_tx_instrumented'):
-                    for a_name in ('get', 'set', 'del'):
-                        real_name = '__{}attr__'.format(a_name)
-                        cached_name = '_tx_real_{}attr'.format(a_name)
+                    for a_name in ('getattr', 'setattr', 'delattr', 'getattribute'):
+                        real_name = '__{}__'.format(a_name)
+                        cached_name = '_tx_real_{}'.format(a_name)
                         setattr(user_class, cached_name,
                                 getattr(user_class, real_name, None))
                         setattr(user_class, real_name,
-                                getattr(self.__class__,
-                                        '_{}attr'.format(a_name)))
+                                getattr(self.__class__, '_{}'.format(a_name)))
                     user_class._tx_instrumented = 1
                 else:
                     user_class._tx_instrumented += 1
@@ -353,9 +361,9 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                     user_class._tx_instrumented -= 1
                     if user_class._tx_instrumented == 0:
                         delattr(user_class, '_tx_instrumented')
-                        for a_name in ('get', 'set', 'del'):
-                            cached_name = '_tx_real_{}attr'.format(a_name)
-                            real_name = '__{}attr__'.format(a_name)
+                        for a_name in ('getattr', 'setattr', 'delattr', 'getattribute'):
+                            cached_name = '_tx_real_{}'.format(a_name)
+                            real_name = '__{}__'.format(a_name)
                             if hasattr(user_class, cached_name):
                                 cached_meth = getattr(user_class, cached_name)
                                 if cached_meth is not None:
