@@ -299,6 +299,7 @@ def get_model_parser(top_rule, comments_model, **kwargs):
         def _replace_user_attr_methods_for_class(self, user_class):
             # Custom attr dunder methods used for user classes during loading
             print('instrumentalize', user_class)
+
             def _getattribute(obj, name):
                 print(name)
                 if name == '__dict__':
@@ -348,7 +349,7 @@ def get_model_parser(top_rule, comments_model, **kwargs):
             to support postponing of user obj initialization.
             """
             for user_class in self.metamodel.user_classes.values():
-                if not '_tx_instrumented' in user_class.__dict__:
+                if '_tx_instrumented' not in user_class.__dict__:
                     self._replace_user_attr_methods_for_class(user_class)
                 else:
                     user_class._tx_instrumented += 1
