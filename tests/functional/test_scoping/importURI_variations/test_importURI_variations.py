@@ -37,7 +37,7 @@ def test_importURI_variations_import_string_hook():
     my_meta_model = metamodel_from_str(grammar)
 
     def conv(i):
-        return i.replace(".", "/")+".model"
+        return i.replace(".", "/") + ".model"
 
     my_meta_model.register_scope_providers(
         {"*.*": scoping_providers.FQNImportURI(importURI_converter=conv)})
@@ -72,7 +72,7 @@ def test_importURI_variations_import_as_ok1():
     my_meta_model = metamodel_from_str(grammar)
 
     def conv(i):
-        return i.replace(".", "/")+".model"
+        return i.replace(".", "/") + ".model"
 
     my_meta_model.register_scope_providers(
         {"*.*": scoping_providers.FQNImportURI(importURI_converter=conv,
@@ -108,7 +108,7 @@ def test_importURI_variations_import_as_ok2():
     my_meta_model = metamodel_from_str(grammar)
 
     def conv(i):
-        return i.replace(".", "/")+".model"
+        return i.replace(".", "/") + ".model"
 
     my_meta_model.register_scope_providers(
         {"*.*": scoping_providers.FQNImportURI(importURI_converter=conv,
@@ -144,7 +144,7 @@ def test_importURI_variations_import_as_multi_import():
     my_meta_model = metamodel_from_str(grammar)
 
     def conv(i):
-        return i.replace(".", "/")+".model"
+        return i.replace(".", "/") + ".model"
 
     my_meta_model.register_scope_providers(
         {"*.*": scoping_providers.FQNImportURI(importURI_converter=conv,
@@ -180,7 +180,7 @@ def test_importURI_variations_import_as_error():
     my_meta_model = metamodel_from_str(grammar)
 
     def conv(i):
-        return i.replace(".", "/")+".model"
+        return i.replace(".", "/") + ".model"
 
     my_meta_model.register_scope_providers(
         {"*.*": scoping_providers.FQNImportURI(importURI_converter=conv,

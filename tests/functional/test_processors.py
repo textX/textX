@@ -78,7 +78,7 @@ def test_object_processors():
     obj_processors = {
         'First': first_obj_processor,
         'Second': second_obj_processor,
-        }
+    }
 
     metamodel = metamodel_from_str(grammar)
     metamodel.register_obj_processors(obj_processors)
@@ -113,7 +113,7 @@ def test_object_processors_user_classes():
     obj_processors = {
         'First': first_obj_processor,
         'Second': second_obj_processor,
-        }
+    }
 
     class First(object):
         def __init__(self, seconds, a, b, c):
@@ -154,7 +154,7 @@ def test_object_processor_replace_object():
     obj_processors = {
         'Second': second_obj_processor,
         'STRING': string_obj_processor,
-        }
+    }
 
     metamodel = metamodel_from_str(grammar)
     metamodel.register_obj_processors(obj_processors)

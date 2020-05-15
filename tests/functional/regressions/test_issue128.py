@@ -47,7 +47,7 @@ def test_abstract_alternative_string_match():
 
     def assertIs(x, rule):
         assert _is(x, rule), 'Unexpected object "{}" to rule "{}"'\
-                    .format(x, type(x), rule)
+            .format(x, rule)
 
     def evaluate(x):
 
@@ -102,7 +102,7 @@ def test_abstract_alternative_string_match():
 
         else:
             assert False, 'Unexpected object "{}" of type "{}"'\
-                    .format(x, type(x))
+                .format(x, type(x))
 
     result = evaluate(model)
 
