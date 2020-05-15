@@ -305,7 +305,6 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                     pass
             return super(type(obj), obj).__getattribute__(name)
 
-
         def _getattr(obj, name):
             try:
                 return obj._tx_obj_attrs[id(obj)][name]
@@ -340,7 +339,8 @@ def get_model_parser(top_rule, comments_model, **kwargs):
             """
             for user_class in self.metamodel.user_classes.values():
                 if not hasattr(user_class, '_tx_instrumented'):
-                    for a_name in ('getattr', 'setattr', 'delattr', 'getattribute'):
+                    for a_name in ('getattr', 'setattr', 'delattr',
+                                   'getattribute'):
                         real_name = '__{}__'.format(a_name)
                         cached_name = '_tx_real_{}'.format(a_name)
                         setattr(user_class, cached_name,
@@ -361,7 +361,8 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                     user_class._tx_instrumented -= 1
                     if user_class._tx_instrumented == 0:
                         delattr(user_class, '_tx_instrumented')
-                        for a_name in ('getattr', 'setattr', 'delattr', 'getattribute'):
+                        for a_name in ('getattr', 'setattr', 'delattr',
+                                       'getattribute'):
                             cached_name = '_tx_real_{}'.format(a_name)
                             real_name = '__{}__'.format(a_name)
                             if hasattr(user_class, cached_name):
@@ -440,7 +441,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                         return process_node(
                             next(n for n in node
                                  if type(n) is not Terminal
-                                 and n.rule._tx_class is not RULE_MATCH))
+                                 and n.rule._tx_class is not RULE_MATCH))  # noqa
                     except StopIteration:
                         # All nodes are match rules, do concatenation
                         return ''.join(text(n) for n in node)

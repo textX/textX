@@ -58,4 +58,4 @@ def test_textx_tools_support():
     rules_len = len(rules_keys)
     assert rules_len > 0
     assert rules_keys[0][0] > \
-        rules_keys[rules_len-1][0]
+        rules_keys[rules_len - 1][0]

@@ -42,8 +42,8 @@ def dot_match_str(cls, other_match_rules=None):
         if s.root:
             # breakpoint()
             if s in visited or s.rule_name in ALL_TYPE_NAMES or \
-                    (hasattr(s, '_tx_class') and
-                     (s._tx_class._tx_type is not RULE_MATCH
+                    (hasattr(s, '_tx_class')
+                     and (s._tx_class._tx_type is not RULE_MATCH
                      or (s._tx_class in other_match_rules
                          and s._tx_class is not cls))):
                 # print("==> NAME " + s.rule_name)
@@ -72,8 +72,8 @@ def dot_match_str(cls, other_match_rules=None):
 
     mstr = ""
     # print("---------- "+str(cls))
-    if not (cls._tx_type is RULE_ABSTRACT and
-            cls.__name__ != cls._tx_peg_rule.rule_name):
+    if not (cls._tx_type is RULE_ABSTRACT
+            and cls.__name__ != cls._tx_peg_rule.rule_name):
         e = cls._tx_peg_rule
         visited = set()
         if other_match_rules is None:
@@ -153,8 +153,8 @@ class DotRenderer(object):
                         attr.name, attr_type
                         if required else r'optional\<{}\>'.format(attr_type))
         return '{}[ label="{{{}|{}}}"]\n\n'.format(
-                id(cls), "*{}".format(name)
-                if cls._tx_type is RULE_ABSTRACT else name, attrs)
+            id(cls), "*{}".format(name)
+            if cls._tx_type is RULE_ABSTRACT else name, attrs)
 
     def render_attr_link(self, cls, attr):
         arrowtail = "arrowtail=diamond, dir=both, " \
@@ -221,10 +221,9 @@ set namespaceSeparator .
                         attrs += "  {} : optional<{}>\n".format(attr.name,
                                                                 attr_type)
         if len(stereotype) > 0:
-            stereotype = "<<"+stereotype+">>"
+            stereotype = "<<" + stereotype + ">>"
         return '\n\nclass {} {} {{\n{}}}\n'.format(
-                cls._tx_fqn, stereotype, attrs
-                )
+            cls._tx_fqn, stereotype, attrs)
 
     def render_attr_link(self, cls, attr):
         if attr.ref and attr.cls.__name__ != 'OBJECT':

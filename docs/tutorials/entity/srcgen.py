@@ -20,8 +20,8 @@ def get_entity_mm():
     Builds and returns a meta-model for Entity language.
     """
     type_builtins = {
-            'integer': SimpleType(None, 'integer'),
-            'string': SimpleType(None, 'string')
+        'integer': SimpleType(None, 'integer'),
+        'string': SimpleType(None, 'string')
     }
     entity_mm = metamodel_from_file(join(this_folder, 'entity.tx'),
                                     classes=[SimpleType],
@@ -40,8 +40,8 @@ def main(debug=False):
         Maps type names from SimpleType to Java.
         """
         return {
-                'integer': 'int',
-                'string': 'String'
+            'integer': 'int',
+            'string': 'String'
         }.get(s.name, s.name)
 
     # Create output folder

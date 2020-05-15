@@ -264,8 +264,8 @@ def metamodel_for_language(language_name, **kwargs):
             metamodels[language_name] = language.metamodel
         else:
             metamodel = language.metamodel(**kwargs)
-            if not (isinstance(metamodel, TextXMetaModel) or
-                    isinstance(metamodel, TextXMetaMetaModel)):
+            if not (isinstance(metamodel, TextXMetaModel)
+                    or isinstance(metamodel, TextXMetaMetaModel)):
                 raise TextXRegistrationError(
                     'Meta-model type for language "{}" is "{}".'
                     .format(language_name, type(metamodel).__name__))

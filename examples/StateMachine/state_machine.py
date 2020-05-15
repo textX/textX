@@ -54,7 +54,7 @@ class StateMachine(object):
                 if event == 'q':
                     return
                 event = int(event)
-                event = self.model.events[event-1]
+                event = self.model.events[event - 1]
             except Exception:
                 print('Invalid input')
 

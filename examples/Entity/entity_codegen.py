@@ -22,8 +22,8 @@ def main(debug=False):
         Maps type names from PrimitiveType to Java.
         """
         return {
-                'integer': 'int',
-                'string': 'String'
+            'integer': 'int',
+            'string': 'String'
         }.get(s.name, s.name)
 
     # Create output folder
