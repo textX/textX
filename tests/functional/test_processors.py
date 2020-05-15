@@ -120,7 +120,7 @@ def test_object_processor_falsy():
     first = metamodel.model_from_str(model_str)
 
     for s in first.seconds:
-        assert s._second_called == True
+        assert s._second_called is True
 
 
 def test_object_processor_replace_object():
