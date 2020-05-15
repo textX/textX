@@ -296,41 +296,51 @@ def get_model_parser(top_rule, comments_model, **kwargs):
 
             return model
 
-        # Custom attr dunder methods used for user classes during loading
-        def _getattribute(obj, name):
-            if name == '__dict__':
+        def _replace_user_attr_methods_for_class(self, user_class):
+            # Custom attr dunder methods used for user classes during loading
+            print('instrumentalize', user_class)
+            def _getattribute(obj, name):
+                print(name)
+                if name == '__dict__':
+                    try:
+                        return user_class._tx_obj_attrs[id(obj)]
+                    except KeyError:
+                        pass
+                else:
+                    try:
+                        return user_class._tx_obj_attrs[id(obj)][name]
+                    except KeyError:
+                        pass
+
+                return super(user_class, obj).__getattribute__(name)
+
+            def _setattr(obj, name, value):
                 try:
-                    return type(obj)._tx_obj_attrs[id(obj)]
+                    obj._tx_obj_attrs[id(obj)][name] = value
                 except KeyError:
-                    pass
-            return super(type(obj), obj).__getattribute__(name)
+                    try:
+                        return obj._tx_real_setattr(name, value)
+                    except (AttributeError, TypeError):
+                        return super(user_class, obj).__setattr__(name, value)
 
-        def _getattr(obj, name):
-            try:
-                return obj._tx_obj_attrs[id(obj)][name]
-            except KeyError:
+            def _delattr(obj, name):
                 try:
-                    return obj._tx_real_getattr(name)
-                except (AttributeError, TypeError):
-                    return super(type(obj), obj).__getattr__(name)
+                    obj._tx_obj_attrs[id(obj)].pop(name)
+                except KeyError:
+                    try:
+                        return obj._tx_real_delattr(name)
+                    except (AttributeError, TypeError):
+                        return super(user_class, obj).__delattr__(name)
 
-        def _setattr(obj, name, value):
-            try:
-                obj._tx_obj_attrs[id(obj)][name] = value
-            except KeyError:
-                try:
-                    return obj._tx_real_setattr(name, value)
-                except (AttributeError, TypeError):
-                    return super(type(obj), obj).__setattr__(name, value)
-
-        def _delattr(obj, name):
-            try:
-                obj._tx_obj_attrs[id(obj)].pop(name)
-            except KeyError:
-                try:
-                    return obj._tx_real_delattr(name)
-                except (AttributeError, TypeError):
-                    return super(type(obj), obj).__delattr__(name)
+            for a_name in ('setattr', 'delattr',
+                           'getattribute'):
+                real_name = '__{}__'.format(a_name)
+                cached_name = '_tx_real_{}'.format(a_name)
+                setattr(user_class, cached_name,
+                        getattr(user_class, real_name, None))
+                setattr(user_class, real_name,
+                        locals()['_{}'.format(a_name)])
+            user_class._tx_instrumented = 1
 
         def _replace_user_attr_methods(self):
             """
@@ -338,16 +348,8 @@ def get_model_parser(top_rule, comments_model, **kwargs):
             to support postponing of user obj initialization.
             """
             for user_class in self.metamodel.user_classes.values():
-                if not hasattr(user_class, '_tx_instrumented'):
-                    for a_name in ('getattr', 'setattr', 'delattr',
-                                   'getattribute'):
-                        real_name = '__{}__'.format(a_name)
-                        cached_name = '_tx_real_{}'.format(a_name)
-                        setattr(user_class, cached_name,
-                                getattr(user_class, real_name, None))
-                        setattr(user_class, real_name,
-                                getattr(self.__class__, '_{}'.format(a_name)))
-                    user_class._tx_instrumented = 1
+                if not '_tx_instrumented' in user_class.__dict__:
+                    self._replace_user_attr_methods_for_class(user_class)
                 else:
                     user_class._tx_instrumented += 1
 
