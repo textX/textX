@@ -298,10 +298,7 @@ def get_model_parser(top_rule, comments_model, **kwargs):
 
         def _replace_user_attr_methods_for_class(self, user_class):
             # Custom attr dunder methods used for user classes during loading
-            print('instrumentalize', user_class)
-
             def _getattribute(obj, name):
-                print(name)
                 if name == '__dict__':
                     try:
                         return user_class._tx_obj_attrs[id(obj)]
