@@ -87,15 +87,13 @@ def test_textx_tools_with_frozen_classes1():
         m = mm.model_from_str(text_ok1)
         assert ref_scope_was_used[0]
         if len(classes) == 0:
-            assert hasattr(m, '_tx_filename')
-            assert hasattr(m, '_tx_metamodel')
+            # Assert that model object has its own filename and metamodel
+            assert '_tx_filename' in m.__dict__
+            assert '_tx_metamodel' in m.__dict__
         else:
-            # TODO: should we take care of not having special fields
-            # in that case?
-            # (also applied for importURI fields (which get also some
-            # special fields).
-            assert not hasattr(m, '_tx_filename')
-            assert not hasattr(m, '_tx_metamodel')
+            # Assert that special attributes are accessible only through class
+            assert '_tx_filename' not in m.__dict__
+            assert '_tx_metamodel' not in m.__dict__
 
         ref_scope_was_used[0] = False
         mm.model_from_str(text_ok2)
