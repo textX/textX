@@ -2,33 +2,25 @@ from __future__ import unicode_literals
 import pytest  # noqa
 from textx import metamodel_from_str
 
-grammar = """
-Document:
-    a=A
-    b=B
-;
-A:
-    'A' name=ID
-;
-B:
-    'B' 'a' '=' a=[A]
-;
-"""
-
-
 @pytest.mark.parametrize('frozen', [False, True])
 def test_user_class_attrs(frozen):
     attr = pytest.importorskip('attr')
+    grammar = """
+    Document:
+        a=A
+        b=B
+    ;
+    A:
+        'A' name=ID
+    ;
+    B:
+        'B' 'a' '=' a=[A]
+    ;
+    """
+
     """
     User supplied meta class.
     """
-    @attr.s(frozen=frozen)
-    class Point(object):
-        "User class."
-        parent = attr.ib()
-        name = attr.ib()
-        x = attr.ib()
-        y = attr.ib()
 
     modelstr = """
     A something
@@ -49,3 +41,38 @@ def test_user_class_attrs(frozen):
                             auto_init_attributes=False)
     model = mm.model_from_str(modelstr)
     assert model.b.a == model.a
+
+
+def test_inheritance_attrs():
+    attr = pytest.importorskip('attr')
+
+    grammar = """
+    Document:
+        super=Super
+        sub=Sub
+    ;
+    Super:
+        'Super' a=INT
+    ;
+    Sub:
+        'Sub' a=INT b=ID
+    ;
+    """
+
+    modelstr = """
+    Super 1
+    Sub 2 something
+    """
+
+    @attr.s()
+    class Super(object):
+        a = attr.ib()
+        parent = attr.ib(kw_only=True, default=None)
+
+    @attr.s()
+    class Sub(Super):
+        b = attr.ib()
+
+    mm = metamodel_from_str(grammar, classes=[Super, Sub])
+    model = mm.model_from_str(modelstr)
+    assert model.sub.b == 'something'
