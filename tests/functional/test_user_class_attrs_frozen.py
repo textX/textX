@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 import pytest  # noqa
 from textx import metamodel_from_str
 
+
 @pytest.mark.parametrize('frozen', [False, True])
 def test_user_class_attrs(frozen):
     attr = pytest.importorskip('attr')
