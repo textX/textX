@@ -66,8 +66,8 @@ def test_inheritance_attrs():
 
     @attr.s()
     class Super(object):
+        parent = attr.ib()
         a = attr.ib()
-        parent = attr.ib(kw_only=True, default=None)
 
     @attr.s()
     class Sub(Super):
