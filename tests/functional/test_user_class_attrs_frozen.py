@@ -19,10 +19,6 @@ def test_user_class_attrs(frozen):
     ;
     """
 
-    """
-    User supplied meta class.
-    """
-
     modelstr = """
     A something
     B a=something
