@@ -57,7 +57,7 @@ def test_model_params():
     assert 'parameter1' in mm._tx_model_param_definitions
     assert 'parameter1' in mm._tx_model_param_definitions
     assert mm._tx_model_param_definitions[
-               'parameter1'].description == "an example param (1)"
+        'parameter1'].description == "an example param (1)"
 
 
 def test_model_params_empty():
