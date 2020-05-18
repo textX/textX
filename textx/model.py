@@ -578,7 +578,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                 assert False
 
         # Collect rules for textx-tools
-        if inst and metamodel.textx_tools_support:
+        if inst is not None and metamodel.textx_tools_support:
             pos = (inst._tx_position, inst._tx_position_end)
             pos_rule_dict[pos] = inst
 
@@ -621,7 +621,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                     if attr:
                         if metaattr.mult in many:
                             for idx, obj in enumerate(attr):
-                                if obj:
+                                if obj is not None:
                                     result = call_obj_processors(metamodel,
                                                                  obj,
                                                                  metaattr.cls)
@@ -921,7 +921,7 @@ class ReferenceResolver:
                     resolved = default_scope(obj, attr, crossref)
 
                 # Collect cross-references for textx-tools
-                if resolved and not type(resolved) is Postponed:
+                if resolved is not None and not type(resolved) is Postponed:
                     if metamodel.textx_tools_support:
                         self.pos_crossref_list.append(
                             RefRulePosition(
@@ -932,7 +932,7 @@ class ReferenceResolver:
                                 def_pos_start=resolved._tx_position,
                                 def_pos_end=resolved._tx_position_end))
 
-                if not resolved:
+                if resolved is None:
                     # As a fall-back search builtins if given
                     if metamodel.builtins:
                         if crossref.obj_name in metamodel.builtins:
@@ -944,7 +944,7 @@ class ReferenceResolver:
                                 resolved = metamodel.builtins[
                                     crossref.obj_name]
 
-                if not resolved:
+                if resolved is None:
                     line, col = self.parser.pos_to_linecol(crossref.position)
                     raise TextXSemanticError(
                         message='Unknown object "{}" of class "{}"'.format(
