@@ -557,7 +557,7 @@ class TextXVisitor(PTNodeVisitor):
 
     def visit_rule_params(self, node, children):
         params = {}
-        for name, value in children[0].items():
+        for name, value in children:
             if name not in ['skipws', 'ws']:
                 raise TextXSyntaxError(
                     'Invalid rule param "{}" at {}.'
@@ -594,7 +594,7 @@ class TextXVisitor(PTNodeVisitor):
             self.dprint("TextX rule param: {}, {}".format(param_name,
                                                           param_value))
 
-        return {param_name: param_value}
+        return (param_name, param_value)
 
     def visit_rule_ref(self, node, children):
         rule_name = text(node)

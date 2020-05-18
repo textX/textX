@@ -326,3 +326,29 @@ assignments (`=`). An optional assignment (`?=`) will always be `False` if the
 RHS object is not matched in the input. The multiplicity assignments (`*=` and
 `+=`) will always be python lists.
 
+## Optional model parameter definitions
+
+A meta-model can define optional model parameters. Such definitions
+are stored in `_tx_model_param_definitions` and define optional parameters,
+which can be specified while loading/creating a model through `model_from_str`
+or `model_from_file`. Details: see [tx_model_params](model.md#_tx_model_params).
+
+`metamodel._tx_model_param_definitions` can be queried (like a dict) to
+retrieve possible extra parameters and their descriptions for a meta-model.
+It is also used to restrict the additional parameters passed to
+`model_from_str` or `model_from_file`.
+
+Default parameters are:
+
+ * `project_root`: this model parameter is used by the [`GlobalRepo`](http://localhost:8000/scoping/#scope-providers-defined-in-module-textxscopingproviders)
+    to set a project directory, where all file patterns not referring to an
+    absolute file position are looked up.
+ 
+ 
+An example of a custom model parameter definition used to control the behavior
+of an object processor is given in
+[test_reference_to_nontextx_attribute.py](https://github.com/textX/textX/blob/master/tests/functional/registration/test_check.py),
+(`test_object_processor_with_optional_parameter_*`; specifying a parameter
+while loading) and
+[test_reference_to_nontextx_attribute.py](https://github.com/textX/textX/blob/master/tests/functional/registration/projects/types_dsl/types_dsl/__init__.py)
+(defining the parameter in the metamodel).

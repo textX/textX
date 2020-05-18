@@ -15,6 +15,7 @@ from textx.const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, \
     RULE_MATCH, RULE_ABSTRACT
 from textx.exceptions import TextXError
 from .registration import LanguageDesc, metamodel_for_language
+from .model_params import ModelParams, ModelParamDefinitions
 
 if sys.version < '3':
     text = unicode  # noqa
@@ -163,6 +164,10 @@ class TextXMetaModel(DebugPrinter):
                 self._tx_model_repository = GlobalModelRepository()
 
         super(TextXMetaModel, self).__init__(**kwargs)
+
+        self._tx_model_param_definitions = ModelParamDefinitions()
+        self._tx_model_param_definitions.add(
+            "project_root", "the project root path")
 
         self.file_name = file_name
         self.rootcls = None
@@ -544,43 +549,65 @@ class TextXMetaModel(DebugPrinter):
         return self.namespaces[self._namespace_stack[-1]]
 
     def model_from_str(self, model_str, file_name=None, debug=None,
-                       pre_ref_resolution_callback=None, encoding='utf-8'):
+                       pre_ref_resolution_callback=None, encoding='utf-8',
+                       **kwargs):
         """
         Instantiates model from the given string.
         :param pre_ref_resolution_callback: called before references are
                resolved. This can be useful to manage models distributed
                across files (scoping)
+        :param **kwargs additional arguments available through
+                _tx_model_params after initiating the model. The attribute
+                is set while executing pre_ref_resolution_callback (see
+                scoping.md)
         """
+        self._tx_model_param_definitions.check_params('from_str', **kwargs)
 
         if type(model_str) is not text:
             raise TextXError("textX accepts only unicode strings.")
 
         if file_name is None:
+            def kwargs_callback(other_model):
+                if hasattr(other_model, '_tx_metamodel'):
+                    other_model._tx_model_params = ModelParams(kwargs)
+                if pre_ref_resolution_callback:
+                    pre_ref_resolution_callback(other_model)
+
             model = self._parser_blueprint.clone().get_model_from_str(
                 model_str, debug=debug,
-                pre_ref_resolution_callback=pre_ref_resolution_callback)
+                pre_ref_resolution_callback=kwargs_callback)
 
             for p in self._model_processors:
                 p(model, self)
         else:
-            model = self.internal_model_from_file(file_name, encoding, debug,
-                                                  model_str=model_str)
+            model = self.internal_model_from_file(
+                file_name, encoding, debug,
+                model_str=model_str,
+                pre_ref_resolution_callback=pre_ref_resolution_callback,
+                model_params=ModelParams(kwargs))
 
         return model
 
-    def model_from_file(self, file_name, encoding='utf-8', debug=None):
-        return self.internal_model_from_file(file_name, encoding, debug)
+    def model_from_file(self, file_name, encoding='utf-8', debug=None,
+                        **kwargs):
+        self._tx_model_param_definitions.check_params(file_name, **kwargs)
+
+        return self.internal_model_from_file(
+            file_name, encoding, debug,
+            model_params=ModelParams(kwargs))
 
     def internal_model_from_file(
             self, file_name, encoding='utf-8', debug=None,
             pre_ref_resolution_callback=None, is_main_model=True,
-            model_str=None):
+            model_str=None, model_params=None):
         """
         Instantiates model from the given file.
         :param pre_ref_resolution_callback: called before references are
                resolved. This can be useful to manage models distributed
                across files (scoping)
         """
+        assert model_params is not None,\
+            "model_params are required in all cases"
         file_name = abspath(file_name)
         model = None
         callback = pre_ref_resolution_callback
@@ -603,6 +630,12 @@ class TextXMetaModel(DebugPrinter):
                 model = self._tx_model_repository.all_models\
                     .filename_to_model[file_name]
 
+        def kwargs_callback(other_model):
+            if hasattr(other_model, '_tx_metamodel'):
+                other_model._tx_model_params = model_params
+            if callback:
+                callback(other_model)
+
         if not model:
             # Read model from file
             if not model_str:
@@ -611,7 +644,7 @@ class TextXMetaModel(DebugPrinter):
             # model not present (from global repo) -> load it
             model = self._parser_blueprint.clone().get_model_from_str(
                 model_str, file_name, debug=debug, encoding=encoding,
-                pre_ref_resolution_callback=callback,
+                pre_ref_resolution_callback=kwargs_callback,
                 is_main_model=is_main_model)
 
         for p in self._model_processors:

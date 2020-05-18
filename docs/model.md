@@ -190,3 +190,10 @@ The model may have a model repository (initiated by some scope provider or by
 the metamodel). This object is responsible to provide and cache other model
 instances (see textx.scoping.providers).
 
+### _tx_model_params
+
+This attribute always exists. It holds all additional parameters passed to
+`model_from_str` or `model_from_file` of a metamodel. These parameters are
+restricted by the `metamodel._tx_model_param_definitions` object
+([model and object processors](metamodel.md#optional-model-parameter-definitions)),
+which is controlled by the metamodel designer.

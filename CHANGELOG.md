@@ -24,9 +24,13 @@ please take a look at related PRs and issues and see if the change affects you.
   - `textx version` command ([#219])
   - Versions for languages/packages in `list-languages` and `list-generators`
     commands ([#228])
+  - Added the ability to specify extra parameters during `model_from_file` or
+    `model_from_str` and to define which extra parameters exist in the
+    metamodel ([#243]).
   
 ### Fixed
 
+  - Fixed applying multiple grammar rule modifiers ([#246])
   - Fixed exception on calling `check` CLI command with relative path name.
   - Fixed return value of textx generate and check commands: we return a failure
     on error now ([#222])
@@ -448,6 +452,8 @@ please take a look at related PRs and issues and see if the change affects you.
 
 
 [#256]: https://github.com/textX/textX/pull/256
+[#246]: https://github.com/textX/textX/issues/246
+[#243]: https://github.com/textX/textX/pull/243
 [#235]: https://github.com/textX/textX/pull/235
 [#234]: https://github.com/textX/textX/pull/234
 [#233]: https://github.com/textX/textX/pull/233
