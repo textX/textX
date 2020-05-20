@@ -284,10 +284,10 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                     pre_ref_resolution_callback=pre_ref_resolution_callback,
                     is_main_model=is_main_model, encoding=encoding)
 
-            except BaseException as e:
+            except:  # noqa
                 # Restore of user classes replaced attr methods
                 self._restore_user_attr_methods()
-                raise e
+                raise
 
             finally:
 
@@ -766,12 +766,15 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                         for name, value in attrs.items():
                             try:
                                 setattr(obj, name, value)
-                            except AttributeError:
+                            except:  # noqa
                                 # Not possible to set the attribute
                                 pass
 
+                        # We shall only pass to __init__ attributes that are
+                        # defined by the meta-model, and `parent` if applicable
                         attrs = {k: v for k, v in attrs.items()
-                                 if not k.startswith('_tx_')}
+                                 if k in obj.__class__._tx_attrs
+                                 or k == 'parent'}
 
                         # Call constructor for custom initialization
                         obj.__init__(**attrs)
@@ -797,12 +800,12 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                             parser.dprint("CALLING OBJECT PROCESSORS")
                         call_obj_processors(m._tx_metamodel, m)
 
-            except BaseException as e:
+            except:  # noqa
                 # remove all processed models from (global) repo (if present)
                 # (remove all of them, not only the model with errors,
                 # since, models with errors may be included in other models)
                 remove_models_from_repositories(models, models)
-                raise e
+                raise
 
         if metamodel.textx_tools_support \
                 and type(model) not in PRIMITIVE_PYTHON_TYPES:
@@ -817,9 +820,9 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                                                       key=lambda x: x[0],
                                                       reverse=True))
     # exception occurred during model creation
-    except BaseException as e:
+    except:  # noqa
         _remove_all_affected_models_in_construction(model)
-        raise e
+        raise
 
     return model
 
