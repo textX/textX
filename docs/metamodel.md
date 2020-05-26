@@ -79,6 +79,14 @@ will be instantiated to represent each `Entity` rule from the grammar.
     class is a child in a parent-child relationship (see the next section), then
     the `parent` constructor parameter should also be given.
 
+Classes that use `__slots__` are supported. Also, initialization of custom
+classes is postponed during model loading and done after reference resolving but
+before object processors call (see [Using the scope provider to modify a
+model](scoping.md##using-the-scope-provider-to-modify-a-model)) to ensure that
+immutable objects (e.g. using [attr frozen
+feature](https://www.attrs.org/en/stable/examples.html#immutability)), that
+can't be changed after initialization, are also supported.
+
 
 ## Parent-child relationships
 

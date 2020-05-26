@@ -11,7 +11,7 @@ First:
 ;
 
 Second:
-    INT|STRING
+    sec=INT|STRING
 ;
 
 """
@@ -21,6 +21,7 @@ def test_user_class():
     """
     User supplied meta class.
     """
+
     class First(object):
         "User class."
         def __init__(self, seconds, a, b, c):
@@ -33,6 +34,16 @@ def test_user_class():
             self.b = b
             self.c = c
 
+            for second in self.seconds:
+                # Make sure seconds have already been instantiated
+                assert hasattr(second, 'sec') and isinstance(second.sec, int)
+
+    class Second(object):
+        "User class"
+        def __init__(self, parent, sec):
+            self.parent = parent
+            self.sec = sec
+
     modelstr = """
     first 34 45 65 "sdf" 45
     """
@@ -43,7 +54,7 @@ def test_user_class():
     assert type(model).__name__ == "First"
     assert type(model) is not First
 
-    mm = metamodel_from_str(grammar, classes=[First])
+    mm = metamodel_from_str(grammar, classes=[First, Second])
     model = mm.model_from_str(modelstr)
     # Test that user class is instantiated
     assert type(model).__name__ == "First"

@@ -60,7 +60,7 @@ def main(debug=False):
 
     def assertIs(x, rule):
         assert _is(x, rule), 'Unexpected object "{}" to rule "{}"'\
-                    .format(x, type(x), rule)
+            .format(x, rule)
 
     def evaluate(x):
 
@@ -115,7 +115,7 @@ def main(debug=False):
 
         else:
             assert False, 'Unexpected object "{}" of type "{}"'\
-                    .format(x, type(x))
+                .format(x, type(x))
 
     result = evaluate(model)
 

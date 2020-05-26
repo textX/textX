@@ -104,10 +104,7 @@ class PlainName(object):
         else:
             result = _inner_resolve_link_rule_ref(obj_ref.cls,
                                                   obj_ref.obj_name)
-        if result:
-            return result
-
-        return None  # error handled outside
+        return result  # error handled outside
 
 
 class FQN(object):
@@ -192,7 +189,7 @@ class FQN(object):
 
             for n in fqn_name.split('.'):
                 obj = find_obj(p, n)
-                if obj:
+                if obj is not None:
                     if type(obj) is Postponed:
                         return obj
                     p = obj
@@ -413,10 +410,10 @@ class FQNImportURI(ImportURI):
             my_scope_redirection_logic = scope_redirection_logic
         ImportURI.__init__(self, FQN(
             scope_redirection_logic=my_scope_redirection_logic),
-                           glob_args=glob_args,
-                           search_path=search_path, importAs=importAs,
-                           importURI_converter=importURI_converter,
-                           importURI_to_scope_name=importURI_to_scope_name)
+            glob_args=glob_args,
+            search_path=search_path, importAs=importAs,
+            importURI_converter=importURI_converter,
+            importURI_to_scope_name=importURI_to_scope_name)
 
 
 class PlainNameImportURI(ImportURI):
@@ -592,8 +589,8 @@ class RelativeName(object):
                 "expected path to list in the model ({})".format(
                     self.path_to_container_object))
         obj_list = filter(
-            lambda x: textx_isinstance(x, attr.cls) and
-            x.name.find(name_part) >= 0, obj_list)
+            lambda x: textx_isinstance(x, attr.cls)
+            and x.name.find(name_part) >= 0, obj_list)
 
         return list(obj_list)
 
@@ -660,8 +657,8 @@ class ExtRelativeName(object):
                     "expected path to list in the model ({})".format(
                         self.path_to_target))
             tmp_list = list(filter(
-                lambda x: textx_isinstance(x, attr.cls) and
-                x.name.find(name_part) >= 0, tmp_list))
+                lambda x: textx_isinstance(x, attr.cls)
+                and x.name.find(name_part) >= 0, tmp_list))
             obj_list = obj_list + tmp_list
 
         return list(obj_list)

@@ -40,8 +40,8 @@ def test_issue78_obj_processors_order_of_eval():
     ''')
     test_list = []
     mm.register_obj_processors({
-        'Base': lambda o: test_list.append('Base_'+o.name),
-        'Special1': lambda o: test_list.append('Special_'+o.name),
+        'Base': lambda o: test_list.append('Base_' + o.name),
+        'Special1': lambda o: test_list.append('Special_' + o.name),
     })
     mm.model_from_str('''
     1 S1
@@ -63,8 +63,8 @@ def test_issue78_obj_processors_replacement1_base():
     ''')
     test_list = []
     mm.register_obj_processors({
-        'Base': lambda o: 'Base_'+o.name,
-        'Special1': lambda o: test_list.append('Special_'+o.name),
+        'Base': lambda o: 'Base_' + o.name,
+        'Special1': lambda o: test_list.append('Special_' + o.name),
     })
     m = mm.model_from_str('''
     1 S1
@@ -87,8 +87,8 @@ def test_issue78_obj_processors_replacement2_specialized():
     ''')
     test_list = []
     mm.register_obj_processors({
-        'Base': lambda o: test_list.append('Base_'+o.name),
-        'Special1': lambda o: 'Special_'+o.name,
+        'Base': lambda o: test_list.append('Base_' + o.name),
+        'Special1': lambda o: 'Special_' + o.name,
     })
     m = mm.model_from_str('''
     1 S1
@@ -112,8 +112,8 @@ def test_issue78_obj_processors_replacement_domination_of_specialized():
         Base: Special1|Special2;
     ''')
     mm.register_obj_processors({
-        'Base': lambda o: 'Base_'+o.name,
-        'Special1': lambda o: 'Special_'+o.name,
+        'Base': lambda o: 'Base_' + o.name,
+        'Special1': lambda o: 'Special_' + o.name,
     })
     m = mm.model_from_str('''
     1 S1

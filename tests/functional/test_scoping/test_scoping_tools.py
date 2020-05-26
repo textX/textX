@@ -7,8 +7,188 @@ from textx.scoping.tools import resolve_model_path,\
     get_list_of_concatenated_objects
 from textx.scoping.tools import get_unique_named_object
 from textx import textx_isinstance
-from textx import get_children_of_type
+from textx import get_children_of_type, get_model
 from pytest import raises
+import attr
+
+
+def test_textx_tools_with_frozen_classes1():
+
+    @attr.s(frozen=True)
+    class Model(object):
+        # _tx_filename = attr.ib()
+        # _tx_parser = attr.ib()
+        use = attr.ib()
+        data = attr.ib()
+
+    @attr.s(frozen=True)
+    class Content(object):
+        parent = attr.ib()
+        elementsA = attr.ib()
+        elementsB = attr.ib()
+        ref = attr.ib()
+
+    @attr.s(frozen=True)
+    class Element(object):
+        parent = attr.ib()
+        name = attr.ib()
+
+    grammar = r'''
+    Model:
+        'use' use=Use
+        data=Content;
+    Content:
+        'A:' elementsA+=Element
+        'B:' elementsB+=Element
+        'ref' ref=[Element];
+    Element: '*' name=ID;
+    Use: 'A'|'B';
+    '''
+    text_ok1 = r'''
+        use A
+        A: *a *b *c
+        B: *d *e *f
+        ref b
+    '''
+    text_ok2 = r'''
+        use B
+        A: *a *b *c
+        B: *d *e *f
+        ref d
+    '''
+    text_not_ok = r'''
+        use B
+        A: *a *b *c
+        B: *d *e *f
+        ref b
+    '''
+    for classes in [[], [Model, Content, Element]]:
+        print("Test Loop, classes==", classes)
+
+        ref_scope_was_used = [False]
+
+        def ref_scope(refItem, myattr, attr_ref):
+            # python3: nonlocal ref_scope_was_used
+            ref_scope_was_used[0] = True
+            if get_model(refItem).use == 'A':
+                return resolve_model_path(
+                    refItem, "parent(Model).data.elementsA.{}".format(
+                        attr_ref.obj_name), True)
+            else:
+                return resolve_model_path(
+                    refItem, "parent(Model).data.elementsB.{}".format(
+                        attr_ref.obj_name), True)
+
+        mm = metamodel_from_str(grammar, classes=classes)
+        mm.register_scope_providers({
+            "Content.ref": ref_scope
+        })
+        ref_scope_was_used[0] = False
+        m = mm.model_from_str(text_ok1)
+        assert ref_scope_was_used[0]
+        if len(classes) == 0:
+            # Assert that model object has its own filename and metamodel
+            assert '_tx_filename' in m.__dict__
+            assert '_tx_metamodel' in m.__dict__
+        else:
+            # Assert that special attributes are accessible only through class
+            assert '_tx_filename' not in m.__dict__
+            assert '_tx_metamodel' not in m.__dict__
+
+        ref_scope_was_used[0] = False
+        mm.model_from_str(text_ok2)
+        assert ref_scope_was_used[0]
+
+        ref_scope_was_used[0] = False
+        with raises(Exception, match=r'.*Unknown object "b".*'):
+            mm.model_from_str(text_not_ok)
+        assert ref_scope_was_used[0]
+
+
+def test_textx_tools_with_frozen_classes2():
+
+    class Model(object):
+        def __init__(self, **kwargs):
+            for k, v in kwargs.items():
+                setattr(self, k, v)
+
+    @attr.s(frozen=True)
+    class Content(object):
+        parent = attr.ib()
+        elementsA = attr.ib()
+        elementsB = attr.ib()
+        ref = attr.ib()
+
+    @attr.s(frozen=True)
+    class Element(object):
+        parent = attr.ib()
+        name = attr.ib()
+
+    grammar = r'''
+    Model:
+        'use' use=Use
+        data=Content;
+    Content:
+        'A:' elementsA+=Element
+        'B:' elementsB+=Element
+        'ref' ref=[Element];
+    Element: '*' name=ID;
+    Use: 'A'|'B';
+    '''
+    text_ok1 = r'''
+        use A
+        A: *a *b *c
+        B: *d *e *f
+        ref b
+    '''
+    text_ok2 = r'''
+        use B
+        A: *a *b *c
+        B: *d *e *f
+        ref d
+    '''
+    text_not_ok = r'''
+        use B
+        A: *a *b *c
+        B: *d *e *f
+        ref b
+    '''
+    for classes in [[], [Model, Content, Element]]:
+        print("Test Loop, classes==", classes)
+
+        ref_scope_was_used = [False]
+
+        def ref_scope(refItem, myattr, attr_ref):
+            # python3: nonlocal ref_scope_was_used
+            ref_scope_was_used[0] = True
+            if get_model(refItem).use == 'A':
+                return resolve_model_path(
+                    refItem, "parent(Model).data.elementsA.{}".format(
+                        attr_ref.obj_name), True)
+            else:
+                return resolve_model_path(
+                    refItem, "parent(Model).data.elementsB.{}".format(
+                        attr_ref.obj_name), True)
+
+        mm = metamodel_from_str(grammar, classes=classes)
+        mm.register_scope_providers({
+            "Content.ref": ref_scope
+        })
+        ref_scope_was_used[0] = False
+        m = mm.model_from_str(text_ok1)
+        assert ref_scope_was_used[0]
+
+        assert hasattr(m, '_tx_filename')
+        assert hasattr(m, '_tx_metamodel')
+
+        ref_scope_was_used[0] = False
+        mm.model_from_str(text_ok2)
+        assert ref_scope_was_used[0]
+
+        ref_scope_was_used[0] = False
+        with raises(Exception, match=r'.*Unknown object "b".*'):
+            mm.model_from_str(text_not_ok)
+        assert ref_scope_was_used[0]
 
 
 def test_textx_isinstace():

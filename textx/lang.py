@@ -540,7 +540,8 @@ class TextXVisitor(PTNodeVisitor):
             cls = self.metamodel.user_classes[rule_name]
 
             # Initialize special attributes
-            self.metamodel._init_class(cls, None, node.position)
+            self.metamodel._init_class(cls, None, node.position,
+                                       external_attributes=True)
         else:
             # Create class to collect attributes. At this time PEG rule
             # is not known.

@@ -34,8 +34,8 @@ def main(path=None, debug=False, reportfilename=None):
             destpath = join(dirname(reportfilename), "pu")
             if not exists(destpath):
                 os.mkdir(destpath)
-            dest_pu = join(destpath, outfname_base+".pu")
-            dest_pu_png = join(destpath, outfname_base+".png")
+            dest_pu = join(destpath, outfname_base + ".pu")
+            dest_pu_png = join(destpath, outfname_base + ".png")
 
             print(dest_dot)
             mm = metamodel_from_file(inname, debug=debug)
@@ -48,7 +48,7 @@ def main(path=None, debug=False, reportfilename=None):
             md.write('\n')
             with open(inname, "rt") as gr:
                 for l in gr:
-                    md.write("\t\t"+l)
+                    md.write("\t\t" + l)
             md.write('\n')
             rel_dest_dot_png = os.path.relpath(
                 dest_dot_png, dirname(reportfilename))

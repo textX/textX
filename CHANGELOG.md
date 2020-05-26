@@ -30,6 +30,8 @@ please take a look at related PRs and issues and see if the change affects you.
   
 ### Fixed
 
+  - Fixed several instances of invalid truthiness checking. Thanks
+    markusschmaus@GitHub ([#250])
   - Fixed applying multiple grammar rule modifiers ([#246])
   - Fixed exception on calling `check` CLI command with relative path name.
   - Fixed return value of textx generate and check commands: we return a failure
@@ -38,6 +40,8 @@ please take a look at related PRs and issues and see if the change affects you.
   
 ### Changed
 
+  - User classes can now be immutable (e.g. `attr.frozen`) or can use
+    `__slots__`. Thanks markusschmaus@GitHub ([#256])
   - Cleanup of setup configuration and install scripts [#231]
   - Dot/PlantUML rendering of meta-models: remove rendering of base types,
     improve rendering of required/optional, render match rules as a single
@@ -448,6 +452,9 @@ please take a look at related PRs and issues and see if the change affects you.
   - Metamodel and model construction.
   - Export to dot.
 
+
+[#256]: https://github.com/textX/textX/pull/256
+[#250]: https://github.com/textX/textX/pull/250
 [#246]: https://github.com/textX/textX/issues/246
 [#243]: https://github.com/textX/textX/pull/243
 [#235]: https://github.com/textX/textX/pull/235

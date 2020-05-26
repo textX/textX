@@ -78,7 +78,7 @@ def test_object_processors():
     obj_processors = {
         'First': first_obj_processor,
         'Second': second_obj_processor,
-        }
+    }
 
     metamodel = metamodel_from_str(grammar)
     metamodel.register_obj_processors(obj_processors)
@@ -90,6 +90,85 @@ def test_object_processors():
     for s in first.seconds:
         assert hasattr(s, '_second_called')
     assert call_order == [2, 2, 2, 1]
+
+
+def test_object_processors_user_classes():
+    """
+    Test that object processors are called.
+    They should be called after each model object construction.
+    """
+
+    def first_obj_processor(first):
+        first._first_called = True
+        first._a_copy = first.a
+
+    def second_obj_processor(second):
+        second._second_called = True
+        second._sec_copy = second.sec
+
+        # test that parent is fully initialised.
+        # b should be True
+        assert second.parent.b is not None
+
+    obj_processors = {
+        'First': first_obj_processor,
+        'Second': second_obj_processor,
+    }
+
+    class First(object):
+        def __init__(self, seconds, a, b, c):
+            self.seconds = seconds
+            self.a = a
+            self.b = b
+            self.c = c
+
+    class Second(object):
+        def __init__(self, sec, parent):
+            self.sec = sec
+            self.parent = parent
+
+    metamodel = metamodel_from_str(grammar, classes=[First, Second])
+    metamodel.register_obj_processors(obj_processors)
+
+    model_str = 'first 34 45 7 A 45 65 B true C "dfdf"'
+    first = metamodel.model_from_str(model_str)
+
+    assert hasattr(first, '_first_called')
+    assert first._a_copy == first.a
+    for s in first.seconds:
+        assert hasattr(s, '_second_called')
+        assert s._sec_copy == s.sec
+
+
+def test_object_processor_falsy():
+    """
+    Test that object processors are called for falsy objects.
+    """
+
+    def second_obj_processor(second):
+        second._second_called = True
+
+    obj_processors = {
+        'Second': second_obj_processor,
+    }
+
+    class Second(object):
+        def __init__(self, parent, sec):
+            self.parent = parent
+            self.sec = sec
+            self._second_called = False
+
+        def __len__(self):
+            return 0
+
+    metamodel = metamodel_from_str(grammar, classes=[Second])
+    metamodel.register_obj_processors(obj_processors)
+
+    model_str = 'first 34 45 7 A 45 65 B true C "dfdf"'
+    first = metamodel.model_from_str(model_str)
+
+    for s in first.seconds:
+        assert s._second_called is True
 
 
 def test_object_processor_replace_object():
@@ -106,7 +185,7 @@ def test_object_processor_replace_object():
     obj_processors = {
         'Second': second_obj_processor,
         'STRING': string_obj_processor,
-        }
+    }
 
     metamodel = metamodel_from_str(grammar)
     metamodel.register_obj_processors(obj_processors)

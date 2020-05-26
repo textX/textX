@@ -67,7 +67,7 @@ def parse_str(grammar, lola_str):
         "Formula": default_processor,
         "FormulaExpression": default_processor,
         "bar": default_processor,
-        }
+    }
 
     meta_model = metamodel_from_str(grammar, ignore_case=True,
                                     auto_init_attributes=False)
