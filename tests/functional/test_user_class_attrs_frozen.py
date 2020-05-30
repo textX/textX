@@ -70,6 +70,14 @@ def test_inheritance_attrs():
     class Sub(Super):
         b = attr.ib()
 
+    super_getattribute = Super.__getattribute__
+    sub_getattribute = Sub.__getattribute__
+
     mm = metamodel_from_str(grammar, classes=[Super, Sub])
     model = mm.model_from_str(modelstr)
     assert model.sub.b == 'something'
+
+    # Make sure that the special methods of both classes have been correctly
+    # restored
+    assert Super.__getattribute__ == super_getattribute
+    assert Sub.__getattribute__ == sub_getattribute

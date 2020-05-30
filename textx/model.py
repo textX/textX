@@ -335,7 +335,7 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                 real_name = '__{}__'.format(a_name)
                 cached_name = '_tx_real_{}'.format(a_name)
                 setattr(user_class, cached_name,
-                        getattr(user_class, real_name, None))
+                        user_class.__dict__.get(real_name, None))
                 setattr(user_class, real_name,
                         locals()['_{}'.format(a_name)])
             user_class._tx_instrumented = 1
