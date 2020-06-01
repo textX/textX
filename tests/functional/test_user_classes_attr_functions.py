@@ -56,24 +56,23 @@ def test_user_class_attr_functions_are_restored_correctly():
     Documentation of correct handling of custom attr methods.
     """
 
-    origA = A.__dict__.get('__setattr__', None)
-    origB = B.__dict__.get('__setattr__', None)
-    origC = C.__dict__.get('__setattr__', None)
+    origA = A.__dict__['__setattr__']
+    assert '__setattr__' not in B.__dict__
+    origC = C.__dict__['__setattr__']
 
     assert origA is not None
-    assert origB is None
     assert origC is not None
 
     mm = metamodel_from_str(grammar, classes=[A, B, C])
     _ = mm.model_from_str(modelstr)
 
-    assert origA is A.__dict__.get('__setattr__', None)
-    assert origB is B.__dict__.get('__setattr__', None)
-    assert origC is C.__dict__.get('__setattr__', None)
+    assert origA is A.__dict__['__setattr__']
+    assert '__setattr__' not in B.__dict__
+    assert origC is C.__dict__['__setattr__']
 
     mm = metamodel_from_str(grammar, classes=[C, B, A])
     _ = mm.model_from_str(modelstr)
 
-    assert origA is A.__dict__.get('__setattr__', None)
-    assert origB is B.__dict__.get('__setattr__', None)
-    assert origC is C.__dict__.get('__setattr__', None)
+    assert origA is A.__dict__['__setattr__']
+    assert '__setattr__' not in B.__dict__
+    assert origC is C.__dict__['__setattr__']
