@@ -33,7 +33,6 @@ class B(A):
     def __init__(self,**kwargs):
         for k,v in kwargs.items():
             self.__dict__[k] = v
-        self.__dict__['test'] = '?'
 
 class C(B):
     """
@@ -44,7 +43,6 @@ class C(B):
     def __init__(self,**kwargs):
         for k,v in kwargs.items():
             self.__dict__[k] = v
-        self.__dict__['test'] = '?'
 
     def __setattr__(self, name, value):
         pass
