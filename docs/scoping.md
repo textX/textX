@@ -278,12 +278,6 @@ objects are already loaded and instantiated. Scoping takes place after the model
 while resolving references you can rely on the assumption that all
 model elements already exist.
 
-Note: while resolving references,
-user classes have modified attr-methods (`__setattr__`, `__getattr__`, `__delattr__`, and `__getattribute__`)
-in order to enable user classes with modified/restricted attribute access,
-like classes employing `__slots__` 
-(see [Custom classes](metamodel.md##custom-classes)).
-
 It also shows, that **objects processors** kick in when all 
 references are resolved. That means that no references are 
 resolved any more after or while the first object processor has been
@@ -293,6 +287,12 @@ during model construction. Those object processors should generally be a very
 simple, usually just a type conversions so they don't need a fully constructed model. 
 **Other object processors** (i.e. those operating on common rules) are called, 
 as depicted above, on a constructed model, *in bottom up* fashion.
+
+Note: while resolving references,
+user classes have modified attr-methods (`__setattr__`, `__getattr__`, `__delattr__`, and `__getattribute__`)
+in order to enable user classes with modified/restricted attribute access,
+like classes employing `__slots__` 
+(see [Custom classes](metamodel.md##custom-classes)).
 
 #### Use case: reference data in non-textx models
 
