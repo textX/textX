@@ -38,7 +38,7 @@ def register_languages():
 
     class A(object):
         def __init__(self, **kwargs):
-            print("INIT {}".format(str(kwargs)))
+            super(A, self).__init__()
             for k, v in kwargs.items():
                 self.__dict__[k] = v
 
