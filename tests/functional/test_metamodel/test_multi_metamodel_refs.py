@@ -36,8 +36,19 @@ def register_languages():
     global_repo = scoping.GlobalModelRepository()
     global_repo_provider = scoping_providers.PlainNameGlobalRepo()
 
+    class A(object):
+        def __init__(self, **kwargs):
+            print("INIT {}".format(str(kwargs)))
+            for k, v in kwargs.items():
+                print("init A: {}={}".format(k,v))
+                self.__dict__[k] = v
+
+        def __setattr__(self, name, value):
+            raise Exception("test: this is not allowed.")
+
     def get_A_mm():
-        mm_A = metamodel_from_str(grammarA, global_repository=global_repo)
+        mm_A = metamodel_from_str(grammarA, global_repository=global_repo,
+                                  classes=[A])
         mm_A.register_scope_providers({"*.*": global_repo_provider})
         return mm_A
 
@@ -127,6 +138,10 @@ def test_multi_metamodel_references_with_importURI():
     # the meta model is constructed (like in our example, mm_A cannot
     # reference mm_B, if mm_B already references mm_A because one has to
     # constructed first).
+    # Add a custom setattr for a rule used in the language with is imported
+    # via the importURI feature. This should test that the attr
+    # replacement also works for models not representing the "main outer
+    # model" of a load_from_xxx-call.
 
     register_languages()
 
@@ -135,15 +150,28 @@ def test_multi_metamodel_references_with_importURI():
     mm_A = metamodel_for_language('A')
     mm_B = metamodel_for_language('BwithImport')
 
+    modelA = mm_A.model_from_str('''
+    A a1 A a2 A a3
+    ''')
+
+    with raises(Exception,
+                match=r'.*test: this is not allowed.*'):
+        modelA.a[0].x=1
+
     # load a model from B which includes a model from A.
     current_dir = os.path.dirname(__file__)
-    model = mm_B.model_from_file(os.path.join(current_dir, 'multi_metamodel',
+    modelB = mm_B.model_from_file(os.path.join(current_dir, 'multi_metamodel',
                                               'refs', 'b.b'))
 
     # check that the classes from the correct meta model are used
     # (and that the model was loaded).
-    assert model.b[0].__class__ == mm_B[model.b[0].__class__.__name__]
-    assert model.b[0].a.__class__ == mm_A[model.b[0].a.__class__.__name__]
+    assert modelB.b[0].__class__ == mm_B[modelB.b[0].__class__.__name__]
+    assert modelB.b[0].a.__class__ == mm_A[modelB.b[0].a.__class__.__name__]
+
+    with raises(Exception,
+                match=r'.*test: this is not allowed.*'):
+        modelB.b[0].a.x=1
+
 
 # -------------------------------------
 

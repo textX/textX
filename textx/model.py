@@ -747,46 +747,6 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                 for m in models:
                     _end_model_construction(m)
 
-                # At this point we should restore original user attr methods as
-                # attribute collection is over and we should switch back to
-                # "normal" behavior
-                parser._restore_user_attr_methods()
-
-                # If the the attributes to the class have been
-                # collected in _tx_obj_attrs we need to do a proper
-                # initialization at this point.
-                for obj in parser._user_class_inst:
-                    try:
-                        # Get the attributes which have been collected
-                        # in metamodel.obj and remove them from this dict.
-                        attrs = obj.__class__._tx_obj_attrs.pop(id(obj))
-
-                        # First try to apply attributes directly. It might
-                        # not be possible for some (e.g. __slots__ are used)
-                        for name, value in attrs.items():
-                            try:
-                                setattr(obj, name, value)
-                            except:  # noqa
-                                # Not possible to set the attribute
-                                pass
-
-                        # We shall only pass to __init__ attributes that are
-                        # defined by the meta-model, and `parent` if applicable
-                        attrs = {k: v for k, v in attrs.items()
-                                 if k in obj.__class__._tx_attrs
-                                 or k == 'parent'}
-
-                        # Call constructor for custom initialization
-                        obj.__init__(**attrs)
-
-                    except TypeError as e:
-                        # Add class name information in case of wrong
-                        # constructor parameters
-                        e.args += ("for class %s" %
-                                   obj.__class__.__name__,)
-                        parser.dprint(traceback.print_exc())
-                        raise e
-
                 # final check that everything went ok
                 for m in models:
                     assert 0 == len(get_children_of_type(
@@ -843,6 +803,47 @@ def _end_model_construction(model):
     End model construction (see _start_model_construction).
     """
     del model._tx_reference_resolver
+
+    # At this point we should restore original user attr methods as
+    # attribute collection is over and we should switch back to
+    # "normal" behavior
+    if hasattr(model,'_tx_parser'):  # not for, e.g., str
+        model._tx_parser._restore_user_attr_methods()
+
+        # If the the attributes to the class have been
+        # collected in _tx_obj_attrs we need to do a proper
+        # initialization at this point.
+        for obj in model._tx_parser._user_class_inst:
+            try:
+                # Get the attributes which have been collected
+                # in metamodel.obj and remove them from this dict.
+                attrs = obj.__class__._tx_obj_attrs.pop(id(obj))
+
+                # First try to apply attributes directly. It might
+                # not be possible for some (e.g. __slots__ are used)
+                for name, value in attrs.items():
+                    try:
+                        setattr(obj, name, value)
+                    except:  # noqa
+                        # Not possible to set the attribute
+                        pass
+
+                # We shall only pass to __init__ attributes that are
+                # defined by the meta-model, and `parent` if applicable
+                attrs = {k: v for k, v in attrs.items()
+                         if k in obj.__class__._tx_attrs
+                         or k == 'parent'}
+
+                # Call constructor for custom initialization
+                obj.__init__(**attrs)
+
+            except TypeError as e:
+                # Add class name information in case of wrong
+                # constructor parameters
+                e.args += ("for class %s" %
+                           obj.__class__.__name__,)
+                model._tx_parser.dprint(traceback.print_exc())
+                raise e
 
 
 def _remove_all_affected_models_in_construction(model):
