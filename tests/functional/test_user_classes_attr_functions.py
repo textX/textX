@@ -12,13 +12,14 @@ modelstr = r'''
 A 1 B 2 C 3
 '''
 
+
 class A(object):
     """
     A defines a class with a custom setattr method
     (it stores the __setattr__ in its __dict__).
     """
-    def __init__(self,**kwargs):
-        for k,v in kwargs.items():
+    def __init__(self, **kwargs):
+        for k, v in kwargs.items():
             self.__dict__[k] = v
 
     def __setattr__(self, name, value):
@@ -30,9 +31,10 @@ class B(A):
     B defines a class inheriting the custom setattr method from A
     (it does not store the __setattr__ in its __dict__).
     """
-    def __init__(self,**kwargs):
-        for k,v in kwargs.items():
+    def __init__(self, **kwargs):
+        for k, v in kwargs.items():
             self.__dict__[k] = v
+
 
 class C(B):
     """
@@ -40,8 +42,8 @@ class C(B):
     It overrides the __setattr__ from B/A.
     (it stores its own __setattr__ in its __dict__).
     """
-    def __init__(self,**kwargs):
-        for k,v in kwargs.items():
+    def __init__(self, **kwargs):
+        for k, v in kwargs.items():
             self.__dict__[k] = v
 
     def __setattr__(self, name, value):
@@ -62,14 +64,14 @@ def test_user_class_attr_functions_are_restored_correctly():
     assert origB is None
     assert origC is not None
 
-    mm = metamodel_from_str(grammar, classes=[A,B,C])
+    mm = metamodel_from_str(grammar, classes=[A, B, C])
     _ = mm.model_from_str(modelstr)
 
     assert origA is A.__dict__.get('__setattr__', None)
     assert origB is B.__dict__.get('__setattr__', None)
     assert origC is C.__dict__.get('__setattr__', None)
 
-    mm = metamodel_from_str(grammar, classes=[C,B,A])
+    mm = metamodel_from_str(grammar, classes=[C, B, A])
     _ = mm.model_from_str(modelstr)
 
     assert origA is A.__dict__.get('__setattr__', None)

@@ -807,7 +807,7 @@ def _end_model_construction(model):
     # At this point we should restore original user attr methods as
     # attribute collection is over and we should switch back to
     # "normal" behavior
-    if hasattr(model,'_tx_parser'):  # not for, e.g., str
+    if hasattr(model, '_tx_parser'):  # not for, e.g., str
         model._tx_parser._restore_user_attr_methods()
 
         # If the the attributes to the class have been

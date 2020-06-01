@@ -40,7 +40,6 @@ def register_languages():
         def __init__(self, **kwargs):
             print("INIT {}".format(str(kwargs)))
             for k, v in kwargs.items():
-                print("init A: {}={}".format(k,v))
                 self.__dict__[k] = v
 
         def __setattr__(self, name, value):
@@ -156,12 +155,12 @@ def test_multi_metamodel_references_with_importURI():
 
     with raises(Exception,
                 match=r'.*test: this is not allowed.*'):
-        modelA.a[0].x=1
+        modelA.a[0].x = 1
 
     # load a model from B which includes a model from A.
     current_dir = os.path.dirname(__file__)
-    modelB = mm_B.model_from_file(os.path.join(current_dir, 'multi_metamodel',
-                                              'refs', 'b.b'))
+    modelB = mm_B.model_from_file(
+        os.path.join(current_dir, 'multi_metamodel', 'refs', 'b.b'))
 
     # check that the classes from the correct meta model are used
     # (and that the model was loaded).
@@ -170,7 +169,7 @@ def test_multi_metamodel_references_with_importURI():
 
     with raises(Exception,
                 match=r'.*test: this is not allowed.*'):
-        modelB.b[0].a.x=1
+        modelB.b[0].a.x = 1
 
 
 # -------------------------------------
