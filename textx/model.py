@@ -808,12 +808,13 @@ def _end_model_construction(model):
     # attribute collection is over and we should switch back to
     # "normal" behavior
     if hasattr(model, '_tx_parser'):  # not for, e.g., str
-        model._tx_parser._restore_user_attr_methods()
+        the_parser = model._tx_parser
+        the_parser._restore_user_attr_methods()
 
         # If the the attributes to the class have been
         # collected in _tx_obj_attrs we need to do a proper
         # initialization at this point.
-        for obj in model._tx_parser._user_class_inst:
+        for obj in the_parser._user_class_inst:
             try:
                 # Get the attributes which have been collected
                 # in metamodel.obj and remove them from this dict.
@@ -842,7 +843,7 @@ def _end_model_construction(model):
                 # constructor parameters
                 e.args += ("for class %s" %
                            obj.__class__.__name__,)
-                model._tx_parser.dprint(traceback.print_exc())
+                the_parser.dprint(traceback.print_exc())
                 raise e
 
 
