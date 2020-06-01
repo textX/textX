@@ -13,6 +13,8 @@ in addition to the main model (see
 "pre_ref_resolution_callback")
 end note
 
+-> replace attr methods;
+
 :**resolve references**
 (ref=[Type]);
 
@@ -21,6 +23,8 @@ note right
 (main responsibility) and also may modify the
 model itself.
 end note
+
+-> restore attr methods;
 
 :(post-) **processing**
 **objects**;

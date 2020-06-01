@@ -278,6 +278,12 @@ objects are already loaded and instantiated. Scoping takes place after the model
 while resolving references you can rely on the assumption that all
 model elements already exist.
 
+Note: while resolving references,
+user classes have modified attr-methods (`__setattr__`, `__getattr__`, `__delattr__`, and `__getattribute__`)
+in order to enable user classes with modified/restricted attribute access,
+like classes employing `__slots__` 
+(see [Custom classes](metamodel.md##custom-classes)).
+
 It also shows, that **objects processors** kick in when all 
 references are resolved. That means that no references are 
 resolved any more after or while the first object processor has been
