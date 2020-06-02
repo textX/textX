@@ -367,6 +367,10 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                             real_name = '__{}__'.format(a_name)
                             if hasattr(user_class, cached_name):
                                 cached_meth = getattr(user_class, cached_name)
+                                if hasattr(cached_meth, 'im_func'):
+                                    # Python 2: func is converted to
+                                    # instancemethod
+                                    cached_meth = cached_meth.im_func
                                 if cached_meth is not None:
                                     setattr(user_class, real_name, cached_meth)
                                 else:
