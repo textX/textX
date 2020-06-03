@@ -288,6 +288,13 @@ simple, usually just a type conversions so they don't need a fully constructed m
 **Other object processors** (i.e. those operating on common rules) are called, 
 as depicted above, on a constructed model, *in bottom up* fashion.
 
+!!! note
+    while resolving references,
+    user classes have modified attr-methods (`__setattr__`, `__getattr__`, `__delattr__`, and `__getattribute__`)
+    in order to enable user classes with modified/restricted attribute access,
+    like classes employing `__slots__` 
+    (see [Custom classes](metamodel.md##custom-classes)).
+
 #### Use case: reference data in non-textx models
 
 If you want to **reference an element not directly modelled** (instantiated), you need to

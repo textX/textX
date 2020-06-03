@@ -41,7 +41,7 @@ please take a look at related PRs and issues and see if the change affects you.
 ### Changed
 
   - User classes can now be immutable (e.g. `attr.frozen`) or can use
-    `__slots__`. Thanks markusschmaus@GitHub ([#256, #260])
+    `__slots__`. Thanks markusschmaus@GitHub ([#256, #260, #261])
   - Cleanup of setup configuration and install scripts [#231]
   - Dot/PlantUML rendering of meta-models: remove rendering of base types,
     improve rendering of required/optional, render match rules as a single
@@ -453,6 +453,7 @@ please take a look at related PRs and issues and see if the change affects you.
   - Export to dot.
 
 
+[#261]: https://github.com/textX/textX/pull/261
 [#260]: https://github.com/textX/textX/pull/260
 [#256]: https://github.com/textX/textX/pull/256
 [#250]: https://github.com/textX/textX/pull/250
