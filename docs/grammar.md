@@ -736,6 +736,7 @@ A rule with a single reference to an abstract or common rule is also abstract:
     
 Abstract rules can have multiple references in a single alternative with the
 following rules:
+
 - If all rule references in a single alternative are match rules the result will
   be a concatenation of all match rule results,
 - If there is a common rule reference than it would be the result and all
