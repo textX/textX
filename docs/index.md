@@ -163,6 +163,9 @@ A full example project that shows how multi-meta-modeling feature can be used is
 also available in [a separate git
 repository](https://github.com/textX/textx-multi-metamodel-example).
 
+To create the initial layout of your project quickly take a look at [project
+scaffolding](scaffolding.md).
+
 
 ## Discussion and help
 
