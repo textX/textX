@@ -211,7 +211,7 @@ For example:
 
 This command will create `png` image out of `dot` file.
 
-![Robot meta-model](../images/robot.tx.dot.png)
+![Robot meta-model](../images/robot.dot.png)
 
 
 ## Instantiating meta-model

@@ -81,7 +81,7 @@ line utility.
 
 Meta-model now looks like this:
 
-![Entity metamodel 1](entity/entity1.tx.dot.png)
+![Entity metamodel 1](entity/entity1.dot.png)
 
 While the example (Person model) looks like this:
 
@@ -157,7 +157,7 @@ Our person model will now begin with:
 
 Meta-model now looks like this:
 
-![Entity metamodel 2](entity/entity.tx.dot.png)
+![Entity metamodel 2](entity/entity.dot.png)
 
 While the example (Person model) looks like this:
 

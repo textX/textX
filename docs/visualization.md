@@ -168,7 +168,7 @@ $ dot -Tpng -O entity.dot
 
 The following image is generated:
 
-![Entity meta-model](https://raw.githubusercontent.com/textX/textX/master/examples/Entity/dotexport/entity_meta.dot.png)
+![Entity meta-model](./images/entity_meta.dot.png)
 
 Alternatively, you can also specify an alternative renderer to export your meta
 model for the [PlantUML] tool.
