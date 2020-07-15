@@ -84,7 +84,12 @@ def generate(textx):
             while model_files:
                 m = model_files.pop(0)
                 if m.startswith('--'):
-                    custom_args[m[2:]] = model_files.pop(0).strip('"\'')
+                    arg_name = m[2:]
+                    if not model_files or model_files[0].startswith('--'):
+                        # Boolean argument
+                        custom_args[arg_name] = True
+                    else:
+                        custom_args[arg_name] = model_files.pop(0).strip('"\'')
                 else:
                     model_files_without_args.append(m)
 
