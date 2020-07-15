@@ -16,6 +16,7 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ### Added
 
+  - Initial docs for Jinja code generator support ([#264]).
   - Analyzing grammars programmatically as plain textX models
     (`grammar_model_from_str/file`) ([#235])
   - Initial `startproject` scaffolding (from
@@ -453,6 +454,7 @@ please take a look at related PRs and issues and see if the change affects you.
   - Export to dot.
 
 
+[#264]: https://github.com/textX/textX/pull/264
 [#261]: https://github.com/textX/textX/pull/261
 [#260]: https://github.com/textX/textX/pull/260
 [#256]: https://github.com/textX/textX/pull/256
