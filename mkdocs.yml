@@ -23,6 +23,7 @@ nav:
   - Debugging: debugging.md
   - textx command: textx_command.md
   - Project scaffolding: scaffolding.md
+  - Jinja generators: jinja.md
   - Howtos: howto.md
 - Tutorials:
   - Hello World: tutorials/hello_world.md
