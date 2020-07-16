@@ -7,15 +7,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <meta name="author" content="Igor Dejanović">
+  
   <link rel="shortcut icon" href="../img/favicon.ico">
   <title>Multi meta-model - textX</title>
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
 
-  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
-  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
-  <link href="../style.css" rel="stylesheet">
-  <link href="../css/version-select.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/theme.css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  <link href="../style.css" rel="stylesheet" />
+  <link href="../css/version-select.css" rel="stylesheet" />
   
   <script>
     // Current page data
@@ -26,7 +27,7 @@
   
   <script src="../js/jquery-2.1.1.min.js" defer></script>
   <script src="../js/modernizr-2.8.3.min.js" defer></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
   <script>hljs.initHighlightingOnLoad();</script> 
   
   <script>
@@ -47,6 +48,7 @@
 
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
       <div class="wy-side-nav-search">
         <a href=".." class="icon icon-home"> textX</a>
         <div role="search">
@@ -57,174 +59,91 @@
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-	<ul class="current">
-	  
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="..">Home</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <span class="caption-text">User Guide</span>
-    <ul class="subnav">
-                <li class="">
-                    
-    <a class="" href="../grammar/">Grammar</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../metamodel/">Meta-model</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../model/">Model</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../scoping/">Scoping</a>
-                </li>
-                <li class=" current">
-                    
-    <a class="current" href="./">Multi meta-model</a>
-    <ul class="subnav">
-            
-    <li class="toctree-l3"><a href="#multi-meta-model-support">Multi meta-model support</a></li>
-    
-        <ul>
-        
-            <li><a class="toctree-l4" href="#use-case-meta-model-referencing-another-meta-model">Use Case: meta model referencing another meta model</a></li>
-        
-            <li><a class="toctree-l4" href="#use-case-recipes-and-ingredients-with-global-model-sharing">Use Case: Recipes and Ingredients with global model sharing</a></li>
-        
-            <li><a class="toctree-l4" href="#use-case-meta-model-sharing-with-the-importuri-feature">Use Case: meta model sharing with the ImportURI-feature</a></li>
-        
-            <li><a class="toctree-l4" href="#use-case-referencing-non-textx-meta-modelsmodels">Use Case: referencing non-textX meta-models/models</a></li>
-        
-            <li><a class="toctree-l4" href="#use-case-referencing-non-textx-meta-modelsmodels-with-a-json-file">Use Case: referencing non-textX meta-models/models with a json file</a></li>
-        
-            <li><a class="toctree-l4" href="#conclusion">Conclusion</a></li>
-        
-        </ul>
-    
-
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">User Guide</span></p>
+                <ul class="current">
+                    <li class="toctree-l1"><a class="reference internal" href="../grammar/">Grammar</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../metamodel/">Meta-model</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../model/">Model</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../scoping/">Scoping</a>
+                    </li>
+                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Multi meta-model</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#use-case-meta-model-referencing-another-meta-model">Use Case: meta model referencing another meta model</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#use-case-recipes-and-ingredients-with-global-model-sharing">Use Case: Recipes and Ingredients with global model sharing</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#use-case-meta-model-sharing-with-the-importuri-feature">Use Case: meta model sharing with the ImportURI-feature</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#use-case-referencing-non-textx-meta-modelsmodels">Use Case: referencing non-textX meta-models/models</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#use-case-referencing-non-textx-meta-modelsmodels-with-a-json-file">Use Case: referencing non-textX meta-models/models with a json file</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#conclusion">Conclusion</a>
+    </li>
     </ul>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../parser_config/">Parser configuration</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../registration/">Registration/Discovery</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../visualization/">Visualization</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../error_handling/">Error handling</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../debugging/">Debugging</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../textx_command/">textx command</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../scaffolding/">Project scaffolding</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../howto/">Howtos</a>
-                </li>
-    </ul>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <span class="caption-text">Tutorials</span>
-    <ul class="subnav">
-                <li class="">
-                    
-    <a class="" href="../tutorials/hello_world/">Hello World</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../tutorials/robot/">Robot</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../tutorials/entity/">Entity</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../tutorials/state_machine/">State Machine</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../tutorials/toylanguage/">Toy language compiler</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../tutorials/self-dsl/">self-dsl</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../tutorials/turtle/">Turtle graphics</a>
-                </li>
-    </ul>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <span class="caption-text">Development</span>
-    <ul class="subnav">
-                <li class="">
-                    
-    <a class="" href="https://github.com/textX/textX/blob/master/CONTRIBUTING.md">Contributing</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../process/">Release process</a>
-                </li>
-    </ul>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <span class="caption-text">About</span>
-    <ul class="subnav">
-                <li class="">
-                    
-    <a class="" href="../about/comparison/">Comparison</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="https://github.com/textX/textX/blob/master/LICENSE.txt">License</a>
-                </li>
-    </ul>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <span class="caption-text">What's new</span>
-    <ul class="subnav">
-                <li class="">
-                    
-    <a class="" href="../whatsnew/release_1_5/">Release 1.5</a>
-                </li>
-    </ul>
-	    </li>
-          
-        </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../parser_config/">Parser configuration</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../registration/">Registration/Discovery</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../visualization/">Visualization</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../error_handling/">Error handling</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../debugging/">Debugging</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../textx_command/">textx command</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../scaffolding/">Project scaffolding</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../howto/">Howtos</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Tutorials</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../tutorials/hello_world/">Hello World</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../tutorials/robot/">Robot</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../tutorials/entity/">Entity</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../tutorials/state_machine/">State Machine</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../tutorials/toylanguage/">Toy language compiler</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../tutorials/self-dsl/">self-dsl</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../tutorials/turtle/">Turtle graphics</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Development</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="" href="https://github.com/textX/textX/blob/master/CONTRIBUTING.md">Contributing</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../process/">Release process</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">About</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../about/comparison/">Comparison</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="https://github.com/textX/textX/blob/master/LICENSE.txt">License</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">What's new</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../whatsnew/release_1_5/">Release 1.5</a>
+                    </li>
+                </ul>
       </div>
-      &nbsp;
+    </div>
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
@@ -256,6 +175,7 @@
       
     </li>
   </ul>
+  
   <hr/>
 </div>
           <div role="main">
@@ -655,7 +575,7 @@ data structure. </p>
     
   </div>
 
-  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
 </footer>
       
         </div>
@@ -665,7 +585,7 @@ data structure. </p>
 
   </div>
 
-  <div class="rst-versions" role="note" style="cursor: pointer">
+  <div class="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
       
           <a href="https://github.com/textX/textX/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
@@ -682,6 +602,11 @@ data structure. </p>
     <script src="../js/theme.js" defer></script>
       <script src="../js/version-select.js" defer></script>
       <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
 
 </body>
 </html>

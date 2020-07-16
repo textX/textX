@@ -7,15 +7,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <meta name="author" content="Igor Dejanović">
+  
   <link rel="shortcut icon" href="../img/favicon.ico">
   <title>Meta-model - textX</title>
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
 
-  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
-  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
-  <link href="../style.css" rel="stylesheet">
-  <link href="../css/version-select.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/theme.css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  <link href="../style.css" rel="stylesheet" />
+  <link href="../css/version-select.css" rel="stylesheet" />
   
   <script>
     // Current page data
@@ -26,7 +27,7 @@
   
   <script src="../js/jquery-2.1.1.min.js" defer></script>
   <script src="../js/modernizr-2.8.3.min.js" defer></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
   <script>hljs.initHighlightingOnLoad();</script> 
   
   <script>
@@ -47,6 +48,7 @@
 
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
       <div class="wy-side-nav-search">
         <a href=".." class="icon icon-home"> textX</a>
         <div role="search">
@@ -57,174 +59,99 @@
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-	<ul class="current">
-	  
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="..">Home</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <span class="caption-text">User Guide</span>
-    <ul class="subnav">
-                <li class="">
-                    
-    <a class="" href="../grammar/">Grammar</a>
-                </li>
-                <li class=" current">
-                    
-    <a class="current" href="./">Meta-model</a>
-    <ul class="subnav">
-            
-    <li class="toctree-l3"><a href="#textx-meta-models">textX meta-models</a></li>
-    
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">User Guide</span></p>
+                <ul class="current">
+                    <li class="toctree-l1"><a class="reference internal" href="../grammar/">Grammar</a>
+                    </li>
+                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Meta-model</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#custom-classes">Custom classes</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#parent-child-relationships">Parent-child relationships</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#processors">Processors</a>
         <ul>
-        
-            <li><a class="toctree-l4" href="#custom-classes">Custom classes</a></li>
-        
-            <li><a class="toctree-l4" href="#parent-child-relationships">Parent-child relationships</a></li>
-        
-            <li><a class="toctree-l4" href="#processors">Processors</a></li>
-        
-            <li><a class="toctree-l4" href="#built-in-objects">Built-in objects</a></li>
-        
-            <li><a class="toctree-l4" href="#creating-your-own-base-type">Creating your own base type</a></li>
-        
-            <li><a class="toctree-l4" href="#auto-initialization-of-the-attributes">Auto-initialization of the attributes</a></li>
-        
+    <li class="toctree-l3"><a class="reference internal" href="#model-processors">Model processors</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#object-processors">Object processors</a>
+    </li>
         </ul>
-    
-
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#built-in-objects">Built-in objects</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#creating-your-own-base-type">Creating your own base type</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#auto-initialization-of-the-attributes">Auto-initialization of the attributes</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#optional-model-parameter-definitions">Optional model parameter definitions</a>
+    </li>
     </ul>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../model/">Model</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../scoping/">Scoping</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../multimetamodel/">Multi meta-model</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../parser_config/">Parser configuration</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../registration/">Registration/Discovery</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../visualization/">Visualization</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../error_handling/">Error handling</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../debugging/">Debugging</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../textx_command/">textx command</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../scaffolding/">Project scaffolding</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../howto/">Howtos</a>
-                </li>
-    </ul>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <span class="caption-text">Tutorials</span>
-    <ul class="subnav">
-                <li class="">
-                    
-    <a class="" href="../tutorials/hello_world/">Hello World</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../tutorials/robot/">Robot</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../tutorials/entity/">Entity</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../tutorials/state_machine/">State Machine</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../tutorials/toylanguage/">Toy language compiler</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../tutorials/self-dsl/">self-dsl</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../tutorials/turtle/">Turtle graphics</a>
-                </li>
-    </ul>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <span class="caption-text">Development</span>
-    <ul class="subnav">
-                <li class="">
-                    
-    <a class="" href="https://github.com/textX/textX/blob/master/CONTRIBUTING.md">Contributing</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../process/">Release process</a>
-                </li>
-    </ul>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <span class="caption-text">About</span>
-    <ul class="subnav">
-                <li class="">
-                    
-    <a class="" href="../about/comparison/">Comparison</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="https://github.com/textX/textX/blob/master/LICENSE.txt">License</a>
-                </li>
-    </ul>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <span class="caption-text">What's new</span>
-    <ul class="subnav">
-                <li class="">
-                    
-    <a class="" href="../whatsnew/release_1_5/">Release 1.5</a>
-                </li>
-    </ul>
-	    </li>
-          
-        </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../model/">Model</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../scoping/">Scoping</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../multimetamodel/">Multi meta-model</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../parser_config/">Parser configuration</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../registration/">Registration/Discovery</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../visualization/">Visualization</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../error_handling/">Error handling</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../debugging/">Debugging</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../textx_command/">textx command</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../scaffolding/">Project scaffolding</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../howto/">Howtos</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Tutorials</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../tutorials/hello_world/">Hello World</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../tutorials/robot/">Robot</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../tutorials/entity/">Entity</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../tutorials/state_machine/">State Machine</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../tutorials/toylanguage/">Toy language compiler</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../tutorials/self-dsl/">self-dsl</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../tutorials/turtle/">Turtle graphics</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Development</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="" href="https://github.com/textX/textX/blob/master/CONTRIBUTING.md">Contributing</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../process/">Release process</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">About</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../about/comparison/">Comparison</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="https://github.com/textX/textX/blob/master/LICENSE.txt">License</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">What's new</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../whatsnew/release_1_5/">Release 1.5</a>
+                    </li>
+                </ul>
       </div>
-      &nbsp;
+    </div>
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
@@ -256,6 +183,7 @@
       
     </li>
   </ul>
+  
   <hr/>
 </div>
           <div role="main">
@@ -334,6 +262,13 @@ provided <code>name</code> and <code>attributes</code> attributes from the <code
 class is a child in a parent-child relationship (see the next section), then
 the <code>parent</code> constructor parameter should also be given.</p>
 </div>
+<p>Classes that use <code>__slots__</code> are supported. Also, initialization of custom
+classes is postponed during model loading and done after reference resolving but
+before object processors call (see <a href="../scoping/##using-the-scope-provider-to-modify-a-model">Using the scope provider to modify a
+model</a>) to ensure that
+immutable objects (e.g. using <a href="https://www.attrs.org/en/stable/examples.html#immutability">attr frozen
+feature</a>), that
+can't be changed after initialization, are also supported.</p>
 <h2 id="parent-child-relationships">Parent-child relationships<a class="headerlink" href="#parent-child-relationships" title="Permanent link">&para;</a></h2>
 <p>There is often an intrinsic parent-child relationship between object in the
 model. In the previous example, each <code>Attribute</code> instance will always be a child
@@ -531,6 +466,28 @@ matched on the input will be set to <code>None</code>. This is true for the plai
 assignments (<code>=</code>). An optional assignment (<code>?=</code>) will always be <code>False</code> if the
 RHS object is not matched in the input. The multiplicity assignments (<code>*=</code> and
 <code>+=</code>) will always be python lists.</p>
+<h2 id="optional-model-parameter-definitions">Optional model parameter definitions<a class="headerlink" href="#optional-model-parameter-definitions" title="Permanent link">&para;</a></h2>
+<p>A meta-model can define optional model parameters. Such definitions
+are stored in <code>_tx_model_param_definitions</code> and define optional parameters,
+which can be specified while loading/creating a model through <code>model_from_str</code>
+or <code>model_from_file</code>. Details: see <a href="../model/#_tx_model_params">tx_model_params</a>.</p>
+<p><code>metamodel._tx_model_param_definitions</code> can be queried (like a dict) to
+retrieve possible extra parameters and their descriptions for a meta-model.
+It is also used to restrict the additional parameters passed to
+<code>model_from_str</code> or <code>model_from_file</code>.</p>
+<p>Default parameters are:</p>
+<ul>
+<li><code>project_root</code>: this model parameter is used by the <a href="http://localhost:8000/scoping/#scope-providers-defined-in-module-textxscopingproviders"><code>GlobalRepo</code></a>
+    to set a project directory, where all file patterns not referring to an
+    absolute file position are looked up.</li>
+</ul>
+<p>An example of a custom model parameter definition used to control the behavior
+of an object processor is given in
+<a href="https://github.com/textX/textX/blob/master/tests/functional/registration/test_check.py">test_reference_to_nontextx_attribute.py</a>,
+(<code>test_object_processor_with_optional_parameter_*</code>; specifying a parameter
+while loading) and
+<a href="https://github.com/textX/textX/blob/master/tests/functional/registration/projects/types_dsl/types_dsl/__init__.py">test_reference_to_nontextx_attribute.py</a>
+(defining the parameter in the metamodel).</p>
               
             </div>
           </div>
@@ -555,7 +512,7 @@ RHS object is not matched in the input. The multiplicity assignments (<code>*=</
     
   </div>
 
-  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
 </footer>
       
         </div>
@@ -565,7 +522,7 @@ RHS object is not matched in the input. The multiplicity assignments (<code>*=</
 
   </div>
 
-  <div class="rst-versions" role="note" style="cursor: pointer">
+  <div class="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
       
           <a href="https://github.com/textX/textX/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
@@ -582,6 +539,11 @@ RHS object is not matched in the input. The multiplicity assignments (<code>*=</
     <script src="../js/theme.js" defer></script>
       <script src="../js/version-select.js" defer></script>
       <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
 
 </body>
 </html>
