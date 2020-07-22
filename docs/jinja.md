@@ -1,13 +1,19 @@
 # Generator framework based on Jinja template engine
 
+!!! warning
+
+    This framework is implemented in 
+    [textX-jinja](https://github.com/textX/textX-jinja) project.
+    You have to install it with `pip install textX-jinja` to be able to use it.
+
+
 You can roll your own code generation approach with textX but sometimes it is
 good to have a predefined framework which is easy to get started with and only
 if you need something very specific later you can create your own code
 generator.
 
 Here, we describe a little framework based on
-[Jinja](https://jinja.palletsprojects.com/) template engine. This framework is
-implemented in [textX-jinja](https://github.com/textX/textX-jinja) project.
+[Jinja](https://jinja.palletsprojects.com/) template engine. 
 
 The idea is simple. If you want to generate a set of files from your textX
 model(s) you create a folder which resembles the outline of the file tree you
