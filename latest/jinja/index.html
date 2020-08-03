@@ -9,7 +9,7 @@
   <meta name="author" content="Igor Dejanović">
   
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Release process - textX</title>
+  <title>Jinja generators - textX</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
 
   <link rel="stylesheet" href="../css/theme.css" />
@@ -20,8 +20,8 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Release process";
-    var mkdocs_page_input_path = "process.md";
+    var mkdocs_page_name = "Jinja generators";
+    var mkdocs_page_input_path = "jinja.md";
     var mkdocs_page_url = null;
   </script>
   
@@ -64,7 +64,7 @@
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">User Guide</span></p>
-                <ul>
+                <ul class="current">
                     <li class="toctree-l1"><a class="reference internal" href="../grammar/">Grammar</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../metamodel/">Meta-model</a>
@@ -89,7 +89,9 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../scaffolding/">Project scaffolding</a>
                     </li>
-                    <li class="toctree-l1"><a class="reference internal" href="../jinja/">Jinja generators</a>
+                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Jinja generators</a>
+    <ul class="current">
+    </ul>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../howto/">Howtos</a>
                     </li>
@@ -112,12 +114,10 @@
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">Development</span></p>
-                <ul class="current">
+                <ul>
                     <li class="toctree-l1"><a class="" href="https://github.com/textX/textX/blob/master/CONTRIBUTING.md">Contributing</a>
                     </li>
-                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Release process</a>
-    <ul class="current">
-    </ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../process/">Release process</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">About</span></p>
@@ -153,14 +153,14 @@
     
       
         
-          <li>Development &raquo;</li>
+          <li>User Guide &raquo;</li>
         
       
     
-    <li>Release process</li>
+    <li>Jinja generators</li>
     <li class="wy-breadcrumbs-aside">
       
-        <a href="https://github.com/textX/textX/edit/master/docs/process.md"
+        <a href="https://github.com/textX/textX/edit/master/docs/jinja.md"
           class="icon icon-github"> Edit on GitHub</a>
       
     </li>
@@ -171,86 +171,73 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="textx-release-process">textX release process<a class="headerlink" href="#textx-release-process" title="Permanent link">&para;</a></h1>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>For the background see <a href="https://github.com/textX/textX/issues/176">here</a>.</p>
+                <h1 id="generator-framework-based-on-jinja-template-engine">Generator framework based on Jinja template engine<a class="headerlink" href="#generator-framework-based-on-jinja-template-engine" title="Permanent link">&para;</a></h1>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This framework is implemented in 
+<a href="https://github.com/textX/textX-jinja">textX-jinja</a> project.
+You have to install it with <code>pip install textX-jinja</code> to be able to use it.</p>
 </div>
-<ul>
-<li>We are using semantic versioning and a standard format to keep changelogs (see
-  <a href="https://github.com/textX/textX/blob/master/CHANGELOG.md">CHANGELOG.md</a>).</li>
-<li>We develop features on feature branches. Feature branches are named
-  <code>feature/&lt;feature name&gt;</code>.</li>
-<li>We fix bugs on bugfix branches named as <code>bugfix/&lt;issue no&gt;-&lt;name&gt;</code></li>
-<li>We have a branch for the upcoming major release -- <code>next-release</code> (red in the
-  picture bellow).</li>
-<li>If the feature is backward incompatible (BIC) the PR is made against the
-  <code>next-release</code> branch (not against the <code>master</code> branch)</li>
-<li>If the feature is backward compatible PR is made against the <code>master</code>.</li>
-<li>Thus, <code>Unreleased</code> section in the changelog on the <code>master</code> branch will never
-  have any BIC change. All BIC changes should go to the changelog on the
-  <code>next-release</code> branch.</li>
-<li>We constantly merge <code>master</code> branch to <code>next-release</code> branch. Thus,
-  <code>next-release</code> branch is the latest and greatest version with <strong>all</strong> finished
-  features applied.</li>
-<li>When the time for minor release come we follow <a href="./#textx-release-checklist">textX release
-  checklist</a> defined bellow.</li>
-<li>When the time for major release come we merge <code>next-release</code> branch to
-  <code>master</code> and follow <a href="./#textx-release-checklist">textX release checklist</a>
-  defined bellow.</li>
-</ul>
-<p><img alt="process" src="../images/process.png" /></p>
-<h1 id="textx-release-checklist">textX release checklist<a class="headerlink" href="#textx-release-checklist" title="Permanent link">&para;</a></h1>
-<ol>
-<li>If minor/major version increase, create maintenance/support branch from the
-     current master. The name is <code>support/v&lt;previous major.minor.x&gt;</code> (e.g.
-     <code>support/v2.0.x</code>).</li>
-<li>Create a temporary branch for preparing the next release called
-     <code>release-preparation</code> and switch to that branch.</li>
-<li>Update version in the <code>textX/__init__.py</code>.</li>
-<li>Update CHANGELOG (create new section for the release, update github links,
-     give credits to contributors).</li>
-<li>Push release branch and create PR. Wait for tests to pass. Wait for the
-     review process to complete.</li>
-<li>Delete all previous distributions in the <code>dist</code> folder.</li>
-<li>
-<p>Create whl/tar.gz packages</p>
-<p><code>python setup.py bdist_wheel sdist</code></p>
-</li>
-<li>
-<p>Release to PyPI testing</p>
-<p><code>python setup.py publishtest</code></p>
-</li>
-<li>
-<p>Release to PyPI</p>
-<p><code>python setup.py publish</code></p>
-</li>
-<li>
-<p>In case of errors repeat steps 3-10.</p>
-</li>
-<li>Create git tag in the form of <code>v&lt;version&gt;</code> (e.g. <code>v2.1.0</code>). Push the tag.</li>
-<li>Merge PR and delete PR branch (<code>release-preparation</code>).</li>
-<li>Change the version in <code>textX/__init__.py</code> to next minor version with
-      <code>.dev0</code> addition (e.g. <code>v2.2.0.dev0</code>).</li>
-<li>Merge <code>master</code> to <code>next-version</code> to keep it up-to-date.</li>
-<li>Update/release the docs<pre><code># mike deploy latest
-mike deploy latest -p
+<p>You can roll your own code generation approach with textX but sometimes it is
+good to have a predefined framework which is easy to get started with and only
+if you need something very specific later you can create your own code
+generator.</p>
+<p>Here, we describe a little framework based on
+<a href="https://jinja.palletsprojects.com/">Jinja</a> template engine. </p>
+<p>The idea is simple. If you want to generate a set of files from your textX
+model(s) you create a folder which resembles the outline of the file tree you
+want to generate. Each file in your template folder can be a Jinja template
+(with <code>.jinja</code> extension, e.g. <code>index.html.jinja</code>), in which case target file
+will be created by running the template through the Jinja engine. If the file
+doesn't end with <code>.jinja</code> extension it is copied as is to the target folder.</p>
+<p>To call Jinja generator you use <code>textx_jinja_generator</code> function:</p>
+<pre><code class="python">...
+from textxjinja import textx_jinja_generator
+...
 
-# For major/minor version release
-# mike delete stable  # this deletes alias stable
-# mike deploy 1.9 stable   # and adds it to 1.9 minor version
-mike deploy 1.9 stable -p
+@generator('mylang', 'mytarget')
+def mygenerator(metamodel, model, output_path, overwrite, debug):
+    &quot;Generate MyTarget from MyLang model.&quot;
+
+    # Prepare config dictionary
+    config = {}
+    config['some_param'] = &quot;Some value&quot;
+
+    template_folder = os.path.join(THIS_FOLDER, 'template')
+
+    # Run Jinja generator
+    textx_jinja_generator(template_folder, output_path, config, overwrite)
 </code></pre>
-</li>
-</ol>
+
+<p>In this example we have our templates stored in <code>template</code> folder.</p>
+<p>You can use variables from <code>config</code> dict in your templates as usual, but also
+you can use them in filenames. If file name has a variable name in the format
+<code>__&lt;variablename&gt;__</code> it will be replaced by the value of the variable from the
+<code>config</code> dict. If variable by the given name is not found the <code>variablename</code> is
+treated as literal filename. For example
+<a href="https://github.com/textX/textX-dev/tree/master/textxdev/scaffold/template">__package__</a>
+in the template file names will be replaced by package name from <code>config</code> dict.</p>
+<p>Boolean values in file names are treated specially. If the value is of a bool
+type the file will be skipped entirely if the value is <code>False</code> but will be used
+if the value is <code>True</code>. This makes it easy to provide templates/files which
+should be generated only under certain conditions (for example see <code>__lang__</code>
+and <code>__gen__</code> variable usage in <a href="https://github.com/textX/textX-dev/tree/master/textxdev/scaffold/template">template
+names</a>)</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>For supporting previous versions only bugfix releases will be made. The process
-is similar. The difference for support release would be that release process
-would be based of the <code>support</code> branch instead of the <code>master</code> branch as is done
-for regular releases. Thus, for support release, we would skip step 1, in step 5
-we would create PR against the support branch, and we won't do steps 13-15.</p>
+<p>It is planned to support iterable in <code>config</code> dict. If a variable is
+iterable then a file will be generated for each element of the iterable. This
+is still not implemented.</p>
 </div>
+<p>To see a full example of using <code>textX-jinja</code> you can take a look at the
+implementation of <code>startproject</code> textX command in
+<a href="https://github.com/textX/textX-dev">textX-dev</a> project. This textX command will
+run a questionnaire based on <a href="https://github.com/textX/textx-lang-questionnaire">the Questionnaire
+DSL</a> and with run a project
+scaffolding generation by <a href="https://github.com/textX/textX-dev/blob/master/textxdev/scaffold/__init__.py#L46">calling
+textx_jinja_generate</a>
+with <a href="https://github.com/textX/textX-dev/tree/master/textxdev/scaffold/template">the templates for the
+project</a>.</p>
               
             </div>
           </div>
@@ -258,10 +245,10 @@ we would create PR against the support branch, and we won't do steps 13-15.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../about/comparison/" class="btn btn-neutral float-right" title="Comparison">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../howto/" class="btn btn-neutral float-right" title="Howtos">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../tutorials/turtle/" class="btn btn-neutral" title="Turtle graphics"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../scaffolding/" class="btn btn-neutral" title="Project scaffolding"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -291,10 +278,10 @@ we would create PR against the support branch, and we won't do steps 13-15.</p>
           <a href="https://github.com/textX/textX/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
       
       
-        <span><a href="../tutorials/turtle/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../scaffolding/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../about/comparison/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../howto/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>
