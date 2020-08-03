@@ -14,9 +14,13 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ## [Unreleased]
 
+
+## [v2.2.0] (released: 2020-08-03)
+
 ### Added
 
-  - Initial docs for Jinja code generator support ([#264]).
+  - Initial docs for Jinja code generator support (from
+    [textX-jinja](https://github.com/textX/textX-jinja)) ([#264]).
   - Analyzing grammars programmatically as plain textX models
     (`grammar_model_from_str/file`) ([#235])
   - Initial `startproject` scaffolding (from
@@ -27,7 +31,7 @@ please take a look at related PRs and issues and see if the change affects you.
     commands ([#228])
   - Added the ability to specify extra parameters during `model_from_file` or
     `model_from_str` and to define which extra parameters exist in the
-    metamodel ([#243]).
+    meta-model ([#243]).
   
 ### Fixed
 
@@ -518,7 +522,8 @@ please take a look at related PRs and issues and see if the change affects you.
 [#93]: https://github.com/textX/textX/pull/93
 [#92]: https://github.com/textX/textX/pull/92
 
-[Unreleased]: https://github.com/textX/textX/compare/v2.1.0...HEAD
+[Unreleased]: https://github.com/textX/textX/compare/v2.2.0...HEAD
+[v2.2.0]: https://github.com/textX/textX/compare/v2.1.0...v2.2.0
 [v2.1.0]: https://github.com/textX/textX/compare/v2.0.1...v2.1.0
 [v2.0.1]: https://github.com/textX/textX/compare/v1.8.0...v2.0.1
 [v1.8.0]: https://github.com/textX/textX/compare/v1.7.1...v1.8.0
