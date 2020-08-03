@@ -16,9 +16,6 @@ if not VERSION:
     raise RuntimeError('No version defined in textx.__init__.py')
 
 if sys.argv[-1].startswith('publish'):
-    if os.system("pip list | grep wheel"):
-        print("wheel not installed.\nUse `pip install wheel`.\nExiting.")
-        sys.exit()
     if os.system("pip list | grep twine"):
         print("twine not installed.\nUse `pip install twine`.\nExiting.")
         sys.exit()
