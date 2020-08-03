@@ -1,0 +1,40 @@
+@startuml
+
+partition "metamodel.model_from_*" {
+start
+
+:**load model(s)**
+(Rule instantiation);
+
+note right
+**scope providers control what files are loaded**
+in addition to the main model (see
+"textx.scoping.ModelLoader" and
+"pre_ref_resolution_callback")
+end note
+
+-> replace attr methods;
+
+:**resolve references**
+(ref=[Type]);
+
+note right
+**scope providers resolve references**
+(main responsibility) and also may modify the
+model itself.
+end note
+
+-> restore attr methods;
+
+:(post-) **processing**
+**objects**;
+
+note right
+**object processors** get a fully loaded model
+with all references resolved. It may, e.g,
+validate and modify the model.
+end note
+
+end
+}
+@enduml

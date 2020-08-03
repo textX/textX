@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="Igor Dejanović">
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Visualization - textX</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../css/theme.css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  <link href="../style.css" rel="stylesheet" />
+  <link href="../css/version-select.css" rel="stylesheet" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Visualization";
+    var mkdocs_page_input_path = "visualization.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+  <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-68681917-1', 'igordejanovic.net');
+      ga('send', 'pageview');
+  </script>
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> textX</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">User Guide</span></p>
+                <ul class="current">
+                    <li class="toctree-l1"><a class="reference internal" href="../grammar/">Grammar</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../metamodel/">Meta-model</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../model/">Model</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../scoping/">Scoping</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../multimetamodel/">Multi meta-model</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../parser_config/">Parser configuration</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../registration/">Registration/Discovery</a>
+                    </li>
+                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Visualization</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#producing-metamodel-visualizations-using-the-textx-command">Producing (meta)model visualizations using the textx command</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#visualize-meta-models-programmatically">Visualize meta-models programmatically</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#visualize-models-programmatically">Visualize models programmatically</a>
+    </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../error_handling/">Error handling</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../debugging/">Debugging</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../textx_command/">textx command</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../scaffolding/">Project scaffolding</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../jinja/">Jinja generators</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../howto/">Howtos</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Tutorials</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../tutorials/hello_world/">Hello World</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../tutorials/robot/">Robot</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../tutorials/entity/">Entity</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../tutorials/state_machine/">State Machine</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../tutorials/toylanguage/">Toy language compiler</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../tutorials/self-dsl/">self-dsl</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../tutorials/turtle/">Turtle graphics</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Development</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="" href="https://github.com/textX/textX/blob/master/CONTRIBUTING.md">Contributing</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../process/">Release process</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">About</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../about/comparison/">Comparison</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="https://github.com/textX/textX/blob/master/LICENSE.txt">License</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">What's new</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../whatsnew/release_1_5/">Release 1.5</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">textX</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>User Guide &raquo;</li>
+        
+      
+    
+    <li>Visualization</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/textX/textX/edit/master/docs/visualization.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="visualization">Visualization<a class="headerlink" href="#visualization" title="Permanent link">&para;</a></h1>
+<p>A meta-model, model and parse-tree can be exported to dot files (<a href="http://www.graphviz.org/">GraphViz</a>) for
+visualization. Module <code>textx.export</code> contains functions <code>metamodel_export</code> and
+<code>model_export</code> that can export meta-model and model to dot files respectively.
+But, it is usually more convenient to produce visualization using the <a href="../textx_command/"><code>textx</code>
+command</a>.</p>
+<p>If <a href="../debugging/">debugging</a> is enabled, meta-model, model and parse trees will
+automatically get exported to dot.</p>
+<p>Dot files can be viewed by dot viewers. There are quite a few dot viewers freely
+available (e.g. <a href="https://github.com/jrfonseca/xdot.py">xdot</a>, <a href="http://zvtm.sourceforge.net/zgrviewer.html">ZGRViewer</a>).</p>
+<p>Alternatively, dot files can be converted to image formats using <code>dot</code> command.
+For more info see <a href="http://stackoverflow.com/questions/1494492/graphviz-how-to-go-from-dot-to-a-graph">this SO
+thread</a>.</p>
+<p>In addition to <a href="http://www.graphviz.org/">GraphViz</a> we also support <a href="http://plantuml.com/">PlantUML</a> as target for our exports
+(see <a href="../textx_command/">textx command/tool</a>). You can copy-paste the exported
+file content online on the <a href="http://plantuml.com/">PlantUML</a> website to visualize it. The PlantUML Tool
+is a JAR file (Java) which runs on various platforms. Many Linux distributions
+have this tool included (e.g. Ubuntu: <code>apt install platuml</code>).</p>
+<h2 id="producing-metamodel-visualizations-using-the-textx-command">Producing (meta)model visualizations using the <code>textx</code> command<a class="headerlink" href="#producing-metamodel-visualizations-using-the-textx-command" title="Permanent link">&para;</a></h2>
+<p>This section describes how to use <a href="../textx_command/"><code>textx</code> command and registered
+generators</a> to produce model and meta-model visualizations.</p>
+<p>Visualizations of models and meta-models are implemented by registering
+generators from <code>textX</code> (for meta-models) or <code>any</code> (for all models) to <code>dot</code> or
+<code>PlantUML</code> file format. Several of these generators are provided by textX. You
+can list them by <a href="../registration/#listing-generators">list-generators command</a>:</p>
+<pre><code class="nohighlight">$ textx list-generators
+textX -&gt; dot         textX               Generating dot visualizations from textX grammars
+textX -&gt; PlantUML    textX               Generating PlantUML visualizations from textX grammars
+any -&gt; dot           textX               Generating dot visualizations from arbitrary models
+flow-dsl -&gt; PlantUML flow-codegen        Generating PlantUML visualization from flow-dsl
+</code></pre>
+
+<p>You see that we have two generators from <code>textX</code> language (i.e. textX grammar
+language) registered by the <code>textX</code> project. The first as a target uses <code>dot</code>
+and the second uses <code>PlantUML</code>. These generators will produce <code>dot</code> (part of
+<a href="http://www.graphviz.org/">GraphViz</a>) or <code>pu</code> (<a href="http://plantuml.com/">PlantUML</a>) file respectively.</p>
+<p>Also, you can see that there is <code>any</code> -&gt; <code>dot</code> generator. This generator can be
+applied to any model and will produce <code>dot</code> output.</p>
+<p>You can also see in this example that we have a specific visualization for
+language <code>flow-dsl</code> that produces <code>PlantUML</code> code. You can register visualizers
+for your own language by registering a generator from your language to some
+output that represents visual rendering. Also, you could provide rendering to
+some different format for all models (<code>any</code>) or for textX grammars. See the
+<a href="../registration/">registration/discovery feature</a> on how to do that.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Generators that produce visualization are by no means different from any
+other generators (e.g. those that would produce Java or Python code).</p>
+</div>
+<p>Here is an example on how to produce the same visualization described in section
+<a href="./">Visualization</a> (see the <a href="https://github.com/textX/textX/tree/master/examples/robot">robot
+example</a>).</p>
+<pre><code class="nohighlight">$ textx generate robot.tx --target dot 
+Generating dot target from models:
+/home/igor/repos/textX/textX/examples/robot/robot.tx
+-&gt; /home/igor/repos/textX/textX/examples/robot/robot.dot
+   To convert to png run &quot;dot -Tpng -O robot.dot&quot;
+</code></pre>
+
+<p>Now you can view <code>dot</code> file using some of available viewers. For example, if you
+install <a href="https://github.com/jrfonseca/xdot.py">xdot</a>:</p>
+<pre><code class="nohighlight">$ xdot robot.dot
+</code></pre>
+
+<p>or convert it to some other graphical format (<a href="http://www.graphviz.org/">GraphViz</a> is needed):</p>
+<pre><code class="nohighlight">$ dot -Tpng -O robot.dot
+</code></pre>
+
+<p>and you will get <code>robot.dot.png</code> that looks like this:</p>
+<p><img alt="Robot meta-model in dot" src="../images/robot.dot.png" /></p>
+<p>You can also generate <a href="http://plantuml.com/">PlantUML</a> output from the grammar files:</p>
+<pre><code class="nohighlight">$ textx generate robot.tx --target plantuml
+Generating plantuml target from models:
+/home/igor/repos/textX/textX/examples/robot/robot.tx
+-&gt; /home/igor/repos/textX/textX/examples/robot/robot.pu
+To convert to png run 'plantuml /home/igor/repos/textX/textX/examples/robot/robot.pu'
+
+</code></pre>
+
+<p>This will produce file <code>robot.pu</code>. Now convert it to <code>robot.png</code> by (<a href="http://plantuml.com/">PlantUML</a>
+must be installed and accessible on path):</p>
+<pre><code class="nohighlight">$ plantuml robot.pu
+
+</code></pre>
+
+<p>The produced <code>robot.png</code> image will look like this:</p>
+<p><img alt="Robot meta-model in PlantUML" src="../images/robot.png" /></p>
+<p>Similarly you can generate output from any model. For example:</p>
+<pre><code class="nohighlight">$ textx generate program.rbt --grammar robot.tx --target dot 
+Generating dot target from models:
+/home/igor/repos/textX/textX/examples/robot/program.rbt
+-&gt; /home/igor/repos/textX/textX/examples/robot/program.dot
+   To convert to png run &quot;dot -Tpng -O program.dot&quot;
+
+</code></pre>
+
+<p>In this example we had to supply <code>--grammar</code> option to <code>generate</code> command as the
+<code>robot</code> language is not registered by the <a href="../registration/">registration API</a>.
+If we had the robot language registered, meta-model could be discovered by the
+file extension.</p>
+<p>We could as usual visualize the <code>dot</code> file by some of the available viewers or
+transform it to <code>png</code> format. The produced image will look like this:</p>
+<p><img alt="Robot program" src="../images/program.dot.png" /></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><a href="http://plantuml.com/">PlantUML</a> output is not yet available for model files.</p>
+</div>
+<h2 id="visualize-meta-models-programmatically">Visualize meta-models programmatically<a class="headerlink" href="#visualize-meta-models-programmatically" title="Permanent link">&para;</a></h2>
+<p>To visualize a meta-model programmatically do (see <a href="https://github.com/textX/textX/tree/master/examples/Entity">Entity
+example</a>):</p>
+<pre><code class="python">from textx import metamodel_from_file
+from textx.export import metamodel_export
+
+entity_mm = metamodel_from_file('entity.tx')
+
+metamodel_export(entity_mm, 'entity.dot')
+</code></pre>
+
+<p><code>entity.dot</code> file will be created. You can visualize this file by using various
+dot viewers or convert it to various image formats using the <code>dot</code> tool.</p>
+<pre><code class="nohighlight">$ dot -Tpng -O entity.dot
+</code></pre>
+
+<p>The following image is generated:</p>
+<p><img alt="Entity meta-model" src="../images/entity_meta.dot.png" /></p>
+<p>Alternatively, you can also specify an alternative renderer to export your meta
+model for the <a href="http://plantuml.com/">PlantUML</a> tool.</p>
+<pre><code class="python">from textx import metamodel_from_file
+from textx.export import metamodel_export, PlantUmlRenderer
+
+entity_mm = metamodel_from_file('entity.tx')
+
+metamodel_export(entity_mm, 'entity.pu',renderer=PlantUmlRenderer())
+</code></pre>
+
+<p><code>entity.pu</code> file will be created. You can convert it to various image formats
+using the <code>plantuml</code> tool.</p>
+<pre><code class="nohighlight">$ plantuml -Tpng entity.pu
+</code></pre>
+
+<p>The following image is generated:</p>
+<p><img alt="Entity meta-model" src="../images/entity.png" /></p>
+<h2 id="visualize-models-programmatically">Visualize models programmatically<a class="headerlink" href="#visualize-models-programmatically" title="Permanent link">&para;</a></h2>
+<p>Similarly to meta-model visualization, you can also visualize your models (see <a href="https://github.com/textX/textX/tree/master/examples/Entity">Entity
+example</a>).</p>
+<pre><code class="python">from textx.export import model_export
+
+person_model = entity_mm.model_from_file('person.ent')
+
+model_export(person_model, 'person.dot')
+</code></pre>
+
+<p>Convert this <code>dot</code> file to <code>png</code> with:</p>
+<pre><code class="nohighlight">$ dot -Tpng -O person.dot
+</code></pre>
+
+<p>The following image is generated:</p>
+<p><img alt="Person model" src="https://raw.githubusercontent.com/textX/textX/master/examples/Entity/dotexport/person.dot.png" /></p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../error_handling/" class="btn btn-neutral float-right" title="Error handling">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../registration/" class="btn btn-neutral" title="Registration/Discovery"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>Copyright &copy; <a href="http://www.igordejanovic.net/">Igor Dejanović</a>.</p>
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+          <a href="https://github.com/textX/textX/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
+      
+      
+        <span><a href="../registration/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../error_handling/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../js/version-select.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>
