@@ -126,7 +126,7 @@ def test_model_with_local_scope_and_error():
     #################################
 
     with raises(textx.exceptions.TextXSemanticError,
-                match=r'.*Unknown objec.*input1.*SlotIn.*'):
+                match=r'.*Unknown object.*input1.*SlotIn.*'):
         my_meta_model.model_from_file(
             join(abspath(dirname(__file__)),
                  "components_model1", "example_err1.components"))
