@@ -136,6 +136,40 @@ def test_model_with_local_scope_and_error():
     #################################
 
 
+def test_model_with_local_scope_and_error_267():
+    """
+    This is a basic test for the local scope provider (bad case, #267).
+    """
+    #################################
+    # META MODEL DEF
+    #################################
+
+    my_meta_model = metamodel_from_file(
+        join(abspath(dirname(__file__)), 'components_model1',
+             'Components.tx'))
+    my_meta_model.register_scope_providers({
+        "*.*": scoping_providers.FQN(),
+        "Connection.from_port":
+            scoping_providers.RelativeName("from_inst.component.slots"),
+        "Connection.to_port":
+            scoping_providers.RelativeName("to_inst.component.slots")
+    })
+
+    #################################
+    # MODEL PARSING
+    #################################
+
+    with raises(textx.exceptions.TextXSemanticError,
+                match=r'.*Unknown object.*pu.*SlotOut.*'):
+        my_meta_model.model_from_file(
+            join(abspath(dirname(__file__)),
+                 "components_model1", "example_err2.components"))
+
+    #################################
+    # END
+    #################################
+
+
 def test_model_with_local_scope_and_inheritance2():
     """
     This is a more complicated test for the local scope provider.
