@@ -1,8 +1,8 @@
-from textx.scoping.rrel_parser import rrel
+from textx.scoping.rrel import rrel, parse
 from arpeggio import ParserPython
 
 
-def test_rrel_basic_parser():
+def test_rrel_basic_parser1():
     parser = ParserPython(rrel)
     parse_tree = parser.parse("^pkg*.cls")
     assert len(parse_tree) == 2  # always true (one path, one EOF)
@@ -12,3 +12,10 @@ def test_rrel_basic_parser():
 
     parse_tree = parser.parse("instance.(type.vals)*")
     assert len(parse_tree) == 2  # always true (one path, one EOF)
+
+
+def test_rrel_basic_parser2():
+    tree = parse("^pkg*.cls")
+    tree = parse("obj.ref.~extension *.methods")
+    tree = parse("instance.(type.vals)*")
+
