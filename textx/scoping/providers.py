@@ -598,6 +598,7 @@ class RelativeName(object):
         lst = self.get_reference_propositions(obj, attr, obj_ref.obj_name)
         if type(lst) is Postponed:
             return lst
+        lst = [x for x in lst if x.name == obj_ref.obj_name]
         if len(lst) > 0:
             return lst[0]
         else:
@@ -667,6 +668,7 @@ class ExtRelativeName(object):
         lst = self.get_reference_propositions(obj, attr, obj_ref.obj_name)
         if type(lst) is Postponed:
             return lst
+        lst = [x for x in lst if x.name == obj_ref.obj_name]
         if len(lst) > 0:
             return lst[0]
         else:
