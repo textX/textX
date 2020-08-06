@@ -20,6 +20,12 @@ please take a look at related PRs and issues and see if the change affects you.
   object that contained the lookup name in its name. Thanks ipa-mdl@GitHub
   ([#267])
 
+### Changed
+
+- Changed `unhashable type` exception when a list is used for `name` attributes by
+  raising a more informative exception and extending docs to document the issue
+  and a proper way to solve it ([#40], [#266]).
+
 
 ## [v2.2.0] (released: 2020-08-03)
 
@@ -465,6 +471,7 @@ please take a look at related PRs and issues and see if the change affects you.
 
 
 [#267]: https://github.com/textX/textX/issues/267
+[#266]: https://github.com/textX/textX/issues/266
 [#264]: https://github.com/textX/textX/pull/264
 [#261]: https://github.com/textX/textX/pull/261
 [#260]: https://github.com/textX/textX/pull/260
@@ -528,6 +535,7 @@ please take a look at related PRs and issues and see if the change affects you.
 [#96]: https://github.com/textX/textX/issues/96
 [#93]: https://github.com/textX/textX/pull/93
 [#92]: https://github.com/textX/textX/pull/92
+[#40]: https://github.com/textX/textX/issues/40
 
 [Unreleased]: https://github.com/textX/textX/compare/v2.2.0...HEAD
 [v2.2.0]: https://github.com/textX/textX/compare/v2.1.0...v2.2.0
