@@ -1,4 +1,5 @@
-from arpeggio import Optional, ZeroOrMore, EOF
+from arpeggio import Optional, EOF
+from arpeggio import ZeroOrMore as ArpeggioZeroOrMore
 from arpeggio import RegExMatch as _
 
 
@@ -31,10 +32,63 @@ def zero_or_more():
 
 
 def path():
-    return Optional(['^', dots]), ZeroOrMore(
+    return Optional(['^', dots]), ArpeggioZeroOrMore(
         [zero_or_more, path_element], '.'), [
         zero_or_more, path_element]
 
 
 def rrel():
     return path, EOF
+
+
+class Parent:
+    def __init__(self, type):
+        self.type = type
+
+    def __repr__(self):
+        return 'parent({})'.format(self.type)
+
+
+class Navigation:
+    def __init__(self, name, consume_name=True):
+        self.name = name
+        self.consume_name = consume_name
+
+    def __repr__(self):
+        return '~'+self.name if self.consume_name else self.name
+
+
+class Brackets:
+    def __init__(self, path):
+        self.path = path
+
+    def __repr__(self):
+        return '('+str(path)+')'
+
+
+class Dots:
+    def __init__(self, num):
+        self.num = num
+
+    def __repr__(self):
+        return '('+('.'*self.num)+')'
+
+
+class ZeroOrMore:
+    def __init__(self, path_element):
+        self.path_element = path_element
+
+    def __repr__(self):
+        return str(self.path_element)+'*'
+
+
+class Path:
+    def __init__(self, path_elements):
+        self.path_elements = path_elements
+
+    def __repr__(self):
+        return '.'.join(map(lambda x:str(x), self.path_elements))
+
+
+def parse(rrel_expression):
+    
