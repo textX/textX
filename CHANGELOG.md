@@ -14,6 +14,12 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed bug where (Ext)RelativeName scope providers accepted any referenced
+  object that contained the lookup name in its name. Thanks ipa-mdl@GitHub
+  ([#267])
+
 
 ## [v2.2.0] (released: 2020-08-03)
 
@@ -458,6 +464,7 @@ please take a look at related PRs and issues and see if the change affects you.
   - Export to dot.
 
 
+[#267]: https://github.com/textX/textX/issues/267
 [#264]: https://github.com/textX/textX/pull/264
 [#261]: https://github.com/textX/textX/pull/261
 [#260]: https://github.com/textX/textX/pull/260
