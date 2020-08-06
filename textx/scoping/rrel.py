@@ -93,27 +93,30 @@ class Path:
 class RrelVisitor(PTNodeVisitor):
 
     def visit_parent(self, node, children):
-        return Parent(node.value)  # TODO
+        return Parent(node.value)
 
     def visit_navigaton(self, node, children):
-        return Navigation(node.value)  # TODO
+        return Navigation(node.value)
 
     def visit_brackets(self, node, children):
-        return Brackets(children)  # TODO
+        return Brackets(children)
 
     def visit_dots(self, node, children):
-        return Dots(len(node.value))  # TODO
+        return Dots(len(node.value))
 
     def visit_zero_or_more(self, node, children):
-        return ZeroOrMore(node.value)  # TODO
+        return ZeroOrMore(node.value)
 
     def visit_path(self, node, children):
-        return Path(children)  # TODO
+        return Path(children)
+
+    def visit_path_element(self, node, children):
+        return node
 
 
-def parse(rrel_expression):
+def parse(rrel_expression, rule=path):
     from arpeggio import ParserPython
-    parser = ParserPython(rrel)
+    parser = ParserPython(rule, reduce_tree=True)
     parse_tree = parser.parse(rrel_expression)
     return visit_parse_tree(parse_tree, RrelVisitor())
 
