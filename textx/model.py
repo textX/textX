@@ -509,7 +509,15 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                 # Objects of each class are in its own namespace
                 if not id(inst.__class__) in parser._instances:
                     parser._instances[id(inst.__class__)] = {}
-                parser._instances[id(inst.__class__)][inst.name] = inst
+                try:
+                    parser._instances[id(inst.__class__)][inst.name] = inst
+                except TypeError as e:
+                    if 'unhashable type' in e.args[0]:
+                        raise TextXSemanticError(
+                            'Object name can\'t be of unhashable type.'
+                            ' Please see the note in this docs'
+                            ' section http://textx.github.io/textX/stable/grammar/#references')  # noqa
+                    raise
 
             if parser.debug:
                 parser.dprint("LEAVING INSTANCE {}".format(node.rule_name))

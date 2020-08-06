@@ -496,7 +496,21 @@ assignments. There are two types of rule references:
 
     Attributes with `name` names are used for reference auto-resolving. A dict
     lookup is used, thus they must be of a hashable type. See 
-    [issue #40](https://github.com/textX/textX/issues/40).
+    issues [#40](https://github.com/textX/textX/issues/40) and 
+    [#266](https://github.com/textX/textX/issues/266).
+
+    A usual error is to match the name in this fashion:
+
+        MyObj: name+=ID['.'];
+
+    Here, `name` will be a list of strings that are separated by dot and that
+    will not work as the name must be hashable. The best way to implement this 
+    and make `name` hashable is:
+
+        MyObj: name=FQN;
+        FQN: ID+['.'];
+
+    Now, `name` will be the string returned by the `FQN` match rule.
 
 
 ### Syntactic predicates
