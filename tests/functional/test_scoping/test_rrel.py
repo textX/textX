@@ -16,6 +16,15 @@ def test_rrel_basic_parser1():
 
 def test_rrel_basic_parser2():
     tree = parse("^pkg*.cls", rule=rrel)
+    assert str(tree) == '(..)*.pkg*.cls'
     tree = parse("obj.ref.~extension *.methods", rule=rrel)
-    tree = parse("instance.(type.vals)*", rule=rrel)
+    assert str(tree) == 'obj.ref.~extension*.methods'
+    tree = parse("type.vals", rule=rrel)
+    assert str(tree) == 'type.vals'
+    tree = parse("(type.vals)", rule=rrel)
+    assert str(tree) == '(type.vals)'
+    tree = parse("(type.vals)*", rule=rrel)
+    assert str(tree) == '(type.vals)*'
+    tree = parse("instance . ( type.vals ) *", rule=rrel)
+    assert str(tree) == 'instance.(type.vals)*'
 

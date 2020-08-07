@@ -50,7 +50,7 @@ class Parent:
 
 
 class Navigation:
-    def __init__(self, name, consume_name=True):
+    def __init__(self, name, consume_name):
         self.name = name
         self.consume_name = consume_name
 
@@ -63,7 +63,7 @@ class Brackets:
         self.path = path
 
     def __repr__(self):
-        return '('+str(path)+')'
+        return '('+str(self.path)+')'
 
 
 class Dots:
@@ -71,7 +71,7 @@ class Dots:
         self.num = num
 
     def __repr__(self):
-        return '('+('.'*self.num)+')'
+        return ('.'*self.num)
 
 
 class ZeroOrMore:
@@ -84,39 +84,49 @@ class ZeroOrMore:
 
 class Path:
     def __init__(self, path_elements):
+        print("create Path :"+str(path_elements))
         self.path_elements = path_elements
+        if (self.path_elements[0]=='^'):
+            self.path_elements[0] = ZeroOrMore(Brackets(Path([Dots(2)])))
 
     def __repr__(self):
-        return '.'.join(map(lambda x:str(x), self.path_elements))
+        if isinstance(self.path_elements[0], Dots):
+            return str(self.path_elements[0])+'.'.join(map(lambda x:str(x), self.path_elements[1:]))
+        else:
+            return '.'.join(map(lambda x:str(x), self.path_elements))
 
 
 class RrelVisitor(PTNodeVisitor):
 
     def visit_parent(self, node, children):
-        return Parent(node.value)
+        return Parent(children[0])
 
-    def visit_navigaton(self, node, children):
-        return Navigation(node.value)
+    def visit_navigation(self, node, children):
+        if len(children)==1:
+            return Navigation(children[0],False)
+        else:
+            return Navigation(children[1],True)
 
     def visit_brackets(self, node, children):
-        return Brackets(children)
+        assert(len(children)==1)  # a path
+        return Brackets(children[0])
 
     def visit_dots(self, node, children):
         return Dots(len(node.value))
 
     def visit_zero_or_more(self, node, children):
-        return ZeroOrMore(node.value)
+        return ZeroOrMore(children[0])
 
     def visit_path(self, node, children):
         return Path(children)
 
     def visit_path_element(self, node, children):
-        return node
+        assert(len(children)==1)
+        return children[0]
 
 
 def parse(rrel_expression, rule=path):
     from arpeggio import ParserPython
-    parser = ParserPython(rule, reduce_tree=True)
+    parser = ParserPython(rule, reduce_tree=False)
     parse_tree = parser.parse(rrel_expression)
     return visit_parse_tree(parse_tree, RrelVisitor())
-
