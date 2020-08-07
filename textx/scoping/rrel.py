@@ -125,8 +125,17 @@ class RrelVisitor(PTNodeVisitor):
         return children[0]
 
 
-def parse(rrel_expression, rule=path):
+def parse(rrel_expression):
+    """
+    This function parses a rrel path and returns a RREL expression tree.
+
+    Args:
+        rrel_expression: the RREL expression.
+
+    Returns:
+        A RREL expression tree.
+    """
     from arpeggio import ParserPython
-    parser = ParserPython(rule, reduce_tree=False)
+    parser = ParserPython(rrel, reduce_tree=False)
     parse_tree = parser.parse(rrel_expression)
     return visit_parse_tree(parse_tree, RrelVisitor())
