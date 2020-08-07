@@ -139,3 +139,18 @@ def parse(rrel_expression):
     parser = ParserPython(rrel, reduce_tree=False)
     parse_tree = parser.parse(rrel_expression)
     return visit_parse_tree(parse_tree, RrelVisitor())
+
+def find(obj, rrel_tree, get_all=False):
+    """
+    This function gets all/one element from a model
+    object based on an rrel tree (query).
+
+    Args:
+        obj: model object
+        rrel_tree: tthe query
+        get_all: stops on first match (False) or return all results (True)
+
+    Returns:
+        A list of results or a Postponed object.
+    """
+    pass
