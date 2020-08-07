@@ -27,4 +27,3 @@ def test_rrel_basic_parser2():
     assert str(tree) == '(type.vals)*'
     tree = parse("instance . ( type.vals ) *")
     assert str(tree) == 'instance.(type.vals)*'
-
