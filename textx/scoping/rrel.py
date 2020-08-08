@@ -249,6 +249,11 @@ def find(obj, lookup_list, rrel_tree):
                 obj, lookup_list = e.apply(obj, lookup_list)
                 if isinstance(obj, Postponed):
                     return obj, lookup_list
+                if isinstance(obj, list):
+                    for iobj in obj:
+                        obj_temp, lookup_list_temp = apply(obj, lookup_list, p, idx+1)
+                        if obj_temp is not None: break  # Postponed or match
+                    return obj_temp, lookup_list_temp
             elif isinstance(e, Brackets):
                 obj, lookup_list = apply(obj, lookup_list, e.path)
                 if isinstance(obj, Postponed):
@@ -256,20 +261,19 @@ def find(obj, lookup_list, rrel_tree):
             elif isinstance(e, ZeroOrMore):
                 obj_temp = obj
                 lookup_list_temp = lookup_list
-                visited = set()
-                while obj_temp is not None and len(lookup_list_temp) > 0:
+                visited = {}
+                while obj_temp is not None:
                     obj_res, lookup_list_res = apply(obj_temp, lookup_list_temp, p, idx+1)
                     if obj_res is not None and (
                             isinstance(obj_res, Postponed) or len(lookup_list_res)==0):
                         return obj_res, lookup_list_res  # found match / postponed
                     obj_temp, lookup_list_temp = apply(
                         obj_temp, lookup_list_temp, e.path_element.path)
-                    if obj_temp in visited:
+                    if obj_temp in visited and visited[obj_temp]==len(lookup_list_temp):
                         break
-                    if obj_temp is not None and (
-                            isinstance(obj_temp, Postponed) or len(lookup_list_res)==0):
-                        return obj_temp, lookup_list_temp  # found match / postponed
-                    visited.add(obj_temp)
+                    if obj_temp is not None and isinstance(obj_temp, Postponed):
+                        return obj_temp, lookup_list_temp  # found postponed
+                    visited[obj_temp] = len(lookup_list_temp)
                 return obj_temp, lookup_list_temp
             idx += 1
         return obj, lookup_list

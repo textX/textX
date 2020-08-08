@@ -32,7 +32,9 @@ def test_rrel_basic_parser2():
 
 def test_rrel_basic_lookup():
     """
-    This is a basic test for the find function
+    This is a basic test for the find function:
+    we use a model with some structure
+    and query this structure with RREL expressions.
     """
     #################################
     # META MODEL DEF
@@ -86,7 +88,7 @@ def test_rrel_basic_lookup():
     ''')
 
     #################################
-    # TEST MODEL
+    # TEST
     #################################
 
     P2 = find(my_model, "P2", "packages")
@@ -110,3 +112,33 @@ def test_rrel_basic_lookup():
     assert Part2_tst is not None
     assert Part2_tst is Part2
 
+    P2_tst = find(rec, "", "parent(Package)")
+    assert P2_tst is not None
+    assert P2_tst is P2
+
+    P2_tst = find(rec, "", "...")
+    assert P2_tst is not None
+    assert P2_tst is P2
+
+    P2_tst = find(rec, "", ".(..).(..)")
+    assert P2_tst is not None
+    assert P2_tst is P2
+
+    P2_tst = find(rec, "", "(..).(..)")
+    assert P2_tst is not None
+    assert P2_tst is P2
+
+    P2_tst = find(rec, "", "...(.).(.)")
+    assert P2_tst is not None
+    assert P2_tst is P2
+
+    P2_tst = find(rec, "", "..(.).(..)")
+    assert P2_tst is not None
+    assert P2_tst is P2
+
+    P2_tst = find(rec, "", "..((.)*)*.(..)")
+    assert P2_tst is not None
+    assert P2_tst is P2
+
+    none = find(my_model, "", "..")
+    assert none is None
