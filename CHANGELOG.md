@@ -19,6 +19,8 @@ please take a look at related PRs and issues and see if the change affects you.
 - Fixed bug where (Ext)RelativeName scope providers accepted any referenced
   object that contained the lookup name in its name. Thanks ipa-mdl@GitHub
   ([#267])
+- Fixed bug in `flow_dsl` test project causing static files not being included
+  in package build/installation ([#272]).
 
 ### Changed
 
