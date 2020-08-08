@@ -143,17 +143,18 @@ def parse(rrel_expression):
     return visit_parse_tree(parse_tree, RrelVisitor())
 
 
-def find(obj, rrel_tree, get_all=False):
+def find(obj, lookup_string, rrel_tree):
     """
     This function gets all/one element from a model
     object based on an rrel tree (query).
 
     Args:
-        obj: model object
-        rrel_tree: tthe query
-        get_all: stops on first match (False) or return all results (True)
+        obj: model object (starting point of the search)
+        lookup_string: dot sepaarted name
+        rrel_tree: the query
 
     Returns:
-        A list of results or a Postponed object.
+        The result of the query (first match), a
+        Postponed object, or None (nothing found).
     """
     pass
