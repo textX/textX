@@ -105,3 +105,8 @@ def test_rrel_basic_lookup():
     assert Part2 is not None
     rec = find(my_model, "P2.Part2.rec", "packages*.classes.attributes")
     assert rec is not None
+
+    Part2_tst = find(rec, "", "..")
+    assert Part2_tst is not None
+    assert Part2_tst is Part2
+

@@ -37,8 +37,8 @@ def zero_or_more():
 
 def path():
     return Optional(['^', dots]), ArpeggioZeroOrMore(
-        [zero_or_more, path_element], '.'), [
-        zero_or_more, path_element]
+        [zero_or_more, path_element], '.'), Optional([
+        zero_or_more, path_element])
 
 
 def rrel():
@@ -238,6 +238,7 @@ def find(obj, lookup_list, rrel_tree):
         rrel_tree = parse(rrel_tree)
     if isinstance(lookup_list, str):
         lookup_list = lookup_list.split(".")
+        lookup_list = list(filter(lambda x: len(x)>0, lookup_list))
 
     def apply(obj, lookup_list, p, idx=0):
         assert isinstance(p, Path)
