@@ -37,8 +37,7 @@ def zero_or_more():
 
 def path():
     return Optional(['^', dots]), ArpeggioZeroOrMore(
-        [zero_or_more, path_element], '.'), Optional([
-        zero_or_more, path_element])
+        [zero_or_more, path_element], '.'), Optional([zero_or_more, path_element])
 
 
 def ordered_choice():
@@ -158,7 +157,7 @@ class OrderedChoice:
         self.paths = paths
 
     def __repr__(self):
-        return ','.join(map(lambda x:str(x), self.paths))
+        return ','.join(map(lambda x: str(x), self.paths))
 
 
 class ZeroOrMore:
@@ -255,7 +254,7 @@ def find(obj, lookup_list, rrel_tree):
         rrel_tree = parse(rrel_tree)
     if isinstance(lookup_list, str):
         lookup_list = lookup_list.split(".")
-        lookup_list = list(filter(lambda x: len(x)>0, lookup_list))
+        lookup_list = list(filter(lambda x: len(x) > 0, lookup_list))
     visited = [set()] * (len(lookup_list) + 1)
 
     def get_next_matches(obj, lookup_list, p, idx=0):
@@ -270,7 +269,7 @@ def find(obj, lookup_list, rrel_tree):
                     return
                 elif isinstance(obj, list):
                     for iobj in obj:
-                        yield from get_next_matches(iobj, lookup_list, p, idx+1)
+                        yield from get_next_matches(iobj, lookup_list, p, idx + 1)
                     return
             elif isinstance(e, Brackets):
                 for ip in e.oc.paths:
@@ -287,7 +286,8 @@ def find(obj, lookup_list, rrel_tree):
                         for obj, lookup_list in get_next_matches(obj, lookup_list, ip):
                             next.append((obj, lookup_list))
                             if obj in visited[len(lookup_list)]:
-                                continue  # not 100% sure if we catch all "inifinte recursions" here
+                                continue  # not 100% sure if we catch all
+                                # "inifinte recursions" here
                             if obj is not None and isinstance(obj, Postponed):
                                 yield obj, lookup_list  # found postponed
                                 return

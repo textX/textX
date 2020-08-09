@@ -173,5 +173,5 @@ def test_rrel_basic_lookup():
     rec2 = find(my_model, "P2.Part2.rec", "(packages,classes,attributes)*")
     assert rec2 is rec
 
-    rec2 = find(my_model, "P2.Part2.rec", "(packages,(classes,attributes)*)*")
+    rec2 = find(my_model, "P2.Part2.rec", "(packages,(classes,attributes)*)*.attributes")
     assert rec2 is rec
