@@ -33,48 +33,33 @@ def test_rrel_basic_parser2():
     assert str(tree) == 'a,b,c'
 
 
-def test_rrel_basic_lookup():
-    """
-    This is a basic test for the find function:
-    we use a model with some structure
-    and query this structure with RREL expressions.
-    """
-    #################################
-    # META MODEL DEF
-    #################################
-    metamodel_str = '''
-        Model:
-            packages*=Package
-        ;
+metamodel_str = '''
+    Model:
+        packages*=Package
+    ;
 
-        Package:
-            'package' name=ID '{'
-            packages*=Package
-            classes*=Class
-            '}'
-        ;
+    Package:
+        'package' name=ID '{'
+        packages*=Package
+        classes*=Class
+        '}'
+    ;
 
-        Class:
-            'class' name=ID '{'
-                attributes*=Attribute
-            '}'
-        ;
+    Class:
+        'class' name=ID '{'
+            attributes*=Attribute
+        '}'
+    ;
 
-        Attribute:
-                'attr' name=ID ';'
-        ;
+    Attribute:
+            'attr' name=ID ';'
+    ;
 
-        Comment: /#.*/;
-        FQN: ID('.'ID)*;
-        '''
+    Comment: /#.*/;
+    FQN: ID('.'ID)*;
+    '''
 
-    my_metamodel = metamodel_from_str(metamodel_str)
-
-    #################################
-    # MODEL PARSING
-    #################################
-
-    my_model = my_metamodel.model_from_str('''
+modeltext = '''
     package P1 {
         class Part1 {
         }
@@ -97,7 +82,25 @@ def test_rrel_basic_lookup():
             attr p1;
         }
     }
-    ''')
+    '''
+
+def test_rrel_basic_lookup():
+    """
+    This is a basic test for the find function:
+    we use a model with some structure
+    and query this structure with RREL expressions.
+    """
+    #################################
+    # META MODEL DEF
+    #################################
+
+    my_metamodel = metamodel_from_str(metamodel_str)
+
+    #################################
+    # MODEL PARSING
+    #################################
+
+    my_model = my_metamodel.model_from_str(modeltext)
 
     #################################
     # TEST
@@ -195,6 +198,25 @@ def test_rrel_basic_lookup():
     assert rec2 is None
 
     rec2 = find(my_model, "rec",
-                "(~packages,~classes,attributes,classes)*", my_metamodel["Class"])
+                "(~packages,classes,attributes,~classes)*", my_metamodel["Class"])
     assert rec2 is not None
     assert rec2 is not rec  # it is the class...
+
+    rec2 = find(my_model, "rec",
+            "(~packages,~classes,attributes,classes)*", my_metamodel["Class"])
+    assert rec2 is not None
+    assert rec2 is not rec  # it is the class...
+
+    t = find(my_model, "",".")
+    assert t is my_model
+
+    t = find(my_model, "","(.)")
+    assert t is my_model
+
+    t = find(my_model, "","(.)*")
+    assert t is my_model
+
+    #rec2 = find(my_model, "rec",
+    #        "(.)*(~packages,~classes,attributes,classes)*", my_metamodel["Class"])
+    #assert rec2 is not None
+    #assert rec2 is not rec  # it is the class...

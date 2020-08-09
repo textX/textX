@@ -283,22 +283,17 @@ def find(obj, lookup_list, rrel_tree, obj_cls=None):
                 return
             elif isinstance(e, ZeroOrMore):
                 def get_from_zero_or_more(obj, lookup_list):
-                    if obj not in visited[len(lookup_list)]:
-                        yield obj, lookup_list
-                        visited[len(lookup_list)].add(obj)
-                    next = []
+                    yield obj, lookup_list
                     for ip in e.path_element.oc.paths:
-                        for obj, lookup_list in get_next_matches(obj, lookup_list, ip):
-                            if obj in visited[len(lookup_list)]:
+                        for iobj, ilookup_list in get_next_matches(obj, lookup_list, ip):
+                            print(ip, iobj, ilookup_list)
+                            if (iobj,ip) in visited[len(ilookup_list)]:
                                 continue
-                            next.append((obj, lookup_list))
-                            if obj is not None and isinstance(obj, Postponed):
-                                yield obj, lookup_list  # found postponed
+                            if iobj is not None and isinstance(iobj, Postponed):
+                                yield iobj, ilookup_list  # found postponed
                                 return
-                            yield obj, lookup_list
-                            visited[len(lookup_list)].add(obj)
-                    for obj, lookup_list in next:
-                        yield from get_from_zero_or_more(obj, lookup_list)
+                            visited[len(ilookup_list)].add((iobj,ip))
+                            yield from get_from_zero_or_more(iobj, ilookup_list)
 
                 for obj, lookup_list in get_from_zero_or_more(obj, lookup_list):
                     yield from get_next_matches(obj, lookup_list, p, idx + 1)
@@ -311,6 +306,7 @@ def find(obj, lookup_list, rrel_tree, obj_cls=None):
             if isinstance(obj_res, Postponed):
                 return obj_res  # Postponed
             elif len(lookup_list_res) == 0:
+                print("MATCH?", obj_res)
                 if obj_cls is None or textx_isinstance(obj_res, obj_cls):
                     return obj_res  # found match
     return None  # not found
