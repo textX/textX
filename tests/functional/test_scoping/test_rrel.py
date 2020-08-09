@@ -3,6 +3,7 @@ from arpeggio import ParserPython
 from textx import metamodel_from_str
 from textx.scoping.rrel import find
 
+
 def test_rrel_basic_parser1():
     parser = ParserPython(rrel)
     parse_tree = parser.parse("^pkg*.cls")
@@ -28,6 +29,8 @@ def test_rrel_basic_parser2():
     assert str(tree) == '(type.vals)*'
     tree = parse("instance . ( type.vals ) *")
     assert str(tree) == 'instance.(type.vals)*'
+    tree = parse("a,b,c")
+    assert str(tree) == 'a,b,c'
 
 
 def test_rrel_basic_lookup():
@@ -157,3 +160,18 @@ def test_rrel_basic_lookup():
     inner = find(my_model, "inner", "~packages*.~classes.attributes")
     assert inner is not None
     assert inner.name == "inner"
+
+    rec2 = find(my_model, "P2.Part2.rec", "other1,other2,packages*.classes.attributes")
+    assert rec2 is rec
+
+    rec2 = find(my_model, "P2.Part2.rec", "other1,packages*.classes.attributes,other2")
+    assert rec2 is rec
+
+    rec2 = find(my_model, "P2.Part2.rec", "other1,other2,other3")
+    assert rec2 is None
+
+    rec2 = find(my_model, "P2.Part2.rec", "(packages,classes,attributes)*")
+    assert rec2 is rec
+
+    rec2 = find(my_model, "P2.Part2.rec", "(packages,(classes,attributes)*)*")
+    assert rec2 is rec

@@ -20,7 +20,7 @@ def navigation():
 
 
 def brackets():
-    return '(', path, ')'
+    return '(', ordered_choice, ')'
 
 
 def dots():
@@ -41,8 +41,12 @@ def path():
         zero_or_more, path_element])
 
 
+def ordered_choice():
+    return ArpeggioZeroOrMore(path, ","), path
+
+
 def rrel():
-    return path, EOF
+    return ordered_choice, EOF
 
 
 class Parent:
@@ -116,11 +120,11 @@ class Navigation:
 
 
 class Brackets:
-    def __init__(self, path):
-        self.path = path
+    def __init__(self, oc):
+        self.oc = oc
 
     def __repr__(self):
-        return '(' + str(self.path) + ')'
+        return '(' + str(self.oc) + ')'
 
 
 class Dots:
@@ -149,10 +153,18 @@ class Dots:
             return None, lookup_list
 
 
+class OrderedChoice:
+    def __init__(self, paths):
+        self.paths = paths
+
+    def __repr__(self):
+        return ','.join(map(lambda x:str(x), self.paths))
+
+
 class ZeroOrMore:
     def __init__(self, path_element):
         if not isinstance(path_element, Brackets):
-            path_element = Brackets(Path([path_element]))
+            path_element = Brackets(OrderedChoice([Path([path_element])]))
         self.path_element = path_element
         assert(isinstance(self.path_element, Brackets))
 
@@ -199,6 +211,9 @@ class RrelVisitor(PTNodeVisitor):
     def visit_path(self, node, children):
         return Path(children)
 
+    def visit_ordered_choice(self, node, children):
+        return OrderedChoice(children)
+
     def visit_path_element(self, node, children):
         assert(len(children) == 1)
         return children[0]
@@ -241,9 +256,9 @@ def find(obj, lookup_list, rrel_tree):
     if isinstance(lookup_list, str):
         lookup_list = lookup_list.split(".")
         lookup_list = list(filter(lambda x: len(x)>0, lookup_list))
+    visited = [set()] * (len(lookup_list) + 1)
 
     def get_next_matches(obj, lookup_list, p, idx=0):
-        print(obj,p,idx)
         assert isinstance(p, Path)
         assert len(p.path_elements) >= idx
         # assert len(lookup_list) > 0
@@ -258,25 +273,26 @@ def find(obj, lookup_list, rrel_tree):
                         yield from get_next_matches(iobj, lookup_list, p, idx+1)
                     return
             elif isinstance(e, Brackets):
-                for obj, lookup_list in get_next_matches(obj, lookup_list, e.path):
-                    yield from get_next_matches(obj, lookup_list, p, idx + 1)
+                for ip in e.oc.paths:
+                    for obj, lookup_list in get_next_matches(obj, lookup_list, ip):
+                        yield from get_next_matches(obj, lookup_list, p, idx + 1)
                 return
             elif isinstance(e, ZeroOrMore):
-                visited = [set()] * (len(lookup_list) + 1)
-
                 def get_from_zero_or_more(obj, lookup_list):
-                    yield obj, lookup_list
-                    visited[len(lookup_list)].add(obj)
-                    next=[]
-                    for obj, lookup_list in get_next_matches(obj, lookup_list, e.path_element.path):
-                        next.append((obj, lookup_list))
-                        if obj in visited[len(lookup_list)]:
-                            break
-                        if obj is not None and isinstance(obj, Postponed):
-                            yield obj, lookup_list  # found postponed
-                            return
+                    if obj not in visited[len(lookup_list)]:
                         yield obj, lookup_list
                         visited[len(lookup_list)].add(obj)
+                    next = []
+                    for ip in e.path_element.oc.paths:
+                        for obj, lookup_list in get_next_matches(obj, lookup_list, ip):
+                            next.append((obj, lookup_list))
+                            if obj in visited[len(lookup_list)]:
+                                continue  # not 100% sure if we catch all "inifinte recursions" here
+                            if obj is not None and isinstance(obj, Postponed):
+                                yield obj, lookup_list  # found postponed
+                                return
+                            yield obj, lookup_list
+                            visited[len(lookup_list)].add(obj)
                     for obj, lookup_list in next:
                         yield from get_from_zero_or_more(obj, lookup_list)
 
@@ -286,9 +302,10 @@ def find(obj, lookup_list, rrel_tree):
             idx += 1
         yield obj, lookup_list
 
-    for obj_res, lookup_list_res in get_next_matches(obj, lookup_list, rrel_tree):
-        if isinstance(obj_res, Postponed):
-            return obj_res  # Postponed
-        elif len(lookup_list_res) == 0:
-            return obj_res  # found match
+    for p in rrel_tree.paths:
+        for obj_res, lookup_list_res in get_next_matches(obj, lookup_list, p):
+            if isinstance(obj_res, Postponed):
+                return obj_res  # Postponed
+            elif len(lookup_list_res) == 0:
+                return obj_res  # found match
     return None  # not found
