@@ -93,6 +93,9 @@ def test_rrel_basic_lookup():
             attr p2a;
             attr p2b;
         }
+        class rec {
+            attr p1;
+        }
     }
     ''')
 
@@ -175,3 +178,23 @@ def test_rrel_basic_lookup():
 
     rec2 = find(my_model, "P2.Part2.rec", "(packages,(classes,attributes)*)*.attributes")
     assert rec2 is rec
+
+    rec2 = find(my_model, "rec", "(~packages,~classes,attributes,classes)*")
+    assert rec2 is not None
+
+    rec2 = find(my_model, "rec",
+                "(~packages,~classes,attributes,classes)*", my_metamodel["OBJECT"])
+    assert rec2 is not None
+
+    rec2 = find(my_model, "rec",
+                "(~packages,~classes,attributes,classes)*", my_metamodel["Attribute"])
+    assert rec2 is rec
+
+    rec2 = find(my_model, "rec",
+                "(~packages,~classes,attributes,classes)*", my_metamodel["Package"])
+    assert rec2 is None
+
+    rec2 = find(my_model, "rec",
+                "(~packages,~classes,attributes,classes)*", my_metamodel["Class"])
+    assert rec2 is not None
+    assert rec2 is not rec  # it is the class...

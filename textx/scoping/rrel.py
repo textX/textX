@@ -90,6 +90,8 @@ class Navigation:
             The object indicated by the navigation object,
             Postponed, None, or a list (if a list has to be processed).
         """
+        if len(lookup_list) == 0 and self.consume_name:
+            return None, lookup_list
         if needs_to_be_resolved(obj, self.name):
             return Postponed()
         if hasattr(obj, self.name):
@@ -234,7 +236,7 @@ def parse(rrel_expression):
     return visit_parse_tree(parse_tree, RrelVisitor())
 
 
-def find(obj, lookup_list, rrel_tree):
+def find(obj, lookup_list, rrel_tree, obj_cls=None):
     """
     This function gets all/one element from a model
     object based on an rrel tree (query).
@@ -258,6 +260,7 @@ def find(obj, lookup_list, rrel_tree):
     visited = [set()] * (len(lookup_list) + 1)
 
     def get_next_matches(obj, lookup_list, p, idx=0):
+        # print("get_next_matches: ",obj, lookup_list, idx)
         assert isinstance(p, Path)
         assert len(p.path_elements) >= idx
         # assert len(lookup_list) > 0
@@ -267,14 +270,16 @@ def find(obj, lookup_list, rrel_tree):
                 if obj is not None and isinstance(obj, Postponed):
                     yield obj, lookup_list
                     return
+                if obj is None:
+                    return
                 elif isinstance(obj, list):
                     for iobj in obj:
                         yield from get_next_matches(iobj, lookup_list, p, idx + 1)
                     return
             elif isinstance(e, Brackets):
                 for ip in e.oc.paths:
-                    for obj, lookup_list in get_next_matches(obj, lookup_list, ip):
-                        yield from get_next_matches(obj, lookup_list, p, idx + 1)
+                    for iobj, ilookup_list in get_next_matches(obj, lookup_list, ip):
+                        yield from get_next_matches(iobj, ilookup_list, p, idx + 1)
                 return
             elif isinstance(e, ZeroOrMore):
                 def get_from_zero_or_more(obj, lookup_list):
@@ -284,10 +289,9 @@ def find(obj, lookup_list, rrel_tree):
                     next = []
                     for ip in e.path_element.oc.paths:
                         for obj, lookup_list in get_next_matches(obj, lookup_list, ip):
-                            next.append((obj, lookup_list))
                             if obj in visited[len(lookup_list)]:
-                                continue  # not 100% sure if we catch all
-                                # "inifinte recursions" here
+                                continue
+                            next.append((obj, lookup_list))
                             if obj is not None and isinstance(obj, Postponed):
                                 yield obj, lookup_list  # found postponed
                                 return
@@ -307,5 +311,34 @@ def find(obj, lookup_list, rrel_tree):
             if isinstance(obj_res, Postponed):
                 return obj_res  # Postponed
             elif len(lookup_list_res) == 0:
-                return obj_res  # found match
+                if obj_cls is None or textx_isinstance(obj_res, obj_cls):
+                    return obj_res  # found match
     return None  # not found
+
+
+class RREL(object):
+    """
+    RREL scope provider
+    """
+    def __init__(self, rrel_tree):
+        if isinstance(rrel_tree, str):
+            rrel_tree = parse(rrel_tree)
+        self.rrel_tree = rrel_tree
+
+    def __call__(self, current_obj, attr, obj_ref):
+        """
+        find an object
+
+        Args:
+            current_obj: object corresponding a instance of an
+                         object (rule instance)
+            attr: the referencing attribute (unused)
+            obj_ref: ObjCrossRef to be resolved
+
+        Returns: None or the referenced object
+        """
+        obj_cls, obj_name = obj_ref.cls, obj_ref.obj_name
+        lookup_list = obj_name.split(".")
+        lookup_list = list(filter(lambda x: len(x) > 0, lookup_list))
+
+        return find(current_obj, lookup_list, self.rrel_tree, obj_cls)
