@@ -46,6 +46,7 @@ def test_rrel_basic_lookup():
 
         Package:
             'package' name=ID '{'
+            packages*=Package
             classes*=Class
             '}'
         ;
@@ -76,6 +77,11 @@ def test_rrel_basic_lookup():
         }
     }
     package P2 {
+        package Inner {
+            class Inner {
+                attr inner;
+            }
+        }
         class Part2 {
             attr rec;
         }
@@ -142,3 +148,12 @@ def test_rrel_basic_lookup():
 
     none = find(my_model, "", "..")
     assert none is None
+
+    inner = find(my_model, "inner", "~packages.~packages.~classes.attributes")
+    assert inner is not None
+    assert inner.name == "inner"
+
+    # expensive version of a "Plain Name" scope provider:
+    inner = find(my_model, "inner", "~packages*.~classes.attributes")
+    assert inner is not None
+    assert inner.name == "inner"

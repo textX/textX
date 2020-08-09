@@ -225,6 +225,8 @@ def find(obj, lookup_list, rrel_tree):
     This function gets all/one element from a model
     object based on an rrel tree (query).
 
+    Note: this function uses Python 3.3+ features (recursive generators)
+
     Args:
         obj: model object (starting point of the search)
         lookup_list: list of name parts forming the full name.
@@ -240,48 +242,53 @@ def find(obj, lookup_list, rrel_tree):
         lookup_list = lookup_list.split(".")
         lookup_list = list(filter(lambda x: len(x)>0, lookup_list))
 
-    def apply(obj, lookup_list, p, idx=0):
+    def get_next_matches(obj, lookup_list, p, idx=0):
+        print(obj,p,idx)
         assert isinstance(p, Path)
         assert len(p.path_elements) >= idx
         # assert len(lookup_list) > 0
         for e in p.path_elements[idx:]:
             if hasattr(e, "apply"):
                 obj, lookup_list = e.apply(obj, lookup_list)
-                if isinstance(obj, Postponed):
-                    return obj, lookup_list
-                if isinstance(obj, list):
+                if obj is not None and isinstance(obj, Postponed):
+                    yield obj, lookup_list
+                    return
+                elif isinstance(obj, list):
                     for iobj in obj:
-                        obj_temp, lookup_list_temp = apply(obj, lookup_list, p, idx+1)
-                        if obj_temp is not None: break  # Postponed or match
-                    return obj_temp, lookup_list_temp
+                        yield from get_next_matches(iobj, lookup_list, p, idx+1)
+                    return
             elif isinstance(e, Brackets):
-                obj, lookup_list = apply(obj, lookup_list, e.path)
-                if isinstance(obj, Postponed):
-                    return obj, lookup_list
+                for obj, lookup_list in get_next_matches(obj, lookup_list, e.path):
+                    yield from get_next_matches(obj, lookup_list, p, idx + 1)
+                return
             elif isinstance(e, ZeroOrMore):
-                obj_temp = obj
-                lookup_list_temp = lookup_list
-                visited = {}
-                while obj_temp is not None:
-                    obj_res, lookup_list_res = apply(obj_temp, lookup_list_temp, p, idx+1)
-                    if obj_res is not None and (
-                            isinstance(obj_res, Postponed) or len(lookup_list_res)==0):
-                        return obj_res, lookup_list_res  # found match / postponed
-                    obj_temp, lookup_list_temp = apply(
-                        obj_temp, lookup_list_temp, e.path_element.path)
-                    if obj_temp in visited and visited[obj_temp]==len(lookup_list_temp):
-                        break
-                    if obj_temp is not None and isinstance(obj_temp, Postponed):
-                        return obj_temp, lookup_list_temp  # found postponed
-                    visited[obj_temp] = len(lookup_list_temp)
-                return obj_temp, lookup_list_temp
-            idx += 1
-        return obj, lookup_list
+                visited = [set()] * (len(lookup_list) + 1)
 
-    obj_res, lookup_list_res = apply(obj, lookup_list, rrel_tree)
-    if isinstance(obj_res, Postponed):
-        return obj_res  # Postponed
-    elif obj_res is not None and len(lookup_list_res) == 0:
-        return obj_res  # found match
-    else:
-        return None  # not found
+                def get_from_zero_or_more(obj, lookup_list):
+                    yield obj, lookup_list
+                    visited[len(lookup_list)].add(obj)
+                    next=[]
+                    for obj, lookup_list in get_next_matches(obj, lookup_list, e.path_element.path):
+                        next.append((obj, lookup_list))
+                        if obj in visited[len(lookup_list)]:
+                            break
+                        if obj is not None and isinstance(obj, Postponed):
+                            yield obj, lookup_list  # found postponed
+                            return
+                        yield obj, lookup_list
+                        visited[len(lookup_list)].add(obj)
+                    for obj, lookup_list in next:
+                        yield from get_from_zero_or_more(obj, lookup_list)
+
+                for obj, lookup_list in get_from_zero_or_more(obj, lookup_list):
+                    yield from get_next_matches(obj, lookup_list, p, idx + 1)
+                return
+            idx += 1
+        yield obj, lookup_list
+
+    for obj_res, lookup_list_res in get_next_matches(obj, lookup_list, rrel_tree):
+        if isinstance(obj_res, Postponed):
+            return obj_res  # Postponed
+        elif len(lookup_list_res) == 0:
+            return obj_res  # found match
+    return None  # not found
