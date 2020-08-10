@@ -246,7 +246,7 @@ def find(obj, lookup_list, rrel_tree, obj_cls=None):
     Args:
         obj: model object (starting point of the search)
         lookup_list: list of name parts forming the full name.
-        rrel_tree: the query (must be a Path oebjct)
+        rrel_tree: the query (must be a Path object)
 
     Returns:
         The result of the query (first match), a
