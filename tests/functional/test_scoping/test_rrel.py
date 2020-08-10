@@ -84,6 +84,7 @@ modeltext = '''
     }
     '''
 
+
 def test_rrel_basic_lookup():
     """
     This is a basic test for the find function:
@@ -203,20 +204,20 @@ def test_rrel_basic_lookup():
     assert rec2 is not rec  # it is the class...
 
     rec2 = find(my_model, "rec",
-            "(~packages,~classes,attributes,classes)*", my_metamodel["Class"])
+                "(~packages,~classes,attributes,classes)*", my_metamodel["Class"])
     assert rec2 is not None
     assert rec2 is not rec  # it is the class...
 
-    t = find(my_model, "",".")
+    t = find(my_model, "", ".")
     assert t is my_model
 
-    t = find(my_model, "","(.)")
+    t = find(my_model, "", "(.)")
     assert t is my_model
 
-    t = find(my_model, "","(.)*")
+    t = find(my_model, "", "(.)*")
     assert t is my_model
 
     rec2 = find(my_model, "rec",
-            "(.)*.(~packages,~classes,attributes,classes)*", my_metamodel["Class"])
+                "(.)*.(~packages,~classes,attributes,classes)*", my_metamodel["Class"])
     assert rec2 is not None
     assert rec2 is not rec  # it is the class...

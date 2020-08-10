@@ -287,16 +287,19 @@ def find(obj, lookup_list, rrel_tree, obj_cls=None):
                     for ip in e.path_element.oc.paths:
                         for iobj, ilookup_list in get_next_matches(obj, lookup_list, ip):
                             print(ip, iobj, ilookup_list)
-                            if (iobj,ip) in visited[len(ilookup_list)]:
+                            if (iobj, ip) in visited[len(ilookup_list)]:
                                 continue
                             if iobj is not None and isinstance(iobj, Postponed):
                                 yield iobj, ilookup_list  # found postponed
                                 return
-                            visited[len(ilookup_list)].add((iobj,ip))
+                            visited[len(ilookup_list)].add((iobj, ip))
                             yield from get_from_zero_or_more(iobj, ilookup_list)
 
+                prevent_doubles = set()
                 for obj, lookup_list in get_from_zero_or_more(obj, lookup_list):
-                    yield from get_next_matches(obj, lookup_list, p, idx + 1)
+                    if (obj, lookup_list) not in prevent_doubles:
+                        yield from get_next_matches(obj, lookup_list, p, idx + 1)
+                        prevent_doubles.add((obj, lookup_list))
                 return
             idx += 1
         yield obj, lookup_list
