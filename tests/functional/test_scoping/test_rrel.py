@@ -216,7 +216,7 @@ def test_rrel_basic_lookup():
     t = find(my_model, "","(.)*")
     assert t is my_model
 
-    #rec2 = find(my_model, "rec",
-    #        "(.)*(~packages,~classes,attributes,classes)*", my_metamodel["Class"])
-    #assert rec2 is not None
-    #assert rec2 is not rec  # it is the class...
+    rec2 = find(my_model, "rec",
+            "(.)*.(~packages,~classes,attributes,classes)*", my_metamodel["Class"])
+    assert rec2 is not None
+    assert rec2 is not rec  # it is the class...
