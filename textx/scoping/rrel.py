@@ -122,6 +122,7 @@ class Navigation:
 
 class Brackets:
     def __init__(self, oc):
+        assert isinstance(oc, OrderedChoice)
         self.oc = oc
 
     def __repr__(self):
@@ -178,7 +179,7 @@ class Path:
         # print("create Path :" + str(path_elements))
         self.path_elements = path_elements
         if (self.path_elements[0] == '^'):
-            self.path_elements[0] = ZeroOrMore(Brackets(Path([Dots(2)])))
+            self.path_elements[0] = ZeroOrMore(Brackets(OrderedChoice([Path([Dots(2)])])))
 
     def __repr__(self):
         if isinstance(self.path_elements[0], Dots):
@@ -282,11 +283,14 @@ def find(obj, lookup_list, rrel_tree, obj_cls=None):
                         yield from get_next_matches(iobj, ilookup_list, p, idx + 1)
                 return
             elif isinstance(e, ZeroOrMore):
+                assert isinstance(e.path_element, Brackets)
                 def get_from_zero_or_more(obj, lookup_list):
                     yield obj, lookup_list
+                    assert isinstance(e.path_element, Brackets)
+                    assert isinstance(e.path_element.oc, OrderedChoice)
                     for ip in e.path_element.oc.paths:
                         for iobj, ilookup_list in get_next_matches(obj, lookup_list, ip):
-                            print(ip, iobj, ilookup_list)
+                            # print(ip, iobj, ilookup_list)
                             if (iobj, ip) in visited[len(ilookup_list)]:
                                 continue
                             if iobj is not None and isinstance(iobj, Postponed):
@@ -297,9 +301,9 @@ def find(obj, lookup_list, rrel_tree, obj_cls=None):
 
                 prevent_doubles = set()
                 for obj, lookup_list in get_from_zero_or_more(obj, lookup_list):
-                    if (obj, lookup_list) not in prevent_doubles:
+                    if (obj, len(lookup_list)) not in prevent_doubles:
                         yield from get_next_matches(obj, lookup_list, p, idx + 1)
-                        prevent_doubles.add((obj, lookup_list))
+                        prevent_doubles.add((obj, len(lookup_list)))
                 return
             idx += 1
         yield obj, lookup_list
