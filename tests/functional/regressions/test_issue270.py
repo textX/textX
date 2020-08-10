@@ -36,13 +36,20 @@ class ConnectionHandler(object):
         print("I am really important for Sender and Receiver")
 
 class Sender(ConnectionHandler):
-    def _init_(self, name=None, port=None):
+    def __init__(self, name=None, connection=None, parent=None):
+        super(Sender).__init__()  # did  not change anything
         print('')
 
 class Receiver(ConnectionHandler):
-    def _init_(self, name=None, port=None):
+    def __init__(self, name=None, connection=None, parent=None):
+        super(Receiver).__init__()  # did  not change anything
         print('')
 
 def test_issue270():
+    # works:
+    #mm = metamodel_from_str(grammar, classes=[Sender, Receiver])
+
+    # does not work
     mm = metamodel_from_str(grammar, classes=[ConnectionHandler, Sender, Receiver])
+
     _ = mm.model_from_str(modelstring)
