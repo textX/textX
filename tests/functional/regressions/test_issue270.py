@@ -14,6 +14,9 @@ Sender:
 Receiver: 
  'incoming' name=ID 'over' connection=[Connection|ID];
 
+// including the base class in the grammar helps:
+// ConnectionHandler: Sender|Receiver;
+
 Connection: 
   'connection' name=ID
   'port' port=STRING 
