@@ -291,7 +291,7 @@ FQN: ID ('.' ID)*;
 '''
 
 
-def test_referencing_attributes_with_manual_rrel_all_in_one():
+def test_referencing_attributes_with_rrel_all_in_one():
     """
     same with rrel
     """

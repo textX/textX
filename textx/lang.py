@@ -13,6 +13,7 @@ from arpeggio import StrMatch, Optional, ZeroOrMore, OneOrMore, Sequence,\
     ParsingExpression, ParserPython, PTNodeVisitor, visit_parse_tree
 from arpeggio.export import PMDOTExporter
 from arpeggio import RegExMatch as _
+import textx.scoping.rrel_lang as rrel_lang
 
 from .exceptions import TextXError, TextXSyntaxError, TextXSemanticError
 from .const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, \
@@ -65,7 +66,7 @@ def assignment_rhs():       return [simple_match, reference], Optional(repeat_mo
 # References
 def reference():            return [rule_ref, obj_ref]
 def rule_ref():             return ident
-def obj_ref():              return '[', class_name, Optional('|', obj_ref_rule), ']'
+def obj_ref():              return '[', class_name, Optional('|', obj_ref_rule, Optional('|', rrel_lang.ordered_choice)), ']'
 
 def rule_name():            return ident
 def obj_ref_rule():         return ident
