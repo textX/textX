@@ -3,6 +3,7 @@ from textx import metamodel_from_str
 from pytest import raises
 import textx.exceptions
 import attr
+from textx.scoping.rrel import RREL
 
 
 @attr.s(frozen=True)
@@ -24,6 +25,46 @@ class RefItem(object):
     parent = attr.ib()
     valref = attr.ib()
 
+grammar = '''
+Model:
+    structs+=Struct
+    instances+=Instance
+    references+=Reference;
+Struct:
+    'struct' name=ID '{' vals+=Val '}';
+Val:
+    'val' name=ID (':' type=[Struct])?;
+Instance:
+    'instance' name=ID (':' type=[Struct])?;
+Reference:
+    'reference' instance=[Instance] refs+=RefItem;
+RefItem:
+    '.' valref=[Val];
+'''
+
+model_text = '''
+struct A {
+    val x
+}
+struct B {
+    val a: A
+}
+struct C {
+    val b: B
+    val a: A
+}
+struct D {
+    val c: C
+    val b1: B
+    val a: A
+}
+instance d: D
+instance a: A
+reference d.c.b.a.x
+reference d.b1.a.x
+reference a.x
+'''
+
 
 def test_referencing_attributes():
     """
@@ -37,44 +78,6 @@ def test_referencing_attributes():
 
     We also show how to handle custom classes here.
     """
-    grammar = '''
-    Model:
-        structs+=Struct
-        instances+=Instance
-        references+=Reference;
-    Struct:
-        'struct' name=ID '{' vals+=Val '}';
-    Val:
-        'val' name=ID (':' type=[Struct])?;
-    Instance:
-        'instance' name=ID (':' type=[Struct])?;
-    Reference:
-        'reference' instance=[Instance] refs+=RefItem;
-    RefItem:
-        '.' valref=[Val];
-    '''
-    model_text = '''
-    struct A {
-        val x
-    }
-    struct B {
-        val a: A
-    }
-    struct C {
-        val b: B
-        val a: A
-    }
-    struct D {
-        val c: C
-        val b1: B
-        val a: A
-    }
-    instance d: D
-    instance a: A
-    reference d.c.b.a.x
-    reference d.b1.a.x
-    reference a.x
-    '''
 
     for classes in [[], [Instance, Reference, RefItem]]:
 
@@ -153,3 +156,120 @@ def test_referencing_attributes():
             instance c: C
             reference c.b.a.x
             ''')
+
+
+grammar_element_by_element = '''
+Model:
+    structs+=Struct
+    instances+=Instance
+    references+=Reference;
+Struct:
+    'struct' name=ID '{' vals+=Val '}';
+Val:
+    'val' name=ID (':' type=[Struct])?;
+Instance:
+    'instance' name=ID (':' type=[Struct])?;
+Reference:
+    'reference' instance=[Instance] refs=RefItem;
+RefItem:
+    '.' valref=[Val] (ref=RefItem)?;
+'''
+
+
+def test_referencing_attributes_with_manual_rrel_modeling_references_element_by_element():
+    """
+    same with rrel
+    """
+
+    mm = metamodel_from_str(grammar_element_by_element)
+    mm.register_scope_providers({
+        "RefItem.valref": RREL("..~valref.~type.vals,..~instance.~type.vals")
+    })
+    m = mm.model_from_str(model_text)
+
+    # negative tests
+    # error: "not_there" not pasrt of A
+    with raises(textx.exceptions.TextXSemanticError,
+                match=r'.*Unknown object.*not_there.*'):
+        mm.model_from_str('''
+        struct A { val x }
+        struct B { val a: A}
+        struct C {
+            val b: B
+            val a: A
+        }
+        instance c: C
+        reference c.b.a.not_there
+        ''')
+
+    # error: B.a is not of type A
+    with raises(textx.exceptions.TextXSemanticError,
+                match=r'.*Unknown object "x".*'):
+        mm.model_from_str('''
+        struct A { val x }
+        struct B { val a }
+        struct C {
+            val b: B
+            val a: A
+        }
+        instance c: C
+        reference c.b.a.x
+        ''')
+
+
+grammar_single_rrel_ref = '''
+Model:
+    structs+=Struct
+    instances+=Instance
+    references+=Reference;
+Struct:
+    'struct' name=ID '{' vals+=Val '}';
+Val:
+    'val' name=ID (':' type=[Struct])?;
+Instance:
+    'instance' name=ID (':' type=[Struct])?;
+Reference:
+    'reference' instance=[Instance] '.' ref=[Val|FQN];
+FQN: ID ('.' ID)*;
+'''
+
+
+def test_referencing_attributes_with_manual_rrel():
+    """
+    same with rrel
+    """
+
+    mm = metamodel_from_str(grammar_single_rrel_ref)
+    mm.register_scope_providers({
+        "Reference.ref": RREL("~instance.~type.vals.(~type.vals)*")
+    })
+    m = mm.model_from_str(model_text)
+
+    # negative tests
+    # error: "not_there" not pasrt of A
+    with raises(textx.exceptions.TextXSemanticError,
+                match=r'.*Unknown object "b.a.not_there".*'):
+        mm.model_from_str('''
+        struct A { val x }
+        struct B { val a: A}
+        struct C {
+            val b: B
+            val a: A
+        }
+        instance c: C
+        reference c.b.a.not_there
+        ''')
+
+    # error: B.a is not of type A
+    with raises(textx.exceptions.TextXSemanticError,
+                match=r'.*Unknown object "b.a.x".*'):
+        mm.model_from_str('''
+        struct A { val x }
+        struct B { val a }
+        struct C {
+            val b: B
+            val a: A
+        }
+        instance c: C
+        reference c.b.a.x
+        ''')

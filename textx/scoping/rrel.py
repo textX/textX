@@ -93,7 +93,7 @@ class Navigation:
         if len(lookup_list) == 0 and self.consume_name:
             return None, lookup_list
         if needs_to_be_resolved(obj, self.name):
-            return Postponed()
+            return Postponed(), lookup_list
         if hasattr(obj, self.name):
             target = getattr(obj, self.name)
             if isinstance(target, list):
