@@ -123,7 +123,7 @@ BuiltinRuleRef:
     'ID' | 'BOOL' | 'INT' | 'FLOAT' | 'STRING' | 'NUMBER' | 'BASETYPE'
 ;
 
-ObjRef:
+ObjRef: // TODO: add RREL
     '[' name=ClassName ('|' obj_ref_rule=ID)? ']'
 ;
 

@@ -297,6 +297,9 @@ def test_referencing_attributes_with_rrel_all_in_one():
     """
 
     mm = metamodel_from_str(grammar_single_rrel_ref)
+    mm.register_scope_providers({
+        "Reference.ref": RREL("~instance.~type.vals.(~type.vals)*")
+    })
     m = mm.model_from_str(model_text)
 
     # negative tests
