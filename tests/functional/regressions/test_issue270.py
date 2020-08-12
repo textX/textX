@@ -15,7 +15,7 @@ Sender:
 Receiver:
  'incoming' name=ID 'over' connection=[Connection|ID];
 
-// fix/works (no unused classes):
+// fix/works (no unused user classes):
 // ConnectionHandler: Sender|Receiver;
 
 Connection:
@@ -55,7 +55,7 @@ class Receiver(ConnectionHandler):
 
 
 def test_issue270():
-    # fix/works (no unused classes):
+    # fix/works (no unused user classes):
     # mm = metamodel_from_str(grammar, classes=[Sender, Receiver])
 
     # does not work
