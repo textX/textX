@@ -2,6 +2,7 @@ from arpeggio import Optional, EOF
 from arpeggio import ZeroOrMore as ArpeggioZeroOrMore
 from arpeggio import RegExMatch as _
 
+
 def id():
     return _(r'[^\d\W]\w*\b')  # from lang.py
 

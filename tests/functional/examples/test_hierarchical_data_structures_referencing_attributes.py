@@ -25,6 +25,7 @@ class RefItem(object):
     parent = attr.ib()
     valref = attr.ib()
 
+
 grammar = '''
 Model:
     structs+=Struct
@@ -185,7 +186,7 @@ def test_referencing_attributes_with_manual_rrel_modeling_references_element_by_
     mm.register_scope_providers({
         "RefItem.valref": RREL("..~valref.~type.vals,..~instance.~type.vals")
     })
-    m = mm.model_from_str(model_text)
+    _ = mm.model_from_str(model_text)
 
     # negative tests
     # error: "not_there" not pasrt of A
@@ -243,7 +244,7 @@ def test_referencing_attributes_with_manual_rrel_single_ref():
     mm.register_scope_providers({
         "Reference.ref": RREL("~instance.~type.vals.(~type.vals)*")
     })
-    m = mm.model_from_str(model_text)
+    _ = mm.model_from_str(model_text)
 
     # negative tests
     # error: "not_there" not pasrt of A
@@ -274,29 +275,28 @@ def test_referencing_attributes_with_manual_rrel_single_ref():
         reference c.b.a.x
         ''')
 
-grammar_all_in_one = '''
-Model:
-    structs+=Struct
-    instances+=Instance
-    references+=Reference;
-Struct:
-    'struct' name=ID '{' vals+=Val '}';
-Val:
-    'val' name=ID (':' type=[Struct])?;
-Instance:
-    'instance' name=ID (':' type=[Struct])?;
-Reference:
-    'reference' instance=[Instance] '.' ref=[Val|FQN|~instance.~type.vals.(~type.vals)*];
-FQN: ID ('.' ID)*;
-'''
-
 
 def test_referencing_attributes_with_rrel_all_in_one():
     """
-    same with rrel
+    RREL solution: all scopre provider information encoded in the grammar.
     """
 
-    mm = metamodel_from_str(grammar_all_in_one)
+    mm = metamodel_from_str('''
+        Model:
+            structs+=Struct
+            instances+=Instance
+            references+=Reference;
+        Struct:
+            'struct' name=ID '{' vals+=Val '}';
+        Val:
+            'val' name=ID (':' type=[Struct])?;
+        Instance:
+            'instance' name=ID (':' type=[Struct])?;
+        Reference:
+            'reference' instance=[Instance]
+            '.' ref=[Val|FQN|~instance.~type.vals.(~type.vals)*];
+        FQN: ID ('.' ID)*;
+        ''')
     m = mm.model_from_str(model_text)
 
     # negative tests

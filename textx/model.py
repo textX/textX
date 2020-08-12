@@ -544,9 +544,10 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
 
                 if metaattr.ref and not metaattr.cont:
                     # If this is non-containing reference create ObjCrossRef
+                    p = metaattr.local_scope_provider
                     value = ObjCrossRef(obj_name=value, cls=metaattr.cls,
                                         position=node[0].position,
-                                        local_scope_provider=metaattr.local_scope_provider)
+                                        local_scope_provider=p)
                     parser._crossrefs.append((model_obj, metaattr, value))
                     return model_obj
 
@@ -567,10 +568,11 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                             # If this is non-containing reference
                             # create ObjCrossRef
 
+                            p = metaattr.local_scope_provider
                             value = ObjCrossRef(obj_name=value,
                                                 cls=metaattr.cls,
                                                 position=n.position,
-                                                local_scope_provider=metaattr.local_scope_provider)
+                                                local_scope_provider=p)
 
                             parser._crossrefs.append((obj_attr, metaattr,
                                                       value))

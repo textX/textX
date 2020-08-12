@@ -243,6 +243,7 @@ def find(obj, lookup_list, rrel_tree, obj_cls=None):
                 return
             elif isinstance(e, ZeroOrMore):
                 assert isinstance(e.path_element, Brackets)
+
                 def get_from_zero_or_more(obj, lookup_list):
                     yield obj, lookup_list
                     assert isinstance(e.path_element, Brackets)
