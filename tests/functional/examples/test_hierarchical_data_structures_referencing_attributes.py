@@ -298,6 +298,7 @@ def test_referencing_attributes_with_rrel_all_in_one():
         FQN: ID ('.' ID)*;
         ''')
     m = mm.model_from_str(model_text)
+    m.references[-1].ref == m.structs[0].vals[0]  # a.x
 
     # negative tests
     # error: "not_there" not pasrt of A
