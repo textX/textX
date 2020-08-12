@@ -1,5 +1,7 @@
 from __future__ import unicode_literals
 from textx.metamodel import metamodel_from_str
+from pytest import raises
+from textx.exceptions import TextXSemanticError
 
 grammar = """
 MyModel: 'model' name=ID
@@ -7,19 +9,18 @@ MyModel: 'model' name=ID
   sender+=Sender
   receiver+=Receiver;
 
-
-Sender: 
+Sender:
   'outgoing' name=ID 'over' connection=[Connection|ID];
 
-Receiver: 
+Receiver:
  'incoming' name=ID 'over' connection=[Connection|ID];
 
-// including the base class in the grammar helps:
+// fix/works (no used classes):
 // ConnectionHandler: Sender|Receiver;
 
-Connection: 
+Connection:
   'connection' name=ID
-  'port' port=STRING 
+  'port' port=STRING
   'ip' ip=STRING;
 """
 
@@ -31,6 +32,8 @@ outgoing out0 over conn
 incoming in0 over conn
 
 """
+
+
 class ConnectionHandler(object):
     def _init_(self):
         print('')
@@ -38,21 +41,26 @@ class ConnectionHandler(object):
     def awesomeMethod4SenderAndReceiver(self):
         print("I am really important for Sender and Receiver")
 
+
 class Sender(ConnectionHandler):
     def __init__(self, name=None, connection=None, parent=None):
         super(Sender).__init__()  # did  not change anything
         print('')
+
 
 class Receiver(ConnectionHandler):
     def __init__(self, name=None, connection=None, parent=None):
         super(Receiver).__init__()  # did  not change anything
         print('')
 
+
 def test_issue270():
-    # works:
-    #mm = metamodel_from_str(grammar, classes=[Sender, Receiver])
+    # fix/works (no used classes):
+    # mm = metamodel_from_str(grammar, classes=[Sender, Receiver])
 
     # does not work
     mm = metamodel_from_str(grammar, classes=[ConnectionHandler, Sender, Receiver])
 
-    _ = mm.model_from_str(modelstring)
+    with raises(TextXSemanticError,
+                match="unexpected: ConnectionHandler seems to be unused in the grammar"):
+        _ = mm.model_from_str(modelstring)

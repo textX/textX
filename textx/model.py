@@ -306,7 +306,15 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                         pass
                 else:
                     try:
-                        return user_class._tx_obj_attrs[id(obj)][name]
+                        if hasattr(user_class, "_tx_obj_attrs"):  # [check _tx_obj_attrs]
+                            # it is a user class used in the grammar
+                            # see: [set _tx_obj_attrs]
+                            return user_class._tx_obj_attrs[id(obj)][name]
+                        else:
+                            # unused user class
+                            raise TextXSemanticError(
+                                "unexpected: {} seems to be unused in the grammar".format(
+                                    user_class.__name__))
                     except KeyError:
                         pass
 
@@ -461,6 +469,10 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
 
             # If user class is given
             # use it instead of generic one
+            # [set _tx_obj_attrs]:
+            #   add the _tx_obj_attrs for all classes in the grammar
+            #   which are user classes (and not: for all user classes)
+            #   (see [check _tx_obj_attrs])
             is_user = False
             if node.rule_name in metamodel.user_classes:
                 user_class = metamodel.user_classes[node.rule_name]
@@ -469,7 +481,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                 # At this point we need object to be allocated
                 # So that nested object get correct reference
                 inst = user_class.__new__(user_class)
-                user_class._tx_obj_attrs[id(inst)] = {}
+                user_class._tx_obj_attrs[id(inst)] = {}  # [set _tx_obj_attrs]
                 is_user = True
 
             else:
