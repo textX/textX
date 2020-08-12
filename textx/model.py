@@ -922,15 +922,18 @@ class ReferenceResolver:
                 attr_refs = [obj.__class__.__name__ + "." + attr.name,
                              "*." + attr.name, obj.__class__.__name__ + ".*",
                              "*.*"]
-                for attr_ref in attr_refs:
-                    if attr_ref in metamodel.scope_providers:
-                        if self.parser.debug:
-                            self.parser.dprint(" FOUND {}".format(attr_ref))
-                        resolved = metamodel.scope_providers[attr_ref](
-                            obj, attr, crossref)
-                        break
+                if crossref.local_scope_provider is not None:
+                    resolved = crossref.local_scope_provider(obj, attr, crossref)
                 else:
-                    resolved = default_scope(obj, attr, crossref)
+                    for attr_ref in attr_refs:
+                        if attr_ref in metamodel.scope_providers:
+                            if self.parser.debug:
+                                self.parser.dprint(" FOUND {}".format(attr_ref))
+                            resolved = metamodel.scope_providers[attr_ref](
+                                obj, attr, crossref)
+                            break
+                    else:
+                        resolved = default_scope(obj, attr, crossref)
 
                 # Collect cross-references for textx-tools
                 if resolved is not None and not type(resolved) is Postponed:

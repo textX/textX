@@ -143,12 +143,17 @@ class RuleCrossRef(object):
             Used for rule references in the RHS of the assignments to
             determine attribute type.
         position(int): A position in the input string of this cross-ref.
+        rrel_tree: the rrel tree defined for this reference
     """
-    def __init__(self, rule_name, cls, position):
+    def __init__(self, rule_name, cls, position, rrel_tree):
         self.rule_name = rule_name
         self.cls = cls
         self.position = position
         self.suppress = False
+        self.local_scope_provider = None
+        if rrel_tree is not None:
+            from textx.scoping.rrel import RREL
+            self.rrel_provider = RREL(rrel_tree)
 
     def __str__(self):
         return self.rule_name
@@ -601,7 +606,7 @@ class TextXVisitor(PTNodeVisitor):
         rule_name = text(node)
         # Here a name of the meta-class (rule) is expected but to support
         # forward referencing we are postponing resolving to second_pass.
-        return RuleCrossRef(rule_name, rule_name, node.position)
+        return RuleCrossRef(rule_name, rule_name, node.position, None)  # TODO. check none! what is the difference to the other constructor call below?
 
     def visit_textx_rule_body(self, node, children):
         if len(children) == 1:
@@ -864,6 +869,7 @@ class TextXVisitor(PTNodeVisitor):
         # A reference to some other class instance will be the value of
         # its "name" attribute.
         class_name = children[0]
+        rrel_tree = None
         if class_name in BASE_TYPE_NAMES:
             line, col = self.grammar_parser.pos_to_linecol(node.position)
             raise TextXSemanticError(
@@ -871,10 +877,12 @@ class TextXVisitor(PTNodeVisitor):
                 .format((line, col)), line, col)
         if len(children) > 1:
             rule_name = children[1]
+            if len(children) > 2:
+                rrel_tree = children[2]
         else:
             # Default rule for matching obj cross-refs
             rule_name = 'ID'
-        return ("obj_ref", RuleCrossRef(rule_name, class_name, node.position))
+        return ("obj_ref", RuleCrossRef(rule_name, class_name, node.position, rrel_tree))
 
     def visit_integer(self, node, children):
         return int(node.value)
