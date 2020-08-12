@@ -296,7 +296,7 @@ def test_referencing_attributes_with_rrel_all_in_one():
     same with rrel
     """
 
-    mm = metamodel_from_str(grammar_single_rrel_ref)
+    mm = metamodel_from_str(grammar_all_in_one)
     m = mm.model_from_str(model_text)
 
     # negative tests

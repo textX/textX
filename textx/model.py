@@ -144,10 +144,11 @@ class ObjCrossRef(object):
         position(int): A position in the input string of this cross-ref.
     """
 
-    def __init__(self, obj_name, cls, position):
+    def __init__(self, obj_name, cls, position, local_scope_provider):
         self.obj_name = obj_name
         self.cls = cls
         self.position = position
+        self.local_scope_provider = local_scope_provider
 
 
 class RefRulePosition(object):
@@ -544,7 +545,8 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                 if metaattr.ref and not metaattr.cont:
                     # If this is non-containing reference create ObjCrossRef
                     value = ObjCrossRef(obj_name=value, cls=metaattr.cls,
-                                        position=node[0].position)
+                                        position=node[0].position,
+                                        local_scope_provider=metaattr.local_scope_provider)
                     parser._crossrefs.append((model_obj, metaattr, value))
                     return model_obj
 
@@ -567,7 +569,8 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
 
                             value = ObjCrossRef(obj_name=value,
                                                 cls=metaattr.cls,
-                                                position=n.position)
+                                                position=n.position,
+                                                local_scope_provider=metaattr.local_scope_provider)
 
                             parser._crossrefs.append((obj_attr, metaattr,
                                                       value))

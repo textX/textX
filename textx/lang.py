@@ -13,7 +13,8 @@ from arpeggio import StrMatch, Optional, ZeroOrMore, OneOrMore, Sequence,\
     ParsingExpression, ParserPython, PTNodeVisitor, visit_parse_tree
 from arpeggio.export import PMDOTExporter
 from arpeggio import RegExMatch as _
-import textx.scoping.rrel_lang as rrel_lang
+from textx.scoping.rrel_lang import ordered_choice
+from textx.scoping.rrel import RrelVisitor
 
 from .exceptions import TextXError, TextXSyntaxError, TextXSemanticError
 from .const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, \
@@ -66,7 +67,7 @@ def assignment_rhs():       return [simple_match, reference], Optional(repeat_mo
 # References
 def reference():            return [rule_ref, obj_ref]
 def rule_ref():             return ident
-def obj_ref():              return '[', class_name, Optional('|', obj_ref_rule, Optional('|', rrel_lang.ordered_choice)), ']'
+def obj_ref():              return '[', class_name, Optional('|', obj_ref_rule, Optional('|', ordered_choice)), ']'
 
 def rule_name():            return ident
 def obj_ref_rule():         return ident
@@ -153,7 +154,7 @@ class RuleCrossRef(object):
         self.local_scope_provider = None
         if rrel_tree is not None:
             from textx.scoping.rrel import RREL
-            self.rrel_provider = RREL(rrel_tree)
+            self.local_scope_provider = RREL(rrel_tree)
 
     def __str__(self):
         return self.rule_name
@@ -177,7 +178,7 @@ class ClassCrossRef(object):
         self.position = position
 
 
-class TextXVisitor(PTNodeVisitor):
+class TextXVisitor(RrelVisitor):
 
     def __init__(self, grammar_parser, metamodel):
         self.grammar_parser = grammar_parser
@@ -756,6 +757,7 @@ class TextXVisitor(PTNodeVisitor):
         if type(rhs_rule) is tuple and rhs_rule[0] == "obj_ref":
             cls_attr.cont = False
             cls_attr.ref = True
+            cls_attr.local_scope_provider = rhs_rule[1].local_scope_provider
             # Override rhs by its PEG rule for further processing
             rhs_rule = rhs_rule[1]
             # Target class is not the same as target rule

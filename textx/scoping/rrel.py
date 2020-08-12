@@ -1,6 +1,3 @@
-from textx import get_metamodel, textx_isinstance
-from textx.scoping.tools import needs_to_be_resolved
-from textx.scoping import Postponed
 from arpeggio import PTNodeVisitor, visit_parse_tree
 from textx.scoping.rrel_lang import rrel
 
@@ -21,6 +18,7 @@ class Parent:
         Returns:
             The parent of the specified type or None.
         """
+        from textx import get_metamodel, textx_isinstance
         t = get_metamodel(obj)[self.type]
         while hasattr(obj, "parent"):
             obj = obj.parent
@@ -47,6 +45,8 @@ class Navigation:
             The object indicated by the navigation object,
             Postponed, None, or a list (if a list has to be processed).
         """
+        from textx.scoping.tools import needs_to_be_resolved
+        from textx.scoping import Postponed
         if len(lookup_list) == 0 and self.consume_name:
             return None, lookup_list
         if needs_to_be_resolved(obj, self.name):
@@ -210,6 +210,8 @@ def find(obj, lookup_list, rrel_tree, obj_cls=None):
         The result of the query (first match), a
         Postponed object, or None (nothing found)
     """
+    from textx import textx_isinstance
+    from textx.scoping import Postponed
     if isinstance(rrel_tree, str):
         rrel_tree = parse(rrel_tree)
     if isinstance(lookup_list, str):
@@ -270,7 +272,6 @@ def find(obj, lookup_list, rrel_tree, obj_cls=None):
             if isinstance(obj_res, Postponed):
                 return obj_res  # Postponed
             elif len(lookup_list_res) == 0:
-                print("MATCH?", obj_res)
                 if obj_cls is None or textx_isinstance(obj_res, obj_cls):
                     return obj_res  # found match
     return None  # not found
