@@ -234,7 +234,7 @@ FQN: ID ('.' ID)*;
 '''
 
 
-def test_referencing_attributes_with_manual_rrel():
+def test_referencing_attributes_with_manual_rrel_single_ref():
     """
     same with rrel
     """
@@ -243,6 +243,60 @@ def test_referencing_attributes_with_manual_rrel():
     mm.register_scope_providers({
         "Reference.ref": RREL("~instance.~type.vals.(~type.vals)*")
     })
+    m = mm.model_from_str(model_text)
+
+    # negative tests
+    # error: "not_there" not pasrt of A
+    with raises(textx.exceptions.TextXSemanticError,
+                match=r'.*Unknown object "b.a.not_there".*'):
+        mm.model_from_str('''
+        struct A { val x }
+        struct B { val a: A}
+        struct C {
+            val b: B
+            val a: A
+        }
+        instance c: C
+        reference c.b.a.not_there
+        ''')
+
+    # error: B.a is not of type A
+    with raises(textx.exceptions.TextXSemanticError,
+                match=r'.*Unknown object "b.a.x".*'):
+        mm.model_from_str('''
+        struct A { val x }
+        struct B { val a }
+        struct C {
+            val b: B
+            val a: A
+        }
+        instance c: C
+        reference c.b.a.x
+        ''')
+
+grammar_all_in_one = '''
+Model:
+    structs+=Struct
+    instances+=Instance
+    references+=Reference;
+Struct:
+    'struct' name=ID '{' vals+=Val '}';
+Val:
+    'val' name=ID (':' type=[Struct])?;
+Instance:
+    'instance' name=ID (':' type=[Struct])?;
+Reference:
+    'reference' instance=[Instance] '.' ref=[Val|FQN|~instance.~type.vals.(~type.vals)*];
+FQN: ID ('.' ID)*;
+'''
+
+
+def test_referencing_attributes_with_manual_rrel_all_in_one():
+    """
+    same with rrel
+    """
+
+    mm = metamodel_from_str(grammar_single_rrel_ref)
     m = mm.model_from_str(model_text)
 
     # negative tests
