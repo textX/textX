@@ -56,11 +56,16 @@ class Receiver(ConnectionHandler):
 
 def test_issue270():
     # fix/works (no unused user classes):
-    # mm = metamodel_from_str(grammar, classes=[Sender, Receiver])
+    mm = metamodel_from_str(grammar, classes=[Sender, Receiver])
+    _ = mm.model_from_str(modelstring)
 
     # does not work
     mm = metamodel_from_str(grammar, classes=[ConnectionHandler, Sender, Receiver])
-
     with raises(TextXSemanticError,
                 match="unexpected: ConnectionHandler seems to be unused in the grammar"):
         _ = mm.model_from_str(modelstring)
+
+    # does work (allow unused user classes)
+    mm = metamodel_from_str(grammar, classes=[ConnectionHandler, Sender, Receiver],
+                            allow_unused_user_classes=True)
+    _ = mm.model_from_str(modelstring)

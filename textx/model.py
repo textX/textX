@@ -300,9 +300,13 @@ def get_model_parser(top_rule, comments_model, **kwargs):
             if not hasattr(user_class, "_tx_obj_attrs"):  # [check _tx_obj_attrs]
                 # it is not a user class used in the grammar
                 # see: [set _tx_obj_attrs]
-                raise TextXSemanticError(
-                    "unexpected: {} seems to be unused in the grammar".format(
-                        user_class.__name__))
+                if self.metamodel.allow_unused_user_classes:
+                    # ignore class (no replacement of methods)
+                    return
+                else:
+                    raise TextXSemanticError(
+                        "unexpected: {} seems to be unused in the grammar".format(
+                            user_class.__name__))
 
             # Custom attr dunder methods used for user classes during loading
             def _getattribute(obj, name):
