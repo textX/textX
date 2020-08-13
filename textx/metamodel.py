@@ -148,12 +148,16 @@ class TextXMetaModel(DebugPrinter):
             "global_repository=GlobalModelRepository()".
         use_regexp_group (bool): if True, regexp terminals are
             replaced with the group value, if they have exactly one group.
+        allow_unused_user_classes: if True, no error is thrown if unused
+            user classes are detected.
     """
 
     def __init__(self, file_name=None, classes=None, builtins=None,
                  auto_init_attributes=True, ignore_case=False, skipws=True,
                  ws=None, autokwd=False, memoization=False,
                  textx_tools_support=False, use_regexp_group=False, **kwargs):
+        # evaluate optional parameter "allow_unused_user_classes"
+        self.allow_unused_user_classes = kwargs.pop("allow_unused_user_classes", False)
         # evaluate optional parameter "global_repository"
         global_repository = kwargs.pop("global_repository", False)
         if global_repository:
