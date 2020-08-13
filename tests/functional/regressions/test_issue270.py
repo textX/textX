@@ -44,13 +44,13 @@ class ConnectionHandler(object):
 
 class Sender(ConnectionHandler):
     def __init__(self, name=None, connection=None, parent=None):
-        super(Sender).__init__()
+        super(Sender, self).__init__()
         print('')
 
 
 class Receiver(ConnectionHandler):
     def __init__(self, name=None, connection=None, parent=None):
-        super(Receiver).__init__()
+        super(Receiver, self).__init__()
         print('')
 
 
