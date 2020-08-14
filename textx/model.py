@@ -304,6 +304,8 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                 if self.metamodel.allow_unused_user_classes:
                     # ignore class (no replacement of methods)
                     return
+                else:
+                    assert False, "unexpected, user_class has no _tx_obj_attrs"
 
             # Custom attr dunder methods used for user classes during loading
             def _getattribute(obj, name):
