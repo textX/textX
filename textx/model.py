@@ -297,9 +297,11 @@ def get_model_parser(top_rule, comments_model, **kwargs):
             return model
 
         def _replace_user_attr_methods_for_class(self, user_class):
-            if not hasattr(user_class, "_tx_obj_attrs"):  # [check _tx_obj_attrs]
-                # it is not a user class used in the grammar
-                # see: [set _tx_obj_attrs]
+            if not hasattr(user_class, "_tx_obj_attrs"):
+                # It is not a user class used in the grammar
+                # Note: see textx.lang.visit_rule_name, where
+                #    metamodel._init_class is called with
+                #    external_attributes=True.
                 if self.metamodel.allow_unused_user_classes:
                     # ignore class (no replacement of methods)
                     return
@@ -472,10 +474,6 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
 
             # If user class is given
             # use it instead of generic one
-            # [set _tx_obj_attrs]:
-            #   add the _tx_obj_attrs for all classes in the grammar
-            #   which are user classes (and not: for all user classes)
-            #   (see [check _tx_obj_attrs])
             is_user = False
             if node.rule_name in metamodel.user_classes:
                 user_class = metamodel.user_classes[node.rule_name]
@@ -484,7 +482,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                 # At this point we need object to be allocated
                 # So that nested object get correct reference
                 inst = user_class.__new__(user_class)
-                user_class._tx_obj_attrs[id(inst)] = {}  # [set _tx_obj_attrs]
+                user_class._tx_obj_attrs[id(inst)] = {}
                 is_user = True
 
             else:
