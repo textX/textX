@@ -535,6 +535,12 @@ class TextXVisitor(PTNodeVisitor):
             self.dprint("Creating class: {}".format(rule_name))
 
         # If a class is given by the user use it. Else, create new class.
+        if rule_name not in self.metamodel.user_classes:
+            user_class = self.metamodel.user_classes_provider(
+                rule_name
+            )
+            if user_class is not None:
+                self.metamodel.user_classes[rule_name] = user_class
         if rule_name in self.metamodel.user_classes:
 
             cls = self.metamodel.user_classes[rule_name]

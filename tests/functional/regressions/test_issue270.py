@@ -64,7 +64,17 @@ def test_issue270():
                 match="unexpected: ConnectionHandler seems to be unused in the grammar"):
         _ = metamodel_from_str(grammar, classes=[ConnectionHandler, Sender, Receiver])
 
-    # does work (allow unused user classes)
-    mm = metamodel_from_str(grammar, classes=[ConnectionHandler, Sender, Receiver],
-                            allow_unused_user_classes=True)
-    _ = mm.model_from_str(modelstring)
+    # does work (allow unused user classes by providing a callable instead of
+    # a list of classes: the callable returns a user class for a given rule name
+    # or None)
+    def class_provider(name):
+        classes = [ConnectionHandler, Sender, Receiver]
+        classes = dict(map(lambda x: (x.__name__, x), classes))
+        return classes.get(name)
+
+    mm = metamodel_from_str(grammar, classes=class_provider)
+    m = mm.model_from_str(modelstring)
+    for s in m.sender:
+        assert isinstance(s, Sender)
+    for r in m.receiver:
+        assert isinstance(r, Receiver)

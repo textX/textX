@@ -121,8 +121,10 @@ class TextXMetaModel(DebugPrinter):
         builtins(dict): A dict of named object used in linking phase.
             References to named objects not defined in the model will be
             searched here.
-        classes(list of classes): A list of user supplied classes to use
-            instead of the dynamically created.
+        classes(list of classes or callable): A list of user supplied classes
+            to use instead of the dynamically created or a callable providing
+            those classes. The callable must accept a rule name and return a
+            class for that rule name or None.
         obj_processors(dict): A dict of user supplied object processors keyed
             by rule/class name (may be a fully qualified name).
         rootcls(TextXClass): A language class that is a root of the meta-model.
@@ -148,16 +150,12 @@ class TextXMetaModel(DebugPrinter):
             "global_repository=GlobalModelRepository()".
         use_regexp_group (bool): if True, regexp terminals are
             replaced with the group value, if they have exactly one group.
-        allow_unused_user_classes: if True, no error is thrown if unused
-            user classes are detected.
     """
 
     def __init__(self, file_name=None, classes=None, builtins=None,
                  auto_init_attributes=True, ignore_case=False, skipws=True,
                  ws=None, autokwd=False, memoization=False,
                  textx_tools_support=False, use_regexp_group=False, **kwargs):
-        # evaluate optional parameter "allow_unused_user_classes"
-        self.allow_unused_user_classes = kwargs.pop("allow_unused_user_classes", False)
         # evaluate optional parameter "global_repository"
         global_repository = kwargs.pop("global_repository", False)
         if global_repository:
@@ -180,9 +178,16 @@ class TextXMetaModel(DebugPrinter):
 
         # Convert classes to dict for easier lookup
         self.user_classes = {}
+
+        def default_user_classes_provider(name):
+            return None
+        self.user_classes_provider = default_user_classes_provider
         if classes:
-            for c in classes:
-                self.user_classes[c.__name__] = c
+            if callable(classes):
+                self.user_classes_provider = classes
+            else:
+                for c in classes:
+                    self.user_classes[c.__name__] = c
 
         self.auto_init_attributes = auto_init_attributes
         self.ignore_case = ignore_case
@@ -496,13 +501,9 @@ class TextXMetaModel(DebugPrinter):
                 # Note: see textx.lang.visit_rule_name, where
                 #    metamodel._init_class is called with
                 #    external_attributes=True.
-                if self.allow_unused_user_classes:
-                    # ignore class (no replacement of methods)
-                    pass
-                else:
-                    raise TextXSemanticError(
-                        "unexpected: {} seems to be unused in the grammar".format(
-                            user_class.__name__))
+                raise TextXSemanticError(
+                    "unexpected: {} seems to be unused in the grammar".format(
+                        user_class.__name__))
 
     def __getitem__(self, name):
         """
