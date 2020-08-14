@@ -10,6 +10,17 @@ from textx.scoping.tools import get_unique_named_object, \
 from pytest import raises
 
 
+class Interface(object):
+    """
+    user defined class to check if user defined classes
+    make problems if newly created objects are mixed
+    with exisiting objects from a previous model_from_xxx.
+    """
+    def __init__(self, **kwargs):
+        for k in kwargs.keys():
+            setattr(self, k, kwargs[k])
+
+
 def test_globalimports_basic_test_with_single_model_file():
     """
     Basic test for the FQNGlobalRepo.
@@ -69,14 +80,19 @@ def test_globalimports_basic_test_with_single_model_file_and_global_repo():
     # META MODEL DEF
     #################################
 
+    # Interface is added as user defined class
+    # and used for two model_from_file
+    # calls.
     my_meta_model = metamodel_from_file(
         join(abspath(dirname(__file__)), 'interface_model2',
              'Interface.tx'),
-        global_repository=True)
+        global_repository=True,
+        classes=[Interface])
     my_meta_model.register_scope_providers(
         {"*.*": scoping_providers.FQNGlobalRepo(
             join(abspath(dirname(__file__)), 'interface_model2',
                  'model_a', '*.if'))})
+    # Note: FQN uses the name field (e.g. of an Interface)
 
     #################################
     # MODEL PARSING
@@ -98,6 +114,7 @@ def test_globalimports_basic_test_with_single_model_file_and_global_repo():
 
     # check that "s.s1" is a reference to the socket interface
     a = get_unique_named_object(my_model, "socket")
+    assert isinstance(a, Interface)  # check that user defined class is used
     s1 = get_unique_named_object(my_model, "s1")
     assert a == s1.ref
 
