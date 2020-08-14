@@ -299,16 +299,11 @@ def get_model_parser(top_rule, comments_model, **kwargs):
         def _replace_user_attr_methods_for_class(self, user_class):
             if not hasattr(user_class, "_tx_obj_attrs"):
                 # It is not a user class used in the grammar
-                # Note: see textx.lang.visit_rule_name, where
-                #    metamodel._init_class is called with
-                #    external_attributes=True.
+                # Normally catched in TextXMetaModel.validate
+                # except when unused user classes are allowed
                 if self.metamodel.allow_unused_user_classes:
                     # ignore class (no replacement of methods)
                     return
-                else:
-                    raise TextXSemanticError(
-                        "unexpected: {} seems to be unused in the grammar".format(
-                            user_class.__name__))
 
             # Custom attr dunder methods used for user classes during loading
             def _getattribute(obj, name):

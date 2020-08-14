@@ -60,10 +60,9 @@ def test_issue270():
     _ = mm.model_from_str(modelstring)
 
     # does not work
-    mm = metamodel_from_str(grammar, classes=[ConnectionHandler, Sender, Receiver])
     with raises(TextXSemanticError,
                 match="unexpected: ConnectionHandler seems to be unused in the grammar"):
-        _ = mm.model_from_str(modelstring)
+        _ = metamodel_from_str(grammar, classes=[ConnectionHandler, Sender, Receiver])
 
     # does work (allow unused user classes)
     mm = metamodel_from_str(grammar, classes=[ConnectionHandler, Sender, Receiver],

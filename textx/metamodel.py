@@ -489,7 +489,20 @@ class TextXMetaModel(DebugPrinter):
         Validates metamodel. Called after construction to check for some
         textX rules.
         """
-        # TODO: Implement complex textX validations.
+        from textx.exceptions import TextXSemanticError
+        for user_class in self.user_classes.values():
+            if not hasattr(user_class, "_tx_obj_attrs"):
+                # It is not a user class used in the grammar
+                # Note: see textx.lang.visit_rule_name, where
+                #    metamodel._init_class is called with
+                #    external_attributes=True.
+                if self.allow_unused_user_classes:
+                    # ignore class (no replacement of methods)
+                    pass
+                else:
+                    raise TextXSemanticError(
+                        "unexpected: {} seems to be unused in the grammar".format(
+                            user_class.__name__))
 
     def __getitem__(self, name):
         """
