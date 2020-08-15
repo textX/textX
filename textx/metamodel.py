@@ -178,10 +178,7 @@ class TextXMetaModel(DebugPrinter):
 
         # Convert classes to dict for easier lookup
         self.user_classes = {}
-
-        def default_user_classes_provider(name):
-            return None
-        self.user_classes_provider = default_user_classes_provider
+        self.user_classes_provider = None
         if classes:
             if callable(classes):
                 self.user_classes_provider = classes
@@ -502,7 +499,7 @@ class TextXMetaModel(DebugPrinter):
                 #    metamodel._init_class is called with
                 #    external_attributes=True.
                 raise TextXSemanticError(
-                    "unexpected: {} seems to be unused in the grammar".format(
+                    "{} class is not used in the grammar".format(
                         user_class.__name__))
 
     def __getitem__(self, name):

@@ -61,7 +61,7 @@ def test_issue270():
 
     # does not work
     with raises(TextXSemanticError,
-                match="unexpected: ConnectionHandler seems to be unused in the grammar"):
+                match="ConnectionHandler class is not used in the grammar"):
         _ = metamodel_from_str(grammar, classes=[ConnectionHandler, Sender, Receiver])
 
     # does work (allow unused user classes by providing a callable instead of
