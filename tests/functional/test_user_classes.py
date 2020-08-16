@@ -91,7 +91,7 @@ class BThing(object):
 
 def test_user_class_with_imported_grammar():
     this_folder = dirname(abspath(__file__))
-    mm = metamodel_from_file(join(this_folder,"user_classes","B.tx"),
+    mm = metamodel_from_file(join(this_folder, "user_classes", "B.tx"),
                              classes=[Thing, AThing, BThing])
     m = mm.model_from_str("""
         A 2,1

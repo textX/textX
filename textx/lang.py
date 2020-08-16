@@ -944,7 +944,7 @@ def language_from_str(language_def, metamodel):
                                    TextXVisitor(parser, metamodel))
 
     # Meta-model is constructed. Validate its semantics.
-    metamodel.validate(is_main=(metamodel is None))
+    metamodel.validate()
 
     # Here we connect meta-model and language parser for convenience.
     lang_parser.metamodel = metamodel
