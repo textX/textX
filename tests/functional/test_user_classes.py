@@ -1,6 +1,8 @@
 from __future__ import unicode_literals
 import pytest  # noqa
-from textx import metamodel_from_str
+from textx import metamodel_from_str, metamodel_from_file
+from os.path import join, dirname, abspath
+
 
 grammar = """
 First:
@@ -67,3 +69,42 @@ def test_user_class():
 
     # Check additional attributes
     assert model.some_attr == 1
+
+
+class Thing(object):
+    def __init__(self, **kwargs):
+        for k in kwargs.keys():
+            setattr(self, k, kwargs[k])
+
+
+class AThing(object):
+    def __init__(self, **kwargs):
+        for k in kwargs.keys():
+            setattr(self, k, kwargs[k])
+
+
+class BThing(object):
+    def __init__(self, **kwargs):
+        for k in kwargs.keys():
+            setattr(self, k, kwargs[k])
+
+
+def test_user_class_with_imported_grammar():
+    this_folder = dirname(abspath(__file__))
+    mm = metamodel_from_file(join(this_folder,"user_classes","B.tx"),
+                             classes=[Thing, AThing, BThing])
+    m = mm.model_from_str("""
+        A 2,1
+        B 5
+        Hello
+    """)
+    assert m.a.v.x == 2
+    assert m.a.v.y == 1
+    assert m.b.v == 5
+    assert m.t.name == "Hello"
+    assert type(m.t).__name__ == "Thing"
+    assert type(m.a.v).__name__ == "Thing"
+    assert isinstance(m.a, AThing)
+    assert isinstance(m.b, BThing)
+    assert isinstance(m.t, Thing)
+    assert isinstance(m.a.v, Thing)

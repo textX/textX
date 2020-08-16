@@ -1,0 +1,10 @@
+import A
+
+Model:
+    a=AThing
+    b=BThing
+    t=Thing
+;
+
+Thing: name=ID;
+BThing: "B" v=INT;

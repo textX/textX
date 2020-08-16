@@ -486,21 +486,22 @@ class TextXMetaModel(DebugPrinter):
         """
         return self.type_convertors.get(_type, lambda x: x)(value)
 
-    def validate(self):
+    def validate(self, is_main=False):
         """
         Validates metamodel. Called after construction to check for some
         textX rules.
         """
-        from textx.exceptions import TextXSemanticError
-        for user_class in self.user_classes.values():
-            if not hasattr(user_class, "_tx_obj_attrs"):
-                # It is not a user class used in the grammar
-                # Note: see textx.lang.visit_rule_name, where
-                #    metamodel._init_class is called with
-                #    external_attributes=True.
-                raise TextXSemanticError(
-                    "{} class is not used in the grammar".format(
-                        user_class.__name__))
+        if is_main:
+            from textx.exceptions import TextXSemanticError
+            for user_class in self.user_classes.values():
+                if not hasattr(user_class, "_tx_obj_attrs"):
+                    # It is not a user class used in the grammar
+                    # Note: see textx.lang.visit_rule_name, where
+                    #    metamodel._init_class is called with
+                    #    external_attributes=True.
+                    raise TextXSemanticError(
+                        "{} class is not used in the grammar".format(
+                            user_class.__name__))
 
     def __getitem__(self, name):
         """
