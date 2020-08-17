@@ -510,9 +510,6 @@ class TextXMetaModel(DebugPrinter):
         for user_class in self.user_classes.values():
             if user_class.__name__ not in self._used_rule_names_for_user_classes:
                 # It is not a user class used in the grammar
-                # Note: see textx.lang.visit_rule_name, where
-                #    metamodel._init_class is called with
-                #    external_attributes=True.
                 raise TextXSemanticError(
                     "{} class is not used in the grammar".format(
                         user_class.__name__))
