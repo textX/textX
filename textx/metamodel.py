@@ -13,7 +13,7 @@ from textx.lang import language_from_str, python_type, BASE_TYPE_NAMES, ID, \
     BOOL, INT, FLOAT, STRICTFLOAT, STRING, NUMBER, BASETYPE, OBJECT
 from textx.const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, \
     RULE_MATCH, RULE_ABSTRACT
-from textx.exceptions import TextXError, TextXSemanticError
+from textx.exceptions import TextXError
 from .registration import LanguageDesc, metamodel_for_language
 from .model_params import ModelParams, ModelParamDefinitions
 
@@ -184,11 +184,14 @@ class TextXMetaModel(DebugPrinter):
         # Convert classes to dict for easier lookup
         self.user_classes = {}
         self.user_classes_provider = None
+        self._used_rule_names_for_user_classes = set()
         if classes:
             if callable(classes):
                 self.user_classes_provider = classes
             else:
                 for c in classes:
+                    if hasattr(c, "_tx_obj_attrs"):
+                        delattr(c, "_tx_obj_attrs")
                     self.user_classes[c.__name__] = c
 
         self.auto_init_attributes = auto_init_attributes
@@ -433,9 +436,6 @@ class TextXMetaModel(DebugPrinter):
             self.rootcls = cls
 
         if external_attributes:
-            print("init {}".format(cls.__name__))
-            if hasattr(cls, "_tx_obj_attrs"):
-                raise TextXSemanticError("redefined imported rule {} cannot be replaced by a user class".format(cls.__name__))
             cls._tx_obj_attrs = {}
 
     def _cls_fqn(self, cls):

@@ -540,12 +540,19 @@ class TextXVisitor(PTNodeVisitor):
                 rule_name
             )
             if cls is not None:
-                assert rule_name not in self.metamodel.user_classes
+                if hasattr(cls, "_tx_obj_attrs"):
+                    delattr(cls, "_tx_obj_attrs")
                 self.metamodel.user_classes[rule_name] = cls
         else:
             cls = self.metamodel.user_classes.get(rule_name)
 
         if cls is not None:
+            if rule_name in self.metamodel._used_rule_names_for_user_classes:
+                raise TextXSemanticError("redefined imported rule"
+                                         + " {}".format(rule_name)
+                                         + " cannot be replaced by a user class")
+            self.metamodel._used_rule_names_for_user_classes.add(rule_name)
+
             # Initialize special attributes
             self.metamodel._init_class(cls, None, node.position,
                                        external_attributes=True)
