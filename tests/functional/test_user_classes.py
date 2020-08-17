@@ -112,4 +112,5 @@ def test_user_class_with_imported_grammar():
                       + r' cannot be replaced by a user class.*'):
         mm = metamodel_from_file(join(this_folder, "user_classes", "B.tx"),
                                  classes=[AThing, BThing, Thing])
-    # now, all involved user classes **may** be instrumented... TODO
+    # now, all involved user classes **may** be instrumented...
+    # (after an exception, we do not guarantee 100% cleanup of user classes)
