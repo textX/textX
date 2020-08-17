@@ -107,6 +107,11 @@ def test_user_class_with_imported_grammar():
     assert isinstance(m.a, AThing)
     assert isinstance(m.b, BThing)
 
+    # required, because _tx_obj_attrs is bot cleaned up:
+    delattr(AThing, "_tx_obj_attrs")
+    delattr(BThing, "_tx_obj_attrs")
+
     with raises(TextXSemanticError, match=r'.*redefined imported rule Thing cannot be replaced by a user class.*'):
         mm = metamodel_from_file(join(this_folder, "user_classes", "B.tx"),
                                  classes=[AThing, BThing, Thing])
+    # now, all involved user classes **may** be instrumented... TODO

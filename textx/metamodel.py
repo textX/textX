@@ -13,7 +13,7 @@ from textx.lang import language_from_str, python_type, BASE_TYPE_NAMES, ID, \
     BOOL, INT, FLOAT, STRICTFLOAT, STRING, NUMBER, BASETYPE, OBJECT
 from textx.const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, \
     RULE_MATCH, RULE_ABSTRACT
-from textx.exceptions import TextXError
+from textx.exceptions import TextXError, TextXSemanticError
 from .registration import LanguageDesc, metamodel_for_language
 from .model_params import ModelParams, ModelParamDefinitions
 
@@ -433,6 +433,9 @@ class TextXMetaModel(DebugPrinter):
             self.rootcls = cls
 
         if external_attributes:
+            print("init {}".format(cls.__name__))
+            if hasattr(cls, "_tx_obj_attrs"):
+                raise TextXSemanticError("redefined imported rule {} cannot be replaced by a user class".format(cls.__name__))
             cls._tx_obj_attrs = {}
 
     def _cls_fqn(self, cls):
@@ -515,6 +518,28 @@ class TextXMetaModel(DebugPrinter):
                 raise TextXSemanticError(
                     "{} class is not used in the grammar".format(
                         user_class.__name__))
+
+    def restore_user_attr_methods(self):
+        for user_class in self.user_classes.values():
+            if hasattr(user_class, '_tx_instrumented'):
+                user_class._tx_instrumented -= 1
+                if user_class._tx_instrumented == 0:
+                    delattr(user_class, '_tx_instrumented')
+                    for a_name in ('getattr', 'setattr', 'delattr',
+                                   'getattribute'):
+                        cached_name = '_tx_real_{}'.format(a_name)
+                        real_name = '__{}__'.format(a_name)
+                        if hasattr(user_class, cached_name):
+                            cached_meth = getattr(user_class, cached_name)
+                            if hasattr(cached_meth, 'im_func'):
+                                # Python 2: func is converted to
+                                # instancemethod
+                                cached_meth = cached_meth.im_func
+                            if cached_meth is not None:
+                                setattr(user_class, real_name, cached_meth)
+                            else:
+                                delattr(user_class, real_name)
+                            delattr(user_class, cached_name)
 
     def __getitem__(self, name):
         """
