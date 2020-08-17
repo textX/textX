@@ -517,28 +517,6 @@ class TextXMetaModel(DebugPrinter):
                     "{} class is not used in the grammar".format(
                         user_class.__name__))
 
-    def restore_user_attr_methods(self):
-        for user_class in self.user_classes.values():
-            if hasattr(user_class, '_tx_instrumented'):
-                user_class._tx_instrumented -= 1
-                if user_class._tx_instrumented == 0:
-                    delattr(user_class, '_tx_instrumented')
-                    for a_name in ('getattr', 'setattr', 'delattr',
-                                   'getattribute'):
-                        cached_name = '_tx_real_{}'.format(a_name)
-                        real_name = '__{}__'.format(a_name)
-                        if hasattr(user_class, cached_name):
-                            cached_meth = getattr(user_class, cached_name)
-                            if hasattr(cached_meth, 'im_func'):
-                                # Python 2: func is converted to
-                                # instancemethod
-                                cached_meth = cached_meth.im_func
-                            if cached_meth is not None:
-                                setattr(user_class, real_name, cached_meth)
-                            else:
-                                delattr(user_class, real_name)
-                            delattr(user_class, cached_name)
-
     def __getitem__(self, name):
         """
         Search for and return class and peg_rule with the given name.
