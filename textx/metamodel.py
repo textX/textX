@@ -37,12 +37,14 @@ def metamodel_from_str(lang_desc, metamodel=None, **kwargs):
 
     """
 
+    is_main_metamodel = metamodel is None
+
     if not metamodel:
         metamodel = TextXMetaModel(**kwargs)
 
     language_from_str(lang_desc, metamodel)
 
-    if "metamodel" not in kwargs:
+    if is_main_metamodel:
         metamodel.validate_user_classes()
 
     return metamodel
