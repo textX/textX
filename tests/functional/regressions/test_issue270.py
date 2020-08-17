@@ -25,7 +25,7 @@ Connection:
 """
 
 
-grammar2 = """
+grammar_with_baseclass_fix = """
 MyModel: 'model' name=ID
   connections+=Connection
   sender+=Sender
@@ -83,7 +83,8 @@ def test_issue270():
     _ = mm.model_from_str(modelstring)
 
     # fix/works (no unused user classes; see grammar2):
-    mm = metamodel_from_str(grammar2, classes=[ConnectionHandler, Sender, Receiver])
+    mm = metamodel_from_str(grammar_with_baseclass_fix,
+                            classes=[ConnectionHandler, Sender, Receiver])
     _ = mm.model_from_str(modelstring)
 
     # does not work
