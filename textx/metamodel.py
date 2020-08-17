@@ -496,8 +496,8 @@ class TextXMetaModel(DebugPrinter):
         """
         Validates metamodel. Called after construction to check for some
         textX rules.
-        TODO
         """
+        # TODO: Implement complex textX validations.
         pass
 
     def validate_user_classes(self):
