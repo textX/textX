@@ -13,8 +13,7 @@ from arpeggio import StrMatch, Optional, ZeroOrMore, OneOrMore, Sequence,\
     ParsingExpression, ParserPython, PTNodeVisitor, visit_parse_tree
 from arpeggio.export import PMDOTExporter
 from arpeggio import RegExMatch as _
-from textx.scoping.rrel_lang import ordered_choice
-from textx.scoping.rrel import RrelVisitor
+from textx.scoping.rrel import ordered_choice, RrelVisitor
 
 from .exceptions import TextXError, TextXSyntaxError, TextXSemanticError
 from .const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, \
