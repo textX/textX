@@ -15,9 +15,6 @@ Sender:
 Receiver:
  'incoming' name=ID 'over' connection=[Connection|ID];
 
-// fix/works (no unused user classes):
-// ConnectionHandler: Sender|Receiver;
-
 Connection:
   'connection' name=ID
   'port' port=STRING
