@@ -82,7 +82,7 @@ def test_issue270():
     mm = metamodel_from_str(grammar, classes=[Sender, Receiver])
     _ = mm.model_from_str(modelstring)
 
-    # fix/works (no unused user classes; see grammar2):
+    # fix/works (no unused user classes; see grammar_with_baseclass_fix):
     mm = metamodel_from_str(grammar_with_baseclass_fix,
                             classes=[ConnectionHandler, Sender, Receiver])
     _ = mm.model_from_str(modelstring)
