@@ -155,6 +155,7 @@ def test_referencing_attributes():
             reference c.b.a.x
             ''')
 
+
 def test_referencing_attributes_with_rrel_all_in_one():
     """
     RREL solution: all scope provider information encoded in the grammar.
