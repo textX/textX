@@ -190,8 +190,6 @@ class TextXMetaModel(DebugPrinter):
                 self.user_classes_provider = classes
             else:
                 for c in classes:
-                    if hasattr(c, "_tx_obj_attrs"):
-                        delattr(c, "_tx_obj_attrs")
                     self.user_classes[c.__name__] = c
 
         self.auto_init_attributes = auto_init_attributes
@@ -510,7 +508,7 @@ class TextXMetaModel(DebugPrinter):
         """
         from textx.exceptions import TextXSemanticError
         for user_class in self.user_classes.values():
-            if not hasattr(user_class, "_tx_obj_attrs"):
+            if user_class.__name__ not in self._used_rule_names_for_user_classes:
                 # It is not a user class used in the grammar
                 # Note: see textx.lang.visit_rule_name, where
                 #    metamodel._init_class is called with

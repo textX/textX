@@ -540,8 +540,6 @@ class TextXVisitor(PTNodeVisitor):
                 rule_name
             )
             if cls is not None:
-                if hasattr(cls, "_tx_obj_attrs"):
-                    delattr(cls, "_tx_obj_attrs")
                 self.metamodel.user_classes[rule_name] = cls
         else:
             cls = self.metamodel.user_classes.get(rule_name)

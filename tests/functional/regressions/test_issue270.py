@@ -24,6 +24,29 @@ Connection:
   'ip' ip=STRING;
 """
 
+
+grammar2 = """
+MyModel: 'model' name=ID
+  connections+=Connection
+  sender+=Sender
+  receiver+=Receiver;
+
+Sender:
+  'outgoing' name=ID 'over' connection=[Connection|ID];
+
+Receiver:
+ 'incoming' name=ID 'over' connection=[Connection|ID];
+
+// fix/works (no unused user classes):
+ConnectionHandler: Sender|Receiver;
+
+Connection:
+  'connection' name=ID
+  'port' port=STRING
+  'ip' ip=STRING;
+"""
+
+
 modelstring = """
 model Example
 connection conn port "1" ip "127.0.0.1"
@@ -57,6 +80,10 @@ class Receiver(ConnectionHandler):
 def test_issue270():
     # fix/works (no unused user classes):
     mm = metamodel_from_str(grammar, classes=[Sender, Receiver])
+    _ = mm.model_from_str(modelstring)
+
+    # fix/works (no unused user classes; see grammar2):
+    mm = metamodel_from_str(grammar2, classes=[ConnectionHandler, Sender, Receiver])
     _ = mm.model_from_str(modelstring)
 
     # does not work
