@@ -49,9 +49,9 @@ Instance:
 // --> lookup of ports with inheritance
 Connection:
     'connect'
-      from_inst=[Instance|ID|^instances] '.' from_port=[SlotOut|ID|~from_inst.~component.(~extends)*.slots]
+      from_inst=[Instance|ID|^instances] '.' from_port=[SlotOut|ID|.~from_inst.~component.(~extends)*.slots]
     'to'
-      to_inst=[Instance|ID|^instances] '.' to_port=[SlotIn|ID|~to_inst.~component.(~extends)*.slots]
+      to_inst=[Instance|ID|^instances] '.' to_port=[SlotIn|ID|.~to_inst.~component.(~extends)*.slots]
 ;
 
 FQN: ID+['.'];
