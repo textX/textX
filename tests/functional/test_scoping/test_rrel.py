@@ -128,6 +128,9 @@ def test_rrel_basic_lookup():
     assert Part2_tst is not None
     assert Part2_tst is Part2
 
+    P2_from_inner_node = find(rec, "P2", "(packages)")
+    assert P2_from_inner_node is P2
+
     P2_tst = find(rec, "", "parent(Package)")
     assert P2_tst is not None
     assert P2_tst is P2

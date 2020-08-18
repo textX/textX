@@ -34,8 +34,8 @@ def rrel_zero_or_more():
 
 def rrel_path():
     return Optional(['^', rrel_dots]), ArpeggioZeroOrMore(
-        [rrel_zero_or_more, rrel_path_element], '.'),\
-           Optional([rrel_zero_or_more, rrel_path_element])
+        [rrel_zero_or_more, rrel_path_element], '.'), Optional(
+        [rrel_zero_or_more, rrel_path_element])
 
 
 def rrel_sequence():
@@ -53,7 +53,13 @@ class RRELParent:
     def __repr__(self):
         return 'parent({})'.format(self.type)
 
-    def apply(self, obj, lookup_list):
+    def start_locally(self):
+        return True
+
+    def start_at_root(self):
+        return False
+
+    def apply(self, obj, lookup_list, first_element):
         """
         Args:
             obj: model object
@@ -79,7 +85,13 @@ class RRELNavigation:
     def __repr__(self):
         return self.name if self.consume_name else '~' + self.name
 
-    def apply(self, obj, lookup_list):
+    def start_locally(self):
+        return False
+
+    def start_at_root(self):
+        return True
+
+    def apply(self, obj, lookup_list, first_element):
         """
         Args:
             obj: model object
@@ -91,6 +103,9 @@ class RRELNavigation:
         """
         from textx.scoping.tools import needs_to_be_resolved
         from textx.scoping import Postponed
+        if first_element:
+            from textx import get_model
+            obj = get_model(obj)
         if len(lookup_list) == 0 and self.consume_name:
             return None, lookup_list
         if needs_to_be_resolved(obj, self.name):
@@ -124,10 +139,16 @@ class RRELNavigation:
 class RRELBrackets:
     def __init__(self, oc):
         assert isinstance(oc, RRELSequence)
-        self.oc = oc
+        self.seq = oc
+
+    def start_locally(self):
+        return self.seq.start_locally()
+
+    def start_at_root(self):
+        return self.seq.start_at_root()
 
     def __repr__(self):
-        return '(' + str(self.oc) + ')'
+        return '(' + str(self.seq) + ')'
 
 
 class RRELDots:
@@ -137,7 +158,13 @@ class RRELDots:
     def __repr__(self):
         return ('.' * self.num)
 
-    def apply(self, obj, lookup_list):
+    def start_locally(self):
+        return True
+
+    def start_at_root(self):
+        return False
+
+    def apply(self, obj, lookup_list, first_element):
         """
         Args:
             obj: model object
@@ -163,6 +190,18 @@ class RRELSequence:
     def __repr__(self):
         return ','.join(map(lambda x: str(x), self.paths))
 
+    def start_locally(self):
+        res = False
+        for p in self.paths:
+            res = res or p.start_locally()
+        return res
+
+    def start_at_root(self):
+        res = False
+        for p in self.paths:
+            res = res or p.start_at_root()
+        return res
+
 
 class RRELZeroOrMore:
     def __init__(self, path_element):
@@ -171,6 +210,12 @@ class RRELZeroOrMore:
                 [RRELPath([path_element])]))
         self.path_element = path_element
         assert(isinstance(self.path_element, RRELBrackets))
+
+    def start_locally(self):
+        return self.path_element.start_locally()
+
+    def start_at_root(self):
+        return self.path_element.start_at_root()
 
     def __repr__(self):
         return str(self.path_element) + '*'
@@ -190,6 +235,12 @@ class RRELPath:
                 map(lambda x: str(x), self.path_elements[1:]))
         else:
             return '.'.join(map(lambda x: str(x), self.path_elements))
+
+    def start_locally(self):
+        return self.path_elements[0].start_locally()
+
+    def start_at_root(self):
+        return self.path_elements[0].start_at_root()
 
 
 class RRELVisitor(PTNodeVisitor):
@@ -265,14 +316,14 @@ def find(obj, lookup_list, rrel_tree, obj_cls=None):
         lookup_list = list(filter(lambda x: len(x) > 0, lookup_list))
     visited = [set()] * (len(lookup_list) + 1)
 
-    def get_next_matches(obj, lookup_list, p, idx=0):
+    def get_next_matches(obj, lookup_list, p, idx=0, first_element=False):
         # print("get_next_matches: ",obj, lookup_list, idx)
         assert isinstance(p, RRELPath)
         assert len(p.path_elements) >= idx
         # assert len(lookup_list) > 0
         for e in p.path_elements[idx:]:
             if hasattr(e, "apply"):
-                obj, lookup_list = e.apply(obj, lookup_list)
+                obj, lookup_list = e.apply(obj, lookup_list, first_element)
                 if obj is not None and isinstance(obj, Postponed):
                     yield obj, lookup_list
                     return
@@ -283,19 +334,22 @@ def find(obj, lookup_list, rrel_tree, obj_cls=None):
                         yield from get_next_matches(iobj, lookup_list, p, idx + 1)
                     return
             elif isinstance(e, RRELBrackets):
-                for ip in e.oc.paths:
-                    for iobj, ilookup_list in get_next_matches(obj, lookup_list, ip):
+                for ip in e.seq.paths:
+                    for iobj, ilookup_list in get_next_matches(
+                            obj, lookup_list, ip, first_element=first_element):
                         yield from get_next_matches(iobj, ilookup_list, p, idx + 1)
                 return
             elif isinstance(e, RRELZeroOrMore):
                 assert isinstance(e.path_element, RRELBrackets)
 
-                def get_from_zero_or_more(obj, lookup_list):
+                def get_from_zero_or_more(obj, lookup_list, first_element=False):
                     yield obj, lookup_list
                     assert isinstance(e.path_element, RRELBrackets)
-                    assert isinstance(e.path_element.oc, RRELSequence)
-                    for ip in e.path_element.oc.paths:
-                        for iobj, ilookup_list in get_next_matches(obj, lookup_list, ip):
+                    assert isinstance(e.path_element.seq, RRELSequence)
+                    for ip in e.path_element.seq.paths:
+                        for iobj, ilookup_list in get_next_matches(
+                                obj, lookup_list, ip,
+                                first_element=first_element):
                             # print(ip, iobj, ilookup_list)
                             if (iobj, ip) in visited[len(ilookup_list)]:
                                 continue
@@ -306,16 +360,19 @@ def find(obj, lookup_list, rrel_tree, obj_cls=None):
                             yield from get_from_zero_or_more(iobj, ilookup_list)
 
                 prevent_doubles = set()
-                for obj, lookup_list in get_from_zero_or_more(obj, lookup_list):
+                for obj, lookup_list in get_from_zero_or_more(
+                        obj, lookup_list, first_element):
                     if (obj, len(lookup_list)) not in prevent_doubles:
                         yield from get_next_matches(obj, lookup_list, p, idx + 1)
                         prevent_doubles.add((obj, len(lookup_list)))
                 return
             idx += 1
+            first_element = False
         yield obj, lookup_list
 
     for p in rrel_tree.paths:
-        for obj_res, lookup_list_res in get_next_matches(obj, lookup_list, p):
+        for obj_res, lookup_list_res in get_next_matches(obj, lookup_list, p,
+                                                         first_element=True):
             if isinstance(obj_res, Postponed):
                 return obj_res  # Postponed
             elif len(lookup_list_res) == 0:

@@ -174,7 +174,7 @@ def test_referencing_attributes_with_rrel_all_in_one():
             'instance' name=ID (':' type=[Struct])?;
         Reference:
             'reference' instance=[Instance]
-            '.' ref=[Val|FQN|~instance.~type.vals.(~type.vals)*];
+            '.' ref=[Val|FQN|.~instance.~type.vals.(~type.vals)*];
         FQN: ID ('.' ID)*;
         ''')
     m = mm.model_from_str(model_text)
