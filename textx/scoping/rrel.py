@@ -4,48 +4,49 @@ from arpeggio import ZeroOrMore as ArpeggioZeroOrMore
 from arpeggio import RegExMatch as _
 
 
-def id():
+def rrel_id():
     return _(r'[^\d\W]\w*\b')  # from lang.py
 
 
-def parent():
-    return 'parent', '(', id, ')'
+def rrel_parent():
+    return 'parent', '(', rrel_id, ')'
 
 
-def navigation():
-    return Optional('~'), id
+def rrel_navigation():
+    return Optional('~'), rrel_id
 
 
-def brackets():
-    return '(', ordered_choice, ')'
+def rrel_brackets():
+    return '(', rrel_sequence, ')'
 
 
-def dots():
+def rrel_dots():
     return _(r'\.+')
 
 
-def path_element():
-    return [parent, brackets, navigation]
+def rrel_path_element():
+    return [rrel_parent, rrel_brackets, rrel_navigation]
 
 
-def zero_or_more():
-    return path_element, '*'
+def rrel_zero_or_more():
+    return rrel_path_element, '*'
 
 
-def path():
-    return Optional(['^', dots]), ArpeggioZeroOrMore(
-        [zero_or_more, path_element], '.'), Optional([zero_or_more, path_element])
+def rrel_path():
+    return Optional(['^', rrel_dots]), ArpeggioZeroOrMore(
+        [rrel_zero_or_more, rrel_path_element], '.'),\
+           Optional([rrel_zero_or_more, rrel_path_element])
 
 
-def ordered_choice():
-    return ArpeggioZeroOrMore(path, ","), path
+def rrel_sequence():
+    return ArpeggioZeroOrMore(rrel_path, ","), rrel_path
 
 
-def rrel():
-    return ordered_choice, EOF
+def rrel_standalone():
+    return rrel_sequence, EOF
 
 
-class Parent:
+class RRELParent:
     def __init__(self, type):
         self.type = type
 
@@ -70,7 +71,7 @@ class Parent:
         return None, lookup_list
 
 
-class Navigation:
+class RRELNavigation:
     def __init__(self, name, consume_name):
         self.name = name
         self.consume_name = consume_name
@@ -120,16 +121,16 @@ class Navigation:
             return None, lookup_list
 
 
-class Brackets:
+class RRELBrackets:
     def __init__(self, oc):
-        assert isinstance(oc, OrderedChoice)
+        assert isinstance(oc, RRELSequence)
         self.oc = oc
 
     def __repr__(self):
         return '(' + str(self.oc) + ')'
 
 
-class Dots:
+class RRELDots:
     def __init__(self, num):
         self.num = num
 
@@ -155,7 +156,7 @@ class Dots:
             return None, lookup_list
 
 
-class OrderedChoice:
+class RRELSequence:
     def __init__(self, paths):
         self.paths = paths
 
@@ -163,60 +164,62 @@ class OrderedChoice:
         return ','.join(map(lambda x: str(x), self.paths))
 
 
-class ZeroOrMore:
+class RRELZeroOrMore:
     def __init__(self, path_element):
-        if not isinstance(path_element, Brackets):
-            path_element = Brackets(OrderedChoice([Path([path_element])]))
+        if not isinstance(path_element, RRELBrackets):
+            path_element = RRELBrackets(RRELSequence(
+                [RRELPath([path_element])]))
         self.path_element = path_element
-        assert(isinstance(self.path_element, Brackets))
+        assert(isinstance(self.path_element, RRELBrackets))
 
     def __repr__(self):
         return str(self.path_element) + '*'
 
 
-class Path:
+class RRELPath:
     def __init__(self, path_elements):
         # print("create Path :" + str(path_elements))
         self.path_elements = path_elements
         if (self.path_elements[0] == '^'):
-            self.path_elements[0] = ZeroOrMore(Brackets(OrderedChoice([Path([Dots(2)])])))
+            self.path_elements[0] = RRELZeroOrMore(RRELBrackets(
+                RRELSequence([RRELPath([RRELDots(2)])])))
 
     def __repr__(self):
-        if isinstance(self.path_elements[0], Dots):
+        if isinstance(self.path_elements[0], RRELDots):
             return str(self.path_elements[0]) + '.'.join(
                 map(lambda x: str(x), self.path_elements[1:]))
         else:
             return '.'.join(map(lambda x: str(x), self.path_elements))
 
 
-class RrelVisitor(PTNodeVisitor):
+class RRELVisitor(PTNodeVisitor):
 
-    def visit_parent(self, node, children):
-        return Parent(children[0])
+    def visit_rrel_parent(self, node, children):
+        return RRELParent(children[0])
 
-    def visit_navigation(self, node, children):
+    def visit_rrel_navigation(self, node, children):
         if len(children) == 1:
-            return Navigation(children[0], True)
+            return RRELNavigation(children[0], True)
         else:
-            return Navigation(children[1], False)
+            return RRELNavigation(children[1], False)
 
-    def visit_brackets(self, node, children):
+    def visit_rrel_brackets(self, node, children):
         assert(len(children) == 1)  # a path
-        return Brackets(children[0])
+        return RRELBrackets(children[0])
 
-    def visit_dots(self, node, children):
-        return Dots(len(node.value))
+    def visit_rrel_dots(self, node, children):
+        return RRELDots(len(node.value))
 
-    def visit_zero_or_more(self, node, children):
-        return ZeroOrMore(children[0])
+    def visit_rrel_zero_or_more(self, node, children):
+        return RRELZeroOrMore(children[0])
 
-    def visit_path(self, node, children):
-        return Path(children)
+    def visit_rrel_path(self, node, children):
+        return RRELPath(children)
 
-    def visit_ordered_choice(self, node, children):
-        return OrderedChoice(children)
+    def visit_rrel_sequence(self, node, children):
+        return RRELSequence(children)
 
-    def visit_path_element(self, node, children):
+    def visit_rrel_path_element(self, node, children):
         assert(len(children) == 1)
         return children[0]
 
@@ -226,15 +229,15 @@ def parse(rrel_expression):
     This function parses a rrel path and returns a RREL expression tree.
 
     Args:
-        rrel_expression: the RREL expression.
+        rrel_expression: the RREL expression (string).
 
     Returns:
         A RREL expression tree.
     """
     from arpeggio import ParserPython
-    parser = ParserPython(rrel, reduce_tree=False)
+    parser = ParserPython(rrel_standalone, reduce_tree=False)
     parse_tree = parser.parse(rrel_expression)
-    return visit_parse_tree(parse_tree, RrelVisitor())
+    return visit_parse_tree(parse_tree, RRELVisitor())
 
 
 def find(obj, lookup_list, rrel_tree, obj_cls=None):
@@ -264,7 +267,7 @@ def find(obj, lookup_list, rrel_tree, obj_cls=None):
 
     def get_next_matches(obj, lookup_list, p, idx=0):
         # print("get_next_matches: ",obj, lookup_list, idx)
-        assert isinstance(p, Path)
+        assert isinstance(p, RRELPath)
         assert len(p.path_elements) >= idx
         # assert len(lookup_list) > 0
         for e in p.path_elements[idx:]:
@@ -279,18 +282,18 @@ def find(obj, lookup_list, rrel_tree, obj_cls=None):
                     for iobj in obj:
                         yield from get_next_matches(iobj, lookup_list, p, idx + 1)
                     return
-            elif isinstance(e, Brackets):
+            elif isinstance(e, RRELBrackets):
                 for ip in e.oc.paths:
                     for iobj, ilookup_list in get_next_matches(obj, lookup_list, ip):
                         yield from get_next_matches(iobj, ilookup_list, p, idx + 1)
                 return
-            elif isinstance(e, ZeroOrMore):
-                assert isinstance(e.path_element, Brackets)
+            elif isinstance(e, RRELZeroOrMore):
+                assert isinstance(e.path_element, RRELBrackets)
 
                 def get_from_zero_or_more(obj, lookup_list):
                     yield obj, lookup_list
-                    assert isinstance(e.path_element, Brackets)
-                    assert isinstance(e.path_element.oc, OrderedChoice)
+                    assert isinstance(e.path_element, RRELBrackets)
+                    assert isinstance(e.path_element.oc, RRELSequence)
                     for ip in e.path_element.oc.paths:
                         for iobj, ilookup_list in get_next_matches(obj, lookup_list, ip):
                             # print(ip, iobj, ilookup_list)

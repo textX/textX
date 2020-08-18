@@ -10,10 +10,10 @@ from __future__ import unicode_literals
 import re
 from arpeggio import StrMatch, Optional, ZeroOrMore, OneOrMore, Sequence,\
     OrderedChoice, UnorderedGroup, Not, And, RegExMatch, Match, NoMatch, EOF, \
-    ParsingExpression, ParserPython, PTNodeVisitor, visit_parse_tree
+    ParsingExpression, ParserPython, visit_parse_tree
 from arpeggio.export import PMDOTExporter
 from arpeggio import RegExMatch as _
-from textx.scoping.rrel import ordered_choice, RrelVisitor
+from textx.scoping.rrel import rrel_sequence, RRELVisitor
 
 from .exceptions import TextXError, TextXSyntaxError, TextXSemanticError
 from .const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, \
@@ -66,7 +66,7 @@ def assignment_rhs():       return [simple_match, reference], Optional(repeat_mo
 # References
 def reference():            return [rule_ref, obj_ref]
 def rule_ref():             return ident
-def obj_ref():              return '[', class_name, Optional('|', obj_ref_rule, Optional('|', ordered_choice)), ']'
+def obj_ref():              return '[', class_name, Optional('|', obj_ref_rule, Optional('|', rrel_sequence)), ']'
 
 def rule_name():            return ident
 def obj_ref_rule():         return ident
@@ -177,7 +177,7 @@ class ClassCrossRef(object):
         self.position = position
 
 
-class TextXVisitor(RrelVisitor):
+class TextXVisitor(RRELVisitor):
 
     def __init__(self, grammar_parser, metamodel):
         self.grammar_parser = grammar_parser

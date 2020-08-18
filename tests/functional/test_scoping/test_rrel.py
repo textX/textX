@@ -1,11 +1,11 @@
-from textx.scoping.rrel import rrel, parse
+from textx.scoping.rrel import rrel_standalone, parse
 from arpeggio import ParserPython
 from textx import metamodel_from_str
 from textx.scoping.rrel import find
 
 
 def test_rrel_basic_parser1():
-    parser = ParserPython(rrel)
+    parser = ParserPython(rrel_standalone)
     parse_tree = parser.parse("^pkg*.cls")
     assert len(parse_tree) == 2  # always true (one path, one EOF)
 
