@@ -1,0 +1,128 @@
+# RREL
+RREL allows to specify scope provider (lookup) specification in the
+grammar itself.
+
+The idea is to support all current builtin scoping providers (e.g., `FQN`,
+`RelativeName` etc.; see [scoping](scoping.md)) while the user would have to resort to Python only to
+support some very specific cases or referring to models not handled by textX.
+
+# Reference resolving expression language (RREL)
+
+Each reference in the model forms a dot separated name, match by the second part
+of the grammar reference, where a plain ID is just a special case. For example,
+a reference could be `package1.component4` or just `component4`. We could further
+generalize this by saying that a reference is a sequence of names where a plain
+ID is just a sequence of length 1. It doesn't have to be a dot separated. A user
+could provide a match (like `FQN` in the above example) and a match processor to
+convert the matched string to a sequence of names. But for simplicity sake in
+this text we assume that the name is a dot separated string which consists of
+name parts separated with dots.
+
+
+For reference resolving as an input we have:
+- Dot separated name where ID is a special case
+- RREL expression
+
+We evaluate RREL expression using the name in the process and we yield referenced
+object or an error.
+
+## RREL operators
+
+Reference resolving expression language (RREL) consists of several operators:
+- `.` Dot navigation. Search for the attribute in the current AST context. Can
+  be used for navigation up the parent chain, e.g. `.` is this object, `..` is
+  parent, `...` is a parent of a parent. If the expression starts with a `.`
+  than we have a relative path starting from the current AST context. Otherwise
+  we have an absolute path starting from the root of the model unless `^` is
+  used (see below). For example, `.a.b` means search for `a` attribute at the
+  current level (`.`) and than search for `b` attribute. Expression `a.b` would
+  search starting from the root of the model.
+- `parent(TYPE)` - navigate up the parent chain until the exact type is found.
+- `~` This is a marker applied to a path element to inform resolver that the
+  current collection should not be searched by the current name part but that
+  all elements should be processed. For example, to search for a method in the
+  inheritance hierarchy one would write `~extends*.methods` which (due to `*`,
+  see below) first searches `methods` collection of the current context object,
+  if not found, all elements of the current `extends` collection are iterated in
+  the order of defintion without consuming name part, and then name would be
+  searched in the `methods` collection of each object from the `extends`
+  collection. If not found `*` would expand `extends` to `extends.extends` if
+  possible and the search would continue.
+- `*` - Repeat/expand. Used in expansion step to expand sub-expression by 0+
+  times. First expansion tried will be 0, than once, then twice etc. For
+  example, `~extends*.methods` would search in `methods` collection in the
+  current context object for the current name part. If not found expansion of
+  `*` would took place and we would search in `~extends.methods` by iterating
+  over `extends` collection without consuming part name (due to `~`) and
+  searching by ref. name part inside `methods` collection of each iterated
+  object. The process would continue (i.e. `~extends.~extends.methods` ...)
+  until no more expansion is possible as we reach the end of inheritance chain.
+- `^` - Bottom-up search. This operator specifies that the given path should be
+  expanded bottom-up, up the parent chain. The search should start at the
+  current AST context and go up the parent chain for the number of components in
+  the current expanded path. Then the match should be tried. See the components
+  example above using `^` in `extends`. For example, `^a.b.c` would start from
+  the current AST level and go to the parent of the parent, search there for
+  `a`, then would search for `b` in the context of the previous AST search
+  result, and finally would search for attribute `c`. `^` is a marker applied to
+  path search subexpression, i.e. it doesn't apply to the whole sequence (see
+  below).
+- `,` - Defines a sequence, i.e. a sequence of RREL expressions which should
+  tried in order.
+  
+Priorities from highest to lowest: `*`, `.`, `,`.
+
+`~` and `^` are regarded as markers, not operators.
+
+## RREL evaluation
+
+Evaluation goes like this:
+1. Expand the expression. Expand `*` starting from 0 times.
+2. Match/navigate the expression (consume part names in the process)
+3. Repeat
+
+~~Due to expansion of `*` for now we should prohibit using of `*` more than once.~~
+
+The process stops when either:
+- all possibilities are exhausted and we haven't find anything -> error.
+- in `*` we came to a situation where we consume all part names before we
+  finished with the RREL expression -> error.
+- We have consumed all path name elements, finished with RREL expression and
+  found the object. If the type is not the same as the type given in the grammar
+  reference we report an error, else we found our object.
+
+
+## RREL processing (internal)
+
+RREL expression are parsed when the grammar is loaded and transformed to AST
+consisting of RREL operator nodes (each node could be an instance of `RREL`
+prefixed class, e.g `RRELSequence`). The expressions ASTs are stateless and thus
+it is an important possibility to define the same expression for multiple
+attributes by using wildcard as the same expression tree would be used for the
+evaluation.
+
+In the process of evaluation the root of the expression tree is given the
+sequence of part names and the current context which represent the parent object
+of the reference in the model AST. The evaluation is then carried out by
+recursive calls of the RREL AST nodes. Each node gets the AST context consisting
+of a collection of objects from the model and a current unconsumed part names
+collection, which are the result of the previous operation or, in the case of
+the root expression AST node, an initial input. Each operator object should
+return the next AST context and the unconsumed part of the name. At the end of
+the successful search AST context should be a single object and the names parts
+should be empty.
+
+## Using RREL from Python code
+
+RREL expression could be used during registration in place of scoping provider.
+For example:
+
+```Python
+my_meta_model.register_scope_providers({
+        "*.*": scoping_providers.FQN(),
+        "Connection.from_port": "from_inst.component.slots"  # RREL
+        "Connection.to_port": "from_inst.component.slots"      # RREL
+    })
+```
+
+See [this comment](https://github.com/igordejanovic/textX/issues/111#issuecomment-441308211)

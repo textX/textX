@@ -4,7 +4,6 @@ from os.path import dirname, join
 from pytest import raises
 
 import textx.exceptions
-from textx.scoping.rrel import RREL
 from textx import get_children
 from textx import metamodel_from_str
 
@@ -44,7 +43,7 @@ def test_fully_qualified_name_ref():
 
     my_metamodel = metamodel_from_str(metamodel_str)
 
-    my_metamodel.register_scope_providers({"Attribute.ref": RREL("^packages*.classes")})
+    my_metamodel.register_scope_providers({"Attribute.ref": "^packages*.classes"})
 
     #################################
     # MODEL PARSING
@@ -138,7 +137,7 @@ def test_fully_qualified_name_ref_type_error():
 
     my_metamodel = metamodel_from_str(metamodel_str)
 
-    my_metamodel.register_scope_providers({"Attribute.ref": RREL("^packages*.classes")})
+    my_metamodel.register_scope_providers({"Attribute.ref": "^packages*.classes"})
 
     #################################
     # MODEL PARSING

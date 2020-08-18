@@ -16,6 +16,7 @@ from textx.const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, \
 from textx.exceptions import TextXError
 from .registration import LanguageDesc, metamodel_for_language
 from .model_params import ModelParams, ModelParamDefinitions
+from textx.scoping.rrel import RREL
 
 if sys.version < '3':
     text = unicode  # noqa
@@ -254,6 +255,9 @@ class TextXMetaModel(DebugPrinter):
 
     def register_scope_providers(self, sp):
         self.scope_providers = sp
+        for k in self.scope_providers.keys():
+            if isinstance(self.scope_providers[k], str):
+                self.scope_providers[k] = RREL(self.scope_providers[k])
 
     def _namespace_for_file_name(self, file_name):
         if file_name is None or self.root_path is None:
