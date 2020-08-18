@@ -231,7 +231,7 @@ def test_rrel_basic_lookup():
     # Here, we test the start_from_root/start_locally logic:
     P2t = find(rec, "P2", "(.)*.packages")
     assert P2t is None
-    P2t = find(rec, "P2", "(.,not_existant_but_root)*.packages")
+    P2t = find(rec, "P2", "(.,not_existent_but_root)*.packages")
     assert P2t is P2
     rect = find(rec, "rec", "(~packages)*.(..).attributes")
     assert rect is None
