@@ -343,7 +343,15 @@ def find(obj, lookup_list, rrel_tree, obj_cls=None):
                 assert isinstance(e.path_element, RRELBrackets)
 
                 def get_from_zero_or_more(obj, lookup_list, first_element=False):
-                    yield obj, lookup_list
+                    assert e.start_locally() or e.start_at_root()  # or, not xor
+                    if first_element:
+                        if e.start_locally():
+                            yield obj, lookup_list
+                        if e.start_at_root():
+                            from textx import get_model
+                            yield get_model(obj), lookup_list
+                    else:
+                        yield obj, lookup_list
                     assert isinstance(e.path_element, RRELBrackets)
                     assert isinstance(e.path_element.seq, RRELSequence)
                     for ip in e.path_element.seq.paths:

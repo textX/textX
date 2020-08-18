@@ -117,6 +117,9 @@ def test_rrel_basic_lookup():
     P2 = find(my_model, "P2", "(packages)")
     assert P2 is not None
 
+    from textx import get_model
+    assert get_model(my_model) is my_model
+
     P2 = find(my_model, "P2", "packages*")
     assert P2 is not None
     Part2 = find(my_model, "P2.Part2", "packages*.classes")
@@ -224,3 +227,13 @@ def test_rrel_basic_lookup():
                 "(.)*.(~packages,~classes,attributes,classes)*", my_metamodel["Class"])
     assert rec2 is not None
     assert rec2 is not rec  # it is the class...
+
+    # Here, we test the start_from_root/start_locally logic:
+    P2t = find(rec, "P2", "(.)*.packages")
+    assert P2t is None
+    P2t = find(rec, "P2", "(.,not_existant_but_root)*.packages")
+    assert P2t is P2
+    rect = find(rec, "rec", "(~packages)*.(..).attributes")
+    assert rect is None
+    rect = find(rec, "rec", "(.,~packages)*.(..).attributes")
+    assert rect is rec
