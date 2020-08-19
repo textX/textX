@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from arpeggio import PTNodeVisitor, visit_parse_tree
 from arpeggio import Optional, EOF
 from arpeggio import ZeroOrMore as ArpeggioZeroOrMore
