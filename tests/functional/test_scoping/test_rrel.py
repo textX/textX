@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from textx.scoping.rrel import rrel_standalone, parse
 from arpeggio import ParserPython
 from textx import metamodel_from_str
