@@ -370,7 +370,6 @@ def find(obj, lookup_list, rrel_tree, obj_cls=None):
                 return
             elif isinstance(e, RRELZeroOrMore):
                 assert isinstance(e.path_element, RRELBrackets)
-                prevent_recursion = set()
 
                 def get_from_zero_or_more(obj, lookup_list, first_element=False):
                     assert e.start_locally() or e.start_at_root()  # or, not xor
