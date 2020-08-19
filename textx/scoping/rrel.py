@@ -369,34 +369,38 @@ def find(obj, lookup_list, rrel_tree, obj_cls=None):
                 return
             elif isinstance(e, RRELZeroOrMore):
                 assert isinstance(e.path_element, RRELBrackets)
+                prevent_recursion = set()
 
                 def get_from_zero_or_more(obj, lookup_list, first_element=False):
-                    assert e.start_locally() or e.start_at_root()  # or, not xor
-                    if first_element:
-                        if e.start_locally():
+                    if (obj, len(lookup_list)) not in prevent_recursion:
+                        prevent_recursion.add((obj, len(lookup_list)))
+
+                        assert e.start_locally() or e.start_at_root()  # or, not xor
+                        if first_element:
+                            if e.start_locally():
+                                yield obj, lookup_list
+                            if e.start_at_root():
+                                from textx import get_model
+                                yield get_model(obj), lookup_list
+                        else:
                             yield obj, lookup_list
-                        if e.start_at_root():
-                            from textx import get_model
-                            yield get_model(obj), lookup_list
-                    else:
-                        yield obj, lookup_list
-                    assert isinstance(e.path_element, RRELBrackets)
-                    assert isinstance(e.path_element.seq, RRELSequence)
-                    for ip in e.path_element.seq.paths:
-                        for iobj, ilookup_list in get_next_matches(
-                                obj, lookup_list, ip,
-                                first_element=first_element):
-                            # print(ip, iobj, ilookup_list)
-                            if (iobj, ip) in visited[len(ilookup_list)]:
-                                continue
-                            if iobj is not None and isinstance(iobj, Postponed):
-                                yield iobj, ilookup_list  # found postponed
-                                return
-                            visited[len(ilookup_list)].add((iobj, ip))
-                            # yield from
-                            for iiobj, iilookup_list in get_from_zero_or_more(
-                                    iobj, ilookup_list):
-                                yield iiobj, iilookup_list
+                        assert isinstance(e.path_element, RRELBrackets)
+                        assert isinstance(e.path_element.seq, RRELSequence)
+                        for ip in e.path_element.seq.paths:
+                            for iobj, ilookup_list in get_next_matches(
+                                    obj, lookup_list, ip,
+                                    first_element=first_element):
+                                # print(ip, iobj, ilookup_list)
+                                if (iobj, ip) in visited[len(ilookup_list)]:
+                                    continue
+                                if iobj is not None and isinstance(iobj, Postponed):
+                                    yield iobj, ilookup_list  # found postponed
+                                    return
+                                visited[len(ilookup_list)].add((iobj, ip))
+                                # yield from
+                                for iiobj, iilookup_list in get_from_zero_or_more(
+                                        iobj, ilookup_list):
+                                    yield iiobj, iilookup_list
 
                 prevent_doubles = set()
                 for obj, lookup_list in get_from_zero_or_more(
