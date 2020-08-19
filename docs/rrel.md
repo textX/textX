@@ -1,3 +1,8 @@
+Changes:
+ * ~~Due to expansion of `*` for now we should prohibit using of `*` more than once.~~
+ * Added preliminary syntax to enable multi files search  (including ImportURI activation): Use
+   the prefix `+m:` for an RREL expression: Then, in case of no match, other models are searched.
+
 # RREL
 RREL allows to specify scope provider (lookup) specification in the
 grammar itself.
@@ -80,8 +85,6 @@ Evaluation goes like this:
 1. Expand the expression. Expand `*` starting from 0 times.
 2. Match/navigate the expression (consume part names in the process)
 3. Repeat
-
-~~Due to expansion of `*` for now we should prohibit using of `*` more than once.~~
 
 The process stops when either:
 - all possibilities are exhausted and we haven't find anything -> error.
