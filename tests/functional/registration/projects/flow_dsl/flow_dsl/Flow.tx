@@ -1,7 +1,11 @@
 reference data-dsl as d
 
+// TODO: add type dependent lookup rules:
+// [d.Data|ID|+m:data]
+// [Algo|ID|+m:algos]
+
 Model: includes*=Include algos+=Algo flows+=Flow;
-Algo: 'algo' name=ID ':' inp=[d.Data] '->' outp=[d.Data];
-Flow: 'connect' algo1=[Algo] '->' algo2=[Algo] ;
+Algo: 'algo' name=ID ':' inp=[d.Data|ID|+m:data] '->' outp=[d.Data|ID|+m:data];
+Flow: 'connect' algo1=[Algo|ID|+m:algos] '->' algo2=[Algo|ID|+m:algos] ;
 Include: '#include' importURI=STRING;
 Comment: /\/\/.*$/;

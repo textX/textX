@@ -712,6 +712,14 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
             if isinstance(scope_provider, ModelLoader):
                 scope_provider.load_models(model, encoding=encoding)
 
+        for crossref in parser._crossrefs:
+            crossref = crossref[2]
+            if crossref.local_scope_provider is not None:
+                from textx.scoping import ModelLoader
+                scope_provider = crossref.local_scope_provider
+                if isinstance(scope_provider, ModelLoader):
+                    scope_provider.load_models(model, encoding=encoding)
+
         if not is_immutable_obj:
             model._tx_reference_resolver = ReferenceResolver(
                 parser, model, pos_crossref_list)

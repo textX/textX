@@ -13,9 +13,6 @@ def flow_dsl():
     p = os.path.join(current_dir, 'Flow.tx')
     flow_mm = metamodel_from_file(p, global_repository=True)
 
-    flow_mm.register_scope_providers(
-        {"*.*": scoping_providers.FQNImportURI()})
-
     def check_flow(f):
         if f.algo1.outp != f.algo2.inp:
             raise TextXSemanticError(

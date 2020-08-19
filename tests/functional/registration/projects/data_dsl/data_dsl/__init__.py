@@ -12,7 +12,4 @@ def data_dsl():
     p = os.path.join(current_dir, 'Data.tx')
     data_mm = metamodel_from_file(p, global_repository=True)
 
-    data_mm.register_scope_providers(
-        {"*.*": scoping_providers.FQNImportURI()})
-
     return data_mm
