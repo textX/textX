@@ -2,10 +2,12 @@ Changes:
  * ~~Due to expansion of `*` for now we should prohibit using of `*` more than once.~~
  * Added preliminary syntax to enable multi files search  (including ImportURI activation): Use
    the prefix `+m:` for an RREL expression: Then, in case of no match, other models are searched.
+   ([grammar example](https://github.com/textX/textX/blob/master/tests/functional/registration/projects/data_dsl/data_dsl/Data.tx))
 
 # RREL
 RREL allows to specify scope provider (lookup) specification in the
-grammar itself.
+grammar itself ([grammar example](tests/functional/test_scoping/components_model1/ComponentsRrel.tx) and 
+an example [test](https://github.com/textX/textX/blob/master/tests/functional/examples/test_hierarchical_data_structures_referencing_attributes.py)).
 
 The idea is to support all current builtin scoping providers (e.g., `FQN`,
 `RelativeName` etc.; see [scoping](scoping.md)) while the user would have to resort to Python only to
@@ -33,7 +35,7 @@ object or an error.
 
 ## RREL operators
 
-Reference resolving expression language (RREL) consists of several operators:
+Reference resolving expression language (RREL) consists of several operators (see [test](tests/functional/test_scoping/test_rrel.py)):
 - `.` Dot navigation. Search for the attribute in the current AST context. Can
   be used for navigation up the parent chain, e.g. `.` is this object, `..` is
   parent, `...` is a parent of a parent. If the expression starts with a `.`
