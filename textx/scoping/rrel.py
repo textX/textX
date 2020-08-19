@@ -353,13 +353,19 @@ def find(obj, lookup_list, rrel_tree, obj_cls=None):
                     return
                 elif isinstance(obj, list):
                     for iobj in obj:
-                        yield from get_next_matches(iobj, lookup_list, p, idx + 1)
+                        # yield from
+                        for iiobj, iilookup_list in get_next_matches(
+                                iobj, lookup_list, p, idx + 1):
+                            yield iiobj, iilookup_list
                     return
             elif isinstance(e, RRELBrackets):
                 for ip in e.seq.paths:
                     for iobj, ilookup_list in get_next_matches(
                             obj, lookup_list, ip, first_element=first_element):
-                        yield from get_next_matches(iobj, ilookup_list, p, idx + 1)
+                        # yield from
+                        for iiobj, iilookup_list in get_next_matches(
+                                iobj, ilookup_list, p, idx + 1):
+                            yield iiobj, iilookup_list
                 return
             elif isinstance(e, RRELZeroOrMore):
                 assert isinstance(e.path_element, RRELBrackets)
@@ -387,14 +393,20 @@ def find(obj, lookup_list, rrel_tree, obj_cls=None):
                                 yield iobj, ilookup_list  # found postponed
                                 return
                             visited[len(ilookup_list)].add((iobj, ip))
-                            yield from get_from_zero_or_more(iobj, ilookup_list)
+                            # yield from
+                            for iiobj, iilookup_list in get_from_zero_or_more(
+                                    iobj, ilookup_list):
+                                yield iiobj, iilookup_list
 
                 prevent_doubles = set()
                 for obj, lookup_list in get_from_zero_or_more(
                         obj, lookup_list, first_element):
                     if (obj, len(lookup_list)) not in prevent_doubles:
-                        yield from get_next_matches(obj, lookup_list, p, idx + 1)
                         prevent_doubles.add((obj, len(lookup_list)))
+                        # yield from
+                        for iiobj, iilookup_list in get_next_matches(
+                                obj, lookup_list, p, idx + 1):
+                            yield iiobj, iilookup_list
                 return
             idx += 1
             first_element = False

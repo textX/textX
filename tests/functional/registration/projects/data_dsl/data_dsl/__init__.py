@@ -1,6 +1,5 @@
 import os
 from textx import metamodel_from_file, language
-import textx.scoping.providers as scoping_providers
 
 
 @language('data-dsl', '*.edata')

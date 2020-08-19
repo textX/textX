@@ -1,7 +1,6 @@
 import os
 from textx import metamodel_from_file, language, TextXSemanticError
 import textx.scoping.tools as tools
-import textx.scoping.providers as scoping_providers
 
 
 @language('flow-dsl', '*.eflow')
