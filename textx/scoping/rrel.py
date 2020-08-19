@@ -42,8 +42,12 @@ def rrel_sequence():
     return ArpeggioZeroOrMore(rrel_path, ","), rrel_path
 
 
+def rrel_expression():
+    return Optional("+m:"), rrel_sequence
+
+
 def rrel_standalone():
-    return rrel_sequence, EOF
+    return rrel_expression, EOF
 
 
 class RRELParent:
@@ -243,6 +247,15 @@ class RRELPath:
         return self.path_elements[0].start_at_root()
 
 
+class RRELExpression:
+    def __init__(self, seq, importURI):
+        self.seq = seq
+        self.importURI = importURI
+
+    def __repr__(self):
+        return "+m:" + str(self.seq) if self.importURI else str(self.seq)
+
+
 class RRELVisitor(PTNodeVisitor):
 
     def visit_rrel_parent(self, node, children):
@@ -274,6 +287,12 @@ class RRELVisitor(PTNodeVisitor):
         assert(len(children) == 1)
         return children[0]
 
+    def visit_rrel_expression(self, node, children):
+        if len(children) == 1:
+            return RRELExpression(children[0], False)
+        else:
+            return RRELExpression(children[1], True)
+
 
 def parse(rrel_expression):
     """
@@ -301,7 +320,7 @@ def find(obj, lookup_list, rrel_tree, obj_cls=None):
     Args:
         obj: model object (starting point of the search)
         lookup_list: list of name parts forming the full name.
-        rrel_tree: the query (must be a Path object)
+        rrel_tree: the query (must be a RRELExpression object or a string)
 
     Returns:
         The result of the query (first match), a
@@ -311,6 +330,9 @@ def find(obj, lookup_list, rrel_tree, obj_cls=None):
     from textx.scoping import Postponed
     if isinstance(rrel_tree, str):
         rrel_tree = parse(rrel_tree)
+    assert isinstance(rrel_tree, RRELExpression)
+    rrel_tree = rrel_tree.seq
+    assert isinstance(rrel_tree, RRELSequence)
     if isinstance(lookup_list, str):
         lookup_list = lookup_list.split(".")
         lookup_list = list(filter(lambda x: len(x) > 0, lookup_list))
@@ -389,15 +411,14 @@ def find(obj, lookup_list, rrel_tree, obj_cls=None):
     return None  # not found
 
 
-def create_rrel_scope_provider(rrel_tree_or_string):
+def create_rrel_scope_provider(rrel_tree_or_string, **kwargs):
+    from textx.scoping.providers import ImportURI
 
     class RREL(object):
         """
         RREL scope provider
         """
         def __init__(self, rrel_tree):
-            if isinstance(rrel_tree, str):
-                rrel_tree = parse(rrel_tree)
             self.rrel_tree = rrel_tree
 
         def __call__(self, current_obj, attr, obj_ref):
@@ -418,4 +439,24 @@ def create_rrel_scope_provider(rrel_tree_or_string):
 
             return find(current_obj, lookup_list, self.rrel_tree, obj_cls)
 
-    return RREL(rrel_tree_or_string)
+    class RRELImportURI(ImportURI):
+        """
+        scope provider with ImportURI and RREL
+        """
+
+        def __init__(self, rrel_tree, glob_args=None, search_path=None,
+                     importAs=False, importURI_converter=None,
+                     importURI_to_scope_name=None):
+            ImportURI.__init__(self, RREL(rrel_tree),
+                               glob_args=glob_args,
+                               search_path=search_path, importAs=importAs,
+                               importURI_converter=importURI_converter,
+                               importURI_to_scope_name=importURI_to_scope_name)
+
+    if isinstance(rrel_tree_or_string, str):
+        rrel_tree_or_string = parse(rrel_tree_or_string)
+
+    if rrel_tree_or_string.importURI:
+        return RRELImportURI(rrel_tree_or_string, *kwargs)
+    else:
+        return RREL(rrel_tree_or_string)
