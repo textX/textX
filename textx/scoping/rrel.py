@@ -3,6 +3,7 @@ from arpeggio import PTNodeVisitor, visit_parse_tree
 from arpeggio import Optional, EOF
 from arpeggio import ZeroOrMore as ArpeggioZeroOrMore
 from arpeggio import RegExMatch as _
+from six import string_types
 
 
 def rrel_id():
@@ -466,7 +467,7 @@ def create_rrel_scope_provider(rrel_tree_or_string, **kwargs):
                                importURI_converter=importURI_converter,
                                importURI_to_scope_name=importURI_to_scope_name)
 
-    if isinstance(rrel_tree_or_string, str):
+    if isinstance(rrel_tree_or_string, string_types):
         rrel_tree_or_string = parse(rrel_tree_or_string)
 
     if rrel_tree_or_string.importURI:
