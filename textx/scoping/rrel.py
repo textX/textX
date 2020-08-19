@@ -389,29 +389,33 @@ def find(obj, lookup_list, rrel_tree, obj_cls=None):
     return None  # not found
 
 
-class RREL(object):
-    """
-    RREL scope provider
-    """
-    def __init__(self, rrel_tree):
-        if isinstance(rrel_tree, str):
-            rrel_tree = parse(rrel_tree)
-        self.rrel_tree = rrel_tree
+def create_rrel_scope_provider(rrel_tree_or_string):
 
-    def __call__(self, current_obj, attr, obj_ref):
+    class RREL(object):
         """
-        find an object
-
-        Args:
-            current_obj: object corresponding a instance of an
-                         object (rule instance)
-            attr: the referencing attribute (unused)
-            obj_ref: ObjCrossRef to be resolved
-
-        Returns: None or the referenced object
+        RREL scope provider
         """
-        obj_cls, obj_name = obj_ref.cls, obj_ref.obj_name
-        lookup_list = obj_name.split(".")
-        lookup_list = list(filter(lambda x: len(x) > 0, lookup_list))
+        def __init__(self, rrel_tree):
+            if isinstance(rrel_tree, str):
+                rrel_tree = parse(rrel_tree)
+            self.rrel_tree = rrel_tree
 
-        return find(current_obj, lookup_list, self.rrel_tree, obj_cls)
+        def __call__(self, current_obj, attr, obj_ref):
+            """
+            find an object
+
+            Args:
+                current_obj: object corresponding a instance of an
+                             object (rule instance)
+                attr: the referencing attribute (unused)
+                obj_ref: ObjCrossRef to be resolved
+
+            Returns: None or the referenced object
+            """
+            obj_cls, obj_name = obj_ref.cls, obj_ref.obj_name
+            lookup_list = obj_name.split(".")
+            lookup_list = list(filter(lambda x: len(x) > 0, lookup_list))
+
+            return find(current_obj, lookup_list, self.rrel_tree, obj_cls)
+
+    return RREL(rrel_tree_or_string);

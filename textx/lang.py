@@ -152,8 +152,8 @@ class RuleCrossRef(object):
         self.suppress = False
         self.local_scope_provider = None
         if rrel_tree is not None:
-            from textx.scoping.rrel import RREL
-            self.local_scope_provider = RREL(rrel_tree)
+            from textx.scoping.rrel import create_rrel_scope_provider
+            self.local_scope_provider = create_rrel_scope_provider(rrel_tree)
 
     def __str__(self):
         return self.rule_name
