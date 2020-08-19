@@ -223,6 +223,9 @@ def test_rrel_basic_lookup():
     t = find(my_model, "", "(.)*")
     assert t is my_model
 
+    t = find(my_model, "", "(.)*.no_existent")  # inifite recursion stopper
+    assert t is None
+
     rec2 = find(my_model, "rec",
                 "(.)*.(~packages,~classes,attributes,classes)*", my_metamodel["Class"])
     assert rec2 is not None
