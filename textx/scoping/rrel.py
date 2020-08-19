@@ -335,7 +335,7 @@ def find(obj, lookup_list, rrel_tree, obj_cls=None):
     assert isinstance(rrel_tree, RRELExpression)
     rrel_tree = rrel_tree.seq
     assert isinstance(rrel_tree, RRELSequence)
-    if isinstance(lookup_list, str):
+    if isinstance(lookup_list, string_types):
         lookup_list = lookup_list.split(".")
         lookup_list = list(filter(lambda x: len(x) > 0, lookup_list))
     visited = [set()] * (len(lookup_list) + 1)
