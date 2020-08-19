@@ -418,4 +418,4 @@ def create_rrel_scope_provider(rrel_tree_or_string):
 
             return find(current_obj, lookup_list, self.rrel_tree, obj_cls)
 
-    return RREL(rrel_tree_or_string);
+    return RREL(rrel_tree_or_string)
