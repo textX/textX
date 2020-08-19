@@ -330,7 +330,7 @@ def find(obj, lookup_list, rrel_tree, obj_cls=None):
     """
     from textx import textx_isinstance
     from textx.scoping import Postponed
-    if isinstance(rrel_tree, str):
+    if isinstance(rrel_tree, string_types):
         rrel_tree = parse(rrel_tree)
     assert isinstance(rrel_tree, RRELExpression)
     rrel_tree = rrel_tree.seq
