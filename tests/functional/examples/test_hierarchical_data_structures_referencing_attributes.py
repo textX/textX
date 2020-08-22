@@ -127,7 +127,7 @@ def test_referencing_attributes():
         assert m.references[2].refs[0].valref == m.structs[0].vals[0]
 
         # negative tests
-        # error: "not_there" not pasrt of A
+        # error: "not_there" not part of A
         with raises(textx.exceptions.TextXSemanticError,
                     match=r'.*Unknown object.*not_there.*'):
             mm.model_from_str('''
@@ -189,7 +189,7 @@ def test_referencing_attributes_with_rrel_all_in_one():
     assert m.references[2].ref == m.structs[0].vals[0]
 
     # negative tests
-    # error: "not_there" not pasrt of A
+    # error: "not_there" not part of A
     with raises(textx.exceptions.TextXSemanticError,
                 match=r'.*Unknown object "b.a.not_there".*'):
         mm.model_from_str('''
