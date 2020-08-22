@@ -241,3 +241,40 @@ def test_rrel_basic_lookup():
     assert rect is None
     rect = find(rec, "rec", "(.,~packages)*.(..).attributes")
     assert rect is rec
+
+
+def test_rrel_repetitions():
+    """
+    This is a basic extra test to demonstrate `()*`
+    in RREL expressions.
+    """
+
+    my_metamodel = metamodel_from_str(r'''
+        Model: entries*=Entry;
+        Entry: name=ID (':' ref=[Entry])?;
+    ''')
+
+    my_model = my_metamodel.model_from_str(r'''
+        a: b
+        c
+        b: a
+    ''')
+
+    a = find(my_model, "a", "entries.ref*")
+    assert a.name == 'a'
+    b = find(my_model, "b", "entries.ref*")
+    assert b.name == 'b'
+    c = find(my_model, "c", "entries.ref*")
+    assert c.name == 'c'
+
+    a2 = find(my_model, "a.b.a", "entries.ref*")
+    assert a2 == a
+
+    b2 = find(my_model, "b.a.b", "entries.ref*")
+    assert b2 == b
+
+    a2 = find(my_model, "b.a.b.a", "entries.ref*")
+    assert a2 == a
+
+    a2 = find(my_model, "b.a.b.a.b.a.b.a.b.a", "entries.ref*")
+    assert a2 == a
