@@ -338,7 +338,7 @@ def find(obj, lookup_list, rrel_tree, obj_cls=None):
     if isinstance(lookup_list, string_types):
         lookup_list = lookup_list.split(".")
         lookup_list = list(filter(lambda x: len(x) > 0, lookup_list))
-    visited = [set()] * (len(lookup_list) + 1)
+    visited = [set() for _ in range(len(lookup_list))]
 
     def get_next_matches(obj, lookup_list, p, idx=0, first_element=False):
         # print("get_next_matches: ",obj, lookup_list, idx)
@@ -388,7 +388,6 @@ def find(obj, lookup_list, rrel_tree, obj_cls=None):
                         for iobj, ilookup_list in get_next_matches(
                                 obj, lookup_list, ip,
                                 first_element=first_element):
-                            # print(ip, iobj, ilookup_list)
                             if (iobj, ip) in visited[len(ilookup_list)]:
                                 continue  # recursion stopper
                             if iobj is not None and isinstance(iobj, Postponed):
