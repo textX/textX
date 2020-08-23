@@ -388,12 +388,12 @@ def find(obj, lookup_list, rrel_tree, obj_cls=None):
                         for iobj, ilookup_list in get_next_matches(
                                 obj, lookup_list, ip,
                                 first_element=first_element):
-                            if (iobj, ip) in visited[len(ilookup_list)]:
+                            if (id(iobj), id(ip)) in visited[len(ilookup_list)]:
                                 continue  # recursion stopper
                             if iobj is not None and isinstance(iobj, Postponed):
                                 yield iobj, ilookup_list  # found postponed
                                 return
-                            visited[len(ilookup_list)].add((iobj, ip))
+                            visited[len(ilookup_list)].add((id(iobj), id(ip)))
                             # yield from
                             for iiobj, iilookup_list in get_from_zero_or_more(
                                     iobj, ilookup_list):
@@ -402,8 +402,8 @@ def find(obj, lookup_list, rrel_tree, obj_cls=None):
                 prevent_doubles = set()
                 for obj, lookup_list in get_from_zero_or_more(
                         obj, lookup_list, first_element):
-                    if (obj, len(lookup_list)) not in prevent_doubles:
-                        prevent_doubles.add((obj, len(lookup_list)))
+                    if (id(obj), len(lookup_list)) not in prevent_doubles:
+                        prevent_doubles.add((id(obj), len(lookup_list)))
                         # yield from
                         for iiobj, iilookup_list in get_next_matches(
                                 obj, lookup_list, p, idx + 1):
