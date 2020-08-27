@@ -5,21 +5,21 @@ import io
 
 def test_issue275():
     grammar = '''
-    
+
     Comment:
         "<:" ( !"*/" /./ )* ":>"
     ;
-    
+
     EntityModel:
       entities+=Entity    // each model has one or more entities
     ;
-    
+
     Entity:
       'entity' name=ID '{'
         attributes+=Attribute     // each entity has one or more attributes
       '}'
     ;
-    
+
     Attribute:
       name=ID ':' type=[Entity]   // type is a reference to an entity. There are
                                   // built-in entities registered on the meta-model
@@ -37,3 +37,5 @@ def test_issue275():
 
     text = out_file.getvalue()
     print(text)
+    assert text.__contains__("&lt;")
+    assert text.__contains__("&gt;")

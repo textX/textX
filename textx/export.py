@@ -126,7 +126,7 @@ class DotRenderer(object):
                 trailer += '\t<tr>\n'
                 attrs = dot_match_str(cls, self.match_rules)
                 trailer += '\t\t<td><b>{}</b></td><td>{}</td>\n'.format(
-                    cls.__name__, attrs.replace("<","&lt;").replace(">","&gt;"))
+                    cls.__name__, attrs.replace("<", "&lt;").replace(">", "&gt;"))
                 trailer += '\t</tr>\n'
             trailer += '</table> >]\n\n'
 
