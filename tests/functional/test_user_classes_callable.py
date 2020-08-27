@@ -74,7 +74,11 @@ class Receiver(ConnectionHandler):
         print('')
 
 
-def test_issue270():
+def test_user_classes_callable():
+    """
+    See metamodel.md, "Custom classes"
+    See issue270
+    """
     # fix/works (no unused user classes):
     mm = metamodel_from_str(grammar, classes=[Sender, Receiver])
     _ = mm.model_from_str(modelstring)
