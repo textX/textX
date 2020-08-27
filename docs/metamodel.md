@@ -77,7 +77,7 @@ for all of these classes in your grammar (else, you get an exception). Alternati
 you can also pass a callable (instead of a list of classes) to return user classes
 given a rule name. In that case, only rule names found in the grammar
 are used to query user classes.
-See [unittest](https://github.com/textX/textX/blob/master/tests/functional/regressions/test_issue270.py).
+See [unittest](https://github.com/textX/textX/blob/master/tests/functional/test_user_classes_callable.py).
 
 !!! note
     Constructor of the user-defined classes should accept all attributes defined
