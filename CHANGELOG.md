@@ -21,6 +21,12 @@ please take a look at related PRs and issues and see if the change affects you.
   ([#267])
 - Fixed bug in `flow_dsl` test project causing static files not being included
   in package build/installation. Thanks sebix@GitHub ([#272]).
+- Fixed bug, where user classes not used in the grammar caused exceptions
+  ([#270]): now, when passing a list of user classes, you need to use them in
+  your grammar. You can alternatively also pass a callable (see metamodel.md;
+  [#273]). Also, using base classes for rules from imported grammars in 
+  conjunction with user classes is not allowed and results in an exception.
+
 
 ### Changed
 
@@ -472,6 +478,8 @@ please take a look at related PRs and issues and see if the change affects you.
   - Export to dot.
 
 
+[#273]: https://github.com/textX/textX/pull/273
+[#270]: https://github.com/textX/textX/issues/270
 [#272]: https://github.com/textX/textX/pull/272
 [#267]: https://github.com/textX/textX/issues/267
 [#266]: https://github.com/textX/textX/issues/266

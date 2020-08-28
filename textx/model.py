@@ -297,6 +297,8 @@ def get_model_parser(top_rule, comments_model, **kwargs):
             return model
 
         def _replace_user_attr_methods_for_class(self, user_class):
+            assert hasattr(user_class, "_tx_obj_attrs")
+
             # Custom attr dunder methods used for user classes during loading
             def _getattribute(obj, name):
                 if name == '__dict__':

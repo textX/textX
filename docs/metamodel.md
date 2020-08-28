@@ -72,6 +72,13 @@ represent.
 Now `entity_mm` can be used to parse the input models where our `Entity` class
 will be instantiated to represent each `Entity` rule from the grammar.
 
+When passing a list of classes (as shown in the example above), you need to have rules
+for all of these classes in your grammar (else, you get an exception). Alternatively,
+you can also pass a callable (instead of a list of classes) to return user classes
+given a rule name. In that case, only rule names found in the grammar
+are used to query user classes.
+See [unittest](https://github.com/textX/textX/blob/master/tests/functional/test_user_classes_callable.py).
+
 !!! note
     Constructor of the user-defined classes should accept all attributes defined
     by the corresponding rule from the grammar. In the previous example, we have
