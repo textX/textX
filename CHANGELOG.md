@@ -24,7 +24,9 @@ please take a look at related PRs and issues and see if the change affects you.
 - Fixed bug, where user classes not used in the grammar caused exceptions
   ([#270]): now, when passing a list of user classes, you need to use them in
   your grammar. You can alternatively also pass a callable (see metamodel.md;
-  [#273]).
+  [#273]). Also, using base classes for rules from imported grammars in 
+  conjunction with user classes is not allowed and results in an exception.
+
 
 ### Changed
 
