@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from textx import metamodel_from_str
 from textx.export import metamodel_export_tofile, DotRenderer
 import io
@@ -5,7 +6,7 @@ import html5lib
 
 
 def test_issue275():
-    grammar = '''
+    grammar = r'''
 
     Comment:
         "<:" ( !"*/" /./ )* ":>"
