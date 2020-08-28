@@ -1,6 +1,7 @@
 from textx import metamodel_from_str
-from textx.export import metamodel_export_tofile, metamodel_export
+from textx.export import metamodel_export_tofile, metamodel_export, DotRenderer
 import io
+import html5lib
 
 
 def test_issue275():
@@ -30,12 +31,18 @@ def test_issue275():
     entity_mm = metamodel_from_str(grammar)
 
     out_file = io.StringIO()
-    # export.model_export(
-    #    None, "debug_test.dot", m._tx_model_repository.all_models )
-    metamodel_export(entity_mm, "test.dot")
-    metamodel_export_tofile(entity_mm, out_file)
+    # metamodel_export(entity_mm, "test.dot")
+    renderer = DotRenderer()
+    metamodel_export_tofile(entity_mm, out_file, renderer)
 
     text = out_file.getvalue()
     print(text)
     assert text.__contains__("&lt;")
     assert text.__contains__("&gt;")
+
+    table = renderer.get_match_rules_table()
+    print("----------")
+    print(table)
+    print("----------")
+    html5parser = html5lib.HTMLParser(strict=True)
+    html5parser.parseFragment(table)
