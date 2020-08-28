@@ -1,5 +1,5 @@
 from textx import metamodel_from_str
-from textx.export import metamodel_export_tofile, metamodel_export, DotRenderer
+from textx.export import metamodel_export_tofile, DotRenderer
 import io
 import html5lib
 

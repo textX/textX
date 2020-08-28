@@ -102,12 +102,14 @@ def dot_escape(s):
             .replace('<', r'\<')\
             .replace('?', r'\?')
 
+
 def html_escape(s):
     if sys.version < '3':
         return s.replace("<", "&lt;").replace(">", "&gt;")
     else:
         from html import escape
         return escape(s)
+
 
 def dot_repr(o):
     if type(o) is text:
