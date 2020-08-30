@@ -1,0 +1,9 @@
+import A
+
+Model:
+    a=AThing
+    b=BThing
+;
+
+Thing: name=ID;
+BThing: "B" v=Thing;

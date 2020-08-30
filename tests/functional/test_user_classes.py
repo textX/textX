@@ -1,6 +1,10 @@
 from __future__ import unicode_literals
 import pytest  # noqa
-from textx import metamodel_from_str
+from textx import metamodel_from_str, metamodel_from_file
+from os.path import join, dirname, abspath
+from pytest import raises
+from textx.exceptions import TextXSemanticError
+
 
 grammar = """
 First:
@@ -67,3 +71,46 @@ def test_user_class():
 
     # Check additional attributes
     assert model.some_attr == 1
+
+
+class Thing(object):
+    def __init__(self, **kwargs):
+        for k in kwargs.keys():
+            setattr(self, k, kwargs[k])
+
+
+class AThing(object):
+    def __init__(self, **kwargs):
+        for k in kwargs.keys():
+            setattr(self, k, kwargs[k])
+
+
+class BThing(object):
+    def __init__(self, **kwargs):
+        for k in kwargs.keys():
+            setattr(self, k, kwargs[k])
+
+
+def test_user_class_with_imported_grammar():
+    this_folder = dirname(abspath(__file__))
+    mm = metamodel_from_file(join(this_folder, "user_classes", "B.tx"),
+                             classes=[AThing, BThing])
+    m = mm.model_from_str("""
+        A 2,1
+        B Hello
+    """)
+    assert m.a.v.x == 2
+    assert m.a.v.y == 1
+    assert m.b.v.name == "Hello"
+    assert type(m.b.v).__name__ == "Thing"
+    assert type(m.a.v).__name__ == "Thing"
+    assert isinstance(m.a, AThing)
+    assert isinstance(m.b, BThing)
+
+    with raises(TextXSemanticError,
+                match=r'.*redefined imported rule Thing'
+                      + r' cannot be replaced by a user class.*'):
+        mm = metamodel_from_file(join(this_folder, "user_classes", "B.tx"),
+                                 classes=[AThing, BThing, Thing])
+    # now, all involved user classes **may** be instrumented...
+    # (after an exception, we do not guarantee 100% cleanup of user classes)

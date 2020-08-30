@@ -39,10 +39,15 @@ def metamodel_from_str(lang_desc, metamodel=None, **kwargs):
 
     """
 
+    is_main_metamodel = metamodel is None
+
     if not metamodel:
         metamodel = TextXMetaModel(**kwargs)
 
     language_from_str(lang_desc, metamodel)
+
+    if is_main_metamodel:
+        metamodel.validate_user_classes()
 
     return metamodel
 
@@ -123,8 +128,10 @@ class TextXMetaModel(DebugPrinter):
         builtins(dict): A dict of named object used in linking phase.
             References to named objects not defined in the model will be
             searched here.
-        classes(list of classes): A list of user supplied classes to use
-            instead of the dynamically created.
+        classes(list of classes or callable): A list of user supplied classes
+            to use instead of the dynamically created or a callable providing
+            those classes. The callable must accept a rule name and return a
+            class for that rule name or None.
         obj_processors(dict): A dict of user supplied object processors keyed
             by rule/class name (may be a fully qualified name).
         rootcls(TextXClass): A language class that is a root of the meta-model.
@@ -178,9 +185,14 @@ class TextXMetaModel(DebugPrinter):
 
         # Convert classes to dict for easier lookup
         self.user_classes = {}
+        self.user_classes_provider = None
+        self._used_rule_names_for_user_classes = set()
         if classes:
-            for c in classes:
-                self.user_classes[c.__name__] = c
+            if callable(classes):
+                self.user_classes_provider = classes
+            else:
+                for c in classes:
+                    self.user_classes[c.__name__] = c
 
         self.auto_init_attributes = auto_init_attributes
         self.ignore_case = ignore_case
@@ -493,6 +505,21 @@ class TextXMetaModel(DebugPrinter):
         textX rules.
         """
         # TODO: Implement complex textX validations.
+        pass
+
+    def validate_user_classes(self):
+        """
+        Validates user classes of the meta model.
+        Called after construction of the main metamodel (not
+        imported ones).
+        """
+        from textx.exceptions import TextXSemanticError
+        for user_class in self.user_classes.values():
+            if user_class.__name__ not in self._used_rule_names_for_user_classes:
+                # It is not a user class used in the grammar
+                raise TextXSemanticError(
+                    "{} class is not used in the grammar".format(
+                        user_class.__name__))
 
     def __getitem__(self, name):
         """

@@ -1,0 +1,31 @@
+package interfaces {
+  interface B
+  interface C
+}
+package base {
+  interface A
+  interface D
+  component Start {
+    out output1 (format A)
+  }
+  component Middle {
+    in input2 (format A,interfaces.B,interfaces.C)
+    out output2 (format interfaces.B,interfaces.C,D)
+  }
+  component End {
+    in input3 (format interfaces.B,interfaces.C,D)
+  }
+}
+
+package usage {
+  instance start : base.Start
+  instance action1 : base.Middle
+  instance action2 : base.Middle
+  instance action3 : base.Middle
+  instance end : base.End
+
+  connect start.pu   to action1.input2
+  connect action1.output2 to action2.input2
+  connect action2.output2 to action3.input2
+  connect action3.output2 to end.input3
+}

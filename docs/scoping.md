@@ -86,8 +86,12 @@ attribute is a list, the list is searched to find the referenced name.
     Special rule selections (e.g., `Connection.from_port`) are preferred
     to wildcard selection (e.e, `"*.*"`).
 
-
 ### Scope Providers defined in Module "textx.scoping.providers"
+
+!!! note
+    The scope provider implementations presented here
+    assume that the name attribute of named elements
+    has a string type (e.g. ´name=ID´).
 
 We provide some standard scope providers:
 
