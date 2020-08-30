@@ -146,11 +146,13 @@ class ObjCrossRef(object):
             reference (see scoping.md for requirements of a scope provider)
     """
 
-    def __init__(self, obj_name, cls, position, local_scope_provider):
+    def __init__(self, obj_name, cls, position, local_scope_provider,
+                 match_rule_name):
         self.obj_name = obj_name
         self.cls = cls
         self.position = position
         self.local_scope_provider = local_scope_provider
+        self.match_rule_name = match_rule_name
 
 
 class RefRulePosition(object):
@@ -557,9 +559,11 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                 if metaattr.ref and not metaattr.cont:
                     # If this is non-containing reference create ObjCrossRef
                     p = metaattr.local_scope_provider
+                    rn = metaattr.local_scope_provider_match_rule_name
                     value = ObjCrossRef(obj_name=value, cls=metaattr.cls,
                                         position=node[0].position,
-                                        local_scope_provider=p)
+                                        local_scope_provider=p,
+                                        match_rule_name=rn)
                     parser._crossrefs.append((model_obj, metaattr, value))
                     return model_obj
 
@@ -581,10 +585,12 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                             # create ObjCrossRef
 
                             p = metaattr.local_scope_provider
+                            rn = metaattr.local_scope_provider_match_rule_name
                             value = ObjCrossRef(obj_name=value,
                                                 cls=metaattr.cls,
                                                 position=n.position,
-                                                local_scope_provider=p)
+                                                local_scope_provider=p,
+                                                match_rule_name=rn)
 
                             parser._crossrefs.append((obj_attr, metaattr,
                                                       value))

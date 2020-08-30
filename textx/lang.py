@@ -153,8 +153,7 @@ class RuleCrossRef(object):
         self.local_scope_provider = None
         if rrel_tree is not None:
             from textx.scoping.rrel import create_rrel_scope_provider
-            self.local_scope_provider = create_rrel_scope_provider(
-                rrel_tree, None, rule_name)
+            self.local_scope_provider = create_rrel_scope_provider(rrel_tree)
 
     def __str__(self):
         return self.rule_name
@@ -770,6 +769,7 @@ class TextXVisitor(RRELVisitor):
             cls_attr.cont = False
             cls_attr.ref = True
             cls_attr.local_scope_provider = rhs_rule[1].local_scope_provider
+            cls_attr.local_scope_provider_match_rule_name = rhs_rule[1].rule_name
             # Override rhs by its PEG rule for further processing
             rhs_rule = rhs_rule[1]
             # Target class is not the same as target rule

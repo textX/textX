@@ -425,52 +425,38 @@ def find(obj, lookup_list, rrel_tree, obj_cls=None, split_string="."):
     return None  # not found
 
 
-def create_rrel_scope_provider(rrel_tree_or_string, split_string,
-                               rule_name_with_split_string=None, **kwargs):
+def create_rrel_scope_provider(rrel_tree_or_string, split_string=None, **kwargs):
     """
     This function creates a RREL scope provider.
 
     Args:
         rrel_tree_or_string: the query (see `rrel.find`)
         split_string: the string used to split the name into individual
-            parts (see `rrel.find`).
-            Future extension: it can be overridden by the RREL expression
-                itself (e.g. like for the importURI flag, e.g. `+split("::"):`; to
-                be discussed).
-        rule_name_with_split_string: alternative to split_string; the
-            rule name specified here, can have a `split` parameter.
-            This parameter specifies the split string. Of not present a
-            `.` is used. Wither split_string or rule_name_with_split_string
-            must be not None.
+            parts (see `rrel.find`). It it is None, the match
+            rule associated with a reference is used to deduce the
+            delimiter (parameter `split`). Else `.` is used.
 
     Returns:
         The result of the query (first match), a
         Postponed object, or None (nothing found)
     """
     from textx.scoping.providers import ImportURI
-    assert (split_string is not None) or (rule_name_with_split_string is not None)
 
     class RREL(object):
         """
         RREL scope provider
         """
-        def __init__(self, rrel_tree, split_string, rule_name_with_split_string):
+        def __init__(self, rrel_tree, split_string):
             """
             Creates a RREL scope provider
 
             Args:
                 rrel_tree: the query (see `rrel.find`)
                 split_string: the string used to split the name into individual
-                    parts (see `rrel.find`)
-                rule_name_with_split_string: alternative to split_string; the
-                    rule name specified here, can have a `split` parameter.
-                    This parameter specifies the split string. Of not present a
-                    `.` is used. Wither split_string or rule_name_with_split_string
-                    must be not None.
+                    parts (see `create_rrel_scope_provider`)
             """
             self.rrel_tree = rrel_tree
             self.split_string = split_string
-            self.rule_name_with_split_string = rule_name_with_split_string
 
         def __call__(self, current_obj, attr, obj_ref):
             """
@@ -488,26 +474,26 @@ def create_rrel_scope_provider(rrel_tree_or_string, split_string,
 
             if self.split_string is None:
                 from textx import get_metamodel
-                assert self.rule_name_with_split_string is not None
-                rule = get_metamodel(current_obj)[self.rule_name_with_split_string]
+                rule = get_metamodel(current_obj)[obj_ref.match_rule_name]
                 if hasattr(rule._tx_peg_rule, 'split'):
-                    self.split_string = rule._tx_peg_rule.split
+                    split = rule._tx_peg_rule.split
                 else:
-                    self.split_string = '.'
+                    split = '.'
+            else:
+                split = self.split_string
 
             return find(current_obj, obj_name, self.rrel_tree, obj_cls,
-                        split_string=self.split_string)
+                        split_string=split)
 
     class RRELImportURI(ImportURI):
         """
         scope provider with ImportURI and RREL
         """
 
-        def __init__(self, rrel_tree, split_string, rule_name_with_split_string,
+        def __init__(self, rrel_tree, split_string,
                      glob_args=None, search_path=None, importAs=False,
                      importURI_converter=None, importURI_to_scope_name=None):
-            ImportURI.__init__(self, RREL(rrel_tree, split_string,
-                                          rule_name_with_split_string),
+            ImportURI.__init__(self, RREL(rrel_tree, split_string),
                                glob_args=glob_args,
                                search_path=search_path, importAs=importAs,
                                importURI_converter=importURI_converter,
@@ -517,7 +503,6 @@ def create_rrel_scope_provider(rrel_tree_or_string, split_string,
         rrel_tree_or_string = parse(rrel_tree_or_string)
 
     if rrel_tree_or_string.importURI:
-        return RRELImportURI(rrel_tree_or_string, split_string,
-                             rule_name_with_split_string, *kwargs)
+        return RRELImportURI(rrel_tree_or_string, split_string, *kwargs)
     else:
-        return RREL(rrel_tree_or_string, split_string, rule_name_with_split_string)
+        return RREL(rrel_tree_or_string, split_string)
