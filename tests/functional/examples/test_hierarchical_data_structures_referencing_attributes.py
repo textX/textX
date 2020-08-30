@@ -216,3 +216,56 @@ def test_referencing_attributes_with_rrel_all_in_one():
         instance c: C
         reference c.b.a.x
         ''')
+
+
+def test_referencing_attributes_with_rrel_all_in_one_splitstring():
+    """
+    RREL solution: variation with diffferent split string specified in match rule.
+    """
+
+    mm = metamodel_from_str('''
+        Model:
+            structs+=Struct
+            instances+=Instance
+            references+=Reference;
+        Struct:
+            'struct' name=ID '{' vals+=Val '}';
+        Val:
+            'val' name=ID (':' type=[Struct])?;
+        Instance:
+            'instance' name=ID (':' type=[Struct])?;
+        Reference:
+            'reference' instance=[Instance]
+            '.' ref=[Val|FQN|.~instance.~type.vals.(~type.vals)*];
+        FQN[split='->']: ID ('->' ID)*;
+        ''')
+    m = mm.model_from_str('''
+        struct A {
+            val x
+        }
+        struct B {
+            val a: A
+        }
+        struct C {
+            val b: B
+            val a: A
+        }
+        struct D {
+            val c: C
+            val b1: B
+            val a: A
+        }
+        instance d: D
+        instance a: A
+        reference d.c->b->a->x
+        reference d.b1->a->x
+        reference a.x
+    ''')
+
+    assert m.references[0].ref.name == 'x'
+    assert m.references[0].ref == m.structs[0].vals[0]
+
+    assert m.references[1].ref == m.structs[0].vals[0]
+
+    assert m.references[2].ref.name == 'x'
+    assert m.references[2].ref == m.structs[0].vals[0]

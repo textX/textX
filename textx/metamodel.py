@@ -270,7 +270,7 @@ class TextXMetaModel(DebugPrinter):
         self.scope_providers = sp
         for k, v in self.scope_providers.items():
             if isinstance(v, string_types):
-                self.scope_providers[k] = create_rrel_scope_provider(v)
+                self.scope_providers[k] = create_rrel_scope_provider(v, '.')
 
     def _namespace_for_file_name(self, file_name):
         if file_name is None or self.root_path is None:

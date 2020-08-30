@@ -181,6 +181,10 @@ def test_rrel_basic_lookup():
     rec2 = find(my_model, "P2.Part2.rec", "other1,packages*.classes.attributes,other2")
     assert rec2 is rec
 
+    rec2 = find(my_model, "P2::Part2::rec", "other1,packages*.classes.attributes,other2",
+                split_string="::")
+    assert rec2 is rec
+
     rec2 = find(my_model, "P2.Part2.rec", "other1,other2,other3")
     assert rec2 is None
 

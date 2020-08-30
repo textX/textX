@@ -143,7 +143,7 @@ class RuleCrossRef(object):
             Used for rule references in the RHS of the assignments to
             determine attribute type.
         position(int): A position in the input string of this cross-ref.
-        rrel_tree: the rrel tree defined for this reference
+        rrel_tree: the RREL tree defined for this reference
     """
     def __init__(self, rule_name, cls, position, rrel_tree):
         self.rule_name = rule_name
@@ -153,7 +153,8 @@ class RuleCrossRef(object):
         self.local_scope_provider = None
         if rrel_tree is not None:
             from textx.scoping.rrel import create_rrel_scope_provider
-            self.local_scope_provider = create_rrel_scope_provider(rrel_tree)
+            self.local_scope_provider = create_rrel_scope_provider(
+                rrel_tree, None, rule_name)
 
     def __str__(self):
         return self.rule_name
@@ -576,7 +577,7 @@ class TextXVisitor(RRELVisitor):
     def visit_rule_params(self, node, children):
         params = {}
         for name, value in children:
-            if name not in ['skipws', 'ws']:
+            if name not in ['skipws', 'ws', 'split']:
                 raise TextXSyntaxError(
                     'Invalid rule param "{}" at {}.'
                     .format(name,
