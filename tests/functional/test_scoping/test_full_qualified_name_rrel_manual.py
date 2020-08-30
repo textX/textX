@@ -197,6 +197,14 @@ def test_fully_qualified_name_ref_with_splitstring():
     assert a[0].ref.name == "C2"
 
 
+def test_split_param_without_delimiter():
+    with raises(textx.exceptions.TextXError,
+                match=r'split requires a string parameter'):
+        metamodel_from_str('''
+            FQN[split]: ID('/'ID)*;
+        ''')
+
+
 def test_fully_qualified_name_ref_type_error():
     """
     This is a basic test for the FQN (positive and negative test).
