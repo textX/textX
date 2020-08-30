@@ -37,13 +37,9 @@ def test_issue275():
     metamodel_export_tofile(entity_mm, out_file, renderer)
 
     text = out_file.getvalue()
-    print(text)
     assert text.__contains__("&lt;")
     assert text.__contains__("&gt;")
 
     table = renderer.get_match_rules_table()
-    print("----------")
-    print(table)
-    print("----------")
     html5parser = html5lib.HTMLParser(strict=True)
     html5parser.parseFragment(table)

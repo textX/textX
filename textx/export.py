@@ -103,10 +103,11 @@ def dot_escape(s):
             .replace('?', r'\?')
 
 
-def html_escape(s):
-    if sys.version < '3':
+if sys.version < '3':
+    def html_escape(s):
         return s.replace("<", "&lt;").replace(">", "&gt;")
-    else:
+else:
+    def html_escape(s):
         from html import escape
         return escape(s)
 
