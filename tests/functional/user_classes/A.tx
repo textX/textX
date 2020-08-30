@@ -1,0 +1,2 @@
+Thing: x=INT "," y=INT;
+AThing: "A" v=Thing;
