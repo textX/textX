@@ -258,7 +258,6 @@ class TextXMetaModel(DebugPrinter):
             file_name = os.path.abspath(file_name)
 
         # Root path will be dir name of the file if loaded from file.
-        # Root path will be dir name of the file if loaded from file.
         # If the grammar is not loaded from file 'import' statement can't be
         # used.
         self.root_path = os.path.dirname(file_name) if file_name else None
@@ -269,10 +268,9 @@ class TextXMetaModel(DebugPrinter):
 
     def register_scope_providers(self, sp):
         self.scope_providers = sp
-        for k in self.scope_providers.keys():
-            if isinstance(self.scope_providers[k], string_types):
-                self.scope_providers[k] = create_rrel_scope_provider(
-                    self.scope_providers[k])
+        for k, v in self.scope_providers.items():
+            if isinstance(v, string_types):
+                self.scope_providers[k] = create_rrel_scope_provider(v)
 
     def _namespace_for_file_name(self, file_name):
         if file_name is None or self.root_path is None:

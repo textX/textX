@@ -142,6 +142,8 @@ class ObjCrossRef(object):
         obj_name(str): A name of the target object.
         cls(TextXClass): The target object class.
         position(int): A position in the input string of this cross-ref.
+        local_scope_provider(scope provider): A scope provider for that
+            reference (see scoping.md for requirements of a scope provider)
     """
 
     def __init__(self, obj_name, cls, position, local_scope_provider):
