@@ -199,9 +199,17 @@ def test_fully_qualified_name_ref_with_splitstring():
 
 def test_split_param_without_delimiter():
     with raises(textx.exceptions.TextXError,
-                match=r'split requires a string parameter'):
+                match=r'.*split requires a string parameter.*'):
         metamodel_from_str('''
             FQN[split]: ID('/'ID)*;
+        ''')
+
+
+def test_split_param_without_delimiter2():
+    with raises(textx.exceptions.TextXError,
+                match=r'.*split requires a non-empty string parameter.*'):
+        metamodel_from_str('''
+            FQN[split='']: ID('/'ID)*;
         ''')
 
 

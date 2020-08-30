@@ -585,6 +585,8 @@ class TextXVisitor(RRELVisitor):
 
             if name == 'split' and not isinstance(value, string_types):
                 raise TextXError("param split requires a string parameter")
+            if name == 'split' and len(value)==0:
+                raise TextXError("param split requires a non-empty string parameter")
             if name == 'ws' and '\\' in value:
                 new_value = ""
                 if "\\n" in value:
