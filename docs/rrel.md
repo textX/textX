@@ -3,6 +3,8 @@ Changes:
  * Added preliminary syntax to enable multi files search  (including ImportURI activation): Use
    the prefix `+m:` for an RREL expression: Then, in case of no match, other models are searched.
    ([grammar example](https://github.com/textX/textX/blob/master/tests/functional/registration/projects/data_dsl/data_dsl/Data.tx))
+ * Added docu concerning the pslit param
+ * Removed "See [this comment](https://github.com/igordejanovic/textX/issues/111#issuecomment-441308211)"
 
 # RREL
 RREL allows to specify scope provider (lookup) specification in the
@@ -147,6 +149,27 @@ Then the RREL scope provider (using the match rule with the extra
 rule parameter `split`) automatically uses the given split
 character to process the name.
 
+## RREL and multi files model
+
+Use the prefix `+m:` for an RREL expression to activate a multi file model
+scope provider. Then, in case of no match, other loaded models are searched.
+When using this extra prefix the importURI feature is activated
+(see [scoping](scoping.md) and
+[grammar example](https://github.com/textX/textX/blob/master/tests/functional/registration/projects/data_dsl/data_dsl/Data.tx)).
+
+## Using RREL from Python code
+
+RREL expression could be used during registration in place of scoping provider.
+For example:
+
+```Python
+my_meta_model.register_scope_providers({
+        "*.*": scoping_providers.FQN(),
+        "Connection.from_port": "from_inst.component.slots"  # RREL
+        "Connection.to_port": "from_inst.component.slots"      # RREL
+    })
+```
+
 ## RREL processing (internal)
 
 RREL expression are parsed when the grammar is loaded and transformed to AST
@@ -166,18 +189,3 @@ the root expression AST node, an initial input. Each operator object should
 return the next AST context and the unconsumed part of the name. At the end of
 the successful search AST context should be a single object and the names parts
 should be empty.
-
-## Using RREL from Python code
-
-RREL expression could be used during registration in place of scoping provider.
-For example:
-
-```Python
-my_meta_model.register_scope_providers({
-        "*.*": scoping_providers.FQN(),
-        "Connection.from_port": "from_inst.component.slots"  # RREL
-        "Connection.to_port": "from_inst.component.slots"      # RREL
-    })
-```
-
-See [this comment](https://github.com/igordejanovic/textX/issues/111#issuecomment-441308211)
