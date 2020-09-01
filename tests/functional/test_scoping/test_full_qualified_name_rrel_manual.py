@@ -32,31 +32,6 @@ Comment: /#.*/;
 FQN: ID('.'ID)*;
 '''
 
-metamodel_str2 = '''
-Model:
-    packages*=Package
-;
-
-Package:
-    'package' name=ID '{'
-    classes*=Class
-    '}'
-;
-
-Class:
-    'class' name=ID '{'
-        attributes*=Attribute
-    '}'
-;
-
-Attribute:
-        'attr' ref=[Class|FQN] name=ID ';'
-;
-
-Comment: /#.*/;
-FQN[split='/']: ID('/'ID)*;
-'''
-
 
 def test_fully_qualified_name_ref():
     """
@@ -160,7 +135,14 @@ def test_fully_qualified_name_ref_with_splitstring():
     # META MODEL DEF
     #################################
 
-    my_metamodel = metamodel_from_str(metamodel_str2)
+    my_metamodel = metamodel_from_str(r'''
+        Model: packages*=Package;
+        Package: 'package' name=ID '{' classes*=Class '}';
+        Class: 'class' name=ID '{'attributes*=Attribute'}';
+        Attribute: 'attr' ref=[Class|FQN] name=ID ';';
+        Comment: /#.*/;
+        FQN[split='/']: ID('/'ID)*;
+    ''')
 
     my_metamodel.register_scope_providers({"Attribute.ref": "^packages*.classes"})
 
