@@ -96,6 +96,56 @@ The process stops when either:
   found the object. If the type is not the same as the type given in the grammar
   reference we report an error, else we found our object.
 
+## RREL reference name deduction
+
+The name of a referenced object is transformed into a list of non-empty
+name parts, which is processed by a RREL expression to navigate through the
+model. Possible names are defined in the grammar, e.g. `FQN` in the
+following example (used in rule `Attribute` to reference a model class:
+
+    Model:     packages*=Package;
+    Package:   'package' name=ID '{' classes*=Class '}';
+    Class:     'class' name=ID '{' attributes*=Attribute '}';
+    Attribute: 'attr' ref=[Class|FQN|^packages*.classes] name=ID ';';
+    Comment:   /#.*/;
+    FQN:       ID('.'ID)*;
+
+The name of a reference (`Attribute.ref`) could then be,
+e.g., `P1.Part1` (the package `P1` and the class `Part1`),
+separated by a dot. The **dot is the default separator**
+(if no other separator is specified).
+
+    package P1 {
+        class Part1 {
+        }
+    }
+    package P2 {
+        class Part2 {
+            attr C2 rec;
+        }
+        class C2 {
+            attr P1.Part1 p1;
+            attr Part2 p2a;
+            attr P2.Part2 p2b;
+        }
+    }
+
+The match rule used to specify possible reference names (e.g., `FQN`)
+can **specify a separator used to split the reference name into individual
+name parts**. Use the rule parameter `split`, which must be a non-empty
+string (e.g. `split='/'`; note that the match rule itself should produce
+names, for which the given separator makes sense):
+
+    Model:          packages*=Package;
+    Package:        'package' name=ID '{' classes*=Class '}';
+    Class:          'class' name=ID '{' attributes*=Attribute '}';
+    Attribute:      'attr' ref=[Class|FQN|^packages*.classes] name=ID ';';
+    Comment:        /#.*/;
+    FQN[split='/']: ID('/'ID)*;  // separator split='/'
+
+Then the RREL scope provider (using the match rule with the extra
+rule parameter `split`) automatically uses the given split
+character to process the name.
 
 ## RREL processing (internal)
 
