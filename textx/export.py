@@ -103,6 +103,15 @@ def dot_escape(s):
             .replace('?', r'\?')
 
 
+if sys.version < '3':
+    def html_escape(s):
+        return s.replace("<", "&lt;").replace(">", "&gt;")
+else:
+    def html_escape(s):
+        from html import escape
+        return escape(s)
+
+
 def dot_repr(o):
     if type(o) is text:
         return "'{}'".format(dot_escape(text(o)))
@@ -118,18 +127,25 @@ class DotRenderer(object):
     def get_header(self):
         return HEADER
 
-    def get_trailer(self):
+    def get_match_rules_table(self):
         trailer = ''
         if self.match_rules:
-            trailer = 'match_rules [ shape=plaintext, label=< <table>\n'
+            trailer = '<table>\n'
             for cls in sorted(self.match_rules, key=lambda x: x._tx_fqn):
                 trailer += '\t<tr>\n'
                 attrs = dot_match_str(cls, self.match_rules)
                 trailer += '\t\t<td><b>{}</b></td><td>{}</td>\n'.format(
-                    cls.__name__, attrs)
+                    cls.__name__, html_escape(attrs))
                 trailer += '\t</tr>\n'
-            trailer += '</table> >]\n\n'
+            trailer += '</table>'
+        return trailer
 
+    def get_trailer(self):
+        trailer = ''
+        if self.match_rules:
+            trailer = 'match_rules [ shape=plaintext, label=< {} >]\n\n'.format(
+                self.get_match_rules_table()
+            )
         return trailer + '\n}\n'
 
     def render_class(self, cls):
