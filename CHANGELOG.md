@@ -26,7 +26,8 @@ please take a look at related PRs and issues and see if the change affects you.
   your grammar. You can alternatively also pass a callable (see metamodel.md;
   [#273]). Also, using base classes for rules from imported grammars in 
   conjunction with user classes is not allowed and results in an exception.
-
+- Fixed bug in `export.py` concerning html escaping in the dot export of a
+  textx meta-model ([#276]).
 
 ### Changed
 
@@ -478,6 +479,7 @@ please take a look at related PRs and issues and see if the change affects you.
   - Export to dot.
 
 
+[#276]: https://github.com/textX/textX/pull/276
 [#273]: https://github.com/textX/textX/pull/273
 [#270]: https://github.com/textX/textX/issues/270
 [#272]: https://github.com/textX/textX/pull/272
