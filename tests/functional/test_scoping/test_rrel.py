@@ -109,7 +109,7 @@ def test_rrel_basic_lookup():
     #################################
 
     P2 = find(my_model, "P2", "packages")
-    assert P2 is not None
+    assert P2.name == "P2"
     Part2 = find(my_model, "P2.Part2", "packages.classes")
     assert Part2.name == "Part2"
     rec = find(my_model, "P2.Part2.rec", "packages.classes.attributes")
