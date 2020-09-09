@@ -1,11 +1,3 @@
-Changes:
- * ~~Due to expansion of `*` for now we should prohibit using of `*` more than once.~~
- * Added preliminary syntax to enable multi files search  (including ImportURI activation): Use
-   the prefix `+m:` for an RREL expression: Then, in case of no match, other models are searched.
-   ([grammar example](https://github.com/textX/textX/blob/master/tests/functional/registration/projects/data_dsl/data_dsl/Data.tx))
- * Added docu concerning the pslit param
- * Removed "See [this comment](https://github.com/igordejanovic/textX/issues/111#issuecomment-441308211)"
-
 # Reference resolving expression language (RREL)
 RREL allows to specify scope provider (lookup) specification in the
 grammar itself ([grammar example](tests/functional/test_scoping/components_model1/ComponentsRrel.tx) and 
