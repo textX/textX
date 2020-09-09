@@ -6,7 +6,7 @@ Changes:
  * Added docu concerning the pslit param
  * Removed "See [this comment](https://github.com/igordejanovic/textX/issues/111#issuecomment-441308211)"
 
-# RREL
+# Reference resolving expression language (RREL)
 RREL allows to specify scope provider (lookup) specification in the
 grammar itself ([grammar example](tests/functional/test_scoping/components_model1/ComponentsRrel.tx) and 
 an example [test](https://github.com/textX/textX/blob/master/tests/functional/examples/test_hierarchical_data_structures_referencing_attributes.py)).
