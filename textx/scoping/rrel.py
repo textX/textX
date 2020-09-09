@@ -361,12 +361,12 @@ class RRELPath(RRELBase):
                 if isinstance(iobj, Postponed):
                     yield iobj, ilookup_list
                     return
-                if len(self.path_elements)-1 == idx:
+                if len(self.path_elements) - 1 == idx:
                     yield iobj, ilookup_list
                 else:
                     for iiobj, iilookup_list in intern_get_next_matches(
                             iobj, ilookup_list, allowed,
-                            first_element=False, idx=idx+1):
+                            first_element=False, idx=idx + 1):
                         yield iiobj, iilookup_list
 
         for iobj, ilookup_list in intern_get_next_matches(
