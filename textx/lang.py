@@ -777,7 +777,7 @@ class TextXVisitor(RRELVisitor):
             rhs_rule = rhs_rule[1]
             # store RREL related information
             cls_attr.scope_provider = rhs_rule.scope_provider
-            cls_attr.scope_provider_match_rule_name = rhs_rule.rule_name
+            cls_attr.match_rule_name = rhs_rule.rule_name
             # Target class is not the same as target rule
             target_cls = rhs_rule.cls
 
