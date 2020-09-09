@@ -111,68 +111,60 @@ def test_rrel_basic_lookup():
     P2 = find(my_model, "P2", "packages")
     assert P2 is not None
     Part2 = find(my_model, "P2.Part2", "packages.classes")
-    assert Part2 is not None
+    assert Part2.name == "Part2"
     rec = find(my_model, "P2.Part2.rec", "packages.classes.attributes")
-    assert rec is not None
+    assert rec.name == "rec"
+    assert rec.parent == Part2
 
     P2 = find(my_model, "P2", "(packages)")
-    assert P2 is not None
+    assert P2.name == "P2"
 
     from textx import get_model
     assert get_model(my_model) is my_model
 
     P2 = find(my_model, "P2", "packages*")
-    assert P2 is not None
+    assert P2.name == "P2"
     Part2 = find(my_model, "P2.Part2", "packages*.classes")
-    assert Part2 is not None
+    assert Part2.name == "Part2"
     rec = find(my_model, "P2.Part2.rec", "packages*.classes.attributes")
-    assert rec is not None
+    assert rec.name == "rec"
+    assert rec.parent == Part2
 
     Part2_tst = find(rec, "", "..")
-    assert Part2_tst is not None
     assert Part2_tst is Part2
 
     P2_from_inner_node = find(rec, "P2", "(packages)")
     assert P2_from_inner_node is P2
 
     P2_tst = find(rec, "", "parent(Package)")
-    assert P2_tst is not None
     assert P2_tst is P2
 
     P2_tst = find(rec, "", "...")
-    assert P2_tst is not None
     assert P2_tst is P2
 
     P2_tst = find(rec, "", ".(..).(..)")
-    assert P2_tst is not None
     assert P2_tst is P2
 
     P2_tst = find(rec, "", "(..).(..)")
-    assert P2_tst is not None
     assert P2_tst is P2
 
     P2_tst = find(rec, "", "...(.).(.)")
-    assert P2_tst is not None
     assert P2_tst is P2
 
     P2_tst = find(rec, "", "..(.).(..)")
-    assert P2_tst is not None
     assert P2_tst is P2
 
     P2_tst = find(rec, "", "..((.)*)*.(..)")
-    assert P2_tst is not None
     assert P2_tst is P2
 
     none = find(my_model, "", "..")
     assert none is None
 
     inner = find(my_model, "inner", "~packages.~packages.~classes.attributes")
-    assert inner is not None
     assert inner.name == "inner"
 
     # expensive version of a "Plain Name" scope provider:
     inner = find(my_model, "inner", "~packages*.~classes.attributes")
-    assert inner is not None
     assert inner.name == "inner"
 
     rec2 = find(my_model, "P2.Part2.rec", "other1,other2,packages*.classes.attributes")
@@ -195,11 +187,11 @@ def test_rrel_basic_lookup():
     assert rec2 is rec
 
     rec2 = find(my_model, "rec", "(~packages,~classes,attributes,classes)*")
-    assert rec2 is not None
+    assert rec2.name == "rec"
 
     rec2 = find(my_model, "rec",
                 "(~packages,~classes,attributes,classes)*", my_metamodel["OBJECT"])
-    assert rec2 is not None
+    assert rec2.name == "rec"
 
     rec2 = find(my_model, "rec",
                 "(~packages,~classes,attributes,classes)*", my_metamodel["Attribute"])
@@ -211,12 +203,12 @@ def test_rrel_basic_lookup():
 
     rec2 = find(my_model, "rec",
                 "(~packages,classes,attributes,~classes)*", my_metamodel["Class"])
-    assert rec2 is not None
+    assert rec2.name == "rec"
     assert rec2 is not rec  # it is the class...
 
     rec2 = find(my_model, "rec",
                 "(~packages,~classes,attributes,classes)*", my_metamodel["Class"])
-    assert rec2 is not None
+    assert rec2.name == "rec"
     assert rec2 is not rec  # it is the class...
 
     t = find(my_model, "", ".")
@@ -233,7 +225,7 @@ def test_rrel_basic_lookup():
 
     rec2 = find(my_model, "rec",
                 "(.)*.(~packages,~classes,attributes,classes)*", my_metamodel["Class"])
-    assert rec2 is not None
+    assert rec2.name == "rec"
     assert rec2 is not rec  # it is the class...
 
     # Here, we test the start_from_root/start_locally logic:
