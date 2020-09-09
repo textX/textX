@@ -356,20 +356,17 @@ class RRELPath(RRELBase):
                                     idx=0):
             assert len(self.path_elements) > idx
             e = self.path_elements[idx]
-            print("**** Path {} index {}<{} = {} with {} @ {}".format(self, idx, len(self.path_elements), e, lookup_list, str(obj)))
             for iobj, ilookup_list in e.get_next_matches(
                     obj, lookup_list, allowed, first_element):
                 if isinstance(iobj, Postponed):
                     yield iobj, ilookup_list
                     return
                 if len(self.path_elements)-1 == idx:
-                    print("**** Path {} index {} with {} >> {}".format(self, idx, lookup_list, obj))
                     yield iobj, ilookup_list
                 else:
                     for iiobj, iilookup_list in intern_get_next_matches(
                             iobj, ilookup_list, allowed,
                             first_element=False, idx=idx+1):
-                        print("**** Path {} index {} with {} ... {}".format(self, idx, lookup_list, obj))
                         yield iiobj, iilookup_list
 
         for iobj, ilookup_list in intern_get_next_matches(
