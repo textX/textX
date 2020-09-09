@@ -142,16 +142,16 @@ class ObjCrossRef(object):
         obj_name(str): A name of the target object.
         cls(TextXClass): The target object class.
         position(int): A position in the input string of this cross-ref.
-        local_scope_provider(scope provider): A scope provider for that
+        scope_provider(scope provider): A scope provider for that
             reference (see scoping.md for requirements of a scope provider)
     """
 
-    def __init__(self, obj_name, cls, position, local_scope_provider,
+    def __init__(self, obj_name, cls, position, scope_provider,
                  match_rule_name):
         self.obj_name = obj_name
         self.cls = cls
         self.position = position
-        self.local_scope_provider = local_scope_provider
+        self.scope_provider = scope_provider
         self.match_rule_name = match_rule_name
 
 
@@ -558,11 +558,11 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
 
                 if metaattr.ref and not metaattr.cont:
                     # If this is non-containing reference create ObjCrossRef
-                    p = metaattr.local_scope_provider
-                    rn = metaattr.local_scope_provider_match_rule_name
+                    p = metaattr.scope_provider
+                    rn = metaattr.scope_provider_match_rule_name
                     value = ObjCrossRef(obj_name=value, cls=metaattr.cls,
                                         position=node[0].position,
-                                        local_scope_provider=p,
+                                        scope_provider=p,
                                         match_rule_name=rn)
                     parser._crossrefs.append((model_obj, metaattr, value))
                     return model_obj
@@ -584,12 +584,12 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                             # If this is non-containing reference
                             # create ObjCrossRef
 
-                            p = metaattr.local_scope_provider
-                            rn = metaattr.local_scope_provider_match_rule_name
+                            p = metaattr.scope_provider
+                            rn = metaattr.scope_provider_match_rule_name
                             value = ObjCrossRef(obj_name=value,
                                                 cls=metaattr.cls,
                                                 position=n.position,
-                                                local_scope_provider=p,
+                                                scope_provider=p,
                                                 match_rule_name=rn)
 
                             parser._crossrefs.append((obj_attr, metaattr,
@@ -732,9 +732,9 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
 
         for crossref in parser._crossrefs:
             crossref = crossref[2]
-            if crossref.local_scope_provider is not None:
+            if crossref.scope_provider is not None:
                 from textx.scoping import ModelLoader
-                scope_provider = crossref.local_scope_provider
+                scope_provider = crossref.scope_provider
                 if isinstance(scope_provider, ModelLoader):
                     scope_provider.load_models(model, encoding=encoding)
 
@@ -953,8 +953,8 @@ class ReferenceResolver:
                 attr_refs = [obj.__class__.__name__ + "." + attr.name,
                              "*." + attr.name, obj.__class__.__name__ + ".*",
                              "*.*"]
-                if crossref.local_scope_provider is not None:
-                    resolved = crossref.local_scope_provider(obj, attr, crossref)
+                if crossref.scope_provider is not None:
+                    resolved = crossref.scope_provider(obj, attr, crossref)
                 else:
                     for attr_ref in attr_refs:
                         if attr_ref in metamodel.scope_providers:
