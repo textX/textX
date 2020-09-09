@@ -173,8 +173,7 @@ def test_referencing_attributes_with_rrel_all_in_one():
         Instance:
             'instance' name=ID (':' type=[Struct])?;
         Reference:
-            'reference' instance=[Instance]
-            '.' ref=[Val|FQN|.~instance.~type.vals.(~type.vals)*];
+            'reference' ref=[Val|FQN|instances.~type.vals.(~type.vals)*];
         FQN: ID ('.' ID)*;
         ''')
     m = mm.model_from_str(model_text)
@@ -191,7 +190,7 @@ def test_referencing_attributes_with_rrel_all_in_one():
     # negative tests
     # error: "not_there" not part of A
     with raises(textx.exceptions.TextXSemanticError,
-                match=r'.*Unknown object "b.a.not_there".*'):
+                match=r'.*Unknown object "c.b.a.not_there".*'):
         mm.model_from_str('''
         struct A { val x }
         struct B { val a: A}
@@ -205,7 +204,7 @@ def test_referencing_attributes_with_rrel_all_in_one():
 
     # error: B.a is not of type A
     with raises(textx.exceptions.TextXSemanticError,
-                match=r'.*Unknown object "b.a.x".*'):
+                match=r'.*Unknown object "c.b.a.x".*'):
         mm.model_from_str('''
         struct A { val x }
         struct B { val a }
