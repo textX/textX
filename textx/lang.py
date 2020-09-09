@@ -623,7 +623,7 @@ class TextXVisitor(RRELVisitor):
         rule_name = text(node)
         # Here a name of the meta-class (rule) is expected but to support
         # forward referencing we are postponing resolving to second_pass.
-        return RuleCrossRef(rule_name, rule_name, node.position, None)  # TODO. check none! what is the difference to the other constructor call below?
+        return RuleCrossRef(rule_name, rule_name, node.position, None)
 
     def visit_textx_rule_body(self, node, children):
         if len(children) == 1:
@@ -773,10 +773,11 @@ class TextXVisitor(RRELVisitor):
         if type(rhs_rule) is tuple and rhs_rule[0] == "obj_ref":
             cls_attr.cont = False
             cls_attr.ref = True
-            cls_attr.local_scope_provider = rhs_rule[1].local_scope_provider
-            cls_attr.local_scope_provider_match_rule_name = rhs_rule[1].rule_name
             # Override rhs by its PEG rule for further processing
             rhs_rule = rhs_rule[1]
+            # store RREL related information
+            cls_attr.local_scope_provider = rhs_rule.local_scope_provider
+            cls_attr.local_scope_provider_match_rule_name = rhs_rule.rule_name
             # Target class is not the same as target rule
             target_cls = rhs_rule.cls
 
