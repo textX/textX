@@ -58,7 +58,7 @@ Reference resolving expression language (RREL) consists of several operators (se
   collection. If not found `*` would expand `extends` to `extends.extends` if
   possible and the search would continue.
 - `*` - Repeat/expand. Used in expansion step to expand sub-expression by 0+
-  times. First expansion tried will be 0, than once, then twice etc. For
+  times. First expansion tried will be 0, then once, then twice etc. For
   example, `~extends*.methods` would search in `methods` collection in the
   current context object for the current name part. If not found expansion of
   `*` would took place and we would search in `~extends.methods` by iterating
