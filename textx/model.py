@@ -144,6 +144,9 @@ class ObjCrossRef(object):
         position(int): A position in the input string of this cross-ref.
         scope_provider(scope provider): A scope provider for that
             reference (see scoping.md for requirements of a scope provider)
+        match_rule_name: the rule name which defines the text format of
+            the reference. It is required to extract the split-attribute for
+            locally defined scope providers.
     """
 
     def __init__(self, obj_name, cls, position, scope_provider,
