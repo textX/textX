@@ -52,7 +52,7 @@ def rrel_standalone():
     return rrel_expression, EOF
 
 
-class RRELBase:
+class RRELBase(object):
     def __init__(self):
         pass
 
