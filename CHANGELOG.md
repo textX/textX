@@ -14,6 +14,13 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ## [Unreleased]
 
+### Added
+
+  - Initial implementation of TEP-001 ([#111]) allowing to specify scope
+    provider behavior within the grammar itself. [#274] introduces
+    the RREL (reference resolving expression language) to define how
+    references are resolved. Details see `rrel.md`.
+
 ### Fixed
 
 - Fixed bug where (Ext)RelativeName scope providers accepted any referenced
@@ -480,6 +487,7 @@ please take a look at related PRs and issues and see if the change affects you.
 
 
 [#276]: https://github.com/textX/textX/pull/276
+[#274]: https://github.com/textX/textX/pull/274
 [#273]: https://github.com/textX/textX/pull/273
 [#270]: https://github.com/textX/textX/issues/270
 [#272]: https://github.com/textX/textX/pull/272
@@ -538,6 +546,7 @@ please take a look at related PRs and issues and see if the change affects you.
 [#118]: https://github.com/textX/textX/pull/118
 [#117]: https://github.com/textX/textX/pull/117
 [#114]: https://github.com/textX/textX/pull/114
+[#111]: https://github.com/textX/textX/issues/111
 [#108]: https://github.com/textX/textX/issues/108
 [#105]: https://github.com/textX/textX/issues/105
 [#103]: https://github.com/textX/textX/issues/103
