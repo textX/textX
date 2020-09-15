@@ -142,12 +142,20 @@ class ObjCrossRef(object):
         obj_name(str): A name of the target object.
         cls(TextXClass): The target object class.
         position(int): A position in the input string of this cross-ref.
+        scope_provider(scope provider): A scope provider for that
+            reference (see scoping.md for requirements of a scope provider)
+        match_rule_name: the rule name which defines the text format of
+            the reference. It is required to extract the split-attribute for
+            locally defined scope providers.
     """
 
-    def __init__(self, obj_name, cls, position):
+    def __init__(self, obj_name, cls, position, scope_provider,
+                 match_rule_name):
         self.obj_name = obj_name
         self.cls = cls
         self.position = position
+        self.scope_provider = scope_provider
+        self.match_rule_name = match_rule_name
 
 
 class RefRulePosition(object):
@@ -553,8 +561,12 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
 
                 if metaattr.ref and not metaattr.cont:
                     # If this is non-containing reference create ObjCrossRef
+                    p = metaattr.scope_provider
+                    rn = metaattr.match_rule_name
                     value = ObjCrossRef(obj_name=value, cls=metaattr.cls,
-                                        position=node[0].position)
+                                        position=node[0].position,
+                                        scope_provider=p,
+                                        match_rule_name=rn)
                     parser._crossrefs.append((model_obj, metaattr, value))
                     return model_obj
 
@@ -575,9 +587,13 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                             # If this is non-containing reference
                             # create ObjCrossRef
 
+                            p = metaattr.scope_provider
+                            rn = metaattr.match_rule_name
                             value = ObjCrossRef(obj_name=value,
                                                 cls=metaattr.cls,
-                                                position=n.position)
+                                                position=n.position,
+                                                scope_provider=p,
+                                                match_rule_name=rn)
 
                             parser._crossrefs.append((obj_attr, metaattr,
                                                       value))
@@ -716,6 +732,14 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
             from textx.scoping import ModelLoader
             if isinstance(scope_provider, ModelLoader):
                 scope_provider.load_models(model, encoding=encoding)
+
+        for crossref in parser._crossrefs:
+            crossref = crossref[2]
+            if crossref.scope_provider is not None:
+                from textx.scoping import ModelLoader
+                scope_provider = crossref.scope_provider
+                if isinstance(scope_provider, ModelLoader):
+                    scope_provider.load_models(model, encoding=encoding)
 
         if not is_immutable_obj:
             model._tx_reference_resolver = ReferenceResolver(
@@ -932,15 +956,18 @@ class ReferenceResolver:
                 attr_refs = [obj.__class__.__name__ + "." + attr.name,
                              "*." + attr.name, obj.__class__.__name__ + ".*",
                              "*.*"]
-                for attr_ref in attr_refs:
-                    if attr_ref in metamodel.scope_providers:
-                        if self.parser.debug:
-                            self.parser.dprint(" FOUND {}".format(attr_ref))
-                        resolved = metamodel.scope_providers[attr_ref](
-                            obj, attr, crossref)
-                        break
+                if crossref.scope_provider is not None:
+                    resolved = crossref.scope_provider(obj, attr, crossref)
                 else:
-                    resolved = default_scope(obj, attr, crossref)
+                    for attr_ref in attr_refs:
+                        if attr_ref in metamodel.scope_providers:
+                            if self.parser.debug:
+                                self.parser.dprint(" FOUND {}".format(attr_ref))
+                            resolved = metamodel.scope_providers[attr_ref](
+                                obj, attr, crossref)
+                            break
+                    else:
+                        resolved = default_scope(obj, attr, crossref)
 
                 # Collect cross-references for textx-tools
                 if resolved is not None and not type(resolved) is Postponed:

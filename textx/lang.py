@@ -10,9 +10,11 @@ from __future__ import unicode_literals
 import re
 from arpeggio import StrMatch, Optional, ZeroOrMore, OneOrMore, Sequence,\
     OrderedChoice, UnorderedGroup, Not, And, RegExMatch, Match, NoMatch, EOF, \
-    ParsingExpression, ParserPython, PTNodeVisitor, visit_parse_tree
+    ParsingExpression, ParserPython, visit_parse_tree
 from arpeggio.export import PMDOTExporter
 from arpeggio import RegExMatch as _
+from textx.scoping.rrel import rrel_expression, RRELVisitor
+from six import string_types
 
 from .exceptions import TextXError, TextXSyntaxError, TextXSemanticError
 from .const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, \
@@ -65,7 +67,7 @@ def assignment_rhs():       return [simple_match, reference], Optional(repeat_mo
 # References
 def reference():            return [rule_ref, obj_ref]
 def rule_ref():             return ident
-def obj_ref():              return '[', class_name, Optional('|', obj_ref_rule), ']'
+def obj_ref():              return '[', class_name, Optional('|', obj_ref_rule, Optional('|', rrel_expression)), ']'
 
 def rule_name():            return ident
 def obj_ref_rule():         return ident
@@ -142,12 +144,17 @@ class RuleCrossRef(object):
             Used for rule references in the RHS of the assignments to
             determine attribute type.
         position(int): A position in the input string of this cross-ref.
+        rrel_tree: the RREL tree defined for this reference
     """
-    def __init__(self, rule_name, cls, position):
+    def __init__(self, rule_name, cls, position, rrel_tree):
         self.rule_name = rule_name
         self.cls = cls
         self.position = position
         self.suppress = False
+        self.scope_provider = None
+        if rrel_tree is not None:
+            from textx.scoping.rrel import create_rrel_scope_provider
+            self.scope_provider = create_rrel_scope_provider(rrel_tree)
 
     def __str__(self):
         return self.rule_name
@@ -171,7 +178,7 @@ class ClassCrossRef(object):
         self.position = position
 
 
-class TextXVisitor(PTNodeVisitor):
+class TextXVisitor(RRELVisitor):
 
     def __init__(self, grammar_parser, metamodel):
         self.grammar_parser = grammar_parser
@@ -570,12 +577,16 @@ class TextXVisitor(PTNodeVisitor):
     def visit_rule_params(self, node, children):
         params = {}
         for name, value in children:
-            if name not in ['skipws', 'ws']:
+            if name not in ['skipws', 'ws', 'split']:
                 raise TextXSyntaxError(
                     'Invalid rule param "{}" at {}.'
                     .format(name,
                             self.grammar_parser.pos_to_linecol(node.position)))
 
+            if name == 'split' and not isinstance(value, string_types):
+                raise TextXError("param split requires a string parameter")
+            if name == 'split' and len(value)==0:
+                raise TextXError("param split requires a non-empty string parameter")
             if name == 'ws' and '\\' in value:
                 new_value = ""
                 if "\\n" in value:
@@ -612,7 +623,7 @@ class TextXVisitor(PTNodeVisitor):
         rule_name = text(node)
         # Here a name of the meta-class (rule) is expected but to support
         # forward referencing we are postponing resolving to second_pass.
-        return RuleCrossRef(rule_name, rule_name, node.position)
+        return RuleCrossRef(rule_name, rule_name, node.position, None)
 
     def visit_textx_rule_body(self, node, children):
         if len(children) == 1:
@@ -764,6 +775,9 @@ class TextXVisitor(PTNodeVisitor):
             cls_attr.ref = True
             # Override rhs by its PEG rule for further processing
             rhs_rule = rhs_rule[1]
+            # store RREL related information
+            cls_attr.scope_provider = rhs_rule.scope_provider
+            cls_attr.match_rule_name = rhs_rule.rule_name
             # Target class is not the same as target rule
             target_cls = rhs_rule.cls
 
@@ -875,6 +889,7 @@ class TextXVisitor(PTNodeVisitor):
         # A reference to some other class instance will be the value of
         # its "name" attribute.
         class_name = children[0]
+        rrel_tree = None
         if class_name in BASE_TYPE_NAMES:
             line, col = self.grammar_parser.pos_to_linecol(node.position)
             raise TextXSemanticError(
@@ -882,10 +897,12 @@ class TextXVisitor(PTNodeVisitor):
                 .format((line, col)), line, col)
         if len(children) > 1:
             rule_name = children[1]
+            if len(children) > 2:
+                rrel_tree = children[2]
         else:
             # Default rule for matching obj cross-refs
             rule_name = 'ID'
-        return ("obj_ref", RuleCrossRef(rule_name, class_name, node.position))
+        return ("obj_ref", RuleCrossRef(rule_name, class_name, node.position, rrel_tree))
 
     def visit_integer(self, node, children):
         return int(node.value)

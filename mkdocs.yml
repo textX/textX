@@ -15,6 +15,7 @@ nav:
   - Meta-model: metamodel.md
   - Model: model.md
   - Scoping: scoping.md
+  - Reference resolving expression language: rrel.md
   - Multi meta-model: multimetamodel.md
   - Parser configuration: parser_config.md
   - Registration/Discovery: registration.md
