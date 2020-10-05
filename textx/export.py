@@ -325,11 +325,11 @@ def model_export_to_file(f, model=None, repo=None):
 
     def _export(obj):
 
-        if obj is None or obj in processed_set or type(obj) \
+        if obj is None or id(obj) in processed_set or type(obj) \
                 in PRIMITIVE_PYTHON_TYPES:
             return
 
-        processed_set.add(obj)
+        processed_set.add(id(obj))
 
         attrs = ""
         obj_cls = obj.__class__
@@ -337,6 +337,8 @@ def model_export_to_file(f, model=None, repo=None):
         for attr_name, attr in obj_cls._tx_attrs.items():
 
             attr_value = getattr(obj, attr_name)
+            if attr_value is None:
+                continue
 
             endmark = 'arrowtail=diamond dir=both' if attr.cont else ""
             required = "+" if attr.mult in \

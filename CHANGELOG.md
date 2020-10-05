@@ -26,6 +26,7 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ### Fixed
 
+  - Fixed bug with unhashable objects during dot export ([#283])
   - Fixed bug where (Ext)RelativeName scope providers accepted any referenced
     object that contained the lookup name in its name. Thanks ipa-mdl@GitHub
     ([#267])
@@ -490,6 +491,7 @@ please take a look at related PRs and issues and see if the change affects you.
   - Export to dot.
 
 
+[#283]: https://github.com/textX/textX/pull/283
 [#282]: https://github.com/textX/textX/pull/282
 [#281]: https://github.com/textX/textX/pull/281
 [#276]: https://github.com/textX/textX/pull/276
