@@ -114,7 +114,11 @@ else:
 
 def dot_repr(o):
     if type(o) is text:
-        return "'{}'".format(dot_escape(text(o)))
+        escaped = dot_escape(text(o))
+        if len(escaped) > 20:
+            return "'{}...'".format(escaped[:20])
+        else:
+            return "'{}'".format(escaped)
     else:
         return text(o)
 
