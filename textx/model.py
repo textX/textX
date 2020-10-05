@@ -62,18 +62,20 @@ def get_parent_of_type(typ, obj):
             return obj
 
 
-def get_children(decider, root, children_first=False):
+def get_children(selector, root, children_first=False, should_follow=lambda obj: True):
     """
     Returns a list of all model elements of type 'typ' starting from model
     element 'root'. The search process will follow containment links only.
     Non-containing references shall not be followed.
 
     Args:
-        decider(obj): a callable returning True if the object is of interest.
+        selector(callable): a predicate to decide if the object is of interest.
         root (model object): Python model object which is the start of the
             search process.
         children_first (bool): a flag indicating whether children will be
             returned before their parents (default=False)
+        should_follow(callable): A predicate to decide if the element should be
+            traversed.
     """
     collected = []
     collected_ids = set()
@@ -88,7 +90,7 @@ def get_children(decider, root, children_first=False):
         cls = elem.__class__
 
         if not children_first:
-            if hasattr(cls, '_tx_attrs') and decider(elem):
+            if hasattr(cls, '_tx_attrs') and selector(elem):
                 collected.append(elem)
                 collected_ids.add(id(elem))
 
@@ -98,16 +100,17 @@ def get_children(decider, root, children_first=False):
                 if attr.cont:
                     if attr.mult in (MULT_ONE, MULT_OPTIONAL):
                         new_elem = getattr(elem, attr_name)
-                        if new_elem:
+                        if new_elem and should_follow(new_elem):
                             follow(new_elem)
                     else:
                         new_elem_list = getattr(elem, attr_name)
                         if new_elem_list:
                             for new_elem in new_elem_list:
-                                follow(new_elem)
+                                if should_follow(new_elem):
+                                    follow(new_elem)
 
         if children_first:
-            if hasattr(cls, '_tx_attrs') and decider(elem):
+            if hasattr(cls, '_tx_attrs') and selector(elem):
                 collected.append(elem)
                 collected_ids.add(id(elem))
 
@@ -115,7 +118,7 @@ def get_children(decider, root, children_first=False):
     return collected
 
 
-def get_children_of_type(typ, root):
+def get_children_of_type(typ, root, children_first=False, should_follow=lambda obj: True):
     """
     Returns a list of all model elements of type 'typ' starting from model
     element 'root'. The search process will follow containment links only.
@@ -126,12 +129,18 @@ def get_children_of_type(typ, root):
             looking for.
         root (model object): Python model object which is the start of the
             search process.
+        children_first (bool): a flag indicating whether children will be
+            returned before their parents (default=False)
+        should_follow(callable): A predicate to decide if the element should be
+            traversed.
     """
 
     if type(typ) is not text:
         typ = typ.__name__
 
-    return get_children(lambda x: x.__class__.__name__ == typ, root)
+    return get_children(lambda x: x.__class__.__name__ == typ, root,
+                        children_first=children_first,
+                        should_follow=should_follow)
 
 
 class ObjCrossRef(object):

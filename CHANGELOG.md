@@ -20,6 +20,9 @@ please take a look at related PRs and issues and see if the change affects you.
     provider behavior within the grammar itself. [#274] introduces
     the RREL (reference resolving expression language) to define how
     references are resolved. Details see `rrel.md`.
+  - Parameter `should_follow` of callable type to `get_children` and
+    `get_children_of_type` model API calls to decide if the element should be
+    traversed. ([#281])
 
 ### Fixed
 
@@ -486,6 +489,7 @@ please take a look at related PRs and issues and see if the change affects you.
   - Export to dot.
 
 
+[#281]: https://github.com/textX/textX/pull/281
 [#276]: https://github.com/textX/textX/pull/276
 [#274]: https://github.com/textX/textX/pull/274
 [#273]: https://github.com/textX/textX/pull/273

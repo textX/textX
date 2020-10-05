@@ -105,21 +105,29 @@ searched for.
 Finds first object up the parent chain of the given type. If no parent of the
 given type exists `None` is returned.
 
-### `get_children_of_type(typ, root)`
+### `get_children_of_type(typ, root, children_first=False, should_follow=lambda obj: True)`
 
 - `typ (str or python class)`: The type of the model object we are looking for.
 - `root (model object)`: Python model object which is the start of the search
     process.
+- `children_first (bool)`: indicates if children should be returned before their
+  parents.
+- `should_follow (callable)`: a predicate used to decide if the object should be
+  traversed.
 
 Returns a list of all model elements of type `typ` starting from model element
 `root`. The search process will follow containment links only. Non-containing
 references shall not be followed.
 
-### `get_children(selector, root)`
+### `get_children(selector, root, children_first=False, should_follow=lambda obj: True)`
 
-- `select(obj)`: a callable returning True if the object is of interest.
+- `selector (callable)`: a predicate returning True if the object is of interest.
 - `root (model object)`: Python model object which is the start of the search
     process.
+- `children_first (bool)`: indicates if children should be returned before their
+  parents.
+- `should_follow (callable)`: a predicate used to decide if the object should be
+  traversed.
 
 Returns a list of all selected model elements starting from model element
 `root`. The search process will follow containment links only. Non-containing
