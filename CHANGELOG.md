@@ -23,24 +23,25 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ### Fixed
 
-- Fixed bug where (Ext)RelativeName scope providers accepted any referenced
-  object that contained the lookup name in its name. Thanks ipa-mdl@GitHub
-  ([#267])
-- Fixed bug in `flow_dsl` test project causing static files not being included
-  in package build/installation. Thanks sebix@GitHub ([#272]).
-- Fixed bug, where user classes not used in the grammar caused exceptions
-  ([#270]): now, when passing a list of user classes, you need to use them in
-  your grammar. You can alternatively also pass a callable (see metamodel.md;
-  [#273]). Also, using base classes for rules from imported grammars in 
-  conjunction with user classes is not allowed and results in an exception.
-- Fixed bug in `export.py` concerning html escaping in the dot export of a
-  textx meta-model ([#276]).
+  - Fixed bug where (Ext)RelativeName scope providers accepted any referenced
+    object that contained the lookup name in its name. Thanks ipa-mdl@GitHub
+    ([#267])
+  - Fixed bug in `flow_dsl` test project causing static files not being included
+    in package build/installation. Thanks sebix@GitHub ([#272]).
+  - Fixed bug, where user classes not used in the grammar caused exceptions
+    ([#270]): now, when passing a list of user classes, you need to use them in
+    your grammar. You can alternatively also pass a callable (see metamodel.md;
+    [#273]). Also, using base classes for rules from imported grammars in 
+    conjunction with user classes is not allowed and results in an exception.
+  - Fixed bug in `export.py` concerning html escaping in the dot export of a
+    textx meta-model ([#276]).
 
 ### Changed
 
-- Changed `unhashable type` exception when a list is used for `name` attributes by
-  raising a more informative exception and extending docs to document the issue
-  and a proper way to solve it ([#40], [#266]).
+  - Truncate long strings during dot export for better diagram readability ([#282]).
+  - Changed `unhashable type` exception when a list is used for `name` attributes by
+    raising a more informative exception and extending docs to document the issue
+    and a proper way to solve it ([#40], [#266]).
 
 
 ## [v2.2.0] (released: 2020-08-03)
@@ -486,6 +487,7 @@ please take a look at related PRs and issues and see if the change affects you.
   - Export to dot.
 
 
+[#282]: https://github.com/textX/textX/pull/282
 [#276]: https://github.com/textX/textX/pull/276
 [#274]: https://github.com/textX/textX/pull/274
 [#273]: https://github.com/textX/textX/pull/273
