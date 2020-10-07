@@ -42,6 +42,7 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ### Changed
 
+  - Make warning about not overwriting generated file more visible ([#284])
   - Truncate long strings during dot export for better diagram readability ([#282]).
   - Changed `unhashable type` exception when a list is used for `name` attributes by
     raising a more informative exception and extending docs to document the issue
@@ -491,6 +492,7 @@ please take a look at related PRs and issues and see if the change affects you.
   - Export to dot.
 
 
+[#284]: https://github.com/textX/textX/pull/284
 [#283]: https://github.com/textX/textX/pull/283
 [#282]: https://github.com/textX/textX/pull/282
 [#281]: https://github.com/textX/textX/pull/281

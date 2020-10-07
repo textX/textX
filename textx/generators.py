@@ -42,7 +42,8 @@ def gen_file(input_file, output_file, gen_callback, overwrite=False,
         gen_callback()
         click.echo('    ' + success_message)
     else:
-        click.echo('-- Skipping: {}'.format(output_file))
+        click.echo(click.style('-- NOT overwriting: ', fg='red', bold=True), nl=False)
+        click.echo(output_file)
 
 
 @generator('textX', 'dot')
