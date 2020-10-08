@@ -79,9 +79,9 @@
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#get_parent_of_typetyp-obj">get_parent_of_type(typ, obj)</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#get_children_of_typetyp-root">get_children_of_type(typ, root)</a>
+    <li class="toctree-l3"><a class="reference internal" href="#get_children_of_typetyp-root-children_firstfalse-should_followlambda-obj-true">get_children_of_type(typ, root, children_first=False, should_follow=lambda obj: True)</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#get_childrenselector-root">get_children(selector, root)</a>
+    <li class="toctree-l3"><a class="reference internal" href="#get_childrenselector-root-children_firstfalse-should_followlambda-obj-true">get_children(selector, root, children_first=False, should_follow=lambda obj: True)</a>
     </li>
         </ul>
     </li>
@@ -106,6 +106,8 @@
     </ul>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../scoping/">Scoping</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../rrel/">Reference resolving expression language</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../multimetamodel/">Multi meta-model</a>
                     </li>
@@ -288,20 +290,28 @@ searched for.</li>
 </ul>
 <p>Finds first object up the parent chain of the given type. If no parent of the
 given type exists <code>None</code> is returned.</p>
-<h3 id="get_children_of_typetyp-root"><code>get_children_of_type(typ, root)</code><a class="headerlink" href="#get_children_of_typetyp-root" title="Permanent link">&para;</a></h3>
+<h3 id="get_children_of_typetyp-root-children_firstfalse-should_followlambda-obj-true"><code>get_children_of_type(typ, root, children_first=False, should_follow=lambda obj: True)</code><a class="headerlink" href="#get_children_of_typetyp-root-children_firstfalse-should_followlambda-obj-true" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>typ (str or python class)</code>: The type of the model object we are looking for.</li>
 <li><code>root (model object)</code>: Python model object which is the start of the search
     process.</li>
+<li><code>children_first (bool)</code>: indicates if children should be returned before their
+  parents.</li>
+<li><code>should_follow (callable)</code>: a predicate used to decide if the object should be
+  traversed.</li>
 </ul>
 <p>Returns a list of all model elements of type <code>typ</code> starting from model element
 <code>root</code>. The search process will follow containment links only. Non-containing
 references shall not be followed.</p>
-<h3 id="get_childrenselector-root"><code>get_children(selector, root)</code><a class="headerlink" href="#get_childrenselector-root" title="Permanent link">&para;</a></h3>
+<h3 id="get_childrenselector-root-children_firstfalse-should_followlambda-obj-true"><code>get_children(selector, root, children_first=False, should_follow=lambda obj: True)</code><a class="headerlink" href="#get_childrenselector-root-children_firstfalse-should_followlambda-obj-true" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>select(obj)</code>: a callable returning True if the object is of interest.</li>
+<li><code>selector (callable)</code>: a predicate returning True if the object is of interest.</li>
 <li><code>root (model object)</code>: Python model object which is the start of the search
     process.</li>
+<li><code>children_first (bool)</code>: indicates if children should be returned before their
+  parents.</li>
+<li><code>should_follow (callable)</code>: a predicate used to decide if the object should be
+  traversed.</li>
 </ul>
 <p>Returns a list of all selected model elements starting from model element
 <code>root</code>. The search process will follow containment links only. Non-containing

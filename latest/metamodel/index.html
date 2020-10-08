@@ -95,6 +95,8 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../scoping/">Scoping</a>
                     </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../rrel/">Reference resolving expression language</a>
+                    </li>
                     <li class="toctree-l1"><a class="reference internal" href="../multimetamodel/">Multi meta-model</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../parser_config/">Parser configuration</a>
@@ -256,6 +258,12 @@ entity_mm = metamodel_from_str(grammar, classes=[Entity])
 </code></pre>
 <p>Now <code>entity_mm</code> can be used to parse the input models where our <code>Entity</code> class
 will be instantiated to represent each <code>Entity</code> rule from the grammar.</p>
+<p>When passing a list of classes (as shown in the example above), you need to have rules
+for all of these classes in your grammar (else, you get an exception). Alternatively,
+you can also pass a callable (instead of a list of classes) to return user classes
+given a rule name. In that case, only rule names found in the grammar
+are used to query user classes.
+See <a href="https://github.com/textX/textX/blob/master/tests/functional/test_user_classes_callable.py">unittest</a>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Constructor of the user-defined classes should accept all attributes defined
