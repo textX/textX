@@ -196,17 +196,19 @@ name parts separated with dots.</p>
 <p>We evaluate RREL expression using the name in the process and we yield referenced
 object or an error.</p>
 <h2 id="rrel-operators">RREL operators<a class="headerlink" href="#rrel-operators" title="Permanent link">&para;</a></h2>
-<p>Reference resolving expression language (RREL) consists of several operators (see <a href="tests/functional/test_scoping/test_rrel.py">test</a>):
-- <code>.</code> Dot navigation. Search for the attribute in the current AST context. Can
+<p>Reference resolving expression language (RREL) consists of several operators
+(see <a href="tests/functional/test_scoping/test_rrel.py">test</a>):</p>
+<ul>
+<li><code>.</code> Dot navigation. Search for the attribute in the current AST context. Can
   be used for navigation up the parent chain, e.g. <code>.</code> is this object, <code>..</code> is
   parent, <code>...</code> is a parent of a parent. If the expression starts with a <code>.</code>
   than we have a relative path starting from the current AST context. Otherwise
   we have an absolute path starting from the root of the model unless <code>^</code> is
   used (see below). For example, <code>.a.b</code> means search for <code>a</code> attribute at the
   current level (<code>.</code>) and than search for <code>b</code> attribute. Expression <code>a.b</code> would
-  search starting from the root of the model.
-- <code>parent(TYPE)</code> - navigate up the parent chain until the exact type is found.
-- <code>~</code> This is a marker applied to a path element to inform resolver that the
+  search starting from the root of the model.</li>
+<li><code>parent(TYPE)</code> - navigate up the parent chain until the exact type is found.</li>
+<li><code>~</code> This is a marker applied to a path element to inform resolver that the
   current collection should not be searched by the current name part but that
   all elements should be processed. For example, to search for a method in the
   inheritance hierarchy one would write <code>~extends*.methods</code> which (due to <code>*</code>,
@@ -215,8 +217,8 @@ object or an error.</p>
   the order of defintion without consuming name part, and then name would be
   searched in the <code>methods</code> collection of each object from the <code>extends</code>
   collection. If not found <code>*</code> would expand <code>extends</code> to <code>extends.extends</code> if
-  possible and the search would continue.
-- <code>*</code> - Repeat/expand. Used in expansion step to expand sub-expression by 0+
+  possible and the search would continue.</li>
+<li><code>*</code> - Repeat/expand. Used in expansion step to expand sub-expression by 0+
   times. First expansion tried will be 0, then once, then twice etc. For
   example, <code>~extends*.methods</code> would search in <code>methods</code> collection in the
   current context object for the current name part. If not found expansion of
@@ -224,8 +226,8 @@ object or an error.</p>
   over <code>extends</code> collection without consuming part name (due to <code>~</code>) and
   searching by ref. name part inside <code>methods</code> collection of each iterated
   object. The process would continue (i.e. <code>~extends.~extends.methods</code> ...)
-  until no more expansion is possible as we reach the end of inheritance chain.
-- <code>^</code> - Bottom-up search. This operator specifies that the given path should be
+  until no more expansion is possible as we reach the end of inheritance chain.</li>
+<li><code>^</code> - Bottom-up search. This operator specifies that the given path should be
   expanded bottom-up, up the parent chain. The search should start at the
   current AST context and go up the parent chain for the number of components in
   the current expanded path. Then the match should be tried. See the components
@@ -234,23 +236,28 @@ object or an error.</p>
   <code>a</code>, then would search for <code>b</code> in the context of the previous AST search
   result, and finally would search for attribute <code>c</code>. <code>^</code> is a marker applied to
   path search subexpression, i.e. it doesn't apply to the whole sequence (see
-  below).
-- <code>,</code> - Defines a sequence, i.e. a sequence of RREL expressions which should
-  tried in order.</p>
+  below).</li>
+<li><code>,</code> - Defines a sequence, i.e. a sequence of RREL expressions which should
+  tried in order.</li>
+</ul>
 <p>Priorities from highest to lowest: <code>*</code>, <code>.</code>, <code>,</code>.</p>
 <p><code>~</code> and <code>^</code> are regarded as markers, not operators.</p>
 <h2 id="rrel-evaluation">RREL evaluation<a class="headerlink" href="#rrel-evaluation" title="Permanent link">&para;</a></h2>
-<p>Evaluation goes like this:
-1. Expand the expression. Expand <code>*</code> starting from 0 times.
-2. Match/navigate the expression (consume part names in the process)
-3. Repeat</p>
-<p>The process stops when either:
-- all possibilities are exhausted and we haven't find anything -&gt; error.
-- in <code>*</code> we came to a situation where we consume all part names before we
-  finished with the RREL expression -&gt; error.
-- We have consumed all path name elements, finished with RREL expression and
+<p>Evaluation goes like this:</p>
+<ol>
+<li>Expand the expression. Expand <code>*</code> starting from 0 times.</li>
+<li>Match/navigate the expression (consume part names in the process)</li>
+<li>Repeat</li>
+</ol>
+<p>The process stops when either:</p>
+<ul>
+<li>all possibilities are exhausted and we haven't find anything -&gt; error.</li>
+<li>in <code>*</code> we came to a situation where we consume all part names before we
+  finished with the RREL expression -&gt; error.</li>
+<li>We have consumed all path name elements, finished with RREL expression and
   found the object. If the type is not the same as the type given in the grammar
-  reference we report an error, else we found our object.</p>
+  reference we report an error, else we found our object.</li>
+</ul>
 <h2 id="rrel-reference-name-deduction">RREL reference name deduction<a class="headerlink" href="#rrel-reference-name-deduction" title="Permanent link">&para;</a></h2>
 <p>The name of a referenced object is transformed into a list of non-empty
 name parts, which is processed by a RREL expression to navigate through the
