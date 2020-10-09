@@ -29,7 +29,9 @@ object or an error.
 
 ## RREL operators
 
-Reference resolving expression language (RREL) consists of several operators (see [test](tests/functional/test_scoping/test_rrel.py)):
+Reference resolving expression language (RREL) consists of several operators
+(see [test](tests/functional/test_scoping/test_rrel.py)):
+
 - `.` Dot navigation. Search for the attribute in the current AST context. Can
   be used for navigation up the parent chain, e.g. `.` is this object, `..` is
   parent, `...` is a parent of a parent. If the expression starts with a `.`
@@ -78,11 +80,13 @@ Priorities from highest to lowest: `*`, `.`, `,`.
 ## RREL evaluation
 
 Evaluation goes like this:
+
 1. Expand the expression. Expand `*` starting from 0 times.
 2. Match/navigate the expression (consume part names in the process)
 3. Repeat
 
 The process stops when either:
+
 - all possibilities are exhausted and we haven't find anything -> error.
 - in `*` we came to a situation where we consume all part names before we
   finished with the RREL expression -> error.
