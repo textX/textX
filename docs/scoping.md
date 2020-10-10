@@ -214,6 +214,73 @@ of the model object to keep track of the included models.
    `textx.scoping.providers.is_file_included_by_model`.
  
 
+### Builtin models
+
+Similarly to [builtin objects](metamodel.md#built-in-objects) that are searched
+by their names, as a fallback you can provide model repository using
+`builtin_models` parameter during meta-model construction. These models will be
+searched by scoping providers based on `ImportURI` scoping provider after
+searching into a local model and all loaded models fails.
+
+This is handy to provide builtin models of the language that are pre-loaded and
+don't need to be imported by each user model.
+
+Here is a full example that demonstrates this feature:
+
+```python
+from textx import metamodel_from_str, metamodel_for_language, register_language
+from textx.scoping import ModelRepository
+
+types_mm = metamodel_from_str(r'''
+Model: types+=BaseType;
+BaseType: 'type' name=ID;
+''')
+
+# We register `types` language to be available by `reference` 
+# statement in the main meta-model
+register_language('types', '*.type', 'Simple types language', types_mm)
+
+# Now in the main meta-model we use `references` to access the
+# type language. We also use RREL for `Property.type` (+m:types) to
+# specify where instances of `BaseType` can be found.
+entity_mm_str = r'''
+reference types as t
+Model: entities+=Entity;
+Entity: 'entity' name=ID '{'
+              properties*=Property
+        '}'
+;
+Property: name=ID ':' type=[t.BaseType|ID|+m:types];
+'''
+
+# Get `types` language meta-model
+types_mm = metamodel_for_language('types')
+
+builtin_models = ModelRepository()
+
+# Construct types model and add it to the repository.
+# We instantiate the types model with two BaseType instances: `int` and `bool`
+builtin_models.add_model(types_mm.model_from_str('type int type bool'))
+
+# BaseType object `int` and `bool` will now be available to the
+# entity meta-model. Standard RREL search mechanism will be used to find the
+# referenced model object
+entity_mm = metamodel_from_str(entity_mm_str, builtin_models=builtin_models)
+
+# In this model `bool` type is accessible despite not being explicitly imported.
+model = entity_mm.model_from_str(r'''
+entity First {
+    first : bool
+}
+''')
+
+assert model.entities[0].properties[0].type.name == 'bool'
+assert model.entities[0].properties[0].type.__class__.__name__ == 'BaseType'
+''')
+
+```
+
+
 
 ## Technical aspects and implementation details
 

@@ -371,6 +371,13 @@ class ImportURI(scoping.ModelLoader):
             ret = self.scope_provider(m, attr, obj_ref)
             if ret:
                 return ret
+
+        # 3) Use builtin models as a fallback if provided
+        if model._tx_metamodel.builtin_models:
+            for m in model._tx_metamodel.builtin_models:
+                ret = self.scope_provider(m, attr, obj_ref)
+                if ret:
+                    return ret
         return None
 
 

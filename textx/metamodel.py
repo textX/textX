@@ -128,6 +128,9 @@ class TextXMetaModel(DebugPrinter):
         builtins(dict): A dict of named object used in linking phase.
             References to named objects not defined in the model will be
             searched here.
+        builtin_models(ModelRepository): An optional repository of preloaded models
+            to be used during reference resolving. These models will be searched
+            as a fallback before `builtins`.
         classes(list of classes or callable): A list of user supplied classes
             to use instead of the dynamically created or a callable providing
             those classes. The callable must accept a rule name and return a
@@ -160,9 +163,10 @@ class TextXMetaModel(DebugPrinter):
     """
 
     def __init__(self, file_name=None, classes=None, builtins=None,
-                 auto_init_attributes=True, ignore_case=False, skipws=True,
-                 ws=None, autokwd=False, memoization=False,
-                 textx_tools_support=False, use_regexp_group=False, **kwargs):
+                 builtin_models=None, auto_init_attributes=True,
+                 ignore_case=False, skipws=True, ws=None, autokwd=False,
+                 memoization=False, textx_tools_support=False,
+                 use_regexp_group=False, **kwargs):
         # evaluate optional parameter "global_repository"
         global_repository = kwargs.pop("global_repository", False)
         if global_repository:
@@ -182,6 +186,7 @@ class TextXMetaModel(DebugPrinter):
         self.rootcls = None
 
         self.builtins = builtins
+        self.builtin_models = builtin_models
 
         # Convert classes to dict for easier lookup
         self.user_classes = {}

@@ -16,6 +16,9 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ### Added
 
+  - `builtin_models` of type `ModelRepository` to meta-model constructor. Used
+    to supply pre-loaded models for `ImportURI` based scoping providers as a
+    fallback to search into. ([#284])
   - Initial implementation of TEP-001 ([#111]) allowing to specify scope
     provider behavior within the grammar itself. [#274] introduces
     the RREL (reference resolving expression language) to define how
@@ -493,6 +496,7 @@ please take a look at related PRs and issues and see if the change affects you.
   - Export to dot.
 
 
+[#284]: https://github.com/textX/textX/pull/284
 [#283]: https://github.com/textX/textX/pull/283
 [#282]: https://github.com/textX/textX/pull/282
 [#281]: https://github.com/textX/textX/pull/281

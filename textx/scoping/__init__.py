@@ -41,10 +41,19 @@ class ModelRepository(object):
     """
 
     def __init__(self):
+        self.name_idx = 1
         self.filename_to_model = {}
 
     def has_model(self, filename):
         return abspath(filename) in self.filename_to_model
+
+    def add_model(self, model):
+        if model._tx_filename:
+            filename = abspath(model._tx_filename)
+        else:
+            filename = 'builtin_model_{}'.format(self.name_idx)
+            self.name_idx += 1
+        self.filename_to_model[filename] = model
 
     def remove_model(self, model):
         filename = None
