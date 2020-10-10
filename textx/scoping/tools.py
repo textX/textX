@@ -232,8 +232,7 @@ def get_unique_named_object_in_all_models(root, name):
         the object (if not unique, raises an error)
     """
     if hasattr(root, '_tx_model_repository'):
-        src = list(
-            root._tx_model_repository.local_models.filename_to_model.values())
+        src = list(root._tx_model_repository.local_models)
         if root not in src:
             src.append(root)
     else:

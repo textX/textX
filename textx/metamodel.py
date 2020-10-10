@@ -654,13 +654,11 @@ class TextXMetaModel(DebugPrinter):
                     # print("METAMODEL PRE-CALLBACK => {}".format(filename))
                     other_model._tx_model_repository = GlobalModelRepository(
                         self._tx_model_repository.all_models)
-                    self._tx_model_repository.all_models\
-                        .filename_to_model[filename] = other_model
+                    self._tx_model_repository.all_models[filename] = other_model
 
                 callback = _pre_ref_resolution_callback
             if self._tx_model_repository.all_models.has_model(file_name):
-                model = self._tx_model_repository.all_models\
-                    .filename_to_model[file_name]
+                model = self._tx_model_repository.all_models[file_name]
 
         def kwargs_callback(other_model):
             if hasattr(other_model, '_tx_metamodel'):

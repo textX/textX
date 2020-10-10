@@ -15,8 +15,7 @@ def test_issue196_errors_in_scope_provider_and_obj_processor():
     #      _tx_model_repository.all_models.filename_to_model.keys())
 
     cached_model_count = len(
-        metamodel_for_language('flow-dsl').
-        _tx_model_repository.all_models.filename_to_model)
+        metamodel_for_language('flow-dsl')._tx_model_repository.all_models)
 
     with pytest.raises(TextXError,
                        match=r'.*types must be lowercase.*'):
@@ -30,8 +29,7 @@ def test_issue196_errors_in_scope_provider_and_obj_processor():
 
     # error while reading, no file cached (cached_model_count unchanged)!
     assert cached_model_count == len(
-        metamodel_for_language('flow-dsl').
-        _tx_model_repository.all_models.filename_to_model)
+        metamodel_for_language('flow-dsl')._tx_model_repository.all_models)
 
     with pytest.raises(TextXError,
                        match=r'.*Unknown object "A" of class "Algo".*'):
@@ -46,8 +44,7 @@ def test_issue196_errors_in_scope_provider_and_obj_processor():
 
     # error while reading, no file cached! (cached_model_count unchanged)!
     assert cached_model_count == len(
-        metamodel_for_language('flow-dsl').
-        _tx_model_repository.all_models.filename_to_model)
+        metamodel_for_language('flow-dsl')._tx_model_repository.all_models)
 
     with pytest.raises(TextXError,
                        match=r'.*types must be lowercase.*'):
@@ -57,8 +54,7 @@ def test_issue196_errors_in_scope_provider_and_obj_processor():
 
     # error while reading, no file cached! (cached_model_count unchanged)!
     assert cached_model_count == len(
-        metamodel_for_language('flow-dsl').
-        _tx_model_repository.all_models.filename_to_model)
+        metamodel_for_language('flow-dsl')._tx_model_repository.all_models)
 
 
 def test_issue196_syntax_error_1():
@@ -69,8 +65,7 @@ def test_issue196_syntax_error_1():
     #      _tx_model_repository.all_models.filename_to_model.keys())
 
     cached_model_count = len(
-        metamodel_for_language('flow-dsl').
-        _tx_model_repository.all_models.filename_to_model)
+        metamodel_for_language('flow-dsl')._tx_model_repository.all_models)
 
     with pytest.raises(TextXError,
                        match=r'.*error: Expected.*'):
@@ -85,8 +80,7 @@ def test_issue196_syntax_error_1():
 
     # error while reading, no file cached!
     assert cached_model_count == len(
-        metamodel_for_language('flow-dsl').
-        _tx_model_repository.all_models.filename_to_model)
+        metamodel_for_language('flow-dsl')._tx_model_repository.all_models)
 
 
 def test_issue196_syntax_error_2():
@@ -97,8 +91,7 @@ def test_issue196_syntax_error_2():
     #      _tx_model_repository.all_models.filename_to_model.keys())
 
     cached_model_count = len(
-        metamodel_for_language('flow-dsl').
-        _tx_model_repository.all_models.filename_to_model)
+        metamodel_for_language('flow-dsl')._tx_model_repository.all_models)
 
     with pytest.raises(TextXError,
                        match=r'.*error: Expected.*'):
@@ -112,5 +105,4 @@ def test_issue196_syntax_error_2():
 
     # error while reading, no file cached! (cached_model_count unchanged)!
     assert cached_model_count == len(
-        metamodel_for_language('flow-dsl').
-        _tx_model_repository.all_models.filename_to_model)
+        metamodel_for_language('flow-dsl')._tx_model_repository.all_models)

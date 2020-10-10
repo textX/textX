@@ -352,6 +352,7 @@ class RRELPath(RRELBase):
 
     def get_next_matches(self, obj, lookup_list, allowed, first_element=False):
         from textx.scoping import Postponed
+
         def intern_get_next_matches(obj, lookup_list, allowed, first_element=False,
                                     idx=0):
             assert len(self.path_elements) > idx

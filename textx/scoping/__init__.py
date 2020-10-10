@@ -55,6 +55,21 @@ class ModelRepository(object):
             # print("*** delete {}".format(filename))
             del self.filename_to_model[filename]
 
+    def __contains__(self, filename):
+        return self.has_model(filename)
+
+    def __iter__(self):
+        return iter(self.filename_to_model.values())
+
+    def __len__(self):
+        return len(self.filename_to_model)
+
+    def __getitem__(self, filename):
+        return self.filename_to_model[filename]
+
+    def __setitem__(self, filename, model):
+        self.filename_to_model[filename] = model
+
 
 class GlobalModelRepository(object):
     """
@@ -86,7 +101,7 @@ class GlobalModelRepository(object):
             all_models: models to be added to this new repository.
         """
         self.local_models = ModelRepository()  # used for current model
-        if all_models:
+        if all_models is not None:
             self.all_models = all_models  # used to reuse already loaded models
         else:
             self.all_models = ModelRepository()
@@ -193,7 +208,7 @@ class GlobalModelRepository(object):
         if not self.local_models.has_model(filename):
             if self.all_models.has_model(filename):
                 # print("CACHED {}".format(filename))
-                new_model = self.all_models.filename_to_model[filename]
+                new_model = self.all_models[filename]
             else:
                 # print("LOADING {}".format(filename))
                 # all models loaded here get their references resolved from the
@@ -203,21 +218,21 @@ class GlobalModelRepository(object):
                     other_model: self.pre_ref_resolution_callback(other_model),
                     is_main_model=is_main_model, encoding=encoding,
                     model_params=model_params)
-                self.all_models.filename_to_model[filename] = new_model
+                self.all_models[filename] = new_model
             # print("ADDING {}".format(filename))
             if add_to_local_models:
-                self.local_models.filename_to_model[filename] = new_model
+                self.local_models[filename] = new_model
         else:
             # print("LOCALLY CACHED {}".format(filename))
             pass
 
-        assert self.all_models.has_model(filename)  # to be sure...
-        return self.all_models.filename_to_model[filename]
+        assert filename in self.all_models  # to be sure...
+        return self.all_models[filename]
 
     def _add_model(self, model):
         filename = self.update_model_in_repo_based_on_filename(model)
         # print("ADDED {}".format(filename))
-        self.local_models.filename_to_model[filename] = model
+        self.local_models[filename] = model
 
     def update_model_in_repo_based_on_filename(self, model):
         """
@@ -239,11 +254,11 @@ class GlobalModelRepository(object):
             while self.all_models.has_model("anonymous{}".format(i)):
                 i += 1
             myfilename = "anonymous{}".format(i)
-            self.all_models.filename_to_model[myfilename] = model
+            self.all_models[myfilename] = model
         else:
             myfilename = abspath(model._tx_filename)
             if (not self.all_models.has_model(myfilename)):
-                self.all_models.filename_to_model[myfilename] = model
+                self.all_models[myfilename] = model
         # print("UPDATED/ADDED/CACHED {}".format(myfilename))
         return myfilename
 
@@ -263,7 +278,7 @@ class GlobalModelRepository(object):
         filename = abspath(filename)
         other_model._tx_model_repository = \
             GlobalModelRepository(self.all_models)
-        self.all_models.filename_to_model[filename] = other_model
+        self.all_models[filename] = other_model
 
 
 class ModelLoader(object):
@@ -307,8 +322,7 @@ def get_included_models(model):
         a list of all models
     """
     if (hasattr(model, "_tx_model_repository")):
-        models = list(
-            model._tx_model_repository.all_models.filename_to_model.values())
+        models = list(model._tx_model_repository.all_models)
         if model not in models:
             models.append(model)
     else:

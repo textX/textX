@@ -69,7 +69,7 @@ def test_metamodel_provider_advanced_test():
 
     def get_all(model_repo, what):
         lst = []
-        for m in model_repo.filename_to_model.values():
+        for m in model_repo:
             lst = lst + get_children_of_type(what, m)
         return lst
 

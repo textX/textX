@@ -93,7 +93,7 @@ def test_metamodel_provider_advanced_test3_global():
 
     def get_all(model_repo, what):
         lst = []
-        for m in model_repo.filename_to_model.values():
+        for m in model_repo:
             lst = lst + get_children_of_type(what, m)
         return lst
 
@@ -186,7 +186,7 @@ def test_metamodel_provider_advanced_test3_import():
 
     def get_all(model_repo, what):
         lst = []
-        for m in model_repo.filename_to_model.values():
+        for m in model_repo:
             lst = lst + get_children_of_type(what, m)
         return lst
 
@@ -277,7 +277,7 @@ def test_metamodel_provider_advanced_test3_inheritance():
 
     def get_all(model_repo, what):
         lst = []
-        for m in model_repo.filename_to_model.values():
+        for m in model_repo:
             lst = lst + get_children_of_type(what, m)
         return lst
 
@@ -361,7 +361,7 @@ def test_metamodel_provider_advanced_test3_inheritance2():
 
     def get_all(model_repo, what):
         lst = []
-        for m in model_repo.filename_to_model.values():
+        for m in model_repo:
             lst = lst + get_children_of_type(what, m)
         return lst
 
@@ -373,8 +373,7 @@ def test_metamodel_provider_advanced_test3_inheritance2():
         assert a.method
 
     # check that all models have different parsers
-    parsers = list(
-        map(lambda x: x._tx_parser, model_repo.filename_to_model.values()))
+    parsers = list(map(lambda x: x._tx_parser, model_repo))
     assert 4 == len(parsers)  # 4 files -> 4 parsers
     assert 4 == len(set(parsers))  # 4 different parsers
 
@@ -452,7 +451,7 @@ def test_metamodel_provider_advanced_test3_diamond():
 
     def get_all(model_repo, what):
         lst = []
-        for m in model_repo.filename_to_model.values():
+        for m in model_repo:
             lst = lst + get_children_of_type(what, m)
         return lst
 
@@ -464,8 +463,7 @@ def test_metamodel_provider_advanced_test3_diamond():
         assert a.method
 
     # check that all models have different parsers
-    parsers = list(
-        map(lambda x: x._tx_parser, model_repo.filename_to_model.values()))
+    parsers = list(map(lambda x: x._tx_parser, model_repo))
     assert 4 == len(parsers)  # 4 files -> 4 parsers
     assert 4 == len(set(parsers))  # 4 different parsers
 

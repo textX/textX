@@ -367,7 +367,7 @@ class ImportURI(scoping.ModelLoader):
             return ret
 
         # 2) do we have loaded models?
-        for m in model_repository.local_models.filename_to_model.values():
+        for m in model_repository.local_models:
             ret = self.scope_provider(m, attr, obj_ref)
             if ret:
                 return ret

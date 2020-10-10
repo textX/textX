@@ -140,7 +140,7 @@ def test_globalimports_basic_test_with_distributed_model():
     #################################
 
     # check that "socket" is an interface
-    inner_model = my_model._tx_model_repository.all_models.filename_to_model[
+    inner_model = my_model._tx_model_repository.all_models[
         join(abspath(dirname(__file__)),
              "interface_model2", "model_b", "base.if")]
     check_unique_named_object_has_class(inner_model, "socket", "Interface")

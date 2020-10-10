@@ -340,7 +340,7 @@ def test_multi_metamodel_types_data_flow1():
     # althought, types.type is included 2x, it is only present 1x
     # (scope providers share a common repo within on model and all
     #  loaded models in that model)
-    assert 3 == len(model1._tx_model_repository.all_models.filename_to_model)
+    assert 3 == len(model1._tx_model_repository.all_models)
 
     # load the type model also used by model1
     model2 = LibData.get_metamodel().model_from_file(
@@ -378,7 +378,7 @@ def test_multi_metamodel_types_data_flow2():
                      'data_flow.flow')
     )
     # althought, types.type is included 2x, it is only present 1x
-    assert 3 == len(model1._tx_model_repository.all_models.filename_to_model)
+    assert 3 == len(model1._tx_model_repository.all_models)
 
     # load the type model also used by model1
     model2 = LibData.get_metamodel().model_from_file(
