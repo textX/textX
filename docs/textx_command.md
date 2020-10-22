@@ -6,8 +6,9 @@ Executing textX related CLI commands
 
 textX has an extensible CLI tool which is a central hub for all textX CLI commands.
 
-When you install textX you get a CLI command `textx` which you call to execute
-any of the registered sub-commands.
+When you install textX with cli dependencies (`pip install textX[cli]`) you get
+a CLI command `textx` which you call to execute any of the registered
+sub-commands.
 
 textX registers several sub-commands:
 

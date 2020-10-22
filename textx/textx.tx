@@ -124,12 +124,25 @@ BuiltinRuleRef:
 ;
 
 ObjRef: // TODO: add RREL
-    '[' name=ClassName ('|' obj_ref_rule=ID)? ']'
+    '[' name=ClassName ('|' obj_ref_rule=ID ('|' rrel=RRELExpression))? ']'
 ;
 
 ClassName:
     QualifiedIdent
 ;
+
+
+// RREL
+RRELExpression: multi?="+m:" sequence=RRELSequence;
+RRELSequence: paths+=RRELPath[','];
+RRELPath: (up='^' | dots=RRELDots)? parts*=RRELPathPart['.'];
+RRELPathPart: RRELZeroOrMore | RRELPathElement;
+RRELZeroOrMore: element=RRELPathElement '*';
+RRELPathElement: RRELParent | RRELBrackets | RRELNavigation;
+RRELDots: /\.+/;
+RRELBrackets: '(' sequence=RRELSequence ')';
+RRELNavigation: noconsume?='~' attr=ID;
+RRELParent: 'parent' '(' type=ID ')';
 
 
 QualifiedIdent:

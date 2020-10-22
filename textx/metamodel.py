@@ -17,7 +17,7 @@ from textx.exceptions import TextXError
 from .registration import LanguageDesc, metamodel_for_language
 from .model_params import ModelParams, ModelParamDefinitions
 from textx.scoping.rrel import create_rrel_scope_provider
-from six import string_types
+from textx.six import string_types
 
 if sys.version < '3':
     text = unicode  # noqa
@@ -44,7 +44,9 @@ def metamodel_from_str(lang_desc, metamodel=None, **kwargs):
     if not metamodel:
         metamodel = TextXMetaModel(**kwargs)
 
-    language_from_str(lang_desc, metamodel)
+    file_name = kwargs.get('file_name')
+
+    language_from_str(lang_desc, metamodel, file_name)
 
     if is_main_metamodel:
         metamodel.validate_user_classes()

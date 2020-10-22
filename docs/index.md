@@ -108,10 +108,18 @@ For an in-depth coverage on the subject we recommend the following books:
 
 ## Installation
 
-    $ pip install textX
+    $ pip install textX[cli]
 
-Note: Previous command requires [pip](https://pypi.python.org/pypi/pip) to be
-installed.
+
+!!! note
+
+    Previous command requires [pip](https://pypi.python.org/pypi/pip) to be
+    installed.
+
+    Also, notice the use of `[cli]` which means that we would like to use CLI
+    `textx` command. If you just want to deploy your language most probably you won't
+    need CLI support.
+
 
 To verify that textX is properly installed run:
 
