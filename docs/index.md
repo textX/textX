@@ -224,12 +224,15 @@ grammar and additional information specified using various DSLs.
 Projects that are currently in progress are:
 
 - [textX-LS](https://github.com/textX/textX-LS) - support for Language Server
-  Protocol and VS Code for any textX based language. This project is about to
-  supersede the following projects:
-  - [textX-languageserver](https://github.com/textX/textX-languageserver) -
-    Language Server Protocol support for textX languages
-  - [textX-extensions](https://github.com/textX/textX-extensions) - syntax
-    highlighting, code outline
+  Protocol and VS Code for any textX based language. 
+  
+- [textx-gen-coloring](https://github.com/danixeee/textx-gen-coloring) - a textX
+  generator which generates syntax highlighting configuration for TextMate
+  compatible editors (e.g. VSCode) from textX grammars.
+  
+- [textx-gen-vscode](https://github.com/danixeee/textx-gen-vscode) - a textX
+  generator which generates VSCode extension from textX grammar.
+
 - [viewX](https://github.com/danielkupco/viewX-vscode) - creating visualizers
   for textX languages
 
