@@ -29,6 +29,7 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ### Fixed
 
+  - Fixed bug with Falsy user classes in `get_children` ([#288])
   - Fixed bug with unhashable objects during dot export ([#283])
   - Fixed bug where (Ext)RelativeName scope providers accepted any referenced
     object that contained the lookup name in its name. Thanks ipa-mdl@GitHub
@@ -496,6 +497,7 @@ please take a look at related PRs and issues and see if the change affects you.
   - Export to dot.
 
 
+[#288]: https://github.com/textX/textX/pull/288
 [#287]: https://github.com/textX/textX/pull/287
 [#284]: https://github.com/textX/textX/pull/284
 [#283]: https://github.com/textX/textX/pull/283
