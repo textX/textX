@@ -45,6 +45,7 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ### Changed
 
+  - `click` is now an optional dependency, only when CLI is needed ([#292])
   - Make warning about not overwriting generated file more visible
     ([01341ec3](https://github.com/textX/textX/commit/01341ec381bfb4c8c27bcec5d2998a34d207f430))
   - Truncate long strings during dot export for better diagram readability ([#282]).
@@ -496,6 +497,7 @@ please take a look at related PRs and issues and see if the change affects you.
   - Export to dot.
 
 
+[#292]: https://github.com/textX/textX/pull/292
 [#284]: https://github.com/textX/textX/pull/284
 [#283]: https://github.com/textX/textX/pull/283
 [#282]: https://github.com/textX/textX/pull/282
