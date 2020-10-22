@@ -265,7 +265,8 @@ class TextXVisitor(RRELVisitor):
                     raise TextXSemanticError(
                         'Unexisting rule "{}" at position {}.'
                         .format(rule.rule_name,
-                                (line, col)), line, col)
+                                (line, col)), line, col,
+                        filename=model_parser.metamodel.file_name)
 
             assert isinstance(rule, ParsingExpression),\
                 "{}:{}".format(type(rule), text(rule))
@@ -818,7 +819,8 @@ class TextXVisitor(RRELVisitor):
                 line, col = self.grammar_parser.pos_to_linecol(position)
                 raise TextXSyntaxError(
                     'Modifiers are not allowed for "{}" operator at {}'
-                    .format(op, text((line, col))), line, col)
+                    .format(op, text((line, col))), line, col,
+                    filename=self.metamodel.file_name)
 
             # Separator modifier
             assignment_rule.sep = modifiers.get('sep', None)
@@ -918,7 +920,7 @@ class TextXVisitor(RRELVisitor):
 textX_parsers = {}
 
 
-def language_from_str(language_def, metamodel):
+def language_from_str(language_def, metamodel, file_name):
     """
     Constructs parser and initializes metamodel from language description
     given in textX language.
@@ -955,7 +957,7 @@ def language_from_str(language_def, metamodel):
 
     # Parse language description with textX parser
     try:
-        parse_tree = parser.parse(language_def)
+        parse_tree = parser.parse(language_def, file_name)
     except NoMatch as e:
         line, col = parser.pos_to_linecol(e.position)
         raise TextXSyntaxError(text(e), line, col)
