@@ -11,21 +11,26 @@ extra_css: [style.css, css/version-select.css]
 nav:
 - Home: index.md
 - User Guide:
-  - Grammar: grammar.md
-  - Meta-model: metamodel.md
-  - Model: model.md
-  - Scoping: scoping.md
-  - Reference resolving expression language: rrel.md
-  - Multi meta-model: multimetamodel.md
-  - Parser configuration: parser_config.md
-  - Registration/Discovery: registration.md
-  - Visualization: visualization.md
-  - Error handling: error_handling.md
-  - Debugging: debugging.md
-  - textx command: textx_command.md
-  - Project scaffolding: scaffolding.md
-  - Jinja generators: jinja.md
-  - Howtos: howto.md
+  - Basics:
+    - Hello world: tutorials/hello_world.md
+    - Grammar: grammar.md
+    - Meta-model: metamodel.md
+    - Model: model.md
+    - Parser configuration: parser_config.md
+    - textx command: textx_command.md
+    - Registration/Discovery: registration.md
+    - Visualization: visualization.md
+    - Project scaffolding: scaffolding.md
+    - Howtos: howto.md
+  - Scoping and multi-file:
+    - Scoping: scoping.md
+    - Reference resolving expression language (RREL): rrel.md
+    - Multi meta-model: multimetamodel.md
+  - Errors:
+    - Error handling: error_handling.md
+    - Debugging: debugging.md
+  - Generators:
+    - Jinja generators: jinja.md
 - Tutorials:
   - Hello World: tutorials/hello_world.md
   - Robot: tutorials/robot.md
