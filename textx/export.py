@@ -404,6 +404,8 @@ def model_export_to_file(f, model=None, repo=None):
     if repo or hasattr(model, "_tx_model_repository"):
         if not repo:
             repo = model._tx_model_repository.all_models
+            if not repo:
+                _export(model)
         for m in repo:
             _export_subgraph(m)
             _export(m)
