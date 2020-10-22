@@ -14,7 +14,7 @@ from arpeggio import StrMatch, Optional, ZeroOrMore, OneOrMore, Sequence,\
 from arpeggio.export import PMDOTExporter
 from arpeggio import RegExMatch as _
 from textx.scoping.rrel import rrel_expression, RRELVisitor
-from six import string_types
+from textx.six import string_types
 
 from .exceptions import TextXError, TextXSyntaxError, TextXSemanticError
 from .const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, \
