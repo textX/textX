@@ -3,7 +3,7 @@ from arpeggio import PTNodeVisitor, visit_parse_tree
 from arpeggio import Optional, EOF
 from arpeggio import ZeroOrMore as ArpeggioZeroOrMore
 from arpeggio import RegExMatch as _
-from six import string_types
+from textx.six import string_types
 
 
 def rrel_id():
