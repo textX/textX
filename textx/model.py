@@ -100,7 +100,7 @@ def get_children(selector, root, children_first=False, should_follow=lambda obj:
                 if attr.cont:
                     if attr.mult in (MULT_ONE, MULT_OPTIONAL):
                         new_elem = getattr(elem, attr_name)
-                        if new_elem and should_follow(new_elem):
+                        if new_elem is not None and should_follow(new_elem):
                             follow(new_elem)
                     else:
                         new_elem_list = getattr(elem, attr_name)
