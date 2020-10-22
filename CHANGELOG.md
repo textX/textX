@@ -20,7 +20,7 @@ please take a look at related PRs and issues and see if the change affects you.
     to supply pre-loaded models for `ImportURI` based scoping providers as a
     fallback to search into. ([#284])
   - Initial implementation of TEP-001 ([#111]) allowing to specify scope
-    provider behavior within the grammar itself. [#274] introduces
+    provider behavior within the grammar itself. [#274] and [#287] introduce
     the RREL (reference resolving expression language) to define how
     references are resolved. Details see `rrel.md`.
   - Parameter `should_follow` of callable type to `get_children` and
@@ -496,6 +496,7 @@ please take a look at related PRs and issues and see if the change affects you.
   - Export to dot.
 
 
+[#287]: https://github.com/textX/textX/pull/287
 [#284]: https://github.com/textX/textX/pull/284
 [#283]: https://github.com/textX/textX/pull/283
 [#282]: https://github.com/textX/textX/pull/282

@@ -1,0 +1,12 @@
+/* Grammar for testing textX RREL parsing
+    This grammar is loaded for analysis, thus references and RREL expressions
+    are just syntactically valid to assert that grammar_model_from_file can
+    properly parse RRELs.
+*/
+
+Multi: ref=[Target|ID|+m:^some_rule];
+MultiParent: ref=[Target|ID|+m:parent(SomeType).some_rule];
+Parent: ref=[Target|ID|parent(SomeRule).obj.ref.~extension*.methods];
+Dots: ref=[Target|ID|(..)*.(pkg)*.cls];
+Brackets: ref=[Target|ID|obj.ref.(~extension)*.methods];
+WhiteSpace: ref=[Target|ID|obj. ref.(~extension ) *. methods];
