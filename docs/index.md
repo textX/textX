@@ -199,6 +199,8 @@ Here is a non-complete list of projects using textX.
       compiler infrastructure. 
     - [Expremigen](https://github.com/shimpe/expremigen) -  Expressive midi generation
     - [fanalyse](https://github.com/azag0/fanalyse) - Fortran code parser/analyser
+    - [Silvera](https://gitlab.com/alensuljkanovic/silvera/-/wikis/home) - A DSL
+      for microservice based software development
 
 * Commercial
 
