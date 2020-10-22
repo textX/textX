@@ -44,7 +44,9 @@ def metamodel_from_str(lang_desc, metamodel=None, **kwargs):
     if not metamodel:
         metamodel = TextXMetaModel(**kwargs)
 
-    language_from_str(lang_desc, metamodel)
+    file_name = kwargs.get('file_name')
+
+    language_from_str(lang_desc, metamodel, file_name)
 
     if is_main_metamodel:
         metamodel.validate_user_classes()
