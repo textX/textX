@@ -3,12 +3,11 @@ import pytest  # noqa
 import os
 import os.path
 from pytest import raises
-from textx import (metamodel_from_str,
+from textx import (get_location, metamodel_from_str,
                    metamodel_for_language,
                    register_language, clear_language_registrations)
 import textx.scoping.providers as scoping_providers
 import textx.scoping as scoping
-import textx.scoping.tools as tools
 import textx.exceptions
 
 
@@ -208,7 +207,7 @@ class LibTypes:
                 if t.name[0].isupper():
                     raise textx.exceptions.TextXSyntaxError(
                         "types must be lowercase",
-                        **tools.get_location(t)
+                        **get_location(t)
                     )
             mm.register_obj_processors({
                 'Type': check_type
@@ -308,7 +307,7 @@ class LibFlow:
                 if f.algo1.outp != f.algo2.inp:
                     raise textx.exceptions.TextXSemanticError(
                         "algo data types must match",
-                        **tools.get_location(f)
+                        **get_location(f)
                     )
             mm.register_obj_processors({
                 'Flow': check_flow

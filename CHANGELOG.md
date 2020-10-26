@@ -16,6 +16,8 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ### Added
 
+  - `get_location` function for producing `line/col/filename` from any textX
+    object. ([#294])
   - `builtin_models` of type `ModelRepository` to meta-model constructor. Used
     to supply pre-loaded models for `ImportURI` based scoping providers as a
     fallback to search into. ([#284])
@@ -498,6 +500,7 @@ please take a look at related PRs and issues and see if the change affects you.
   - Export to dot.
 
 
+[#294]: https://github.com/textX/textX/pull/294
 [#292]: https://github.com/textX/textX/pull/292
 [#288]: https://github.com/textX/textX/pull/288
 [#287]: https://github.com/textX/textX/pull/287

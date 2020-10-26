@@ -143,6 +143,23 @@ def get_children_of_type(typ, root, children_first=False, should_follow=lambda o
                         should_follow=should_follow)
 
 
+def get_location(model_obj):
+    """
+    Args:
+        model_obj: the model object of interest
+
+    Returns:
+        the line, col and filename of the model element.
+        The filename may be None.
+        This function may be used to fill exceptions
+    """
+    from textx.model import get_model
+    the_model = get_model(model_obj)
+    line, col = the_model._tx_parser.pos_to_linecol(
+        model_obj._tx_position)
+    return {"line": line, "col": col, "filename": the_model._tx_filename}
+
+
 class ObjCrossRef(object):
     """
     Used for object cross reference resolving.

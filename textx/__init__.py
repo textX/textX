@@ -1,7 +1,7 @@
 # flake8: noqa
 from textx.metamodel import metamodel_from_file, metamodel_from_str
 from textx.model import get_children_of_type, get_parent_of_type, \
-    get_model, get_metamodel, get_children
+    get_model, get_metamodel, get_children, get_location
 from textx.exceptions import TextXError, TextXSyntaxError, \
     TextXSemanticError, TextXRegistrationError
 from textx.scoping.tools import textx_isinstance

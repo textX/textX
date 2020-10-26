@@ -94,22 +94,6 @@ def get_list_of_concatenated_objects(def_obj, path_to_extension):
     return def_objs
 
 
-def get_location(model_obj):
-    """
-    Args:
-        model_obj: the model object of interest
-
-    Returns:
-        the line, col and filename of the model element.
-        The filename may be None.
-        This function may be used to fill exceptions
-    """
-    the_model = get_model(model_obj)
-    line, col = the_model._tx_parser.pos_to_linecol(
-        model_obj._tx_position)
-    return {"line": line, "col": col, "filename": the_model._tx_filename}
-
-
 def get_parser(model_obj):
     """
     Args:

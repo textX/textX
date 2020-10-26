@@ -1,6 +1,5 @@
 import os
-import textx.scoping.tools as tools
-from textx import metamodel_from_file, TextXSyntaxError, language, get_model
+from textx import metamodel_from_file, TextXSyntaxError, language, get_model, get_location
 
 
 @language('types-dsl', '*.etype')
@@ -25,7 +24,7 @@ def types_dsl():
             if t.name[0].isupper():
                 raise TextXSyntaxError(
                     "types must be lowercase",
-                    **tools.get_location(t)
+                    **get_location(t)
                 )
 
     types_mm.register_obj_processors({
