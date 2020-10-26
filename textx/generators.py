@@ -1,6 +1,6 @@
 try:
     import click
-except ModuleNotFoundError:
+except ImportError:
     raise Exception('textX must be installed with CLI dependencies to use '
                     'textx command.\npip install textX[cli]')
 import os
