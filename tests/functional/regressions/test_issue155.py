@@ -20,7 +20,7 @@ def test_textx_issue155():
     BoolOperator:  op=/AND|OR/;
     """)
 
-    from textx.scoping.tools import textx_isinstance
+    from textx import textx_isinstance
 
     m1 = METAMODEL.model_from_str('(b=3 OR c=4)')
     assert textx_isinstance(m1.expression, METAMODEL['BaseExpr'])

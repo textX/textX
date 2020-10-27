@@ -25,6 +25,31 @@ __all__ = ['get_children_of_type', 'get_parent_of_type', 'get_model',
            'get_metamodel']
 
 
+def textx_isinstance(obj, obj_cls):
+    """
+    This function determines, if a textx object is an instance of a
+     textx class.
+    Args:
+        obj: the object to be analyzed
+        obj_cls: the class to be checked
+
+    Returns:
+        True if obj is an instance of obj_cls.
+    """
+    if obj_cls.__name__ == "OBJECT":
+        return True
+    if isinstance(obj, obj_cls):
+        return True
+    if hasattr(obj_cls, "_tx_fqn") and hasattr(obj, "_tx_fqn"):
+        if obj_cls._tx_fqn == obj._tx_fqn:
+            return True
+    if hasattr(obj_cls, "_tx_inh_by"):
+        for cls in obj_cls._tx_inh_by:
+            if (textx_isinstance(obj, cls)):
+                return True
+    return False
+
+
 def get_model(obj):
     """
     Finds model root element for the given object.
@@ -141,6 +166,23 @@ def get_children_of_type(typ, root, children_first=False, should_follow=lambda o
     return get_children(lambda x: x.__class__.__name__ == typ, root,
                         children_first=children_first,
                         should_follow=should_follow)
+
+
+def get_location(model_obj):
+    """
+    Args:
+        model_obj: the model object of interest
+
+    Returns:
+        the line, col and filename of the model element.
+        The filename may be None.
+        This function may be used to fill exceptions
+    """
+    from textx.model import get_model
+    the_model = get_model(model_obj)
+    line, col = the_model._tx_parser.pos_to_linecol(
+        model_obj._tx_position)
+    return {"line": line, "col": col, "filename": the_model._tx_filename}
 
 
 class ObjCrossRef(object):

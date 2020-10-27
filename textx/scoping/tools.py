@@ -32,31 +32,6 @@ def needs_to_be_resolved(parent_obj, attr_name):
         return False
 
 
-def textx_isinstance(obj, obj_cls):
-    """
-    This function determines, if a textx object is an instance of a
-     textx class.
-    Args:
-        obj: the object to be analyzed
-        obj_cls: the class to be checked
-
-    Returns:
-        True if obj is an instance of obj_cls.
-    """
-    if obj_cls.__name__ == "OBJECT":
-        return True
-    if isinstance(obj, obj_cls):
-        return True
-    if hasattr(obj_cls, "_tx_fqn") and hasattr(obj, "_tx_fqn"):
-        if obj_cls._tx_fqn == obj._tx_fqn:
-            return True
-    if hasattr(obj_cls, "_tx_inh_by"):
-        for cls in obj_cls._tx_inh_by:
-            if (textx_isinstance(obj, cls)):
-                return True
-    return False
-
-
 def get_list_of_concatenated_objects(def_obj, path_to_extension):
     """
     get a list of the objects consisting of
@@ -92,22 +67,6 @@ def get_list_of_concatenated_objects(def_obj, path_to_extension):
 
     rec_walk(def_obj)
     return def_objs
-
-
-def get_location(model_obj):
-    """
-    Args:
-        model_obj: the model object of interest
-
-    Returns:
-        the line, col and filename of the model element.
-        The filename may be None.
-        This function may be used to fill exceptions
-    """
-    the_model = get_model(model_obj)
-    line, col = the_model._tx_parser.pos_to_linecol(
-        model_obj._tx_position)
-    return {"line": line, "col": col, "filename": the_model._tx_filename}
 
 
 def get_parser(model_obj):

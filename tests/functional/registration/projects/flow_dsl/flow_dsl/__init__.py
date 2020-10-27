@@ -1,6 +1,5 @@
 import os
-from textx import metamodel_from_file, language, TextXSemanticError
-import textx.scoping.tools as tools
+from textx import metamodel_from_file, language, TextXSemanticError, get_location
 
 
 @language('flow-dsl', '*.eflow')
@@ -16,7 +15,7 @@ def flow_dsl():
         if f.algo1.outp != f.algo2.inp:
             raise TextXSemanticError(
                 "algo data types must match",
-                **tools.get_location(f)
+                **get_location(f)
             )
 
     flow_mm.register_obj_processors({

@@ -83,7 +83,7 @@ Where `person.ent` file might contain this:
 
 ## Model API
 
-Functions given in this section can be imported from `textx.model` module.
+Functions given in this section can be imported from `textx` module.
 
 ### `get_model(obj)`
 
@@ -133,6 +133,19 @@ Returns a list of all selected model elements starting from model element
 `root`. The search process will follow containment links only. Non-containing
 references shall not be followed.
 
+### `get_location(obj)`
+
+Returns the location of the textX model object in the form of a dict with
+`line/col/filename` keys. Filename can be `None` if the model is loaded from a
+string. Return value is convenient for use in TextX exceptions (e.g. `raise
+TextXSemanticError('Some message', **get_location(model_obj))`)
+
+### `textx_isinstace(obj, cls)`
+
+Return `True` if `obj` is instance of `cls` taking into account textX rule/class
+hierarchy. For textX created classes you can get a reference to a class from
+meta-model by keying into it using the class name `metamodel['SomeRule']`.
+
 ## Special model object's attributes
 
 Beside attributes specified by the grammar, there are several special
@@ -164,6 +177,9 @@ Previous example will give the line/column position of the first entity.
 `_tx_position_end` is the position in the input stream where the object ends.
 This position is one char past the last char belonging to the object. Thus,
 `_tx_position_end - _tx_position == length of the object str representation`.
+
+If you need line, column and filename of a textX object (e.g. for raising
+`TextXSemanticError`) see [get_location above](#get_locationobj).
 
 
 ### _tx_filename

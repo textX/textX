@@ -6,7 +6,7 @@ from pytest import raises
 
 import textx.scoping.providers as scoping_providers
 from textx import (metamodel_from_file, register_language,
-                   clear_language_registrations)
+                   clear_language_registrations, get_location)
 
 
 def test_exception_from_included_model():
@@ -32,7 +32,6 @@ def test_exception_from_included_model():
 
         def my_processor(m):
             from textx.exceptions import TextXSemanticError
-            from textx.scoping.tools import get_location
             if m.name == "d1":
                 raise TextXSemanticError("d1 triggers artifical error",
                                          **get_location(m))

@@ -172,7 +172,7 @@ Let's do some additional checks for the above Entity DSL example.
 
       if entity.name != entity.name.capitalize():
         raise TextXSemanticError('Entity name "%s" must be capitalized.' %
-                                entity.name)
+                                entity.name, **get_location(entity))
 
     def attribute_obj_processor(attribute):
       '''
