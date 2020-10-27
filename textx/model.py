@@ -25,6 +25,31 @@ __all__ = ['get_children_of_type', 'get_parent_of_type', 'get_model',
            'get_metamodel']
 
 
+def textx_isinstance(obj, obj_cls):
+    """
+    This function determines, if a textx object is an instance of a
+     textx class.
+    Args:
+        obj: the object to be analyzed
+        obj_cls: the class to be checked
+
+    Returns:
+        True if obj is an instance of obj_cls.
+    """
+    if obj_cls.__name__ == "OBJECT":
+        return True
+    if isinstance(obj, obj_cls):
+        return True
+    if hasattr(obj_cls, "_tx_fqn") and hasattr(obj, "_tx_fqn"):
+        if obj_cls._tx_fqn == obj._tx_fqn:
+            return True
+    if hasattr(obj_cls, "_tx_inh_by"):
+        for cls in obj_cls._tx_inh_by:
+            if (textx_isinstance(obj, cls)):
+                return True
+    return False
+
+
 def get_model(obj):
     """
     Finds model root element for the given object.
