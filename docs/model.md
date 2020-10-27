@@ -140,7 +140,7 @@ Returns the location of the textX model object in the form of a dict with
 string. Return value is convenient for use in TextX exceptions (e.g. `raise
 TextXSemanticError('Some message', **get_location(model_obj))`)
 
-### `textx_isinstace(obj, cls)`
+### `textx_isinstance(obj, cls)`
 
 Return `True` if `obj` is instance of `cls` taking into account textX rule/class
 hierarchy. For textX created classes you can get a reference to a class from

@@ -191,7 +191,7 @@ def test_textx_tools_with_frozen_classes2():
         assert ref_scope_was_used[0]
 
 
-def test_textx_isinstace():
+def test_textx_isinstance():
     grammar = \
         '''
     Model: a=A;
