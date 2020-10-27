@@ -89,7 +89,7 @@
     </li>
     <li class="toctree-l4"><a class="reference internal" href="#get_locationobj">get_location(obj)</a>
     </li>
-    <li class="toctree-l4"><a class="reference internal" href="#textx_isinstaceobj-cls">textx_isinstace(obj, cls)</a>
+    <li class="toctree-l4"><a class="reference internal" href="#textx_isinstanceobj-cls">textx_isinstance(obj, cls)</a>
     </li>
         </ul>
     </li>
@@ -347,7 +347,7 @@ references shall not be followed.</p>
 <code>line/col/filename</code> keys. Filename can be <code>None</code> if the model is loaded from a
 string. Return value is convenient for use in TextX exceptions (e.g. <code>raise
 TextXSemanticError('Some message', **get_location(model_obj))</code>)</p>
-<h3 id="textx_isinstaceobj-cls"><code>textx_isinstace(obj, cls)</code><a class="headerlink" href="#textx_isinstaceobj-cls" title="Permanent link">&para;</a></h3>
+<h3 id="textx_isinstanceobj-cls"><code>textx_isinstance(obj, cls)</code><a class="headerlink" href="#textx_isinstanceobj-cls" title="Permanent link">&para;</a></h3>
 <p>Return <code>True</code> if <code>obj</code> is instance of <code>cls</code> taking into account textX rule/class
 hierarchy. For textX created classes you can get a reference to a class from
 meta-model by keying into it using the class name <code>metamodel['SomeRule']</code>.</p>
