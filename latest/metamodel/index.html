@@ -365,7 +365,7 @@ constructed. They are registered per class/rule.</p>
 
   if entity.name != entity.name.capitalize():
     raise TextXSemanticError('Entity name "%s" must be capitalized.' %
-                            entity.name)
+                            entity.name, **get_location(entity))
 
 def attribute_obj_processor(attribute):
   '''

@@ -205,6 +205,20 @@ exceptions are located in <code>textx.exceptions</code> module.</p>
 <code>col</code> attributes which represent line and column where the error was found.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
+<p>You can also raise <code>TextXSemanticError</code> during semantic checks (e.g. in <a href="../metamodel/#processors">object
+processors</a>. These error classes accepts the message
+and location information (<code>line</code>, <code>col</code>, <code>filename</code>) which can be produced from
+any textX model object using <code>get_location</code>:</p>
+<pre><code>from textx import get_location, TextXSemanticError
+...
+def my_processor(entity):
+    ... check something
+    raise TextXSemanticError('Invalid entity', **get_location(entity))
+...
+</code></pre>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>See also <a href="../textx_command/">textx command/tool</a> for (meta)model checking 
 from command line.</p>
 </div>

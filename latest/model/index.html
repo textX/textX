@@ -87,6 +87,10 @@
     </li>
     <li class="toctree-l4"><a class="reference internal" href="#get_childrenselector-root-children_firstfalse-should_followlambda-obj-true">get_children(selector, root, children_first=False, should_follow=lambda obj: True)</a>
     </li>
+    <li class="toctree-l4"><a class="reference internal" href="#get_locationobj">get_location(obj)</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#textx_isinstaceobj-cls">textx_isinstace(obj, cls)</a>
+    </li>
         </ul>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#special-model-objects-attributes">Special model object's attributes</a>
@@ -298,7 +302,7 @@ entity Address {
 }
 </code></pre>
 <h2 id="model-api">Model API<a class="headerlink" href="#model-api" title="Permanent link">&para;</a></h2>
-<p>Functions given in this section can be imported from <code>textx.model</code> module.</p>
+<p>Functions given in this section can be imported from <code>textx</code> module.</p>
 <h3 id="get_modelobj"><code>get_model(obj)</code><a class="headerlink" href="#get_modelobj" title="Permanent link">&para;</a></h3>
 <p><code>obj (model object)</code></p>
 <p>Finds the root of the model following <code>parent</code> references.</p>
@@ -338,6 +342,15 @@ references shall not be followed.</p>
 <p>Returns a list of all selected model elements starting from model element
 <code>root</code>. The search process will follow containment links only. Non-containing
 references shall not be followed.</p>
+<h3 id="get_locationobj"><code>get_location(obj)</code><a class="headerlink" href="#get_locationobj" title="Permanent link">&para;</a></h3>
+<p>Returns the location of the textX model object in the form of a dict with
+<code>line/col/filename</code> keys. Filename can be <code>None</code> if the model is loaded from a
+string. Return value is convenient for use in TextX exceptions (e.g. <code>raise
+TextXSemanticError('Some message', **get_location(model_obj))</code>)</p>
+<h3 id="textx_isinstaceobj-cls"><code>textx_isinstace(obj, cls)</code><a class="headerlink" href="#textx_isinstaceobj-cls" title="Permanent link">&para;</a></h3>
+<p>Return <code>True</code> if <code>obj</code> is instance of <code>cls</code> taking into account textX rule/class
+hierarchy. For textX created classes you can get a reference to a class from
+meta-model by keying into it using the class name <code>metamodel['SomeRule']</code>.</p>
 <h2 id="special-model-objects-attributes">Special model object's attributes<a class="headerlink" href="#special-model-objects-attributes" title="Permanent link">&para;</a></h2>
 <p>Beside attributes specified by the grammar, there are several special
 attributes on model objects created by textX. All special attributes' names
@@ -360,6 +373,8 @@ format use <code>pos_to_linecol</code> method of the parser.</p>
 <p><code>_tx_position_end</code> is the position in the input stream where the object ends.
 This position is one char past the last char belonging to the object. Thus,
 <code>_tx_position_end - _tx_position == length of the object str representation</code>.</p>
+<p>If you need line, column and filename of a textX object (e.g. for raising
+<code>TextXSemanticError</code>) see <a href="#get_locationobj">get_location above</a>.</p>
 <h3 id="_tx_filename">_tx_filename<a class="headerlink" href="#_tx_filename" title="Permanent link">&para;</a></h3>
 <p>This attribute exists only on the root of the model. If the model is loaded
 from a file, this attribute will be the full path of the source file. If the
