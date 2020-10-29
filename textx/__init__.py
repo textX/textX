@@ -4,7 +4,6 @@ from textx.model import get_children_of_type, get_parent_of_type, \
     get_model, get_metamodel, get_children, get_location, textx_isinstance
 from textx.exceptions import TextXError, TextXSyntaxError, \
     TextXSemanticError, TextXRegistrationError
-from textx.generators import get_output_filename, gen_file
 from textx.registration import (LanguageDesc, GeneratorDesc,
                                 register_language, register_generator,
                                 language_descriptions, language_description,
