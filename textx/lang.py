@@ -920,7 +920,6 @@ class TextXVisitor(RRELVisitor):
 # parser object cache as a thread local storage (i.e. cached per each thread).
 # To speed up parser initialization (e.g. during imports)
 tlocal = threading.local()
-tlocal.textX_parsers = {}
 
 
 def language_from_str(language_def, metamodel, file_name):
@@ -942,7 +941,10 @@ def language_from_str(language_def, metamodel, file_name):
     if metamodel.debug:
         metamodel.dprint("*** PARSING LANGUAGE DEFINITION ***")
 
-    # Check the cache for already conctructed textX parser
+    # Check the cache for already constructed textX parser
+    if not getattr(tlocal, 'textX_parsers', None):
+        tlocal.textX_parsers = {}
+
     if metamodel.debug in tlocal.textX_parsers:
         parser = tlocal.textX_parsers[metamodel.debug]
     else:
