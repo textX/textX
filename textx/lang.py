@@ -8,6 +8,7 @@ have named this language textX ;)
 """
 from __future__ import unicode_literals
 import re
+import threading
 from arpeggio import StrMatch, Optional, ZeroOrMore, OneOrMore, Sequence,\
     OrderedChoice, UnorderedGroup, Not, And, RegExMatch, Match, NoMatch, EOF, \
     ParsingExpression, ParserPython, visit_parse_tree
@@ -916,8 +917,10 @@ class TextXVisitor(RRELVisitor):
         return children[0]
 
 
-# parser object cache. To speed up parser initialization (e.g. during imports)
-textX_parsers = {}
+# parser object cache as a thread local storage (i.e. cached per each thread).
+# To speed up parser initialization (e.g. during imports)
+tlocal = threading.local()
+tlocal.textX_parsers = {}
 
 
 def language_from_str(language_def, metamodel, file_name):
@@ -940,8 +943,8 @@ def language_from_str(language_def, metamodel, file_name):
         metamodel.dprint("*** PARSING LANGUAGE DEFINITION ***")
 
     # Check the cache for already conctructed textX parser
-    if metamodel.debug in textX_parsers:
-        parser = textX_parsers[metamodel.debug]
+    if metamodel.debug in tlocal.textX_parsers:
+        parser = tlocal.textX_parsers[metamodel.debug]
     else:
         # Create parser for TextX grammars using
         # the arpeggio grammar specified in this module
@@ -953,7 +956,7 @@ def language_from_str(language_def, metamodel, file_name):
                               file=metamodel.file)
 
         # Cache it for subsequent calls
-        textX_parsers[metamodel.debug] = parser
+        tlocal.textX_parsers[metamodel.debug] = parser
 
     # Parse language description with textX parser
     try:
