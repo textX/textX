@@ -1,8 +1,3 @@
-try:
-    import click
-except ImportError:
-    raise Exception('textX must be installed with CLI dependencies to use '
-                    'textx command.\npip install textX[cli]')
 import os
 from functools import partial
 from textx.registration import generator
@@ -41,6 +36,11 @@ def gen_file(input_file, output_file, gen_callback, overwrite=False,
         success_message (str): A message displayed to user after generation is
             complete.
     """
+    try:
+        import click
+    except ImportError:
+        raise Exception('textX must be installed with CLI dependencies to use '
+                        'textx command.\npip install textX[cli]')
     if overwrite or not os.path.exists(output_file):
         click.echo('-> {}'.format(output_file))
         gen_callback()

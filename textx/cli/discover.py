@@ -1,4 +1,8 @@
-import click
+try:
+    import click
+except ImportError:
+    raise Exception('textX must be installed with CLI dependencies to use '
+                    'textx command.\npip install textX[cli]')
 
 from textx.registration import (language_descriptions,
                                 generator_descriptions)

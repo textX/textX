@@ -1,6 +1,10 @@
 from __future__ import unicode_literals
+try:
+    import click
+except ImportError:
+    raise Exception('textX must be installed with CLI dependencies to use '
+                    'textx command.\npip install textX[cli]')
 import os
-import click
 from textx import (metamodel_from_file,
                    metamodel_for_language,
                    metamodel_for_file,
