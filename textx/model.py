@@ -375,19 +375,19 @@ def get_model_parser(top_rule, comments_model, **kwargs):
 
             def _setattr(obj, name, value):
                 try:
-                    obj._tx_obj_attrs[id(obj)][name] = value
+                    user_class._tx_obj_attrs[id(obj)][name] = value
                 except KeyError:
                     try:
-                        return obj._tx_real_setattr(name, value)
+                        return user_class._tx_real_setattr(name, value)
                     except (AttributeError, TypeError):
                         return super(user_class, obj).__setattr__(name, value)
 
             def _delattr(obj, name):
                 try:
-                    obj._tx_obj_attrs[id(obj)].pop(name)
+                    user_class._tx_obj_attrs[id(obj)].pop(name)
                 except KeyError:
                     try:
-                        return obj._tx_real_delattr(name)
+                        return user_class._tx_real_delattr(name)
                     except (AttributeError, TypeError):
                         return super(user_class, obj).__delattr__(name)
 
