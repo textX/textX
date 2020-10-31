@@ -5,6 +5,7 @@ from __future__ import absolute_import
 import codecs
 import os
 import sys
+import warnings
 from os.path import join, abspath, dirname
 from collections import OrderedDict
 from arpeggio import DebugPrinter
@@ -180,9 +181,8 @@ class TextXMetaModel(DebugPrinter):
 
         super(TextXMetaModel, self).__init__(**kwargs)
 
-        self._tx_model_param_definitions = ModelParamDefinitions()
-        self._tx_model_param_definitions.add(
-            "project_root", "the project root path")
+        self.model_param_defs = ModelParamDefinitions()
+        self.model_param_defs.add("project_root", "the project root path")
 
         self.file_name = file_name
         self.rootcls = None
@@ -600,7 +600,7 @@ class TextXMetaModel(DebugPrinter):
                 is set while executing pre_ref_resolution_callback (see
                 scoping.md)
         """
-        self._tx_model_param_definitions.check_params('from_str', **kwargs)
+        self.model_param_defs.check_params('from_str', **kwargs)
 
         if type(model_str) is not text:
             raise TextXError("textX accepts only unicode strings.")
@@ -629,7 +629,7 @@ class TextXMetaModel(DebugPrinter):
 
     def model_from_file(self, file_name, encoding='utf-8', debug=None,
                         **kwargs):
-        self._tx_model_param_definitions.check_params(file_name, **kwargs)
+        self.model_param_defs.check_params(file_name, **kwargs)
 
         return self.internal_model_from_file(
             file_name, encoding, debug,
@@ -710,6 +710,12 @@ class TextXMetaModel(DebugPrinter):
         """
         self.obj_processors = obj_processors
         self.type_convertors.update(obj_processors)
+
+    @property
+    def _tx_model_param_definitions(self):
+        warnings.warn(
+            '_tx_model_param_definitions is deprecated in favor of model_param_defs.')
+        return self.model_param_defs
 
 
 class TextXMetaMetaModel(object):

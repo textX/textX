@@ -335,15 +335,15 @@ RHS object is not matched in the input. The multiplicity assignments (`*=` and
 
 ## Optional model parameter definitions
 
-A meta-model can define optional model parameters. Such definitions
-are stored in `_tx_model_param_definitions` and define optional parameters,
-which can be specified while loading/creating a model through `model_from_str`
-or `model_from_file`. Details: see [tx_model_params](model.md#_tx_model_params).
+A meta-model can define optional model parameters. Such definitions are stored
+in `model_param_defs` and define optional parameters, which can be specified
+while loading/creating a model through `model_from_str` or `model_from_file`.
+Details: see [tx_model_params](model.md#_tx_model_params).
 
-`metamodel._tx_model_param_definitions` can be queried (like a dict) to
-retrieve possible extra parameters and their descriptions for a meta-model.
-It is also used to restrict the additional parameters passed to
-`model_from_str` or `model_from_file`.
+`metamodel.model_param_defs` can be queried (like a dict) to retrieve possible
+extra parameters and their descriptions for a meta-model. It is also used to
+restrict the additional parameters passed to `model_from_str` or
+`model_from_file`.
 
 Default parameters are:
 

@@ -16,10 +16,10 @@ MyModel test1
 
 def test_model_params():
     mm = metamodel_from_str(grammar)
-    mm._tx_model_param_definitions.add(
+    mm.model_param_defs.add(
         "parameter1", "an example param (1)"
     )
-    mm._tx_model_param_definitions.add(
+    mm.model_param_defs.add(
         "parameter2", "an example param (2)"
     )
 
@@ -53,19 +53,19 @@ def test_model_params():
     with raises(TextXError, match=".*unknown parameter myerror2.*"):
         mm.model_from_str(text, parameter1='P1', myerror2='P2')
 
-    assert len(mm._tx_model_param_definitions) >= 2
-    assert 'parameter1' in mm._tx_model_param_definitions
-    assert 'parameter1' in mm._tx_model_param_definitions
-    assert mm._tx_model_param_definitions[
+    assert len(mm.model_param_defs) >= 2
+    assert 'parameter1' in mm.model_param_defs
+    assert 'parameter1' in mm.model_param_defs
+    assert mm.model_param_defs[
         'parameter1'].description == "an example param (1)"
 
 
 def test_model_params_empty():
     mm = metamodel_from_str(grammar)
-    mm._tx_model_param_definitions.add(
+    mm.model_param_defs.add(
         "parameter1", "an example param (1)"
     )
-    mm._tx_model_param_definitions.add(
+    mm.model_param_defs.add(
         "parameter2", "an example param (2)"
     )
 
@@ -79,10 +79,10 @@ def test_model_params_empty():
 
 def test_model_params_file_based():
     mm = metamodel_from_str(grammar)
-    mm._tx_model_param_definitions.add(
+    mm.model_param_defs.add(
         "parameter1", "an example param (1)"
     )
-    mm._tx_model_param_definitions.add(
+    mm.model_param_defs.add(
         "parameter2", "an example param (2)"
     )
 

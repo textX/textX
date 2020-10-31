@@ -48,6 +48,7 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ### Changed
 
+  - `_tx_model_param_definitions` deprecated in favor of `model_param_defs` ([#298]).
   - `click` is now an optional dependency, only when CLI is needed ([#292])
   - Make warning about not overwriting generated file more visible
     ([01341ec3](https://github.com/textX/textX/commit/01341ec381bfb4c8c27bcec5d2998a34d207f430))
@@ -500,6 +501,7 @@ please take a look at related PRs and issues and see if the change affects you.
   - Export to dot.
 
 
+[#298]: https://github.com/textX/textX/pull/298
 [#294]: https://github.com/textX/textX/pull/294
 [#292]: https://github.com/textX/textX/pull/292
 [#288]: https://github.com/textX/textX/pull/288

@@ -218,6 +218,6 @@ instances (see textx.scoping.providers).
 
 This attribute always exists. It holds all additional parameters passed to
 `model_from_str` or `model_from_file` of a metamodel. These parameters are
-restricted by the `metamodel._tx_model_param_definitions` object
-([model and object processors](metamodel.md#optional-model-parameter-definitions)),
-which is controlled by the metamodel designer.
+restricted by the `metamodel.model_param_defs` object ([model and object
+processors](metamodel.md#optional-model-parameter-definitions)), which is
+controlled by the metamodel designer.
