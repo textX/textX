@@ -105,7 +105,13 @@ def generate(textx):
                 if per_file_metamodel:
                     language = language_for_file(model_file).name
                     metamodel = metamodel_for_file(model_file)
-                model = metamodel.model_from_file(model_file)
+
+                # Get custom args that match defined model parameters and pass
+                # them in to be available to model processors.
+                model_params = {k: v for k, v in custom_args.items()
+                                if k in metamodel.model_param_defs}
+
+                model = metamodel.model_from_file(model_file, **model_params)
                 generator = generator_for_language_target(
                     language, target, any_permitted=per_file_metamodel)
 

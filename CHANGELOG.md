@@ -16,6 +16,10 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ### Added
 
+  - `textx generate`. Documented passing in arbitrary parameters which can be
+    used in the generator function. Also, implemented passing of model
+    parameters defined in the meta-model (`model_param_defs` and
+    `_tx_model_params`) ([#299])
   - `get_location` function for producing `line/col/filename` from any textX
     object. ([#294])
   - `builtin_models` of type `ModelRepository` to meta-model constructor. Used
@@ -501,6 +505,7 @@ please take a look at related PRs and issues and see if the change affects you.
   - Export to dot.
 
 
+[#299]: https://github.com/textX/textX/pull/299
 [#298]: https://github.com/textX/textX/pull/298
 [#294]: https://github.com/textX/textX/pull/294
 [#292]: https://github.com/textX/textX/pull/292
