@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="Igor Dejanović">
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Frequently Asked Questions - textX</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../css/theme.css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  <link href="../style.css" rel="stylesheet" />
+  <link href="../css/version-select.css" rel="stylesheet" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Frequently Asked Questions";
+    var mkdocs_page_input_path = "faq.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+  <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-68681917-1', 'igordejanovic.net');
+      ga('send', 'pageview');
+  </script>
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> textX</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">User Guide</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Basics</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../tutorials/hello_world/">Hello world</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../grammar/">Grammar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../metamodel/">Meta-model</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../model/">Model</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../parser_config/">Parser configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../textx_command/">textx command</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../registration/">Registration/Discovery</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../visualization/">Visualization</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../scaffolding/">Project scaffolding</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../howto/">Howtos</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Scoping and multi-file</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../scoping/">Scoping</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../rrel/">Reference resolving expression language (RREL)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../multimetamodel/">Multi meta-model</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Errors</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../error_handling/">Error handling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../debugging/">Debugging</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Generators</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../jinja/">Jinja generators</a>
+                </li>
+    </ul>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Tutorials</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../tutorials/hello_world/">Hello World</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../tutorials/robot/">Robot</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../tutorials/entity/">Entity</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../tutorials/state_machine/">State Machine</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../tutorials/toylanguage/">Toy language compiler</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../tutorials/self-dsl/">self-dsl</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../tutorials/turtle/">Turtle graphics</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Development</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="" href="https://github.com/textX/textX/blob/master/CONTRIBUTING.md">Contributing</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../process/">Release process</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">About</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../about/comparison/">Comparison</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="https://github.com/textX/textX/blob/master/LICENSE.txt">License</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">What's new</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../whatsnew/release_1_5/">Release 1.5</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">textX</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Frequently Asked Questions</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/textX/textX/edit/master/docs/faq.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="frequently-asked-questions">Frequently Asked Questions<a class="headerlink" href="#frequently-asked-questions" title="Permanent link">&para;</a></h1>
+<p>Your question is not here? Please use
+<a href="https://stackoverflow.com/questions/tagged/textx">stackoverflow</a>. Just make
+sure your question is tagged with <code>textx</code>.</p>
+<h2 id="is-textx-suitable-to-generate-django-model-code">Is TextX suitable to generate Django model code ?<a class="headerlink" href="#is-textx-suitable-to-generate-django-model-code" title="Permanent link">&para;</a></h2>
+<p>Yes, textX is perfectly suitable for the task. Actually, that is something it is created for. To make a clean little language that fits your needs in describing your requirements/solution and than generate a bunch of stuff for various target platforms. See the Entity example is the docs. It's very simplistic but would provide you a good starting point.</p>
+<p>I see the success of Django and similar frameworks (like ROR for example) mainly due to use of internal DSLs (django models is a DSL that is interpreted on-the-fly to provide ORM etc., or admin is interpreted on the fly to provide CRUDS interface). With textX you can go further by having an external DSL where you can fully control your syntax and you can generate the rest of the stuff. Down the road, if you decide to leave Django, just change your generators and regenerate for the new platform.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Taken from <a href="https://github.com/textX/textX/issues/121">#121</a>.</p>
+</div>
+<h2 id="what-is-an-idiomatic-way-to-test-models-generated-by-a-grammar">What is an idiomatic way to test models generated by a grammar ?<a class="headerlink" href="#what-is-an-idiomatic-way-to-test-models-generated-by-a-grammar" title="Permanent link">&para;</a></h2>
+<p>Exact comparison of models is probably not a good idea : differences in the model may be unsignificant from the semantic point of view.</p>
+<p>A more practical and sensible approach is to construct the model using textX and then to traverse the model, asserting various facts about it, duck typing style.</p>
+<p>You may want to look at property-oriented testing, with frameworks as <a href="https://hypothesis.works">hypothesis</a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Inspired from <a href="https://github.com/textX/textX/issues/116">#116</a>.</p>
+</div>
+<h2 id="how-to-parse-whitespace-sensitive-grammar-like-python">How to parse whitespace sensitive grammar (like Python) ?<a class="headerlink" href="#how-to-parse-whitespace-sensitive-grammar-like-python" title="Permanent link">&para;</a></h2>
+<p>There is no direct support for whitespace sensitive languages at the moment. An <a href="https://github.com/textX/textX/issues/15">incoming work</a> is going to deal with this.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Taken from <a href="https://github.com/textX/textX/issues/44">#44</a>.</p>
+</div>
+<h2 id="how-to-use-line-terminator-as-eol-token-like-python">How to use line terminator as EOL token (like Python) ?<a class="headerlink" href="#how-to-use-line-terminator-as-eol-token-like-python" title="Permanent link">&para;</a></h2>
+<p>You can disable whitespace skipping using <code>ws</code> <a href="http://textx.github.io/textX/parser_config/#whitespace-handling">parser parameter</a> to redefine whitespaces or disable whitespace entirely using <code>skipws</code> param.</p>
+<p>You can also do that <a href="http://textx.github.io/textX/grammar/#rule-modifiers">per rule</a>. This way you can catch whitespaces in your grammar. For your particular case, when you should match inside single line only, there is even simpler solution by using <a href="http://textx.github.io/textX/grammar/#repetition-modifiers"><code>eolterm</code> repetition modifier</a>.</p>
+<p>See for example implementation of <a href="https://github.com/igordejanovic/pyFlies/blob/master/examples/Simon/Simon.pf">pyFlies conditions</a>. In this DSL each state is a separate line.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Taken from <a href="https://github.com/textX/textX/issues/44">#44</a>.</p>
+</div>
+<h2 id="textx-allows-to-get-ast-from-code-how-to-convert-the-ast-back-to-code">TextX allows to get AST from code. How to convert the AST back to code ?<a class="headerlink" href="#textx-allows-to-get-ast-from-code-how-to-convert-the-ast-back-to-code" title="Permanent link">&para;</a></h2>
+<p>This feature is not implemented for the moment. It will be made possible by an incoming frontend for TextX
+based on <a href="http://www.igordejanovic.net/2017/08/09/parglare-python-parser.html">another parsing method</a>.</p>
+<p>For the moment, the closest thing you have is <a href="https://github.com/textX/textX/tree/master/examples/Entity">the Entity example</a>
+showing how to generate source code from models.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Taken from <a href="https://github.com/textX/textX/issues/36">#36</a>.</p>
+</div>
+<h2 id="is-the-dot-output-fully-deterministic">Is the <code>.dot</code> output fully deterministic ?<a class="headerlink" href="#is-the-dot-output-fully-deterministic" title="Permanent link">&para;</a></h2>
+<p>No, because internally the <code>id()</code> function is used when generating the <code>.dot</code>
+output for nodes identification.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Taken from <a href="https://github.com/textX/textX/issues/101">#101</a>.</p>
+</div>
+<h2 id="how-is-using-a-model-processor-is-different-from-simply-calling-a-function-taking-a-model-after-the-parsing-is-complete">How is using a model processor is different from simply calling a function taking a model after the parsing is complete ?<a class="headerlink" href="#how-is-using-a-model-processor-is-different-from-simply-calling-a-function-taking-a-model-after-the-parsing-is-complete" title="Permanent link">&para;</a></h2>
+<p>No difference. Model processor is only a convenience that ensures that calling a processor is not forgotten.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Taken from <a href="https://github.com/textX/textX/issues/124">#124</a>.</p>
+</div>
+<h2 id="are-object-processors-also-called-after-the-parsing-is-complete">Are object processors also called after the parsing is complete ?<a class="headerlink" href="#are-object-processors-also-called-after-the-parsing-is-complete" title="Permanent link">&para;</a></h2>
+<p>Object processors are called after parsing and reference resolution. Thus, an object processor always have all references resolved.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Taken from <a href="https://github.com/textX/textX/issues/124">#124</a>.</p>
+</div>
+<h2 id="if-an-object-processor-returns-a-value-of-another-object-type-does-a-processor-for-that-type-is-called">If an object processor returns a value of another object type, does a processor for that type is called ?<a class="headerlink" href="#if-an-object-processor-returns-a-value-of-another-object-type-does-a-processor-for-that-type-is-called" title="Permanent link">&para;</a></h2>
+<p>If you return a value in an object processor, the current object is replaced. The replaced object is not further processed.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Taken from <a href="https://github.com/textX/textX/issues/124">#124</a>.</p>
+</div>
+<h2 id="is-there-an-existing-dsl-for-json-schema">Is there an existing DSL for JSON schema ?<a class="headerlink" href="#is-there-an-existing-dsl-for-json-schema" title="Permanent link">&para;</a></h2>
+<p>We are not aware of any project using textX for JSON Schema implementation.</p>
+<p>It however shouldn't be hard to define grammar for JSON Schema in textX. You can start with the <a href="https://github.com/textX/textX/tree/master/examples/json">JSON example</a>.
+Actually, JSON schema is JSON file so it can be parsed with any JSON parser (the <a href="https://docs.python.org/3/library/json.html">official python one</a>, or even textX JSON example)
+and validated and analysed afterwards. You could then extract schema validation rules and apply them to subsequent JSON files.
+JSON schema is meta-language, thus it could be applied to itself.</p>
+<p>However, there are standard JSON Schema implementations in Python that do that well and probably will parse much faster than textX.</p>
+<p>TextX targets situation where you want to parse something that doesn't have readily available parser, like some custom textual formats or DSLs.
+For example, to combine JSON Schema with other formalisms.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Taken from <a href="https://github.com/textX/textX/issues/51">#51</a>.</p>
+</div>
+              
+            </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>Copyright &copy; <a href="http://www.igordejanovic.net/">Igor Dejanović</a>.</p>
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+          <a href="https://github.com/textX/textX/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
+      
+      
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../js/version-select.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>
