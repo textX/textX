@@ -12,7 +12,15 @@ Backward incompatible changes are marked with **(BIC)**. These changes are the
 reason for the major version increase so when upgrading between major versions
 please take a look at related PRs and issues and see if the change affects you.
 
+
 ## [Unreleased]
+
+### Added
+### Fixed
+### Changed
+
+
+## [2.3.0] (released: 2020-11-01)
 
 ### Added
 
@@ -588,7 +596,8 @@ please take a look at related PRs and issues and see if the change affects you.
 [#92]: https://github.com/textX/textX/pull/92
 [#40]: https://github.com/textX/textX/issues/40
 
-[Unreleased]: https://github.com/textX/textX/compare/v2.2.0...HEAD
+[Unreleased]: https://github.com/textX/textX/compare/2.3.0...HEAD
+[2.3.0]: https://github.com/textX/textX/compare/v2.2.0...2.3.0
 [v2.2.0]: https://github.com/textX/textX/compare/v2.1.0...v2.2.0
 [v2.1.0]: https://github.com/textX/textX/compare/v2.0.1...v2.1.0
 [v2.0.1]: https://github.com/textX/textX/compare/v1.8.0...v2.0.1
