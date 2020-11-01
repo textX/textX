@@ -356,6 +356,28 @@ Options:
 
 ```
 
+You can pass in arbitrary parameters in the `generator` command. These
+parameters will get collected and will be made available as `kwargs` to the
+generator function call.
+
+For example:
+
+    textx generate mymodel.flow --target mytarget --overwrite --meaning_of_life 42
+    
+Your generator function:
+
+    @generator('flow', 'mytarget')
+    def flow_mytarget_generator(metamodel, model, output_path, overwrite, debug, **kwargs):
+        ... kwargs has meaning_of_life param
+        
+gets `meaning_of_life` param with value `42`.
+
+If you have [model parameters
+defined](metamodel.md#optional-model-parameter-definitions) on a meta-model
+then any parameter passed to the generator that is registered on the meta-model
+will be available as `model._tx_model_params` and can be used e.g. in [model
+processors](metamodel.md#model-processors).
+
 
 ## Registration API
 
