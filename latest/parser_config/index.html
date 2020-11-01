@@ -207,20 +207,18 @@
 <h2 id="case-sensitivity">Case sensitivity<a class="headerlink" href="#case-sensitivity" title="Permanent link">&para;</a></h2>
 <p>Parser is by default case sensitive. For DSLs that should be case insensitive
 use <code>ignore_case</code> parameter of the meta-model constructor call.</p>
-<pre><code class="python">from textx import metamodel_from_file
+<pre><code class="language-python">from textx import metamodel_from_file
 
 my_metamodel = metamodel_from_file('mygrammar.tx', ignore_case=True)
 </code></pre>
-
 <h2 id="whitespace-handling">Whitespace handling<a class="headerlink" href="#whitespace-handling" title="Permanent link">&para;</a></h2>
 <p>The parser will skip whitespaces by default. Whitespaces are spaces, tabs and
 newlines by default. Skipping of the whitespaces can be disabled by <code>skipws</code> bool
 parameter in the constructor call. Also, what is a whitespace can be redefined by
 the <code>ws</code> string parameter.</p>
-<pre><code class="python">from textx import metamodel_from_file
+<pre><code class="language-python">from textx import metamodel_from_file
 my_metamodel = metamodel_from_file('mygrammar.tx', skipws=False, ws='\s\n')
 </code></pre>
-
 <p>Whitespaces and whitespace skipping can be defined in the grammar on the level
 of a single rule by <a href="../grammar/#rule-modifiers">rule modifiers</a>.</p>
 <h2 id="automatic-keywords">Automatic keywords<a class="headerlink" href="#automatic-keywords" title="Permanent link">&para;</a></h2>
@@ -238,10 +236,9 @@ boundaries regular expression rule for each keyword-like match.</p>
 <p>textX can do automatic word boundary match for all keyword-like string matches.
 To enable this feature set parameter <code>autokwd</code> to <code>True</code> in the constructor
 call.</p>
-<pre><code class="python">from textx import metamodel_from_file
+<pre><code class="language-python">from textx import metamodel_from_file
 my_metamodel = metamodel_from_file('mygrammar.tx', autokwd=True)
 </code></pre>
-
 <p>Any simple match from the grammar that is matched by the
 regular expression <code>[^\d\W]\w*</code> is considered to be a keyword.</p>
 <h2 id="memoization-aka-packrat-parsing">Memoization (a.k.a. packrat parsing)<a class="headerlink" href="#memoization-aka-packrat-parsing" title="Permanent link">&para;</a></h2>
@@ -251,7 +248,7 @@ increase at the expense of some memory used for the memoization cache.</p>
 <p>Starting with textX 1.4 this feature is disabled by default. If you think that
 parsing is slow, try to enable memoization by setting <code>memoization</code> parameter to
 <code>True</code> during meta-model instantiation.</p>
-<pre><code class="python">from textx import metamodel_from_file
+<pre><code class="language-python">from textx import metamodel_from_file
 my_metamodel = metamodel_from_file('mygrammar.tx', memoization=True)
 </code></pre>
               

@@ -335,13 +335,12 @@ When using this extra prefix the importURI feature is activated
 <h2 id="using-rrel-from-python-code">Using RREL from Python code<a class="headerlink" href="#using-rrel-from-python-code" title="Permanent link">&para;</a></h2>
 <p>RREL expression could be used during registration in place of scoping provider.
 For example:</p>
-<pre><code class="Python">my_meta_model.register_scope_providers({
+<pre><code class="language-Python">my_meta_model.register_scope_providers({
         &quot;*.*&quot;: scoping_providers.FQN(),
         &quot;Connection.from_port&quot;: &quot;from_inst.component.slots&quot;  # RREL
         &quot;Connection.to_port&quot;: &quot;from_inst.component.slots&quot;      # RREL
     })
 </code></pre>
-
 <h2 id="rrel-processing-internal">RREL processing (internal)<a class="headerlink" href="#rrel-processing-internal" title="Permanent link">&para;</a></h2>
 <p>RREL expression are parsed when the grammar is loaded and transformed to AST
 consisting of RREL operator nodes (each node could be an instance of <code>RREL</code>

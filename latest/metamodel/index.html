@@ -444,25 +444,21 @@ MyFloat:
   /\d+\.(\d+)?/
 ;
 </code></pre>
-
 <p>In this example <code>MyFloat</code> rule is a match rule and by default will return Python
 <code>string</code>, so attribute <code>some_number</code> will be of <code>string</code> type. To change that,
 register object processor for <code>MyFloat</code> rule:</p>
 <pre><code>mm = metamodel_from_str(grammar)
 mm.register_obj_processors({'MyFloat': lambda x: float(x)}))
 </code></pre>
-
 <p>Now, <code>MyFloat</code> will always be converted to Python <code>float</code> type.</p>
 <p>Using match filters you can override built-in rule's conversions like this:</p>
 <pre><code>Model:
   some_float=INT
 ;
 </code></pre>
-
 <pre><code>mm = metamodel_from_str(grammar)
 mm.register_obj_processors({'INT': lambda x: float(x)}))
 </code></pre>
-
 <p>In this example we use built-in rule <code>INT</code> that returns Python <code>int</code> type.
 Registering object processor with the key <code>INT</code> we can change default behaviour
 and convert what is matched by this rule to some other object (<code>float</code> in this
@@ -499,14 +495,14 @@ assignments (<code>=</code>). An optional assignment (<code>?=</code>) will alwa
 RHS object is not matched in the input. The multiplicity assignments (<code>*=</code> and
 <code>+=</code>) will always be python lists.</p>
 <h2 id="optional-model-parameter-definitions">Optional model parameter definitions<a class="headerlink" href="#optional-model-parameter-definitions" title="Permanent link">&para;</a></h2>
-<p>A meta-model can define optional model parameters. Such definitions
-are stored in <code>_tx_model_param_definitions</code> and define optional parameters,
-which can be specified while loading/creating a model through <code>model_from_str</code>
-or <code>model_from_file</code>. Details: see <a href="../model/#_tx_model_params">tx_model_params</a>.</p>
-<p><code>metamodel._tx_model_param_definitions</code> can be queried (like a dict) to
-retrieve possible extra parameters and their descriptions for a meta-model.
-It is also used to restrict the additional parameters passed to
-<code>model_from_str</code> or <code>model_from_file</code>.</p>
+<p>A meta-model can define optional model parameters. Such definitions are stored
+in <code>model_param_defs</code> and define optional parameters, which can be specified
+while loading/creating a model through <code>model_from_str</code> or <code>model_from_file</code>.
+Details: see <a href="../model/#_tx_model_params">tx_model_params</a>.</p>
+<p><code>metamodel.model_param_defs</code> can be queried (like a dict) to retrieve possible
+extra parameters and their descriptions for a meta-model. It is also used to
+restrict the additional parameters passed to <code>model_from_str</code> or
+<code>model_from_file</code>.</p>
 <p>Default parameters are:</p>
 <ul>
 <li><code>project_root</code>: this model parameter is used by the <a href="http://localhost:8000/scoping/#scope-providers-defined-in-module-textxscopingproviders"><code>GlobalRepo</code></a>
