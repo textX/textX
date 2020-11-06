@@ -201,8 +201,8 @@ Here is a non-complete list of projects using textX.
       (DSL) for simplified music notation
     - [applang](https://github.com/kosanmil/applang) - Textual DSL for
       generating mobile applications
-    - [pyFlies](https://github.com/igordejanovic/pyFlies) - DSL for cognitive
-      experiments modeling
+    - [pyFlies](https://github.com/pyflies/pyflies) - A DSL for designing
+      experiments in psychology
     - [ppci](http://ppci.readthedocs.io/en/latest/index.html) - Pure python
       compiler infrastructure. 
     - [Expremigen](https://github.com/shimpe/expremigen) -  Expressive midi generation
