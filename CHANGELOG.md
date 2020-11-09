@@ -17,6 +17,10 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ### Added
 ### Fixed
+
+- Fixed model export to dot in cases where textX object is replaced in the
+  processor([#301])
+
 ### Changed
 
 
@@ -513,6 +517,7 @@ please take a look at related PRs and issues and see if the change affects you.
   - Export to dot.
 
 
+[#301]: https://github.com/textX/textX/issues/301
 [#299]: https://github.com/textX/textX/pull/299
 [#298]: https://github.com/textX/textX/pull/298
 [#294]: https://github.com/textX/textX/pull/294
