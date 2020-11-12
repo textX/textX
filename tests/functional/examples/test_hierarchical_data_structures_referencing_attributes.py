@@ -3,6 +3,7 @@ from textx import metamodel_from_str
 from pytest import raises
 import textx.exceptions
 import attr
+from textx.scoping.rrel import find_object_with_path
 
 
 @attr.s(frozen=True)
@@ -304,4 +305,13 @@ def test_referencing_attributes_with_rrel_and_full_path_access():
     # todo: access reference d.c.b.a.x --> "d.c.b.a.x"
     # (allows to access all intermediate referenced named
     # elements: d c b a x)
-    assert m.references[0].ref == m.structs[0].vals[0]
+    res, objpath = find_object_with_path(m.references[0], "d.c.b.a.x",
+                                         "instances.~type.vals.(~type.vals)*")
+    assert res.name == 'x'
+    assert len(objpath) == 5  # only named elements are included (no ~type)
+    assert objpath[0] == m.instances[0]
+    assert objpath[0].name == 'd'
+    assert objpath[1].name == 'c'
+    assert objpath[2].name == 'b'
+    assert objpath[3].name == 'a'
+    assert objpath[4].name == 'x'

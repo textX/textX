@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 from textx.scoping.rrel import rrel_standalone, parse
 from arpeggio import ParserPython
 from textx import metamodel_from_str
-from textx.scoping.rrel import find
+from textx.scoping.rrel import find, find_object_with_path
 
 
 def test_rrel_basic_parser1():
@@ -269,8 +269,20 @@ def test_rrel_repetitions():
     b2 = find(my_model, "b.a.b", "entries.ref*")
     assert b2 == b
 
+    res, objpath = find_object_with_path(my_model, "b.a.b", "entries.ref*")
+    assert res == b
+    assert len(objpath) == 3
+    assert objpath[-1] == res
+    assert ".".join(map(lambda x: x.name, objpath)) == 'b.a.b'
+
     a2 = find(my_model, "b.a.b.a", "entries.ref*")
     assert a2 == a
+
+    res, objpath = find_object_with_path(my_model, "b.a.b.a", "entries.ref*")
+    assert res == a
+    assert len(objpath) == 4
+    assert objpath[-1] == res
+    assert ".".join(map(lambda x: x.name, objpath)) == 'b.a.b.a'
 
     a2 = find(my_model, "b.a.b.a.b.a.b.a.b.a", "entries.ref*")
     assert a2 == a
