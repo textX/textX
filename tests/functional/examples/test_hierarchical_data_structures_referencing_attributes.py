@@ -301,7 +301,7 @@ def test_referencing_attributes_with_rrel_and_full_path_access():
     assert m.references[2].ref.name == 'x'
     assert m.references[2].ref == m.structs[0].vals[0]
 
-    # todo: access reference d.c.b.a.x --> "c.b.a.x"
+    # todo: access reference d.c.b.a.x --> "d.c.b.a.x"
     # (allows to access all intermediate referenced named
-    # elements: c b a x)
+    # elements: d c b a x)
     assert m.references[0].ref == m.structs[0].vals[0]
