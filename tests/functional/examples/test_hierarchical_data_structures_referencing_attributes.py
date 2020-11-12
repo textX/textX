@@ -268,3 +268,40 @@ def test_referencing_attributes_with_rrel_all_in_one_splitstring():
 
     assert m.references[2].ref.name == 'x'
     assert m.references[2].ref == m.structs[0].vals[0]
+
+
+def test_referencing_attributes_with_rrel_and_full_path_access():
+    """
+    RREL solution: all scope provider information encoded in the grammar.
+    """
+
+    mm = metamodel_from_str('''
+        Model:
+            structs+=Struct
+            instances+=Instance
+            references+=Reference;
+        Struct:
+            'struct' name=ID '{' vals+=Val '}';
+        Val:
+            'val' name=ID (':' type=[Struct])?;
+        Instance:
+            'instance' name=ID (':' type=[Struct])?;
+        Reference:
+            'reference' ref=[Val|FQN|instances.~type.vals.(~type.vals)*];
+        FQN: ID ('.' ID)*;
+        ''')
+    m = mm.model_from_str(model_text)
+    m.references[-1].ref == m.structs[0].vals[0]  # a.x
+
+    assert m.references[0].ref.name == 'x'
+    assert m.references[0].ref == m.structs[0].vals[0]
+
+    assert m.references[1].ref == m.structs[0].vals[0]
+
+    assert m.references[2].ref.name == 'x'
+    assert m.references[2].ref == m.structs[0].vals[0]
+
+    # todo: access reference d.c.b.a.x --> "c.b.a.x"
+    # (allows to access all intermediate referenced named
+    # elements: c b a x)
+    assert m.references[0].ref == m.structs[0].vals[0]
