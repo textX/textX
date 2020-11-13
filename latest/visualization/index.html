@@ -226,12 +226,13 @@ generators</a> to produce model and meta-model visualizations.</p>
 generators from <code>textX</code> (for meta-models) or <code>any</code> (for all models) to <code>dot</code> or
 <code>PlantUML</code> file format. Several of these generators are provided by textX. You
 can list them by <a href="../registration/#listing-generators">list-generators command</a>:</p>
-<pre><code class="language-nohighlight">$ textx list-generators
+<pre><code class="nohighlight">$ textx list-generators
 textX -&gt; dot         textX               Generating dot visualizations from textX grammars
 textX -&gt; PlantUML    textX               Generating PlantUML visualizations from textX grammars
 any -&gt; dot           textX               Generating dot visualizations from arbitrary models
 flow-dsl -&gt; PlantUML flow-codegen        Generating PlantUML visualization from flow-dsl
 </code></pre>
+
 <p>You see that we have two generators from <code>textX</code> language (i.e. textX grammar
 language) registered by the <code>textX</code> project. The first as a target uses <code>dot</code>
 and the second uses <code>PlantUML</code>. These generators will produce <code>dot</code> (part of
@@ -252,44 +253,50 @@ other generators (e.g. those that would produce Java or Python code).</p>
 <p>Here is an example on how to produce the same visualization described in section
 <a href="./">Visualization</a> (see the <a href="https://github.com/textX/textX/tree/master/examples/robot">robot
 example</a>).</p>
-<pre><code class="language-nohighlight">$ textx generate robot.tx --target dot 
+<pre><code class="nohighlight">$ textx generate robot.tx --target dot 
 Generating dot target from models:
 /home/igor/repos/textX/textX/examples/robot/robot.tx
 -&gt; /home/igor/repos/textX/textX/examples/robot/robot.dot
    To convert to png run &quot;dot -Tpng -O robot.dot&quot;
 </code></pre>
+
 <p>Now you can view <code>dot</code> file using some of available viewers. For example, if you
 install <a href="https://github.com/jrfonseca/xdot.py">xdot</a>:</p>
-<pre><code class="language-nohighlight">$ xdot robot.dot
+<pre><code class="nohighlight">$ xdot robot.dot
 </code></pre>
+
 <p>or convert it to some other graphical format (<a href="http://www.graphviz.org/">GraphViz</a> is needed):</p>
-<pre><code class="language-nohighlight">$ dot -Tpng -O robot.dot
+<pre><code class="nohighlight">$ dot -Tpng -O robot.dot
 </code></pre>
+
 <p>and you will get <code>robot.dot.png</code> that looks like this:</p>
 <p><img alt="Robot meta-model in dot" src="../images/robot.dot.png" /></p>
 <p>You can also generate <a href="http://plantuml.com/">PlantUML</a> output from the grammar files:</p>
-<pre><code class="language-nohighlight">$ textx generate robot.tx --target plantuml
+<pre><code class="nohighlight">$ textx generate robot.tx --target plantuml
 Generating plantuml target from models:
 /home/igor/repos/textX/textX/examples/robot/robot.tx
 -&gt; /home/igor/repos/textX/textX/examples/robot/robot.pu
 To convert to png run 'plantuml /home/igor/repos/textX/textX/examples/robot/robot.pu'
 
 </code></pre>
+
 <p>This will produce file <code>robot.pu</code>. Now convert it to <code>robot.png</code> by (<a href="http://plantuml.com/">PlantUML</a>
 must be installed and accessible on path):</p>
-<pre><code class="language-nohighlight">$ plantuml robot.pu
+<pre><code class="nohighlight">$ plantuml robot.pu
 
 </code></pre>
+
 <p>The produced <code>robot.png</code> image will look like this:</p>
 <p><img alt="Robot meta-model in PlantUML" src="../images/robot.png" /></p>
 <p>Similarly you can generate output from any model. For example:</p>
-<pre><code class="language-nohighlight">$ textx generate program.rbt --grammar robot.tx --target dot 
+<pre><code class="nohighlight">$ textx generate program.rbt --grammar robot.tx --target dot 
 Generating dot target from models:
 /home/igor/repos/textX/textX/examples/robot/program.rbt
 -&gt; /home/igor/repos/textX/textX/examples/robot/program.dot
    To convert to png run &quot;dot -Tpng -O program.dot&quot;
 
 </code></pre>
+
 <p>In this example we had to supply <code>--grammar</code> option to <code>generate</code> command as the
 <code>robot</code> language is not registered by the <a href="../registration/">registration API</a>.
 If we had the robot language registered, meta-model could be discovered by the
@@ -304,46 +311,52 @@ transform it to <code>png</code> format. The produced image will look like this:
 <h2 id="visualize-meta-models-programmatically">Visualize meta-models programmatically<a class="headerlink" href="#visualize-meta-models-programmatically" title="Permanent link">&para;</a></h2>
 <p>To visualize a meta-model programmatically do (see <a href="https://github.com/textX/textX/tree/master/examples/Entity">Entity
 example</a>):</p>
-<pre><code class="language-python">from textx import metamodel_from_file
+<pre><code class="python">from textx import metamodel_from_file
 from textx.export import metamodel_export
 
 entity_mm = metamodel_from_file('entity.tx')
 
 metamodel_export(entity_mm, 'entity.dot')
 </code></pre>
+
 <p><code>entity.dot</code> file will be created. You can visualize this file by using various
 dot viewers or convert it to various image formats using the <code>dot</code> tool.</p>
-<pre><code class="language-nohighlight">$ dot -Tpng -O entity.dot
+<pre><code class="nohighlight">$ dot -Tpng -O entity.dot
 </code></pre>
+
 <p>The following image is generated:</p>
 <p><img alt="Entity meta-model" src="../images/entity_meta.dot.png" /></p>
 <p>Alternatively, you can also specify an alternative renderer to export your meta
 model for the <a href="http://plantuml.com/">PlantUML</a> tool.</p>
-<pre><code class="language-python">from textx import metamodel_from_file
+<pre><code class="python">from textx import metamodel_from_file
 from textx.export import metamodel_export, PlantUmlRenderer
 
 entity_mm = metamodel_from_file('entity.tx')
 
 metamodel_export(entity_mm, 'entity.pu',renderer=PlantUmlRenderer())
 </code></pre>
+
 <p><code>entity.pu</code> file will be created. You can convert it to various image formats
 using the <code>plantuml</code> tool.</p>
-<pre><code class="language-nohighlight">$ plantuml -Tpng entity.pu
+<pre><code class="nohighlight">$ plantuml -Tpng entity.pu
 </code></pre>
+
 <p>The following image is generated:</p>
 <p><img alt="Entity meta-model" src="../images/entity.png" /></p>
 <h2 id="visualize-models-programmatically">Visualize models programmatically<a class="headerlink" href="#visualize-models-programmatically" title="Permanent link">&para;</a></h2>
 <p>Similarly to meta-model visualization, you can also visualize your models (see <a href="https://github.com/textX/textX/tree/master/examples/Entity">Entity
 example</a>).</p>
-<pre><code class="language-python">from textx.export import model_export
+<pre><code class="python">from textx.export import model_export
 
 person_model = entity_mm.model_from_file('person.ent')
 
 model_export(person_model, 'person.dot')
 </code></pre>
+
 <p>Convert this <code>dot</code> file to <code>png</code> with:</p>
-<pre><code class="language-nohighlight">$ dot -Tpng -O person.dot
+<pre><code class="nohighlight">$ dot -Tpng -O person.dot
 </code></pre>
+
 <p>The following image is generated:</p>
 <p><img alt="Person model" src="https://raw.githubusercontent.com/textX/textX/master/examples/Entity/dotexport/person.dot.png" /></p>
               

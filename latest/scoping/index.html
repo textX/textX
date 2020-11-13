@@ -248,7 +248,7 @@ attributes of grammar rules:</p>
    bounds <code>FQN</code> provider to all attributes of <code>MyAttribute</code> grammar rule</li>
 </ul>
 <p>Example (from <a href="https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_local_scope.py">tests/test_scoping/test_local_scope.py</a>):</p>
-<pre><code class="language-nohighlight"># Grammar snippet (Components.tx)
+<pre><code class="nohighlight"># Grammar snippet (Components.tx)
 Component:
     'component' name=ID ('extends' extends+=[Component|FQN][','])? '{'
         slots*=Slot
@@ -265,7 +265,8 @@ Connection:
       to_inst=[Instance|ID] '.' to_port=[SlotIn|ID]
 ;
 </code></pre>
-<pre><code class="language-python"># Python snippet
+
+<pre><code class="python"># Python snippet
 my_meta_model = metamodel_from_file(
     os.path.join(abspath(dirname(__file__)), 'components_model1', 'Components.tx')
 
@@ -277,6 +278,7 @@ my_meta_model.register_scope_providers({
         &quot;to_inst.component.slots&quot;),
 })
 </code></pre>
+
 <p>This example selects the fully qualified name provider as default provider
 (<code>"*.*"</code>). Moreover, for special attributes of a <code>Connection</code> a relative name
 lookup is specified: here the <code>path</code> from the rule <code>Connection</code> containing the
@@ -318,7 +320,7 @@ Example: see
 <a href="https://github.com/textX/textX/blob/master/tests/functional/regressions/test_issue103_python_like_import.py">tests/functional/regressions/test_issue103_python_like_import.py</a>.</p>
 </li>
 </ul>
-<pre><code class="language-nohighlight">    package p1 {
+<pre><code class="nohighlight">    package p1 {
         package p2 {
             class a {};
         }
@@ -327,6 +329,7 @@ Example: see
     var x = new p1.p2.a()
     var y = new main.a()
 </code></pre>
+
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Except in the context of the <code>scope_redirection_logic</code> (see above),
@@ -423,7 +426,7 @@ searching into a local model and all loaded models fails.</p>
 <p>This is handy to provide builtin models of the language that are pre-loaded and
 don't need to be imported by each user model.</p>
 <p>Here is a full example that demonstrates this feature:</p>
-<pre><code class="language-python">from textx import metamodel_from_str, metamodel_for_language, register_language
+<pre><code class="python">from textx import metamodel_from_str, metamodel_for_language, register_language
 from textx.scoping import ModelRepository
 
 types_mm = metamodel_from_str(r'''
@@ -474,6 +477,7 @@ assert model.entities[0].properties[0].type.__class__.__name__ == 'BaseType'
 ''')
 
 </code></pre>
+
 <h2 id="technical-aspects-and-implementation-details">Technical aspects and implementation details<a class="headerlink" href="#technical-aspects-and-implementation-details" title="Permanent link">&para;</a></h2>
 <p>The scope providers are Python callables accepting <code>obj, attr, obj_ref</code>:</p>
 <ul>

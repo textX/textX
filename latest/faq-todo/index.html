@@ -212,6 +212,7 @@ print(&quot;ast.false [%s]&quot;%  str(ast.false))
 print(&quot;ast.string [%s]&quot;% str(ast.string))
 print(&quot;ast.string2[%s]&quot;% str(ast.string2))
 </code></pre>
+
 <p>producing this output:</p>
 <pre><code>ast.float [0.0]
 ast.integer [0]
@@ -220,10 +221,10 @@ ast.false []
 ast.string []
 ast.string2[None]
 </code></pre>
-<p>You can see that integers initialize to 0, floats to 0.0 and other strings to the empty string ('') while the none-terminal (string2) initializes to None.</p>
-<!-- I would argue that they should be consistent and all initialize to None unless they parsed. Otherwise there is no reliable way to know which rule fired. -->
-<!-- What if the user entered 0.0 or the empty string? -->
 
+<p>You can see that integers initialize to 0, floats to 0.0 and other strings to the empty string ('') while the none-terminal (string2) initializes to None.
+<!-- I would argue that they should be consistent and all initialize to None unless they parsed. Otherwise there is no reliable way to know which rule fired. -->
+<!-- What if the user entered 0.0 or the empty string? --></p>
 <p>As documented <a href="http://textx.github.io/textX/stable/metamodel/#auto-initialization-of-the-attributes">here</a>, this behavior can be changed with <code>auto_init_attributes</code> param of meta-model instanciation.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>

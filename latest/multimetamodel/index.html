@@ -255,21 +255,23 @@ repository</a>.</p>
 </div>
 <p>We have two languages/grammars (grammar <code>A</code> and <code>B</code>). <code>grammarA</code> string defines
 named elements of type <code>A</code>:</p>
-<pre><code class="language-nohighlight">Model: a+=A;
+<pre><code class="nohighlight">Model: a+=A;
 A:'A' name=ID;
 </code></pre>
+
 <p><code>GrammarBWithImportURI</code> string defines named elements of type <code>B</code> referencing
 elements of type <code>A</code> (from <code>grammarA</code>). This is achieved by using <code>reference</code>
 statement with alias. It also allows importing other model files by using
 <code>importURI</code>.</p>
-<pre><code class="language-nohighlight">reference A as a
+<pre><code class="nohighlight">reference A as a
 Model: imports+=Import b+=B;
 B:'B' name=ID '-&gt;' a=[a.A];
 Import: 'import' importURI=STRING;
 </code></pre>
+
 <p>We now proceed by registering languages using <a href="../registration/">registration
 API</a>:</p>
-<pre><code class="language-python">global_repo = scoping.GlobalModelRepository()
+<pre><code class="python">global_repo = scoping.GlobalModelRepository()
 global_repo_provider = scoping_providers.PlainNameGlobalRepo()
 
 def get_A_mm():
@@ -294,6 +296,7 @@ register_language('BwithImport',
                   pattern=&quot;*.b&quot;,
                   metamodel=get_BwithImport_mm)
 </code></pre>
+
 <p>Note that we are using a global repository and <code>FQNImportURI</code> scoping provider
 for <code>B</code> language to support importing of <code>A</code> models inside <code>B</code> models and
 referencing its model objects.</p>
@@ -306,31 +309,35 @@ information.</p>
 <p>After the languages are registered we can access the meta-models of registered
 languages using <a href="../registration/">the registration API</a>. Given the model in
 language <code>A</code> in file <code>myA_model.a</code>:</p>
-<pre><code class="language-nohighlight">A a1 A a2 A a3
+<pre><code class="nohighlight">A a1 A a2 A a3
 </code></pre>
+
 <p>and model in language <code>B</code> (with support for <code>ImportURI</code>) in file <code>myB_model.b</code>:</p>
-<pre><code class="language-nohighlight">import 'myA_model.a'
+<pre><code class="nohighlight">import 'myA_model.a'
 B b1 -&gt; a1 B b2 -&gt; a2 B b3 -&gt; a3
 </code></pre>
+
 <p>we can instantiate model <code>myB_model.b</code> like this:</p>
-<pre><code class="language-python">mm_B = metamodel_for_language('BwithImport')
+<pre><code class="python">mm_B = metamodel_for_language('BwithImport')
 model_file_name = os.path.join(os.path.dirname(__file__), 'myB_model.b')
 model = mm_B.model_from_file(model_file_name)
 </code></pre>
+
 <p>In another way we could use a global model repository directly to instantiate
 models directly from Python code without resorting to <code>ImportURI</code> machinery.
 For this we shall modify the grammar of language <code>B</code> to be:</p>
-<pre><code class="language-nohighlight">reference A
+<pre><code class="nohighlight">reference A
 Model: b+=B;
 B:'B' name=ID '-&gt;' a=[A.A];
 </code></pre>
+
 <p>Notice that we are not using the <code>ImportURI</code> functionality to load the
 referenced model here. Since both meta-models share the same global repository,
 we can directly add a model object to the <code>global_repo_provider</code> (<code>add_model</code>)
 of language A. This model object will then be visible to the scope provider of
 the second model and make the model object available. We register this language
 as we did above. Now, the code can look like this:</p>
-<pre><code class="language-python">mm_A = metamodel_for_language('A')
+<pre><code class="python">mm_A = metamodel_for_language('A')
 mA = mm_A.model_from_str('''
 A a1 A a2 A a3
 ''')
@@ -341,6 +348,7 @@ mB = mm_B.model_from_str('''
 B b1 -&gt; a1 B b2 -&gt; a2 B b3 -&gt; a3
 ''')
 </code></pre>
+
 <p>See how we explicitly added model <code>mA</code> to the global repository. This enabled
 model <code>mB</code> to find and resolve references to objects from <code>mA</code>.</p>
 <div class="admonition note">
@@ -377,7 +385,7 @@ to the meta-models (see
 <a href="https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_metamodel_provider2.py">test_metamodel_provider2.py</a>).
 Importantly, a common model repository (<code>global_repo</code>) is defined to share all
 model elements among both meta models:</p>
-<pre><code class="language-python">i_mm = get_meta_model(
+<pre><code class="python">i_mm = get_meta_model(
     global_repo, join(this_folder, &quot;metamodel_provider2&quot;, &quot;Ingredient.tx&quot;))
 r_mm = get_meta_model(
     global_repo, join(this_folder, &quot;metamodel_provider2&quot;, &quot;Recipe.tx&quot;))
@@ -396,6 +404,7 @@ register_language(
     metamodel=i_mm
 )
 </code></pre>
+
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>In practice we would usually register our languages using declarative
@@ -413,7 +422,7 @@ of components. A second model is added to define users which use instances of
 components defined in the first model.</p>
 <p>The grammar for the user meta-model is given as follows (including the ability
 to import a component model file).</p>
-<pre><code class="language-nohighlight">import Components
+<pre><code class="nohighlight">import Components
 
 Model:
     imports+=Import
@@ -426,6 +435,7 @@ User:
 
 Import: 'import' importURI=STRING;
 </code></pre>
+
 <p>The <a href="../registration/">registration API</a> is utilized to bind a file extension to
 the corresponding meta-model:</p>
 <pre><code>register_language(
@@ -442,9 +452,10 @@ register_language(
 )
 </code></pre>
 <p>With this construct we can define a user model referencing a component model:</p>
-<pre><code class="language-nohighlight">import &quot;example.components&quot;
+<pre><code class="nohighlight">import &quot;example.components&quot;
 user pi uses usage.action1
 </code></pre>
+
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>In practice we would usually register our languages using declarative
@@ -459,18 +470,20 @@ information.</p>
 </div>
 <p>You can reference an arbitrary python object using the <code>OBJECT</code> rule (see:
 <a href="https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_reference_to_buildin_attribute.py">test_reference_to_buildin_attribute.py</a>)</p>
-<pre><code class="language-nohighlight">Access:
+<pre><code class="nohighlight">Access:
     'access' name=ID pyobj=[OBJECT] ('.' pyattr=[OBJECT])?
 </code></pre>
+
 <p>In this case the referenced object will be a python dictionary referenced by
 <code>pyobj</code> and the entry of such a dictionary will be referenced by <code>pyattr</code>. An
 example model will look like:</p>
-<pre><code class="language-nohighlight">access AccessName1 foreign_model.name_of_entry
+<pre><code class="nohighlight">access AccessName1 foreign_model.name_of_entry
 </code></pre>
+
 <p><code>foreign_model</code> in this case is a plain Python dictionary provided as a <a href="../metamodel/#built-in-objects">custom
 built-in</a> and registered during meta-model
 construction:</p>
-<pre><code class="language-python">foreign_model = {
+<pre><code class="python">foreign_model = {
     &quot;name&quot;: &quot;Test&quot;,
     &quot;value&quot;: 3
 }
@@ -478,20 +491,23 @@ my_metamodel = metamodel_from_str(metamodel_str,
                                   builtins={
                                       'foreign_model': foreign_model})
 </code></pre>
+
 <p>A custom scope provider is used to achieve mapping of <code>pyobj/pyattr</code> to the
 entry in the <code>foreign_model</code> dict:</p>
-<pre><code class="language-python">def my_scope_provider(obj, attr, attr_ref):
+<pre><code class="python">def my_scope_provider(obj, attr, attr_ref):
     pyobj = obj.pyobj
     if attr_ref.obj_name in pyobj:
         return pyobj[attr_ref.obj_name]
     else:
         raise Exception(&quot;{} not found&quot;.format(attr_ref.obj_name))
 </code></pre>
+
 <p>The scope provider is linked to the <code>pyattr</code> attribute of the rule <code>Access</code>:</p>
-<pre><code class="language-python">my_metamodel.register_scope_providers({
+<pre><code class="python">my_metamodel.register_scope_providers({
     &quot;Access.pyattr&quot;: my_scope_provider,
 })
 </code></pre>
+
 <p>With this, we can reference non-texX data elements from within our language.
 This can be used to, e.g., use a non-textX AST object and reference it from a
 textX model.</p>
@@ -506,18 +522,20 @@ textX model.</p>
 also demonstrate how such an external model can be loaded with our own language
 (using a json file as external model).</p>
 <p>We want to access elements of JSON file from our model like this:</p>
-<pre><code class="language-nohighlight">import &quot;test_reference_to_nontextx_attribute/othermodel.json&quot; as data
+<pre><code class="nohighlight">import &quot;test_reference_to_nontextx_attribute/othermodel.json&quot; as data
 access A1 data.name
 access A2 data.gender
 </code></pre>
+
 <p>Where the json file <code>othermodel.json</code> consists of:</p>
-<pre><code class="language-nohighlight">{
+<pre><code class="nohighlight">{
   &quot;name&quot;: &quot;pierre&quot;,
   &quot;gender&quot;: &quot;male&quot;
 }
 </code></pre>
+
 <p>We start with the following meta-model:</p>
-<pre><code class="language-nohighlight">Model:
+<pre><code class="nohighlight">Model:
     imports+=Json
     access+=Access
 ;
@@ -529,11 +547,12 @@ Json: 'import' filename=STRING 'as' name=ID;
 Comment: /\/\/.*$/;
 
 </code></pre>
+
 <p>Now when resolving <code>pyobj/pyattr</code> combo of the <code>Access</code> rule we want to search
 in the imported JSON file. To achieve this we will write and register a scope
 provider that will load the referenced JSON file first time it is accessed and
 that lookup for the <code>pyattr</code> key in that file:</p>
-<pre><code class="language-python">def generic_scope_provider(obj, attr, attr_ref):
+<pre><code class="python">def generic_scope_provider(obj, attr, attr_ref):
     if not obj.pyobj:
         from textx.scoping import Postponed
         return Postponed()
@@ -552,6 +571,7 @@ my_metamodel.register_scope_providers({
     &quot;Access.pyattr&quot;: generic_scope_provider,
 })
 </code></pre>
+
 <h2 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">&para;</a></h2>
 <p>We provide a pragmatic way to define meta-models that use other meta-models.
 Mostly, we focus on textX meta-models using other textX meta-models. But scope

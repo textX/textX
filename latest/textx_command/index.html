@@ -232,7 +232,7 @@ install textX[dev]</code>.</p>
 </div>
 <h2 id="using-the-tool">Using the tool<a class="headerlink" href="#using-the-tool" title="Permanent link">&para;</a></h2>
 <p>To see all available sub-commands just call the <code>textx</code>:</p>
-<pre><code class="language-sh">$ textx               
+<pre><code class="sh">$ textx               
 Usage: textx [OPTIONS] COMMAND [ARGS]...
 
 Options:
@@ -245,8 +245,9 @@ Commands:
   list-generators  List all registered generators
   list-languages   List all registered languages
 </code></pre>
+
 <p>To get a help on a specific command:</p>
-<pre><code class="language-sh">$ textx check --help
+<pre><code class="sh">$ textx check --help
 Usage: textx check [OPTIONS] MODEL_FILES...
 
   Check/validate model given its file path. If grammar is given use it to
@@ -277,6 +278,7 @@ Options:
                      provided.
   --help             Show this message and exit.
 </code></pre>
+
 <h2 id="extending-textx-command">Extending textx command<a class="headerlink" href="#extending-textx-command" title="Permanent link">&para;</a></h2>
 <p><code>textx</code> command can be extended from other installed Python packages using
 <a href="https://setuptools.readthedocs.io/en/latest/pkg_resources.html">pkg_resources</a>
@@ -288,7 +290,7 @@ processing. That makes really easy to create new commands and command groups.</p
 <code>click</code> command group (in this case a top level <code>textx</code> command) and use the
 group to register additional commands using <code>click</code> decorators.</p>
 <p>For example:</p>
-<pre><code class="language-python">import click
+<pre><code class="python">import click
 
 def testcommand(textx):
   @textx.command()
@@ -302,10 +304,11 @@ def testcommand(textx):
       &quot;&quot;&quot;
       click.echo(&quot;Hello sub-command test!&quot;)
 </code></pre>
+
 <p>Register new command in your project's <code>setup.py</code> file under the entry point
 <code>textx_commands</code> (we are assuming that <code>testcommand</code> function is in package
 <code>cli</code>).</p>
-<pre><code class="language-python">setup(
+<pre><code class="python">setup(
     name='MyProject',
     packages=[&quot;cli&quot;],
     entry_points={
@@ -315,6 +318,7 @@ def testcommand(textx):
     }
 )
 </code></pre>
+
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>If you prefer a more declarative approach you can use <code>setup.cfg</code> instead of
@@ -323,7 +327,7 @@ idea see how <a href="https://github.com/textX/textX/blob/master/setup.cfg">text
 </div>
 <p>If you install now your project in the same Python environment where <code>textX</code> is
 installed you will see that <code>textx</code> command now has your command registered.</p>
-<pre><code class="language-sh">$ textx
+<pre><code class="sh">$ textx
 Usage: textx [OPTIONS] COMMAND [ARGS]...
 
 Options:
@@ -339,10 +343,11 @@ Commands:
 $ textx testcommand some_argument
 Hello sub-command test!
 </code></pre>
+
 <p>Similarly you can create new command groups. You can have a group level options
 and a command level options and arguments.</p>
 <p>Here is a full example:</p>
-<pre><code class="language-python">import click
+<pre><code class="python">import click
 
 def create_testgroup(textx):
     @textx.group()
@@ -370,11 +375,12 @@ def create_testgroup(textx):
         click.echo(&quot;GroupCommand2: argument: {}, option:{}&quot;.format(
             some_argument, some_option))
 </code></pre>
+
 <p>In this example we created a new group called <code>testgroup</code>. We use that group in
 the rest of the code to decorate new commands belonging to the group.</p>
 <p>As usual, we have to register our function in the extension point
 <code>textx_commands</code>:</p>
-<pre><code class="language-python">setup(
+<pre><code class="python">setup(
     name='MyProject',
     packages=[&quot;cli&quot;],
     entry_points={
@@ -386,9 +392,10 @@ the rest of the code to decorate new commands belonging to the group.</p>
     }
 )
 </code></pre>
+
 <p>If <code>MyProject</code> is installed in the environment where <code>textX</code> is installed you'll
 see that your command group is now accessible by the <code>textx</code> command:</p>
-<pre><code class="language-sh">$  textx
+<pre><code class="sh">$  textx
 Usage: textx [OPTIONS] COMMAND [ARGS]...
 
 Options:
@@ -419,6 +426,7 @@ Commands:
 $ textx testgroup groupcommand1 first_argument
 GroupCommand1: argument: first_argument, option:False
 </code></pre>
+
 <p>For a full example please take a look at <a href="https://github.com/textX/textX/blob/master/tests/functional/subcommands/test_subcommands.py">this
 test</a> and this <a href="https://github.com/textX/textX/tree/master/tests/functional/subcommands/example_project">example test
 project</a>.</p>

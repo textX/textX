@@ -383,9 +383,10 @@ Additionally, meta-model contains a parser that knows how to parse input
 strings. From parsed input (parse tree) meta-model will create a model.</p>
 <p>Meta-models are created from our grammar description, in this case
 <code>robot.tx</code> file. Open <code>robot.py</code> Python file and write following:</p>
-<pre><code class="language-python">from textx import metamodel_from_file
+<pre><code class="python">from textx import metamodel_from_file
 robot_mm = metamodel_from_file('robot.tx')
 </code></pre>
+
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This meta-model can be used to parse multiple models.</p>
@@ -393,8 +394,9 @@ robot_mm = metamodel_from_file('robot.tx')
 <h2 id="instantiating-model">Instantiating model<a class="headerlink" href="#instantiating-model" title="Permanent link">&para;</a></h2>
 <p>Now, when we have our meta-model we can parse models from strings or external
 textual files. Extend your <code>robot.py</code> with:</p>
-<pre><code class="language-python">robot_model = robot_mm.model_from_file('program.rbt')
+<pre><code class="python">robot_model = robot_mm.model_from_file('program.rbt')
 </code></pre>
+
 <p>This command will parse the file <code>program.rbt</code> and construct our robot model.
 If this file does not match our language a syntax error will be raised on the
 first error encountered.</p>
@@ -462,9 +464,10 @@ runs it. At each step this method will update the robot position and print it.</
         print(self)
 </code></pre>
 <p>Now lets give our <code>robot_model</code> to <code>Robot</code> instance and see what happens.</p>
-<pre><code class="language-python">robot = Robot()
+<pre><code class="python">robot = Robot()
 robot.interpret(robot_model)
 </code></pre>
+
 <p>You should get this output:</p>
 <pre><code>Setting position to: 3, 1
 Robot position is 3, 1.
@@ -487,16 +490,18 @@ instantiates an object of particular class. Use <code>register_obj_processors</c
 method on meta-model to register callables/processors for classes your wish to
 process in some way immediately after instantiation.</p>
 <p>Lets define our processor for <code>MoveCommand</code> in <code>robot.py</code> file.</p>
-<pre><code class="language-python">def move_command_processor(move_cmd):
+<pre><code class="python">def move_command_processor(move_cmd):
 
   # If steps is not given, set it do default 1 value.
   if move_cmd.steps == 0:
     move_cmd.steps = 1
 </code></pre>
+
 <p>Now, register this processor on meta-model. After meta-model construction add a
 line for registration.</p>
-<pre><code class="language-python">robot_mm.register_obj_processors({'MoveCommand': move_command_processor})
+<pre><code class="python">robot_mm.register_obj_processors({'MoveCommand': move_command_processor})
 </code></pre>
+
 <p><code>register_obj_processors</code> accepts a dictionary keyed by class name. The
 values are callables that should handle instances of the given class.</p>
 <p>If you run robot interpreter again you will get output like this:</p>

@@ -1089,13 +1089,15 @@ which need to analyze the grammar beyond of just syntactic and semantic checks
 (e.g. syntax highlighting may analyze grammar to discover keywords that needs to
 be colored).</p>
 <p>To load grammar model first get the textX language meta-model with:</p>
-<pre><code class="language-python">textx_mm = metamodel_for_language('textx')
+<pre><code class="python">textx_mm = metamodel_for_language('textx')
 </code></pre>
+
 <p>and then call either <code>grammar_model_from_str</code> or <code>grammar_model_from_file</code>
 method on this meta-model object:</p>
 <pre><code>grammar_model = textx_mm.grammar_model_from_file(
     join(abspath(dirname(__file__)), 'pyflies.tx'))
 </code></pre>
+
 <p>Then investigate this model as you would do with any other model:</p>
 <pre><code>assert len(grammar_model.imports_or_references) == 3
 assert len(grammar_model.rules) == 45
