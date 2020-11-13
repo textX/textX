@@ -209,6 +209,10 @@ Here is a non-complete list of projects using textX.
     - [fanalyse](https://github.com/azag0/fanalyse) - Fortran code parser/analyser
     - [Silvera](https://gitlab.com/alensuljkanovic/silvera/-/wikis/home) - A DSL
       for microservice based software development
+    - [cutevariant](https://github.com/labsquare/cutevariant) - A standalone and
+      free application to explore genetics variations from VCF file. Developed
+      by [labsquare](http://www.labsquare.org/) - A community for genomics
+      software
 
 * Commercial
 
