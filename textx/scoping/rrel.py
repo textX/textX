@@ -394,7 +394,10 @@ class RRELExpression:
         self.use_proxy = ('p' in flags)
 
     def __repr__(self):
-        return "+"+self.flags+":" + str(self.seq) if self.importURI else str(self.seq)
+        if self.importURI:
+            return "+" + self.flags + ":" + str(self.seq)
+        else:
+            return str(self.seq)
 
 
 class RRELVisitor(PTNodeVisitor):
@@ -454,11 +457,11 @@ class ReferenceProxy(object):
        during reference resolution.
     """
     def __init__(self, path):
-        assert len(path)>0
+        assert len(path) > 0
         self.__dict__['_tx_path'] = path
 
     def __setattr__(self, key, value):
-        if key=='_tx_path' or key=='_tx_obj':
+        if key == '_tx_path' or key == '_tx_obj':
             raise Exception("not allowed to set _tx_path")
         return setattr(self.__dict__['_tx_path'][-1], key, value)
 
