@@ -45,7 +45,7 @@ def rrel_sequence():
 
 
 def rrel_expression():
-    return Optional("+m:"), rrel_sequence
+    return Optional(_(r'\+[mp]+:')), rrel_sequence
 
 
 def rrel_standalone():
@@ -387,12 +387,14 @@ class RRELPath(RRELBase):
 
 
 class RRELExpression:
-    def __init__(self, seq, importURI):
+    def __init__(self, seq, flags):
         self.seq = seq
-        self.importURI = importURI
+        self.flags = flags
+        self.importURI = ('m' in flags)
+        self.use_proxy = ('p' in flags)
 
     def __repr__(self):
-        return "+m:" + str(self.seq) if self.importURI else str(self.seq)
+        return "+"+self.flags+":" + str(self.seq) if self.importURI else str(self.seq)
 
 
 class RRELVisitor(PTNodeVisitor):
@@ -428,9 +430,51 @@ class RRELVisitor(PTNodeVisitor):
 
     def visit_rrel_expression(self, node, children):
         if len(children) == 1:
-            return RRELExpression(children[0], False)
+            return RRELExpression(children[0], "")
         else:
-            return RRELExpression(children[1], True)
+            flags = children[0][1:-1]  # see grammar
+            return RRELExpression(children[1], flags)
+
+
+class ReferenceProxy(object):
+    """
+    This class describes a resolved reference of an RREL
+    with 'p'-flag set ('+p:'). It can be used similar to
+    a normally resolved reference concerning the following
+    semantics: getattr, setattr, delattr and '=='.
+
+    With this, a ReferenceProxy object is compatible with the
+    `textx.textx_isinstance` semantics.
+
+    It further provides
+     - an attribute '_tx_obj', corresponding
+       exactly to the resolved reference.
+     - an attribute '_tx_path', a list of objects
+       describing the path of named objects traversed
+       during reference resolution.
+    """
+    def __init__(self, path):
+        assert len(path)>0
+        self.__dict__['_tx_path'] = path
+
+    def __setattr__(self, key, value):
+        if key=='_tx_path' or key=='_tx_obj':
+            raise Exception("not allowed to set _tx_path")
+        return setattr(self.__dict__['_tx_path'][-1], key, value)
+
+    def __getattr__(self, item):
+        if item == '_tx_path':
+            return self.__dict__['_tx_path']
+        elif item == '_tx_obj':
+            return self.__dict__['_tx_path'][-1]
+        else:
+            return getattr(self.__dict__['_tx_path'][-1], item)
+
+    def __delattr__(self, item):
+        return delattr(self.__dict__['_tx_path'][-1], item)
+
+    def __eq__(self, other):
+        return self.__dict__['_tx_path'][-1] == other
 
 
 def parse(rrel_expression):
@@ -482,7 +526,8 @@ def find_object_with_path(obj, lookup_list, rrel_tree, obj_cls=None,
     return None  # not found
 
 
-def find(obj, lookup_list, rrel_tree, obj_cls=None, split_string="."):
+def find(obj, lookup_list, rrel_tree, obj_cls=None, split_string=".",
+         use_proxy=False):
     """
     This function gets all/one element from a model
     object based on an rrel tree (query).
@@ -494,6 +539,8 @@ def find(obj, lookup_list, rrel_tree, obj_cls=None, split_string="."):
         split_string: the string used to split the name into individual
             parts (e.g. '.' for a python-like name schema or '::' for a
             C++-like name schema for namespace resolution)
+        use_proxy: return a path proxy object (see ReferenceProxy) instead
+            of the normal result of the query.
 
     Returns:
         The result of the query (first match), a
@@ -502,7 +549,10 @@ def find(obj, lookup_list, rrel_tree, obj_cls=None, split_string="."):
     res = find_object_with_path(obj, lookup_list, rrel_tree, obj_cls, split_string)
     if type(res) is tuple:
         # full path is in res[1]
-        return res[0]
+        if use_proxy:
+            return ReferenceProxy(res[1])
+        else:
+            return res[0]
     else:
         return res
 
@@ -528,7 +578,7 @@ def create_rrel_scope_provider(rrel_tree_or_string, split_string=None, **kwargs)
         """
         RREL scope provider
         """
-        def __init__(self, rrel_tree, split_string):
+        def __init__(self, rrel_tree, split_string, use_proxy):
             """
             Creates a RREL scope provider
 
@@ -536,9 +586,11 @@ def create_rrel_scope_provider(rrel_tree_or_string, split_string=None, **kwargs)
                 rrel_tree: the query (see `rrel.find`)
                 split_string: the string used to split the name into individual
                     parts (see `create_rrel_scope_provider`)
+                use_proxy: see find
             """
             self.rrel_tree = rrel_tree
             self.split_string = split_string
+            self.use_proxy = use_proxy
 
         def __call__(self, current_obj, attr, obj_ref):
             """
@@ -565,17 +617,17 @@ def create_rrel_scope_provider(rrel_tree_or_string, split_string=None, **kwargs)
                 split = self.split_string
 
             return find(current_obj, obj_name, self.rrel_tree, obj_cls,
-                        split_string=split)
+                        split_string=split, use_proxy=self.use_proxy)
 
     class RRELImportURI(ImportURI):
         """
         scope provider with ImportURI and RREL
         """
 
-        def __init__(self, rrel_tree, split_string,
+        def __init__(self, rrel_tree, split_string, use_proxy,
                      glob_args=None, search_path=None, importAs=False,
                      importURI_converter=None, importURI_to_scope_name=None):
-            ImportURI.__init__(self, RREL(rrel_tree, split_string),
+            ImportURI.__init__(self, RREL(rrel_tree, split_string, use_proxy),
                                glob_args=glob_args,
                                search_path=search_path, importAs=importAs,
                                importURI_converter=importURI_converter,
@@ -585,6 +637,8 @@ def create_rrel_scope_provider(rrel_tree_or_string, split_string=None, **kwargs)
         rrel_tree_or_string = parse(rrel_tree_or_string)
 
     if rrel_tree_or_string.importURI:
-        return RRELImportURI(rrel_tree_or_string, split_string, *kwargs)
+        return RRELImportURI(rrel_tree_or_string, split_string,
+                             rrel_tree_or_string.use_proxy, *kwargs)
     else:
-        return RREL(rrel_tree_or_string, split_string)
+        return RREL(rrel_tree_or_string, split_string,
+                    rrel_tree_or_string.use_proxy)

@@ -288,14 +288,18 @@ def test_referencing_attributes_with_rrel_and_full_path_access():
         Instance:
             'instance' name=ID (':' type=[Struct])?;
         Reference:
-            'reference' ref=[Val|FQN|instances.~type.vals.(~type.vals)*];
+            'reference' ref=[Val|FQN|+p:instances.~type.vals.(~type.vals)*];
         FQN: ID ('.' ID)*;
         ''')
     m = mm.model_from_str(model_text)
     m.references[-1].ref == m.structs[0].vals[0]  # a.x
 
     assert m.references[0].ref.name == 'x'
+    assert m.references[0].ref._tx_obj is m.structs[0].vals[0]
     assert m.references[0].ref == m.structs[0].vals[0]
+    assert not m.references[0].ref is m.structs[0].vals[0]
+    assert textx.textx_isinstance(m.references[0].ref, mm['Val'])
+    assert not textx.textx_isinstance(m.references[0].ref, mm['Struct'])
 
     assert m.references[1].ref == m.structs[0].vals[0]
 
@@ -309,6 +313,15 @@ def test_referencing_attributes_with_rrel_and_full_path_access():
                                          "instances.~type.vals.(~type.vals)*")
     assert res.name == 'x'
     assert len(objpath) == 5  # only named elements are included (no ~type)
+    assert objpath[0] == m.instances[0]
+    assert objpath[0].name == 'd'
+    assert objpath[1].name == 'c'
+    assert objpath[2].name == 'b'
+    assert objpath[3].name == 'a'
+    assert objpath[4].name == 'x'
+
+    objpath = m.references[0].ref._tx_path
+
     assert objpath[0] == m.instances[0]
     assert objpath[0].name == 'd'
     assert objpath[1].name == 'c'
