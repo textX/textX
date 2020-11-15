@@ -56,7 +56,7 @@ class RRELBase(object):
     def __init__(self):
         pass
 
-    def get_next_matches(self, obj, lookup_list, allowed, matched_path_so_far,
+    def get_next_matches(self, obj, lookup_list, allowed, matched_path,
                          first_element=False):
         """
         This function yields potential matches encountered along the
@@ -84,16 +84,16 @@ class RRELBase(object):
         if not allowed(obj, lookup_list, self):  # also adjusts visited objs
             return  # recursion stopper
 
-        obj, lookup_list, matched_path_so_far = self.apply(
-            obj, lookup_list, matched_path_so_far, first_element)
+        obj, lookup_list, matched_path = self.apply(
+            obj, lookup_list, matched_path, first_element)
         if obj is None:
             return
         elif isinstance(obj, list):
             for iobj in obj:
                 if iobj is not None:
-                    yield iobj, lookup_list, matched_path_so_far
+                    yield iobj, lookup_list, matched_path
         else:
-            yield obj, lookup_list, matched_path_so_far
+            yield obj, lookup_list, matched_path
 
 
 class RRELParent(RRELBase):
@@ -110,7 +110,7 @@ class RRELParent(RRELBase):
     def start_at_root(self):
         return False
 
-    def apply(self, obj, lookup_list, matched_path_so_far, first_element):
+    def apply(self, obj, lookup_list, matched_path, first_element):
         """
         Args:
             obj: model object
@@ -124,8 +124,8 @@ class RRELParent(RRELBase):
         while hasattr(obj, "parent"):
             obj = obj.parent
             if textx_isinstance(obj, t):
-                return obj, lookup_list, matched_path_so_far
-        return None, lookup_list, matched_path_so_far
+                return obj, lookup_list, matched_path
+        return None, lookup_list, matched_path
 
 
 class RRELNavigation(RRELBase):
@@ -143,7 +143,7 @@ class RRELNavigation(RRELBase):
     def start_at_root(self):
         return True
 
-    def apply(self, obj, lookup_list, matched_path_so_far, first_element):
+    def apply(self, obj, lookup_list, matched_path, first_element):
         """
         Args:
             obj: model object
@@ -159,35 +159,35 @@ class RRELNavigation(RRELBase):
             from textx import get_model
             obj = get_model(obj)
         if len(lookup_list) == 0 and self.consume_name:
-            return None, lookup_list, matched_path_so_far
+            return None, lookup_list, matched_path
         if needs_to_be_resolved(obj, self.name):
-            return Postponed(), lookup_list, matched_path_so_far
+            return Postponed(), lookup_list, matched_path
         if hasattr(obj, self.name):
             target = getattr(obj, self.name)
             if isinstance(target, list):
                 if not self.consume_name:
-                    return target, lookup_list, matched_path_so_far  # return list
+                    return target, lookup_list, matched_path  # return list
                 else:
                     lst = list(filter(lambda x: hasattr(
                         x, "name") and getattr(
                         x, "name") == lookup_list[0], target))
                     if len(lst) > 0:
-                        return lst[0], lookup_list[1:], matched_path_so_far + [
+                        return lst[0], lookup_list[1:], matched_path + [
                             lst[0]]  # return obj
                     else:
-                        return None, lookup_list, matched_path_so_far  # return None
+                        return None, lookup_list, matched_path  # return None
             else:
                 if not self.consume_name:
-                    return target, lookup_list, matched_path_so_far
+                    return target, lookup_list, matched_path
                 else:
                     if hasattr(target, "name") and getattr(
                             target, "name") == lookup_list[0]:
-                        return target, lookup_list[1:], matched_path_so_far + [
+                        return target, lookup_list[1:], matched_path + [
                             target]  # return obj
                     else:
-                        return None, lookup_list, matched_path_so_far  # return None
+                        return None, lookup_list, matched_path  # return None
         else:
-            return None, lookup_list, matched_path_so_far
+            return None, lookup_list, matched_path
 
 
 class RRELBrackets(RRELBase):
@@ -205,13 +205,13 @@ class RRELBrackets(RRELBase):
     def __repr__(self):
         return '(' + str(self.seq) + ')'
 
-    def get_next_matches(self, obj, lookup_list, allowed, matched_path_so_far,
+    def get_next_matches(self, obj, lookup_list, allowed, matched_path,
                          first_element=False):
         if not allowed(obj, lookup_list, self):  # also adjusts visited objs
             return  # recursion stopper
-        for iobj, ilookup_list, imatched_path_so_far in self.seq.get_next_matches(
-                obj, lookup_list, allowed, matched_path_so_far, first_element):
-            yield iobj, ilookup_list, imatched_path_so_far
+        for iobj, ilookup_list, imatched_path in self.seq.get_next_matches(
+                obj, lookup_list, allowed, matched_path, first_element):
+            yield iobj, ilookup_list, imatched_path
 
 
 class RRELDots(RRELBase):
@@ -228,7 +228,7 @@ class RRELDots(RRELBase):
     def start_at_root(self):
         return False
 
-    def apply(self, obj, lookup_list, matched_path_so_far, first_element):
+    def apply(self, obj, lookup_list, matched_path, first_element):
         """
         Args:
             obj: model object
@@ -242,9 +242,9 @@ class RRELDots(RRELBase):
             obj = obj.parent
             num -= 1
         if num <= 1:
-            return obj, lookup_list, matched_path_so_far
+            return obj, lookup_list, matched_path
         else:
-            return None, lookup_list, matched_path_so_far
+            return None, lookup_list, matched_path
 
 
 class RRELSequence(RRELBase):
@@ -267,14 +267,14 @@ class RRELSequence(RRELBase):
             res = res or p.start_at_root()
         return res
 
-    def get_next_matches(self, obj, lookup_list, allowed, matched_path_so_far,
+    def get_next_matches(self, obj, lookup_list, allowed, matched_path,
                          first_element=False):
         if not allowed(obj, lookup_list, self):  # also adjusts visited objs
             return  # recursion stopper
         for ip in self.paths:
-            for iobj, ilookup_list, imatched_path_so_far in ip.get_next_matches(
-                    obj, lookup_list, allowed, matched_path_so_far, first_element):
-                yield iobj, ilookup_list, imatched_path_so_far
+            for iobj, ilookup_list, imatched_path in ip.get_next_matches(
+                    obj, lookup_list, allowed, matched_path, first_element):
+                yield iobj, ilookup_list, imatched_path
 
 
 class RRELZeroOrMore(RRELBase):
@@ -295,46 +295,46 @@ class RRELZeroOrMore(RRELBase):
     def __repr__(self):
         return str(self.path_element) + '*'
 
-    def get_next_matches(self, obj, lookup_list, allowed, matched_path_so_far,
+    def get_next_matches(self, obj, lookup_list, allowed, matched_path,
                          first_element=False):
         assert isinstance(self.path_element, RRELBrackets)
         from textx.scoping import Postponed
 
-        def get_from_zero_or_more(obj, lookup_list, matched_path_so_far,
+        def get_from_zero_or_more(obj, lookup_list, matched_path,
                                   first_element=False):
             assert self.start_locally() or self.start_at_root()  # or, not xor
             if not allowed(obj, lookup_list, self):  # also adjusts visited objs
                 return  # recursion stopper
             if first_element:
                 if self.start_locally():
-                    yield obj, lookup_list, matched_path_so_far
+                    yield obj, lookup_list, matched_path
                 if self.start_at_root():
                     from textx import get_model
-                    yield get_model(obj), lookup_list, matched_path_so_far
+                    yield get_model(obj), lookup_list, matched_path
             else:
-                yield obj, lookup_list, matched_path_so_far
+                yield obj, lookup_list, matched_path
             assert isinstance(self.path_element.seq, RRELSequence)
             for iobj, ilookup_list,\
-                imatched_path_so_far in self.path_element.seq.get_next_matches(
-                    obj, lookup_list, allowed, matched_path_so_far,
+                imatched_path in self.path_element.seq.get_next_matches(
+                    obj, lookup_list, allowed, matched_path,
                     first_element=first_element):
                 if isinstance(iobj, Postponed):
-                    yield iobj, ilookup_list, imatched_path_so_far  # found postponed
+                    yield iobj, ilookup_list, imatched_path  # found postponed
                     return
                 # yield from
-                for iiobj, iilookup_list, iimatched_path_so_far in get_from_zero_or_more(
-                        iobj, ilookup_list, imatched_path_so_far):
-                    yield iiobj, iilookup_list, iimatched_path_so_far
+                for iiobj, iilookup_list, iimatched_path in get_from_zero_or_more(
+                        iobj, ilookup_list, imatched_path):
+                    yield iiobj, iilookup_list, iimatched_path
 
         prevent_doubles = set()
-        for iobj, ilookup_list, imatched_path_so_far in get_from_zero_or_more(
-                obj, lookup_list, matched_path_so_far, first_element):
+        for iobj, ilookup_list, imatched_path in get_from_zero_or_more(
+                obj, lookup_list, matched_path, first_element):
             if isinstance(iobj, Postponed):
-                yield iobj, ilookup_list, imatched_path_so_far
+                yield iobj, ilookup_list, imatched_path
                 return
             if (id(iobj), len(ilookup_list)) not in prevent_doubles:
                 prevent_doubles.add((id(iobj), len(ilookup_list)))
-                yield iobj, ilookup_list, imatched_path_so_far
+                yield iobj, ilookup_list, imatched_path
 
 
 class RRELPath(RRELBase):
@@ -359,30 +359,30 @@ class RRELPath(RRELBase):
     def start_at_root(self):
         return self.path_elements[0].start_at_root()
 
-    def get_next_matches(self, obj, lookup_list, allowed, matched_path_so_far,
+    def get_next_matches(self, obj, lookup_list, allowed, matched_path,
                          first_element=False):
         from textx.scoping import Postponed
 
-        def intern_get_next_matches(obj, lookup_list, allowed, matched_path_so_far,
+        def intern_get_next_matches(obj, lookup_list, allowed, matched_path,
                                     first_element=False, idx=0):
             assert len(self.path_elements) > idx
             e = self.path_elements[idx]
-            for iobj, ilookup_list, imatched_path_so_far in e.get_next_matches(
-                    obj, lookup_list, allowed, matched_path_so_far, first_element):
+            for iobj, ilookup_list, imatched_path in e.get_next_matches(
+                    obj, lookup_list, allowed, matched_path, first_element):
                 if isinstance(iobj, Postponed):
-                    yield iobj, ilookup_list, imatched_path_so_far
+                    yield iobj, ilookup_list, imatched_path
                     return
                 if len(self.path_elements) - 1 == idx:
-                    yield iobj, ilookup_list, imatched_path_so_far
+                    yield iobj, ilookup_list, imatched_path
                 else:
                     for iiobj, iilookup_list,\
-                        iimatched_path_so_far in intern_get_next_matches(
-                            iobj, ilookup_list, allowed, imatched_path_so_far,
+                        iimatched_path in intern_get_next_matches(
+                            iobj, ilookup_list, allowed, imatched_path,
                             first_element=False, idx=idx + 1):
-                        yield iiobj, iilookup_list, iimatched_path_so_far
+                        yield iiobj, iilookup_list, iimatched_path
 
         for iobj, ilookup_list, imatched_path in intern_get_next_matches(
-                obj, lookup_list, allowed, matched_path_so_far, first_element, 0):
+                obj, lookup_list, allowed, matched_path, first_element, 0):
             yield iobj, ilookup_list, imatched_path
 
 
