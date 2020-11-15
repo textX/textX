@@ -1,0 +1,12 @@
+A a1 {
+    A aa1 {
+        A aaa1 {}
+        A aab1 {}
+    }
+}
+A a2 {
+    A aa2 {}
+}
+A R {
+    A r2 {}
+}

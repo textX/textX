@@ -347,3 +347,14 @@ def test_split_str():
             }
             R a2::unknown
         ''')
+
+
+def test_split_str_multifile():
+    # same as test abive, but with "+mp:" flag
+    from os.path import dirname, join
+    from textx import metamodel_from_file
+    this_folder = dirname(__file__)
+    mm = metamodel_from_file(join(this_folder, 'rrel', 'Grammar.tx'))
+    m = mm.model_from_file(join(this_folder, 'rrel', 'main.model'))
+    # see above:
+    assert '.'.join(map(lambda x: x.name, m.r[0].a[0]._tx_path)) == 'a1.aa1.aaa1'

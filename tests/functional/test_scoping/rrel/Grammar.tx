@@ -1,0 +1,5 @@
+Model: includes*=Include a*=A r*=R;
+A: 'A' name=ID '{' a*=A  '}';
+R: 'R' a+=[A|FQN|+pm:a*][','];
+FQN[split='::']: ID ('::' ID)*;
+Include: '#include' importURI=STRING;
