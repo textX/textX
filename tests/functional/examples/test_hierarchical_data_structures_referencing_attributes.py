@@ -305,20 +305,8 @@ def test_referencing_attributes_with_rrel_and_full_path_access():
     assert m.references[2].ref.name == 'x'
     assert m.references[2].ref == m.structs[0].vals[0]
 
-    # todo: access reference d.c.b.a.x --> "d.c.b.a.x"
     # (allows to access all intermediate referenced named
     # elements: d c b a x)
-    res, objpath = find_object_with_path(m.references[0], "d.c.b.a.x",
-                                         "instances.~type.vals.(~type.vals)*")
-    assert res.name == 'x'
-    assert len(objpath) == 5  # only named elements are included (no ~type)
-    assert objpath[0] == m.instances[0]
-    assert objpath[0].name == 'd'
-    assert objpath[1].name == 'c'
-    assert objpath[2].name == 'b'
-    assert objpath[3].name == 'a'
-    assert objpath[4].name == 'x'
-
     objpath = m.references[0].ref._tx_path
 
     assert objpath[0] == m.instances[0]
