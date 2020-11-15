@@ -3,7 +3,6 @@ from textx import metamodel_from_str
 from pytest import raises
 import textx.exceptions
 import attr
-from textx.scoping.rrel import find_object_with_path
 
 
 @attr.s(frozen=True)
