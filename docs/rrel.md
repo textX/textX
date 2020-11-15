@@ -153,6 +153,71 @@ When using this extra prefix the importURI feature is activated
 (see [scoping](scoping.md) and
 [grammar example](https://github.com/textX/textX/blob/master/tests/functional/registration/projects/data_dsl/data_dsl/Data.tx)).
 
+## Accessing the RREL 'path' of a resolved reference
+
+Use the prefix `+p:` for an RREL expression to access the complete
+path of named elements for a resolved reference. For that, the
+resolved reference is represented by a proxy which is transparent
+to the user is terms of attribute access and `textx_instanceof`
+semantics.
+
+The proxy (`textx.scoping.rrel.ReferenceProxy`) provides two extra
+fields: `_tx_obj` and `_tx_path`. `_tx_obj` represent the
+ referenced object itself and `_tx_path` is a list with
+ all named elements traversed during scope resolution. The last
+ extra of the list is `_tx_obj`. 
+
+The following model shows how to employ the `+p:` flag and
+is used in the unittest referenced for the following use case:
+```
+Model:
+    structs+=Struct
+    instances+=Instance
+    references+=Reference;
+Struct:
+    'struct' name=ID '{' vals+=Val '}';
+Val:
+    'val' name=ID (':' type=[Struct])?;
+Instance:
+    'instance' name=ID (':' type=[Struct])?;
+Reference:
+    'reference' ref=[Val|FQN|+p:instances.~type.vals.(~type.vals)*];
+FQN: ID ('.' ID)*;
+```
+
+The **use case** for that feature is that you sometimes need
+to access all model elements specfied in a model reference. Consider
+a reference to a hierarchically modelled data element  like in this
+[unittest example](https://github.com/textX/textX/blob/master/tests/functional/examples/test_hierarchical_data_structures_referencing_attributes.py),
+e.g. `reference d.c.b.a.x`:
+
+```
+struct A {
+    val x
+}
+struct B {
+    val a: A
+}
+struct C {
+    val b: B
+    val a: A
+}
+struct D {
+    val c: C
+    val b1: B
+}
+instance d: D
+reference d.c.b.a.x
+reference d.b1.a.x
+```
+
+In this example you need all referenced intermediate model elements to
+accurately identify the modelled data for, e.g., code generation because
+`reference d.c.b.a.x` is not distinguishable from
+`reference d.b1.a.x` without the path
+(both point to teh field `x` in `A`).
+
+
 ## Using RREL from Python code
 
 RREL expression could be used during registration in place of scoping provider.
