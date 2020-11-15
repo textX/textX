@@ -303,10 +303,10 @@ def test_split_str():
     mm = metamodel_from_str('''
         Model: a+=A r+=R;
         A: 'A' name=ID '{' a*=A  '}';
-        R: 'R' a=[A|FQN|a*];
+        R: 'R' a+=[A|FQN|+p:a*][','];
         FQN[split='::']: ID ('::' ID)*;
     ''')
-    _ = mm.model_from_str('''
+    m = mm.model_from_str('''
         A a1 {
             A aa1 {
                 A aaa1 {}
@@ -316,10 +316,24 @@ def test_split_str():
         A a2 {
             A aa2 {}
         }
-        R a1::aa1::aaa1
-        R a1::aa1::aab1
+        A R {
+            A r2 {}
+        }
+        R a1::aa1::aaa1, a1::aa1::aab1, R, R::r2
+        R R
         R a2::aa2
     ''')
+    assert len(m.r) == 3
+
+    assert len(m.r[0].a) == 4
+    assert len(m.r[1].a) == 1
+    assert len(m.r[2].a) == 1
+
+    assert '.'.join(map(lambda x: x.name, m.r[0].a[0]._tx_path)) == 'a1.aa1.aaa1'
+    assert '.'.join(map(lambda x: x.name, m.r[0].a[1]._tx_path)) == 'a1.aa1.aab1'
+    assert '.'.join(map(lambda x: x.name, m.r[0].a[2]._tx_path)) == 'R'
+    assert '.'.join(map(lambda x: x.name, m.r[0].a[3]._tx_path)) == 'R.r2'
+
     with raises(TextXSemanticError, match=r'.*Unknown object.*a2::unknown.*'):
         _ = mm.model_from_str('''
             A a1 {
