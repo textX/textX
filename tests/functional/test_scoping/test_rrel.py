@@ -169,9 +169,7 @@ def test_rrel_basic_lookup():
     assert textx_isinstance(package_Inner, my_metamodel["Package"])
     assert not textx_isinstance(package_Inner, my_metamodel["Class"])
 
-    package_P2 = find(inner, "P2", "parent(OBJECT)*.packages")
-    assert textx_isinstance(package_Inner, my_metamodel["Package"])
-    assert P2_tst is package_P2
+    assert None is find(inner, "P2", "parent(Class)*.packages")
 
     # expensive version of a "Plain Name" scope provider:
     inner = find(my_model, "inner", "~packages*.~classes.attributes")
