@@ -215,7 +215,7 @@ In this example you need all referenced intermediate model elements to
 accurately identify the modelled data for, e.g., code generation because
 `reference d.c.b.a.x` is not distinguishable from
 `reference d.b1.a.x` without the path
-(both point to teh field `x` in `A`).
+(both point to the field `x` in `A`).
 
 
 ## Using RREL from Python code
