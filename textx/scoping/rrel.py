@@ -462,7 +462,7 @@ class ReferenceProxy(object):
 
     def __setattr__(self, key, value):
         if key == '_tx_path' or key == '_tx_obj':
-            raise Exception("not allowed to set _tx_path")
+            raise Exception("not allowed to set _tx_path or _tx_obj")
         return setattr(self.__dict__['_tx_path'][-1], key, value)
 
     def __getattr__(self, item):
@@ -474,6 +474,8 @@ class ReferenceProxy(object):
             return getattr(self.__dict__['_tx_path'][-1], item)
 
     def __delattr__(self, item):
+        if item == '_tx_path' or item == '_tx_obj':
+            raise Exception("not allowed to del _tx_path or _tx_obj")
         return delattr(self.__dict__['_tx_path'][-1], item)
 
     def __eq__(self, other):

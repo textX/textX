@@ -314,3 +314,15 @@ def test_referencing_attributes_with_rrel_and_full_path_access():
     assert objpath[2].name == 'b'
     assert objpath[3].name == 'a'
     assert objpath[4].name == 'x'
+
+    setattr(m.references[0].ref, "extra", "ok to add extra field")
+    with raises(Exception, match=r'.*not allowed.*'):
+        setattr(m.references[0].ref, "_tx_obj", "not ok")
+    with raises(Exception, match=r'.*not allowed.*'):
+        setattr(m.references[0].ref, "_tx_path", "not ok")
+
+    del m.references[0].ref.extra
+    with raises(Exception, match=r'.*not allowed.*'):
+        del m.references[0].ref._tx_obj
+    with raises(Exception, match=r'.*not allowed.*'):
+        del m.references[0].ref._tx_path
