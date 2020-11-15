@@ -165,7 +165,7 @@ The proxy (`textx.scoping.rrel.ReferenceProxy`) provides two extra
 fields: `_tx_obj` and `_tx_path`. `_tx_obj` represent the
  referenced object itself and `_tx_path` is a list with
  all named elements traversed during scope resolution. The last
- extra of the list is `_tx_obj`. 
+ entry of the list is `_tx_obj`. 
 
 The following model shows how to employ the `+p:` flag and
 is used in the unittest referenced for the following use case:
