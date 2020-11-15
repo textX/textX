@@ -3,6 +3,8 @@ from textx.scoping.rrel import rrel_standalone, parse
 from arpeggio import ParserPython
 from textx import metamodel_from_str, textx_isinstance
 from textx.scoping.rrel import find, find_object_with_path
+from pytest import raises
+from textx.exceptions import TextXSemanticError
 
 
 def test_rrel_basic_parser1():
@@ -294,3 +296,40 @@ def test_rrel_repetitions():
 
     a2 = find(my_model, "b.a.b.a.b.a.b.a.b.a", "entries.ref*")
     assert a2 == a
+
+
+def test_split_str():
+    from textx import metamodel_from_str
+    mm = metamodel_from_str('''
+        Model: a+=A r+=R;
+        A: 'A' name=ID '{' a*=A  '}';
+        R: 'R' a=[A|FQN|a*];
+        FQN[split='::']: ID ('::' ID)*;
+    ''')
+    _ = mm.model_from_str('''
+        A a1 {
+            A aa1 {
+                A aaa1 {}
+                A aab1 {}
+            }
+        }
+        A a2 {
+            A aa2 {}
+        }
+        R a1::aa1::aaa1
+        R a1::aa1::aab1
+        R a2::aa2
+    ''')
+    with raises(TextXSemanticError, match=r'.*Unknown object.*a2::unknown.*'):
+        _ = mm.model_from_str('''
+            A a1 {
+                A aa1 {
+                    A aaa1 {}
+                    A aab1 {}
+                }
+            }
+            A a2 {
+                A aa2 {}
+            }
+            R a2::unknown
+        ''')
