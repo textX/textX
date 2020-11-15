@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 from textx.scoping.rrel import rrel_standalone, parse
 from arpeggio import ParserPython
-from textx import metamodel_from_str
+from textx import metamodel_from_str, textx_isinstance
 from textx.scoping.rrel import find, find_object_with_path
 
 
@@ -32,6 +32,8 @@ def test_rrel_basic_parser2():
     assert str(tree) == 'instance.(type.vals)*'
     tree = parse("a,b,c")
     assert str(tree) == 'a,b,c'
+    tree = parse("parent(NAME)")
+    assert str(tree) == 'parent(NAME)'
 
 
 metamodel_str = '''
@@ -162,6 +164,14 @@ def test_rrel_basic_lookup():
 
     inner = find(my_model, "inner", "~packages.~packages.~classes.attributes")
     assert inner.name == "inner"
+
+    package_Inner = find(inner, "Inner", "parent(OBJECT)*.packages")
+    assert textx_isinstance(package_Inner, my_metamodel["Package"])
+    assert not textx_isinstance(package_Inner, my_metamodel["Class"])
+
+    package_P2 = find(inner, "P2", "parent(OBJECT)*.packages")
+    assert textx_isinstance(package_Inner, my_metamodel["Package"])
+    assert P2_tst is package_P2
 
     # expensive version of a "Plain Name" scope provider:
     inner = find(my_model, "inner", "~packages*.~classes.attributes")
