@@ -268,3 +268,61 @@ def test_referencing_attributes_with_rrel_all_in_one_splitstring():
 
     assert m.references[2].ref.name == 'x'
     assert m.references[2].ref == m.structs[0].vals[0]
+
+
+def test_referencing_attributes_with_rrel_and_full_path_access():
+    """
+    RREL solution: all scope provider information encoded in the grammar.
+    """
+
+    mm = metamodel_from_str('''
+        Model:
+            structs+=Struct
+            instances+=Instance
+            references+=Reference;
+        Struct:
+            'struct' name=ID '{' vals+=Val '}';
+        Val:
+            'val' name=ID (':' type=[Struct])?;
+        Instance:
+            'instance' name=ID (':' type=[Struct])?;
+        Reference:
+            'reference' ref=[Val|FQN|+p:instances.~type.vals.(~type.vals)*];
+        FQN: ID ('.' ID)*;
+        ''')
+    m = mm.model_from_str(model_text)
+
+    assert m.references[0].ref.name == 'x'
+    assert m.references[0].ref._tx_obj is m.structs[0].vals[0]
+    assert m.references[0].ref == m.structs[0].vals[0]
+    assert not m.references[0].ref is m.structs[0].vals[0]
+    assert textx.textx_isinstance(m.references[0].ref, mm['Val'])
+    assert not textx.textx_isinstance(m.references[0].ref, mm['Struct'])
+
+    assert m.references[1].ref == m.structs[0].vals[0]
+
+    assert m.references[2].ref.name == 'x'
+    assert m.references[2].ref == m.structs[0].vals[0]
+
+    # (allows to access all intermediate referenced named
+    # elements: d c b a x)
+    objpath = m.references[0].ref._tx_path
+
+    assert objpath[0] == m.instances[0]
+    assert objpath[0].name == 'd'
+    assert objpath[1].name == 'c'
+    assert objpath[2].name == 'b'
+    assert objpath[3].name == 'a'
+    assert objpath[4].name == 'x'
+
+    setattr(m.references[0].ref, "extra", "ok to add extra field")
+    with raises(Exception, match=r'.*not allowed.*'):
+        setattr(m.references[0].ref, "_tx_obj", "not ok")
+    with raises(Exception, match=r'.*not allowed.*'):
+        setattr(m.references[0].ref, "_tx_path", "not ok")
+
+    del m.references[0].ref.extra
+    with raises(Exception, match=r'.*not allowed.*'):
+        del m.references[0].ref._tx_obj
+    with raises(Exception, match=r'.*not allowed.*'):
+        del m.references[0].ref._tx_path

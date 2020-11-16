@@ -1,8 +1,10 @@
 from __future__ import unicode_literals
 from textx.scoping.rrel import rrel_standalone, parse
 from arpeggio import ParserPython
-from textx import metamodel_from_str
-from textx.scoping.rrel import find
+from textx import metamodel_from_str, textx_isinstance
+from textx.scoping.rrel import find, find_object_with_path
+from pytest import raises
+from textx.exceptions import TextXSemanticError
 
 
 def test_rrel_basic_parser1():
@@ -32,6 +34,8 @@ def test_rrel_basic_parser2():
     assert str(tree) == 'instance.(type.vals)*'
     tree = parse("a,b,c")
     assert str(tree) == 'a,b,c'
+    tree = parse("parent(NAME)")
+    assert str(tree) == 'parent(NAME)'
 
 
 metamodel_str = '''
@@ -163,6 +167,12 @@ def test_rrel_basic_lookup():
     inner = find(my_model, "inner", "~packages.~packages.~classes.attributes")
     assert inner.name == "inner"
 
+    package_Inner = find(inner, "Inner", "parent(OBJECT)*.packages")
+    assert textx_isinstance(package_Inner, my_metamodel["Package"])
+    assert not textx_isinstance(package_Inner, my_metamodel["Class"])
+
+    assert None is find(inner, "P2", "parent(Class)*.packages")
+
     # expensive version of a "Plain Name" scope provider:
     inner = find(my_model, "inner", "~packages*.~classes.attributes")
     assert inner.name == "inner"
@@ -269,8 +279,82 @@ def test_rrel_repetitions():
     b2 = find(my_model, "b.a.b", "entries.ref*")
     assert b2 == b
 
+    res, objpath = find_object_with_path(my_model, "b.a.b", "entries.ref*")
+    assert res == b
+    assert len(objpath) == 3
+    assert objpath[-1] == res
+    assert ".".join(map(lambda x: x.name, objpath)) == 'b.a.b'
+
     a2 = find(my_model, "b.a.b.a", "entries.ref*")
     assert a2 == a
 
+    res, objpath = find_object_with_path(my_model, "b.a.b.a", "entries.ref*")
+    assert res == a
+    assert len(objpath) == 4
+    assert objpath[-1] == res
+    assert ".".join(map(lambda x: x.name, objpath)) == 'b.a.b.a'
+
     a2 = find(my_model, "b.a.b.a.b.a.b.a.b.a", "entries.ref*")
     assert a2 == a
+
+
+def test_split_str():
+    from textx import metamodel_from_str
+    mm = metamodel_from_str('''
+        Model: a+=A r+=R;
+        A: 'A' name=ID '{' a*=A  '}';
+        R: 'R' a+=[A|FQN|+p:a*][','];
+        FQN[split='::']: ID ('::' ID)*;
+    ''')
+    m = mm.model_from_str('''
+        A a1 {
+            A aa1 {
+                A aaa1 {}
+                A aab1 {}
+            }
+        }
+        A a2 {
+            A aa2 {}
+        }
+        A R {
+            A r2 {}
+        }
+        R a1::aa1::aaa1, a1::aa1::aab1, R, R::r2
+        R R
+        R a2::aa2
+    ''')
+    assert len(m.r) == 3
+
+    assert len(m.r[0].a) == 4
+    assert len(m.r[1].a) == 1
+    assert len(m.r[2].a) == 1
+
+    assert '.'.join(map(lambda x: x.name, m.r[0].a[0]._tx_path)) == 'a1.aa1.aaa1'
+    assert '.'.join(map(lambda x: x.name, m.r[0].a[1]._tx_path)) == 'a1.aa1.aab1'
+    assert '.'.join(map(lambda x: x.name, m.r[0].a[2]._tx_path)) == 'R'
+    assert '.'.join(map(lambda x: x.name, m.r[0].a[3]._tx_path)) == 'R.r2'
+
+    with raises(TextXSemanticError, match=r'.*Unknown object.*a2::unknown.*'):
+        _ = mm.model_from_str('''
+            A a1 {
+                A aa1 {
+                    A aaa1 {}
+                    A aab1 {}
+                }
+            }
+            A a2 {
+                A aa2 {}
+            }
+            R a2::unknown
+        ''')
+
+
+def test_split_str_multifile():
+    # same as test above, but with "+mp:" flag
+    from os.path import dirname, join
+    from textx import metamodel_from_file
+    this_folder = dirname(__file__)
+    mm = metamodel_from_file(join(this_folder, 'rrel', 'Grammar.tx'))
+    m = mm.model_from_file(join(this_folder, 'rrel', 'main.model'))
+    # see above:
+    assert '.'.join(map(lambda x: x.name, m.r[0].a[0]._tx_path)) == 'a1.aa1.aaa1'

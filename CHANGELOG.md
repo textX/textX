@@ -16,6 +16,10 @@ please take a look at related PRs and issues and see if the change affects you.
 ## [Unreleased]
 
 ### Added
+
+- Added ability to access the full path of named objects
+  traversed while resolving a RREL expression ([#304]).
+
 ### Fixed
 
 - Fixed model export to dot in cases where textX object is replaced in the
@@ -517,6 +521,7 @@ please take a look at related PRs and issues and see if the change affects you.
   - Export to dot.
 
 
+[#304]: https://github.com/textX/textX/pull/304
 [#301]: https://github.com/textX/textX/issues/301
 [#299]: https://github.com/textX/textX/pull/299
 [#298]: https://github.com/textX/textX/pull/298
