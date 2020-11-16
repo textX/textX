@@ -186,7 +186,7 @@ FQN: ID ('.' ID)*;
 ```
 
 The **use case** for that feature is that you sometimes need
-to access all model elements specfied in a model reference. Consider
+to access all model elements specified in a model reference. Consider
 a reference to a hierarchically modelled data element  like in this
 [unittest example](https://github.com/textX/textX/blob/master/tests/functional/examples/test_hierarchical_data_structures_referencing_attributes.py),
 e.g. `reference d.c.b.a.x`:

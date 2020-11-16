@@ -350,7 +350,7 @@ def test_split_str():
 
 
 def test_split_str_multifile():
-    # same as test abive, but with "+mp:" flag
+    # same as test above, but with "+mp:" flag
     from os.path import dirname, join
     from textx import metamodel_from_file
     this_folder = dirname(__file__)
