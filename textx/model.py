@@ -5,9 +5,10 @@ Model construction from parse trees and the model API.
 import sys
 import codecs
 import traceback
+from future.utils import raise_from
 from collections import OrderedDict
 from arpeggio import Parser, Sequence, NoMatch, EOF, Terminal
-from textx.exceptions import TextXSyntaxError, TextXSemanticError
+from textx.exceptions import TextXError, TextXSyntaxError, TextXSemanticError
 from textx.const import MULT_OPTIONAL, MULT_ONE, MULT_ONEORMORE, \
     MULT_ZEROORMORE, RULE_ABSTRACT, RULE_MATCH, MULT_ASSIGN_ERROR, \
     UNKNOWN_OBJ_ERROR
@@ -183,6 +184,41 @@ def get_location(model_obj):
     line, col = the_model._tx_parser.pos_to_linecol(
         model_obj._tx_position)
     return {"line": line, "col": col, "filename": the_model._tx_filename}
+
+
+def textxerror_wrap(obj_processor):
+    """
+    This is a decorator to wrap your object processors
+    if you desire to automatically convert any exception
+    into a TextXError (with file/position information).
+
+    This is useful when non-textx exceptions are used
+    to indicate a problem in a model file:
+
+    ```
+    @textxerror_wrap
+    def date_converter(model_date):
+        from datetime import datetime
+        return datetime(day=model_date.d, month=model_date.m, year=model_date.y)
+    ```
+    Args:
+        obj_processor: an object processor (a callable)
+
+    Returns:
+        the decorated object processor
+    """
+    def wrapper(obj):
+        try:
+            return obj_processor(obj)
+        except Exception as e:
+            if isinstance(e, TextXError):
+                raise
+            else:
+                if hasattr(obj, '_tx_position') and hasattr(obj, '_tx_filename'):
+                    raise_from(TextXError(str(e), **get_location(obj)), e)
+                else:
+                    raise_from(TextXError(str(e)), e)
+    return wrapper
 
 
 class ObjCrossRef(object):
@@ -459,8 +495,11 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
         """
         Process subtree for match rules.
         """
+        line, col = parser.pos_to_linecol(nt.position)
         if isinstance(nt, Terminal):
-            return metamodel.convert(nt.value, nt.rule_name)
+            return metamodel.process(nt.value, nt.rule_name,
+                                     filename=parser.file_name,
+                                     line=line, col=col)
         else:
             # If RHS of assignment is NonTerminal it is a product of
             # complex match rule. Convert nodes to text and do the join.
@@ -468,24 +507,29 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                 result = "".join([text(process_match(n)) for n in nt])
             else:
                 result = process_match(nt[0])
-            obj_processor = metamodel.obj_processors.get(nt.rule_name, None)
-            if obj_processor:
-                return obj_processor(result)
-            else:
-                return result
+            return metamodel.process(result, nt.rule_name,
+                                     filename=parser.file_name,
+                                     line=line, col=col)
 
     def process_node(node):
+        line, col = parser.pos_to_linecol(node.position)
         if isinstance(node, Terminal):
             from arpeggio import RegExMatch
             if metamodel.use_regexp_group and \
                     isinstance(node.rule, RegExMatch):
                 if node.rule.regex.groups == 1:
                     value = node.extra_info.group(1)
-                    return metamodel.convert(value, node.rule_name)
+                    return metamodel.process(value, node.rule_name,
+                                             filename=parser.file_name,
+                                             line=line, col=col)
                 else:
-                    return metamodel.convert(node.value, node.rule_name)
+                    return metamodel.process(node.value, node.rule_name,
+                                             filename=parser.file_name,
+                                             line=line, col=col)
             else:
-                return metamodel.convert(node.value, node.rule_name)
+                return metamodel.process(node.value, node.rule_name,
+                                         filename=parser.file_name,
+                                         line=line, col=col)
 
         assert node.rule.root, \
             "Not a root node: {}".format(node.rule.rule_name)
@@ -693,7 +737,12 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
         # enter recursive visit of attributes only, if the class of the
         # object being processed is a meta class of the current meta model
         if model_obj.__class__.__name__ in metamodel:
-            current_metaclass_of_obj = metamodel[model_obj.__class__.__name__]
+            if hasattr(model_obj, '_tx_fqn'):
+                current_metaclass_of_obj = metamodel[model_obj._tx_fqn]
+            else:
+                # fallback (not used - unsure if this case is required...):
+                current_metaclass_of_obj = metamodel[model_obj.__class__.__name__]
+            assert current_metaclass_of_obj is not None
 
             for metaattr in current_metaclass_of_obj._tx_attrs.values():
                 # If attribute is base type or containment reference go down
@@ -718,16 +767,17 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
             if current_metaclass_of_obj._tx_fqn !=\
                     metaclass_of_grammar_rule._tx_fqn:
                 assert RULE_ABSTRACT == metaclass_of_grammar_rule._tx_type
-                obj_processor_current = metamodel.obj_processors.get(
-                    current_metaclass_of_obj.__name__, None)
-                if obj_processor_current:
-                    return_value_current = obj_processor_current(model_obj)
+                if metamodel.has_obj_processor(current_metaclass_of_obj.__name__):
+                    return_value_current = metamodel.process(
+                        model_obj, current_metaclass_of_obj.__name__,
+                        **get_location(model_obj))
 
         # call obj_proc of rule found in grammar
-        obj_processor_grammar = metamodel.obj_processors.get(
-            metaclass_of_grammar_rule.__name__, None)
-        if obj_processor_grammar:
-            return_value_grammar = obj_processor_grammar(model_obj)
+        if metamodel.has_obj_processor(metaclass_of_grammar_rule.__name__):
+            loc = get_location(model_obj)
+            return_value_grammar = metamodel.process(model_obj,
+                                                     metaclass_of_grammar_rule.__name__,
+                                                     **loc)
 
         # both obj_processors are called, if two different processors
         # are defined for the object metaclass and the grammar metaclass
@@ -843,11 +893,10 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
 
                     # We have model loaded and all link resolved
                     # So we shall do a depth-first call of object
-                    # processors if any processor is defined.
-                    if m._tx_metamodel.obj_processors:
-                        if parser.debug:
-                            parser.dprint("CALLING OBJECT PROCESSORS")
-                        call_obj_processors(m._tx_metamodel, m)
+                    # processors
+                    if parser.debug:
+                        parser.dprint("CALLING OBJECT PROCESSORS")
+                    call_obj_processors(m._tx_metamodel, m)
 
             except:  # noqa
                 # remove all processed models from (global) repo (if present)

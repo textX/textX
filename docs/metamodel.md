@@ -210,6 +210,13 @@ on-the-fly model interpretation. For more information
 !!! note
     For more information please take a look at [the tests](https://github.com/textX/textX/blob/master/tests/functional/test_processors.py).
 
+Object processors decorated with `textx.textxerror_wrap` will transform
+any exceptions not derived from `TextXError` to a `TextXError` (including
+line/column and filename information). This can be useful, if
+object processors transform values using non-textx libraries (like `datetime`)
+and you wish to get the location in the model file, where errors occur
+while transforming the data (see 
+[these tests](https://github.com/textX/textX/blob/master/tests/functional/test_processors.py)).
 
 ## Built-in objects
 

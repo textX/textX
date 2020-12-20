@@ -4,7 +4,7 @@ Testing model and object processors.
 from __future__ import unicode_literals
 import pytest  # noqa
 import sys
-from textx import metamodel_from_str
+from textx import metamodel_from_str, textxerror_wrap
 
 if sys.version < '3':
     text = unicode  # noqa
@@ -350,3 +350,60 @@ def test_multipart_nested_match_rules():
     assert called[0]
     assert model.objects[0] == '#3.4'
     assert model.objects[1] == '--6--'
+
+
+def test_obj_processor_exception_wrap_for_external_exceptions():
+    grammar = r"""
+        Model: date=Date;
+        Date: d=INT '.' m=INT '.' y=INT;
+        """
+
+    @textxerror_wrap
+    def date_converter(model_date):
+        from datetime import datetime
+        return datetime(day=model_date.d, month=model_date.m, year=model_date.y)
+
+    mm = metamodel_from_str(grammar)
+    mm.register_obj_processors({'Date': date_converter})
+    mm.model_from_str('1.12.20')  # ok
+    from textx import TextXError
+    with pytest.raises(TextXError, match=r'None:1:1:.*1\.\.12'):
+        mm.model_from_str('1.13.21')  # month>12
+
+
+def test_obj_processor_exception_wrap_for_common_rules():
+    grammar = r"""
+        Model: a+=A;
+        A: name=ID ('(' other=[A] ')')?;
+        """
+
+    @textxerror_wrap
+    def p(a):
+        if a.name == 'E':
+            raise Exception("test")
+
+    mm = metamodel_from_str(grammar)
+    mm.register_obj_processors({'A': p})
+    from textx.exceptions import TextXError
+    mm.model_from_str('X Y Z (X)')
+    with pytest.raises(TextXError, match=r'None:1:3:.*test'):
+        mm.model_from_str('X E Z (X)')
+
+
+def test_obj_processor_exception_wrap_for_match_rules():
+    grammar = r"""
+        Model: a+=A;
+        A: /\w+/;
+        """
+
+    @textxerror_wrap
+    def p(a):
+        if a == 'E':
+            raise Exception("test")
+
+    mm = metamodel_from_str(grammar)
+    mm.register_obj_processors({'A': p})
+    from textx.exceptions import TextXError
+    mm.model_from_str('X Y Z')
+    with pytest.raises(TextXError, match=r'None:1:3:.*test'):
+        mm.model_from_str('X E Z')

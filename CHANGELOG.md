@@ -19,6 +19,10 @@ please take a look at related PRs and issues and see if the change affects you.
 
 - Added ability to access the full path of named objects
   traversed while resolving a RREL expression ([#304]).
+- Added decorator `textx.textxerror_wrap` for object processors 
+  to automatically transform non-TextXErrors to TextXErrors
+  in order to indicate the filename and position of the
+  element being processed ([#306]).
 
 ### Fixed
 
@@ -521,6 +525,7 @@ please take a look at related PRs and issues and see if the change affects you.
   - Export to dot.
 
 
+[#306]: https://github.com/textX/textX/pull/306
 [#304]: https://github.com/textX/textX/pull/304
 [#301]: https://github.com/textX/textX/issues/301
 [#299]: https://github.com/textX/textX/pull/299
