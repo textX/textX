@@ -95,10 +95,17 @@ def test_user_class_with_imported_grammar():
     this_folder = dirname(abspath(__file__))
     mm = metamodel_from_file(join(this_folder, "user_classes", "B.tx"),
                              classes=[AThing, BThing])
+    called = [False]
+
+    def dummy(_):
+        called[0] = True
+
+    mm.register_obj_processors({'AThing': dummy})
     m = mm.model_from_str("""
         A 2,1
         B Hello
     """)
+    assert called[0]
     assert m.a.v.x == 2
     assert m.a.v.y == 1
     assert m.b.v.name == "Hello"
