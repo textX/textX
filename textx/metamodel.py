@@ -138,7 +138,7 @@ class TextXMetaModel(DebugPrinter):
             to use instead of the dynamically created or a callable providing
             those classes. The callable must accept a rule name and return a
             class for that rule name or None.
-        obj_processors(dict): A dict of user supplied object processors keyed
+        _obj_processors(dict): A dict of user supplied object processors keyed
             by rule/class name (may be a fully qualified name).
         rootcls(TextXClass): A language class that is a root of the meta-model.
         root_path(str): The root dir used for the import statement.
@@ -213,11 +213,8 @@ class TextXMetaModel(DebugPrinter):
         # Registered model processors
         self._model_processors = []
 
-        # Registered object processors
-        self.obj_processors = {}
-
         # Match rule and base type conversion callables
-        self.type_convertors = {
+        self._default_obj_processors = {
             'BOOL': lambda x: x == '1' or x.lower() == 'true',
             'INT': lambda x: int(x),
             'FLOAT': lambda x: float(x),
@@ -225,6 +222,9 @@ class TextXMetaModel(DebugPrinter):
             'STRING': lambda x: x[1:-1].replace(r'\"',
                                                 r'"').replace(r"\'", "'"),
         }
+
+        # Registered object processors (use _default_obj_processors)
+        self.register_obj_processors({})
 
         # Registered scope provider
         self.scope_providers = {}
@@ -498,11 +498,38 @@ class TextXMetaModel(DebugPrinter):
         clazz._tx_attrs[name] = attr
         return attr
 
-    def convert(self, value, _type):
+    def has_obj_processor(self, _type):
+        return _type in self._obj_processors
+
+    def process(self, value, _type, filename, col, line):
         """
+        Process a value with the given type
         Convert instances of textx types and match rules to python types.
+
+        Args:
+            value: the value
+            _type: the type of the value (TextX Class)
+            filename: filename for current object
+            col: col for current object
+            line: line for current object
+        Returns:
+            None or a value used by TextX to replace the object during
+            model creation.
         """
-        return self.type_convertors.get(_type, lambda x: x)(value)
+        try:
+            return self._obj_processors.get(_type, lambda x: x)(value)
+        except Exception as e:
+            from textx.exceptions import TextXError
+            if isinstance(e, TextXError):
+                if e.col is None:
+                    e.col = col
+                if e.line is None:
+                    e.line = line
+                if e.filename is None:
+                    e.filename = filename
+                raise e
+            else:
+                raise
 
     def validate(self):
         """
@@ -708,8 +735,8 @@ class TextXMetaModel(DebugPrinter):
             obj_processors(dict): A dictionary where key=class name,
                 value=callable
         """
-        self.obj_processors = obj_processors
-        self.type_convertors.update(obj_processors)
+        self._obj_processors = dict(self._default_obj_processors)
+        self._obj_processors.update(obj_processors)
 
     @property
     def _tx_model_param_definitions(self):
