@@ -17,15 +17,16 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ### Added
 
-- Added ability to access the full path of named objects
-  traversed while resolving a RREL expression ([#304]).
-- Added decorator `textx.textxerror_wrap` for object processors 
-  to automatically transform non-TextXErrors to TextXErrors
-  in order to indicate the filename and position of the
-  element being processed ([#306]).
+- Added ability to access the full path of named objects traversed while
+  resolving a RREL expression ([#304]).
+- Added decorator `textx.textxerror_wrap` for object processors to automatically
+  transform non-TextXErrors to TextXErrors in order to indicate the filename and
+  position of the element being processed ([#306]).
 
 ### Fixed
 
+- Relaxed assert in model creation enabling some model changes in user classes
+  ([#311])
 - Fixed model export to dot in cases where textX object is replaced in the
   processor([#301])
 
@@ -525,6 +526,7 @@ please take a look at related PRs and issues and see if the change affects you.
   - Export to dot.
 
 
+[#311]: https://github.com/textX/textX/pull/311
 [#306]: https://github.com/textX/textX/pull/306
 [#304]: https://github.com/textX/textX/pull/304
 [#301]: https://github.com/textX/textX/issues/301
