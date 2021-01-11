@@ -763,10 +763,10 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                             if result is not None:
                                 setattr(model_obj, metaattr.name, result)
 
-            # call obj_proc of the current meta_class if type == RULE_ABSTRACT
             if current_metaclass_of_obj._tx_fqn !=\
                     metaclass_of_grammar_rule._tx_fqn:
-                assert RULE_ABSTRACT == metaclass_of_grammar_rule._tx_type
+                # This can happen if grammar rule is abstract or if model is
+                # modified (e.g. expression reduction)
                 if metamodel.has_obj_processor(current_metaclass_of_obj.__name__):
                     return_value_current = metamodel.process(
                         model_obj, current_metaclass_of_obj.__name__,
