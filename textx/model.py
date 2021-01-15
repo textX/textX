@@ -253,15 +253,17 @@ class RefRulePosition(object):
         name(str): A name of the target object.
         ref_pos_start(int): Reference starting position
         ref_pos_end(int): Reference ending position
+        def_file_name(str): Definition's model file name
         def_pos_start(int): Starting position of referenced object
         def_pos_end(int): Ending position of referenced object
     """
 
     def __init__(self, name, ref_pos_start, ref_pos_end,
-                 def_pos_start, def_pos_end):
+                 def_file_name, def_pos_start, def_pos_end):
         self.name = name
         self.ref_pos_start = ref_pos_start
         self.ref_pos_end = ref_pos_end
+        self.def_file_name = def_file_name
         self.def_pos_start = def_pos_start
         self.def_pos_end = def_pos_end
 
@@ -1078,6 +1080,7 @@ class ReferenceResolver:
                                 ref_pos_start=crossref.position,
                                 ref_pos_end=crossref.position + len(
                                     resolved.name),
+                                def_file_name=get_model(resolved)._tx_filename,
                                 def_pos_start=resolved._tx_position,
                                 def_pos_end=resolved._tx_position_end))
 
