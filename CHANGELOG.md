@@ -32,6 +32,9 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ### Changed
 
+- Added `def_file_name` atribute to `RefRulePosition` for storing the definition's
+  model file name in case of cross-references between models. ([#277])
+
 
 ## [2.3.0] (released: 2020-11-01)
 
