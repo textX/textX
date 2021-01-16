@@ -21,8 +21,8 @@ FQNI: ID+['.']('.*')?;
 Import: 'import' importURI=FQNI;
 """
 
-
-model_b_file_name = join(abspath(dirname(__file__)), "test_objcrossref_positions_B.model")
+model_b_file_name = join(abspath(dirname(__file__)),
+                         "test_objcrossref_positions_B.model")
 
 model_b_str = """
 import test_objcrossref_positions
@@ -33,12 +33,11 @@ package packageB {
 }
 """
 
-
-model_a_file_name = join(abspath(dirname(__file__)), "test_objcrossref_positions.model")
+model_a_file_name = join(abspath(dirname(__file__)),
+                         "test_objcrossref_positions.model")
 
 with open(model_a_file_name, 'r') as model_a_file:
     model_a_str = model_a_file.read()
-
 
 
 def test_objcrossref_positions():
@@ -67,13 +66,17 @@ def test_objcrossref_positions():
 
     # def_pos
     rule_position = model_a_str.find("packageA1")  # look for object A in packageA1
-    assert model_a_str.find("object A", rule_position) == model_b._pos_crossref_list[0].def_pos_start
+    assert model_a_str.find("object A", rule_position) \
+        == model_b._pos_crossref_list[0].def_pos_start
     rule_position = model_a_str.find("packageA2")  # look for object A in packageA2
-    assert model_a_str.find("object A", rule_position) == model_b._pos_crossref_list[1].def_pos_start
+    assert model_a_str.find("object A", rule_position) \
+        == model_b._pos_crossref_list[1].def_pos_start
 
     # ref_pos
-    assert model_b_str.find("packageA1.A") == model_b._pos_crossref_list[0].ref_pos_start
-    assert model_b_str.find("packageA2.A") == model_b._pos_crossref_list[1].ref_pos_start
+    assert model_b_str.find("packageA1.A") \
+        == model_b._pos_crossref_list[0].ref_pos_start
+    assert model_b_str.find("packageA2.A") \
+        == model_b._pos_crossref_list[1].ref_pos_start
 
     # def_file_name
     assert model_a_file_name == model_b._pos_crossref_list[0].def_file_name
@@ -85,14 +88,18 @@ def test_objcrossref_positions():
 
     # def_pos
     rule_position = model_a_str.find("packageA1")  # look for object A in packageA1
-    assert model_a_str.find("object A", rule_position) == model_a._pos_crossref_list[0].def_pos_start
+    assert model_a_str.find("object A", rule_position) \
+        == model_a._pos_crossref_list[0].def_pos_start
     rule_position = model_a_str.find("packageA2")  # look for object A in packageA2
-    assert model_a_str.find("object A", rule_position) == model_a._pos_crossref_list[1].def_pos_start
+    assert model_a_str.find("object A", rule_position) \
+        == model_a._pos_crossref_list[1].def_pos_start
 
     # ref_pos
-    assert model_a_str.find("packageA1.A") == model_a._pos_crossref_list[0].ref_pos_start
+    assert model_a_str.find("packageA1.A") \
+        == model_a._pos_crossref_list[0].ref_pos_start
     rule_position = model_a_str.find("object B")  # look for object B crossref
-    assert model_a_str.find("A", rule_position) == model_a._pos_crossref_list[1].ref_pos_start
+    assert model_a_str.find("A", rule_position) \
+        == model_a._pos_crossref_list[1].ref_pos_start
 
     # def_file_name
     assert model_a_file_name == model_a._pos_crossref_list[0].def_file_name
