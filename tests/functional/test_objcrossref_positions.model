@@ -1,0 +1,7 @@
+package packageA1 {
+    object A
+}
+package packageA2 {
+    object A ref packageA1.A
+    object B ref A
+}
