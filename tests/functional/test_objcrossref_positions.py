@@ -1,49 +1,110 @@
 from __future__ import unicode_literals
+from os.path import join, abspath, dirname
 from textx import metamodel_from_str
+import textx.scoping.providers as scoping_providers
 
-grammar = """
+grammar = r"""
 Model:
-    firsts*=First
-    second=Second
+        imports*=Import
+        packages*=Package
 ;
-First:
-    'first' name=ID
+Package:
+        'package' name=ID '{'
+            objects*=Object
+        '}'
 ;
-Second:
-    'second' ref_list+=[First][',']
+Object:
+    'object' name=ID ('ref' ref=[Object|FQN])?
 ;
+FQN: ID+['.'];
+FQNI: ID+['.']('.*')?;
+Import: 'import' importURI=FQNI;
 """
 
-modelstr = """
-first Test1
-first Test2
+model_b_file_name = join(abspath(dirname(__file__)),
+                         "test_objcrossref_positions_B.model")
 
-second Test1, Test2
+model_b_str = """
+import test_objcrossref_positions
+
+package packageB {
+    object A1 ref packageA1.A
+    object A2 ref packageA2.A
+}
 """
+
+model_a_file_name = join(abspath(dirname(__file__)),
+                         "test_objcrossref_positions.model")
+
+with open(model_a_file_name, 'r') as model_a_file:
+    model_a_str = model_a_file.read()
 
 
 def test_objcrossref_positions():
-    # get positions from string
-    # definition positions
-    test1_def_pos = modelstr.find('first Test1')
-    test2_def_pos = modelstr.find('first Test2')
-    # reference positions ( skip 30 characters )
-    second_rule_pos = modelstr.find('second')
-    test1_ref_pos = modelstr.find('Test1', second_rule_pos)
-    test2_ref_pos = modelstr.find('Test2', second_rule_pos)
+    #################################
+    # META MODEL DEF
+    #################################
 
-    # textx_tools_support enabled
-    mm = metamodel_from_str(grammar, textx_tools_support=True)
-    model = mm.model_from_str(modelstr)
+    my_meta_model = metamodel_from_str(grammar, textx_tools_support=True)
 
-    # compare positions with crossref list items
-    test1_crossref = model._pos_crossref_list[0]
-    test2_crossref = model._pos_crossref_list[1]
+    def conv(i):
+        return i.replace(".", "/") + ".model"
 
-    # test1
-    assert test1_crossref.ref_pos_start == test1_ref_pos
-    assert test1_crossref.def_pos_start == test1_def_pos
+    my_meta_model.register_scope_providers(
+        {"*.*": scoping_providers.FQNImportURI(importURI_converter=conv)})
 
-    # test2
-    assert test2_crossref.ref_pos_start == test2_ref_pos
-    assert test2_crossref.def_pos_start == test2_def_pos
+    #################################
+    # MODEL PARSING
+    #################################
+
+    model_b = my_meta_model.model_from_str(model_b_str, file_name=model_b_file_name)
+    model_a = my_meta_model.model_from_file(model_a_file_name)
+
+    #################################
+    # TEST CROSSREF BETWEEN MODELS
+    #################################
+
+    # def_pos
+    rule_position = model_a_str.find("packageA1")  # look for object A in packageA1
+    assert model_a_str.find("object A", rule_position) \
+        == model_b._pos_crossref_list[0].def_pos_start
+    rule_position = model_a_str.find("packageA2")  # look for object A in packageA2
+    assert model_a_str.find("object A", rule_position) \
+        == model_b._pos_crossref_list[1].def_pos_start
+
+    # ref_pos
+    assert model_b_str.find("packageA1.A") \
+        == model_b._pos_crossref_list[0].ref_pos_start
+    assert model_b_str.find("packageA2.A") \
+        == model_b._pos_crossref_list[1].ref_pos_start
+
+    # def_file_name
+    assert model_a_file_name == model_b._pos_crossref_list[0].def_file_name
+    assert model_a_file_name == model_b._pos_crossref_list[1].def_file_name
+
+    #################################
+    # TEST CROSSREF SAME MODELS
+    #################################
+
+    # def_pos
+    rule_position = model_a_str.find("packageA1")  # look for object A in packageA1
+    assert model_a_str.find("object A", rule_position) \
+        == model_a._pos_crossref_list[0].def_pos_start
+    rule_position = model_a_str.find("packageA2")  # look for object A in packageA2
+    assert model_a_str.find("object A", rule_position) \
+        == model_a._pos_crossref_list[1].def_pos_start
+
+    # ref_pos
+    assert model_a_str.find("packageA1.A") \
+        == model_a._pos_crossref_list[0].ref_pos_start
+    rule_position = model_a_str.find("object B")  # look for object B crossref
+    assert model_a_str.find("A", rule_position) \
+        == model_a._pos_crossref_list[1].ref_pos_start
+
+    # def_file_name
+    assert model_a_file_name == model_a._pos_crossref_list[0].def_file_name
+    assert model_a_file_name == model_a._pos_crossref_list[1].def_file_name
+
+    #################################
+    # END
+    #################################

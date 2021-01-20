@@ -32,6 +32,9 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ### Changed
 
+- Added `def_file_name` atribute to `RefRulePosition` for storing the definition's
+  model file name in case of cross-references between models. ([#313],[#277])
+
 
 ## [2.3.0] (released: 2020-11-01)
 
@@ -525,7 +528,8 @@ please take a look at related PRs and issues and see if the change affects you.
   - Metamodel and model construction.
   - Export to dot.
 
-
+[#277]: https://github.com/textX/textX/issues/277
+[#313]: https://github.com/textX/textX/pull/313
 [#311]: https://github.com/textX/textX/pull/311
 [#306]: https://github.com/textX/textX/pull/306
 [#304]: https://github.com/textX/textX/pull/304
