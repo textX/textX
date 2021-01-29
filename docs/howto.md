@@ -173,3 +173,7 @@ concrete DSL. These DLS reference each other.
 
  * Unittest 
    [tests/functional/examples/test_modeling_float_int_variables.py](https://github.com/textX/textX/blob/master/tests/functional/examples/test_modeling_float_int_variables.py)
+
+## Parsing structures inside arbitrary surrounding text
+
+See this [StackOverflow question](https://stackoverflow.com/questions/53379893/parsing-dhcpd-conf-with-textx).
