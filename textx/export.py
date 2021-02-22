@@ -250,15 +250,14 @@ set namespaceSeparator .
             # If attribute is a reference
             # mult = attr.mult if not attr.mult == MULT_ONE else ""
             if attr.cont:
-                arr = "*--"
+                arr = "*-->"
             else:
-                arr = "o--"
-            if attr.mult == MULT_ZEROORMORE:
-                arr = arr + ' "0..*"'
-            elif attr.mult == MULT_ONEORMORE:
-                arr = arr + ' "1..*"'
-            return '{} {} {}\n'.format(
-                cls._tx_fqn, arr, attr.cls._tx_fqn)
+                arr = "o-->"
+            name = attr.name
+            if attr.mult != "1":
+                name += " " + attr.mult
+            return '{} {} {}: {}\n'.format(
+                cls._tx_fqn, arr, attr.cls._tx_fqn, name)
 
     def render_inherited_by(self, base, special):
         return '{} <|-- {}\n'.format(base._tx_fqn, special._tx_fqn)
