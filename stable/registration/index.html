@@ -498,9 +498,9 @@ Options:
   --help                  Show this message and exit.
 
 </code></pre>
-<p>You can pass in arbitrary parameters in the <code>generator</code> command. These
-parameters will get collected and will be made available as <code>kwargs</code> to the
-generator function call.</p>
+<p>You can pass arbitrary parameters to the <code>generate</code> command. These parameters
+will get collected and will be made available as <code>kwargs</code> to the generator
+function call.</p>
 <p>For example:</p>
 <pre><code>textx generate mymodel.flow --target mytarget --overwrite --meaning_of_life 42
 </code></pre>
@@ -509,7 +509,7 @@ generator function call.</p>
 def flow_mytarget_generator(metamodel, model, output_path, overwrite, debug, **kwargs):
     ... kwargs has meaning_of_life param
 </code></pre>
-<p>gets <code>meaning_of_life</code> param with value <code>42</code>.</p>
+<p>gets <code>meaning_of_life</code> param with value <code>42</code> in <code>kwargs</code>.</p>
 <p>If you have <a href="../metamodel/#optional-model-parameter-definitions">model parameters
 defined</a> on a meta-model
 then any parameter passed to the generator that is registered on the meta-model
