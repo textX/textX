@@ -215,7 +215,7 @@ want to generate. Each file in your template folder can be a Jinja template
 will be created by running the template through the Jinja engine. If the file
 doesn't end with <code>.jinja</code> extension it is copied as is to the target folder.</p>
 <p>To call Jinja generator you use <code>textx_jinja_generator</code> function:</p>
-<pre><code class="python">...
+<pre><code class="language-python">...
 from textxjinja import textx_jinja_generator
 ...
 
@@ -232,7 +232,6 @@ def mygenerator(metamodel, model, output_path, overwrite, debug):
     # Run Jinja generator
     textx_jinja_generator(template_folder, output_path, config, overwrite)
 </code></pre>
-
 <p>In this example we have our templates stored in <code>template</code> folder.</p>
 <p>You can use variables from <code>config</code> dict in your templates as usual, but also
 you can use them in filenames. If file name has a variable name in the format

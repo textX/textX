@@ -285,9 +285,8 @@ Attribute:
 Classes</a> and
 <a href="../metamodel/#built-in-objects">Builtins</a> sections.</p>
 <p>Now, we can use the <code>entity_mm</code> meta-model to parse and create Entity models.</p>
-<pre><code class="python">person_model = entity_mm.model_from_file('person.ent')
+<pre><code class="language-python">person_model = entity_mm.model_from_file('person.ent')
 </code></pre>
-
 <p>Where <code>person.ent</code> file might contain this:</p>
 <pre><code>entity Person {
   name : string
@@ -364,10 +363,9 @@ object has been matched by the parser. Each object from the model object graph
 has this attribute.</p>
 <p>This is an absolute position in the input stream. To convert it to line/column
 format use <code>pos_to_linecol</code> method of the parser.</p>
-<pre><code class="python">line, col = entity_model._tx_parser.pos_to_linecol(
+<pre><code class="language-python">line, col = entity_model._tx_parser.pos_to_linecol(
     person_model.entities[0]._tx_position)
 </code></pre>
-
 <p>Where <code>entity_model</code> is a model constructed by textX.</p>
 <p>Previous example will give the line/column position of the first entity.</p>
 <p><code>_tx_position_end</code> is the position in the input stream where the object ends.

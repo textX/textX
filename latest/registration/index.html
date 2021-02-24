@@ -257,7 +257,7 @@ language and finally a callable that should be called to get the instance of the
 language meta-model. Alternatively, you can provide the instance of the
 meta-model instead of the callable.</p>
 <p>For example:</p>
-<pre><code class="python">from textx import LanguageDesc
+<pre><code class="language-python">from textx import LanguageDesc
 
 def entity_metamodel():
     # Some code that constructs and return the language meta-model
@@ -268,11 +268,10 @@ entity_lang = LanguageDesc('entity',
                            description='Entity-relationship language',
                            metamodel=entity_metamodel)
 </code></pre>
-
 <p>The next step is to make this language discoverable by textX. To do this we have
 to register our <code>entity_lang</code> object in the <code>setup.py</code> entry point named
 <code>textx_languages</code>.</p>
-<pre><code class="python">setup(
+<pre><code class="language-python">setup(
     ...
     entry_points={
         'textx_languages': [
@@ -280,7 +279,6 @@ to register our <code>entity_lang</code> object in the <code>setup.py</code> ent
         ],
     },
 </code></pre>
-
 <p>In this example <code>entity.metamodel</code> is the Python module where <code>entity_lang</code> is defined.</p>
 <p>When you install this project textX will discover your language and offer it
 through <a href="#registration-api">registration API</a> (see bellow).</p>
@@ -290,7 +288,7 @@ provide the name and the file pattern as parameters. Docstring of the decorated
 function will be used as a language description.</p>
 <p>The equivalent of the previous definition using the <code>language</code> decorator would
 be:</p>
-<pre><code class="python">from textx import language
+<pre><code class="language-python">from textx import language
 
 @language('entity', '*.ent')
 def entity_lang():
@@ -300,7 +298,6 @@ def entity_lang():
     # Some code that constructs and return the language meta-model
     # E.g. call to metamodel_from_file
 </code></pre>
-
 <p>The <code>setup.py</code> entry point would be the same.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -314,25 +311,23 @@ prefix, <code>mycompanyname-entity</code> instead of just <code>entity</code>).<
 <p>textX provides a core command <code>list-languages</code> that lists all registered
 languages in the current environment. We eat our own dog food so even <code>textX</code>
 grammar language is registered as a language using the same mechanism.</p>
-<pre><code class="nohighlight">$ textx list-languages
+<pre><code class="language-nohighlight">$ textx list-languages
 txcl (*.txcl)         textx-gen-coloring    A language for syntax highlight definition.
 textX (*.tx)          textX                 A meta-language for language definition
 types-dsl (*.etype)   types-dsl             An example DSL for simple types definition
 data-dsl (*.edata)    data-dsl              An example DSL for data definition
 flow-dsl (*.eflow)    flow-dsl              An example DSL for data flow processing definition
 </code></pre>
-
 <p>The first column gives the language unique name and filename pattern, the second
 column is the Python project which registered the language and the third column
 is a short description.</p>
 <p>You can get a reference to a registered language meta-model in your programs by
 using the <a href="#registration-api">registration API</a> <code>metamodel_for_language</code> call. For example:</p>
-<pre><code class="python">from textx import metamodel_for_language
+<pre><code class="language-python">from textx import metamodel_for_language
 data_dsl_mm = metamodel_for_language('data-dsl')
 
 model = data_dsl_mm.model_from_file('my_model.data')
 </code></pre>
-
 <h2 id="textx-generators">textX generators<a class="headerlink" href="#textx-generators" title="Permanent link">&para;</a></h2>
 <p>textX generators are callables which can transform any textX model to an
 arbitrary (usually textual) representation. Similarly to languages, generators
@@ -344,9 +339,8 @@ programmatically or from CLI using <code>textx</code> command.</p>
 language, the name of the target language, a short one-line description of the
 generator and finally a callable that should be called to perform code
 generation. The callable is if the form:</p>
-<pre><code class="python">def generator(metamodel, model, output_path, overwrite, debug, **custom_args)
+<pre><code class="language-python">def generator(metamodel, model, output_path, overwrite, debug, **custom_args)
 </code></pre>
-
 <p>where:</p>
 <ul>
 <li><code>metamodel</code> - is the metamodel of the source language</li>
@@ -361,7 +355,7 @@ generation. The callable is if the form:</p>
   not recognize</li>
 </ul>
 <p>For example:</p>
-<pre><code class="python">from textx import GeneratorDesc
+<pre><code class="language-python">from textx import GeneratorDesc
 
 def my_generator(metamodel, model, output_path, overwrite, debug, **custom_args)
     # Some code that perform generation
@@ -372,11 +366,10 @@ entity_java_generator = GeneratorDesc(
     description='Entity-relationship to Java language generator',
     generator=my_generator)
 </code></pre>
-
 <p>The next step is to make this generator discoverable by textX. To do this we
 have to register our <code>entity_java_generator</code> object in the <code>setup.py</code> entry
 point named <code>textx_generators</code>.</p>
-<pre><code class="python">setup(
+<pre><code class="language-python">setup(
     ...
     entry_points={
         'textx_generators' : [
@@ -384,7 +377,6 @@ point named <code>textx_generators</code>.</p>
         ],
     },
 </code></pre>
-
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>You can also register generator programmatically using <a href="#registration-api">registration API</a>.
@@ -400,18 +392,17 @@ callable and provide the name and the source and target language as parameters.
 Docstring of the decorated function will be used as a generator description.</p>
 <p>The equivalent of the previous definition using the <code>generator</code> decorator would
 be:</p>
-<pre><code class="python">from textx import generator
+<pre><code class="language-python">from textx import generator
 
 @generator('entity', 'java')
 def my_generator(metamodel, model, output_path, overwrite, debug, **custom_args)
     &quot;Entity-relationship to Java language generator&quot;
     # Some code that perform generation
 </code></pre>
-
 <p>The <code>setup.py</code> would remain the same.</p>
 <p>Here is an example of the generator of <code>dot</code> files from any textX model. This is
 an actual code from textX.</p>
-<pre><code class="python">@generator('any', 'dot')
+<pre><code class="language-python">@generator('any', 'dot')
 def model_generate_dot(metamodel, model, output_path, overwrite, debug):
     &quot;Generating dot visualizations from arbitrary models&quot;
 
@@ -428,17 +419,15 @@ def model_generate_dot(metamodel, model, output_path, overwrite, debug):
     else:
         click.echo('-- Skipping: {}'.format(output_file))
 </code></pre>
-
 <h3 id="listing-generators">Listing generators<a class="headerlink" href="#listing-generators" title="Permanent link">&para;</a></h3>
 <p>textX provides a core command <code>list-generators</code> that lists all registered
 generators in the current environment. </p>
-<pre><code class="nohighlight">$ textx list-generators
+<pre><code class="language-nohighlight">$ textx list-generators
 textX -&gt; dot         textX               Generating dot visualizations from textX grammars
 textX -&gt; PlantUML    textX               Generating PlantUML visualizations from textX grammars
 any -&gt; dot           textX               Generating dot visualizations from arbitrary models
 flow-dsl -&gt; PlantUML flow-codegen        Generating PlantUML visualization from flow-dsl
 </code></pre>
-
 <p>The first column gives the generator identifier, the second column is the Python
 project which registered the generator and the third column is a short
 description.</p>
@@ -455,12 +444,11 @@ done as using the generator mechanism.</p>
 <p>You can get a reference to a generator by using the <a href="#registration-api">registration API</a>. For
 example <code>generator_for_language_target</code> call will return the generator for the
 given source language name and target language name.</p>
-<pre><code class="python">from textx import generator_for_language_target
+<pre><code class="language-python">from textx import generator_for_language_target
 robot_to_java = generator_for_language_target('robot', 'java')
 
 robot_to_java(robot_mm, my_model)
 </code></pre>
-
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>If you are using <code>@generator</code> decorator and want to programmatically call
@@ -471,7 +459,7 @@ from the <a href="#registration-api">registration API</a> as described.</p>
 <p>A more convenient way is to call the generator from the CLI. This is done using
 the textX provided <code>generate</code> command.</p>
 <p>To get a help on the command:</p>
-<pre><code class="nohighlight">$ textx generate --help
+<pre><code class="language-nohighlight">$ textx generate --help
 Usage: textx generate [OPTIONS] MODEL_FILES...
 
   Run code generator on a provided model(s).
@@ -510,10 +498,9 @@ Options:
   --help                  Show this message and exit.
 
 </code></pre>
-
-<p>You can pass in arbitrary parameters in the <code>generator</code> command. These
-parameters will get collected and will be made available as <code>kwargs</code> to the
-generator function call.</p>
+<p>You can pass arbitrary parameters to the <code>generate</code> command. These parameters
+will get collected and will be made available as <code>kwargs</code> to the generator
+function call.</p>
 <p>For example:</p>
 <pre><code>textx generate mymodel.flow --target mytarget --overwrite --meaning_of_life 42
 </code></pre>
@@ -522,7 +509,7 @@ generator function call.</p>
 def flow_mytarget_generator(metamodel, model, output_path, overwrite, debug, **kwargs):
     ... kwargs has meaning_of_life param
 </code></pre>
-<p>gets <code>meaning_of_life</code> param with value <code>42</code>.</p>
+<p>gets <code>meaning_of_life</code> param with value <code>42</code> in <code>kwargs</code>.</p>
 <p>If you have <a href="../metamodel/#optional-model-parameter-definitions">model parameters
 defined</a> on a meta-model
 then any parameter passed to the generator that is registered on the meta-model

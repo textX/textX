@@ -401,6 +401,13 @@ on-the-fly model interpretation. For more information</p>
 <p class="admonition-title">Note</p>
 <p>For more information please take a look at <a href="https://github.com/textX/textX/blob/master/tests/functional/test_processors.py">the tests</a>.</p>
 </div>
+<p>Object processors decorated with <code>textx.textxerror_wrap</code> will transform
+any exceptions not derived from <code>TextXError</code> to a <code>TextXError</code> (including
+line/column and filename information). This can be useful, if
+object processors transform values using non-textx libraries (like <code>datetime</code>)
+and you wish to get the location in the model file, where errors occur
+while transforming the data (see 
+<a href="https://github.com/textX/textX/blob/master/tests/functional/test_processors.py">these tests</a>).</p>
 <h2 id="built-in-objects">Built-in objects<a class="headerlink" href="#built-in-objects" title="Permanent link">&para;</a></h2>
 <p>Often, you will need objects that should be a part of each model and you do not
 want users to specify them in every model they create. The most notable example
@@ -444,25 +451,21 @@ MyFloat:
   /\d+\.(\d+)?/
 ;
 </code></pre>
-
 <p>In this example <code>MyFloat</code> rule is a match rule and by default will return Python
 <code>string</code>, so attribute <code>some_number</code> will be of <code>string</code> type. To change that,
 register object processor for <code>MyFloat</code> rule:</p>
 <pre><code>mm = metamodel_from_str(grammar)
 mm.register_obj_processors({'MyFloat': lambda x: float(x)}))
 </code></pre>
-
 <p>Now, <code>MyFloat</code> will always be converted to Python <code>float</code> type.</p>
 <p>Using match filters you can override built-in rule's conversions like this:</p>
 <pre><code>Model:
   some_float=INT
 ;
 </code></pre>
-
 <pre><code>mm = metamodel_from_str(grammar)
 mm.register_obj_processors({'INT': lambda x: float(x)}))
 </code></pre>
-
 <p>In this example we use built-in rule <code>INT</code> that returns Python <code>int</code> type.
 Registering object processor with the key <code>INT</code> we can change default behaviour
 and convert what is matched by this rule to some other object (<code>float</code> in this
