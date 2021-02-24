@@ -213,6 +213,8 @@ Here is a non-complete list of projects using textX.
       free application to explore genetics variations from VCF file. Developed
       by [labsquare](http://www.labsquare.org/) - A community for genomics
       software
+    - [osxphotos](https://github.com/RhetTbull/osxphotos) - Python app to export
+      pictures and associated metadata from Apple Photos on macOS.
 
 * Commercial
 
