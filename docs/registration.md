@@ -356,9 +356,9 @@ Options:
 
 ```
 
-You can pass in arbitrary parameters in the `generator` command. These
-parameters will get collected and will be made available as `kwargs` to the
-generator function call.
+You can pass arbitrary parameters to the `generate` command. These parameters
+will get collected and will be made available as `kwargs` to the generator
+function call.
 
 For example:
 
@@ -370,7 +370,7 @@ Your generator function:
     def flow_mytarget_generator(metamodel, model, output_path, overwrite, debug, **kwargs):
         ... kwargs has meaning_of_life param
         
-gets `meaning_of_life` param with value `42`.
+gets `meaning_of_life` param with value `42` in `kwargs`.
 
 If you have [model parameters
 defined](metamodel.md#optional-model-parameter-definitions) on a meta-model
