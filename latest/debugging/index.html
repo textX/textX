@@ -202,17 +202,15 @@ debugging is enabled, textX will print various debugging messages.</p>
 messages during grammar parsing and meta-model construction will be printed.
 Additionally, a parse tree created during the grammar parsing as well as
 meta-model (if constructed successfully) dot files will be generated:</p>
-<pre><code class="python">form textx.metamodel import metamodel_from_file
+<pre><code class="language-python">form textx.metamodel import metamodel_from_file
 
 robot_metamodel = metamodel_from_file('robot.tx', debug=True)
 </code></pre>
-
 <p>If <code>debug</code> is set in the <code>model_from_file/str</code> calls, various messages during
 the model parsing and construction will be printed. Additionally, parse tree
 created from the input as well as the model will be exported to dot files.</p>
-<pre><code class="python">  robot_program = robot_metamodel.model_from_file('program.rbt', debug=True)
+<pre><code class="language-python">  robot_program = robot_metamodel.model_from_file('program.rbt', debug=True)
 </code></pre>
-
 <p>Alternatively, you can use <a href="../textx_command/">textx check or generate command</a>
 in debug mode.</p>
 <pre><code>$ textx --debug generate --grammar robot.tx program.rbt --target dot

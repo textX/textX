@@ -332,16 +332,70 @@ scope provider. Then, in case of no match, other loaded models are searched.
 When using this extra prefix the importURI feature is activated
 (see <a href="../scoping/">scoping</a> and
 <a href="https://github.com/textX/textX/blob/master/tests/functional/registration/projects/data_dsl/data_dsl/Data.tx">grammar example</a>).</p>
+<h2 id="accessing-the-rrel-path-of-a-resolved-reference">Accessing the RREL 'path' of a resolved reference<a class="headerlink" href="#accessing-the-rrel-path-of-a-resolved-reference" title="Permanent link">&para;</a></h2>
+<p>Use the prefix <code>+p:</code> for an RREL expression to access the complete
+path of named elements for a resolved reference. For that, the
+resolved reference is represented by a proxy which is transparent
+to the user is terms of attribute access and <code>textx_instanceof</code>
+semantics.</p>
+<p>The proxy (<code>textx.scoping.rrel.ReferenceProxy</code>) provides two extra
+fields: <code>_tx_obj</code> and <code>_tx_path</code>. <code>_tx_obj</code> represent the
+ referenced object itself and <code>_tx_path</code> is a list with
+ all named elements traversed during scope resolution. The last
+ entry of the list is <code>_tx_obj</code>. </p>
+<p>The following model shows how to employ the <code>+p:</code> flag and
+is used in the unittest referenced for the following use case:</p>
+<pre><code>Model:
+    structs+=Struct
+    instances+=Instance
+    references+=Reference;
+Struct:
+    'struct' name=ID '{' vals+=Val '}';
+Val:
+    'val' name=ID (':' type=[Struct])?;
+Instance:
+    'instance' name=ID (':' type=[Struct])?;
+Reference:
+    'reference' ref=[Val|FQN|+p:instances.~type.vals.(~type.vals)*];
+FQN: ID ('.' ID)*;
+</code></pre>
+<p>The <strong>use case</strong> for that feature is that you sometimes need
+to access all model elements specified in a model reference. Consider
+a reference to a hierarchically modelled data element  like in this
+<a href="https://github.com/textX/textX/blob/master/tests/functional/examples/test_hierarchical_data_structures_referencing_attributes.py">unittest example</a>,
+e.g. <code>reference d.c.b.a.x</code>:</p>
+<pre><code>struct A {
+    val x
+}
+struct B {
+    val a: A
+}
+struct C {
+    val b: B
+    val a: A
+}
+struct D {
+    val c: C
+    val b1: B
+}
+instance d: D
+reference d.c.b.a.x
+reference d.b1.a.x
+</code></pre>
+<p>In this example you need all referenced intermediate model elements to
+accurately identify the modelled data for, e.g., code generation because
+<code>reference d.c.b.a.x</code> is not distinguishable from
+<code>reference d.b1.a.x</code> without the path
+(both point to the field <code>x</code> in <code>A</code>).</p>
 <h2 id="using-rrel-from-python-code">Using RREL from Python code<a class="headerlink" href="#using-rrel-from-python-code" title="Permanent link">&para;</a></h2>
 <p>RREL expression could be used during registration in place of scoping provider.
 For example:</p>
-<pre><code class="Python">my_meta_model.register_scope_providers({
+<pre><code class="language-Python">my_meta_model.register_scope_providers({
         &quot;*.*&quot;: scoping_providers.FQN(),
         &quot;Connection.from_port&quot;: &quot;from_inst.component.slots&quot;  # RREL
         &quot;Connection.to_port&quot;: &quot;from_inst.component.slots&quot;      # RREL
     })
 </code></pre>
-
 <h2 id="rrel-processing-internal">RREL processing (internal)<a class="headerlink" href="#rrel-processing-internal" title="Permanent link">&para;</a></h2>
 <p>RREL expression are parsed when the grammar is loaded and transformed to AST
 consisting of RREL operator nodes (each node could be an instance of <code>RREL</code>
