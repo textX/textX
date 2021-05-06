@@ -223,35 +223,36 @@ from textxjinja import textx_jinja_generator
 def mygenerator(metamodel, model, output_path, overwrite, debug):
     &quot;Generate MyTarget from MyLang model.&quot;
 
-    # Prepare config dictionary
-    config = {}
-    config['some_param'] = &quot;Some value&quot;
+    # Prepare context dictionary
+    context = {}
+    context['some_param'] = &quot;Some value&quot;
 
     template_folder = os.path.join(THIS_FOLDER, 'template')
 
     # Run Jinja generator
-    textx_jinja_generator(template_folder, output_path, config, overwrite)
+    textx_jinja_generator(template_folder, output_path, context, overwrite)
 </code></pre>
 <p>In this example we have our templates stored in <code>template</code> folder.</p>
-<p>You can use variables from <code>config</code> dict in your templates as usual, but also
+<p>You can use variables from <code>context</code> dict in your templates as usual, but also
 you can use them in filenames. If file name has a variable name in the format
 <code>__&lt;variablename&gt;__</code> it will be replaced by the value of the variable from the
-<code>config</code> dict. If variable by the given name is not found the <code>variablename</code> is
+<code>context</code> dict. If variable by the given name is not found the <code>variablename</code> is
 treated as literal filename. For example
 <a href="https://github.com/textX/textX-dev/tree/master/textxdev/scaffold/template">__package__</a>
-in the template file names will be replaced by package name from <code>config</code> dict.</p>
+in the template file names will be replaced by package name from <code>context</code> dict.</p>
 <p>Boolean values in file names are treated specially. If the value is of a bool
 type the file will be skipped entirely if the value is <code>False</code> but will be used
 if the value is <code>True</code>. This makes it easy to provide templates/files which
 should be generated only under certain conditions (for example see <code>__lang__</code>
 and <code>__gen__</code> variable usage in <a href="https://github.com/textX/textX-dev/tree/master/textxdev/scaffold/template">template
 names</a>)</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>It is planned to support iterable in <code>config</code> dict. If a variable is
-iterable then a file will be generated for each element of the iterable. This
-is still not implemented.</p>
-</div>
+<p>If a variable from context is iterable, then the generator will produce a file
+for each element of the iterable. </p>
+<p>Parameter <code>transform_names</code> is a callable that is used to transform model
+variables and return a string that will be used instead. It is applied to both
+iterable and non-iterable model objects. <a href="https://github.com/textX/textX-jinja/blob/master/tests/test_iterable/test_transform_names/test_transform_names.py">This
+test</a>
+is an example usage of iterables and name tranformation.</p>
 <p>To see a full example of using <code>textX-jinja</code> you can take a look at the
 implementation of <code>startproject</code> textX command in
 <a href="https://github.com/textX/textX-dev">textX-dev</a> project. This textX command will
