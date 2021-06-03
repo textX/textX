@@ -753,7 +753,7 @@ following rules:
 
 - If all rule references in a single alternative are match rules the result will
   be a concatenation of all match rule results,
-- If there is a common rule reference than it would be the result and all
+- If there is a common rule reference then it would be the result and all
   surrounding match rules are used only for parsing
 - If there are multiple common rules than the first will be used as a result and
   the rest only for parsing
