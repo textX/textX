@@ -317,10 +317,10 @@ a reference to other rules (either a match or a link reference) or a simple
 match (string or regex match). For example:
 
     Person:
-      name=Name ',' surename=Surename ',' age=INT ',' height=INT ';'
+      name=Name ',' surname=Surname ',' age=INT ',' height=INT ';'
     ;
 
-The `Name` and `Surename` rules referenced in the RHS of the first two
+The `Name` and `Surname` rules referenced in the RHS of the first two
 assignments are not given in this example.
 
 This example describes the rule and meta-class `Person`, that will parse and
@@ -328,7 +328,7 @@ instantiate the `Person` objects with  these four attributes:
 
 * `name` - which will use the rule `Name` to match the input, it 
   will be a reference to the instance of the `Name` class,
-* `surename` - will use `Surename` rule to match the input,
+* `surname` - will use `Surname` rule to match the input,
 * `age` - will use the built-in type `INT` to match a number from the
   input string. `age` will be converted to the python `int` type.
 * `height` - the same as `age`, but the matched number will be
@@ -753,9 +753,9 @@ following rules:
 
 - If all rule references in a single alternative are match rules the result will
   be a concatenation of all match rule results,
-- If there is a common rule reference than it would be the result and all
+- If there is a common rule reference then it would be the result and all
   surrounding match rules are used only for parsing
-- If there are multiple common rules than the first will be used as a result and
+- If there are multiple common rules then the first will be used as a result and
   the rest only for parsing
 
 For example:
@@ -920,7 +920,7 @@ line is a comment.
 
 ## Grammar modularization
 
-Grammars can be defined in multiple files and than imported. Rules used in the
+Grammars can be defined in multiple files and then imported. Rules used in the
 references are first searched for in the current file and then in the imported
 files, in the order of the import.
 
