@@ -755,7 +755,7 @@ following rules:
   be a concatenation of all match rule results,
 - If there is a common rule reference then it would be the result and all
   surrounding match rules are used only for parsing
-- If there are multiple common rules than the first will be used as a result and
+- If there are multiple common rules then the first will be used as a result and
   the rest only for parsing
 
 For example:
@@ -920,7 +920,7 @@ line is a comment.
 
 ## Grammar modularization
 
-Grammars can be defined in multiple files and than imported. Rules used in the
+Grammars can be defined in multiple files and then imported. Rules used in the
 references are first searched for in the current file and then in the imported
 files, in the order of the import.
 
