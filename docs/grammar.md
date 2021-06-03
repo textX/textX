@@ -317,10 +317,10 @@ a reference to other rules (either a match or a link reference) or a simple
 match (string or regex match). For example:
 
     Person:
-      name=Name ',' surename=Surename ',' age=INT ',' height=INT ';'
+      name=Name ',' surname=Surname ',' age=INT ',' height=INT ';'
     ;
 
-The `Name` and `Surename` rules referenced in the RHS of the first two
+The `Name` and `Surname` rules referenced in the RHS of the first two
 assignments are not given in this example.
 
 This example describes the rule and meta-class `Person`, that will parse and
@@ -328,7 +328,7 @@ instantiate the `Person` objects with  these four attributes:
 
 * `name` - which will use the rule `Name` to match the input, it 
   will be a reference to the instance of the `Name` class,
-* `surename` - will use `Surename` rule to match the input,
+* `surname` - will use `Surname` rule to match the input,
 * `age` - will use the built-in type `INT` to match a number from the
   input string. `age` will be converted to the python `int` type.
 * `height` - the same as `age`, but the matched number will be
