@@ -32,8 +32,11 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ### Changed
 
-- Added `def_file_name` atribute to `RefRulePosition` for storing the definition's
+- Added `def_file_name` attribute to `RefRulePosition` for storing the definition's
   model file name in case of cross-references between models. ([#313],[#277])
+- Migrated from Travis CI to GitHub Actions ([#307])
+- Dropped support for deprecated Python versions. The lowest supported version
+  is 3.6. **(BIC)**
 
 
 ## [2.3.0] (released: 2020-11-01)
@@ -531,6 +534,7 @@ please take a look at related PRs and issues and see if the change affects you.
 [#277]: https://github.com/textX/textX/issues/277
 [#313]: https://github.com/textX/textX/pull/313
 [#311]: https://github.com/textX/textX/pull/311
+[#307]: https://github.com/textX/textX/issues/307
 [#306]: https://github.com/textX/textX/pull/306
 [#304]: https://github.com/textX/textX/pull/304
 [#301]: https://github.com/textX/textX/issues/301
