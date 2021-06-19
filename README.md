@@ -194,7 +194,7 @@ MIT
 
 ## Python versions
 
-Tested for 2.7, 3.4+
+Tested for 3.6+
 
 
 [Arpeggio]: https://github.com/textX/Arpeggio
