@@ -1,0 +1,35 @@
+name: tests
+
+on: ["push", "pull_request"]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-18.04
+    strategy:
+      matrix:
+        python-version: [3.6, 3.7, 3.8, 3.9]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install test dependencies
+      run: |
+        ./install-test.sh
+    - name: Install dev version of Arpeggio
+      run: |
+        cd ..
+        git clone --depth=1 --branch=master git://github.com/textX/Arpeggio.git
+        cd Arpeggio && python setup.py install
+        cd ../textX
+    - name: Run unit tests
+      run: |
+        ./runtests.sh
+    - name: Coveralls
+      env:
+        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+      run: |
+        coveralls
