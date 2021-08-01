@@ -22,7 +22,7 @@ class Robot(object):
         self.y = 0
 
     def __str__(self):
-        return "Robot position is {}, {}.".format(self.x, self.y)
+        return f"Robot position is {self.x}, {self.y}."
 
     def interpret(self, model):
 
@@ -30,19 +30,18 @@ class Robot(object):
         for c in model.commands:
 
             if c.__class__.__name__ == "InitialCommand":
-                print("Setting position to: {}, {}".format(c.x, c.y))
+                print(f"Setting position to: {c.x}, {c.y}")
                 self.x = c.x
                 self.y = c.y
             else:
-                dir = c.direction
-                print("Going {} for {} step(s).".format(dir, c.steps))
+                print(f"Going {c.direction} for {c.steps} step(s).")
 
                 move = {
                     "up": (0, 1),
                     "down": (0, -1),
                     "left": (-1, 0),
                     "right": (1, 0)
-                }[dir]
+                }[c.direction]
 
                 # Calculate new robot position
                 self.x += c.steps * move[0]

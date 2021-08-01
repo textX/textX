@@ -73,10 +73,16 @@ These are the steps to build a very basic Hello World - like language.
 
 5. Than use meta-model to create models from textual description:
 
-        example_hello_model = hello_meta.model_from_file('example.hello')
+        hello_model = hello_meta.model_from_file('example.hello')
 
-    Textual model `example.hello` will be parsed and transformed to a plain
-    Python object graph. Object classes are those defined by the meta-model.
+    Textual model `example.hello` will be parsed and transformed to plain Python
+    objects. Python classes of the created objects are those defined by the
+    meta-model. Returned object `hello_model` will be a reference to the root of
+    the model, i.e. the object of class `HelloWorldModel`. You can use the model
+    as any other Python object. For example:
+    
+        print("Greeting", ", ".join([to_greet.name
+                                    for to_greet in hello_model.to_greet]))
 
 6. You can optionally export model to `dot` file to visualize it. Run following
    from the command line:

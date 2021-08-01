@@ -90,7 +90,7 @@ attribute is a list, the list is searched to find the referenced name.
 
 !!! note
     The scope provider implementations presented here
-    assume that the name attribute of named elements
+    assume that the `name` attribute of named elements
     has a string type (e.g. ´name=ID´).
 
 We provide some standard scope providers:
@@ -104,7 +104,7 @@ We provide some standard scope providers:
    
     A central feature of this scope provider is, that it **traverses the model
     tree and searches for a matching sequence of named objects** (objects with
-    an attribute name matching parts of the full qualified name separated by
+    an attribute `name` matching parts of the full qualified name separated by
     dots). You can also provide a **callback** (`scope_redirection_logic`) to
     specify that certain named objects are not searched recursively, but are
     replaced by a list of objects instead, which are searched in place of the

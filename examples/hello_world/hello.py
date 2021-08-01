@@ -16,11 +16,13 @@ def main(debug=False):
     metamodel_export(hello_meta, join(this_folder, 'hello_meta.dot'))
 
     # Instantiate model
-    example_hello_model = hello_meta.model_from_file(
-        join(this_folder, 'example.hello'))
+    hello_model = hello_meta.model_from_file(join(this_folder, 'example.hello'))
+
+    print("Greeting", ", ".join([to_greet.name
+                                for to_greet in hello_model.to_greet]))
 
     # Optionally export model to dot
-    model_export(example_hello_model, join(this_folder, 'example.dot'))
+    model_export(hello_model, join(this_folder, 'example.dot'))
 
 
 if __name__ == '__main__':

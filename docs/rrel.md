@@ -1,28 +1,49 @@
 # Reference resolving expression language (RREL)
+
 RREL allows to specify scope provider (lookup) specification in the
 grammar itself ([grammar example](tests/functional/test_scoping/components_model1/ComponentsRrel.tx) and 
 an example [test](https://github.com/textX/textX/blob/master/tests/functional/examples/test_hierarchical_data_structures_referencing_attributes.py)).
 
 The idea is to support all current builtin scoping providers (e.g., `FQN`,
-`RelativeName` etc.; see [scoping](scoping.md)) while the user would have to resort to Python only to
-support some very specific cases or referring to models not handled by textX.
+`RelativeName` etc.; see [scoping](scoping.md)) while the user would have to
+resort to Python only to support some very specific cases or referring to models
+not handled by textX.
 
-# Reference resolving expression language (RREL)
+A RREL expression is written as a third part of the textX [link rule
+reference](grammar.md#references).
 
-Each reference in the model forms a dot separated name, match by the second part
-of the grammar reference, where a plain ID is just a special case. For example,
-a reference could be `package1.component4` or just `component4`. We could further
-generalize this by saying that a reference is a sequence of names where a plain
-ID is just a sequence of length 1. It doesn't have to be a dot separated. A user
-could provide a match (like `FQN` in the above example) and a match processor to
-convert the matched string to a sequence of names. But for simplicity sake in
-this text we assume that the name is a dot separated string which consists of
-name parts separated with dots.
+For example:
 
+```
+Attribute: 'attr' ref=[Class|FQN|^packages*.classes] name=ID ';';
+```
+
+This grammar rule has a `ref` attribute which is a reference to the `Class`
+rule. This is a link rule reference as it is enclosed inside of square brackets.
+It consists of three parts separated by `|`. The first part defines the target
+object type or its grammar rule. The second part defines what will parser match
+at the place of the reference. It would be a fully qualified name of the target
+object (thus `FQN`). The third part of the reference is RREL expression
+(`^packages*.classes`). Second and third part of the reference are optional. If
+second part is not given `ID` is assumed. If RREL expression is not given the
+default resolver, which search the reference in the global scope, will be used.
+
+Each reference in the model, by default, forms a dot separated name, which is
+matched by the second part of the link rule reference in the grammar, where a
+plain ID is just a special case. For example, a reference could be
+`package1.component4` or just `component4`. We could further generalize this by
+saying that a reference is a sequence of names where a plain ID is just a
+sequence of length 1. It doesn't have to be dot separated. A user could provide
+a custom match rule (like `FQN` in the above example) and a match processor to
+convert the matched string to a sequence of names. There is also the possibility
+to define the separator sequence (by default a dot), as demonstrated in
+sub-section ["RREL reference name deduction"](#rrel-reference-name-deduction)
+bellow. 
 
 For reference resolving as an input we have:
-- Dot separated name where ID is a special case
-- RREL expression
+
+- A dot separated name matched by the parser, where ID is a special case
+- A RREL expression
 
 We evaluate RREL expression using the name in the process and we yield referenced
 object or an error.

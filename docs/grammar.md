@@ -448,12 +448,13 @@ assignments. There are two types of rule references:
     python list. A `parent` attribute of each `StructureElement` will be set to
     the containing `Structure`.
 
-* **Link rule reference** - will match an identifier of some class object at the
-  given place and convert that identifier to a python reference to the target
-  object. This reference resolving is done automatically by textX. By default, a
-  `name` attribute is used as the identifier of the object. Currently, there is
-  no automatic support for namespaces in textX. All objects of the same class
-  are in a single namespace.
+* **Link rule reference** - is written as a referred rule name inside square
+  brackets. It will match an identifier of some class object at the given place
+  and convert that identifier to a Python reference to the target object. This
+  reference resolving is done automatically by textX. By default, a `name`
+  attribute is used as the identifier of the object. By default, all objects of
+  the same class are in a single namespace. This can be configured by [scope
+  providers](scoping.md) and [Reference Resolving Expression Language](rrel.md).
 
     Example:
 
@@ -494,8 +495,8 @@ assignments. There are two types of rule references:
 
 !!! note
 
-    Attributes with `name` names are used for reference auto-resolving. A dict
-    lookup is used, thus they must be of a hashable type. See 
+    Attributes with `name` names are used for reference auto-resolving. By default, 
+    a dict lookup is used, thus they must be of a hashable type. See 
     issues [#40](https://github.com/textX/textX/issues/40) and 
     [#266](https://github.com/textX/textX/issues/266).
 

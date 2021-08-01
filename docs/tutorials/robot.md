@@ -12,14 +12,13 @@ do we have and what are their relationships and constraints. In the following
 paragraph a short analysis is done. Important concepts are emphasized.
 
 In this case we want an imperative language that should define `robot` movement
-on the imaginary grid.  Robot should `move` in four base `direction`. We will
+on the imaginary grid. Robot should `move` in four base `direction`. We will
 call these directions `up, down, left` and `right` (you could use north, south,
-west and east if you like).  Additionally, we shall have a robot coordinate
-given in x, y `position`.  For simplicity, our robot can move in discrete
-`steps`. In each movement robot can move by 1 or more steps but in the same
-direction. Coordinate is given as a pair of integer numbers. Robot will have an
-`initial position`. If not given explicitly it is assumed that position is `(0,
-0)`.
+west and east if you like). Additionally, we shall have a robot coordinate given
+in x, y `position`. For simplicity, our robot can move in discrete `steps`. In
+each movement robot can move by 1 or more steps but in the same direction.
+Coordinate is given as a pair of integer numbers. Robot will have an `initial
+position`. If not given explicitly it is assumed that position is `(0, 0)`.
 
 
 So, lets build a simple robot language.
@@ -207,7 +206,7 @@ transformed with `dot` tool to raster or vector graphics.
 
 For example:
 
-    dot -Tpng robot.dot -O robot.png
+    $ dot -Tpng -O robot.dot
 
 This command will create `png` image out of `dot` file.
 
@@ -257,7 +256,7 @@ In the same manner as meta-model visualization we can visualize our model too.
 This will create `program.dot` file that can be visualized using proper viewer
 or transformed to image.
 
-    $ dot -Tpng program.dot -O program.png
+    $ dot -Tpng -O program.dot
 
 For the robot program above we should get an image like this:
 
@@ -282,13 +281,13 @@ Lets imagine that we have a robot that understands our language. In your
 
     class Robot(object):
 
-      def __init__(self):
-        # Initial position is (0,0)
-        self.x = 0
-        self.y = 0
+        def __init__(self):
+            # Initial position is (0,0)
+            self.x = 0
+            self.y = 0
 
-      def __str__(self):
-        return "Robot position is {}, {}.".format(self.x, self.y)
+        def __str__(self):
+            return f"Robot position is {self.x}, {self.y}."
 
 Now, our robot will have an `interpret` method that accepts our robot model and
 runs it. At each step this method will update the robot position and print it.
@@ -299,19 +298,18 @@ runs it. At each step this method will update the robot position and print it.
         for c in model.commands:
 
             if c.__class__.__name__ == "InitialCommand":
-                print("Setting position to: {}, {}".format(c.x, c.y))
+                print(f"Setting position to: {c.x}, {c.y}")
                 self.x = c.x
                 self.y = c.y
             else:
-                dir = c.direction
-                print("Going {} for {} step(s).".format(dir, c.steps))
+                print(f"Going {c.direction} for {c.steps} step(s).")
 
                 move = {
                     "up": (0, 1),
                     "down": (0, -1),
                     "left": (-1, 0),
                     "right": (1, 0)
-                }[dir]
+                }[c.direction]
 
                 # Calculate new robot position
                 self.x += c.steps * move[0]

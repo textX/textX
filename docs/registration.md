@@ -73,6 +73,14 @@ setup(
     },
 ```
 
+Alternatively, you can use `setup.cfg` which is a preferred way:
+
+```conf
+[options.entry_points]
+textx_languages =
+    entity = entity.metamodel:entity_lang
+```
+
 In this example `entity.metamodel` is the Python module where `entity_lang` is defined.
 
 When you install this project textX will discover your language and offer it
@@ -163,7 +171,7 @@ def generator(metamodel, model, output_path, overwrite, debug, **custom_args)
 
 where:
 
-- `metamodel` - is the metamodel of the source language
+- `metamodel` - is the meta-model of the source language
 - `model` - is the model for which the code generating is started
 - `output_path` - is the root folder path where the output should be stored
 - `overwrite` - a bool flag that tells us should we overwrite the target files
@@ -181,14 +189,14 @@ For example:
 ```python
 from textx import GeneratorDesc
 
-def my_generator(metamodel, model, output_path, overwrite, debug, **custom_args)
+def entity_java_generator(metamodel, model, output_path, overwrite, debug, **custom_args)
     # Some code that perform generation
 
 entity_java_generator = GeneratorDesc(
     language='entity',
     target='java'
     description='Entity-relationship to Java language generator',
-    generator=my_generator)
+    generator=entity_java_generator)
 ```
 
 The next step is to make this generator discoverable by textX. To do this we
@@ -230,7 +238,7 @@ be:
 from textx import generator
 
 @generator('entity', 'java')
-def my_generator(metamodel, model, output_path, overwrite, debug, **custom_args)
+def entity_java_generator(metamodel, model, output_path, overwrite, debug, **custom_args)
     "Entity-relationship to Java language generator"
     # Some code that perform generation
 ```
