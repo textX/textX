@@ -882,9 +882,7 @@ class TextXVisitor(RRELVisitor):
             regex.compile()
         except Exception as e:
             line, col = self.grammar_parser.pos_to_linecol(node[1].position)
-            raise TextXSyntaxError(
-                "{} at {}"
-                .format(text(e), text((line, col))), line, col)
+            raise TextXSyntaxError(text(e), line, col)
         return regex
 
     def visit_obj_ref(self, node, children):
@@ -959,8 +957,10 @@ def language_from_str(language_def, metamodel, file_name):
     try:
         parse_tree = parser.parse(language_def, file_name)
     except NoMatch as e:
-        line, col = parser.pos_to_linecol(e.position)
-        raise TextXSyntaxError(text(e), line, col)
+        e.eval_attrs()
+        raise TextXSyntaxError(e.message, e.line, e.col,
+                               filename=e.parser.file_name,
+                               context=e.context)
 
     # Construct new parser and meta-model based on the given language
     # description.

@@ -68,7 +68,7 @@ def test_issue196_syntax_error_1():
         metamodel_for_language('flow-dsl')._tx_model_repository.all_models)
 
     with pytest.raises(TextXError,
-                       match=r'.*error: Expected.*'):
+                       match=r'.*\d+: Expected.*'):
         mmF.model_from_file(
             os.path.join(current_dir,
                          'models',
@@ -94,7 +94,7 @@ def test_issue196_syntax_error_2():
         metamodel_for_language('flow-dsl')._tx_model_repository.all_models)
 
     with pytest.raises(TextXError,
-                       match=r'.*error: Expected.*'):
+                       match=r'.*\d+: Expected.*'):
         mmF.model_from_file(os.path.join(current_dir,
                                          'models',
                                          'MODEL_WITH_SYNTAX_ERROR.eflow'))

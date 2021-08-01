@@ -328,10 +328,12 @@ def get_model_parser(top_rule, comments_model, **kwargs):
             try:
                 return self.parser_model.parse(self)
             except NoMatch as e:
-                line, col = e.parser.pos_to_linecol(e.position)
-                raise TextXSyntaxError(message=text(e),
-                                       line=line,
-                                       col=col,
+                e.eval_attrs()
+                raise TextXSyntaxError(message=e.message,
+                                       line=e.line,
+                                       col=e.col,
+                                       filename=e.parser.file_name,
+                                       context=e.context,
                                        expected_rules=e.rules)
 
         def get_model_from_file(self, file_name, encoding, debug,
