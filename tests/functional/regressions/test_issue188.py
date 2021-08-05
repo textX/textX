@@ -39,6 +39,6 @@ def test_issue188_skipws_5():
         SPACE[noskipws]: ' ';
     ''')
     with pytest.raises(TextXSyntaxError,
-                       match='.*Expected \'bar \' at position'):
+                       match=r'.*\d+: Expected \'bar \''):
         mm.model_from_str(' foo bar')
     mm.model_from_str(' foo bar ')

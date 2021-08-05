@@ -17,7 +17,7 @@ def test_object_processor_with_optional_parameter_default():
     model_file = os.path.join(this_folder,
                               'projects', 'types_dsl', 'tests',
                               'models', 'types_with_error.etype')
-    with raises(TextXSyntaxError, match='error: types must be lowercase'):
+    with raises(TextXSyntaxError, match='types must be lowercase'):
         mm.model_from_file(model_file)
 
 
@@ -26,7 +26,7 @@ def test_object_processor_with_optional_parameter_on():
     model_file = os.path.join(this_folder,
                               'projects', 'types_dsl', 'tests',
                               'models', 'types_with_error.etype')
-    with raises(TextXSyntaxError, match='error: types must be lowercase'):
+    with raises(TextXSyntaxError, match='types must be lowercase'):
         mm.model_from_file(model_file, type_name_check='on')
 
 
@@ -102,7 +102,8 @@ def test_check_invalid_model():
     runner = CliRunner()
     result = runner.invoke(textx, ['check', model_file])
     assert result.exit_code != 0
-    assert 'error: types must be lowercase' in result.output
+    assert 'Error:' in result.output
+    assert 'types must be lowercase' in result.output
 
 
 def test_check_invalid_language():
