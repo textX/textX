@@ -30,16 +30,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
   <script>hljs.initHighlightingOnLoad();</script> 
   
-  <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-      ga('create', 'UA-68681917-1', 'igordejanovic.net');
-      ga('send', 'pageview');
-  </script>
-  
 </head>
 
 <body class="wy-body-for-nav" role="document">
@@ -51,11 +41,7 @@
     <div class="wy-side-scroll">
       <div class="wy-side-nav-search">
         <a href=".." class="icon icon-home"> textX</a>
-        <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
-  </form>
-</div>
+        
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
@@ -279,6 +265,11 @@ to register our <code>entity_lang</code> object in the <code>setup.py</code> ent
         ],
     },
 </code></pre>
+<p>Alternatively, you can use <code>setup.cfg</code> which is a preferred way:</p>
+<pre><code class="language-conf">[options.entry_points]
+textx_languages =
+    entity = entity.metamodel:entity_lang
+</code></pre>
 <p>In this example <code>entity.metamodel</code> is the Python module where <code>entity_lang</code> is defined.</p>
 <p>When you install this project textX will discover your language and offer it
 through <a href="#registration-api">registration API</a> (see bellow).</p>
@@ -343,7 +334,7 @@ generation. The callable is if the form:</p>
 </code></pre>
 <p>where:</p>
 <ul>
-<li><code>metamodel</code> - is the metamodel of the source language</li>
+<li><code>metamodel</code> - is the meta-model of the source language</li>
 <li><code>model</code> - is the model for which the code generating is started</li>
 <li><code>output_path</code> - is the root folder path where the output should be stored</li>
 <li><code>overwrite</code> - a bool flag that tells us should we overwrite the target files
@@ -357,14 +348,14 @@ generation. The callable is if the form:</p>
 <p>For example:</p>
 <pre><code class="language-python">from textx import GeneratorDesc
 
-def my_generator(metamodel, model, output_path, overwrite, debug, **custom_args)
+def entity_java_generator(metamodel, model, output_path, overwrite, debug, **custom_args)
     # Some code that perform generation
 
 entity_java_generator = GeneratorDesc(
     language='entity',
     target='java'
     description='Entity-relationship to Java language generator',
-    generator=my_generator)
+    generator=entity_java_generator)
 </code></pre>
 <p>The next step is to make this generator discoverable by textX. To do this we
 have to register our <code>entity_java_generator</code> object in the <code>setup.py</code> entry
@@ -395,7 +386,7 @@ be:</p>
 <pre><code class="language-python">from textx import generator
 
 @generator('entity', 'java')
-def my_generator(metamodel, model, output_path, overwrite, debug, **custom_args)
+def entity_java_generator(metamodel, model, output_path, overwrite, debug, **custom_args)
     &quot;Entity-relationship to Java language generator&quot;
     # Some code that perform generation
 </code></pre>
@@ -652,7 +643,6 @@ be created and cached for further use.</p>
     <script>var base_url = '..';</script>
     <script src="../js/theme.js" defer></script>
       <script src="../js/version-select.js" defer></script>
-      <script src="../search/main.js" defer></script>
     <script defer>
         window.onload = function () {
             SphinxRtdTheme.Navigation.enable(true);

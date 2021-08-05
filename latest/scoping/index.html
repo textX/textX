@@ -30,16 +30,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
   <script>hljs.initHighlightingOnLoad();</script> 
   
-  <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-      ga('create', 'UA-68681917-1', 'igordejanovic.net');
-      ga('send', 'pageview');
-  </script>
-  
 </head>
 
 <body class="wy-body-for-nav" role="document">
@@ -51,11 +41,7 @@
     <div class="wy-side-scroll">
       <div class="wy-side-nav-search">
         <a href=".." class="icon icon-home"> textX</a>
-        <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
-  </form>
-</div>
+        
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
@@ -292,7 +278,7 @@ to wildcard selection (e.e, <code>"*.*"</code>).</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The scope provider implementations presented here
-assume that the name attribute of named elements
+assume that the <code>name</code> attribute of named elements
 has a string type (e.g. ´name=ID´).</p>
 </div>
 <p>We provide some standard scope providers:</p>
@@ -306,7 +292,7 @@ has a string type (e.g. ´name=ID´).</p>
     Example: see <a href="https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_full_qualified_name.py">tests/test_scoping/test_full_qualified_name.py</a>.</p>
 <p>A central feature of this scope provider is, that it <strong>traverses the model
 tree and searches for a matching sequence of named objects</strong> (objects with
-an attribute name matching parts of the full qualified name separated by
+an attribute <code>name</code> matching parts of the full qualified name separated by
 dots). You can also provide a <strong>callback</strong> (<code>scope_redirection_logic</code>) to
 specify that certain named objects are not searched recursively, but are
 replaced by a list of objects instead, which are searched in place of the
@@ -641,7 +627,6 @@ Here you can </p>
     <script>var base_url = '..';</script>
     <script src="../js/theme.js" defer></script>
       <script src="../js/version-select.js" defer></script>
-      <script src="../search/main.js" defer></script>
     <script defer>
         window.onload = function () {
             SphinxRtdTheme.Navigation.enable(true);

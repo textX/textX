@@ -54,7 +54,7 @@ window.addEventListener("DOMContentLoaded", function() {
     }), realVersion);
     select.id = "version-selector";
     select.addEventListener("change", function(event) {
-      window.location.href = REL_BASE_URL + "/../" + this.value;
+      window.location.href = REL_BASE_URL + "/../" + this.value + "/";
     });
 
     var title = document.querySelector("div.wy-side-nav-search");

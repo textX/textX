@@ -30,16 +30,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
   <script>hljs.initHighlightingOnLoad();</script> 
   
-  <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-      ga('create', 'UA-68681917-1', 'igordejanovic.net');
-      ga('send', 'pageview');
-  </script>
-  
 </head>
 
 <body class="wy-body-for-nav" role="document">
@@ -51,11 +41,7 @@
     <div class="wy-side-scroll">
       <div class="wy-side-nav-search">
         <a href=".." class="icon icon-home"> textX</a>
-        <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
-  </form>
-</div>
+        
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
@@ -636,12 +622,13 @@ python list. A <code>parent</code> attribute of each <code>StructureElement</cod
 the containing <code>Structure</code>.</p>
 </li>
 <li>
-<p><strong>Link rule reference</strong> - will match an identifier of some class object at the
-  given place and convert that identifier to a python reference to the target
-  object. This reference resolving is done automatically by textX. By default, a
-  <code>name</code> attribute is used as the identifier of the object. Currently, there is
-  no automatic support for namespaces in textX. All objects of the same class
-  are in a single namespace.</p>
+<p><strong>Link rule reference</strong> - is written as a referred rule name inside square
+  brackets. It will match an identifier of some class object at the given place
+  and convert that identifier to a Python reference to the target object. This
+  reference resolving is done automatically by textX. By default, a <code>name</code>
+  attribute is used as the identifier of the object. By default, all objects of
+  the same class are in a single namespace. This can be configured by <a href="../scoping/">scope
+  providers</a> and <a href="../rrel/">Reference Resolving Expression Language</a>.</p>
 <p>Example:</p>
 <pre><code>ScreenType:
   'screen' name=ID "{"
@@ -677,8 +664,8 @@ that, you can use the following syntax:</p>
 </ul>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Attributes with <code>name</code> names are used for reference auto-resolving. A dict
-lookup is used, thus they must be of a hashable type. See 
+<p>Attributes with <code>name</code> names are used for reference auto-resolving. By default, 
+a dict lookup is used, thus they must be of a hashable type. See 
 issues <a href="https://github.com/textX/textX/issues/40">#40</a> and 
 <a href="https://github.com/textX/textX/issues/266">#266</a>.</p>
 <p>A usual error is to match the name in this fashion:</p>
@@ -1153,7 +1140,6 @@ str_matches = get_children_of_type(&quot;SimpleMatch&quot;, grammar_model)
     <script>var base_url = '..';</script>
     <script src="../js/theme.js" defer></script>
       <script src="../js/version-select.js" defer></script>
-      <script src="../search/main.js" defer></script>
     <script defer>
         window.onload = function () {
             SphinxRtdTheme.Navigation.enable(true);

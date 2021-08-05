@@ -30,16 +30,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
   <script>hljs.initHighlightingOnLoad();</script> 
   
-  <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-      ga('create', 'UA-68681917-1', 'igordejanovic.net');
-      ga('send', 'pageview');
-  </script>
-  
 </head>
 
 <body class="wy-body-for-nav" role="document">
@@ -51,11 +41,7 @@
     <div class="wy-side-scroll">
       <div class="wy-side-nav-search">
         <a href="../.." class="icon icon-home"> textX</a>
-        <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
-  </form>
-</div>
+        
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
@@ -210,14 +196,13 @@ the basic workflow when working with textX.</p>
 do we have and what are their relationships and constraints. In the following
 paragraph a short analysis is done. Important concepts are emphasized.</p>
 <p>In this case we want an imperative language that should define <code>robot</code> movement
-on the imaginary grid.  Robot should <code>move</code> in four base <code>direction</code>. We will
+on the imaginary grid. Robot should <code>move</code> in four base <code>direction</code>. We will
 call these directions <code>up, down, left</code> and <code>right</code> (you could use north, south,
-west and east if you like).  Additionally, we shall have a robot coordinate
-given in x, y <code>position</code>.  For simplicity, our robot can move in discrete
-<code>steps</code>. In each movement robot can move by 1 or more steps but in the same
-direction. Coordinate is given as a pair of integer numbers. Robot will have an
-<code>initial position</code>. If not given explicitly it is assumed that position is <code>(0,
-0)</code>.</p>
+west and east if you like). Additionally, we shall have a robot coordinate given
+in x, y <code>position</code>. For simplicity, our robot can move in discrete <code>steps</code>. In
+each movement robot can move by 1 or more steps but in the same direction.
+Coordinate is given as a pair of integer numbers. Robot will have an <code>initial
+position</code>. If not given explicitly it is assumed that position is <code>(0, 0)</code>.</p>
 <p>So, lets build a simple robot language.</p>
 <h2 id="grammar">Grammar<a class="headerlink" href="#grammar" title="Permanent link">&para;</a></h2>
 <p>First, we need to define a grammar for the language. In textX the grammar will
@@ -371,7 +356,7 @@ Generating dot target from models:
 <p><code>dot</code> file can be opened with dot viewer (there are many to choose from) or
 transformed with <code>dot</code> tool to raster or vector graphics.</p>
 <p>For example:</p>
-<pre><code>dot -Tpng robot.dot -O robot.png
+<pre><code>$ dot -Tpng -O robot.dot
 </code></pre>
 <p>This command will create <code>png</code> image out of <code>dot</code> file.</p>
 <p><img alt="Robot meta-model" src="../../images/robot.dot.png" /></p>
@@ -407,7 +392,7 @@ Generating dot target from models:
 </code></pre>
 <p>This will create <code>program.dot</code> file that can be visualized using proper viewer
 or transformed to image.</p>
-<pre><code>$ dot -Tpng program.dot -O program.png
+<pre><code>$ dot -Tpng -O program.dot
 </code></pre>
 <p>For the robot program above we should get an image like this:</p>
 <p><img alt="Robot program" src="../../images/program.rbt.dot.png" /></p>
@@ -425,13 +410,13 @@ command.</p>
 <code>robot.py</code> file add:</p>
 <pre><code>class Robot(object):
 
-  def __init__(self):
-    # Initial position is (0,0)
-    self.x = 0
-    self.y = 0
+    def __init__(self):
+        # Initial position is (0,0)
+        self.x = 0
+        self.y = 0
 
-  def __str__(self):
-    return "Robot position is {}, {}.".format(self.x, self.y)
+    def __str__(self):
+        return f"Robot position is {self.x}, {self.y}."
 </code></pre>
 <p>Now, our robot will have an <code>interpret</code> method that accepts our robot model and
 runs it. At each step this method will update the robot position and print it.</p>
@@ -441,19 +426,18 @@ runs it. At each step this method will update the robot position and print it.</
     for c in model.commands:
 
         if c.__class__.__name__ == "InitialCommand":
-            print("Setting position to: {}, {}".format(c.x, c.y))
+            print(f"Setting position to: {c.x}, {c.y}")
             self.x = c.x
             self.y = c.y
         else:
-            dir = c.direction
-            print("Going {} for {} step(s).".format(dir, c.steps))
+            print(f"Going {c.direction} for {c.steps} step(s).")
 
             move = {
                 "up": (0, 1),
                 "down": (0, -1),
                 "left": (-1, 0),
                 "right": (1, 0)
-            }[dir]
+            }[c.direction]
 
             # Calculate new robot position
             self.x += c.steps * move[0]
@@ -570,7 +554,6 @@ generate source code from your models.</p>
     <script>var base_url = '../..';</script>
     <script src="../../js/theme.js" defer></script>
       <script src="../../js/version-select.js" defer></script>
-      <script src="../../search/main.js" defer></script>
     <script defer>
         window.onload = function () {
             SphinxRtdTheme.Navigation.enable(true);
