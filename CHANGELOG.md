@@ -25,6 +25,7 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ### Fixed
 
+- Fix exception/error messages ([#320])
 - Relaxed assert in model creation enabling some model changes in user classes
   ([#311])
 - Fixed model export to dot in cases where textX object is replaced in the
@@ -37,6 +38,15 @@ please take a look at related PRs and issues and see if the change affects you.
 - Migrated from Travis CI to GitHub Actions ([#307])
 - Dropped support for deprecated Python versions. The lowest supported version
   is 3.6. **(BIC)**
+
+[#320]: https://github.com/textX/textX/pull/320
+[#313]: https://github.com/textX/textX/pull/313
+[#311]: https://github.com/textX/textX/pull/311
+[#307]: https://github.com/textX/textX/issues/307
+[#306]: https://github.com/textX/textX/pull/306
+[#304]: https://github.com/textX/textX/pull/304
+[#301]: https://github.com/textX/textX/issues/301
+[#277]: https://github.com/textX/textX/issues/277
 
 
 ## [2.3.0] (released: 2020-11-01)
@@ -531,13 +541,6 @@ please take a look at related PRs and issues and see if the change affects you.
   - Metamodel and model construction.
   - Export to dot.
 
-[#277]: https://github.com/textX/textX/issues/277
-[#313]: https://github.com/textX/textX/pull/313
-[#311]: https://github.com/textX/textX/pull/311
-[#307]: https://github.com/textX/textX/issues/307
-[#306]: https://github.com/textX/textX/pull/306
-[#304]: https://github.com/textX/textX/pull/304
-[#301]: https://github.com/textX/textX/issues/301
 [#299]: https://github.com/textX/textX/pull/299
 [#298]: https://github.com/textX/textX/pull/298
 [#294]: https://github.com/textX/textX/pull/294
