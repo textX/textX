@@ -4,9 +4,13 @@ site_description: A meta-language for building Domain-Specific Languages (DSLs)
 site_author: Igor Dejanović
 
 repo_url: https://github.com/textX/textX
-google_analytics: [UA-68681917-1, igordejanovic.net]
-theme: readthedocs
-extra_css: [style.css, css/version-select.css]
+
+theme:
+  name: readthedocs
+  analytics:
+    gtag: UA-68681917-1
+
+extra_css: [style.css]
 
 nav:
 - Home: index.md
@@ -53,7 +57,7 @@ markdown_extensions:
 - toc:
     permalink: true
 
-copyright: Copyright &copy; <a href="http://www.igordejanovic.net/">Igor Dejanović</a>.
+plugins:
+  - mike
 
-extra_javascript:
-- js/version-select.js
+copyright: Copyright &copy; <a href="http://www.igordejanovic.net/">Igor Dejanović</a>.
