@@ -520,17 +520,17 @@ side). The LHS is always a name of the meta-class attribute while the RHS can be
 a reference to other rules (either a match or a link reference) or a simple
 match (string or regex match). For example:</p>
 <pre><code>Person:
-  name=Name ',' surename=Surename ',' age=INT ',' height=INT ';'
+  name=Name ',' surname=Surname ',' age=INT ',' height=INT ';'
 ;
 </code></pre>
-<p>The <code>Name</code> and <code>Surename</code> rules referenced in the RHS of the first two
+<p>The <code>Name</code> and <code>Surname</code> rules referenced in the RHS of the first two
 assignments are not given in this example.</p>
 <p>This example describes the rule and meta-class <code>Person</code>, that will parse and
 instantiate the <code>Person</code> objects with  these four attributes:</p>
 <ul>
 <li><code>name</code> - which will use the rule <code>Name</code> to match the input, it 
   will be a reference to the instance of the <code>Name</code> class,</li>
-<li><code>surename</code> - will use <code>Surename</code> rule to match the input,</li>
+<li><code>surname</code> - will use <code>Surname</code> rule to match the input,</li>
 <li><code>age</code> - will use the built-in type <code>INT</code> to match a number from the
   input string. <code>age</code> will be converted to the python <code>int</code> type.</li>
 <li><code>height</code> - the same as <code>age</code>, but the matched number will be
@@ -902,9 +902,9 @@ following rules:</p>
 <ul>
 <li>If all rule references in a single alternative are match rules the result will
   be a concatenation of all match rule results,</li>
-<li>If there is a common rule reference than it would be the result and all
+<li>If there is a common rule reference then it would be the result and all
   surrounding match rules are used only for parsing</li>
-<li>If there are multiple common rules than the first will be used as a result and
+<li>If there are multiple common rules then the first will be used as a result and
   the rest only for parsing</li>
 </ul>
 <p>For example:</p>
@@ -1042,7 +1042,7 @@ defined like this:</p>
 <p>Which states that everything starting with <code>//</code> and continuing until the end of
 line is a comment.</p>
 <h2 id="grammar-modularization">Grammar modularization<a class="headerlink" href="#grammar-modularization" title="Permanent link">&para;</a></h2>
-<p>Grammars can be defined in multiple files and than imported. Rules used in the
+<p>Grammars can be defined in multiple files and then imported. Rules used in the
 references are first searched for in the current file and then in the imported
 files, in the order of the import.</p>
 <p>Example:</p>
