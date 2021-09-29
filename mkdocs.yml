@@ -59,5 +59,6 @@ markdown_extensions:
 
 plugins:
   - mike
+  - search
 
 copyright: Copyright &copy; <a href="http://www.igordejanovic.net/">Igor Dejanović</a>.
