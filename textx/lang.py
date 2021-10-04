@@ -8,6 +8,7 @@ have named this language textX ;)
 """
 from __future__ import unicode_literals
 import re
+import codecs
 from arpeggio import StrMatch, Optional, ZeroOrMore, OneOrMore, Sequence,\
     OrderedChoice, UnorderedGroup, Not, And, RegExMatch, Match, NoMatch, EOF, \
     ParsingExpression, ParserPython, visit_parse_tree
@@ -26,6 +27,22 @@ if sys.version < '3':
 else:
     text = str
 
+# Interpreting backslash sequences.
+# See https://stackoverflow.com/a/24519338/2024430
+ESCAPE_SEQUENCE_RE = re.compile(r'''
+    ( \\U........      # 8-digit hex escapes
+    | \\u....          # 4-digit hex escapes
+    | \\x..            # 2-digit hex escapes
+    | \\[0-7]{1,3}     # Octal escapes
+    | \\N\{[^}]+\}     # Unicode characters by name
+    | \\[\\'"abfnrtv]  # Single-character escapes
+    )''', re.UNICODE | re.VERBOSE)
+
+def decode_escapes(s):
+    def decode_match(match):
+        return codecs.decode(match.group(0), 'unicode-escape')
+
+    return ESCAPE_SEQUENCE_RE.sub(decode_match, s)
 
 # textX grammar
 def textx_model():          return (ZeroOrMore(import_or_reference_stm),
@@ -858,6 +875,9 @@ class TextXVisitor(RRELVisitor):
     def visit_str_match(self, node, children):
         try:
             to_match = children[0][1:-1]
+            if '\\' in to_match:
+                to_match = decode_escapes(to_match)
+
         except IndexError:
             to_match = ''
 

@@ -1,0 +1,3 @@
+// Regex match with backslash chars
+Rule1[noskipws]: 'First' /\n/ Rule2;
+Rule2: / */- 'Second' /\t/ 'Third';

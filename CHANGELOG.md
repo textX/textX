@@ -25,6 +25,9 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ### Fixed
 
+- Fix interpreting of backslash special chars (e.g. `\n`, `\t`) in grammar
+  string matches ([#323]). Possible **(BIC)** - backslash chars were not
+  interpreted in grammar files and raw Python strings prior to this fix.
 - Fix exception/error messages ([#320])
 - Relaxed assert in model creation enabling some model changes in user classes
   ([#311])
@@ -39,6 +42,7 @@ please take a look at related PRs and issues and see if the change affects you.
 - Dropped support for deprecated Python versions. The lowest supported version
   is 3.6. **(BIC)**
 
+[#323]: https://github.com/textX/textX/issues/323
 [#320]: https://github.com/textX/textX/pull/320
 [#313]: https://github.com/textX/textX/pull/313
 [#311]: https://github.com/textX/textX/pull/311
