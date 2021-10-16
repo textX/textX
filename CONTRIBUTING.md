@@ -2,9 +2,9 @@
 
 Contributions are welcome, and they are greatly appreciated!. You can contribute
 code, documentation, tests, bug reports. Every little bit helps, and credit will
-always be given. If you plan to make a contribution it would be great if you
-first announce that on [the issue
-tracker](https://github.com/textX/textX/issues).
+always be given. If you plan to make a significant contribution it would be
+great if you first announce that in [the
+Discussions](https://github.com/textX/textX/discussions).
 
 You can contribute in many ways:
 
@@ -25,31 +25,34 @@ If you are reporting a bug, please include:
 
 ### Fix Bugs
 
-Look through the GitHub issues for bugs. Anything tagged with "bug"
-and "help wanted" is open to whoever wants to implement it.
+Look through the GitHub issues for bugs. Anything tagged with "bug" and "help
+wanted" is open to whoever wants to implement it.
 
 
 ### Implement Features
 
-Look through the GitHub issues for features. Anything tagged with "enhancement"
-and "help wanted" is open to whoever wants to implement it.
+Look through the GitHub issues for features. Anything tagged with
+"enhancement/feature" and "help wanted" is open to whoever wants to implement
+it.
 
 
 ### Write Documentation
 
-textX could always use more documentation, whether as part of the
-official textX docs, in docstrings, or even on the web in blog posts,
-articles, and such.
+textX could always use more documentation, whether as part of the official textX
+docs, in docstrings, or even on the web in blog posts, articles, and such.
 
 #### How to Test the Documentation Locally
 
-textX is currently using `mkdocs`, a documentation generator, to generate the docs into html files. 
+textX is currently using `mkdocs`, a documentation generator, to generate the
+docs into html files.
 
-To test the docs locally, you need to follow the first 3 instructions at the [Get Started!](#get-started) section
+To test the docs locally, you need to follow the first 3 instructions at the
+[Get Started!](#get-started) section
 
 1. Fork the repo (one-time effort)
 2. Clone your fork locally (one-time effort)
-3. Create a virtualenv for the fork and install the relevant libraries (one-time effort)
+3. Create a virtualenv for the fork and install the relevant libraries (one-time
+   effort)
 
 Once you complete the above 3 instructions, you can now:
 
@@ -58,19 +61,21 @@ Once you complete the above 3 instructions, you can now:
 
 `mkdocs` will run a webserver that serves the documentation at 127.0.0.1:8000
 
-To make changes to the configurations, you can look at `mkdocs.yml`. For more information on how to use mkdocs, visit this [site](https://www.mkdocs.org).
+To make changes to the configurations, you can look at `mkdocs.yml`. For more
+information on how to use mkdocs, visit this [site](https://www.mkdocs.org).
 
 
 ### Submit Feedback
 
-The best way to send feedback is to file an issue at https://github.com/textX/textX/issues.
+The best way to send feedback is to open a discussion at
+https://github.com/textX/textX/discussions
 
 If you are proposing a feature:
 
 - Explain in detail how it would work.
 - Keep the scope as narrow as possible, to make it easier to implement.
-- Remember that this is a volunteer-driven project, and that contributions
-  are welcome :)
+- Remember that this is a volunteer-driven project, and that contributions are
+  welcome :)
 
 
 ## Get Started!
@@ -116,7 +121,7 @@ Ready to contribute? Here's how to set up `textX` for local development.
 
 5. When you're done making changes, check that your changes pass flake8, the
    tests, and have a look at the coverage:
-
+   
         $ flake8
         $ py.test tests/functional/
         $ coverage run --source textx -m py.test tests/functional
@@ -147,8 +152,8 @@ Before you submit a pull request, check that it meets these guidelines:
 1. The pull request should include tests.
 2. If the pull request adds/changes functionality, the docs should be updated. 
 3. The pull request should work for Python 3.6+. Check
-   https://github.com/textX/textX/actions and make sure that
-   the tests pass for all supported Python versions.
+   https://github.com/textX/textX/actions and make sure that the tests pass for
+   all supported Python versions.
 
 
 ## Tips
