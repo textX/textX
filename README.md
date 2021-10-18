@@ -168,13 +168,12 @@ currently unmaintained.
 
 ## Discussion and help
 
-For general questions and help please use
-[StackOverflow](https://stackoverflow.com/questions/tagged/textx). Just make
-sure to tag your question with the `textx` tag.
+For general questions, suggestions, and feature requests please use [GitHub
+Discussions](https://github.com/textX/textX/discussions).
 
 
-For issues, suggestions and feature request please use 
-[GitHub issue tracker](https://github.com/textX/textX/issues).
+For issues please use [GitHub issue
+tracker](https://github.com/textX/textX/issues).
 
 
 ## Citing textX
