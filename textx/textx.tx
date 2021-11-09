@@ -135,7 +135,7 @@ ClassName:
 // RREL
 RRELExpression: multi?="+m:" sequence=RRELSequence;
 RRELSequence: paths+=RRELPath[','];
-RRELPath: (up='^' | dots=RRELDots)? parts*=RRELPathPart['.'];
+RRELPath: ((up='^' | dots=RRELDots)? parts+=RRELPathPart['.']) | (up='^' | dots=RRELDots);
 RRELPathPart: RRELZeroOrMore | RRELPathElement;
 RRELZeroOrMore: element=RRELPathElement '*';
 RRELPathElement: RRELParent | RRELBrackets | RRELNavigation;
