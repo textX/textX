@@ -34,8 +34,16 @@ def test_rrel_basic_parser2():
     assert str(tree) == 'instance.(type.vals)*'
     tree = parse("a,b,c")
     assert str(tree) == 'a,b,c'
+    tree = parse("a.b.c")
+    assert str(tree) == 'a.b.c'
     tree = parse("parent(NAME)")
     assert str(tree) == 'parent(NAME)'
+
+    # do not allow "empty" rrel expressions:
+    with raises(Exception):
+        tree = parse("")
+    with raises(Exception):
+        tree = parse("a,b,c,")
 
 
 metamodel_str = '''
