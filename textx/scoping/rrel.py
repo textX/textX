@@ -35,9 +35,10 @@ def rrel_zero_or_more():
 
 
 def rrel_path():
-    return Optional(['^', rrel_dots]), ArpeggioZeroOrMore(
-        [rrel_zero_or_more, rrel_path_element], '.'), Optional(
-        [rrel_zero_or_more, rrel_path_element])
+    return [(Optional(['^', rrel_dots]),
+            ArpeggioZeroOrMore([rrel_zero_or_more, rrel_path_element],'.'),
+             [rrel_zero_or_more, rrel_path_element]),
+            ['^', rrel_dots]]
 
 
 def rrel_sequence():
