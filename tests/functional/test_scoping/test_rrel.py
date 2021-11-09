@@ -172,6 +172,9 @@ def test_rrel_basic_lookup():
     none = find(my_model, "", "..")
     assert none is None
 
+    m = find(my_model, "", ".")  # '.' references the current element
+    assert m is my_model
+
     inner = find(my_model, "inner", "~packages.~packages.~classes.attributes")
     assert inner.name == "inner"
 
