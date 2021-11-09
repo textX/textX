@@ -71,7 +71,6 @@ venv
 .pytest_cache
 .idea
 examples/render_all_grammars/pu
-tests/functional/test_metamodel/model_param_generate_test.testtarget
-
 examples/render_all_grammars/REPORT.md
+tests/functional/test_metamodel/model_param_generate_test.testtarget
 
