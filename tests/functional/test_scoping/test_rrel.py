@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 from textx.scoping.rrel import rrel_standalone, parse
-from arpeggio import ParserPython
+from arpeggio import ParserPython, NoMatch
 from textx import metamodel_from_str, textx_isinstance
 from textx.scoping.rrel import find, find_object_with_path
 from pytest import raises
@@ -34,8 +34,16 @@ def test_rrel_basic_parser2():
     assert str(tree) == 'instance.(type.vals)*'
     tree = parse("a,b,c")
     assert str(tree) == 'a,b,c'
+    tree = parse("a.b.c")
+    assert str(tree) == 'a.b.c'
     tree = parse("parent(NAME)")
     assert str(tree) == 'parent(NAME)'
+
+    # do not allow "empty" rrel expressions:
+    with raises(NoMatch):
+        tree = parse("")
+    with raises(NoMatch):
+        tree = parse("a,b,c,")
 
 
 metamodel_str = '''
@@ -163,6 +171,9 @@ def test_rrel_basic_lookup():
 
     none = find(my_model, "", "..")
     assert none is None
+
+    m = find(my_model, "", ".")  # '.' references the current element
+    assert m is my_model
 
     inner = find(my_model, "inner", "~packages.~packages.~classes.attributes")
     assert inner.name == "inner"

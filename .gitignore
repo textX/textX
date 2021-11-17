@@ -72,4 +72,5 @@ venv
 .idea
 examples/render_all_grammars/pu
 examples/render_all_grammars/REPORT.md
+tests/functional/test_metamodel/model_param_generate_test.testtarget
 

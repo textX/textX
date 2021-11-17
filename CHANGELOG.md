@@ -33,6 +33,7 @@ please take a look at related PRs and issues and see if the change affects you.
   ([#311])
 - Fixed model export to dot in cases where textX object is replaced in the
   processor([#301])
+- Do not allow "empty" RREL expressions (compare unittests in `test_rrel.py`; [#355])
 
 ### Changed
 
@@ -545,6 +546,7 @@ please take a look at related PRs and issues and see if the change affects you.
   - Metamodel and model construction.
   - Export to dot.
 
+[#355]: https://github.com/textX/textX/pull/355
 [#299]: https://github.com/textX/textX/pull/299
 [#298]: https://github.com/textX/textX/pull/298
 [#294]: https://github.com/textX/textX/pull/294
