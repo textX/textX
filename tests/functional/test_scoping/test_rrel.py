@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 from textx.scoping.rrel import rrel_standalone, parse
-from arpeggio import ParserPython
+from arpeggio import ParserPython, NoMatch
 from textx import metamodel_from_str, textx_isinstance
 from textx.scoping.rrel import find, find_object_with_path
 from pytest import raises
@@ -40,9 +40,9 @@ def test_rrel_basic_parser2():
     assert str(tree) == 'parent(NAME)'
 
     # do not allow "empty" rrel expressions:
-    with raises(Exception):
+    with raises(NoMatch):
         tree = parse("")
-    with raises(Exception):
+    with raises(NoMatch):
         tree = parse("a,b,c,")
 
 
