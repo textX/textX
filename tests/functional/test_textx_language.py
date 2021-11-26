@@ -966,3 +966,16 @@ def test_syntactic_predicate_and():
     assert model.elements[1].__class__.__name__ == 'A'
     assert model.elements[2].__class__.__name__ == 'AbeforeB'
     assert model.elements[3].__class__.__name__ == 'B'
+
+
+def test_attribute_multiplicity():
+    """
+    Test http://textx.github.io/textX/stable/grammar/#multiple-assignment-to-the-same-attribute
+    """
+    grammar = """
+    Rule1: a='a' a='c';
+    Rule2: (a='a'|a='b') a='c';
+    """
+    meta = metamodel_from_str(grammar)
+    assert meta['Rule1']._tx_attrs['a'].mult == '1..*'
+    assert meta['Rule2']._tx_attrs['a'].mult == '1..*'
