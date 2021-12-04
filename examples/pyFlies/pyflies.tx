@@ -165,7 +165,7 @@ Block:
 ;
 
 TestInstance:
-  'test' type=[TestType] trials=INT (practice?="practice"|randomize?="randomize")#
+  'test' type=[TestType] trials=INT (practice?="practice" randomize?="randomize")#
 ;
 
 ScreenInstance:
