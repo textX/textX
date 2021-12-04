@@ -47,11 +47,11 @@ depicted in the following figure:
 * `INT` rule: matches an integer number. This match will be converted to
   a Python `int` instance.
 * `FLOAT` rule: will match a floating point number. This match will be converted
-  to a Python `float` instance ('FLOAT' is a direct subtype of 'BASETYPE'; 
+  to a Python `float` instance ('FLOAT' is a direct subtype of 'BASETYPE';
   in order to distinguish floats and ints, 'STRICTFLOAT' was introduced).
-* `STRICTFLOAT` rule: will match a floating point number. This match will be 
-  converted to a Python `float` instance. A 'STRICTFLOAT' will not match an 'INT' 
-  (without "." or "e|E"). A 'NUMBER' is either a 'STRICTFLOAT' or an 'INT', 
+* `STRICTFLOAT` rule: will match a floating point number. This match will be
+  converted to a Python `float` instance. A 'STRICTFLOAT' will not match an 'INT'
+  (without "." or "e|E"). A 'NUMBER' is either a 'STRICTFLOAT' or an 'INT',
   and will, thus, be converted to a float or an int, respectively.
 * `BOOL` rule: matches the words `true` or `false`. This match
   will be converted to a Python `bool` instance.
@@ -262,8 +262,8 @@ Now, an ordered choice in the parentheses is optional.
 
 * **Unordered group** is a special kind of a sequence. Syntactically it is
   similar to a repetition. It is specified by the `#` operator and must be
-  applied to sequences. This operator will match each element of the sequence in
-  an arbitrary order:
+  applied to either sequences or ordered choices. This operator will match each
+  element of the sequence or the ordered choice in an arbitrary order:
 
         Colors:
           ("red" "green" "blue")#
@@ -280,10 +280,10 @@ Now, an ordered choice in the parentheses is optional.
 
         red blue red green
         blue green
-        
+
     Consider this example:
 
-        Modifier: 
+        Modifier:
             (static?='static' final?='final' visibility=Visibility)#
         ;
 
@@ -300,12 +300,38 @@ Now, an ordered choice in the parentheses is optional.
         public static
         final protected static
         ...
-        
+
+    You can combine unordered groups with parenthesized groups. Lets look at the
+    following example:
+
+        Unordered:
+          (('first' 'second')  'third')#
+        ;
+
+    This will match group with sequence `first second` and `third` in arbitrary
+    order but the sequence `first second` maintains the order. Thus, these
+    inputs will match:
+
+        first second third
+        third first second
+
+    But these won't:
+
+        third second first
+        second first third
+
+    Alternatively, you can use ordered choice instead of grouping. This will be
+    equivalent with the previous example:
+
+        Unordered:
+          ('first' 'second' | 'third')#
+        ;
+
     !!! note
         Unordered group may also have
         [repetition modifiers](#repetition-modifiers) defined.
 
-        
+
 ### Assignments
 
 Assignments are used as a part of the meta-model deduction process. Each
@@ -326,7 +352,7 @@ assignments are not given in this example.
 This example describes the rule and meta-class `Person`, that will parse and
 instantiate the `Person` objects with  these four attributes:
 
-* `name` - which will use the rule `Name` to match the input, it 
+* `name` - which will use the rule `Name` to match the input, it
   will be a reference to the instance of the `Name` class,
 * `surname` - will use `Surname` rule to match the input,
 * `age` - will use the built-in type `INT` to match a number from the
@@ -491,13 +517,13 @@ assignments. There are two types of rule references:
         ;
 
     Here, instead of `ID` a `WORD` rule is used to match the object's identifier.
-    
+
 
 !!! note
 
-    Attributes with `name` names are used for reference auto-resolving. By default, 
-    a dict lookup is used, thus they must be of a hashable type. See 
-    issues [#40](https://github.com/textX/textX/issues/40) and 
+    Attributes with `name` names are used for reference auto-resolving. By default,
+    a dict lookup is used, thus they must be of a hashable type. See
+    issues [#40](https://github.com/textX/textX/issues/40) and
     [#266](https://github.com/textX/textX/issues/266).
 
     A usual error is to match the name in this fashion:
@@ -505,7 +531,7 @@ assignments. There are two types of rule references:
         MyObj: name+=ID['.'];
 
     Here, `name` will be a list of strings that are separated by dot and that
-    will not work as the name must be hashable. The best way to implement this 
+    will not work as the name must be hashable. The best way to implement this
     and make `name` hashable is:
 
         MyObj: name=FQN;
@@ -566,7 +592,7 @@ There are two type of syntactic predicates:
         Element:
             AbeforeB | A | B
         ;
-        AbeforeB: 
+        AbeforeB:
             a='a' &'b'      // this succeeds only if 'b' follows 'a'
         ;
         A: a='a';
@@ -608,13 +634,13 @@ We also state in `QuotedID` that there are optional quotation marks around each
 ID, but we don't want those either `'"'?-`.
 
 Given this input:
-  
+
     first."second".third."fourth"
 
 `FullyQualifiedID` will return:
 
     first.second.third.fourth
-  
+
 
 ## Repetition modifiers
 
@@ -702,7 +728,7 @@ have attributes defined. For example:
     ;
 
 This rule has two defined attributes: `x` and `y`.
-    
+
 **Abstract rules** are rules that have no assignments and reference at least one
 abstract or common rule. They are usually given as an ordered choice of other
 rules and they are used to generalize other rules. For example:
@@ -748,7 +774,7 @@ A rule with a single reference to an abstract or common rule is also abstract:
     Value:
       OtherRule
     ;
-    
+
 Abstract rules can have multiple references in a single alternative with the
 following rules:
 
@@ -777,7 +803,7 @@ Another example:
     Model: (STRING | ID | '#' Rule1) Sufix;
     Rule1: a=INT; // common rule
     Sufix: '--';
-    
+
 This is also abstract rule as we are referencing `Rule1` which is a common rule
 and we have no assignments. Matching `# 42 --` as input will give an instance of
 `Rule1` with attribute `a` set to integer `42`.
@@ -801,7 +827,7 @@ In the following example we see what happens if we have multiple common rule ref
     Rule2: a=STRING; // common rule
     Prefix: '#';
     Sufix: '--';
-    
+
 For input `# 42 -- "some string"` the model will be an instance of `Rule1` with
 attribute `a` set to `42` as it is the first common rule reference in the last
 alternative (the one that succeeds) but `Rule2`, despite being discarded, must
@@ -840,7 +866,7 @@ specified in brackets (`[ ]`) at the beginning of the rule's definition after
 the rule's name. Currently, they are used to alter parser configuration for
 whitespace handling on the rule level.
 
-Rule modifiers act on the current rule and all rules referenced inside the rule 
+Rule modifiers act on the current rule and all rules referenced inside the rule
 (recursively): unless a refrenced rule has an explicit rule modifier, the currently
 active modifier state is propagated to referenced rules.
 
