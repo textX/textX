@@ -90,9 +90,9 @@ def get_parent_of_type(typ, obj):
 
 def get_children(selector, root, children_first=False, should_follow=lambda obj: True):
     """
-    Returns a list of all model elements of type 'typ' starting from model
-    element 'root'. The search process will follow containment links only.
-    Non-containing references shall not be followed.
+    Returns a list of all model elements that satisfies the given predicate
+    starting from the `root` element. The search process will follow containment
+    links only. Non-containing references shall not be followed.
 
     Args:
         selector(callable): a predicate to decide if the object is of interest.
