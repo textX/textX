@@ -753,6 +753,7 @@ class TextXMetaMetaModel(object):
 
     def __init__(self):
         self._metamodel = None
+        self.model_param_defs = ModelParamDefinitions()
 
     @property
     def metamodel(self):
