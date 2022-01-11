@@ -26,7 +26,7 @@ jobs:
     - name: Install dev version of Arpeggio
       run: |
         cd ..
-        git clone --depth=1 --branch=master git://github.com/textX/Arpeggio.git
+        git clone --depth=1 --branch=master https://github.com/textX/Arpeggio
         pip uninstall -y Arpeggio
         cd Arpeggio && python setup.py install
         cd ../textX
