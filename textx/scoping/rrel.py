@@ -15,7 +15,8 @@ def rrel_parent():
 
 
 def rrel_navigation():
-    return Optional('~'), rrel_id
+    from textx.lang import string_value
+    return [(Optional('~'), rrel_id), (Optional(string_value), '~', rrel_id)]
 
 
 def rrel_brackets():
@@ -130,13 +131,18 @@ class RRELParent(RRELBase):
 
 
 class RRELNavigation(RRELBase):
-    def __init__(self, name, consume_name):
+    def __init__(self, name, consume_name, fixed_name):
         super(RRELNavigation, self).__init__()
         self.name = name
         self.consume_name = consume_name
+        self.fixed_name = fixed_name
 
     def __repr__(self):
-        return self.name if self.consume_name else '~' + self.name
+        if self.fixed_name is not None:
+            assert not self.consume_name
+            return "'" + self.fixed_name + "'~" + self.name
+        else:
+            return self.name if self.consume_name else '~' + self.name
 
     def start_locally(self):
         return False
@@ -166,27 +172,45 @@ class RRELNavigation(RRELBase):
         if hasattr(obj, self.name):
             target = getattr(obj, self.name)
             if isinstance(target, list):
-                if not self.consume_name:
+                if not self.consume_name and self.fixed_name is None:
                     return target, lookup_list, matched_path  # return list
                 else:
-                    lst = list(filter(lambda x: hasattr(
-                        x, "name") and getattr(
-                        x, "name") == lookup_list[0], target))
-                    if len(lst) > 0:
-                        return lst[0], lookup_list[1:], matched_path + [
-                            lst[0]]  # return obj
+                    if self.fixed_name is not None:
+                        lst = list(filter(lambda x: hasattr(
+                            x, "name") and getattr(
+                            x, "name") == self.fixed_name, target))
+                        if len(lst) > 0:
+                            return lst[0], lookup_list, matched_path + [
+                                lst[0]]  # return obj
+                        else:
+                            return None, lookup_list, matched_path  # return None
                     else:
-                        return None, lookup_list, matched_path  # return None
+                        lst = list(filter(lambda x: hasattr(
+                            x, "name") and getattr(
+                            x, "name") == lookup_list[0], target))
+                        if len(lst) > 0:
+                            return lst[0], lookup_list[1:], matched_path + [
+                                lst[0]]  # return obj
+                        else:
+                            return None, lookup_list, matched_path  # return None
             else:
-                if not self.consume_name:
+                if not self.consume_name and self.fixed_name is None:
                     return target, lookup_list, matched_path
                 else:
-                    if hasattr(target, "name") and getattr(
-                            target, "name") == lookup_list[0]:
-                        return target, lookup_list[1:], matched_path + [
-                            target]  # return obj
+                    if self.fixed_name is not None:
+                        if hasattr(target, "name") and getattr(
+                                target, "name") == self.fixed_name:
+                            return target, lookup_list, matched_path + [
+                                target]  # return obj
+                        else:
+                            return None, lookup_list, matched_path  # return None
                     else:
-                        return None, lookup_list, matched_path  # return None
+                        if hasattr(target, "name") and getattr(
+                                target, "name") == lookup_list[0]:
+                            return target, lookup_list[1:], matched_path + [
+                                target]  # return obj
+                        else:
+                            return None, lookup_list, matched_path  # return None
         else:
             return None, lookup_list, matched_path
 
@@ -407,10 +431,13 @@ class RRELVisitor(PTNodeVisitor):
         return RRELParent(children[0])
 
     def visit_rrel_navigation(self, node, children):
-        if len(children) == 1:
-            return RRELNavigation(children[0], True)
+        if len(children) == 2:
+            if 'string_value' in children.results:
+                return RRELNavigation(children[1], False, children[0])
+            else:
+                return RRELNavigation(children[1], False, None)
         else:
-            return RRELNavigation(children[1], False)
+            return RRELNavigation(children[0], True, None)
 
     def visit_rrel_brackets(self, node, children):
         assert(len(children) == 1)  # a path
@@ -438,6 +465,15 @@ class RRELVisitor(PTNodeVisitor):
         else:
             flags = children[0][1:-1]  # see grammar
             return RRELExpression(children[1], flags)
+
+
+class StandaloneRRELVisitor(RRELVisitor):
+    """
+    We need proper string processing for the standalone RRELVisitor
+    because of the string_value` as part of the navigation node.
+    """
+    def visit_string_value(self, node, children):
+        return node.value[1:-1]
 
 
 class ReferenceProxy(object):
@@ -496,7 +532,7 @@ def parse(rrel_expression):
     from arpeggio import ParserPython
     parser = ParserPython(rrel_standalone, reduce_tree=False)
     parse_tree = parser.parse(rrel_expression)
-    return visit_parse_tree(parse_tree, RRELVisitor())
+    return visit_parse_tree(parse_tree, StandaloneRRELVisitor())
 
 
 def find_object_with_path(obj, lookup_list, rrel_tree, obj_cls=None,
