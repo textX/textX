@@ -431,3 +431,53 @@ def test_rrel_with_fixed_string_in_navigation():
             using myi32 = i32    # found via "default lookup"
             using myFoo = Foo    # --> not found
         ''')
+
+
+def test_rrel_with_fixed_string_in_navigation_with_scalars():
+    builtin_models = ModelRepository()
+    mm = metamodel_from_str(r'''
+        Model: types_collection=TypesCollection // scalar here (compared to last test)
+            ('activeTypes' '=' active_types=[TypesCollection])? usings*=Using;
+        Using: 'using' name=ID "=" type=[Type|ID|+m:
+                ~active_types.types,             // "regular lookup"
+                'builtin'~types_collection.types // "default lookup"
+                                                 // name "builtin" hard coded in grammar
+            ];
+        TypesCollection: 'types' name=ID "{" types*=Type "}";
+        Type: 'type' name=ID;
+        Comment: /#.*?$/;
+    ''', builtin_models=builtin_models)
+
+    builtin_models.add_model(mm.model_from_str(r'''
+        types builtin {
+            type i32
+            type i64
+            type f32
+            type f64
+        }
+    '''))
+
+    _ = mm.model_from_str(r'''
+        types MyTypes {
+            type Int
+            type Double
+        }
+        activeTypes=MyTypes
+        using myDouble = Double
+        using myInt = Int    # found via "regular lookup"
+        using myi32 = i32    # found via "default lookup"
+    ''')
+
+    with raises(TextXSemanticError,
+                match=r'.*Unknown object "Unknown".*'):
+        _ = mm.model_from_str(r'''
+            types MyTypes {
+                type Int
+                type Double
+            }
+            activeTypes=MyTypes
+            using myDouble = Double
+            using myInt = Int    # found via "regular lookup"
+            using myi32 = i32    # found via "default lookup"
+            using myFoo = Unknown    # --> not found
+        ''')
