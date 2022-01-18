@@ -17,6 +17,9 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ### Added
 
+- Added RREL-'fixed name'-extension, allowing to follow model elements 
+  given a fixed name (e.g. an object defined in a builtin model).
+  Details described in rrel.md ([#364]).
 - Added ability to access the full path of named objects traversed while
   resolving a RREL expression ([#304]).
 - Added decorator `textx.textxerror_wrap` for object processors to automatically
@@ -59,7 +62,6 @@ please take a look at related PRs and issues and see if the change affects you.
 ## [2.3.0] (released: 2020-11-01)
 
 ### Added
-
   - `textx generate`. Documented passing in arbitrary parameters which can be
     used in the generator function. Also, implemented passing of model
     parameters defined in the meta-model (`model_param_defs` and
@@ -548,6 +550,7 @@ please take a look at related PRs and issues and see if the change affects you.
   - Metamodel and model construction.
   - Export to dot.
 
+[#364]: https://github.com/textX/textX/pull/364
 [#355]: https://github.com/textX/textX/pull/355
 [#299]: https://github.com/textX/textX/pull/299
 [#298]: https://github.com/textX/textX/pull/298
