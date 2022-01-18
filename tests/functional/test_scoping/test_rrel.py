@@ -3,6 +3,7 @@ from textx.scoping.rrel import rrel_standalone, parse
 from arpeggio import ParserPython, NoMatch
 from textx import metamodel_from_str, textx_isinstance
 from textx.scoping.rrel import find, find_object_with_path
+from textx.scoping import ModelRepository
 from pytest import raises
 from textx.exceptions import TextXSemanticError
 
@@ -38,6 +39,8 @@ def test_rrel_basic_parser2():
     assert str(tree) == 'a.b.c'
     tree = parse("parent(NAME)")
     assert str(tree) == 'parent(NAME)'
+    tree = parse("a.'b'~b.'c'~x")
+    assert str(tree) == "a.'b'~b.'c'~x"
 
     # do not allow "empty" rrel expressions:
     with raises(NoMatch):
@@ -369,3 +372,112 @@ def test_split_str_multifile():
     m = mm.model_from_file(join(this_folder, 'rrel', 'main.model'))
     # see above:
     assert '.'.join(map(lambda x: x.name, m.r[0].a[0]._tx_path)) == 'a1.aa1.aaa1'
+
+
+def test_rrel_with_fixed_string_in_navigation():
+    builtin_models = ModelRepository()
+    mm = metamodel_from_str(r'''
+        Model: types_collection*=TypesCollection
+            ('activeTypes' '=' active_types=[TypesCollection])? usings*=Using;
+        Using: 'using' name=ID "=" type=[Type|ID|+m:
+                ~active_types.types,             // "regular lookup"
+                'builtin'~types_collection.types // "default lookup"
+                                                 // name "builtin" hard coded in grammar
+            ];
+        TypesCollection: 'types' name=ID "{" types*=Type "}";
+        Type: 'type' name=ID;
+        Comment: /#.*?$/;
+    ''', builtin_models=builtin_models)
+
+    builtin_models.add_model(mm.model_from_str(r'''
+        types builtin {
+            type i32
+            type i64
+            type f32
+            type f64
+        }
+    '''))
+
+    _ = mm.model_from_str(r'''
+        types MyTypes {
+            type Int
+            type Double
+        }
+        types OtherTypes {
+            type Foo
+            type Bar
+        }
+        activeTypes=MyTypes
+        using myDouble = Double
+        using myInt = Int    # found via "regular lookup"
+        using myi32 = i32    # found via "default lookup"
+        # using myFoo = Foo  # --> not found
+    ''')
+
+    with raises(TextXSemanticError,
+                match=r'.*Unknown object "Foo".*'):
+        _ = mm.model_from_str(r'''
+            types MyTypes {
+                type Int
+                type Double
+            }
+            types OtherTypes {
+                type Foo
+                type Bar
+            }
+            activeTypes=MyTypes
+            using myDouble = Double
+            using myInt = Int    # found via "regular lookup"
+            using myi32 = i32    # found via "default lookup"
+            using myFoo = Foo    # --> not found
+        ''')
+
+
+def test_rrel_with_fixed_string_in_navigation_with_scalars():
+    builtin_models = ModelRepository()
+    mm = metamodel_from_str(r'''
+        Model: types_collection=TypesCollection // scalar here (compared to last test)
+            ('activeTypes' '=' active_types=[TypesCollection])? usings*=Using;
+        Using: 'using' name=ID "=" type=[Type|ID|+m:
+                ~active_types.types,             // "regular lookup"
+                'builtin'~types_collection.types // "default lookup"
+                                                 // name "builtin" hard coded in grammar
+            ];
+        TypesCollection: 'types' name=ID "{" types*=Type "}";
+        Type: 'type' name=ID;
+        Comment: /#.*?$/;
+    ''', builtin_models=builtin_models)
+
+    builtin_models.add_model(mm.model_from_str(r'''
+        types builtin {
+            type i32
+            type i64
+            type f32
+            type f64
+        }
+    '''))
+
+    _ = mm.model_from_str(r'''
+        types MyTypes {
+            type Int
+            type Double
+        }
+        activeTypes=MyTypes
+        using myDouble = Double
+        using myInt = Int    # found via "regular lookup"
+        using myi32 = i32    # found via "default lookup"
+    ''')
+
+    with raises(TextXSemanticError,
+                match=r'.*Unknown object "Unknown".*'):
+        _ = mm.model_from_str(r'''
+            types MyTypes {
+                type Int
+                type Double
+            }
+            activeTypes=MyTypes
+            using myDouble = Double
+            using myInt = Int    # found via "regular lookup"
+            using myi32 = i32    # found via "default lookup"
+            using myFoo = Unknown    # --> not found
+        ''')
