@@ -449,12 +449,6 @@ class RRELVisitor(PTNodeVisitor):
             flags = children[0][1:-1]  # see grammar
             return RRELExpression(children[1], flags)
 
-
-class StandaloneRRELVisitor(RRELVisitor):
-    """
-    We need proper string processing for the standalone RRELVisitor
-    because of the string_value` as part of the navigation node.
-    """
     def visit_string_value(self, node, children):
         return node.value[1:-1]
 
@@ -515,7 +509,7 @@ def parse(rrel_expression):
     from arpeggio import ParserPython
     parser = ParserPython(rrel_standalone, reduce_tree=False)
     parse_tree = parser.parse(rrel_expression)
-    return visit_parse_tree(parse_tree, StandaloneRRELVisitor())
+    return visit_parse_tree(parse_tree, RRELVisitor())
 
 
 def find_object_with_path(obj, lookup_list, rrel_tree, obj_cls=None,
