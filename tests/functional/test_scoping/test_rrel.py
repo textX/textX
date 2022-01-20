@@ -128,6 +128,8 @@ def test_rrel_basic_lookup():
     Part2 = find(my_model, "P2.Part2", "packages.classes")
     assert Part2.name == "Part2"
     rec = find(my_model, "P2.Part2.rec", "packages.classes.attributes")
+    rec_with_fixed_name = find(my_model, "P2.rec", "packages.'Part2'~classes.attributes")
+    assert rec_with_fixed_name is rec
     assert rec.name == "rec"
     assert rec.parent == Part2
 
