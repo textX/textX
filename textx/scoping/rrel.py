@@ -171,46 +171,29 @@ class RRELNavigation(RRELBase):
             return Postponed(), lookup_list, matched_path
         if hasattr(obj, self.name):
             target = getattr(obj, self.name)
-            if isinstance(target, list):
-                if not self.consume_name and self.fixed_name is None:
-                    return target, lookup_list, matched_path  # return list
-                else:
-                    if self.fixed_name is not None:
-                        lst = list(filter(lambda x: hasattr(
-                            x, "name") and getattr(
-                            x, "name") == self.fixed_name, target))
-                        if len(lst) > 0:
-                            return lst[0], lookup_list, matched_path + [
-                                lst[0]]  # return obj
-                        else:
-                            return None, lookup_list, matched_path  # return None
-                    else:
-                        lst = list(filter(lambda x: hasattr(
-                            x, "name") and getattr(
-                            x, "name") == lookup_list[0], target))
-                        if len(lst) > 0:
-                            return lst[0], lookup_list[1:], matched_path + [
-                                lst[0]]  # return obj
-                        else:
-                            return None, lookup_list, matched_path  # return None
+            if not self.consume_name and self.fixed_name is None:
+                return target, lookup_list, matched_path  # return list
             else:
-                if not self.consume_name and self.fixed_name is None:
-                    return target, lookup_list, matched_path
-                else:
-                    if self.fixed_name is not None:
-                        if hasattr(target, "name") and getattr(
-                                target, "name") == self.fixed_name:
-                            return target, lookup_list, matched_path + [
-                                target]  # return obj
-                        else:
-                            return None, lookup_list, matched_path  # return None
+                if not isinstance(target, list):
+                    target = [target]
+                if self.fixed_name is not None:
+                    lst = list(filter(lambda x: hasattr(
+                        x, "name") and getattr(
+                        x, "name") == self.fixed_name, target))
+                    if len(lst) > 0:
+                        return lst[0], lookup_list, matched_path + [
+                            lst[0]]  # return obj
                     else:
-                        if hasattr(target, "name") and getattr(
-                                target, "name") == lookup_list[0]:
-                            return target, lookup_list[1:], matched_path + [
-                                target]  # return obj
-                        else:
-                            return None, lookup_list, matched_path  # return None
+                        return None, lookup_list, matched_path  # return None
+                else:
+                    lst = list(filter(lambda x: hasattr(
+                        x, "name") and getattr(
+                        x, "name") == lookup_list[0], target))
+                    if len(lst) > 0:
+                        return lst[0], lookup_list[1:], matched_path + [
+                            lst[0]]  # return obj
+                    else:
+                        return None, lookup_list, matched_path  # return None
         else:
             return None, lookup_list, matched_path
 
