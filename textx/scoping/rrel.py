@@ -171,46 +171,29 @@ class RRELNavigation(RRELBase):
             return Postponed(), lookup_list, matched_path
         if hasattr(obj, self.name):
             target = getattr(obj, self.name)
-            if isinstance(target, list):
-                if not self.consume_name and self.fixed_name is None:
-                    return target, lookup_list, matched_path  # return list
-                else:
-                    if self.fixed_name is not None:
-                        lst = list(filter(lambda x: hasattr(
-                            x, "name") and getattr(
-                            x, "name") == self.fixed_name, target))
-                        if len(lst) > 0:
-                            return lst[0], lookup_list, matched_path + [
-                                lst[0]]  # return obj
-                        else:
-                            return None, lookup_list, matched_path  # return None
-                    else:
-                        lst = list(filter(lambda x: hasattr(
-                            x, "name") and getattr(
-                            x, "name") == lookup_list[0], target))
-                        if len(lst) > 0:
-                            return lst[0], lookup_list[1:], matched_path + [
-                                lst[0]]  # return obj
-                        else:
-                            return None, lookup_list, matched_path  # return None
+            if not self.consume_name and self.fixed_name is None:
+                return target, lookup_list, matched_path  # return list
             else:
-                if not self.consume_name and self.fixed_name is None:
-                    return target, lookup_list, matched_path
-                else:
-                    if self.fixed_name is not None:
-                        if hasattr(target, "name") and getattr(
-                                target, "name") == self.fixed_name:
-                            return target, lookup_list, matched_path + [
-                                target]  # return obj
-                        else:
-                            return None, lookup_list, matched_path  # return None
+                if not isinstance(target, list):
+                    target = [target]
+                if self.fixed_name is not None:
+                    lst = list(filter(lambda x: hasattr(
+                        x, "name") and getattr(
+                        x, "name") == self.fixed_name, target))
+                    if len(lst) > 0:
+                        return lst[0], lookup_list, matched_path + [
+                            lst[0]]  # return obj
                     else:
-                        if hasattr(target, "name") and getattr(
-                                target, "name") == lookup_list[0]:
-                            return target, lookup_list[1:], matched_path + [
-                                target]  # return obj
-                        else:
-                            return None, lookup_list, matched_path  # return None
+                        return None, lookup_list, matched_path  # return None
+                else:
+                    lst = list(filter(lambda x: hasattr(
+                        x, "name") and getattr(
+                        x, "name") == lookup_list[0], target))
+                    if len(lst) > 0:
+                        return lst[0], lookup_list[1:], matched_path + [
+                            lst[0]]  # return obj
+                    else:
+                        return None, lookup_list, matched_path  # return None
         else:
             return None, lookup_list, matched_path
 
@@ -466,12 +449,6 @@ class RRELVisitor(PTNodeVisitor):
             flags = children[0][1:-1]  # see grammar
             return RRELExpression(children[1], flags)
 
-
-class StandaloneRRELVisitor(RRELVisitor):
-    """
-    We need proper string processing for the standalone RRELVisitor
-    because of the string_value` as part of the navigation node.
-    """
     def visit_string_value(self, node, children):
         return node.value[1:-1]
 
@@ -532,7 +509,7 @@ def parse(rrel_expression):
     from arpeggio import ParserPython
     parser = ParserPython(rrel_standalone, reduce_tree=False)
     parse_tree = parser.parse(rrel_expression)
-    return visit_parse_tree(parse_tree, StandaloneRRELVisitor())
+    return visit_parse_tree(parse_tree, RRELVisitor())
 
 
 def find_object_with_path(obj, lookup_list, rrel_tree, obj_cls=None,
