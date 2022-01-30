@@ -373,9 +373,13 @@ class TextXVisitor(RRELVisitor):
                                 if rule._tx_class._tx_type != RULE_MATCH and\
                                         rule._tx_class not in inh_by:
                                     inh_by.append(rule._tx_class)
+                                    # stop after first added/found type
+                                    return True
                         else:
                             for r in rule.nodes:
-                                _add_reffered_classes(r, inh_by)
+                                if _add_reffered_classes(r, inh_by):
+                                    return True
+                        return False
 
                     if type(rule) is OrderedChoice:
                         for r in rule.nodes:
