@@ -138,7 +138,7 @@ In Xtext:
 In textX:
 
     ASCII:
-        /0x[0-7]([0-9]|[A-F])/;
+        /0x[0-7](\d|[A-F])/;
 
 Literal Regex match can be used anywhere a regular match rule can be used.
 
@@ -281,11 +281,11 @@ enums.
 
 ## Scoping
 
-At present stage textX doesn't provide builtin mechanism for scoping definition.
-However, this can be done in Python using object processors but there is no
-specific scoping API that could help language developer in resolving links.
+[Scoping](../scoping.md) in textX is done either by using Python through
+registration of scope providers, or declaratively using [Reference Resolving
+Expression Language](../rrel.md).
 
-Xtext does provide a [Scoping
+Xtext provides a [Scoping
 API](http://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#scoping)
 which can be used by the Xtend code to specify scoping rules.
 
@@ -386,9 +386,8 @@ Xtext use two additional DSLs:
 - Xtend - a modern Java dialect which can be used in various places in the
   Xtext framework
 
-The only additional DSL used in textX is genconf which is a DSL for generator
-configuration and has been developed as a part of
-[textx-tools project](https://github.com/textX/textx-tools).
+textX uses [RREL](../rrel.md) for the declarative specification of reference
+resolving in the grammar.
 
 ## Template engines
 
