@@ -25,7 +25,7 @@ textX's differences in regard to this first class are following:
   uses [PEG
   grammars](https://en.wikipedia.org/wiki/Parsing_expression_grammar). The
   consequences are that lookahead is unlimited and there are no ambiguities
-  possible as the [alternative operator is ordered](../grammar#ordered-choice).
+  possible as the [alternative operator is ordered](../../grammar#ordered-choice).
   Additionally, there is no need for a separate lexer.
 - textX uses a single textual specification (grammar) to define not only the
   syntax of the language but also its meta-model (a.k.a. abstract syntax). The
@@ -53,7 +53,7 @@ textX is positioned between these two classes of DSL tools. The goal of textX
 project is not a highly sophisticated DSL engineering platform but a simple DSL
 Python library that can be used in various Python applications and development
 environment. It can also be used for non-Python development using code
-generation from textX models (see [Entity tutorial](../tutorials/entity)).
+generation from textX models (see [Entity tutorial](../../tutorials/entity)).
 Tooling infrastructure, editor support etc. will be developed as independent
 projects (see for example
 [textx-tools](https://github.com/textX/textx-tools)).
@@ -81,10 +81,10 @@ used to instantiate objects recognized by the parser.
 
 textX integrates with Python typing system. In textX there is no keyword
 `returns`. The class used for the rule will be dynamically created Python class
-for all [non-match rules](../grammar#rule-types). Language designer can
+for all [non-match rules](../../grammar#rule-types). Language designer can
 provide class using [user classes]() registration on meta-model.  If the rule
 is of [match type] than it will always return Python string or some of base
-Python types for [BASETYPES inherited rules](../grammar#textx-base-types).
+Python types for [BASETYPES inherited rules](../../grammar#textx-base-types).
 
 ## Assignments
 
@@ -124,7 +124,7 @@ In textX there is no difference between parser and terminal rules so you can
 use the full textX language to define terminals. Furthermore, textX gives you
 the full power of [Python regular
 expressions](https://docs.python.org/3/howto/regex.html#regex-howto) through
-[regular expression match](../grammar#matches). Regex matches are defined
+[regular expression match](../../grammar#matches). Regex matches are defined
 inside `/ /`. Anything you can use in Python [re
 module](https://docs.python.org/3/library/re.html) you can use here.  This
 gives you quite powerful sublanguage for pattern definition.
@@ -151,7 +151,7 @@ For example:
 ## Repetition modifiers
 
 textX provides a syntactic construct called [repetition
-modifier](../grammar#repetition-modifiers) which enables parser to be altered
+modifier](../../grammar#repetition-modifiers) which enables parser to be altered
 during parsing of a specific repetition expression.
 
 For example, there is often a need to define a separated list of elements.
@@ -172,7 +172,7 @@ For example, to match one or more integer separated by comma or semi-colon:
     list_of_ints+=INT[/,|;/]
 
 Inside square brackets more than one repetition modifier can be defined.  See
-[section in the docs](../grammar#repetition-modifiers) for additional
+[section in the docs](../../grammar#repetition-modifiers) for additional
 explanations.
 
 We are not aware of the similar feature in Xtext.
@@ -238,7 +238,7 @@ will try each alternative in predetermined order until it succeeds. Thus, textX
 grammar can't be ambiguous. Nevertheless, sometimes it is not possible to
 specify desired parse tree by reordering alternatives. In that case syntactic
 predicates are used. textX implements both [and- and not- syntactic
-predicates](../grammar#syntactic-predicates).
+predicates](../../grammar#syntactic-predicates).
 
 On the other hand, predictive non-backtracking parsers (as is ANTLR used by
 Xtext) must make a decision which alternative to chose. Thus, grammar might be
@@ -258,7 +258,7 @@ used for comments, whitespaces etc.  Terminal rules are referenced from the
 terminals inherits them.
 
 textX provides support for whitespaces alteration on the parser level and rule
-level and a special [Comment match rule](../grammar#language-comments) that can
+level and a special [Comment match rule](../../grammar#language-comments) that can
 be used to describe comments pattern which are suppressed from the model.
 Comment rule is currently defined for the whole grammar, i.e. can't be altered
 on a per-rule basis.
@@ -281,9 +281,9 @@ enums.
 
 ## Scoping
 
-[Scoping](../scoping.md) in textX is done either by using Python through
+[Scoping](../../scoping/) in textX is done either by using Python through
 registration of scope providers, or declaratively using [Reference Resolving
-Expression Language](../rrel.md).
+Expression Language](../../rrel/).
 
 Xtext provides a [Scoping
 API](http://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#scoping)
@@ -340,7 +340,7 @@ An approach to augment model after loading in Xtext is given
 
 ## Parser control
 
-In textX several aspect of [parsing can be controlled](../parser_config.md):
+In textX several aspect of [parsing can be controlled](../../parser_config/):
 
 - Whitespaces
 - Case sensitivity
@@ -359,7 +359,7 @@ rules](http://stackoverflow.com/questions/30889847/match-string-in-xtext-regardl
 ## Mapping to host language types
 
 textX will dynamically create ordinary Python classes from the grammar rules.
-You can [register your own classes](../metamodel#custom-classes) during
+You can [register your own classes](../../metamodel#custom-classes) during
 meta-model construction which will be used instead. Thus, it is easy to provide
 your domain model in the form of Python classes.
 
@@ -373,7 +373,7 @@ integration with JVM.
 
 In textX you can provide objects that will be available to every model. It is
 used to provide, e.g. built-in types of the language. For more details see
-[built-in objects section](../metamodel#built-in-objects) in the docs.
+[built-in objects section](../../metamodel#built-in-objects) in the docs.
 
 An approach to augment model after loading in Xtext is given
 [here](http://xtextcasts.org/episodes/18-model-optimization).
@@ -386,7 +386,7 @@ Xtext use two additional DSLs:
 - Xtend - a modern Java dialect which can be used in various places in the
   Xtext framework
 
-textX uses [RREL](../rrel.md) for the declarative specification of reference
+textX uses [RREL](../../rrel) for the declarative specification of reference
 resolving in the grammar.
 
 ## Template engines
