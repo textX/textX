@@ -14,7 +14,7 @@
 
   <link rel="stylesheet" href="../../css/theme.css" />
   <link rel="stylesheet" href="../../css/theme_extra.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
   <link href="../../style.css" rel="stylesheet" />
   <link href="../../css/version-select.css" rel="stylesheet" />
   
@@ -27,9 +27,16 @@
   
   <script src="../../js/jquery-2.1.1.min.js" defer></script>
   <script src="../../js/modernizr-2.8.3.min.js" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
   <script>hljs.initHighlightingOnLoad();</script> 
-  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-68681917-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-68681917-1');
+  </script>
 </head>
 
 <body class="wy-body-for-nav" role="document">
@@ -43,7 +50,7 @@
         <a href="../.." class="icon icon-home"> textX</a>
         <div role="search">
   <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
   </form>
 </div>
       </div>
@@ -178,6 +185,7 @@
   
   <hr/>
 </div>
+
           <div role="main">
             <div class="section">
               
@@ -205,7 +213,7 @@ known by the name <a href="https://en.wikipedia.org/wiki/Compiler-compiler">Pars
   uses <a href="https://en.wikipedia.org/wiki/Parsing_expression_grammar">PEG
   grammars</a>. The
   consequences are that lookahead is unlimited and there are no ambiguities
-  possible as the <a href="../grammar#ordered-choice">alternative operator is ordered</a>.
+  possible as the <a href="../../grammar#ordered-choice">alternative operator is ordered</a>.
   Additionally, there is no need for a separate lexer.</li>
 <li>textX uses a single textual specification (grammar) to define not only the
   syntax of the language but also its meta-model (a.k.a. abstract syntax). The
@@ -231,7 +239,7 @@ editor, debugger, validator, visualiser etc.</p>
 project is not a highly sophisticated DSL engineering platform but a simple DSL
 Python library that can be used in various Python applications and development
 environment. It can also be used for non-Python development using code
-generation from textX models (see <a href="../tutorials/entity">Entity tutorial</a>).
+generation from textX models (see <a href="../../tutorials/entity">Entity tutorial</a>).
 Tooling infrastructure, editor support etc. will be developed as independent
 projects (see for example
 <a href="https://github.com/textX/textx-tools">textx-tools</a>).</p>
@@ -251,10 +259,10 @@ used by Xtext.</p>
 used to instantiate objects recognized by the parser.</p>
 <p>textX integrates with Python typing system. In textX there is no keyword
 <code>returns</code>. The class used for the rule will be dynamically created Python class
-for all <a href="../grammar#rule-types">non-match rules</a>. Language designer can
+for all <a href="../../grammar#rule-types">non-match rules</a>. Language designer can
 provide class using <a href="">user classes</a> registration on meta-model.  If the rule
 is of [match type] than it will always return Python string or some of base
-Python types for <a href="../grammar#textx-base-types">BASETYPES inherited rules</a>.</p>
+Python types for <a href="../../grammar#textx-base-types">BASETYPES inherited rules</a>.</p>
 <h2 id="assignments">Assignments<a class="headerlink" href="#assignments" title="Permanent link">&para;</a></h2>
 <p>In textX there are two types of <code>many</code> assignments (<code>*=</code> - zero or more, <code>+=</code> -
 one or more) whereas in Xtext there is only one (<code>+=</code>) which defines the type
@@ -283,7 +291,7 @@ EBNF</a>.</p>
 use the full textX language to define terminals. Furthermore, textX gives you
 the full power of <a href="https://docs.python.org/3/howto/regex.html#regex-howto">Python regular
 expressions</a> through
-<a href="../grammar#matches">regular expression match</a>. Regex matches are defined
+<a href="../../grammar#matches">regular expression match</a>. Regex matches are defined
 inside <code>/ /</code>. Anything you can use in Python <a href="https://docs.python.org/3/library/re.html">re
 module</a> you can use here.  This
 gives you quite powerful sublanguage for pattern definition.</p>
@@ -293,7 +301,7 @@ gives you quite powerful sublanguage for pattern definition.</p>
 </code></pre>
 <p>In textX:</p>
 <pre><code>ASCII:
-    /0x[0-7]([0-9]|[A-F])/;
+    /0x[0-7](\d|[A-F])/;
 </code></pre>
 <p>Literal Regex match can be used anywhere a regular match rule can be used.</p>
 <p>For example:</p>
@@ -301,7 +309,7 @@ gives you quite powerful sublanguage for pattern definition.</p>
     name=/[a-zA-Z]+/ age=INT;
 </code></pre>
 <h2 id="repetition-modifiers">Repetition modifiers<a class="headerlink" href="#repetition-modifiers" title="Permanent link">&para;</a></h2>
-<p>textX provides a syntactic construct called <a href="../grammar#repetition-modifiers">repetition
+<p>textX provides a syntactic construct called <a href="../../grammar#repetition-modifiers">repetition
 modifier</a> which enables parser to be altered
 during parsing of a specific repetition expression.</p>
 <p>For example, there is often a need to define a separated list of elements.</p>
@@ -317,7 +325,7 @@ Repetition modifier can be a regular expression match too.</p>
 <pre><code>list_of_ints+=INT[/,|;/]
 </code></pre>
 <p>Inside square brackets more than one repetition modifier can be defined.  See
-<a href="../grammar#repetition-modifiers">section in the docs</a> for additional
+<a href="../../grammar#repetition-modifiers">section in the docs</a> for additional
 explanations.</p>
 <p>We are not aware of the similar feature in Xtext.</p>
 <h2 id="rule-modifiers">Rule modifiers<a class="headerlink" href="#rule-modifiers" title="Permanent link">&para;</a></h2>
@@ -366,7 +374,7 @@ an input parses it has exactly one parse tree. textX is backtracking parser and
 will try each alternative in predetermined order until it succeeds. Thus, textX
 grammar can't be ambiguous. Nevertheless, sometimes it is not possible to
 specify desired parse tree by reordering alternatives. In that case syntactic
-predicates are used. textX implements both <a href="../grammar#syntactic-predicates">and- and not- syntactic
+predicates are used. textX implements both <a href="../../grammar#syntactic-predicates">and- and not- syntactic
 predicates</a>.</p>
 <p>On the other hand, predictive non-backtracking parsers (as is ANTLR used by
 Xtext) must make a decision which alternative to chose. Thus, grammar might be
@@ -382,7 +390,7 @@ used for comments, whitespaces etc.  Terminal rules are referenced from the
 <code>hidden</code> list in the parser rules. All rules called from the one using hidden
 terminals inherits them.</p>
 <p>textX provides support for whitespaces alteration on the parser level and rule
-level and a special <a href="../grammar#language-comments">Comment match rule</a> that can
+level and a special <a href="../../grammar#language-comments">Comment match rule</a> that can
 be used to describe comments pattern which are suppressed from the model.
 Comment rule is currently defined for the whole grammar, i.e. can't be altered
 on a per-rule basis.</p>
@@ -397,10 +405,10 @@ rules</a>
 while textX does not. In textX you use match rule with ordered choice to mimic
 enums.</p>
 <h2 id="scoping">Scoping<a class="headerlink" href="#scoping" title="Permanent link">&para;</a></h2>
-<p>At present stage textX doesn't provide builtin mechanism for scoping definition.
-However, this can be done in Python using object processors but there is no
-specific scoping API that could help language developer in resolving links.</p>
-<p>Xtext does provide a <a href="http://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#scoping">Scoping
+<p><a href="../../scoping/">Scoping</a> in textX is done either by using Python through
+registration of scope providers, or declaratively using <a href="../../rrel/">Reference Resolving
+Expression Language</a>.</p>
+<p>Xtext provides a <a href="http://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#scoping">Scoping
 API</a>
 which can be used by the Xtend code to specify scoping rules.</p>
 <h1 id="additional-differences-in-the-tool-usage">Additional differences in the tool usage<a class="headerlink" href="#additional-differences-in-the-tool-usage" title="Permanent link">&para;</a></h1>
@@ -455,7 +463,7 @@ for <a href="http://stackoverflow.com/questions/30889847/match-string-in-xtext-r
 rules</a>.</p>
 <h2 id="mapping-to-host-language-types">Mapping to host language types<a class="headerlink" href="#mapping-to-host-language-types" title="Permanent link">&para;</a></h2>
 <p>textX will dynamically create ordinary Python classes from the grammar rules.
-You can <a href="../metamodel#custom-classes">register your own classes</a> during
+You can <a href="../../metamodel#custom-classes">register your own classes</a> during
 meta-model construction which will be used instead. Thus, it is easy to provide
 your domain model in the form of Python classes.</p>
 <p>Xtext is based on ECore model, thus all concepts will be instances of ECore
@@ -466,7 +474,7 @@ integration with JVM.</p>
 <h2 id="built-in-objects">Built-in objects<a class="headerlink" href="#built-in-objects" title="Permanent link">&para;</a></h2>
 <p>In textX you can provide objects that will be available to every model. It is
 used to provide, e.g. built-in types of the language. For more details see
-<a href="../metamodel#built-in-objects">built-in objects section</a> in the docs.</p>
+<a href="../../metamodel#built-in-objects">built-in objects section</a> in the docs.</p>
 <p>An approach to augment model after loading in Xtext is given
 <a href="http://xtextcasts.org/episodes/18-model-optimization">here</a>.</p>
 <h2 id="additional-languages">Additional languages<a class="headerlink" href="#additional-languages" title="Permanent link">&para;</a></h2>
@@ -476,9 +484,8 @@ used to provide, e.g. built-in types of the language. For more details see
 <li>Xtend - a modern Java dialect which can be used in various places in the
   Xtext framework</li>
 </ul>
-<p>The only additional DSL used in textX is genconf which is a DSL for generator
-configuration and has been developed as a part of
-<a href="https://github.com/textX/textx-tools">textx-tools project</a>.</p>
+<p>textX uses <a href="../../rrel">RREL</a> for the declarative specification of reference
+resolving in the grammar.</p>
 <h2 id="template-engines">Template engines<a class="headerlink" href="#template-engines" title="Permanent link">&para;</a></h2>
 <p>textX doesn't impose a particular template engine to be used for code
 generation. Although we use <a href="http://jinja.pocoo.org/">Jinja2</a> in some of the
@@ -534,19 +541,22 @@ objects. We plan to develop language-specific model visualization support.</p>
   </div>
 
   <div class="rst-versions" role="note" aria-label="versions">
-    <span class="rst-current-version" data-toggle="rst-current-version">
-      
-          <a href="https://github.com/textX/textX/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
-      
-      
-        <span><a href="../../process/" style="color: #fcfcfc;">&laquo; Previous</a></span>
-      
-      
-        <span style="margin-left: 15px"><a href="../../whatsnew/release_1_5/" style="color: #fcfcfc">Next &raquo;</a></span>
-      
-    </span>
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/textX/textX/" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../../process/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../../whatsnew/release_1_5/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
 </div>
     <script>var base_url = '../..';</script>
+    <script src="../../js/theme_extra.js" defer></script>
     <script src="../../js/theme.js" defer></script>
       <script src="../../search/main.js" defer></script>
       <script src="../../js/version-select.js" defer></script>
