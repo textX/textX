@@ -271,19 +271,25 @@ object or an error.</p>
   collection. If not found <code>*</code> would expand <code>extends</code> to <code>extends.extends</code> if
   possible and the search would continue.</li>
 <li>
-<p><code>'name-value'~</code> The <code>~</code> operator takes an additional optional string to indicate
-  that the part of the name is not consumed, but is expected to be the value
-  indicated by the passed string: <code>'myname'~myattribute</code> means <em>follow attribute
-  <code>myattribute</code>, if it is named <code>'myname'</code></em>. The following example sketches parts 
-  of a meta-model, where the lookup rules indicate a fallback to some <code>types_collection</code>
-  entry with the name <code>'builtin'</code> (of course such an object must be present to
-  successfully resolve such references, e.g., by adding a builtin model with that
-  information (see <a href="https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_rrel.py">tests/test_scoping/test_rrel.py, test_rrel_with_fixed_string_in_navigation</a>):</p>
-<p>Using: 'using' name=ID "=" type=[Type|ID|+m:
+<p><code>'name-value'~</code> The <code>~</code> operator takes an additional optional string to
+  indicate that the part of the name is not consumed, but is expected to be the
+  value indicated by the passed string: <code>'myname'~myattribute</code> means <em>follow
+  attribute <code>myattribute</code>, if it is named <code>'myname'</code></em>. </p>
+<p>The following example sketches parts of a meta-model, where the lookup rules
+indicate a fallback to some <code>types_collection</code> entry with the name
+<code>'builtin'</code> (of course such an object must be present to successfully
+resolve such references, e.g., by adding a builtin model with that
+information (see <a href="https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_rrel.py">tests/test_scoping/test_rrel.py,
+test_rrel_with_fixed_string_in_navigation</a>):</p>
+<pre><code>  Using: 'using' name=ID "=" type=[Type|ID|+m:
         ~active_types.types,                // "regular lookup"
-        'builtin'~types_collection.types    // "default lookup" - name "builtin" hard coded in grammar
-    ]; <br />
-- <code>*</code> - Repeat/expand. Used in expansion step to expand sub-expression by 0+
+        'builtin'~types_collection.types    // "default lookup" - name "builtin" 
+                                            // hard coded in grammar
+    ];
+</code></pre>
+</li>
+<li>
+<p><code>*</code> - Repeat/expand. Used in expansion step to expand sub-expression by 0+
   times. First expansion tried will be 0, then once, then twice etc. For
   example, <code>~extends*.methods</code> would search in <code>methods</code> collection in the
   current context object for the current name part. If not found expansion of
@@ -291,8 +297,9 @@ object or an error.</p>
   over <code>extends</code> collection without consuming part name (due to <code>~</code>) and
   searching by ref. name part inside <code>methods</code> collection of each iterated
   object. The process would continue (i.e. <code>~extends.~extends.methods</code> ...)
-  until no more expansion is possible as we reach the end of inheritance chain.
-- <code>^</code> - Bottom-up search. This operator specifies that the given path should be
+  until no more expansion is possible as we reach the end of inheritance chain.</p>
+</li>
+<li><code>^</code> - Bottom-up search. This operator specifies that the given path should be
   expanded bottom-up, up the parent chain. The search should start at the
   current AST context and go up the parent chain for the number of components in
   the current expanded path. Then the match should be tried. See the components
@@ -301,10 +308,9 @@ object or an error.</p>
   <code>a</code>, then would search for <code>b</code> in the context of the previous AST search
   result, and finally would search for attribute <code>c</code>. <code>^</code> is a marker applied to
   path search subexpression, i.e. it doesn't apply to the whole sequence (see
-  below).
-- <code>,</code> - Defines a sequence, i.e. a sequence of RREL expressions which should
-  tried in order.</p>
-</li>
+  below).</li>
+<li><code>,</code> - Defines a sequence, i.e. a sequence of RREL expressions which should
+  tried in order.</li>
 </ul>
 <p>Priorities from highest to lowest: <code>*</code>, <code>.</code>, <code>,</code>.</p>
 <p><code>~</code> and <code>^</code> are regarded as markers, not operators.</p>
