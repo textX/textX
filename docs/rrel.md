@@ -72,19 +72,24 @@ Reference resolving expression language (RREL) consists of several operators
   searched in the `methods` collection of each object from the `extends`
   collection. If not found `*` would expand `extends` to `extends.extends` if
   possible and the search would continue.
-- `'name-value'~` The `~` operator takes an additional optional string to indicate
-  that the part of the name is not consumed, but is expected to be the value
-  indicated by the passed string: `'myname'~myattribute` means _follow attribute
-  `myattribute`, if it is named `'myname'`_. The following example sketches parts 
-  of a meta-model, where the lookup rules indicate a fallback to some `types_collection`
-  entry with the name `'builtin'` (of course such an object must be present to
-  successfully resolve such references, e.g., by adding a builtin model with that
-  information (see [tests/test_scoping/test_rrel.py, test_rrel_with_fixed_string_in_navigation](https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_rrel.py)):
+- `'name-value'~` The `~` operator takes an additional optional string to
+  indicate that the part of the name is not consumed, but is expected to be the
+  value indicated by the passed string: `'myname'~myattribute` means _follow
+  attribute `myattribute`, if it is named `'myname'`_. 
+  
+    The following example sketches parts of a meta-model, where the lookup rules
+    indicate a fallback to some `types_collection` entry with the name
+    `'builtin'` (of course such an object must be present to successfully
+    resolve such references, e.g., by adding a builtin model with that
+    information (see [tests/test_scoping/test_rrel.py,
+    test_rrel_with_fixed_string_in_navigation](https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_rrel.py)):
 
-      Using: 'using' name=ID "=" type=[Type|ID|+m:
-            ~active_types.types,                // "regular lookup"
-            'builtin'~types_collection.types    // "default lookup" - name "builtin" hard coded in grammar
-        ];   
+          Using: 'using' name=ID "=" type=[Type|ID|+m:
+                ~active_types.types,                // "regular lookup"
+                'builtin'~types_collection.types    // "default lookup" - name "builtin" 
+                                                    // hard coded in grammar
+            ];
+        
 - `*` - Repeat/expand. Used in expansion step to expand sub-expression by 0+
   times. First expansion tried will be 0, then once, then twice etc. For
   example, `~extends*.methods` would search in `methods` collection in the
