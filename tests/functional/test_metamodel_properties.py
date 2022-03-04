@@ -78,11 +78,16 @@ def test_metamodel_abstract_rule_detail2():
     # the rest only for parsing" from http://textx.github.io/textX/stable/grammar/
     mm = textx.metamodel_from_str(r'''
         Model: 'value' x=Base;
-        Base: S1|(S2 NotS3); // only use first rule (S2) as
-                             // possible instance for each choice-option
+        Base: S1 | S2 NotS3 // only use first rule (S2) as
+                            // possible instance for each choice-option
+            | (S4 | S5) S6; // Both S4 and S5 should be inheriting classes
+                            // but not S6 as it comes second in sequence.
         S1: name=ID;
         S2: name=ID;
         NotS3: name=ID;
+        S4: name=ID;
+        S5: name=ID;
+        S6: name=ID;
     ''')
     assert mm is not None
     all_rules = mm._current_namespace
@@ -90,5 +95,6 @@ def test_metamodel_abstract_rule_detail2():
     assert textx.textx_isinstance(mm["S1"], mm["Base"])
     assert textx.textx_isinstance(mm["S2"], mm["Base"])
     assert not textx.textx_isinstance(mm["NotS3"], mm["Base"])  # problem
-    # problem (hint for root cause, NotS3 is part of tx_inh_by):
-    assert len(all_rules['Base']._tx_inh_by) == 2
+
+    assert set([c.__name__ for c in all_rules['Base']._tx_inh_by]) \
+        == set(['S1', 'S2', 'S4', 'S5'])
