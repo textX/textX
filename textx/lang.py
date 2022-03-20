@@ -368,20 +368,26 @@ class TextXVisitor(RRELVisitor):
                     # Recursively append all referenced classes.
                     def _add_reffered_classes(rule, inh_by, start=False):
                         if rule.root and not start:
-                            if hasattr(rule, '_tx_class'):
-                                _determine_rule_type(rule._tx_class)
-                                if rule._tx_class._tx_type != RULE_MATCH and\
-                                        rule._tx_class not in inh_by:
-                                    inh_by.append(rule._tx_class)
+                            _determine_rule_type(rule._tx_class)
+                            if rule._tx_class._tx_type != RULE_MATCH and\
+                                    rule._tx_class not in inh_by:
+                                inh_by.append(rule._tx_class)
+                                # stop after first added/found type
+                                return True
                         else:
+                            is_ordered_choice = type(rule) is OrderedChoice
+                            inh_added = False
                             for r in rule.nodes:
-                                _add_reffered_classes(r, inh_by)
+                                inh_added |= _add_reffered_classes(r, inh_by)
+                                if inh_added and not is_ordered_choice:
+                                    # If not ordered choice we should get out
+                                    # early as the rest of the rule shouldn't
+                                    # influence the inheritance hierarchy.
+                                    break
+                            return inh_added
+                        return False
 
-                    if type(rule) is OrderedChoice:
-                        for r in rule.nodes:
-                            _add_reffered_classes(r, cls._tx_inh_by)
-                    else:
-                        _add_reffered_classes(rule, cls._tx_inh_by, start=True)
+                    _add_reffered_classes(rule, cls._tx_inh_by, start=True)
 
         # Multi-pass rule type resolving to support circular rule references.
         # `has_change` is a list to support outer scope variable change in
