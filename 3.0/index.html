@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A meta-language for building Domain-Specific Languages (DSLs)">
+  <meta name="author" content="Igor Dejanović">
+  
+  <link rel="shortcut icon" href="img/favicon.ico">
+  <title>textX</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="css/theme.css" />
+  <link rel="stylesheet" href="css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+  <link href="style.css" rel="stylesheet" />
+  <link href="css/version-select.css" rel="stylesheet" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Home";
+    var mkdocs_page_input_path = "index.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="js/jquery-2.1.1.min.js" defer></script>
+  <script src="js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-68681917-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-68681917-1');
+  </script>
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href="." class="icon icon-home"> textX</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul class="current">
+                    <li class="toctree-l1 current"><a class="reference internal current" href=".">Home</a>
+    <ul class="current">
+    </ul>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">User Guide</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Basics</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="tutorials/hello_world/">Hello world</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="grammar/">Grammar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="metamodel/">Meta-model</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="model/">Model</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="parser_config/">Parser configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="textx_command/">textx command</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="registration/">Registration/Discovery</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="visualization/">Visualization</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="scaffolding/">Project scaffolding</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="howto/">Howtos</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Scoping and multi-file</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="scoping/">Scoping</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="rrel/">Reference resolving expression language (RREL)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="multimetamodel/">Multi meta-model</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Errors</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="error_handling/">Error handling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="debugging/">Debugging</a>
+                </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Generators</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="jinja/">Jinja generators</a>
+                </li>
+    </ul>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Tutorials</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="tutorials/hello_world/">Hello World</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="tutorials/robot/">Robot</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="tutorials/entity/">Entity</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="tutorials/state_machine/">State Machine</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="tutorials/toylanguage/">Toy language compiler</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="tutorials/self-dsl/">self-dsl</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="tutorials/turtle/">Turtle graphics</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Development</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="" href="https://github.com/textX/textX/blob/master/CONTRIBUTING.md">Contributing</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="process/">Release process</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">About</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="about/comparison/">Comparison</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="https://github.com/textX/textX/blob/master/LICENSE.txt">License</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">What's new</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="whatsnew/release_1_5/">Release 1.5</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href=".">textX</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Home</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/textX/textX/edit/master/docs/index.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+
+          <div role="main">
+            <div class="section">
+              
+                <p><img alt="textX logo" src="images/textX-logo.png" /></p>
+<hr />
+<p><a href="https://github.com/textX/textX">textX</a> is a meta-language (i.e. a
+language for language definition) for domain-specific language (DSL)
+specification in Python.</p>
+<p>In a nutshell, textX will help you build your textual language in an easy way.
+You can invent your own language or build a support for an already existing
+textual language or file format.</p>
+<p>From a single grammar description, textX automatically builds a meta-model (in
+the form of Python classes) and a parser for your language. The parser will
+parse expressions of your language and automatically build a graph of Python
+objects (i.e. the model) corresponding to the meta-model.</p>
+<p>textX is inspired by <a href="http://www.eclipse.org/xtext/">Xtext</a> - a Java based
+language workbench for building DSLs with full tooling support (editors,
+debuggers etc.) on the Eclipse platform.  If you like Java and
+<a href="http://www.eclipse.org/">Eclipse</a> check it out. It is a great tool.</p>
+<p>A video tutorial for textX installation and implementation of a simple data
+modeling language is bellow.</p>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/CN2IVtInapo" frameborder="0" allowfullscreen></iframe>
+
+<p>For a not-so-basic video tutorial check out <a href="tutorials/state_machine/">State Machine video
+tutorial</a>.</p>
+<p>For an introduction to DSLs in general here are some references:</p>
+<ul>
+<li>Federico Tomassetti: <a href="https://tomassetti.me/domain-specific-languages/">The complete guide to (external) Domain Specific
+  Languages</a>.</li>
+<li>Pierre Bayerl: <a href="https://goto40.github.io/self-dsl/">self-dsl</a>.</li>
+</ul>
+<p>For an in-depth coverage on the subject we recommend the following books:</p>
+<ul>
+<li>Voelter, Markus, et al. <a href="http://dslbook.org">DSL engineering: Designing, implementing and using domain-specific languages</a>. dslbook.org, 2013.</li>
+<li>Kelly, Steven, and Juha-Pekka Tolvanen. <a href="http://dsmbook.com/">Domain-specific modeling: enabling full code generation</a>. John Wiley &amp; Sons, 2008.</li>
+</ul>
+<h2 id="feature-highlights">Feature highlights<a class="headerlink" href="#feature-highlights" title="Permanent link">&para;</a></h2>
+<ul>
+<li>
+<p><strong>Meta-model/parser from a single description</strong></p>
+<p>A single description is used to define both language concrete syntax and its
+meta-model (a.k.a. abstract syntax). See the description of
+<a href="grammar/">grammar</a> and <a href="metamodel/">metamodel</a>.</p>
+</li>
+<li>
+<p><strong>Automatic model (AST) construction</strong></p>
+<p>Parse tree will automatically be transformed to a graph of python objects
+(a.k.a. the model). See the <a href="model/">model</a> section.</p>
+<p>Python classes will be created by textX but, if needed, user supplied
+classes may be used. See <a href="metamodel/#custom-classes">custom classes</a>.</p>
+</li>
+<li>
+<p><strong>Automatic linking</strong></p>
+<p>You can have references to other objects in your language and the textual
+representation of the reference will be resolved to the proper python reference
+automatically.</p>
+</li>
+<li>
+<p><strong>Automatic parent-child relationships</strong></p>
+<p>textX will maintain a parent-child relationships imposed by the grammar.
+See <a href="metamodel/#parent-child-relationships">parent-child relationships</a>.</p>
+</li>
+<li>
+<p><strong>Parser control</strong></p>
+<p>Parser can be configured with regard to case handling, whitespace handling,
+keyword handling etc. See <a href="parser_config/">parser configuration</a>.</p>
+</li>
+<li>
+<p><strong>Model/object post-processing</strong></p>
+<p>A callbacks (so called processors) can be registered for models and
+individual classes.  This enables model/object postprocessing (validation,
+additional changes etc.).  See <a href="metamodel/#processors">processors</a> section.</p>
+</li>
+<li>
+<p><strong>Grammar modularization - imports</strong></p>
+<p>Grammar can be split into multiple files and then files/grammars can be
+imported where needed. See <a href="grammar/#grammar-modularization">Grammar
+modularization</a>.</p>
+</li>
+<li>
+<p><strong>Scope Providers</strong></p>
+<p>Scope Providers allow different types of scoping. See <a href="scoping/">Scoping</a>.</p>
+</li>
+<li>
+<p><strong>Multi-meta-model support</strong></p>
+<p>Different meta-models can be combined. Typically some of these meta-models
+extend other meta-models (grammar modularization) and reference each other.
+Special scope providers support file-extension-based allocation of model
+files to meta models. See <a href="multimetamodel/">Multi meta-model support</a></p>
+</li>
+<li>
+<p><strong>Meta-model/model visualization</strong></p>
+<p>Both meta-model and parsed models can be visulized using
+<a href="http://graphviz.org/">GraphViz</a> software package. See
+<a href="visualization/">visualization</a> section.</p>
+</li>
+</ul>
+<h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h2>
+<pre><code>$ pip install textX[cli]
+</code></pre>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Previous command requires <a href="https://pypi.python.org/pypi/pip">pip</a> to be
+installed.</p>
+<p>Also, notice the use of <code>[cli]</code> which means that we would like to use CLI
+<code>textx</code> command. If you just want to deploy your language most probably you won't
+need CLI support.</p>
+</div>
+<p>To verify that textX is properly installed run:</p>
+<pre><code>$ textx
+</code></pre>
+<p>You should get output like this:</p>
+<pre><code>Usage: textx [OPTIONS] COMMAND [ARGS]...
+
+Options:
+  --debug  Debug/trace output.
+  --help   Show this message and exit.
+
+Commands:
+  check            Check/validate model given its file path.
+  generate         Run code generator on a provided model(s).
+  list-generators  List all registered generators
+  list-languages   List all registered languages
+  version          Print version info.
+</code></pre>
+<p>To install development (<code>master</code> branch) version:</p>
+<pre><code>$ pip install --upgrade https://github.com/textX/textX/archive/master.zip
+</code></pre>
+<h2 id="python-versions">Python versions<a class="headerlink" href="#python-versions" title="Permanent link">&para;</a></h2>
+<p>textX works with Python 3.6+. Other versions might work but are not tested.</p>
+<h2 id="getting-started">Getting started<a class="headerlink" href="#getting-started" title="Permanent link">&para;</a></h2>
+<p>See textX <code>Tutorials</code> to get you started:</p>
+<ul>
+<li><a href="tutorials/hello_world/">Hello World</a></li>
+<li><a href="tutorials/robot/">Robot</a></li>
+<li><a href="tutorials/entity/">Entity</a></li>
+<li><a href="tutorials/state_machine/">State Machine</a> - video tutorial</li>
+<li><a href="tutorials/toylanguage/">Toy language compiler</a></li>
+<li><a href="tutorials/self-dsl/">self-dsl</a></li>
+</ul>
+<p>For specific information read various <code>User Guide</code> sections.</p>
+<p>Also, you can
+check out <a href="https://github.com/textX/textX/tree/master/examples/">examples</a>.</p>
+<p>A full example project that shows how multi-meta-modeling feature can be used is
+also available in <a href="https://github.com/textX/textx-multi-metamodel-example">a separate git
+repository</a>.</p>
+<p>To create the initial layout of your project quickly take a look at <a href="scaffolding/">project
+scaffolding</a>.</p>
+<h2 id="discussion-and-help">Discussion and help<a class="headerlink" href="#discussion-and-help" title="Permanent link">&para;</a></h2>
+<p>For general questions and help please use
+<a href="https://stackoverflow.com/questions/tagged/textx">StackOverflow</a>. Just make
+sure to tag your question with the <code>textx</code> tag.</p>
+<p>For issues, suggestions and feature request please use 
+<a href="https://github.com/textX/textX/issues">GitHub issue tracker</a>.</p>
+<h2 id="projects-using-textx">Projects using textX<a class="headerlink" href="#projects-using-textx" title="Permanent link">&para;</a></h2>
+<p>Here is a non-complete list of projects using textX.</p>
+<ul>
+<li>
+<p>Open-source</p>
+<ul>
+<li><a href="https://github.com/pyecore/pyecore">pyecore</a> - ECore implementation in
+  Python. Vincent Aranega is doing a great work on integrating textX with
+  pyecore. The idea is that the integration eventually gets merged to the
+  main textX repo. For now, you can follow his
+  work <a href="https://github.com/aranega/textX">on his fork of textX</a>.</li>
+<li><a href="https://github.com/E2Music/pyTabs">pyTabs</a> - A Domain-Specific Language
+  (DSL) for simplified music notation</li>
+<li><a href="https://github.com/kosanmil/applang">applang</a> - Textual DSL for
+  generating mobile applications</li>
+<li><a href="https://github.com/pyflies/pyflies">pyFlies</a> - A DSL for designing
+  experiments in psychology</li>
+<li><a href="http://ppci.readthedocs.io/en/latest/index.html">ppci</a> - Pure python
+  compiler infrastructure. </li>
+<li><a href="https://github.com/shimpe/expremigen">Expremigen</a> -  Expressive midi generation</li>
+<li><a href="https://github.com/azag0/fanalyse">fanalyse</a> - Fortran code parser/analyser</li>
+<li><a href="https://gitlab.com/alensuljkanovic/silvera/-/wikis/home">Silvera</a> - A DSL
+  for microservice based software development</li>
+<li><a href="https://github.com/labsquare/cutevariant">cutevariant</a> - A standalone and
+  free application to explore genetics variations from VCF file. Developed
+  by <a href="http://www.labsquare.org/">labsquare</a> - A community for genomics
+  software</li>
+<li><a href="https://github.com/RhetTbull/osxphotos">osxphotos</a> - Python app to export
+  pictures and associated metadata from Apple Photos on macOS.</li>
+</ul>
+</li>
+<li>
+<p>Commercial</p>
+<ul>
+<li>textX is used as a part of <a href="https://www.typhoon-hil.com/?utm_campaign=1604_HIL402%20Campaign&amp;utm_content=Igor_github&amp;utm_source=email">Typhoon-HIL's</a>
+  schematic editor for the description of power electronic and DSP schemes and
+  components.</li>
+</ul>
+</li>
+</ul>
+<p>If you are using textX to build some cool stuff drop me a line at igor dot
+dejanovic at gmail. I would like to hear from you!</p>
+<h2 id="editoride-support">Editor/IDE support<a class="headerlink" href="#editoride-support" title="Permanent link">&para;</a></h2>
+<h3 id="visual-studio-code-support">Visual Studio Code support<a class="headerlink" href="#visual-studio-code-support" title="Permanent link">&para;</a></h3>
+<p>There is currently an ongoing effort to build tooling support
+around <a href="https://code.visualstudio.com/">Visual Studio Code</a>. The idea is to
+auto-generate VCS plugin with syntax highlighting, outline, InteliSense,
+navigation, visualization. The input for the generator would be your language
+grammar and additional information specified using various DSLs.</p>
+<p>Projects that are currently in progress are:</p>
+<ul>
+<li>
+<p><a href="https://github.com/textX/textX-LS">textX-LS</a> - support for Language Server
+  Protocol and VS Code for any textX based language. </p>
+</li>
+<li>
+<p><a href="https://github.com/danixeee/textx-gen-coloring">textx-gen-coloring</a> - a textX
+  generator which generates syntax highlighting configuration for TextMate
+  compatible editors (e.g. VSCode) from textX grammars.</p>
+</li>
+<li>
+<p><a href="https://github.com/danixeee/textx-gen-vscode">textx-gen-vscode</a> - a textX
+  generator which generates VSCode extension from textX grammar.</p>
+</li>
+<li>
+<p><a href="https://github.com/danielkupco/viewX-vscode">viewX</a> - creating visualizers
+  for textX languages</p>
+</li>
+</ul>
+<p>Stay tuned ;)</p>
+<h3 id="other-editors">Other editors<a class="headerlink" href="#other-editors" title="Permanent link">&para;</a></h3>
+<p>If you are a vim editor user check
+out <a href="https://github.com/textX/textx.vim/">support for vim</a>.</p>
+<p>For emacs there is <a href="https://github.com/textX/textx-mode">textx-mode</a> which is
+also available in <a href="https://melpa.org/#/textx-mode">MELPA</a>.</p>
+<p>You can also check
+out <a href="https://github.com/textX/textX-ninja">textX-ninja project</a>. It is
+currently unmaintained.</p>
+<h2 id="citing-textx">Citing textX<a class="headerlink" href="#citing-textx" title="Permanent link">&para;</a></h2>
+<p>If you are using textX in your research project we would be very grateful if you
+cite our paper:</p>
+<p>Dejanović I., Vaderna R., Milosavljević G., Vuković Ž. (2017). <a href="https://www.doi.org/10.1016/j.knosys.2016.10.023">TextX: A Python
+tool for Domain-Specific Languages
+implementation</a>.
+Knowledge-Based Systems, 115, 1-4.</p>
+<pre><code class="language-bibtex">@article{Dejanovic2017,
+    author = {Dejanovi\'{c}, I. and Vaderna, R. and Milosavljevi\'{c}, G. and Vukovi\'{c}, \v{Z}.},
+    doi = {10.1016/j.knosys.2016.10.023},
+    issn = {0950-7051},
+    journal = {Knowledge-Based Systems},
+    keywords = {Domain-Specific Language; Meta-model; Model; Model-Driven software development; Parser; Python },
+    note = {},
+    pages = {1--4},
+    title = {{TextX: A Python tool for Domain-Specific Languages implementation}},
+    url = {http://www.sciencedirect.com/science/article/pii/S0950705116304178},
+    volume = {115},
+    year = {2017}
+}
+</code></pre>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="tutorials/hello_world/" class="btn btn-neutral float-right" title="Hello world">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>Copyright &copy; <a href="http://www.igordejanovic.net/">Igor Dejanović</a>.</p>
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/textX/textX/" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+      <span><a href="tutorials/hello_world/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script>var base_url = '.';</script>
+    <script src="js/theme_extra.js" defer></script>
+    <script src="js/theme.js" defer></script>
+      <script src="search/main.js" defer></script>
+      <script src="js/version-select.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>
+
+<!--
+MkDocs version : 1.2.3
+Build Date UTC : 2022-03-20 17:09:51.093954+00:00
+-->

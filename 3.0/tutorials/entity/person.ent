@@ -1,0 +1,14 @@
+type string
+type integer
+
+entity Person {
+  name : string
+  address: Address
+  age: integer
+}
+
+entity Address {
+  street : string
+  city : string
+  country : string
+}
