@@ -15,6 +15,9 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ## [Unreleased]
 
+
+## [3.0.0] (released: 2022-03-20)
+
 ### Added
 
 - Added RREL-'fixed name'-extension, allowing to follow model elements 
@@ -637,7 +640,8 @@ please take a look at related PRs and issues and see if the change affects you.
 [#92]: https://github.com/textX/textX/pull/92
 [#40]: https://github.com/textX/textX/issues/40
 
-[Unreleased]: https://github.com/textX/textX/compare/2.3.0...HEAD
+[Unreleased]: https://github.com/textX/textX/compare/3.0.0...HEAD
+[3.0.0]: https://github.com/textX/textX/compare/2.3.0...3.0.0
 [2.3.0]: https://github.com/textX/textX/compare/v2.2.0...2.3.0
 [v2.2.0]: https://github.com/textX/textX/compare/v2.1.0...v2.2.0
 [v2.1.0]: https://github.com/textX/textX/compare/v2.0.1...v2.1.0
