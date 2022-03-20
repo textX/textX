@@ -41,12 +41,14 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ### Changed
 
+- Inheritance chain calculation. Possible **(BIC)** ([#369]).
 - Added `def_file_name` attribute to `RefRulePosition` for storing the definition's
   model file name in case of cross-references between models. ([#313],[#277])
 - Migrated from Travis CI to GitHub Actions ([#307])
 - Dropped support for deprecated Python versions. The lowest supported version
   is 3.6. **(BIC)**
 
+[#369]: https://github.com/textX/textX/pull/369
 [#360]: https://github.com/textX/textX/issues/360
 [#323]: https://github.com/textX/textX/issues/323
 [#320]: https://github.com/textX/textX/pull/320
