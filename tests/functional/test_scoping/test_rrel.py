@@ -483,3 +483,29 @@ def test_rrel_with_fixed_string_in_navigation_with_scalars():
             using myi32 = i32    # found via "default lookup"
             using myFoo = Unknown    # --> not found
         ''')
+
+
+def test_lookup_multifile():
+    # same as test above, but with "+mp:" flag
+    from os.path import dirname, join
+    from textx import metamodel_from_file
+    this_folder = dirname(__file__)
+    mm = metamodel_from_file(join(this_folder, 'rrel_multifile', 'Grammar.tx'))
+
+    # "standard" multi-file usage
+    m = mm.model_from_file(join(this_folder, 'rrel_multifile', 'main.model'))
+    assert m is not None
+
+    # Rule "P1" employs a mandatory rrel path entry ".." (no multi-file)
+    m = mm.model_from_file(join(this_folder, 'rrel_multifile', 'navigation0.model'))
+    assert m is not None
+
+    # Rule "P1" employs a mandatory rrel path entry ".." (with multi-file)
+    # Note: "+pm:..(..)*.a*" works with the current impl (TODO: remove comment)
+    # TODO: in case of multi-files, do not start at the root of each model, but
+    # iterate over all models once the path reaches the model root (e.g. with .. in
+    # a navigation rrel node)...
+    m = mm.model_from_file(join(this_folder, 'rrel_multifile', 'navigation1.model'))
+    assert m is not None
+
+    # TODO add loading example with expected error: navigation1_err.model
