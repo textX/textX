@@ -652,6 +652,10 @@ def create_rrel_scope_provider(rrel_tree_or_string, split_string=None, **kwargs)
                                importURI_converter=importURI_converter,
                                importURI_to_scope_name=importURI_to_scope_name)
 
+        def __call__(self, obj, attr, obj_ref):
+            return self.scope_provider(obj, attr, obj_ref)
+
+
     if isinstance(rrel_tree_or_string, string_types):
         rrel_tree_or_string = parse(rrel_tree_or_string)
 
