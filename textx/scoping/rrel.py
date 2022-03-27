@@ -165,38 +165,57 @@ class RRELNavigation(RRELBase):
         if first_element:
             from textx import get_model
             obj = get_model(obj)
+
+        start = [ obj ]
+        if not hasattr(obj, "parent"):  # am I a root model node?
+            if hasattr(obj,"_tx_model_repository"):
+                for m in obj._tx_model_repository.local_models:
+                    start.append(m)
+            if obj._tx_metamodel.builtin_models:
+                print("builtin!")
+                for m in obj._tx_metamodel.builtin_models:
+                    start.append(m)
+
         if len(lookup_list) == 0 and self.consume_name:
             return None, lookup_list, matched_path
-        if needs_to_be_resolved(obj, self.name):
-            return Postponed(), lookup_list, matched_path
-        if hasattr(obj, self.name):
-            target = getattr(obj, self.name)
-            if not self.consume_name and self.fixed_name is None:
-                return target, lookup_list, matched_path  # return list
-            else:
-                if not isinstance(target, list):
-                    target = [target]
-                if self.fixed_name is not None:
-                    lst = list(filter(lambda x: hasattr(
-                        x, "name") and getattr(
-                        x, "name") == self.fixed_name, target))
-                    if len(lst) > 0:
-                        return lst[0], lookup_list, matched_path + [
-                            lst[0]]  # return obj
-                    else:
-                        return None, lookup_list, matched_path  # return None
-                else:
-                    lst = list(filter(lambda x: hasattr(
-                        x, "name") and getattr(
-                        x, "name") == lookup_list[0], target))
-                    if len(lst) > 0:
-                        return lst[0], lookup_list[1:], matched_path + [
-                            lst[0]]  # return obj
-                    else:
-                        return None, lookup_list, matched_path  # return None
-        else:
-            return None, lookup_list, matched_path
 
+        def lookup(obj):
+            if needs_to_be_resolved(obj, self.name):
+                return Postponed(), lookup_list, matched_path
+            if hasattr(obj, self.name):
+                target = getattr(obj, self.name)
+                if not self.consume_name and self.fixed_name is None:
+                    return target, lookup_list, matched_path  # return list
+                else:
+                    if not isinstance(target, list):
+                        target = [target]
+                    if self.fixed_name is not None:
+                        lst = list(filter(lambda x: hasattr(
+                            x, "name") and getattr(
+                            x, "name") == self.fixed_name, target))
+                        if len(lst) > 0:
+                            return lst[0], lookup_list, matched_path + [
+                                lst[0]]  # return obj
+                        else:
+                            return None, lookup_list, matched_path  # return None
+                    else:
+                        lst = list(filter(lambda x: hasattr(
+                            x, "name") and getattr(
+                            x, "name") == lookup_list[0], target))
+                        if len(lst) > 0:
+                            return lst[0], lookup_list[1:], matched_path + [
+                                lst[0]]  # return obj
+                        else:
+                            return None, lookup_list, matched_path  # return None
+            else:
+                return None, lookup_list, matched_path
+
+        for start_obj in start:
+            res, res_lookup_list, res_lookup_path = lookup(start_obj)
+            if (res):
+                return res, res_lookup_list, res_lookup_path
+
+        return None, lookup_list, matched_path
 
 class RRELBrackets(RRELBase):
     def __init__(self, oc):
