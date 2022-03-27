@@ -136,6 +136,7 @@ class RRELNavigation(RRELBase):
         self.name = name
         self.consume_name = consume_name
         self.fixed_name = fixed_name
+        self.rrel_expression = None  # is set after tree is built, req. for +m flag
 
     def __repr__(self):
         if self.fixed_name is not None:
@@ -160,6 +161,7 @@ class RRELNavigation(RRELBase):
             The object indicated by the navigation object,
             Postponed, None, or a list (if a list has to be processed).
         """
+        assert self.rrel_expression is not None
         from textx.scoping.tools import needs_to_be_resolved
         from textx.scoping import Postponed
         if first_element:
@@ -168,13 +170,14 @@ class RRELNavigation(RRELBase):
 
         start = [obj]
         if not hasattr(obj, "parent"):  # am I a root model node?
-            if hasattr(obj, "_tx_model_repository"):
-                for m in obj._tx_model_repository.local_models:
-                    start.append(m)
-            if obj._tx_metamodel.builtin_models:
-                print("builtin!")
-                for m in obj._tx_metamodel.builtin_models:
-                    start.append(m)
+            if self.rrel_expression.importURI:
+                if hasattr(obj, "_tx_model_repository"):
+                    for m in obj._tx_model_repository.local_models:
+                        start.append(m)
+                if obj._tx_metamodel.builtin_models:
+                    print("builtin!")
+                    for m in obj._tx_metamodel.builtin_models:
+                        start.append(m)
 
         if len(lookup_list) == 0 and self.consume_name:
             return None, lookup_list, matched_path
@@ -420,6 +423,18 @@ class RRELExpression:
         self.flags = flags
         self.importURI = ('m' in flags)
         self.use_proxy = ('p' in flags)
+
+        def prepare_tree(node):
+            if isinstance(node, RRELNavigation):
+                node.rrel_expression = self
+            if isinstance(node, RRELBase):
+                for c in node.__dict__.values():
+                    if isinstance(c, list):
+                        for e in c:
+                            prepare_tree(e)
+                    else:
+                        prepare_tree(c)
+        prepare_tree(self.seq)
 
     def __repr__(self):
         if self.importURI:

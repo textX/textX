@@ -510,14 +510,19 @@ def test_lookup_multifile():
 
     # the next exammple is missing the include statement (leads to "Unknown object...")
     with raises(TextXSemanticError, match=r'Unknown object'):
-        _ = mm.model_from_file(join(this_folder, 'rrel_multifile', 'navigation1_err.model'))
+        _ = mm.model_from_file(join(this_folder, 'rrel_multifile',
+                                    'navigation1_err.model'))
+
 
 def test_lookup_multifile_missing_flag_m():
     from os.path import dirname, join
     from textx import metamodel_from_file
     this_folder = dirname(__file__)
 
-    # the next exammple is missing the +m flag in the grammar (lookup across files disabled)
-    mmE = metamodel_from_file(join(this_folder, 'rrel_multifile', 'GrammarMissingPlusM.tx'))
+    # the next exammple is missing the +m flag in the grammar
+    # (lookup across files disabled):
+    mmE = metamodel_from_file(join(this_folder, 'rrel_multifile',
+                                   'GrammarMissingPlusM.tx'))
     with raises(TextXSemanticError, match=r'Unknown object'):
-        _ = mmE.model_from_file(join(this_folder, 'rrel_multifile', 'navigation1.model'))
+        _ = mmE.model_from_file(join(this_folder, 'rrel_multifile',
+                                     'navigation1.model'))
