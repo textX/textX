@@ -833,11 +833,18 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
         if hasattr(model, '_tx_metamodel'):
             assert hasattr(model, '_tx_model_params')
 
+        # Load all imported models (e.g. using importURI)
+        # based on the maker `ModelLoader` found in the
+        # defined scope providers:
         for scope_provider in metamodel.scope_providers.values():
             from textx.scoping import ModelLoader
             if isinstance(scope_provider, ModelLoader):
                 scope_provider.load_models(model, encoding=encoding)
 
+        # Load all imported models (e.g. using importURI)
+        # based on the maker `ModelLoader` directly attached to
+        # model references (e.g. in case of RREL experessions defined
+        # in the grammar):
         for crossref in parser._crossrefs:
             crossref = crossref[2]
             if crossref.scope_provider is not None:
