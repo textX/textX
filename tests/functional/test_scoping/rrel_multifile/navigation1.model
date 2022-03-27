@@ -13,3 +13,6 @@ A a1 {
 A R {
     A r2 {}
 }
+
+// activate importURI (in any case, also for `GrammarMissingPlusM.tx`):
+R R.r2
