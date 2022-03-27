@@ -841,10 +841,9 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
             if isinstance(scope_provider, ModelLoader):
                 scope_provider.load_models(model, encoding=encoding)
 
-        # Load all imported models (e.g. using importURI)
-        # based on the maker `ModelLoader` directly attached to
-        # model references (e.g. in case of RREL experessions defined
-        # in the grammar):
+        # Load all imported models based on the maker
+        # `ModelLoader` directly attached to model references
+        # (e.g. in case of RREL expressions defined in the grammar):
         for crossref in parser._crossrefs:
             crossref = crossref[2]
             if crossref.scope_provider is not None:

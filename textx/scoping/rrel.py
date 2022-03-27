@@ -688,6 +688,10 @@ def create_rrel_scope_provider(rrel_tree_or_string, split_string=None, **kwargs)
                                importURI_to_scope_name=importURI_to_scope_name)
 
         def __call__(self, obj, attr, obj_ref):
+            # override `__call__`in order to ignore the `default ImportURI`
+            # implementation: Here, we just need to call the normal
+            # scope resolution of the RREL provider (+the `ModelLoader`
+            # feature of the `ImportURI` implementation):
             return self.scope_provider(obj, attr, obj_ref)
 
     if isinstance(rrel_tree_or_string, string_types):
