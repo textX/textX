@@ -166,9 +166,9 @@ class RRELNavigation(RRELBase):
             from textx import get_model
             obj = get_model(obj)
 
-        start = [ obj ]
+        start = [obj]
         if not hasattr(obj, "parent"):  # am I a root model node?
-            if hasattr(obj,"_tx_model_repository"):
+            if hasattr(obj, "_tx_model_repository"):
                 for m in obj._tx_model_repository.local_models:
                     start.append(m)
             if obj._tx_metamodel.builtin_models:
@@ -216,6 +216,7 @@ class RRELNavigation(RRELBase):
                 return res, res_lookup_list, res_lookup_path
 
         return None, lookup_list, matched_path
+
 
 class RRELBrackets(RRELBase):
     def __init__(self, oc):
@@ -673,7 +674,6 @@ def create_rrel_scope_provider(rrel_tree_or_string, split_string=None, **kwargs)
 
         def __call__(self, obj, attr, obj_ref):
             return self.scope_provider(obj, attr, obj_ref)
-
 
     if isinstance(rrel_tree_or_string, string_types):
         rrel_tree_or_string = parse(rrel_tree_or_string)
