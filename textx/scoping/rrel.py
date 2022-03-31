@@ -175,7 +175,6 @@ class RRELNavigation(RRELBase):
                     for m in obj._tx_model_repository.local_models:
                         start.append(m)
                 if obj._tx_metamodel.builtin_models:
-                    print("builtin!")
                     for m in obj._tx_metamodel.builtin_models:
                         start.append(m)
 
