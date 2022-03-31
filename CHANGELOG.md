@@ -15,6 +15,11 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed RREL lookup in case of multi-meta models (some special cases were not
+  handled correctly; [#379]).
+
 
 ## [3.0.0] (released: 2022-03-20)
 
@@ -31,8 +36,6 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ### Fixed
 
-- Fixed RREL lookup in case of multi-meta models (some special cases were not
-  handled correctly; [#379]).
 - `model_param_defs` on `TextXMetaMetaModel` ([#360]).
 - Interpreting of backslash special chars (e.g. `\n`, `\t`) in grammar string
   matches ([#323]). Possible **(BIC)** - backslash chars were not interpreted in
