@@ -15,4 +15,16 @@ A R {
 }
 
 // activate importURI (in any case, also for `GrammarMissingPlusM.tx`):
+
 R R.r2
+
+// ^^^
+// This is important for `test_lookup_multifile_missing_flag_m`:
+// Here, we want to make sure the "#include" command is executed
+//  - at the moment this happens only if any scope provide is active,
+//    which is an ImportURI provder. In case eof RREL, a RREL
+//    reference needs also to be present to trigger the load command
+//    (see model.py, look for `ModelLoader`).
+//  - once the model is loaded in the referenced test, we want to
+//    make sure that the P1 reference from the included model is not
+//    found (because of the missing +m flag).
