@@ -15,6 +15,13 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed RREL lookup in case of multi-meta models (some special cases were not
+  handled correctly; [#379]).
+
+[#379]: https://github.com/textX/textX/pull/379
+
 
 ## [3.0.0] (released: 2022-03-20)
 

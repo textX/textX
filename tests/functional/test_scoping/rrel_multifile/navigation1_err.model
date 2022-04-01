@@ -1,0 +1,15 @@
+//missing: #include "navigation1_included.model"
+A a1 {
+    A aa1 {
+        A aaa1 {}
+        A aab1 {}
+        P1 aaa1
+        P1 aa1
+        P1 ab1
+        P1 a2
+    }
+    A ab1 {}
+}
+A R {
+    A r2 {}
+}

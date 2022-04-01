@@ -136,6 +136,7 @@ class RRELNavigation(RRELBase):
         self.name = name
         self.consume_name = consume_name
         self.fixed_name = fixed_name
+        self.rrel_expression = None  # is set after tree is built, req. for +m flag
 
     def __repr__(self):
         if self.fixed_name is not None:
@@ -160,42 +161,63 @@ class RRELNavigation(RRELBase):
             The object indicated by the navigation object,
             Postponed, None, or a list (if a list has to be processed).
         """
+        assert self.rrel_expression is not None
         from textx.scoping.tools import needs_to_be_resolved
         from textx.scoping import Postponed
         if first_element:
             from textx import get_model
             obj = get_model(obj)
+
+        start = [obj]
+        if not hasattr(obj, "parent"):  # am I a root model node?
+            if self.rrel_expression.importURI:
+                if hasattr(obj, "_tx_model_repository"):
+                    for m in obj._tx_model_repository.local_models:
+                        start.append(m)
+                if obj._tx_metamodel.builtin_models:
+                    for m in obj._tx_metamodel.builtin_models:
+                        start.append(m)
+
         if len(lookup_list) == 0 and self.consume_name:
             return None, lookup_list, matched_path
-        if needs_to_be_resolved(obj, self.name):
-            return Postponed(), lookup_list, matched_path
-        if hasattr(obj, self.name):
-            target = getattr(obj, self.name)
-            if not self.consume_name and self.fixed_name is None:
-                return target, lookup_list, matched_path  # return list
-            else:
-                if not isinstance(target, list):
-                    target = [target]
-                if self.fixed_name is not None:
-                    lst = list(filter(lambda x: hasattr(
-                        x, "name") and getattr(
-                        x, "name") == self.fixed_name, target))
-                    if len(lst) > 0:
-                        return lst[0], lookup_list, matched_path + [
-                            lst[0]]  # return obj
-                    else:
-                        return None, lookup_list, matched_path  # return None
+
+        def lookup(obj):
+            if needs_to_be_resolved(obj, self.name):
+                return Postponed(), lookup_list, matched_path
+            if hasattr(obj, self.name):
+                target = getattr(obj, self.name)
+                if not self.consume_name and self.fixed_name is None:
+                    return target, lookup_list, matched_path  # return list
                 else:
-                    lst = list(filter(lambda x: hasattr(
-                        x, "name") and getattr(
-                        x, "name") == lookup_list[0], target))
-                    if len(lst) > 0:
-                        return lst[0], lookup_list[1:], matched_path + [
-                            lst[0]]  # return obj
+                    if not isinstance(target, list):
+                        target = [target]
+                    if self.fixed_name is not None:
+                        lst = list(filter(lambda x: hasattr(
+                            x, "name") and getattr(
+                            x, "name") == self.fixed_name, target))
+                        if len(lst) > 0:
+                            return lst[0], lookup_list, matched_path + [
+                                lst[0]]  # return obj
+                        else:
+                            return None, lookup_list, matched_path  # return None
                     else:
-                        return None, lookup_list, matched_path  # return None
-        else:
-            return None, lookup_list, matched_path
+                        lst = list(filter(lambda x: hasattr(
+                            x, "name") and getattr(
+                            x, "name") == lookup_list[0], target))
+                        if len(lst) > 0:
+                            return lst[0], lookup_list[1:], matched_path + [
+                                lst[0]]  # return obj
+                        else:
+                            return None, lookup_list, matched_path  # return None
+            else:
+                return None, lookup_list, matched_path
+
+        for start_obj in start:
+            res, res_lookup_list, res_lookup_path = lookup(start_obj)
+            if (res):
+                return res, res_lookup_list, res_lookup_path
+
+        return None, lookup_list, matched_path
 
 
 class RRELBrackets(RRELBase):
@@ -400,6 +422,18 @@ class RRELExpression:
         self.flags = flags
         self.importURI = ('m' in flags)
         self.use_proxy = ('p' in flags)
+
+        def prepare_tree(node):
+            if isinstance(node, RRELNavigation):
+                node.rrel_expression = self
+            if isinstance(node, RRELBase):
+                for c in node.__dict__.values():
+                    if isinstance(c, list):
+                        for e in c:
+                            prepare_tree(e)
+                    else:
+                        prepare_tree(c)
+        prepare_tree(self.seq)
 
     def __repr__(self):
         if self.importURI:
@@ -651,6 +685,13 @@ def create_rrel_scope_provider(rrel_tree_or_string, split_string=None, **kwargs)
                                search_path=search_path, importAs=importAs,
                                importURI_converter=importURI_converter,
                                importURI_to_scope_name=importURI_to_scope_name)
+
+        def __call__(self, obj, attr, obj_ref):
+            # override `__call__`in order to ignore the `default ImportURI`
+            # implementation: Here, we just need to call the normal
+            # scope resolution of the RREL provider (+the `ModelLoader`
+            # feature of the `ImportURI` implementation):
+            return self.scope_provider(obj, attr, obj_ref)
 
     if isinstance(rrel_tree_or_string, string_types):
         rrel_tree_or_string = parse(rrel_tree_or_string)
