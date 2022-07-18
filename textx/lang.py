@@ -824,7 +824,7 @@ class TextXVisitor(RRELVisitor):
             cls_attr.mult = MULT_OPTIONAL
             base_rule_name = 'BOOL'
 
-            # ?= assigment should have default value of False.
+            # ?= assignment should have default value of False.
             # so we shall mark it as such.
             cls_attr.bool_assignment = True
 
@@ -1001,7 +1001,7 @@ def language_from_str(language_def, metamodel, file_name):
     metamodel._parser_blueprint = lang_parser
 
     if metamodel.debug:
-        # Create dot file for debuging purposes
+        # Create dot file for debugging purposes
         PMDOTExporter().exportFile(
             lang_parser.parser_model,
             "{}_parser_model.dot".format(metamodel.rootcls.__name__))
