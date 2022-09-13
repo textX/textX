@@ -23,9 +23,9 @@ def test_flow_dsl(clear_all):
     model = mmF.model_from_file(os.path.join(current_dir,
                                              'models',
                                              'data_flow.eflow'))
-    assert(model is not None)
-    assert(len(model.algos) == 2)
-    assert(len(model.flows) == 1)
+    assert model is not None
+    assert len(model.algos) == 2
+    assert len(model.flows) == 1
 
 
 def test_flow_dsl_validation(clear_all):

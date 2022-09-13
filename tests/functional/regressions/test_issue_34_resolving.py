@@ -31,7 +31,7 @@ def test_issue_34_resolving():
     ;
 
     Cond:
-        attribute = [Attribute|attr_id] '<' values=STRING
+        attribute = [Attribute:attr_id] '<' values=STRING
     ;
 
     attr_id:

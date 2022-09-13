@@ -123,8 +123,8 @@ BuiltinRuleRef:
     'ID' | 'BOOL' | 'INT' | 'FLOAT' | 'STRING' | 'NUMBER' | 'BASETYPE'
 ;
 
-ObjRef: // TODO: add RREL
-    '[' name=ClassName ('|' obj_ref_rule=ID ('|' rrel=RRELExpression))? ']'
+ObjRef: // TODO: Remove '|' separator in 4.0
+    '[' name=ClassName ((':' | '|') obj_ref_rule=ID ('|' rrel=RRELExpression))? ']'
 ;
 
 ClassName:

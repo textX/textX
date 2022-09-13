@@ -16,7 +16,7 @@ Entity: 'entity' name=ID '{'
               properties*=Property
         '}'
 ;
-Property: name=ID ':' type=[t.BaseType|ID|+m:types];
+Property: name=ID ':' type=[t.BaseType:ID|+m:types];
 '''
 
 

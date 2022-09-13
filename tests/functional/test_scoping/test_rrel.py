@@ -319,7 +319,7 @@ def test_split_str():
     mm = metamodel_from_str('''
         Model: a+=A r+=R;
         A: 'A' name=ID '{' a*=A  '}';
-        R: 'R' a+=[A|FQN|+p:a*][','];
+        R: 'R' a+=[A:FQN|+p:a*][','];
         FQN[split='::']: ID ('::' ID)*;
     ''')
     m = mm.model_from_str('''
@@ -381,7 +381,7 @@ def test_rrel_with_fixed_string_in_navigation():
     mm = metamodel_from_str(r'''
         Model: types_collection*=TypesCollection
             ('activeTypes' '=' active_types=[TypesCollection])? usings*=Using;
-        Using: 'using' name=ID "=" type=[Type|ID|+m:
+        Using: 'using' name=ID "=" type=[Type:ID|+m:
                 ~active_types.types,             // "regular lookup"
                 'builtin'~types_collection.types // "default lookup"
                                                  // name "builtin" hard coded in grammar
@@ -440,7 +440,7 @@ def test_rrel_with_fixed_string_in_navigation_with_scalars():
     mm = metamodel_from_str(r'''
         Model: types_collection=TypesCollection // scalar here (compared to last test)
             ('activeTypes' '=' active_types=[TypesCollection])? usings*=Using;
-        Using: 'using' name=ID "=" type=[Type|ID|+m:
+        Using: 'using' name=ID "=" type=[Type:ID|+m:
                 ~active_types.types,             // "regular lookup"
                 'builtin'~types_collection.types // "default lookup"
                                                  // name "builtin" hard coded in grammar

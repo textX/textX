@@ -25,7 +25,7 @@ Class:
 ;
 
 Attribute:
-        'attr' ref=[Class|FQN] name=ID ';'
+        'attr' ref=[Class:FQN] name=ID ';'
 ;
 
 Comment: /#.*/;
@@ -139,7 +139,7 @@ def test_fully_qualified_name_ref_with_splitstring():
         Model: packages*=Package;
         Package: 'package' name=ID '{' classes*=Class '}';
         Class: 'class' name=ID '{'attributes*=Attribute'}';
-        Attribute: 'attr' ref=[Class|FQN] name=ID ';';
+        Attribute: 'attr' ref=[Class:FQN] name=ID ';';
         Comment: /#.*/;
         FQN[split='/']: ID('/'ID)*;
     ''')

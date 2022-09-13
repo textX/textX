@@ -15,12 +15,13 @@ reference](grammar.md#references).
 For example:
 
 ```
-Attribute: 'attr' ref=[Class|FQN|^packages*.classes] name=ID ';';
+Attribute: 'attr' ref=[Class:FQN|^packages*.classes] name=ID ';';
 ```
 
 This grammar rule has a `ref` attribute which is a reference to the `Class`
 rule. This is a link rule reference as it is enclosed inside of square brackets.
-It consists of three parts separated by `|`. The first part defines the target
+It consists of three parts where first two parts are separated by `:` while the
+second and the third are separated by `|`. The first part defines the target
 object type or its grammar rule. The second part defines what will parser match
 at the place of the reference. It would be a fully qualified name of the target
 object (thus `FQN`). The third part of the reference is RREL expression
@@ -84,7 +85,7 @@ Reference resolving expression language (RREL) consists of several operators
     information (see [tests/test_scoping/test_rrel.py,
     test_rrel_with_fixed_string_in_navigation](https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_rrel.py)):
 
-          Using: 'using' name=ID "=" type=[Type|ID|+m:
+          Using: 'using' name=ID "=" type=[Type:ID|+m:
                 ~active_types.types,                // "regular lookup"
                 'builtin'~types_collection.types    // "default lookup" - name "builtin" 
                                                     // hard coded in grammar
@@ -143,7 +144,7 @@ following example (used in rule `Attribute` to reference a model class:
     Model:     packages*=Package;
     Package:   'package' name=ID '{' classes*=Class '}';
     Class:     'class' name=ID '{' attributes*=Attribute '}';
-    Attribute: 'attr' ref=[Class|FQN|^packages*.classes] name=ID ';';
+    Attribute: 'attr' ref=[Class:FQN|^packages*.classes] name=ID ';';
     Comment:   /#.*/;
     FQN:       ID('.'ID)*;
 
@@ -176,7 +177,7 @@ names, for which the given separator makes sense):
     Model:          packages*=Package;
     Package:        'package' name=ID '{' classes*=Class '}';
     Class:          'class' name=ID '{' attributes*=Attribute '}';
-    Attribute:      'attr' ref=[Class|FQN|^packages*.classes] name=ID ';';
+    Attribute:      'attr' ref=[Class:FQN|^packages*.classes] name=ID ';';
     Comment:        /#.*/;
     FQN[split='/']: ID('/'ID)*;  // separator split='/'
 
@@ -220,7 +221,7 @@ Val:
 Instance:
     'instance' name=ID (':' type=[Struct])?;
 Reference:
-    'reference' ref=[Val|FQN|+p:instances.~type.vals.(~type.vals)*];
+    'reference' ref=[Val:FQN|+p:instances.~type.vals.(~type.vals)*];
 FQN: ID ('.' ID)*;
 ```
 

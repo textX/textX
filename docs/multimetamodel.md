@@ -251,7 +251,7 @@ Model:
 ;
 
 User:
-    "user" name=ID "uses" instance=[Instance|FQN] // Instance, FQN from other grammar
+    "user" name=ID "uses" instance=[Instance:FQN] // Instance, FQN from other grammar
 ;
 
 Import: 'import' importURI=STRING;

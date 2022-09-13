@@ -4,7 +4,7 @@ StateMachine:
     'end'
 
     ('resetEvents'
-        resetEvents+=[Event|SMID]
+        resetEvents+=[Event:SMID]
     'end')?
 
     'commands'
@@ -34,7 +34,7 @@ State:
 ;
 
 Transition:
-    event=[Event|SMID] '=>' to_state=[State]
+    event=[Event:SMID] '=>' to_state=[State]
 ;
 
 SMID:

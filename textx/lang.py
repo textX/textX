@@ -84,7 +84,8 @@ def assignment_rhs():       return [simple_match, reference], Optional(repeat_mo
 # References
 def reference():            return [rule_ref, obj_ref]
 def rule_ref():             return ident
-def obj_ref():              return '[', class_name, Optional('|', obj_ref_rule, Optional('|', rrel_expression)), ']'
+# TODO: Remove "|" optional sep in version 4.0.
+def obj_ref():              return '[', class_name, Optional([':', '|'], obj_ref_rule, Optional('|', rrel_expression)), ']'
 
 def rule_name():            return ident
 def obj_ref_rule():         return ident
@@ -922,9 +923,9 @@ class TextXVisitor(RRELVisitor):
                 'Primitive type instances can not be referenced at {}.'
                 .format((line, col)), line, col)
         if len(children) > 1:
-            rule_name = children[1]
-            if len(children) > 2:
-                rrel_tree = children[2]
+            rule_name = children[2]
+            if len(children) > 3:
+                rrel_tree = children[3]
         else:
             # Default rule for matching obj cross-refs
             rule_name = 'ID'

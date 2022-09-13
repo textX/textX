@@ -19,7 +19,7 @@ def test_issue103_python_like_import():
                 vars*=Var
         ;
         Class: 'class' name=ID '{' '}' ';';
-        Var: 'var' name=ID '=' 'new' theclass=[Class|FQN] '(' ')';
+        Var: 'var' name=ID '=' 'new' theclass=[Class:FQN] '(' ')';
         FQN: ID+['.'];
         Import: 'import' importURI=STRING;
         Comment: /#.*$/;
@@ -67,9 +67,9 @@ def test_issue103_imported_namedspaces():
         ;
         Package: PackageDef|PackageRef;
         PackageDef: "package" name=ID "{" packages*=Package classes*=Class "}";
-        PackageRef: "using" ref=[Package|FQN] "as" name=ID;
+        PackageRef: "using" ref=[Package:FQN] "as" name=ID;
         Class: 'class' name=ID '{' '}' ';';
-        Var: 'var' name=ID '=' 'new' theclass=[Class|FQN] '(' ')';
+        Var: 'var' name=ID '=' 'new' theclass=[Class:FQN] '(' ')';
         FQN: ID+['.'];
         Import: 'import' importURI=STRING;
         Comment: /#.*$/;

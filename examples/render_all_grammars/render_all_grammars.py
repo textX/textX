@@ -16,6 +16,9 @@ def main(path=None, debug=False, reportfilename=None):
     print("render_all_grammars.py - example program")
     matches = []
     for root, dirnames, filenames in os.walk(path):
+        if 'textx_textx' in root:
+            # skip semantically invalid grammars
+            continue
         for filename in fnmatch.filter(filenames, '*.tx'):
             matches.append((root, filename))
 

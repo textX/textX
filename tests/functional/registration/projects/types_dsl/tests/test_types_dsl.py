@@ -22,8 +22,8 @@ def test_types_dsl(clear_all):
     model = mmT.model_from_file(os.path.join(current_dir,
                                              'models',
                                              'types.etype'))
-    assert(model is not None)
-    assert(len(model.types) == 2)
+    assert model is not None
+    assert len(model.types) == 2
 
 
 def test_types_dsl_invalid(clear_all):

@@ -19,7 +19,7 @@ Package:
 // A component defines something with in/out ports
 // A component can inherit form another component --> lookup with inheritance
 Component:
-    'component' name=ID ('extends' extends=[Component|FQN])? '{'
+    'component' name=ID ('extends' extends=[Component:FQN])? '{'
         slots*=Slot
     '}'
 ;
@@ -36,7 +36,7 @@ SlotOut:
 // An instance of a component can be connected to other instances
 // always with portout --> portin
 Instance:
-    'instance' name=ID ':' component=[Component|FQN] ;
+    'instance' name=ID ':' component=[Component:FQN] ;
 
 // A connection connects two instances
 // --> lookup of ports to corresponding component belonging to the instance
@@ -44,9 +44,9 @@ Instance:
 //   resolved later...
 Connection:
     'connect'
-      from_port=[SlotOut|ID] 'from' from_inst=[Instance|ID]
+      from_port=[SlotOut:ID] 'from' from_inst=[Instance:ID]
     '->'
-      to_port=[SlotIn|ID] 'from' to_inst=[Instance|ID]
+      to_port=[SlotIn:ID] 'from' to_inst=[Instance:ID]
 ;
 
 FQN: ID+['.'];

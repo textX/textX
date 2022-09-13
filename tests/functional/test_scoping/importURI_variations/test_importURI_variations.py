@@ -19,7 +19,7 @@ Package:
 ;
 
 Object:
-    'object' name=ID text=STRING ('ref' ref=[Object|FQN])? ';'?
+    'object' name=ID text=STRING ('ref' ref=[Object:FQN])? ';'?
 ;
 
 FQN: ID+['.'];

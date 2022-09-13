@@ -6,7 +6,7 @@ Model:
 ;
 
 User:
-    "user" name=ID "uses" instance=[Instance|FQN]
+    "user" name=ID "uses" instance=[Instance:FQN]
 ;
 
 Import: 'import' importURI=STRING;

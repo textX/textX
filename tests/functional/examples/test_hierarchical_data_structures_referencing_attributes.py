@@ -173,7 +173,7 @@ def test_referencing_attributes_with_rrel_all_in_one():
         Instance:
             'instance' name=ID (':' type=[Struct])?;
         Reference:
-            'reference' ref=[Val|FQN|instances.~type.vals.(~type.vals)*];
+            'reference' ref=[Val:FQN|instances.~type.vals.(~type.vals)*];
         FQN: ID ('.' ID)*;
         ''')
     m = mm.model_from_str(model_text)
@@ -235,7 +235,7 @@ def test_referencing_attributes_with_rrel_all_in_one_splitstring():
             'instance' name=ID (':' type=[Struct])?;
         Reference:
             'reference' instance=[Instance]
-            '.' ref=[Val|FQN|.~instance.~type.vals.(~type.vals)*];
+            '.' ref=[Val:FQN|.~instance.~type.vals.(~type.vals)*];
         FQN[split='->']: ID ('->' ID)*;
         ''')
     m = mm.model_from_str('''
@@ -287,7 +287,7 @@ def test_referencing_attributes_with_rrel_and_full_path_access():
         Instance:
             'instance' name=ID (':' type=[Struct])?;
         Reference:
-            'reference' ref=[Val|FQN|+p:instances.~type.vals.(~type.vals)*];
+            'reference' ref=[Val:FQN|+p:instances.~type.vals.(~type.vals)*];
         FQN: ID ('.' ID)*;
         ''')
     m = mm.model_from_str(model_text)

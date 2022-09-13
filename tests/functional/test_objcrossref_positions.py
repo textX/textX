@@ -14,7 +14,7 @@ Package:
         '}'
 ;
 Object:
-    'object' name=ID ('ref' ref=[Object|FQN])?
+    'object' name=ID ('ref' ref=[Object:FQN])?
 ;
 FQN: ID+['.'];
 FQNI: ID+['.']('.*')?;

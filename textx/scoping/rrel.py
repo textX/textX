@@ -314,7 +314,7 @@ class RRELZeroOrMore(RRELBase):
             path_element = RRELBrackets(RRELSequence(
                 [RRELPath([path_element])]))
         self.path_element = path_element
-        assert(isinstance(self.path_element, RRELBrackets))
+        assert isinstance(self.path_element, RRELBrackets)
 
     def start_locally(self):
         return self.path_element.start_locally()
@@ -457,7 +457,7 @@ class RRELVisitor(PTNodeVisitor):
             return RRELNavigation(children[0], True, None)
 
     def visit_rrel_brackets(self, node, children):
-        assert(len(children) == 1)  # a path
+        assert len(children) == 1  # a path
         return RRELBrackets(children[0])
 
     def visit_rrel_dots(self, node, children):
@@ -473,7 +473,7 @@ class RRELVisitor(PTNodeVisitor):
         return RRELSequence(children)
 
     def visit_rrel_path_element(self, node, children):
-        assert(len(children) == 1)
+        assert len(children) == 1
         return children[0]
 
     def visit_rrel_expression(self, node, children):

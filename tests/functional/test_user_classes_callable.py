@@ -10,10 +10,10 @@ MyModel: 'model' name=ID
   receiver+=Receiver;
 
 Sender:
-  'outgoing' name=ID 'over' connection=[Connection|ID];
+  'outgoing' name=ID 'over' connection=[Connection:ID];
 
 Receiver:
- 'incoming' name=ID 'over' connection=[Connection|ID];
+ 'incoming' name=ID 'over' connection=[Connection:ID];
 
 Connection:
   'connection' name=ID
@@ -29,10 +29,10 @@ MyModel: 'model' name=ID
   receiver+=Receiver;
 
 Sender:
-  'outgoing' name=ID 'over' connection=[Connection|ID];
+  'outgoing' name=ID 'over' connection=[Connection:ID];
 
 Receiver:
- 'incoming' name=ID 'over' connection=[Connection|ID];
+ 'incoming' name=ID 'over' connection=[Connection:ID];
 
 // fix/works (no unused user classes):
 ConnectionHandler: Sender|Receiver;

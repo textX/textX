@@ -513,7 +513,7 @@ assignments. There are two types of rule references:
     that, you can use the following syntax:
 
         ScreenInstance:
-          'screen' type=[ScreenType|WORD]
+          'screen' type=[ScreenType:WORD]
         ;
 
     Here, instead of `ID` a `WORD` rule is used to match the object's identifier.

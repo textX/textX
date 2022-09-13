@@ -1,7 +1,7 @@
 Model: includes*=Include r*=R a*=A r*=R;
 A: 'A' name=ID '{' ( a=A | p1=P1 )* '}'; 
-R: 'R' a+=[A|FQN|+pm:a*][','];
-P1: 'P1' a+=[A|FQN|+pm:..(..)*.a*][',']; // many times ".." and 1x "A"
+R: 'R' a+=[A:FQN|+pm:a*][','];
+P1: 'P1' a+=[A:FQN|+pm:..(..)*.a*][',']; // many times ".." and 1x "A"
 FQN: ID ('.' ID)*;
 Include: '#include' importURI=STRING;
 Comment: /\/\/.*?$/;

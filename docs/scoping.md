@@ -6,7 +6,7 @@
 Assume a grammar with references as in the following example (grammar snippet).
 
     MyAttribute:
-            ref=[MyInterface|FQN] name=ID ';'
+            ref=[MyInterface:FQN] name=ID ';'
     ;
 
 The scope provider is responsible for the reference resolution of such a
@@ -44,19 +44,19 @@ Example (from [tests/test_scoping/test_local_scope.py](https://github.com/textX/
 ```nohighlight
 # Grammar snippet (Components.tx)
 Component:
-    'component' name=ID ('extends' extends+=[Component|FQN][','])? '{'
+    'component' name=ID ('extends' extends+=[Component:FQN][','])? '{'
         slots*=Slot
     '}'
 ;
 Slot: SlotIn|SlotOut;
 # ...
 Instance:
-    'instance' name=ID ':' component=[Component|FQN] ;
+    'instance' name=ID ':' component=[Component:FQN] ;
 Connection:
     'connect'
-      from_inst=[Instance|ID] '.' from_port=[SlotOut|ID]
+      from_inst=[Instance:ID] '.' from_port=[SlotOut:ID]
     'to'
-      to_inst=[Instance|ID] '.' to_port=[SlotIn|ID]
+      to_inst=[Instance:ID] '.' to_port=[SlotIn:ID]
 ;
 ```
 
@@ -250,7 +250,7 @@ Entity: 'entity' name=ID '{'
               properties*=Property
         '}'
 ;
-Property: name=ID ':' type=[t.BaseType|ID|+m:types];
+Property: name=ID ':' type=[t.BaseType:ID|+m:types];
 '''
 
 # Get `types` language meta-model

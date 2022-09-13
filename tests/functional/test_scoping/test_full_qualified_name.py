@@ -26,7 +26,7 @@ Class:
 ;
 
 Attribute:
-        'attr' ref=[Class|FQN] name=ID ';'
+        'attr' ref=[Class:FQN] name=ID ';'
 ;
 
 Comment: /#.*/;
