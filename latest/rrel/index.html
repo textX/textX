@@ -218,11 +218,12 @@ not handled by textX.</p>
 <p>A RREL expression is written as a third part of the textX <a href="../grammar/#references">link rule
 reference</a>.</p>
 <p>For example:</p>
-<pre><code>Attribute: 'attr' ref=[Class|FQN|^packages*.classes] name=ID ';';
+<pre><code>Attribute: 'attr' ref=[Class:FQN|^packages*.classes] name=ID ';';
 </code></pre>
 <p>This grammar rule has a <code>ref</code> attribute which is a reference to the <code>Class</code>
 rule. This is a link rule reference as it is enclosed inside of square brackets.
-It consists of three parts separated by <code>|</code>. The first part defines the target
+It consists of three parts where first two parts are separated by <code>:</code> while the
+second and the third are separated by <code>|</code>. The first part defines the target
 object type or its grammar rule. The second part defines what will parser match
 at the place of the reference. It would be a fully qualified name of the target
 object (thus <code>FQN</code>). The third part of the reference is RREL expression
@@ -281,7 +282,7 @@ indicate a fallback to some <code>types_collection</code> entry with the name
 resolve such references, e.g., by adding a builtin model with that
 information (see <a href="https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_rrel.py">tests/test_scoping/test_rrel.py,
 test_rrel_with_fixed_string_in_navigation</a>):</p>
-<pre><code>  Using: 'using' name=ID "=" type=[Type|ID|+m:
+<pre><code>  Using: 'using' name=ID "=" type=[Type:ID|+m:
         ~active_types.types,                // "regular lookup"
         'builtin'~types_collection.types    // "default lookup" - name "builtin" 
                                             // hard coded in grammar
@@ -338,7 +339,7 @@ following example (used in rule <code>Attribute</code> to reference a model clas
 <pre><code>Model:     packages*=Package;
 Package:   'package' name=ID '{' classes*=Class '}';
 Class:     'class' name=ID '{' attributes*=Attribute '}';
-Attribute: 'attr' ref=[Class|FQN|^packages*.classes] name=ID ';';
+Attribute: 'attr' ref=[Class:FQN|^packages*.classes] name=ID ';';
 Comment:   /#.*/;
 FQN:       ID('.'ID)*;
 </code></pre>
@@ -369,7 +370,7 @@ names, for which the given separator makes sense):</p>
 <pre><code>Model:          packages*=Package;
 Package:        'package' name=ID '{' classes*=Class '}';
 Class:          'class' name=ID '{' attributes*=Attribute '}';
-Attribute:      'attr' ref=[Class|FQN|^packages*.classes] name=ID ';';
+Attribute:      'attr' ref=[Class:FQN|^packages*.classes] name=ID ';';
 Comment:        /#.*/;
 FQN[split='/']: ID('/'ID)*;  // separator split='/'
 </code></pre>
@@ -406,7 +407,7 @@ Val:
 Instance:
     'instance' name=ID (':' type=[Struct])?;
 Reference:
-    'reference' ref=[Val|FQN|+p:instances.~type.vals.(~type.vals)*];
+    'reference' ref=[Val:FQN|+p:instances.~type.vals.(~type.vals)*];
 FQN: ID ('.' ID)*;
 </code></pre>
 <p>The <strong>use case</strong> for that feature is that you sometimes need
