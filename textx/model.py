@@ -5,7 +5,6 @@ Model construction from parse trees and the model API.
 import sys
 import codecs
 import traceback
-from future.utils import raise_from
 from collections import OrderedDict
 from arpeggio import Parser, Sequence, NoMatch, EOF, Terminal
 from textx.exceptions import TextXError, TextXSyntaxError, TextXSemanticError
@@ -16,6 +15,7 @@ from textx.lang import PRIMITIVE_PYTHON_TYPES
 from textx.scoping import Postponed, remove_models_from_repositories, \
     get_included_models
 from textx.scoping.providers import PlainName as DefaultScopeProvider
+from textx.six import raise_from
 
 if sys.version < '3':
     text = unicode  # noqa

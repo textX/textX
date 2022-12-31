@@ -24,10 +24,12 @@ please take a look at related PRs and issues and see if the change affects you.
 
 - Changed separator in obj. rule refs from `|` to `:`. Old separator
   will still be allowed until version 4.0. ([#385], [#384])
+- Removed the dependency on `future` package ([#388])
 
 [#385]: https://github.com/textX/textX/pull/385
 [#384]: https://github.com/textX/textX/issues/384
 [#379]: https://github.com/textX/textX/pull/379
+[#388]: https://github.com/textX/textX/pull/388
 
 
 ## [3.0.0] (released: 2022-03-20)
