@@ -111,7 +111,7 @@ Ready to contribute? Here's how to set up `textX` for local development.
     To verify that everything is setup properly run tests:
     
         $ flake8
-        $ py.test tests/functional/
+        $ pytest tests/functional/
 
 4. Create a branch for local development::
 
@@ -123,8 +123,8 @@ Ready to contribute? Here's how to set up `textX` for local development.
    tests, and have a look at the coverage:
    
         $ flake8
-        $ py.test tests/functional/
-        $ coverage run --source textx -m py.test tests/functional
+        $ pytest tests/functional/
+        $ coverage run --source textx -m pytest tests/functional
         $ coverage report
         
    You can run all this at once with provided script `runtests.sh`
@@ -161,13 +161,13 @@ Before you submit a pull request, check that it meets these guidelines:
 To run a subset of tests:
 
 ```
-$ py.test tests/functional/mytest.py
+$ pytest tests/functional/mytest.py
 ```
 
 or a single test:
 
 ```
-$ py.test tests/functional/mytest.py::some_test
+$ pytest tests/functional/mytest.py::some_test
 ```
 
 ## Credit
