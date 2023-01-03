@@ -20,18 +20,19 @@ please take a look at related PRs and issues and see if the change affects you.
 - Fixed RREL lookup in case of multi-meta models (some special cases were not
   handled correctly; [#379]).
 - Fixed test suite invocation to use `pytest` over `py.test` that stopped
-  working in pytest-7.2.0. ([#389])
+  working in pytest-7.2.0. ([#389]). Thanks mgorny@GitHub.
 
 ### Changed
 
 - Changed separator in obj. rule refs from `|` to `:`. Old separator
   will still be allowed until version 4.0. ([#385], [#384])
-- Removed the dependency on `future` package ([#388])
+- Removed the dependency on `future` package ([#388]). Thanks mgorny@GitHub.
 
+[#389]: https://github.com/textX/textX/pull/389
+[#388]: https://github.com/textX/textX/pull/388
 [#385]: https://github.com/textX/textX/pull/385
 [#384]: https://github.com/textX/textX/issues/384
 [#379]: https://github.com/textX/textX/pull/379
-[#388]: https://github.com/textX/textX/pull/388
 
 
 ## [3.0.0] (released: 2022-03-20)
