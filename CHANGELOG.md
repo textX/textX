@@ -19,6 +19,8 @@ please take a look at related PRs and issues and see if the change affects you.
 
 - Fixed RREL lookup in case of multi-meta models (some special cases were not
   handled correctly; [#379]).
+- Fixed test suite invocation to use `pytest` over `py.test` that stopped
+  working in pytest-7.2.0. ([#389])
 
 ### Changed
 
