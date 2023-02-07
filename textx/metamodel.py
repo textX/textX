@@ -9,7 +9,6 @@ import warnings
 from os.path import join, abspath, dirname
 from collections import OrderedDict
 from arpeggio import DebugPrinter
-from textx.six import add_metaclass
 from textx.lang import language_from_str, python_type, BASE_TYPE_NAMES, ID, \
     BOOL, INT, FLOAT, STRICTFLOAT, STRING, NUMBER, BASETYPE, OBJECT
 from textx.const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, \
@@ -18,7 +17,6 @@ from textx.exceptions import TextXError
 from .registration import LanguageDesc, metamodel_for_language
 from .model_params import ModelParams, ModelParamDefinitions
 from textx.scoping.rrel import create_rrel_scope_provider
-from textx.six import string_types
 
 if sys.version < '3':
     text = unicode  # noqa
@@ -276,7 +274,7 @@ class TextXMetaModel(DebugPrinter):
     def register_scope_providers(self, sp):
         self.scope_providers = sp
         for k, v in self.scope_providers.items():
-            if isinstance(v, string_types):
+            if isinstance(v, str):
                 self.scope_providers[k] = create_rrel_scope_provider(v)
 
     def _namespace_for_file_name(self, file_name):
@@ -364,8 +362,7 @@ class TextXMetaModel(DebugPrinter):
                 return '<textx:{} class at {}>'.format(cls._tx_fqn,
                                                        id(cls))
 
-        @add_metaclass(TextXMetaClass)
-        class TextXClass(object):
+        class TextXClass(object, metaclass=TextXMetaClass):
             """
             Dynamically created class. Each textX rule will result in
             creating one Python class with the type name of the rule.

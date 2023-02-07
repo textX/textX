@@ -15,7 +15,6 @@ from textx.lang import PRIMITIVE_PYTHON_TYPES
 from textx.scoping import Postponed, remove_models_from_repositories, \
     get_included_models
 from textx.scoping.providers import PlainName as DefaultScopeProvider
-from textx.six import raise_from
 
 if sys.version < '3':
     text = unicode  # noqa
@@ -215,9 +214,9 @@ def textxerror_wrap(obj_processor):
                 raise
             else:
                 if hasattr(obj, '_tx_position') and hasattr(obj, '_tx_filename'):
-                    raise_from(TextXError(str(e), **get_location(obj)), e)
+                    raise TextXError(str(e), **get_location(obj)) from e
                 else:
-                    raise_from(TextXError(str(e)), e)
+                    raise TextXError(str(e)) from e
     return wrapper
 
 

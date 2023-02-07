@@ -3,7 +3,6 @@ from arpeggio import PTNodeVisitor, visit_parse_tree
 from arpeggio import Optional, EOF
 from arpeggio import ZeroOrMore as ArpeggioZeroOrMore
 from arpeggio import RegExMatch as _
-from textx.six import string_types
 
 
 def rrel_id():
@@ -551,12 +550,12 @@ def find_object_with_path(obj, lookup_list, rrel_tree, obj_cls=None,
     from textx import textx_isinstance
     from textx.scoping import Postponed
 
-    if isinstance(rrel_tree, string_types):
+    if isinstance(rrel_tree, str):
         rrel_tree = parse(rrel_tree)
     assert isinstance(rrel_tree, RRELExpression)
     rrel_tree = rrel_tree.seq
     assert isinstance(rrel_tree, RRELSequence)
-    if isinstance(lookup_list, string_types):
+    if isinstance(lookup_list, str):
         lookup_list = lookup_list.split(split_string)
         lookup_list = list(filter(lambda x: len(x) > 0, lookup_list))
     visited = [set() for _ in range(len(lookup_list) + 1)]
@@ -693,7 +692,7 @@ def create_rrel_scope_provider(rrel_tree_or_string, split_string=None, **kwargs)
             # feature of the `ImportURI` implementation):
             return self.scope_provider(obj, attr, obj_ref)
 
-    if isinstance(rrel_tree_or_string, string_types):
+    if isinstance(rrel_tree_or_string, str):
         rrel_tree_or_string = parse(rrel_tree_or_string)
 
     if rrel_tree_or_string.importURI:

@@ -15,7 +15,6 @@ from arpeggio import StrMatch, Optional, ZeroOrMore, OneOrMore, Sequence,\
 from arpeggio.export import PMDOTExporter
 from arpeggio import RegExMatch as _
 from textx.scoping.rrel import rrel_expression, RRELVisitor
-from textx.six import string_types
 
 from .exceptions import TextXError, TextXSyntaxError, TextXSemanticError
 from .const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, \
@@ -608,7 +607,7 @@ class TextXVisitor(RRELVisitor):
                     .format(name,
                             self.grammar_parser.pos_to_linecol(node.position)))
 
-            if name == 'split' and not isinstance(value, string_types):
+            if name == 'split' and not isinstance(value, str):
                 raise TextXError("param split requires a string parameter")
             if name == 'split' and len(value)==0:
                 raise TextXError("param split requires a non-empty string parameter")
