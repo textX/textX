@@ -16,6 +16,15 @@ please take a look at related PRs and issues and see if the change affects you.
 ## [Unreleased]
 
 
+## [3.1.1] (released: 2023-02-10)
+
+### Fixed
+
+- Source distribution packaging issue ([392]). Thanks yurivict@GitHub.
+
+[#392]: https://github.com/textX/textX/issues/392
+
+
 ## [3.1.0] (released: 2023-02-08)
 
 ### Fixed
@@ -665,7 +674,8 @@ please take a look at related PRs and issues and see if the change affects you.
 [#92]: https://github.com/textX/textX/pull/92
 [#40]: https://github.com/textX/textX/issues/40
 
-[Unreleased]: https://github.com/textX/textX/compare/3.1.0...HEAD
+[Unreleased]: https://github.com/textX/textX/compare/3.1.1...HEAD
+[3.1.1]: https://github.com/textX/textX/compare/3.1.0...3.1.1
 [3.1.0]: https://github.com/textX/textX/compare/3.0.0...3.1.0
 [3.0.0]: https://github.com/textX/textX/compare/2.3.0...3.0.0
 [2.3.0]: https://github.com/textX/textX/compare/v2.2.0...2.3.0
