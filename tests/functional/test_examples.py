@@ -11,7 +11,7 @@ import pytest  # noqa
 import os
 import sys
 import glob
-import imp
+import importlib
 
 
 def test_examples():
@@ -24,15 +24,21 @@ def test_examples():
                 sorted(glob.glob(examples_pat))
                 if not any(f.endswith(a)
                            for a in ['__init__.py', 'render_all_grammars.py'])]
+
+    example_modules = []
     for e in examples:
         print("Running example:", e)
         example_dir = os.path.dirname(e)
         sys.path.insert(0, example_dir)
+
         (module_name, _) = os.path.splitext(os.path.basename(e))
-        (module_file, module_path, desc) = \
-            imp.find_module(module_name, [example_dir])
+        mod = importlib.import_module(module_name)
 
-        m = imp.load_module(module_name, module_file, module_path, desc)
+        if hasattr(mod, 'main'):
+            mod.main(debug=False)
+            example_modules.append(mod)
 
-        if hasattr(m, 'main'):
-            m.main(debug=False)
+    print('Tested examples:')
+    for e in example_modules:
+        print(e.__file__)
+    assert len(example_modules) == 12
