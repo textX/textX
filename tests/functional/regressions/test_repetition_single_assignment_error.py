@@ -25,18 +25,17 @@ def test_repetition_single_assignment_error():
     assert model.many_a[0].c == ["c"]
 
     grammar = r"""
-    Rep: many_a*=A;
-    A: ( ('b' '=' b=BOOL) |
-        ('c' '=' c=C)
-      )*;
+    Rep: a=A;
+    A: (('b' '=' b=BOOL) |
+       ('c' '=' c=C))*;
     B: "b";
     C: "c";
     """
     mm = metamodel_from_str(grammar)
-    model = mm.model_from_str(" c=c b=true ")
+    model = mm.model_from_str(" c=c b=true c=c b=false")
 
-    assert model.many_a[0].b == [True]
-    assert model.many_a[0].c == ["c"]
+    assert model.a.b == [True, False]
+    assert model.a.c == ["c", "c"]
 
 
 def test_repetition_bool_assignment_error():

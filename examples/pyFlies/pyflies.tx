@@ -144,7 +144,7 @@ TextType:
 ;
 
 WORD:
-  /[-\w]*\b/
+  /[-\w]+\b/
 ;
 
 Sound:
