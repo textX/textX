@@ -1,19 +1,19 @@
-Python 3.6.1
-Filename: test_memory_nomemoization.py
+Python 3.10.10
+Filename: /home/igor/repos/textX/textX/tests/perf/test_memory_nomemoization.py
 
-Line #    Mem usage    Increment   Line Contents
-================================================
-     6     14.2 MiB      0.0 MiB   @profile
-     7                             def nomemoization():
-     8     14.5 MiB      0.3 MiB       mm = metamodel_from_file('rhapsody.tx')
-     9                             
-    10                                 # Small file
-    11     14.5 MiB      0.0 MiB       this_folder = dirname(__file__)
-    12     14.5 MiB      0.0 MiB       model = mm.model_from_file(join(this_folder,
-    13     66.2 MiB     51.7 MiB                                       'test_inputs', 'LightSwitch.rpy'))
-    14                             
-    15                                 # Large file
-    16     66.2 MiB      0.0 MiB       model2 = mm.model_from_file(join(this_folder,
-    17    152.4 MiB     86.2 MiB                                        'test_inputs', 'LightSwitchDouble.rpy'))
+Line #    Mem usage    Increment  Occurrences   Line Contents
+=============================================================
+     6     28.0 MiB     28.0 MiB           1   @profile
+     7                                         def nomemoization():
+     8     28.2 MiB      0.2 MiB           1       mm = metamodel_from_file('rhapsody.tx')
+     9                                         
+    10                                             # Small file
+    11     28.2 MiB      0.0 MiB           1       this_folder = dirname(__file__)
+    12     81.5 MiB     53.2 MiB           2       model = mm.model_from_file(join(this_folder,
+    13     28.2 MiB      0.0 MiB           1                                       'test_inputs', 'LightSwitch.rpy'))
+    14                                         
+    15                                             # Large file
+    16    190.2 MiB    108.8 MiB           2       model2 = mm.model_from_file(join(this_folder,
+    17     81.5 MiB      0.0 MiB           1                                        'test_inputs', 'LightSwitchDouble.rpy'))
 
 
