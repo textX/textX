@@ -5,15 +5,15 @@ Line #    Mem usage    Increment  Occurrences   Line Contents
 =============================================================
      6     28.0 MiB     28.0 MiB           1   @profile
      7                                         def nomemoization():
-     8     28.2 MiB      0.2 MiB           1       mm = metamodel_from_file('rhapsody.tx')
+     8     29.9 MiB      1.9 MiB           1       mm = metamodel_from_file('rhapsody.tx')
      9                                         
     10                                             # Small file
-    11     28.2 MiB      0.0 MiB           1       this_folder = dirname(__file__)
-    12     81.5 MiB     53.2 MiB           2       model = mm.model_from_file(join(this_folder,
-    13     28.2 MiB      0.0 MiB           1                                       'test_inputs', 'LightSwitch.rpy'))
+    11     29.9 MiB      0.0 MiB           1       this_folder = dirname(__file__)
+    12    155.6 MiB    125.7 MiB           2       model = mm.model_from_file(join(this_folder,
+    13     29.9 MiB      0.0 MiB           1                                       'test_inputs', 'LightSwitch.rpy'))
     14                                         
     15                                             # Large file
-    16    190.2 MiB    108.8 MiB           2       model2 = mm.model_from_file(join(this_folder,
-    17     81.5 MiB      0.0 MiB           1                                        'test_inputs', 'LightSwitchDouble.rpy'))
+    16    405.8 MiB    250.2 MiB           2       model2 = mm.model_from_file(join(this_folder,
+    17    155.6 MiB      0.0 MiB           1                                        'test_inputs', 'LightSwitchDouble.rpy'))
 
 

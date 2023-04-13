@@ -4,64 +4,64 @@ Python 3.10.10
 
 1. Small file, no memoization. File: LightSwitch.rpy
 File size: 672.24 KB
-Elapsed time: 2.49 sec
-Speed = 270.45 KB/sec
+Elapsed time: 5.84 sec
+Speed = 115.11 KB/sec
 
 1. Large file, no memoization. File: LightSwitchDouble.rpy
 File size: 1344.08 KB
-Elapsed time: 5.45 sec
-Speed = 246.54 KB/sec
+Elapsed time: 13.75 sec
+Speed = 97.73 KB/sec
 
 2. Small file, no memoization. File: LightSwitch.rpy
 File size: 672.24 KB
-Elapsed time: 3.19 sec
-Speed = 210.46 KB/sec
+Elapsed time: 7.80 sec
+Speed = 86.22 KB/sec
 
 2. Large file, no memoization. File: LightSwitchDouble.rpy
 File size: 1344.08 KB
-Elapsed time: 5.65 sec
-Speed = 238.09 KB/sec
+Elapsed time: 14.10 sec
+Speed = 95.29 KB/sec
 
 3. Small file, no memoization. File: LightSwitch.rpy
 File size: 672.24 KB
-Elapsed time: 3.26 sec
-Speed = 206.25 KB/sec
+Elapsed time: 7.69 sec
+Speed = 87.38 KB/sec
 
 3. Large file, no memoization. File: LightSwitchDouble.rpy
 File size: 1344.08 KB
-Elapsed time: 5.69 sec
-Speed = 236.40 KB/sec
+Elapsed time: 14.32 sec
+Speed = 93.83 KB/sec
 
 
 *** Memoization
 
 1. Small file, with memoization. File: LightSwitch.rpy
 File size: 672.24 KB
-Elapsed time: 3.88 sec
-Speed = 173.17 KB/sec
+Elapsed time: 8.78 sec
+Speed = 76.56 KB/sec
 
 1. Large file, with memoization. File: LightSwitchDouble.rpy
 File size: 1344.08 KB
-Elapsed time: 7.12 sec
-Speed = 188.88 KB/sec
+Elapsed time: 15.24 sec
+Speed = 88.19 KB/sec
 
 2. Small file, with memoization. File: LightSwitch.rpy
 File size: 672.24 KB
-Elapsed time: 4.05 sec
-Speed = 166.08 KB/sec
+Elapsed time: 8.30 sec
+Speed = 80.98 KB/sec
 
 2. Large file, with memoization. File: LightSwitchDouble.rpy
 File size: 1344.08 KB
-Elapsed time: 6.98 sec
-Speed = 192.61 KB/sec
+Elapsed time: 16.53 sec
+Speed = 81.29 KB/sec
 
 3. Small file, with memoization. File: LightSwitch.rpy
 File size: 672.24 KB
-Elapsed time: 4.12 sec
-Speed = 163.26 KB/sec
+Elapsed time: 9.17 sec
+Speed = 73.31 KB/sec
 
 3. Large file, with memoization. File: LightSwitchDouble.rpy
 File size: 1344.08 KB
-Elapsed time: 7.06 sec
-Speed = 190.29 KB/sec
+Elapsed time: 16.39 sec
+Speed = 82.00 KB/sec
 
