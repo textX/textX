@@ -15,6 +15,13 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ## [Unreleased]
 
+### Fixed
+
+- Removed word boundary from INT rule regex. Thanks @NevenaAl for reporting the
+  issue and providing the test ([401]).
+
+ [#401]: https://github.com/textX/textX/pull/401
+
 
 ## [3.1.1] (released: 2023-02-10)
 
@@ -39,7 +46,7 @@ please take a look at related PRs and issues and see if the change affects you.
 - Changed separator in obj. rule refs from `|` to `:`. Old separator
   will still be allowed until version 4.0. ([#385], [#384])
 - Removed the dependency on `future` package ([#388]). Thanks mgorny@GitHub.
-- Removed vendored `six` library. We don't need 2.x support anymore. Thanks 
+- Removed vendored `six` library. We don't need 2.x support anymore. Thanks
   davidchall@GitHub for reporting the issue ([#390]).
 
 [#390]: https://github.com/textX/textX/issues/390
@@ -54,7 +61,7 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ### Added
 
-- Added RREL-'fixed name'-extension, allowing to follow model elements 
+- Added RREL-'fixed name'-extension, allowing to follow model elements
   given a fixed name (e.g. an object defined in a builtin model).
   Details described in rrel.md ([#364]).
 - Added ability to access the full path of named objects traversed while
@@ -130,7 +137,7 @@ please take a look at related PRs and issues and see if the change affects you.
   - Fixed bug, where user classes not used in the grammar caused exceptions
     ([#270]): now, when passing a list of user classes, you need to use them in
     your grammar. You can alternatively also pass a callable (see metamodel.md;
-    [#273]). Also, using base classes for rules from imported grammars in 
+    [#273]). Also, using base classes for rules from imported grammars in
     conjunction with user classes is not allowed and results in an exception.
   - Fixed bug in `export.py` concerning html escaping in the dot export of a
     textx meta-model ([#276]).
@@ -164,7 +171,7 @@ please take a look at related PRs and issues and see if the change affects you.
   - Added the ability to specify extra parameters during `model_from_file` or
     `model_from_str` and to define which extra parameters exist in the
     meta-model ([#243]).
-  
+
 ### Fixed
 
   - Fixed several instances of invalid truthiness checking. Thanks
@@ -174,7 +181,7 @@ please take a look at related PRs and issues and see if the change affects you.
   - Fixed return value of textx generate and check commands: we return a failure
     on error now ([#222])
   - Fixed type checking for references to builtin elements ([#218])
-  
+
 ### Changed
 
   - User classes can now be immutable (e.g. `attr.frozen`) or can use
@@ -203,7 +210,7 @@ please take a look at related PRs and issues and see if the change affects you.
   - Changed function name `textx.scoping.get_all_models_including_attached_models`
     to `textx.scoping.get_included_models` (marked old function
     as deprecated) ([#197]).
-  - Delete all models touched while loading a model, when an error occurs 
+  - Delete all models touched while loading a model, when an error occurs
     while loading in all repositories (strong exception safety guarantee) ([#200]).
 
 
@@ -258,7 +265,7 @@ please take a look at related PRs and issues and see if the change affects you.
   - Started using _[Keep a Changelog][keepachangelog]_ ([#174])
   - Started using _[Semantic Versioning][semver]_ ([#174])
   - Dropped support for Python 3.3
-     
+
 ### Fixed
 
   - White-spaces in string matches were erroneously stripped ([#188])
@@ -286,11 +293,11 @@ please take a look at related PRs and issues and see if the change affects you.
        docs](http://textx.github.io/textX/development/grammar/#matches)
        for usage.
    - https://github.com/textX/textX/pull/69
-     - Added search path feature (issue #66) - search path support for model 
+     - Added search path feature (issue #66) - search path support for model
        files (importURI scope providers; see docs/scoping.md).
    - https://github.com/textX/textX/pull/77
      - New multi meta model support for references-only for better meta model
-       modularity (referencing models without having access to the grammar, 
+       modularity (referencing models without having access to the grammar,
        see docs/multimetamodel.md).
    - https://github.com/textX/textX/pull/79
      - Fixing obj_processors calling.
@@ -363,9 +370,9 @@ please take a look at related PRs and issues and see if the change affects you.
     - The metamodel clones the parser when parsing a model file. The meta model
       holds one parser, which is clone for every model to be parsed.
 
-      Backward incompatible change: The metamodel.parser is only a blueprint 
+      Backward incompatible change: The metamodel.parser is only a blueprint
       and cannot be used to, e.g., determine model element positions in the
-      file. Use your_model._tx_parser instead, e.g., 
+      file. Use your_model._tx_parser instead, e.g.,
       textx.get_model(obj)._tx_parser).
 
     - TextXModelParser now has a clone method.
@@ -385,7 +392,7 @@ please take a look at related PRs and issues and see if the change affects you.
     object. See [the
     docs](http://textx.github.io/textX/metamodel/#object-processors). In
     order to migrate your match filters just register them as object processors.
-    
+
   - Backward incompatible change: all methods of `textx.model` module get a
     `get_` prefix. See [this commit](https://github.com/textX/textX/commit/90667f29604f2e67c593e5a66de11ea286cf5be0) and [the
     docs](http://textx.github.io/textX/1.7/model/#model-api)
