@@ -60,7 +60,7 @@ like in the exmample referenced below "@[myref]"):
    [tests/functional/examples/test_free_text_with_references.py](https://github.com/textX/textX/blob/master/tests/functional/examples/test_free_text_with_references.py)
 
 
-## Referncing a JSON database from within a textX model
+## Referencing a JSON database from within a textX model
 
 Here, we link a textX model with a non textX database (could be any database
 or data structure available in python). If you have, e.g., a DOORS binding,
