@@ -214,6 +214,8 @@ Here is a non-complete list of projects using textX.
       software
     - [osxphotos](https://github.com/RhetTbull/osxphotos) - Python app to export
       pictures and associated metadata from Apple Photos on macOS.
+    - [StrictDoc](https://github.com/strictdoc-project/strictdoc) - Software for
+      technical documentation and requirements management. 
 
 * Commercial
 

@@ -177,3 +177,48 @@ concrete DSL. These DLS reference each other.
 ## Parsing structures inside arbitrary surrounding text
 
 See this [StackOverflow question](https://stackoverflow.com/questions/53379893/parsing-dhcpd-conf-with-textx).
+
+## Optimizing grammar performance
+
+When it comes to parsing very large files with textX, the performance issues
+may arise. In certain cases, a good performance improvement can be achieved by
+optimizing the grammar.
+
+Investigating the grammar with the parse trace option enabled (`debug=true`) 
+helps to reveal the excessive backtrackings (unsuccessful matches) that are 
+essentially the wasted computations. By investigating these backtrackings,
+valuable clues can be obtained regarding possible inefficiencies in the 
+grammar design.
+
+Known optimization techniques:
+
+- Reorder OrderedChoice to put first those members that occur more often in 
+  inputs.
+
+- If a grammar has a hot path that is called out very often and this path
+  contains negative assertions (see this
+  [example](https://stackoverflow.com/a/68891730/598057)), these negative 
+  assertions can be optimized by merging them all together in a single 
+  regex. Regex engine is implemented in C and is much faster to handle the
+  negative assertions in one go compared to when the negative matching is done
+  by Arpeggio on the Python level.
+
+## Caching parsed content to speed up processing
+
+Parsing a single text file with textX can be fast. However, when dealing with
+multiple files that need to be re-parsed every time a program is invoked, it is
+worth considering the option of caching the parsed content.
+
+One straightforward solution, using Python, involves utilizing Python's
+[pickle](https://docs.python.org/3/library/pickle.html) module. After running a
+textX job, a set of Python objects is created based on the textX grammar. The
+Pickle module allows storing these objects in a file on the file system.
+Consequently, when the program is executed again, instead of parsing the textX
+grammar from scratch, the program can efficiently recreate the Python objects
+from the cached file.
+
+To ensure that the cache remains valid, the modification date of the original
+text file can be compared with that of the cached file. If the cached file is
+found to be older than the original text file, it indicates that the textX
+parser needs to be called again to obtain the latest result and subsequently
+update the cached file.
