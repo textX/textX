@@ -3,7 +3,7 @@ from os.path import dirname, abspath, join
 
 import textx.scoping.providers as scoping_providers
 from textx import metamodel_from_file, metamodel_from_str
-from textx.scoping.tools import resolve_model_path,\
+from textx.scoping.tools import resolve_model_path, \
     get_list_of_concatenated_objects
 from textx.scoping.tools import get_unique_named_object
 from textx import textx_isinstance

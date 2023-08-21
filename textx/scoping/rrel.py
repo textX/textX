@@ -343,7 +343,7 @@ class RRELZeroOrMore(RRELBase):
             else:
                 yield obj, lookup_list, matched_path
             assert isinstance(self.path_element.seq, RRELSequence)
-            for iobj, ilookup_list,\
+            for iobj, ilookup_list, \
                 imatched_path in self.path_element.seq.get_next_matches(
                     obj, lookup_list, allowed, matched_path,
                     first_element=first_element):
@@ -404,7 +404,7 @@ class RRELPath(RRELBase):
                 if len(self.path_elements) - 1 == idx:
                     yield iobj, ilookup_list, imatched_path
                 else:
-                    for iiobj, iilookup_list,\
+                    for iiobj, iilookup_list, \
                         iimatched_path in intern_get_next_matches(
                             iobj, ilookup_list, allowed, imatched_path,
                             first_element=False, idx=idx + 1):

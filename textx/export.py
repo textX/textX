@@ -3,7 +3,7 @@
 Export of textX based models and metamodels to dot file.
 """
 from __future__ import unicode_literals
-from arpeggio import Match, OrderedChoice, Sequence, OneOrMore, ZeroOrMore,\
+from arpeggio import Match, OrderedChoice, Sequence, OneOrMore, ZeroOrMore, \
     Optional
 from textx.const import MULT_ZEROORMORE, MULT_ONEORMORE, MULT_ONE, \
     RULE_ABSTRACT, RULE_COMMON, RULE_MATCH

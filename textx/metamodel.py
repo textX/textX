@@ -669,7 +669,7 @@ class TextXMetaModel(DebugPrinter):
                resolved. This can be useful to manage models distributed
                across files (scoping)
         """
-        assert model_params is not None,\
+        assert model_params is not None, \
             "model_params are required in all cases"
         file_name = abspath(file_name)
         model = None

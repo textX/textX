@@ -210,7 +210,7 @@ class GlobalModelRepository(object):
         Returns:
             the loaded/cached model
         """
-        assert model_params is not None,\
+        assert model_params is not None, \
             "model_params needs to be specified"
 
         filename = abspath(filename)
