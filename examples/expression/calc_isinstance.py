@@ -4,17 +4,10 @@ This is a variant of calc example using textx_isinstance() to inspect object
 types.
 """
 
-from __future__ import unicode_literals
-import sys
 from os.path import join, dirname
 from textx import metamodel_from_str
 from textx import textx_isinstance
 from textx.export import metamodel_export, model_export
-
-if sys.version < '3':
-    text = unicode  # noqa
-else:
-    text = str
 
 grammar = '''
 Calc: assignments*=Assignment expression=Expression;

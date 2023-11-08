@@ -8,7 +8,6 @@ have named this language textX ;)
 """
 import codecs
 import re
-import sys
 
 from arpeggio import (
     EOF,
@@ -44,11 +43,6 @@ from .const import (
     mult_lt,
 )
 from .exceptions import TextXError, TextXSemanticError, TextXSyntaxError
-
-if sys.version < "3":
-    text = unicode  # noqa
-else:
-    text = str
 
 # Interpreting backslash sequences.
 # See https://stackoverflow.com/a/24519338/2024430
@@ -274,7 +268,7 @@ BASE_TYPE_RULES = {
 BASE_TYPE_NAMES = list(BASE_TYPE_RULES.keys())
 ALL_TYPE_NAMES = BASE_TYPE_NAMES + ["OBJECT"]
 
-PRIMITIVE_PYTHON_TYPES = [int, float, text, bool]
+PRIMITIVE_PYTHON_TYPES = [int, float, str, bool]
 
 for regex in [ID, BOOL, INT, FLOAT, STRICTFLOAT, STRING]:
     regex.compile()
@@ -283,14 +277,14 @@ for regex in [ID, BOOL, INT, FLOAT, STRICTFLOAT, STRING]:
 def python_type(textx_type_name):
     """Return Python type from the name of base textx type."""
     return {
-        "ID": text,
+        "ID": str,
         "BOOL": bool,
         "INT": int,
         "FLOAT": float,
         "STRICTFLOAT": float,
-        "STRING": text,
+        "STRING": str,
         "NUMBER": float,
-        "BASETYPE": text,
+        "BASETYPE": str,
     }.get(textx_type_name, textx_type_name)
 
 
@@ -324,9 +318,6 @@ class RuleCrossRef:
 
     def __str__(self):
         return self.rule_name
-
-    def __unicode__(self):
-        return self.__str__()
 
 
 class ClassCrossRef:
@@ -438,7 +429,7 @@ class TextXVisitor(RRELVisitor):
                         filename=model_parser.metamodel.file_name,
                     )
 
-            assert isinstance(rule, ParsingExpression), f"{type(rule)}:{text(rule)}"
+            assert isinstance(rule, ParsingExpression), f"{type(rule)}:{str(rule)}"
 
             # Recurse into subrules, and resolve rules.
             for idx, child in enumerate(rule.nodes):
@@ -635,7 +626,7 @@ class TextXVisitor(RRELVisitor):
         self.metamodel.referenced_languages[language_alias] = language_name
 
     def visit_grammar_to_import(self, node, children):
-        return text(node)
+        return str(node)
 
     def visit_textx_rule(self, node, children):
         if len(children) > 2:
@@ -805,7 +796,7 @@ class TextXVisitor(RRELVisitor):
         return (param_name, param_value)
 
     def visit_rule_ref(self, node, children):
-        rule_name = text(node)
+        rule_name = str(node)
         # Here a name of the meta-class (rule) is expected but to support
         # forward referencing we are postponing resolving to second_pass.
         return RuleCrossRef(rule_name, rule_name, node.position, None)
@@ -890,9 +881,7 @@ class TextXVisitor(RRELVisitor):
                     if repeat_op == "?":
                         line, col = self.grammar_parser.pos_to_linecol(position)
                         raise TextXSyntaxError(
-                            'Modifiers are not allowed for "?" operator at {}'.format(
-                                text((line, col))
-                            ),
+                            f'Modifiers are not allowed for "?" operator at {(line, col)}',
                             line,
                             col,
                         )
@@ -1006,9 +995,7 @@ class TextXVisitor(RRELVisitor):
             if op == "?=" or op == "=":
                 line, col = self.grammar_parser.pos_to_linecol(position)
                 raise TextXSyntaxError(
-                    'Modifiers are not allowed for "{}" operator at {}'.format(
-                        op, text((line, col))
-                    ),
+                    f'Modifiers are not allowed for "{op}" operator at {(line, col)}',
                     line,
                     col,
                     filename=self.metamodel.file_name,
@@ -1083,7 +1070,7 @@ class TextXVisitor(RRELVisitor):
             regex.compile()
         except Exception as e:
             line, col = self.grammar_parser.pos_to_linecol(node[1].position)
-            raise TextXSyntaxError(text(e), line, col)
+            raise TextXSyntaxError(str(e), line, col)
         return regex
 
     def visit_obj_ref(self, node, children):
@@ -1134,8 +1121,8 @@ def language_from_str(language_def, metamodel, file_name):
         Parser for the new language.
     """
 
-    if type(language_def) is not text:
-        raise TextXError("textX accepts only unicode strings.")
+    if type(language_def) is not str:
+        raise TextXError("textX accepts only strings.")
 
     if metamodel.debug:
         metamodel.dprint("*** PARSING LANGUAGE DEFINITION ***")

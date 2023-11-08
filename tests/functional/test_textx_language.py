@@ -1,15 +1,8 @@
-import sys
-
 import pytest
 
 from textx import TextXSyntaxError, metamodel_from_str
 from textx.const import RULE_ABSTRACT, RULE_COMMON, RULE_MATCH
 from textx.lang import ALL_TYPE_NAMES
-
-if sys.version < "3":
-    text = unicode  # noqa
-else:
-    text = str
 
 
 def test_common_rule():
@@ -208,7 +201,7 @@ def test_match_rule():
 
     model = meta.model_from_str("two")
     assert model
-    assert model.__class__ == text
+    assert model.__class__ == str
     assert model == "two"
 
 
@@ -226,7 +219,7 @@ def test_match_rule_multiple():
 
     model = meta.model_from_str(" one two")
     assert model
-    assert model.__class__ == text
+    assert model.__class__ == str
     assert model == "onetwo"
 
 
@@ -243,7 +236,7 @@ def test_match_rule_complex():
 
     model = meta.model_from_str("one 45 one 78 foo foo foo")
     assert model
-    assert model.__class__ == text
+    assert model.__class__ == str
     assert model == "one45one78foofoofoo"
 
 
@@ -313,7 +306,7 @@ def test_regex_match_rule():
 
     model = meta.model_from_str("bar7")
     assert model
-    assert model.__class__ == text
+    assert model.__class__ == str
     assert model == "bar7"
 
 
@@ -869,7 +862,7 @@ def test_default_attribute_values():
     assert model.a == 0
     assert type(model.b) is bool
     assert model.b is False
-    assert type(model.c) is text
+    assert type(model.c) is str
     assert model.c == ""
     assert type(model.d) is float
     assert model.d == 0.0

@@ -2,13 +2,7 @@
 Testing model and object processors.
 """
 import pytest  # noqa
-import sys
 from textx.metamodel import metamodel_from_str
-
-if sys.version < "3":
-    text = unicode  # noqa
-else:
-    text = str
 
 
 class OuterObject:

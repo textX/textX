@@ -2,13 +2,7 @@
 Testing model and object processors.
 """
 import pytest  # noqa
-import sys
 from textx import metamodel_from_str, textxerror_wrap
-
-if sys.version < "3":
-    text = unicode  # noqa
-else:
-    text = str
 
 grammar = """
 First:
@@ -212,7 +206,7 @@ def test_obj_processor_simple_match_rule():
 
     mm = metamodel_from_str(grammar)
     m = mm.model_from_str(model)
-    assert type(m.a) is text
+    assert type(m.a) is str
 
     processors = {"MyFloat": lambda x: float(x)}
     print("filters")
@@ -237,7 +231,7 @@ def test_obj_processor_sequence_match_rule():
 
     mm = metamodel_from_str(grammar)
     m = mm.model_from_str(model)
-    assert type(m.i) is text
+    assert type(m.i) is str
 
     processors = {"MyFixedInt": lambda x: int(x)}
     mm = metamodel_from_str(grammar)
@@ -255,7 +249,7 @@ def test_base_type_obj_processor_override():
     """
 
     def to_float_with_str_check(x):
-        assert type(x) is text
+        assert type(x) is str
         return float(x)
 
     processors = {"INT": to_float_with_str_check}
@@ -275,7 +269,7 @@ def test_custom_base_type_with_builtin_alternatives():
 
     mm = metamodel_from_str(grammar)
     model = mm.model_from_str("3.4 6")
-    assert type(model.i[0]) is text
+    assert type(model.i[0]) is str
     assert type(model.i[1]) is int
 
     mm.register_obj_processors({"MyFloat": lambda x: float(x)})
@@ -313,7 +307,7 @@ def test_nested_match_rules():
     # the result returned from match processors lower in hierarchy.
     def myobject_processor(x):
         assert type(x) in [int, float]
-        return f"#{text(x)}"
+        return f"#{x}"
 
     mm.register_obj_processors(
         {

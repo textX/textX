@@ -3,7 +3,6 @@ Meta-model construction.
 """
 import codecs
 import os
-import sys
 import warnings
 from collections import OrderedDict
 from os.path import abspath, dirname, join
@@ -36,12 +35,6 @@ from textx.scoping.rrel import create_rrel_scope_provider
 
 from .model_params import ModelParamDefinitions, ModelParams
 from .registration import LanguageDesc, metamodel_for_language
-
-if sys.version < "3":
-    text = unicode  # noqa
-else:
-    text = str
-
 
 __all__ = ["metamodel_from_str", "metamodel_from_file"]
 
@@ -687,8 +680,8 @@ class TextXMetaModel(DebugPrinter):
         """
         self.model_param_defs.check_params("from_str", **kwargs)
 
-        if type(model_str) is not text:
-            raise TextXError("textX accepts only unicode strings.")
+        if type(model_str) is not str:
+            raise TextXError("textX accepts only strings.")
 
         if file_name is None:
 

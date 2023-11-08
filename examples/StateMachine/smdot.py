@@ -1,7 +1,6 @@
 """
 Export state machine models to dot.
 """
-from __future__ import unicode_literals
 import codecs
 import sys
 from os.path import dirname, join

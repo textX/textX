@@ -2,7 +2,6 @@
 Export of textX based models and metamodels to dot file.
 """
 import codecs
-import sys
 
 from arpeggio import Match, OneOrMore, Optional, OrderedChoice, Sequence, ZeroOrMore
 
@@ -15,12 +14,6 @@ from textx.const import (
     RULE_MATCH,
 )
 from textx.lang import ALL_TYPE_NAMES, BASE_TYPE_NAMES, PRIMITIVE_PYTHON_TYPES
-
-if sys.version < "3":
-    text = unicode  # noqa
-else:
-    text = str
-
 
 HEADER = """
     digraph textX {
@@ -64,7 +57,7 @@ def dot_match_str(cls, other_match_rules=None):
 
         visited.add(s)
         if isinstance(s, Match):
-            result = text(s)
+            result = str(s)
         elif isinstance(s, OrderedChoice):
             result = "|".join([r(x) for x in s.nodes])
         elif isinstance(s, Sequence):
@@ -118,27 +111,21 @@ def dot_escape(s):
     )
 
 
-if sys.version < "3":
+def html_escape(s):
+    from html import escape
 
-    def html_escape(s):
-        return s.replace("<", "&lt;").replace(">", "&gt;")
-else:
-
-    def html_escape(s):
-        from html import escape
-
-        return escape(s)
+    return escape(s)
 
 
 def dot_repr(o):
-    if type(o) is text:
-        escaped = dot_escape(text(o))
+    if type(o) is str:
+        escaped = dot_escape(str(o))
         if len(escaped) > 20:
             return f"'{escaped[:20]}...'"
         else:
             return f"'{escaped}'"
     else:
-        return text(o)
+        return str(o)
 
 
 class DotRenderer:
@@ -383,7 +370,7 @@ def model_export_to_file(f, model=None, repo=None):
                                     _export(list_obj)
                 else:
                     # Plain attributes
-                    if type(attr_value) is text and attr_name != "name":
+                    if type(attr_value) is str and attr_name != "name":
                         attr_value = dot_repr(attr_value)
 
                     if type(attr_value) in PRIMITIVE_PYTHON_TYPES:

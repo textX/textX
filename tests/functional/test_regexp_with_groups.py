@@ -2,13 +2,7 @@
 Testing model and regexp with groups.
 """
 import pytest  # noqa
-import sys
 from textx import metamodel_from_str
-
-if sys.version < "3":
-    text = unicode  # noqa
-else:
-    text = str
 
 grammar = r"""
 Model: entries += Entry;

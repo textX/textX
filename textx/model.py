@@ -3,7 +3,6 @@ Model construction from parse trees and the model API.
 """
 
 import codecs
-import sys
 import traceback
 from collections import OrderedDict
 
@@ -23,11 +22,6 @@ from textx.exceptions import TextXError, TextXSemanticError, TextXSyntaxError
 from textx.lang import PRIMITIVE_PYTHON_TYPES
 from textx.scoping import Postponed, get_included_models, remove_models_from_repositories
 from textx.scoping.providers import PlainName as DefaultScopeProvider
-
-if sys.version < "3":
-    text = unicode  # noqa
-else:
-    text = str
 
 __all__ = ["get_children_of_type", "get_parent_of_type", "get_model", "get_metamodel"]
 
@@ -85,7 +79,7 @@ def get_parent_of_type(typ, obj):
         obj (model object): Python model object which is the start of the
             search process.
     """
-    if type(typ) is not text:
+    if type(typ) is not str:
         typ = typ.__name__
 
     while hasattr(obj, "parent"):
@@ -166,7 +160,7 @@ def get_children_of_type(typ, root, children_first=False, should_follow=lambda o
             traversed.
     """
 
-    if type(typ) is not text:
+    if type(typ) is not str:
         typ = typ.__name__
 
     return get_children(
@@ -541,7 +535,7 @@ def parse_tree_to_objgraph(
             # If RHS of assignment is NonTerminal it is a product of
             # complex match rule. Convert nodes to text and do the join.
             if len(nt) > 1:
-                result = "".join([text(process_match(n)) for n in nt])
+                result = "".join([str(process_match(n)) for n in nt])
             else:
                 result = process_match(nt[0])
             return metamodel.process(
@@ -605,7 +599,7 @@ def parse_tree_to_objgraph(
                         )  # noqa
                     except StopIteration:
                         # All nodes are match rules, do concatenation
-                        return "".join(text(n) for n in node)
+                        return "".join(str(n) for n in node)
                 else:
                     return process_node(node[0])
             elif mclass._tx_type == RULE_MATCH:
@@ -648,7 +642,7 @@ def parse_tree_to_objgraph(
 
             for n in node:
                 if parser.debug:
-                    parser.dprint(f"Recursing into {type(n).__name__} = '{text(n)}'")
+                    parser.dprint(f"Recursing into {type(n).__name__} = '{n}'")
                 process_node(n)
 
             parser._inst_stack.pop()

@@ -1,6 +1,3 @@
-from __future__ import unicode_literals
-
-
 def main(debug=False):
 
     from textx import metamodel_from_str, get_children_of_type

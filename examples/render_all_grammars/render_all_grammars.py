@@ -1,4 +1,3 @@
-from __future__ import unicode_literals
 from textx import metamodel_from_file
 from textx.export import metamodel_export, PlantUmlRenderer
 import fnmatch

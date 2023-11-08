@@ -4,14 +4,7 @@ matches and a rule reference.
 See https://github.com/textX/textX/pull/128
 
 """
-import sys
-
 from textx import metamodel_from_str, textx_isinstance
-
-if sys.version < "3":
-    text = unicode  # noqa
-else:
-    text = str
 
 # Global variable namespace
 namespace = {}
@@ -83,9 +76,7 @@ def test_abstract_alternative_string_match():
                         return namespace[x.op_id]
                     else:
                         raise Exception(
-                            'Unknown variable "{}" at position {}'.format(
-                                x.op_id, x._tx_position
-                            )
+                            f'Unknown variable "{x.op_id}" at position {x._tx_position}'
                         )
             else:
                 assertIs(x, "CompoundOperand")

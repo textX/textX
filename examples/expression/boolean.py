@@ -1,4 +1,3 @@
-from __future__ import unicode_literals
 from os.path import join, dirname
 from textx import metamodel_from_str
 from textx.export import metamodel_export, model_export
