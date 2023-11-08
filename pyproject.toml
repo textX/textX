@@ -54,19 +54,19 @@ exclude = ["**/.*"]
 
 [project.optional-dependencies]
 cli = [
-    "click >=7.0, <8.0"
+    "click >=7.0, <9.0"
 ]
 
 dev = [
     "textX-dev",
-    "click >=7.0, <8.0",
+    "click >=7.0, <9.0",
     "flit",
     "mkdocs",
     "mike",
 ]
 
 test = [
-    "click >=7.0, <8.0",
+    "click >=7.0, <9.0",
     "ruff",
     "attrs",
     "jinja2",
