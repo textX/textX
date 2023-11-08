@@ -46,10 +46,11 @@ Changelog = "https://github.com/textX/textX/blob/master/CHANGELOG.md"
 build-backend = "flit_core.buildapi"
 requires = ["flit_core >=3.8.0,<4"]
 
-[tool.flit.sdist]
-include = ["textx/", "docs/", "examples/"]
-exclude = [".*", "build", "dist"]
+[tool.flit.module]
+name = "textx"
 
+[tool.flit.sdist]
+exclude = ["**/.*"]
 
 [project.optional-dependencies]
 cli = [
@@ -59,7 +60,7 @@ cli = [
 dev = [
     "textX-dev",
     "click >=7.0, <8.0",
-    "setuptools-scm",
+    "flit",
     "mkdocs",
     "mike",
 ]
