@@ -56,7 +56,7 @@ incoming in0 over conn
 
 class ConnectionHandler:
     def _init_(self):
-        print('')
+        print("")
 
     def awesomeMethod4SenderAndReceiver(self):
         print("I am really important for Sender and Receiver")
@@ -65,13 +65,13 @@ class ConnectionHandler:
 class Sender(ConnectionHandler):
     def __init__(self, name=None, connection=None, parent=None):
         super(Sender, self).__init__()
-        print('')
+        print("")
 
 
 class Receiver(ConnectionHandler):
     def __init__(self, name=None, connection=None, parent=None):
         super(Receiver, self).__init__()
-        print('')
+        print("")
 
 
 def test_user_classes_callable():
@@ -84,13 +84,15 @@ def test_user_classes_callable():
     _ = mm.model_from_str(modelstring)
 
     # fix/works (no unused user classes; see grammar_with_baseclass_fix):
-    mm = metamodel_from_str(grammar_with_baseclass_fix,
-                            classes=[ConnectionHandler, Sender, Receiver])
+    mm = metamodel_from_str(
+        grammar_with_baseclass_fix, classes=[ConnectionHandler, Sender, Receiver]
+    )
     _ = mm.model_from_str(modelstring)
 
     # does not work
-    with raises(TextXSemanticError,
-                match="ConnectionHandler class is not used in the grammar"):
+    with raises(
+        TextXSemanticError, match="ConnectionHandler class is not used in the grammar"
+    ):
         _ = metamodel_from_str(grammar, classes=[ConnectionHandler, Sender, Receiver])
 
     # does work (allow unused user classes by providing a callable instead of

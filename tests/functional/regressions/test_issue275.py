@@ -7,7 +7,7 @@ from textx.export import DotRenderer, metamodel_export_tofile
 
 
 def test_issue275():
-    grammar = r'''
+    grammar = r"""
 
     Comment:
         "<:" ( !"*/" /./ )* ":>"
@@ -28,7 +28,7 @@ def test_issue275():
                                   // built-in entities registered on the meta-model
                                   // for primitive types (integer, string)
     ;
-    '''
+    """
 
     entity_mm = metamodel_from_str(grammar)
 

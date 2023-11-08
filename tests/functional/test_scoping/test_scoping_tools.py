@@ -19,7 +19,6 @@ from textx.scoping.tools import (
 
 
 def test_textx_tools_with_frozen_classes1():
-
     @attr.s(frozen=True)
     class Model:
         # _tx_filename = attr.ib()
@@ -39,7 +38,7 @@ def test_textx_tools_with_frozen_classes1():
         parent = attr.ib()
         name = attr.ib()
 
-    grammar = r'''
+    grammar = r"""
     Model:
         'use' use=Use
         data=Content;
@@ -49,25 +48,25 @@ def test_textx_tools_with_frozen_classes1():
         'ref' ref=[Element];
     Element: '*' name=ID;
     Use: 'A'|'B';
-    '''
-    text_ok1 = r'''
+    """
+    text_ok1 = r"""
         use A
         A: *a *b *c
         B: *d *e *f
         ref b
-    '''
-    text_ok2 = r'''
+    """
+    text_ok2 = r"""
         use B
         A: *a *b *c
         B: *d *e *f
         ref d
-    '''
-    text_not_ok = r'''
+    """
+    text_not_ok = r"""
         use B
         A: *a *b *c
         B: *d *e *f
         ref b
-    '''
+    """
     for classes in [[], [Model, Content, Element]]:
         print("Test Loop, classes==", classes)
 
@@ -76,28 +75,28 @@ def test_textx_tools_with_frozen_classes1():
         def ref_scope(refItem, myattr, attr_ref):
             # python3: nonlocal ref_scope_was_used
             ref_scope_was_used[0] = True
-            if get_model(refItem).use == 'A':
+            if get_model(refItem).use == "A":
                 return resolve_model_path(
-                    refItem, f"parent(Model).data.elementsA.{attr_ref.obj_name}", True)
+                    refItem, f"parent(Model).data.elementsA.{attr_ref.obj_name}", True
+                )
             else:
                 return resolve_model_path(
-                    refItem, f"parent(Model).data.elementsB.{attr_ref.obj_name}", True)
+                    refItem, f"parent(Model).data.elementsB.{attr_ref.obj_name}", True
+                )
 
         mm = metamodel_from_str(grammar, classes=classes)
-        mm.register_scope_providers({
-            "Content.ref": ref_scope
-        })
+        mm.register_scope_providers({"Content.ref": ref_scope})
         ref_scope_was_used[0] = False
         m = mm.model_from_str(text_ok1)
         assert ref_scope_was_used[0]
         if len(classes) == 0:
             # Assert that model object has its own filename and metamodel
-            assert '_tx_filename' in m.__dict__
-            assert '_tx_metamodel' in m.__dict__
+            assert "_tx_filename" in m.__dict__
+            assert "_tx_metamodel" in m.__dict__
         else:
             # Assert that special attributes are accessible only through class
-            assert '_tx_filename' not in m.__dict__
-            assert '_tx_metamodel' not in m.__dict__
+            assert "_tx_filename" not in m.__dict__
+            assert "_tx_metamodel" not in m.__dict__
 
         ref_scope_was_used[0] = False
         mm.model_from_str(text_ok2)
@@ -110,7 +109,6 @@ def test_textx_tools_with_frozen_classes1():
 
 
 def test_textx_tools_with_frozen_classes2():
-
     class Model:
         def __init__(self, **kwargs):
             for k, v in kwargs.items():
@@ -128,7 +126,7 @@ def test_textx_tools_with_frozen_classes2():
         parent = attr.ib()
         name = attr.ib()
 
-    grammar = r'''
+    grammar = r"""
     Model:
         'use' use=Use
         data=Content;
@@ -138,25 +136,25 @@ def test_textx_tools_with_frozen_classes2():
         'ref' ref=[Element];
     Element: '*' name=ID;
     Use: 'A'|'B';
-    '''
-    text_ok1 = r'''
+    """
+    text_ok1 = r"""
         use A
         A: *a *b *c
         B: *d *e *f
         ref b
-    '''
-    text_ok2 = r'''
+    """
+    text_ok2 = r"""
         use B
         A: *a *b *c
         B: *d *e *f
         ref d
-    '''
-    text_not_ok = r'''
+    """
+    text_not_ok = r"""
         use B
         A: *a *b *c
         B: *d *e *f
         ref b
-    '''
+    """
     for classes in [[], [Model, Content, Element]]:
         print("Test Loop, classes==", classes)
 
@@ -165,23 +163,23 @@ def test_textx_tools_with_frozen_classes2():
         def ref_scope(refItem, myattr, attr_ref):
             # python3: nonlocal ref_scope_was_used
             ref_scope_was_used[0] = True
-            if get_model(refItem).use == 'A':
+            if get_model(refItem).use == "A":
                 return resolve_model_path(
-                    refItem, f"parent(Model).data.elementsA.{attr_ref.obj_name}", True)
+                    refItem, f"parent(Model).data.elementsA.{attr_ref.obj_name}", True
+                )
             else:
                 return resolve_model_path(
-                    refItem, f"parent(Model).data.elementsB.{attr_ref.obj_name}", True)
+                    refItem, f"parent(Model).data.elementsB.{attr_ref.obj_name}", True
+                )
 
         mm = metamodel_from_str(grammar, classes=classes)
-        mm.register_scope_providers({
-            "Content.ref": ref_scope
-        })
+        mm.register_scope_providers({"Content.ref": ref_scope})
         ref_scope_was_used[0] = False
         m = mm.model_from_str(text_ok1)
         assert ref_scope_was_used[0]
 
-        assert hasattr(m, '_tx_filename')
-        assert hasattr(m, '_tx_metamodel')
+        assert hasattr(m, "_tx_filename")
+        assert hasattr(m, "_tx_metamodel")
 
         ref_scope_was_used[0] = False
         mm.model_from_str(text_ok2)
@@ -194,17 +192,16 @@ def test_textx_tools_with_frozen_classes2():
 
 
 def test_textx_isinstance():
-    grammar = \
-        '''
+    grammar = """
     Model: a=A;
     A: B;
     B: C;
     C: x=ID;
-    '''
+    """
     my_meta_model = metamodel_from_str(grammar)
-    A = my_meta_model['A']
-    B = my_meta_model['B']
-    C = my_meta_model['C']
+    A = my_meta_model["A"]
+    B = my_meta_model["B"]
+    C = my_meta_model["C"]
     my_model = my_meta_model.model_from_str("c")
     c = get_children_of_type("C", my_model)
     assert len(c) == 1
@@ -220,59 +217,56 @@ def test_resolve_model_path_with_lists():
     #################################
 
     my_meta_model = metamodel_from_file(
-        join(abspath(dirname(__file__)),
-             'components_model1', 'Components.tx'))
-    my_meta_model.register_scope_providers({
-        "*.*": scoping_providers.FQN(),
-        "Connection.from_port":
-            scoping_providers.ExtRelativeName("from_inst.component",
-                                              "slots",
-                                              "extends"),
-        "Connection.to_port":
-            scoping_providers.ExtRelativeName("to_inst.component",
-                                              "slots",
-                                              "extends"),
-    })
+        join(abspath(dirname(__file__)), "components_model1", "Components.tx")
+    )
+    my_meta_model.register_scope_providers(
+        {
+            "*.*": scoping_providers.FQN(),
+            "Connection.from_port": scoping_providers.ExtRelativeName(
+                "from_inst.component", "slots", "extends"
+            ),
+            "Connection.to_port": scoping_providers.ExtRelativeName(
+                "to_inst.component", "slots", "extends"
+            ),
+        }
+    )
 
     #################################
     # MODEL PARSING
     #################################
 
     my_model = my_meta_model.model_from_file(
-        join(abspath(dirname(__file__)),
-             "components_model1", "example_inherit2.components"))
+        join(
+            abspath(dirname(__file__)), "components_model1", "example_inherit2.components"
+        )
+    )
 
     #################################
     # TEST MODEL
     #################################
 
-    action2a = resolve_model_path(my_model,
-                                  "packages.usage.instances.action2",
-                                  True)
+    action2a = resolve_model_path(my_model, "packages.usage.instances.action2", True)
     action2b = get_unique_named_object(my_model, "action2")
     assert action2a is action2b
 
-    middle_a = resolve_model_path(my_model,
-                                  "packages.base.components.Middle",
-                                  True)
+    middle_a = resolve_model_path(my_model, "packages.base.components.Middle", True)
     middle_b = get_unique_named_object(my_model, "Middle")
     assert middle_a is middle_b
 
     # test parent(...) with lists
     action2a_with_parent = resolve_model_path(
-        action2a, "parent(Model).packages.usage.instances.action2", True)
+        action2a, "parent(Model).packages.usage.instances.action2", True
+    )
     assert action2a_with_parent == action2a
 
     # test "normal" parent with lists
-    action2a_with_parent2 = resolve_model_path(
-        action2a, "parent.instances.action2", True)
+    action2a_with_parent2 = resolve_model_path(action2a, "parent.instances.action2", True)
     assert action2a_with_parent2 == action2a
 
-    with raises(Exception, match=r'.*unexpected: got list in path for '
-                                 r'get_referenced_object.*'):
-        resolve_model_path(my_model,
-                           "packages.usage.instances.action2",
-                           False)
+    with raises(
+        Exception, match=r".*unexpected: got list in path for " r"get_referenced_object.*"
+    ):
+        resolve_model_path(my_model, "packages.usage.instances.action2", False)
 
 
 def test_resolve_model_path_simple_case():
@@ -280,11 +274,11 @@ def test_resolve_model_path_simple_case():
     # META MODEL DEF
     #################################
 
-    grammar = r'''
+    grammar = r"""
         Model: name=ID a=A b=B;
         A: 'A:' name=ID;
         B: 'B:' name=ID ('->' b=B| '=' a=A );
-    '''
+    """
 
     mm = metamodel_from_str(grammar)
 
@@ -292,14 +286,16 @@ def test_resolve_model_path_simple_case():
     # MODEL PARSING
     #################################
 
-    model = mm.model_from_str(r'''
+    model = mm.model_from_str(
+        r"""
         My_Model
             A: OuterA
             B: Level0_B
              -> B: Level1_B
              -> B: Level2_B
              = A: InnerA
-    ''')
+    """
+    )
 
     #################################
     # TEST MODEL
@@ -339,10 +335,10 @@ def test_resolve_model_path_simple_case_with_refs():
     # META MODEL DEF
     #################################
 
-    grammar = r'''
+    grammar = r"""
         Model: name=ID b=B;
         B: 'B:' name=ID ('->' b=B | '-->' bref=[B] );
-    '''
+    """
 
     mm = metamodel_from_str(grammar)
 
@@ -350,12 +346,14 @@ def test_resolve_model_path_simple_case_with_refs():
     # MODEL PARSING
     #################################
 
-    model = mm.model_from_str(r'''
+    model = mm.model_from_str(
+        r"""
         My_Model
             B: Level0_B
              -> B: Level1_B
              --> Level0_B
-    ''')
+    """
+    )
 
     #################################
     # TEST MODEL
@@ -377,30 +375,34 @@ def test_get_list_of_concatenated_objects():
     #################################
 
     my_meta_model = metamodel_from_file(
-        join(abspath(dirname(__file__)),
-             'components_model1', 'Components.tx'))
-    my_meta_model.register_scope_providers({
-        "*.*": scoping_providers.FQN(),
-        "Connection.from_port":
-            scoping_providers.ExtRelativeName("from_inst.component",
-                                              "slots",
-                                              "extends"),
-        "Connection.to_port":
-            scoping_providers.ExtRelativeName("to_inst.component",
-                                              "slots",
-                                              "extends"),
-    })
+        join(abspath(dirname(__file__)), "components_model1", "Components.tx")
+    )
+    my_meta_model.register_scope_providers(
+        {
+            "*.*": scoping_providers.FQN(),
+            "Connection.from_port": scoping_providers.ExtRelativeName(
+                "from_inst.component", "slots", "extends"
+            ),
+            "Connection.to_port": scoping_providers.ExtRelativeName(
+                "to_inst.component", "slots", "extends"
+            ),
+        }
+    )
 
     #################################
     # MODEL PARSING
     #################################
 
     my_model1 = my_meta_model.model_from_file(
-        join(abspath(dirname(__file__)),
-             "components_model1", "example_inherit1.components"))
+        join(
+            abspath(dirname(__file__)), "components_model1", "example_inherit1.components"
+        )
+    )
     my_model2 = my_meta_model.model_from_file(
-        join(abspath(dirname(__file__)),
-             "components_model1", "example_inherit2.components"))
+        join(
+            abspath(dirname(__file__)), "components_model1", "example_inherit2.components"
+        )
+    )
 
     #################################
     # TEST MODEL

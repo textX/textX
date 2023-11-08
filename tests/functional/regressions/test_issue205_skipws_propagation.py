@@ -1,4 +1,3 @@
-
 import pytest
 
 from textx import TextXSyntaxError, metamodel_from_str
@@ -11,10 +10,12 @@ def test_issue205_skipws_propagation():
     Reported at SO: https://stackoverflow.com/questions/57944531/how-do-you-correctly-mix-textx-skipws-non-skipws  # noqa
     """
 
-    mm = metamodel_from_str(r'''
+    mm = metamodel_from_str(
+        r"""
             Sentence[skipws]: words*=Word;
             Word[noskipws]: ID '.' | ID | '.';
-        ''')
+        """
+    )
 
     # If ```noskipws``` from the ```Word``` rule is obeyed then this won't
     # parse as there is no rule to consume spaces in between the words. In the
@@ -22,7 +23,7 @@ def test_issue205_skipws_propagation():
     # ```noskipws``` from Word so the parse will not fail but it would not be
     # what should be expected.
     with pytest.raises(TextXSyntaxError):
-        mm.model_from_str('''foo bar .''')
+        mm.model_from_str("""foo bar .""")
 
     # We should consume spaces explicitly. Here, we show that a rule with the
     # ```noskipws``` rule modifier is able to consume spaces explicitly. Match
@@ -32,10 +33,12 @@ def test_issue205_skipws_propagation():
     # words, because the rule modifiers
     # (http://textx.github.io/textX/stable/grammar/#rule-modifiers) apply
     # immediately. Thus, we need to consume the extra spaces before a word.
-    mm = metamodel_from_str(r'''
+    mm = metamodel_from_str(
+        r"""
             Sentence[skipws]: words*=Word;
             Word[noskipws]: /\s*/- (ID '.' | ID | '.');
-        ''')
+        """
+    )
 
-    m = mm.model_from_str('''foo bar .''')
+    m = mm.model_from_str("""foo bar .""")
     assert len(m.words) == 3

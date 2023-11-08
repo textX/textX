@@ -5,7 +5,7 @@ import pytest  # noqa
 import sys
 from textx.metamodel import metamodel_from_str
 
-if sys.version < '3':
+if sys.version < "3":
     text = unicode  # noqa
 else:
     text = str
@@ -68,16 +68,12 @@ def default_processor(obj):
 
 def parse_lola(grammar, lola_str):
     lola_str = lola_str
-    obj_processors = {
-        "InnerObject": default_processor,
-        "OuterObject": default_processor
-    }
+    obj_processors = {"InnerObject": default_processor, "OuterObject": default_processor}
 
     lola_classes = [InnerObject, OuterObject]
 
     meta_model = metamodel_from_str(
-        grammar, classes=lola_classes,
-        ignore_case=True, auto_init_attributes=False
+        grammar, classes=lola_classes, ignore_case=True, auto_init_attributes=False
     )
     meta_model.register_obj_processors(obj_processors)
     model = meta_model.model_from_str(lola_str)

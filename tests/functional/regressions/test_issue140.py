@@ -17,16 +17,16 @@ def test_multi_metamodel_obj_proc():
     repo = scoping_providers.PlainNameGlobalRepo()
     repo.register_models(os.path.dirname(__file__) + "/issue140/*.a")
 
-    mm_A = metamodel_from_file(os.path.join(
-        os.path.dirname(__file__),
-        "issue140",
-        "A.tx"
-    ), global_repository=global_repo, classes=[C1])
-    mm_B = metamodel_from_file(os.path.join(
-        os.path.dirname(__file__),
-        "issue140",
-        "B.tx"
-    ), global_repository=global_repo, classes=[C1])
+    mm_A = metamodel_from_file(
+        os.path.join(os.path.dirname(__file__), "issue140", "A.tx"),
+        global_repository=global_repo,
+        classes=[C1],
+    )
+    mm_B = metamodel_from_file(
+        os.path.join(os.path.dirname(__file__), "issue140", "B.tx"),
+        global_repository=global_repo,
+        classes=[C1],
+    )
 
     mm_B.register_scope_providers({"*.*": repo})
 
@@ -37,19 +37,7 @@ def test_multi_metamodel_obj_proc():
     mm_B.register_obj_processors({"C1": proc})
 
     clear_language_registrations()
-    register_language(
-        'a-dsl',
-        pattern='*.a',
-        description='Test Lang A',
-        metamodel=mm_A)
-    register_language(
-        'b-dsl',
-        pattern='*.b',
-        description='Test Lang B',
-        metamodel=mm_B)
+    register_language("a-dsl", pattern="*.a", description="Test Lang A", metamodel=mm_A)
+    register_language("b-dsl", pattern="*.b", description="Test Lang B", metamodel=mm_B)
 
-    mm_B.model_from_file(os.path.join(
-        os.path.dirname(__file__),
-        "issue140",
-        "b.b"
-    ))
+    mm_B.model_from_file(os.path.join(os.path.dirname(__file__), "issue140", "b.b"))

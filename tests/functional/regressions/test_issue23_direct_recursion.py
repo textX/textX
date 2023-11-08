@@ -15,9 +15,9 @@ def test_issue_23():
     """
     mm = metamodel_from_str(grammar)
 
-    assert mm['List']._tx_type is RULE_COMMON
-    assert mm['Value']._tx_type is RULE_ABSTRACT
-    assert mm['Value']._tx_inh_by == [mm['List']]
+    assert mm["List"]._tx_type is RULE_COMMON
+    assert mm["Value"]._tx_type is RULE_ABSTRACT
+    assert mm["Value"]._tx_inh_by == [mm["List"]]
 
     grammar = """
     List: '{' members+=Value '}';
@@ -25,8 +25,8 @@ def test_issue_23():
     """
     mm = metamodel_from_str(grammar)
 
-    assert mm['List']._tx_type is RULE_COMMON
-    assert mm['Value']._tx_type is RULE_MATCH
+    assert mm["List"]._tx_type is RULE_COMMON
+    assert mm["Value"]._tx_type is RULE_MATCH
 
     grammar = """
     ListSyntax: '{' List '}';
@@ -35,8 +35,8 @@ def test_issue_23():
     """
     mm = metamodel_from_str(grammar)
 
-    assert mm['ListSyntax']._tx_type is RULE_ABSTRACT
-    assert mm['ListSyntax']._tx_inh_by == [mm['List']]
-    assert mm['List']._tx_type is RULE_COMMON
-    assert mm['Value']._tx_type is RULE_ABSTRACT
-    assert mm['Value']._tx_inh_by == [mm['ListSyntax']]
+    assert mm["ListSyntax"]._tx_type is RULE_ABSTRACT
+    assert mm["ListSyntax"]._tx_inh_by == [mm["List"]]
+    assert mm["List"]._tx_type is RULE_COMMON
+    assert mm["Value"]._tx_type is RULE_ABSTRACT
+    assert mm["Value"]._tx_inh_by == [mm["ListSyntax"]]

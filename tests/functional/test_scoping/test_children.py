@@ -1,11 +1,10 @@
-
 import re
 from operator import eq
 
 import textx.scoping.providers as scoping_providers
 from textx import get_children, get_children_of_type, metamodel_from_str
 
-metamodel_str = '''
+metamodel_str = """
 Model:
     packages*=Package
 ;
@@ -27,7 +26,7 @@ Attribute:
 ;
 
 FQN: ID('.'ID)*;
-    '''
+    """
 
 
 def test_children():
@@ -46,7 +45,8 @@ def test_children():
     # MODEL PARSING
     #################################
 
-    my_model = my_metamodel.model_from_str('''
+    my_model = my_metamodel.model_from_str(
+        """
     package P1 {
         class Part1 {
         }
@@ -61,7 +61,8 @@ def test_children():
             attr P2.Part2 p2b;
         }
     }
-    ''')
+    """
+    )
 
     #################################
     # TEST
@@ -71,25 +72,23 @@ def test_children():
     res.sort(key=lambda x: x.name)
     assert len(res) == 3
     assert all(map(eq, map(lambda x: x.name, res), ["C2", "Part1", "Part2"]))
-    assert not all(map(eq, map(lambda x: x.name, res),
-                       ["Part1", "Part2", "C2"]))
+    assert not all(map(eq, map(lambda x: x.name, res), ["Part1", "Part2", "C2"]))
     for x in res:
         assert x.__class__.__name__ == "Class"
 
     res = get_children_of_type("Attribute", my_model)
     res.sort(key=lambda x: x.name)
     assert len(res) == 4
-    assert all(map(eq, map(lambda x: x.name, res),
-                   ["p1", "p2a", "p2b", "rec"]))
+    assert all(map(eq, map(lambda x: x.name, res), ["p1", "p2a", "p2b", "rec"]))
     for x in res:
         assert x.__class__.__name__ == "Attribute"
 
-    res = get_children(lambda x: hasattr(x, "name") and re.match(
-        ".*2.*", x.name), my_model)
+    res = get_children(
+        lambda x: hasattr(x, "name") and re.match(".*2.*", x.name), my_model
+    )
     res.sort(key=lambda x: x.name)
     assert len(res) == 5
-    assert all(map(eq, map(lambda x: x.name, res),
-                   ["C2", "P2", "Part2", "p2a", "p2b"]))
+    assert all(map(eq, map(lambda x: x.name, res), ["C2", "P2", "Part2", "p2a", "p2b"]))
 
     #################################
     # END

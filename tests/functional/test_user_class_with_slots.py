@@ -17,9 +17,11 @@ def test_user_class_with_slots():
     """
     User supplied meta class.
     """
+
     class Point:
         "User class."
-        __slots__ = ['parent', 'x', 'y']
+
+        __slots__ = ["parent", "x", "y"]
 
         def __init__(self, parent, x, y):
             self.parent = parent
@@ -33,8 +35,7 @@ def test_user_class_with_slots():
     end
     """
 
-    mm = metamodel_from_str(grammar, classes=[Point],
-                            auto_init_attributes=False)
+    mm = metamodel_from_str(grammar, classes=[Point], auto_init_attributes=False)
     model = mm.model_from_str(modelstr)
     # Test that user class is instantiated
     point = model.points[0]

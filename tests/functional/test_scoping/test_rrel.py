@@ -21,23 +21,23 @@ def test_rrel_basic_parser1():
 
 def test_rrel_basic_parser2():
     tree = parse("^pkg*.cls")
-    assert str(tree) == '(..)*.(pkg)*.cls'
+    assert str(tree) == "(..)*.(pkg)*.cls"
     tree = parse("obj.ref.~extension *.methods")
-    assert str(tree) == 'obj.ref.(~extension)*.methods'
+    assert str(tree) == "obj.ref.(~extension)*.methods"
     tree = parse("type.vals")
-    assert str(tree) == 'type.vals'
+    assert str(tree) == "type.vals"
     tree = parse("(type.vals)")
-    assert str(tree) == '(type.vals)'
+    assert str(tree) == "(type.vals)"
     tree = parse("(type.vals)*")
-    assert str(tree) == '(type.vals)*'
+    assert str(tree) == "(type.vals)*"
     tree = parse("instance . ( type.vals ) *")
-    assert str(tree) == 'instance.(type.vals)*'
+    assert str(tree) == "instance.(type.vals)*"
     tree = parse("a,b,c")
-    assert str(tree) == 'a,b,c'
+    assert str(tree) == "a,b,c"
     tree = parse("a.b.c")
-    assert str(tree) == 'a.b.c'
+    assert str(tree) == "a.b.c"
     tree = parse("parent(NAME)")
-    assert str(tree) == 'parent(NAME)'
+    assert str(tree) == "parent(NAME)"
     tree = parse("a.'b'~b.'c'~x")
     assert str(tree) == "a.'b'~b.'c'~x"
 
@@ -48,7 +48,7 @@ def test_rrel_basic_parser2():
         tree = parse("a,b,c,")
 
 
-metamodel_str = '''
+metamodel_str = """
     Model:
         packages*=Package
     ;
@@ -72,9 +72,9 @@ metamodel_str = '''
 
     Comment: /#.*/;
     FQN: ID('.'ID)*;
-    '''
+    """
 
-modeltext = '''
+modeltext = """
     package P1 {
         class Part1 {
         }
@@ -97,7 +97,7 @@ modeltext = '''
             attr p1;
         }
     }
-    '''
+    """
 
 
 def test_rrel_basic_lookup():
@@ -136,6 +136,7 @@ def test_rrel_basic_lookup():
     assert P2.name == "P2"
 
     from textx import get_model
+
     assert get_model(my_model) is my_model
 
     P2 = find(my_model, "P2", "packages*")
@@ -198,8 +199,12 @@ def test_rrel_basic_lookup():
     rec2 = find(my_model, "P2.Part2.rec", "other1,packages*.classes.attributes,other2")
     assert rec2 is rec
 
-    rec2 = find(my_model, "P2::Part2::rec", "other1,packages*.classes.attributes,other2",
-                split_string="::")
+    rec2 = find(
+        my_model,
+        "P2::Part2::rec",
+        "other1,packages*.classes.attributes,other2",
+        split_string="::",
+    )
     assert rec2 is rec
 
     rec2 = find(my_model, "P2.Part2.rec", "other1,other2,other3")
@@ -214,25 +219,39 @@ def test_rrel_basic_lookup():
     rec2 = find(my_model, "rec", "(~packages,~classes,attributes,classes)*")
     assert rec2.name == "rec"
 
-    rec2 = find(my_model, "rec",
-                "(~packages,~classes,attributes,classes)*", my_metamodel["OBJECT"])
+    rec2 = find(
+        my_model,
+        "rec",
+        "(~packages,~classes,attributes,classes)*",
+        my_metamodel["OBJECT"],
+    )
     assert rec2.name == "rec"
 
-    rec2 = find(my_model, "rec",
-                "(~packages,~classes,attributes,classes)*", my_metamodel["Attribute"])
+    rec2 = find(
+        my_model,
+        "rec",
+        "(~packages,~classes,attributes,classes)*",
+        my_metamodel["Attribute"],
+    )
     assert rec2 is rec
 
-    rec2 = find(my_model, "rec",
-                "(~packages,~classes,attributes,classes)*", my_metamodel["Package"])
+    rec2 = find(
+        my_model,
+        "rec",
+        "(~packages,~classes,attributes,classes)*",
+        my_metamodel["Package"],
+    )
     assert rec2 is None
 
-    rec2 = find(my_model, "rec",
-                "(~packages,classes,attributes,~classes)*", my_metamodel["Class"])
+    rec2 = find(
+        my_model, "rec", "(~packages,classes,attributes,~classes)*", my_metamodel["Class"]
+    )
     assert rec2.name == "rec"
     assert rec2 is not rec  # it is the class...
 
-    rec2 = find(my_model, "rec",
-                "(~packages,~classes,attributes,classes)*", my_metamodel["Class"])
+    rec2 = find(
+        my_model, "rec", "(~packages,~classes,attributes,classes)*", my_metamodel["Class"]
+    )
     assert rec2.name == "rec"
     assert rec2 is not rec  # it is the class...
 
@@ -248,8 +267,12 @@ def test_rrel_basic_lookup():
     t = find(my_model, "", "(.)*.no_existent")  # inifite recursion stopper
     assert t is None
 
-    rec2 = find(my_model, "rec",
-                "(.)*.(~packages,~classes,attributes,classes)*", my_metamodel["Class"])
+    rec2 = find(
+        my_model,
+        "rec",
+        "(.)*.(~packages,~classes,attributes,classes)*",
+        my_metamodel["Class"],
+    )
     assert rec2.name == "rec"
     assert rec2 is not rec  # it is the class...
 
@@ -270,23 +293,27 @@ def test_rrel_repetitions():
     in RREL expressions.
     """
 
-    my_metamodel = metamodel_from_str(r'''
+    my_metamodel = metamodel_from_str(
+        r"""
         Model: entries*=Entry;
         Entry: name=ID (':' ref=[Entry])?;
-    ''')
+    """
+    )
 
-    my_model = my_metamodel.model_from_str(r'''
+    my_model = my_metamodel.model_from_str(
+        r"""
         a: b
         c
         b: a
-    ''')
+    """
+    )
 
     a = find(my_model, "a", "entries.ref*")
-    assert a.name == 'a'
+    assert a.name == "a"
     b = find(my_model, "b", "entries.ref*")
-    assert b.name == 'b'
+    assert b.name == "b"
     c = find(my_model, "c", "entries.ref*")
-    assert c.name == 'c'
+    assert c.name == "c"
 
     a2 = find(my_model, "a.b.a", "entries.ref*")
     assert a2 == a
@@ -298,7 +325,7 @@ def test_rrel_repetitions():
     assert res == b
     assert len(objpath) == 3
     assert objpath[-1] == res
-    assert ".".join(map(lambda x: x.name, objpath)) == 'b.a.b'
+    assert ".".join(map(lambda x: x.name, objpath)) == "b.a.b"
 
     a2 = find(my_model, "b.a.b.a", "entries.ref*")
     assert a2 == a
@@ -307,7 +334,7 @@ def test_rrel_repetitions():
     assert res == a
     assert len(objpath) == 4
     assert objpath[-1] == res
-    assert ".".join(map(lambda x: x.name, objpath)) == 'b.a.b.a'
+    assert ".".join(map(lambda x: x.name, objpath)) == "b.a.b.a"
 
     a2 = find(my_model, "b.a.b.a.b.a.b.a.b.a", "entries.ref*")
     assert a2 == a
@@ -315,13 +342,17 @@ def test_rrel_repetitions():
 
 def test_split_str():
     from textx import metamodel_from_str
-    mm = metamodel_from_str('''
+
+    mm = metamodel_from_str(
+        """
         Model: a+=A r+=R;
         A: 'A' name=ID '{' a*=A  '}';
         R: 'R' a+=[A:FQN|+p:a*][','];
         FQN[split='::']: ID ('::' ID)*;
-    ''')
-    m = mm.model_from_str('''
+    """
+    )
+    m = mm.model_from_str(
+        """
         A a1 {
             A aa1 {
                 A aaa1 {}
@@ -337,20 +368,22 @@ def test_split_str():
         R a1::aa1::aaa1, a1::aa1::aab1, R, R::r2
         R R
         R a2::aa2
-    ''')
+    """
+    )
     assert len(m.r) == 3
 
     assert len(m.r[0].a) == 4
     assert len(m.r[1].a) == 1
     assert len(m.r[2].a) == 1
 
-    assert '.'.join(map(lambda x: x.name, m.r[0].a[0]._tx_path)) == 'a1.aa1.aaa1'
-    assert '.'.join(map(lambda x: x.name, m.r[0].a[1]._tx_path)) == 'a1.aa1.aab1'
-    assert '.'.join(map(lambda x: x.name, m.r[0].a[2]._tx_path)) == 'R'
-    assert '.'.join(map(lambda x: x.name, m.r[0].a[3]._tx_path)) == 'R.r2'
+    assert ".".join(map(lambda x: x.name, m.r[0].a[0]._tx_path)) == "a1.aa1.aaa1"
+    assert ".".join(map(lambda x: x.name, m.r[0].a[1]._tx_path)) == "a1.aa1.aab1"
+    assert ".".join(map(lambda x: x.name, m.r[0].a[2]._tx_path)) == "R"
+    assert ".".join(map(lambda x: x.name, m.r[0].a[3]._tx_path)) == "R.r2"
 
-    with raises(TextXSemanticError, match=r'.*Unknown object.*a2::unknown.*'):
-        _ = mm.model_from_str('''
+    with raises(TextXSemanticError, match=r".*Unknown object.*a2::unknown.*"):
+        _ = mm.model_from_str(
+            """
             A a1 {
                 A aa1 {
                     A aaa1 {}
@@ -361,7 +394,8 @@ def test_split_str():
                 A aa2 {}
             }
             R a2::unknown
-        ''')
+        """
+        )
 
 
 def test_split_str_multifile():
@@ -369,16 +403,18 @@ def test_split_str_multifile():
     from os.path import dirname, join
 
     from textx import metamodel_from_file
+
     this_folder = dirname(__file__)
-    mm = metamodel_from_file(join(this_folder, 'rrel', 'Grammar.tx'))
-    m = mm.model_from_file(join(this_folder, 'rrel', 'main.model'))
+    mm = metamodel_from_file(join(this_folder, "rrel", "Grammar.tx"))
+    m = mm.model_from_file(join(this_folder, "rrel", "main.model"))
     # see above:
-    assert '.'.join(map(lambda x: x.name, m.r[0].a[0]._tx_path)) == 'a1.aa1.aaa1'
+    assert ".".join(map(lambda x: x.name, m.r[0].a[0]._tx_path)) == "a1.aa1.aaa1"
 
 
 def test_rrel_with_fixed_string_in_navigation():
     builtin_models = ModelRepository()
-    mm = metamodel_from_str(r'''
+    mm = metamodel_from_str(
+        r"""
         Model: types_collection*=TypesCollection
             ('activeTypes' '=' active_types=[TypesCollection])? usings*=Using;
         Using: 'using' name=ID "=" type=[Type:ID|+m:
@@ -389,18 +425,25 @@ def test_rrel_with_fixed_string_in_navigation():
         TypesCollection: 'types' name=ID "{" types*=Type "}";
         Type: 'type' name=ID;
         Comment: /#.*?$/;
-    ''', builtin_models=builtin_models)
+    """,
+        builtin_models=builtin_models,
+    )
 
-    builtin_models.add_model(mm.model_from_str(r'''
+    builtin_models.add_model(
+        mm.model_from_str(
+            r"""
         types builtin {
             type i32
             type i64
             type f32
             type f64
         }
-    '''))
+    """
+        )
+    )
 
-    _ = mm.model_from_str(r'''
+    _ = mm.model_from_str(
+        r"""
         types MyTypes {
             type Int
             type Double
@@ -414,11 +457,12 @@ def test_rrel_with_fixed_string_in_navigation():
         using myInt = Int    # found via "regular lookup"
         using myi32 = i32    # found via "default lookup"
         # using myFoo = Foo  # --> not found
-    ''')
+    """
+    )
 
-    with raises(TextXSemanticError,
-                match=r'.*Unknown object "Foo".*'):
-        _ = mm.model_from_str(r'''
+    with raises(TextXSemanticError, match=r'.*Unknown object "Foo".*'):
+        _ = mm.model_from_str(
+            r"""
             types MyTypes {
                 type Int
                 type Double
@@ -432,12 +476,14 @@ def test_rrel_with_fixed_string_in_navigation():
             using myInt = Int    # found via "regular lookup"
             using myi32 = i32    # found via "default lookup"
             using myFoo = Foo    # --> not found
-        ''')
+        """
+        )
 
 
 def test_rrel_with_fixed_string_in_navigation_with_scalars():
     builtin_models = ModelRepository()
-    mm = metamodel_from_str(r'''
+    mm = metamodel_from_str(
+        r"""
         Model: types_collection=TypesCollection // scalar here (compared to last test)
             ('activeTypes' '=' active_types=[TypesCollection])? usings*=Using;
         Using: 'using' name=ID "=" type=[Type:ID|+m:
@@ -448,18 +494,25 @@ def test_rrel_with_fixed_string_in_navigation_with_scalars():
         TypesCollection: 'types' name=ID "{" types*=Type "}";
         Type: 'type' name=ID;
         Comment: /#.*?$/;
-    ''', builtin_models=builtin_models)
+    """,
+        builtin_models=builtin_models,
+    )
 
-    builtin_models.add_model(mm.model_from_str(r'''
+    builtin_models.add_model(
+        mm.model_from_str(
+            r"""
         types builtin {
             type i32
             type i64
             type f32
             type f64
         }
-    '''))
+    """
+        )
+    )
 
-    _ = mm.model_from_str(r'''
+    _ = mm.model_from_str(
+        r"""
         types MyTypes {
             type Int
             type Double
@@ -468,11 +521,12 @@ def test_rrel_with_fixed_string_in_navigation_with_scalars():
         using myDouble = Double
         using myInt = Int    # found via "regular lookup"
         using myi32 = i32    # found via "default lookup"
-    ''')
+    """
+    )
 
-    with raises(TextXSemanticError,
-                match=r'.*Unknown object "Unknown".*'):
-        _ = mm.model_from_str(r'''
+    with raises(TextXSemanticError, match=r'.*Unknown object "Unknown".*'):
+        _ = mm.model_from_str(
+            r"""
             types MyTypes {
                 type Int
                 type Double
@@ -482,7 +536,8 @@ def test_rrel_with_fixed_string_in_navigation_with_scalars():
             using myInt = Int    # found via "regular lookup"
             using myi32 = i32    # found via "default lookup"
             using myFoo = Unknown    # --> not found
-        ''')
+        """
+        )
 
 
 def test_lookup_multifile():
@@ -490,15 +545,16 @@ def test_lookup_multifile():
     from os.path import dirname, join
 
     from textx import metamodel_from_file
+
     this_folder = dirname(__file__)
-    mm = metamodel_from_file(join(this_folder, 'rrel_multifile', 'Grammar.tx'))
+    mm = metamodel_from_file(join(this_folder, "rrel_multifile", "Grammar.tx"))
 
     # "standard" multi-file usage
-    m = mm.model_from_file(join(this_folder, 'rrel_multifile', 'main.model'))
+    m = mm.model_from_file(join(this_folder, "rrel_multifile", "main.model"))
     assert m is not None
 
     # Rule "P1" employs a mandatory rrel path entry ".." (no multi-file)
-    m = mm.model_from_file(join(this_folder, 'rrel_multifile', 'navigation0.model'))
+    m = mm.model_from_file(join(this_folder, "rrel_multifile", "navigation0.model"))
     assert m is not None
 
     # Rule "P1" employs a mandatory rrel path entry ".." (with multi-file)
@@ -506,25 +562,27 @@ def test_lookup_multifile():
     # TODO: in case of multi-files, do not start at the root of each model, but
     # iterate over all models once the path reaches the model root (e.g. with .. in
     # a navigation rrel node)...
-    m = mm.model_from_file(join(this_folder, 'rrel_multifile', 'navigation1.model'))
+    m = mm.model_from_file(join(this_folder, "rrel_multifile", "navigation1.model"))
     assert m is not None
 
     # the next exammple is missing the include statement (leads to "Unknown object...")
-    with raises(TextXSemanticError, match=r'Unknown object'):
-        _ = mm.model_from_file(join(this_folder, 'rrel_multifile',
-                                    'navigation1_err.model'))
+    with raises(TextXSemanticError, match=r"Unknown object"):
+        _ = mm.model_from_file(
+            join(this_folder, "rrel_multifile", "navigation1_err.model")
+        )
 
 
 def test_lookup_multifile_missing_flag_m():
     from os.path import dirname, join
 
     from textx import metamodel_from_file
+
     this_folder = dirname(__file__)
 
     # the next exammple is missing the +m flag in the grammar
     # (lookup across files disabled):
-    mmE = metamodel_from_file(join(this_folder, 'rrel_multifile',
-                                   'GrammarMissingPlusM.tx'))
-    with raises(TextXSemanticError, match=r'Unknown object'):
-        _ = mmE.model_from_file(join(this_folder, 'rrel_multifile',
-                                     'navigation1.model'))
+    mmE = metamodel_from_file(
+        join(this_folder, "rrel_multifile", "GrammarMissingPlusM.tx")
+    )
+    with raises(TextXSemanticError, match=r"Unknown object"):
+        _ = mmE.model_from_file(join(this_folder, "rrel_multifile", "navigation1.model"))

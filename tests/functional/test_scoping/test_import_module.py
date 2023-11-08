@@ -1,4 +1,3 @@
-
 from os.path import abspath, dirname, join
 
 from pytest import raises
@@ -21,18 +20,17 @@ def test_model_without_imports():
     #################################
 
     my_meta_model = metamodel_from_file(
-        join(abspath(dirname(__file__)),
-             'interface_model1', 'Interface.tx'))
-    my_meta_model.register_scope_providers(
-        {"*.*": scoping_providers.FQNImportURI()})
+        join(abspath(dirname(__file__)), "interface_model1", "Interface.tx")
+    )
+    my_meta_model.register_scope_providers({"*.*": scoping_providers.FQNImportURI()})
 
     #################################
     # MODEL PARSING
     #################################
 
     my_model = my_meta_model.model_from_file(
-        join(abspath(dirname(__file__)),
-             "interface_model1", "model_a", "all_in_one.if"))
+        join(abspath(dirname(__file__)), "interface_model1", "model_a", "all_in_one.if")
+    )
 
     #################################
     # TEST MODEL
@@ -60,21 +58,20 @@ def test_model_with_imports():
     #################################
 
     my_meta_model = metamodel_from_file(
-        join(abspath(dirname(__file__)),
-             'interface_model1', 'Interface.tx'))
-    my_meta_model.register_scope_providers(
-        {"*.*": scoping_providers.FQNImportURI()})
+        join(abspath(dirname(__file__)), "interface_model1", "Interface.tx")
+    )
+    my_meta_model.register_scope_providers({"*.*": scoping_providers.FQNImportURI()})
 
     #################################
     # MODEL PARSING
     #################################
 
     my_model = my_meta_model.model_from_file(
-        join(abspath(dirname(__file__)),
-             "interface_model1", "model_b", "app.if"))
+        join(abspath(dirname(__file__)), "interface_model1", "model_b", "app.if")
+    )
     my_model2 = my_meta_model.model_from_file(
-        join(abspath(dirname(__file__)),
-             "interface_model1", "model_b", "app.if"))
+        join(abspath(dirname(__file__)), "interface_model1", "model_b", "app.if")
+    )
 
     #################################
     # TEST MODEL
@@ -82,8 +79,8 @@ def test_model_with_imports():
 
     # check that "socket" is an interface
     inner_model = my_model._tx_model_repository.all_models[
-        join(abspath(dirname(__file__)),
-             "interface_model1", "model_b", "base.if")]
+        join(abspath(dirname(__file__)), "interface_model1", "model_b", "base.if")
+    ]
     check_unique_named_object_has_class(inner_model, "socket", "Interface")
 
     # check that "s.s1" is a reference to the socket interface
@@ -111,25 +108,29 @@ def test_model_with_imports_and_errors():
     #################################
 
     my_meta_model = metamodel_from_file(
-        join(abspath(dirname(__file__)),
-             'interface_model1', 'Interface.tx'))
-    my_meta_model.register_scope_providers(
-        {"*.*": scoping_providers.FQNImportURI()})
+        join(abspath(dirname(__file__)), "interface_model1", "Interface.tx")
+    )
+    my_meta_model.register_scope_providers({"*.*": scoping_providers.FQNImportURI()})
 
     #################################
     # MODEL PARSING
     #################################
 
-    with raises(textx.exceptions.TextXSemanticError,
-                match=r'.*Unknown object.*types.int.*'):
+    with raises(
+        textx.exceptions.TextXSemanticError, match=r".*Unknown object.*types.int.*"
+    ):
         my_meta_model.model_from_file(
-            join(abspath(dirname(__file__)),
-                 "interface_model1", "model_b", "app_error1.if"))
+            join(
+                abspath(dirname(__file__)), "interface_model1", "model_b", "app_error1.if"
+            )
+        )
 
-    with raises(IOError, match=r'.*file_not_found\.if.*'):
+    with raises(IOError, match=r".*file_not_found\.if.*"):
         my_meta_model.model_from_file(
-            join(abspath(dirname(__file__)),
-                 "interface_model1", "model_b", "app_error2.if"))
+            join(
+                abspath(dirname(__file__)), "interface_model1", "model_b", "app_error2.if"
+            )
+        )
 
     #################################
     # END
@@ -145,21 +146,21 @@ def test_model_with_imports_and_global_repo():
     #################################
 
     my_meta_model = metamodel_from_file(
-        join(abspath(dirname(__file__)), 'interface_model1', 'Interface.tx'),
-        global_repository=True)
-    my_meta_model.register_scope_providers(
-        {"*.*": scoping_providers.FQNImportURI()})
+        join(abspath(dirname(__file__)), "interface_model1", "Interface.tx"),
+        global_repository=True,
+    )
+    my_meta_model.register_scope_providers({"*.*": scoping_providers.FQNImportURI()})
 
     #################################
     # MODEL PARSING
     #################################
 
     my_model = my_meta_model.model_from_file(
-        join(abspath(dirname(__file__)),
-             "interface_model1", "model_b", "app.if"))
+        join(abspath(dirname(__file__)), "interface_model1", "model_b", "app.if")
+    )
     my_model2 = my_meta_model.model_from_file(
-        join(abspath(dirname(__file__)),
-             "interface_model1", "model_b", "app.if"))
+        join(abspath(dirname(__file__)), "interface_model1", "model_b", "app.if")
+    )
 
     #################################
     # TEST MODEL
@@ -185,18 +186,17 @@ def test_model_with_circular_imports():
     #################################
 
     my_meta_model = metamodel_from_file(
-        join(abspath(dirname(__file__)),
-             'interface_model1', 'Interface.tx'))
-    my_meta_model.register_scope_providers(
-        {"*.*": scoping_providers.FQNImportURI()})
+        join(abspath(dirname(__file__)), "interface_model1", "Interface.tx")
+    )
+    my_meta_model.register_scope_providers({"*.*": scoping_providers.FQNImportURI()})
 
     #################################
     # MODEL PARSING
     #################################
 
     my_model = my_meta_model.model_from_file(
-        join(abspath(dirname(__file__)),
-             "interface_model1", "model_c", "A.if"))
+        join(abspath(dirname(__file__)), "interface_model1", "model_c", "A.if")
+    )
 
     #################################
     # TEST MODEL
@@ -211,22 +211,23 @@ def test_model_with_circular_imports():
     check_unique_named_object_has_class(my_model, "A", "Interface")
     a = get_unique_named_object(my_model, "A")
 
-    a_self = get_children(lambda x: hasattr(x, 'name') and x.name == "self", a)
+    a_self = get_children(lambda x: hasattr(x, "name") and x.name == "self", a)
     assert len(a_self) == 1
     a_self = a_self[0]
 
-    a_other = get_children(
-        lambda x: hasattr(x, 'name') and x.name == "other", a)
+    a_other = get_children(lambda x: hasattr(x, "name") and x.name == "other", a)
     assert len(a_other) == 1
     a_other = a_other[0]
 
     a_other_self = get_children(
-        lambda x: hasattr(x, 'name') and x.name == "self", a_other.ref)
+        lambda x: hasattr(x, "name") and x.name == "self", a_other.ref
+    )
     assert len(a_other_self) == 1
     a_other_self = a_other_self[0]
 
     a_other_other = get_children(
-        lambda x: hasattr(x, 'name') and x.name == "other", a_other.ref)
+        lambda x: hasattr(x, "name") and x.name == "other", a_other.ref
+    )
     assert len(a_other_other) == 1
     a_other_other = a_other_other[0]
 
@@ -249,18 +250,19 @@ def test_model_with_multi_import():
     #################################
 
     my_meta_model = metamodel_from_file(
-        join(abspath(dirname(__file__)),
-             'interface_model1', 'Interface.tx'))
-    my_meta_model.register_scope_providers(
-        {"*.*": scoping_providers.FQNImportURI()})
+        join(abspath(dirname(__file__)), "interface_model1", "Interface.tx")
+    )
+    my_meta_model.register_scope_providers({"*.*": scoping_providers.FQNImportURI()})
 
     #################################
     # MODEL PARSING
     #################################
 
     my_model = my_meta_model.model_from_file(
-        join(abspath(dirname(__file__)),
-             "interface_model1", "model_c", "A_multi_import.if"))
+        join(
+            abspath(dirname(__file__)), "interface_model1", "model_c", "A_multi_import.if"
+        )
+    )
 
     #################################
     # TEST MODEL

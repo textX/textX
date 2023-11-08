@@ -21,6 +21,7 @@ def test_user_class_init_order():
 
     class First:
         "User class."
+
         def __init__(self, seconds):
             "Constructor must be without parameters."
             self.seconds = seconds
@@ -28,6 +29,7 @@ def test_user_class_init_order():
 
     class Second:
         "User class"
+
         def __init__(self, parent, sec):
             self.parent = parent
             self.sec = sec

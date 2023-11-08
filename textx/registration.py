@@ -115,9 +115,7 @@ def language_description(language_name):
     try:
         return languages[language_name]
     except KeyError:
-        raise TextXRegistrationError(
-            f'Language "{language_name}" not registered.'
-        )
+        raise TextXRegistrationError(f'Language "{language_name}" not registered.')
 
 
 def generator_description(language_name, target_name, any_permitted=False):

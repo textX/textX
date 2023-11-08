@@ -1,4 +1,3 @@
-
 from pytest import raises
 
 import textx.scoping.providers as providers
@@ -24,17 +23,17 @@ some persons may still be generated. Thus, you need to wait (with a
 "Postponer" how this can be achieved).
 """
 
-grammar = r'''
+grammar = r"""
 Model: (persons+=Person|knows+=Knows)*;
 Person: ':' 'person' name=ID;
 Knows: person1=[Person] 'knows' person2=[Person];
-'''
-grammar_addon = r'''
+"""
+grammar_addon = r"""
 Model: (persons+=Person|knows+=Knows|greetings=Greeting)*;
 Person: ':' 'person' name=ID;
 Knows: person1=[Person] 'knows' person2=[Person]; // inventing
 Greeting: '*' 'hello' person=[Person]; // non-inventing
-'''
+"""
 
 
 def person_definer_scope(knows, attr, attr_ref):
@@ -45,7 +44,7 @@ def person_definer_scope(knows, attr, attr_ref):
         return found_persons[0]  # if a person exists, return it
     else:
         mm = get_metamodel(m)  # else, create it and store it in the model
-        person = mm['Person']()
+        person = mm["Person"]()
         person.name = name
         person.parent = m
         m.persons.append(person)
@@ -59,6 +58,7 @@ class Postponer:
     Reference resolution will fail if a set of Postponed
     resolutions does not change any more.
     """
+
     def __init__(self, base=providers.PlainName()):
         self.base = base
 
@@ -72,11 +72,13 @@ class Postponer:
 
 def test_model_modification_through_scoping_normal_lookup():
     mm = metamodel_from_str(grammar)
-    m = mm.model_from_str(r'''
+    m = mm.model_from_str(
+        r"""
         :person Tom
         :person Jerry
         Tom knows Jerry
-        ''')
+        """
+    )
     assert len(m.persons) == 2
     assert len(m.knows) == 1
 
@@ -84,95 +86,114 @@ def test_model_modification_through_scoping_normal_lookup():
 def test_model_modification_through_scoping_normal_lookup_failure():
     mm = metamodel_from_str(grammar)
     with raises(TextXSemanticError):
-        mm.model_from_str(r'''
+        mm.model_from_str(
+            r"""
             :person Tom
             :person Jerry
             Tom knows Jerry
             Tom knows Berry
-            ''')
+            """
+        )
 
 
 def test_model_modification_through_scoping_custom_lookup():
     mm = metamodel_from_str(grammar)
-    mm.register_scope_providers({'Knows.*': person_definer_scope})
-    m = mm.model_from_str(r'''
+    mm.register_scope_providers({"Knows.*": person_definer_scope})
+    m = mm.model_from_str(
+        r"""
         :person Tom
         :person Jerry
         Tom knows Jerry
         Tom knows Berry
         Berry knows Jerry
-        ''')
+        """
+    )
     assert len(m.persons) == 3
     assert len(m.knows) == 3
 
-    m = mm.model_from_str(r'''
-        :person Tom
-        :person Jerry
-        :person Berry
-        Tom knows Jerry
-        Tom knows Berry
-        Berry knows Jerry
-        ''')
-    assert len(m.persons) == 3
-    assert len(m.knows) == 3
-
-    m = mm.model_from_str(r'''
-        Tom knows Jerry
-        Tom knows Berry
-        Berry knows Jerry
+    m = mm.model_from_str(
+        r"""
         :person Tom
         :person Jerry
         :person Berry
-        ''')
-    assert len(m.persons) == 3
-    assert len(m.knows) == 3
-
-    m = mm.model_from_str(r'''
         Tom knows Jerry
         Tom knows Berry
         Berry knows Jerry
-        ''')
+        """
+    )
+    assert len(m.persons) == 3
+    assert len(m.knows) == 3
+
+    m = mm.model_from_str(
+        r"""
+        Tom knows Jerry
+        Tom knows Berry
+        Berry knows Jerry
+        :person Tom
+        :person Jerry
+        :person Berry
+        """
+    )
+    assert len(m.persons) == 3
+    assert len(m.knows) == 3
+
+    m = mm.model_from_str(
+        r"""
+        Tom knows Jerry
+        Tom knows Berry
+        Berry knows Jerry
+        """
+    )
     assert len(m.persons) == 3
     assert len(m.knows) == 3
 
 
 def test_model_modification_through_scoping_custom_lookup_addon_failure():
     mm = metamodel_from_str(grammar_addon)
-    mm.register_scope_providers({'Knows.*': person_definer_scope})
+    mm.register_scope_providers({"Knows.*": person_definer_scope})
 
     # Here, at least one case produces an error, since
     # Tom is not part of the model until the "Knowns" rule
     # is resolved.
-    with raises(TextXSemanticError, match=r'.*Unknown object.*Tom.*'):
-        mm.model_from_str(r'''
+    with raises(TextXSemanticError, match=r".*Unknown object.*Tom.*"):
+        mm.model_from_str(
+            r"""
             Tom knows Jerry
             *hello Tom
-            ''')
-        mm.model_from_str(r'''
+            """
+        )
+        mm.model_from_str(
+            r"""
             *hello Tom
             Tom knows Jerry
-            ''')
+            """
+        )
 
 
 def test_model_modification_through_scoping_custom_lookup_addon_fix():
     mm = metamodel_from_str(grammar_addon)
-    mm.register_scope_providers({'Knows.*': person_definer_scope,
-                                 'Greeting.*': Postponer()})
+    mm.register_scope_providers(
+        {"Knows.*": person_definer_scope, "Greeting.*": Postponer()}
+    )
 
-    m = mm.model_from_str(r'''
+    m = mm.model_from_str(
+        r"""
         Tom knows Jerry
         *hello Tom
-        ''')
+        """
+    )
 
     assert len(m.persons) == 2
     assert len(m.knows) == 1
     assert len(m.greetings) == 1
     assert m.greetings[0].person == m.knows[0].person1
 
-    m = mm.model_from_str(r'''
+    m = mm.model_from_str(
+        r"""
         *hello Tom
         Tom knows Jerry
-        ''')
+        """
+    )
 
     assert len(m.persons) == 2
     assert len(m.knows) == 1
@@ -180,8 +201,10 @@ def test_model_modification_through_scoping_custom_lookup_addon_fix():
     assert m.greetings[0].person == m.knows[0].person1
 
     # Unknown elements still produce an error, as expected
-    with raises(TextXSemanticError, match=r'.*Unresolvable.*Berry.*'):
-        mm.model_from_str(r'''
+    with raises(TextXSemanticError, match=r".*Unresolvable.*Berry.*"):
+        mm.model_from_str(
+            r"""
             Tom knows Jerry
             *hello Berry
-            ''')
+            """
+        )

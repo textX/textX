@@ -7,7 +7,7 @@ def test_multiple_rule_modifiers():
     See: https://github.com/textX/textX/issues/246
     """
 
-    grammar = r'''
+    grammar = r"""
     main_rule[ws=' \t']:
         "word1" rule1
     ;
@@ -15,11 +15,11 @@ def test_multiple_rule_modifiers():
     rule1[skipws, ws=' \t\n']:
         "word2" "word3"
     ;
-    '''
+    """
 
     meta = metamodel_from_str(grammar)
-    s = '''word1 word2
-    word3'''
+    s = """word1 word2
+    word3"""
 
     model = meta.model_from_str(s)
-    assert model == 'word1word2word3'
+    assert model == "word1word2word3"

@@ -27,6 +27,7 @@ def test_user_class():
 
     class First:
         "User class."
+
         def __init__(self, seconds, a, b, c):
             "Constructor must be without parameters."
             # Testing that additional attributes
@@ -39,10 +40,11 @@ def test_user_class():
 
             for second in self.seconds:
                 # Make sure seconds have already been instantiated
-                assert hasattr(second, 'sec') and isinstance(second.sec, int)
+                assert hasattr(second, "sec") and isinstance(second.sec, int)
 
     class Second:
         "User class"
+
         def __init__(self, parent, sec):
             self.parent = parent
             self.sec = sec
@@ -92,18 +94,21 @@ class BThing:
 
 def test_user_class_with_imported_grammar():
     this_folder = dirname(abspath(__file__))
-    mm = metamodel_from_file(join(this_folder, "user_classes", "B.tx"),
-                             classes=[AThing, BThing])
+    mm = metamodel_from_file(
+        join(this_folder, "user_classes", "B.tx"), classes=[AThing, BThing]
+    )
     called = [False]
 
     def dummy(_):
         called[0] = True
 
-    mm.register_obj_processors({'AThing': dummy})
-    m = mm.model_from_str("""
+    mm.register_obj_processors({"AThing": dummy})
+    m = mm.model_from_str(
+        """
         A 2,1
         B Hello
-    """)
+    """
+    )
     assert called[0]
     assert m.a.v.x == 2
     assert m.a.v.y == 1
@@ -113,10 +118,13 @@ def test_user_class_with_imported_grammar():
     assert isinstance(m.a, AThing)
     assert isinstance(m.b, BThing)
 
-    with raises(TextXSemanticError,
-                match=r'.*redefined imported rule Thing'
-                      + r' cannot be replaced by a user class.*'):
-        mm = metamodel_from_file(join(this_folder, "user_classes", "B.tx"),
-                                 classes=[AThing, BThing, Thing])
+    with raises(
+        TextXSemanticError,
+        match=r".*redefined imported rule Thing"
+        + r" cannot be replaced by a user class.*",
+    ):
+        mm = metamodel_from_file(
+            join(this_folder, "user_classes", "B.tx"), classes=[AThing, BThing, Thing]
+        )
     # now, all involved user classes **may** be instrumented...
     # (after an exception, we do not guarantee 100% cleanup of user classes)

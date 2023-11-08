@@ -1,6 +1,6 @@
 from textx import metamodel_from_str
 
-grammar = '''
+grammar = """
 Calc: expression=Expression;
 Expression: op=Term (op=PlusOrMinus op=Term)* ;
 PlusOrMinus: '+' | '-';
@@ -8,7 +8,7 @@ Term: op=Factor (op=MulOrDiv op=Factor)*;
 MulOrDiv: '*' | '/' ;
 Factor: (sign=PlusOrMinus)?  op=Operand;
 Operand: op=NUMBER | op=ID | ('(' op=Expression ')');
-'''
+"""
 
 
 class Calc:
@@ -28,5 +28,5 @@ def test_non_abstract_grammar_rule_different_from_obj_metaclass():
 
     """
     mm = metamodel_from_str(grammar, classes=[Calc])
-    model = mm.model_from_str('2 * 5')
-    assert model.expression.__class__.__name__ == 'Term'
+    model = mm.model_from_str("2 * 5")
+    assert model.expression.__class__.__name__ == "Term"

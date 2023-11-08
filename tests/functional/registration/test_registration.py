@@ -22,7 +22,7 @@ from textx.metamodel import TextXMetaModel
 
 
 def mymetamodel_callable(**kwargs):
-    return metamodel_from_str('MyModel: INT;', **kwargs)
+    return metamodel_from_str("MyModel: INT;", **kwargs)
 
 
 def generator_callable():
@@ -32,10 +32,12 @@ def generator_callable():
 @pytest.fixture
 def language_registered():
     clear_language_registrations()
-    register_language('test-lang',
-                      pattern='*.test',
-                      description='test-lang description',
-                      metamodel=mymetamodel_callable)
+    register_language(
+        "test-lang",
+        pattern="*.test",
+        description="test-lang description",
+        metamodel=mymetamodel_callable,
+    )
 
 
 def test_register_language():
@@ -43,31 +45,37 @@ def test_register_language():
     Test both style of language registration.
     """
     clear_language_registrations()
-    register_language('test-lang',
-                      pattern='*.test',
-                      description='test-lang description',
-                      metamodel=mymetamodel_callable)
+    register_language(
+        "test-lang",
+        pattern="*.test",
+        description="test-lang description",
+        metamodel=mymetamodel_callable,
+    )
 
-    language = language_description('test-lang')
+    language = language_description("test-lang")
 
     assert type(language) is LanguageDesc
-    assert language.name == 'test-lang'
-    assert language.pattern == '*.test'
-    assert language.description == 'test-lang description'
+    assert language.name == "test-lang"
+    assert language.pattern == "*.test"
+    assert language.description == "test-lang description"
     assert language.metamodel == mymetamodel_callable
 
     clear_language_registrations()
-    register_language(LanguageDesc('test-lang',
-                                   pattern='*.test',
-                                   description='test-lang description',
-                                   metamodel=mymetamodel_callable))
+    register_language(
+        LanguageDesc(
+            "test-lang",
+            pattern="*.test",
+            description="test-lang description",
+            metamodel=mymetamodel_callable,
+        )
+    )
 
-    language = language_description('test-lang')
+    language = language_description("test-lang")
 
     assert type(language) is LanguageDesc
-    assert language.name == 'test-lang'
-    assert language.pattern == '*.test'
-    assert language.description == 'test-lang description'
+    assert language.name == "test-lang"
+    assert language.pattern == "*.test"
+    assert language.description == "test-lang description"
     assert language.metamodel == mymetamodel_callable
 
 
@@ -78,23 +86,22 @@ def test_register_language_with_decorator():
 
     clear_language_registrations()
 
-    @language('test-lang', '*.test')
+    @language("test-lang", "*.test")
     def test_lang():
         "This is a test language"
         return mymetamodel_callable()
 
     assert type(test_lang) is LanguageDesc
-    assert test_lang.name == 'test-lang'
-    assert test_lang.pattern == '*.test'
-    assert test_lang.description == 'This is a test language'
+    assert test_lang.name == "test-lang"
+    assert test_lang.pattern == "*.test"
+    assert test_lang.description == "This is a test language"
     assert callable(test_lang.metamodel)
 
 
 def test_asking_for_unregistered_language_raises_error():
-    """
-    """
-    with pytest.raises(TextXRegistrationError, match='.*not registered.*'):
-        language_description('unexisting')
+    """ """
+    with pytest.raises(TextXRegistrationError, match=".*not registered.*"):
+        language_description("unexisting")
 
 
 def test_register_already_existing_language():
@@ -104,16 +111,20 @@ def test_register_already_existing_language():
     """
 
     clear_language_registrations()
-    register_language('test-lang',
-                      pattern='*.test',
-                      description='test-lang description',
-                      metamodel=mymetamodel_callable)
+    register_language(
+        "test-lang",
+        pattern="*.test",
+        description="test-lang description",
+        metamodel=mymetamodel_callable,
+    )
 
-    with pytest.raises(TextXRegistrationError, match='.*already registered.*'):
-        register_language('test-lang',
-                          pattern='*.test',
-                          description='test-lang description',
-                          metamodel=mymetamodel_callable)
+    with pytest.raises(TextXRegistrationError, match=".*already registered.*"):
+        register_language(
+            "test-lang",
+            pattern="*.test",
+            description="test-lang description",
+            metamodel=mymetamodel_callable,
+        )
 
 
 def test_declaratively_registered_languages_always_available():
@@ -123,11 +134,11 @@ def test_declaratively_registered_languages_always_available():
     accessible.
     """
     clear_language_registrations()
-    tx_lang = language_description('textx')
+    tx_lang = language_description("textx")
 
-    assert tx_lang.name == 'textX'
-    assert tx_lang.pattern == '*.tx'
-    assert tx_lang.project_name == 'textX'
+    assert tx_lang.name == "textX"
+    assert tx_lang.pattern == "*.tx"
+    assert tx_lang.project_name == "textX"
 
 
 def test_language_for_file():
@@ -136,10 +147,10 @@ def test_language_for_file():
     """
 
     clear_language_registrations()
-    tx_lang = language_description('textx')
+    tx_lang = language_description("textx")
 
-    assert tx_lang is language_for_file('test.tx')
-    assert tx_lang is language_for_file('*.tx')
+    assert tx_lang is language_for_file("test.tx")
+    assert tx_lang is language_for_file("*.tx")
 
 
 def test_metamodel_for_language(language_registered):
@@ -147,7 +158,7 @@ def test_metamodel_for_language(language_registered):
     Test finding a meta-model for the given language name.
     """
 
-    mm = metamodel_for_language('test-lang')
+    mm = metamodel_for_language("test-lang")
     assert isinstance(mm, TextXMetaModel)
 
 
@@ -157,36 +168,35 @@ def test_metamodel_for_language_with_params(language_registered):
     brand new meta-model while the old instance will be returned if no `kwargs`
     are given.
     """
+
     class MyModel:
         pass
 
-    mm = metamodel_for_language('test-lang', ignore_case=True,
-                                classes=[MyModel])
+    mm = metamodel_for_language("test-lang", ignore_case=True, classes=[MyModel])
     assert mm.ignore_case
-    assert 'MyModel' in mm.user_classes
+    assert "MyModel" in mm.user_classes
 
     # Now we can call without kwargs and we still get the same instance
-    mm2 = metamodel_for_language('test-lang')
+    mm2 = metamodel_for_language("test-lang")
     assert mm is mm2
 
     # But, passing kwargs again creates a new meta-model
-    mm3 = metamodel_for_language('test-lang', ignore_case=False,
-                                 classes=[MyModel])
+    mm3 = metamodel_for_language("test-lang", ignore_case=False, classes=[MyModel])
     assert not mm3.ignore_case
-    assert 'MyModel' in mm.user_classes
+    assert "MyModel" in mm.user_classes
 
 
 def test_metamodel_for_file(language_registered):
     """
     Test finding a meta-model for the given file or file pattern.
     """
-    mm = metamodel_for_file('mymodel.test')
+    mm = metamodel_for_file("mymodel.test")
     assert isinstance(mm, TextXMetaModel)
 
-    mm = metamodel_for_file('*.test')
+    mm = metamodel_for_file("*.test")
     assert isinstance(mm, TextXMetaModel)
 
-    mm = metamodel_for_file('somefile*.test')
+    mm = metamodel_for_file("somefile*.test")
     assert isinstance(mm, TextXMetaModel)
 
 
@@ -196,21 +206,22 @@ def test_metamodel_for_file_with_params(language_registered):
     brand new meta-model while the old instance will be returned if no `kwargs`
     are given.
     """
+
     class MyModel:
         pass
 
-    mm = metamodel_for_file('*.test', ignore_case=True, classes=[MyModel])
+    mm = metamodel_for_file("*.test", ignore_case=True, classes=[MyModel])
     assert mm.ignore_case
-    assert 'MyModel' in mm.user_classes
+    assert "MyModel" in mm.user_classes
 
     # Now we can call without kwargs and we still get the same instance
-    mm2 = metamodel_for_file('*.test')
+    mm2 = metamodel_for_file("*.test")
     assert mm is mm2
 
     # But, passing kwargs again creates a new meta-model
-    mm3 = metamodel_for_file('*.test', ignore_case=False, classes=[MyModel])
+    mm3 = metamodel_for_file("*.test", ignore_case=False, classes=[MyModel])
     assert not mm3.ignore_case
-    assert 'MyModel' in mm.user_classes
+    assert "MyModel" in mm.user_classes
 
 
 def test_multiple_languages_for_the_same_pattern():
@@ -219,20 +230,23 @@ def test_multiple_languages_for_the_same_pattern():
     `language_for_file` shall raise `TextXRegistrationError`.
     """
     clear_language_registrations()
-    register_language('test-lang',
-                      pattern='*.test',
-                      description='test-lang description',
-                      metamodel=mymetamodel_callable)
-    register_language('test-lang2',
-                      pattern='*.test',
-                      description='test-lang2 description',
-                      metamodel=mymetamodel_callable)
+    register_language(
+        "test-lang",
+        pattern="*.test",
+        description="test-lang description",
+        metamodel=mymetamodel_callable,
+    )
+    register_language(
+        "test-lang2",
+        pattern="*.test",
+        description="test-lang2 description",
+        metamodel=mymetamodel_callable,
+    )
 
-    with pytest.raises(TextXRegistrationError,
-                       match='Multiple languages can parse.*'):
-        language_for_file('Somefile.test')
+    with pytest.raises(TextXRegistrationError, match="Multiple languages can parse.*"):
+        language_for_file("Somefile.test")
 
-    assert len(languages_for_file('Somefile.test')) == 2
+    assert len(languages_for_file("Somefile.test")) == 2
 
 
 def test_file_without_any_language():
@@ -241,9 +255,10 @@ def test_file_without_any_language():
     no languages are registered will raise an error.
     """
 
-    with pytest.raises(TextXRegistrationError,
-                       match='No language registered that can parse.*'):
-        language_for_file('Somefile.nolang')
+    with pytest.raises(
+        TextXRegistrationError, match="No language registered that can parse.*"
+    ):
+        language_for_file("Somefile.nolang")
 
 
 def test_metamodel_callable_must_return_a_metamodel():
@@ -255,14 +270,15 @@ def test_metamodel_callable_must_return_a_metamodel():
         return 42
 
     clear_language_registrations()
-    register_language('test-lang',
-                      pattern='*.test',
-                      description='test-lang description',
-                      metamodel=invalid_metamodel_callable)
+    register_language(
+        "test-lang",
+        pattern="*.test",
+        description="test-lang description",
+        metamodel=invalid_metamodel_callable,
+    )
 
-    with pytest.raises(TextXRegistrationError,
-                       match='.*Meta-model type for language.*'):
-        metamodel_for_language('test-lang')
+    with pytest.raises(TextXRegistrationError, match=".*Meta-model type for language.*"):
+        metamodel_for_language("test-lang")
 
 
 def test_register_generator():
@@ -271,31 +287,37 @@ def test_register_generator():
     """
 
     clear_generator_registrations()
-    register_generator('test-lang',
-                       target='Java',
-                       description='test-lang Java generator',
-                       generator=generator_callable)
+    register_generator(
+        "test-lang",
+        target="Java",
+        description="test-lang Java generator",
+        generator=generator_callable,
+    )
 
-    generator = generator_description('test-lang', 'java')
+    generator = generator_description("test-lang", "java")
 
     assert type(generator) is GeneratorDesc
-    assert generator.language == 'test-lang'
-    assert generator.target == 'Java'
-    assert generator.description == 'test-lang Java generator'
+    assert generator.language == "test-lang"
+    assert generator.target == "Java"
+    assert generator.description == "test-lang Java generator"
     assert generator.generator == generator_callable
 
     clear_generator_registrations()
-    register_generator(GeneratorDesc('test-lang',
-                                     target='Java',
-                                     description='test-lang Java generator',
-                                     generator=generator_callable))
+    register_generator(
+        GeneratorDesc(
+            "test-lang",
+            target="Java",
+            description="test-lang Java generator",
+            generator=generator_callable,
+        )
+    )
 
-    generator = generator_description('test-lang', 'java')
+    generator = generator_description("test-lang", "java")
 
     assert type(generator) is GeneratorDesc
-    assert generator.language == 'test-lang'
-    assert generator.target == 'Java'
-    assert generator.description == 'test-lang Java generator'
+    assert generator.language == "test-lang"
+    assert generator.target == "Java"
+    assert generator.description == "test-lang Java generator"
     assert generator.generator == generator_callable
 
 
@@ -303,15 +325,16 @@ def test_register_generator_with_decorator():
     """
     Test using `generator` decorator to register a generator function.
     """
-    @generator('test-lang', 'Java')
+
+    @generator("test-lang", "Java")
     def generator_for_test_lang():
         "Generator description"
         pass
 
     assert type(generator_for_test_lang) is GeneratorDesc
-    assert generator_for_test_lang.language == 'test-lang'
-    assert generator_for_test_lang.target == 'Java'
-    assert generator_for_test_lang.description == 'Generator description'
+    assert generator_for_test_lang.language == "test-lang"
+    assert generator_for_test_lang.target == "Java"
+    assert generator_for_test_lang.description == "Generator description"
     assert callable(generator_for_test_lang.generator)
 
 
@@ -319,11 +342,11 @@ def test_asking_for_unregistered_generator_raises_error():
     """
     Test searching for unexisting generator raises an error.
     """
-    with pytest.raises(TextXRegistrationError, match='.*No generators.*'):
-        generator_description('flow-dsl', 'unexisting_target')
+    with pytest.raises(TextXRegistrationError, match=".*No generators.*"):
+        generator_description("flow-dsl", "unexisting_target")
 
-    with pytest.raises(TextXRegistrationError, match='.*No generators.*'):
-        generator_description('unexisting_language', 'unexisting_target')
+    with pytest.raises(TextXRegistrationError, match=".*No generators.*"):
+        generator_description("unexisting_language", "unexisting_target")
 
 
 def test_register_already_existing_generator():
@@ -333,16 +356,20 @@ def test_register_already_existing_generator():
     """
 
     clear_generator_registrations()
-    register_generator('test-lang',
-                       target='Java',
-                       description='test-lang Java generator',
-                       generator=generator_callable)
+    register_generator(
+        "test-lang",
+        target="Java",
+        description="test-lang Java generator",
+        generator=generator_callable,
+    )
 
-    with pytest.raises(TextXRegistrationError, match='.*already registered.*'):
-        register_generator('test-lang',
-                           target='Java',
-                           description='test-lang Java generator',
-                           generator=generator_callable)
+    with pytest.raises(TextXRegistrationError, match=".*already registered.*"):
+        register_generator(
+            "test-lang",
+            target="Java",
+            description="test-lang Java generator",
+            generator=generator_callable,
+        )
 
 
 def test_declaratively_registered_generator_always_available():
@@ -351,9 +378,9 @@ def test_declaratively_registered_generator_always_available():
     call.
     """
     clear_generator_registrations()
-    generator = generator_description('flow-dsl', 'plantuml')
+    generator = generator_description("flow-dsl", "plantuml")
 
-    assert generator.language == 'flow-dsl'
-    assert generator.target == 'PlantUML'
+    assert generator.language == "flow-dsl"
+    assert generator.target == "PlantUML"
     assert callable(generator.generator)
-    assert generator.project_name == 'flow-codegen'
+    assert generator.project_name == "flow-codegen"

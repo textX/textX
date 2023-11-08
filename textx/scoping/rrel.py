@@ -217,8 +217,7 @@ class RRELNavigation(RRELBase):
                     else:
                         lst = list(
                             filter(
-                                lambda x: hasattr(x, "name")
-                                and x.name == lookup_list[0],
+                                lambda x: hasattr(x, "name") and x.name == lookup_list[0],
                                 target,
                             )
                         )

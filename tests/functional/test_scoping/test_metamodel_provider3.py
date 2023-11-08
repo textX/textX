@@ -1,4 +1,3 @@
-
 from os.path import abspath, dirname, join
 
 import textx.scoping.providers as scoping_providers
@@ -25,47 +24,39 @@ def test_metamodel_provider_advanced_test3_global():
     this_folder = dirname(abspath(__file__))
 
     def get_meta_model(global_repo, grammar_file_name):
-        mm = metamodel_from_file(join(this_folder, grammar_file_name),
-                                 debug=False)
-        mm.register_scope_providers({
-            "*.*": global_repo,
-        })
+        mm = metamodel_from_file(join(this_folder, grammar_file_name), debug=False)
+        mm.register_scope_providers(
+            {
+                "*.*": global_repo,
+            }
+        )
         return mm
 
     global_repo_provider = scoping_providers.PlainNameGlobalRepo()
     global_repo_provider.register_models(
-        join(this_folder, "metamodel_provider3", "circular", "*.a"))
+        join(this_folder, "metamodel_provider3", "circular", "*.a")
+    )
     global_repo_provider.register_models(
-        join(this_folder, "metamodel_provider3", "circular", "*.b"))
+        join(this_folder, "metamodel_provider3", "circular", "*.b")
+    )
     global_repo_provider.register_models(
-        join(this_folder, "metamodel_provider3", "circular", "*.c"))
+        join(this_folder, "metamodel_provider3", "circular", "*.c")
+    )
 
     a_mm = get_meta_model(
-        global_repo_provider, join(this_folder,
-                                   "metamodel_provider3", "A.tx"))
+        global_repo_provider, join(this_folder, "metamodel_provider3", "A.tx")
+    )
     b_mm = get_meta_model(
-        global_repo_provider, join(this_folder,
-                                   "metamodel_provider3", "B.tx"))
+        global_repo_provider, join(this_folder, "metamodel_provider3", "B.tx")
+    )
     c_mm = get_meta_model(
-        global_repo_provider, join(this_folder,
-                                   "metamodel_provider3", "C.tx"))
+        global_repo_provider, join(this_folder, "metamodel_provider3", "C.tx")
+    )
 
     clear_language_registrations()
-    register_language(
-        'a-dsl',
-        pattern='*.a',
-        description='Test Lang A',
-        metamodel=a_mm)
-    register_language(
-        'b-dsl',
-        pattern='*.b',
-        description='Test Lang B',
-        metamodel=b_mm)
-    register_language(
-        'c-dsl',
-        pattern='*.c',
-        description='Test Lang C',
-        metamodel=c_mm)
+    register_language("a-dsl", pattern="*.a", description="Test Lang A", metamodel=a_mm)
+    register_language("b-dsl", pattern="*.b", description="Test Lang B", metamodel=b_mm)
+    register_language("c-dsl", pattern="*.c", description="Test Lang C", metamodel=c_mm)
 
     #################################
     # MODEL PARSING
@@ -96,6 +87,7 @@ def test_metamodel_provider_advanced_test3_global():
 
     # more checks
     from textx import textx_isinstance
+
     for a in lst:
         assert textx_isinstance(a, a_mm["Obj"])
         assert textx_isinstance(a, b_mm["Obj"])
@@ -122,48 +114,38 @@ def test_metamodel_provider_advanced_test3_import():
     this_folder = dirname(abspath(__file__))
 
     def get_meta_model(provider, grammar_file_name):
-        mm = metamodel_from_file(join(this_folder, grammar_file_name),
-                                 debug=False)
-        mm.register_scope_providers({
-            "*.*": provider,
-        })
+        mm = metamodel_from_file(join(this_folder, grammar_file_name), debug=False)
+        mm.register_scope_providers(
+            {
+                "*.*": provider,
+            }
+        )
         return mm
 
     import_lookup_provider = scoping_providers.PlainNameImportURI()
 
     a_mm = get_meta_model(
-        import_lookup_provider, join(this_folder,
-                                     "metamodel_provider3", "A.tx"))
+        import_lookup_provider, join(this_folder, "metamodel_provider3", "A.tx")
+    )
     b_mm = get_meta_model(
-        import_lookup_provider, join(this_folder,
-                                     "metamodel_provider3", "B.tx"))
+        import_lookup_provider, join(this_folder, "metamodel_provider3", "B.tx")
+    )
     c_mm = get_meta_model(
-        import_lookup_provider, join(this_folder,
-                                     "metamodel_provider3", "C.tx"))
+        import_lookup_provider, join(this_folder, "metamodel_provider3", "C.tx")
+    )
 
     clear_language_registrations()
-    register_language(
-        'a-dsl',
-        pattern='*.a',
-        description='Test Lang A',
-        metamodel=a_mm)
-    register_language(
-        'b-dsl',
-        pattern='*.b',
-        description='Test Lang B',
-        metamodel=b_mm)
-    register_language(
-        'c-dsl',
-        pattern='*.c',
-        description='Test Lang C',
-        metamodel=c_mm)
+    register_language("a-dsl", pattern="*.a", description="Test Lang A", metamodel=a_mm)
+    register_language("b-dsl", pattern="*.b", description="Test Lang B", metamodel=b_mm)
+    register_language("c-dsl", pattern="*.c", description="Test Lang C", metamodel=c_mm)
 
     #################################
     # MODEL PARSING
     #################################
 
     m = a_mm.model_from_file(
-        join(this_folder, "metamodel_provider3", "circular", "model_a.a"))
+        join(this_folder, "metamodel_provider3", "circular", "model_a.a")
+    )
     model_repo = m._tx_model_repository.all_models
 
     #################################
@@ -208,52 +190,41 @@ def test_metamodel_provider_advanced_test3_inheritance():
     this_folder = dirname(abspath(__file__))
 
     def get_meta_model(provider, grammar_file_name):
-        mm = metamodel_from_file(join(this_folder, grammar_file_name),
-                                 debug=False)
-        mm.register_scope_providers({
-            "*.*": provider,
-            "Call.method": scoping_providers.ExtRelativeName("obj.ref",
-                                                             "methods",
-                                                             "extends")
-        })
+        mm = metamodel_from_file(join(this_folder, grammar_file_name), debug=False)
+        mm.register_scope_providers(
+            {
+                "*.*": provider,
+                "Call.method": scoping_providers.ExtRelativeName(
+                    "obj.ref", "methods", "extends"
+                ),
+            }
+        )
         return mm
 
     import_lookup_provider = scoping_providers.FQNImportURI()
 
     a_mm = get_meta_model(
-        import_lookup_provider, join(this_folder,
-                                     "metamodel_provider3", "A.tx"))
+        import_lookup_provider, join(this_folder, "metamodel_provider3", "A.tx")
+    )
     b_mm = get_meta_model(
-        import_lookup_provider, join(this_folder,
-                                     "metamodel_provider3", "B.tx"))
+        import_lookup_provider, join(this_folder, "metamodel_provider3", "B.tx")
+    )
     c_mm = get_meta_model(
-        import_lookup_provider, join(this_folder,
-                                     "metamodel_provider3", "C.tx"))
+        import_lookup_provider, join(this_folder, "metamodel_provider3", "C.tx")
+    )
 
     clear_language_registrations()
-    register_language(
-        'a-dsl',
-        pattern='*.a',
-        description='Test Lang A',
-        metamodel=a_mm)
-    register_language(
-        'b-dsl',
-        pattern='*.b',
-        description='Test Lang B',
-        metamodel=b_mm)
-    register_language(
-        'c-dsl',
-        pattern='*.c',
-        description='Test Lang C',
-        metamodel=c_mm)
+    register_language("a-dsl", pattern="*.a", description="Test Lang A", metamodel=a_mm)
+    register_language("b-dsl", pattern="*.b", description="Test Lang B", metamodel=b_mm)
+    register_language("c-dsl", pattern="*.c", description="Test Lang C", metamodel=c_mm)
 
     #################################
     # MODEL PARSING
     #################################
 
     m = a_mm.model_from_file(
-        join(this_folder, "metamodel_provider3",
-             "inheritance", "model_a.a"))
+        join(this_folder, "metamodel_provider3", "inheritance", "model_a.a")
+    )
     model_repo = m._tx_model_repository.all_models
 
     #################################
@@ -291,52 +262,41 @@ def test_metamodel_provider_advanced_test3_inheritance2():
     this_folder = dirname(abspath(__file__))
 
     def get_meta_model(provider, grammar_file_name):
-        mm = metamodel_from_file(join(this_folder, grammar_file_name),
-                                 debug=False)
-        mm.register_scope_providers({
-            "*.*": provider,
-            "Call.method": scoping_providers.ExtRelativeName("obj.ref",
-                                                             "methods",
-                                                             "extends")
-        })
+        mm = metamodel_from_file(join(this_folder, grammar_file_name), debug=False)
+        mm.register_scope_providers(
+            {
+                "*.*": provider,
+                "Call.method": scoping_providers.ExtRelativeName(
+                    "obj.ref", "methods", "extends"
+                ),
+            }
+        )
         return mm
 
     import_lookup_provider = scoping_providers.FQNImportURI()
 
     a_mm = get_meta_model(
-        import_lookup_provider, join(this_folder,
-                                     "metamodel_provider3", "A.tx"))
+        import_lookup_provider, join(this_folder, "metamodel_provider3", "A.tx")
+    )
     b_mm = get_meta_model(
-        import_lookup_provider, join(this_folder,
-                                     "metamodel_provider3", "B.tx"))
+        import_lookup_provider, join(this_folder, "metamodel_provider3", "B.tx")
+    )
     c_mm = get_meta_model(
-        import_lookup_provider, join(this_folder,
-                                     "metamodel_provider3", "C.tx"))
+        import_lookup_provider, join(this_folder, "metamodel_provider3", "C.tx")
+    )
 
     clear_language_registrations()
-    register_language(
-        'a-dsl',
-        pattern='*.a',
-        description='Test Lang A',
-        metamodel=a_mm)
-    register_language(
-        'b-dsl',
-        pattern='*.b',
-        description='Test Lang B',
-        metamodel=b_mm)
-    register_language(
-        'c-dsl',
-        pattern='*.c',
-        description='Test Lang C',
-        metamodel=c_mm)
+    register_language("a-dsl", pattern="*.a", description="Test Lang A", metamodel=a_mm)
+    register_language("b-dsl", pattern="*.b", description="Test Lang B", metamodel=b_mm)
+    register_language("c-dsl", pattern="*.c", description="Test Lang C", metamodel=c_mm)
 
     #################################
     # MODEL PARSING
     #################################
 
     m = a_mm.model_from_file(
-        join(this_folder, "metamodel_provider3",
-             "inheritance2", "model_a.a"))
+        join(this_folder, "metamodel_provider3", "inheritance2", "model_a.a")
+    )
     model_repo = m._tx_model_repository.all_models
 
     #################################
@@ -359,8 +319,7 @@ def test_metamodel_provider_advanced_test3_inheritance2():
         assert a.method
 
     # check that all models have different parsers
-    parsers = list(
-        map(lambda x: x._tx_parser, model_repo))
+    parsers = list(map(lambda x: x._tx_parser, model_repo))
     assert len(parsers) == 4  # 4 files -> 4 parsers
     assert len(set(parsers)) == 4  # 4 different parsers
 
@@ -382,52 +341,41 @@ def test_metamodel_provider_advanced_test3_diamond():
     this_folder = dirname(abspath(__file__))
 
     def get_meta_model(provider, grammar_file_name):
-        mm = metamodel_from_file(join(this_folder, grammar_file_name),
-                                 debug=False)
-        mm.register_scope_providers({
-            "*.*": provider,
-            "Call.method": scoping_providers.ExtRelativeName("obj.ref",
-                                                             "methods",
-                                                             "extends")
-        })
+        mm = metamodel_from_file(join(this_folder, grammar_file_name), debug=False)
+        mm.register_scope_providers(
+            {
+                "*.*": provider,
+                "Call.method": scoping_providers.ExtRelativeName(
+                    "obj.ref", "methods", "extends"
+                ),
+            }
+        )
         return mm
 
     import_lookup_provider = scoping_providers.FQNImportURI()
 
     a_mm = get_meta_model(
-        import_lookup_provider, join(this_folder,
-                                     "metamodel_provider3", "A.tx"))
+        import_lookup_provider, join(this_folder, "metamodel_provider3", "A.tx")
+    )
     b_mm = get_meta_model(
-        import_lookup_provider, join(this_folder,
-                                     "metamodel_provider3", "B.tx"))
+        import_lookup_provider, join(this_folder, "metamodel_provider3", "B.tx")
+    )
     c_mm = get_meta_model(
-        import_lookup_provider, join(this_folder,
-                                     "metamodel_provider3", "C.tx"))
+        import_lookup_provider, join(this_folder, "metamodel_provider3", "C.tx")
+    )
 
     clear_language_registrations()
-    register_language(
-        'a-dsl',
-        pattern='*.a',
-        description='Test Lang A',
-        metamodel=a_mm)
-    register_language(
-        'b-dsl',
-        pattern='*.b',
-        description='Test Lang B',
-        metamodel=b_mm)
-    register_language(
-        'c-dsl',
-        pattern='*.c',
-        description='Test Lang C',
-        metamodel=c_mm)
+    register_language("a-dsl", pattern="*.a", description="Test Lang A", metamodel=a_mm)
+    register_language("b-dsl", pattern="*.b", description="Test Lang B", metamodel=b_mm)
+    register_language("c-dsl", pattern="*.c", description="Test Lang C", metamodel=c_mm)
 
     #################################
     # MODEL PARSING
     #################################
 
     m = a_mm.model_from_file(
-        join(this_folder, "metamodel_provider3",
-             "diamond", "A_includes_B_C.a"))
+        join(this_folder, "metamodel_provider3", "diamond", "A_includes_B_C.a")
+    )
     model_repo = m._tx_model_repository.all_models
 
     #################################

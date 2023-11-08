@@ -1,4 +1,3 @@
-
 from os.path import abspath, dirname, join
 
 from pytest import raises
@@ -27,23 +26,26 @@ def test_postponed_resolution_error():
         return scoping.Postponed()
 
     my_meta_model = metamodel_from_file(
-        join(abspath(dirname(__file__)),
-             'components_model1', 'Components.tx'))
-    my_meta_model.register_scope_providers({
-        "*.*": scoping_providers.FQN(),
-        "Connection.from_port": from_port,
-        "Connection.to_port": to_port
-    })
+        join(abspath(dirname(__file__)), "components_model1", "Components.tx")
+    )
+    my_meta_model.register_scope_providers(
+        {
+            "*.*": scoping_providers.FQN(),
+            "Connection.from_port": from_port,
+            "Connection.to_port": to_port,
+        }
+    )
 
     #################################
     # MODEL PARSING
     #################################
 
-    with raises(textx.exceptions.TextXSemanticError,
-                match=r'.*Unresolvable cross references.*'):
+    with raises(
+        textx.exceptions.TextXSemanticError, match=r".*Unresolvable cross references.*"
+    ):
         my_meta_model.model_from_file(
-            join(abspath(dirname(__file__)),
-                 "components_model1", "example.components"))
+            join(abspath(dirname(__file__)), "components_model1", "example.components")
+        )
 
 
 def test_model_with_local_scope():
@@ -55,23 +57,27 @@ def test_model_with_local_scope():
     #################################
 
     my_meta_model = metamodel_from_file(
-        join(abspath(dirname(__file__)), 'components_model1',
-             'Components.tx'))
-    my_meta_model.register_scope_providers({
-        "*.*": scoping_providers.FQN(),
-        "Connection.from_port":
-            scoping_providers.RelativeName("from_inst.component.slots"),
-        "Connection.to_port":
-            scoping_providers.RelativeName("to_inst.component.slots"),
-    })
+        join(abspath(dirname(__file__)), "components_model1", "Components.tx")
+    )
+    my_meta_model.register_scope_providers(
+        {
+            "*.*": scoping_providers.FQN(),
+            "Connection.from_port": scoping_providers.RelativeName(
+                "from_inst.component.slots"
+            ),
+            "Connection.to_port": scoping_providers.RelativeName(
+                "to_inst.component.slots"
+            ),
+        }
+    )
 
     #################################
     # MODEL PARSING
     #################################
 
     my_model = my_meta_model.model_from_file(
-        join(abspath(dirname(__file__)), "components_model1",
-             "example.components"))
+        join(abspath(dirname(__file__)), "components_model1", "example.components")
+    )
 
     #################################
     # TEST MODEL
@@ -81,9 +87,9 @@ def test_model_with_local_scope():
     action2 = get_unique_named_object(my_model, "action2")
     action3 = get_unique_named_object(my_model, "action3")
     connections = get_children_of_type("Connection", my_model)
-    selected_connections = list(filter(
-        lambda x: x.from_inst == action2 and x.to_inst == action3,
-        connections))
+    selected_connections = list(
+        filter(lambda x: x.from_inst == action2 and x.to_inst == action3, connections)
+    )
     assert len(selected_connections) == 1
 
     # test list of formats
@@ -109,25 +115,32 @@ def test_model_with_local_scope_and_error():
     #################################
 
     my_meta_model = metamodel_from_file(
-        join(abspath(dirname(__file__)), 'components_model1',
-             'Components.tx'))
-    my_meta_model.register_scope_providers({
-        "*.*": scoping_providers.FQN(),
-        "Connection.from_port":
-            scoping_providers.RelativeName("from_inst.component.slots"),
-        "Connection.to_port":
-            scoping_providers.RelativeName("to_inst.component.slots")
-    })
+        join(abspath(dirname(__file__)), "components_model1", "Components.tx")
+    )
+    my_meta_model.register_scope_providers(
+        {
+            "*.*": scoping_providers.FQN(),
+            "Connection.from_port": scoping_providers.RelativeName(
+                "from_inst.component.slots"
+            ),
+            "Connection.to_port": scoping_providers.RelativeName(
+                "to_inst.component.slots"
+            ),
+        }
+    )
 
     #################################
     # MODEL PARSING
     #################################
 
-    with raises(textx.exceptions.TextXSemanticError,
-                match=r'.*Unknown object.*input1.*SlotIn.*'):
+    with raises(
+        textx.exceptions.TextXSemanticError, match=r".*Unknown object.*input1.*SlotIn.*"
+    ):
         my_meta_model.model_from_file(
-            join(abspath(dirname(__file__)),
-                 "components_model1", "example_err1.components"))
+            join(
+                abspath(dirname(__file__)), "components_model1", "example_err1.components"
+            )
+        )
 
     #################################
     # END
@@ -143,25 +156,32 @@ def test_model_with_local_scope_and_error_267():
     #################################
 
     my_meta_model = metamodel_from_file(
-        join(abspath(dirname(__file__)), 'components_model1',
-             'Components.tx'))
-    my_meta_model.register_scope_providers({
-        "*.*": scoping_providers.FQN(),
-        "Connection.from_port":
-            scoping_providers.RelativeName("from_inst.component.slots"),
-        "Connection.to_port":
-            scoping_providers.RelativeName("to_inst.component.slots")
-    })
+        join(abspath(dirname(__file__)), "components_model1", "Components.tx")
+    )
+    my_meta_model.register_scope_providers(
+        {
+            "*.*": scoping_providers.FQN(),
+            "Connection.from_port": scoping_providers.RelativeName(
+                "from_inst.component.slots"
+            ),
+            "Connection.to_port": scoping_providers.RelativeName(
+                "to_inst.component.slots"
+            ),
+        }
+    )
 
     #################################
     # MODEL PARSING
     #################################
 
-    with raises(textx.exceptions.TextXSemanticError,
-                match=r'.*Unknown object.*pu.*SlotOut.*'):
+    with raises(
+        textx.exceptions.TextXSemanticError, match=r".*Unknown object.*pu.*SlotOut.*"
+    ):
         my_meta_model.model_from_file(
-            join(abspath(dirname(__file__)),
-                 "components_model1", "example_err2.components"))
+            join(
+                abspath(dirname(__file__)), "components_model1", "example_err2.components"
+            )
+        )
 
     #################################
     # END
@@ -177,27 +197,29 @@ def test_model_with_local_scope_and_inheritance2():
     #################################
 
     my_meta_model = metamodel_from_file(
-        join(abspath(dirname(__file__)), 'components_model1',
-             'Components.tx'))
-    my_meta_model.register_scope_providers({
-        "*.*": scoping_providers.FQN(),
-        "Connection.from_port":
-            scoping_providers.ExtRelativeName("from_inst.component",
-                                              "slots",
-                                              "extends"),
-        "Connection.to_port":
-            scoping_providers.ExtRelativeName("to_inst.component",
-                                              "slots",
-                                              "extends"),
-    })
+        join(abspath(dirname(__file__)), "components_model1", "Components.tx")
+    )
+    my_meta_model.register_scope_providers(
+        {
+            "*.*": scoping_providers.FQN(),
+            "Connection.from_port": scoping_providers.ExtRelativeName(
+                "from_inst.component", "slots", "extends"
+            ),
+            "Connection.to_port": scoping_providers.ExtRelativeName(
+                "to_inst.component", "slots", "extends"
+            ),
+        }
+    )
 
     #################################
     # MODEL PARSING
     #################################
 
     my_model = my_meta_model.model_from_file(
-        join(abspath(dirname(__file__)),
-             "components_model1", "example_inherit1.components"))
+        join(
+            abspath(dirname(__file__)), "components_model1", "example_inherit1.components"
+        )
+    )
 
     #################################
     # TEST MODEL
@@ -209,24 +231,27 @@ def test_model_with_local_scope_and_inheritance2():
     action3 = get_unique_named_object(my_model, "action3")
     end = get_unique_named_object(my_model, "end")
     connections = get_children_of_type("Connection", my_model)
-    selected_connections_12 = list(filter(
-        lambda x: x.from_inst == action1 and x.to_inst == action2,
-        connections))
-    selected_connections_3e = list(filter(
-        lambda x: x.from_inst == action3 and x.to_inst == end,
-        connections))
+    selected_connections_12 = list(
+        filter(lambda x: x.from_inst == action1 and x.to_inst == action2, connections)
+    )
+    selected_connections_3e = list(
+        filter(lambda x: x.from_inst == action3 and x.to_inst == end, connections)
+    )
     assert len(selected_connections_12) == 1
     assert len(selected_connections_3e) == 1
-    assert selected_connections_12[0].to_port is selected_connections_3e[0].\
-        to_port  # output3 is same
+    assert (
+        selected_connections_12[0].to_port is selected_connections_3e[0].to_port
+    )  # output3 is same
 
     #################################
     # MODEL PARSING
     #################################
 
     my_model = my_meta_model.model_from_file(
-        join(abspath(dirname(__file__)),
-             "components_model1", "example_inherit2.components"))
+        join(
+            abspath(dirname(__file__)), "components_model1", "example_inherit2.components"
+        )
+    )
 
     #################################
     # TEST MODEL
@@ -239,15 +264,17 @@ def test_model_with_local_scope_and_inheritance2():
     action3 = get_unique_named_object(my_model, "action3")
     end = get_unique_named_object(my_model, "end")
     connections = get_children_of_type("Connection", my_model)
-    selected_connections_12 = list(filter(
-        lambda x: x.from_inst == action1 and x.to_inst == action2,
-        connections))
-    selected_connections_3e = list(filter(
-        lambda x: x.from_inst == action3 and x.to_inst == end, connections))
+    selected_connections_12 = list(
+        filter(lambda x: x.from_inst == action1 and x.to_inst == action2, connections)
+    )
+    selected_connections_3e = list(
+        filter(lambda x: x.from_inst == action3 and x.to_inst == end, connections)
+    )
     assert len(selected_connections_12) == 1
     assert len(selected_connections_3e) == 1
-    assert selected_connections_12[0].to_port is selected_connections_3e[0].\
-        to_port  # output3 is same
+    assert (
+        selected_connections_12[0].to_port is selected_connections_3e[0].to_port
+    )  # output3 is same
 
     #################################
     # END
@@ -273,34 +300,42 @@ def test_model_with_local_scope_postponed():
 
     sp1 = scoping_providers.RelativeName("from_inst.component.slots")
     my_meta_model1 = metamodel_from_file(
-        join(abspath(dirname(__file__)),
-             'components_model1', 'Components.tx'))
-    my_meta_model1.register_scope_providers({
-        "*.*": scoping_providers.FQN(),
-        "Connection.from_port": sp1,
-        "Connection.to_port":
-            scoping_providers.RelativeName("to_inst.component.slots")
-    })
+        join(abspath(dirname(__file__)), "components_model1", "Components.tx")
+    )
+    my_meta_model1.register_scope_providers(
+        {
+            "*.*": scoping_providers.FQN(),
+            "Connection.from_port": sp1,
+            "Connection.to_port": scoping_providers.RelativeName(
+                "to_inst.component.slots"
+            ),
+        }
+    )
 
     sp2 = scoping_providers.RelativeName("from_inst.component.slots")
     my_meta_model2 = metamodel_from_file(
-        join(abspath(dirname(__file__)), 'components_model2',
-             'Components.tx'))
-    my_meta_model2.register_scope_providers({
-        "*.*": scoping_providers.FQN(),
-        "Connection.from_port": sp2,
-        "Connection.to_port":
-            scoping_providers.RelativeName("to_inst.component.slots")
-    })
+        join(abspath(dirname(__file__)), "components_model2", "Components.tx")
+    )
+    my_meta_model2.register_scope_providers(
+        {
+            "*.*": scoping_providers.FQN(),
+            "Connection.from_port": sp2,
+            "Connection.to_port": scoping_providers.RelativeName(
+                "to_inst.component.slots"
+            ),
+        }
+    )
 
     #################################
     # MODEL PARSING
     #################################
 
-    my_meta_model1.model_from_file(join(abspath(dirname(__file__)),
-                                   "components_model1", "example.components"))
-    my_meta_model2.model_from_file(join(abspath(dirname(__file__)),
-                                   "components_model2", "example.components"))
+    my_meta_model1.model_from_file(
+        join(abspath(dirname(__file__)), "components_model1", "example.components")
+    )
+    my_meta_model2.model_from_file(
+        join(abspath(dirname(__file__)), "components_model2", "example.components")
+    )
 
     #################################
     # TEST MODEL
@@ -323,25 +358,32 @@ def test_model_with_local_scope_wrong_type():
     #################################
 
     my_meta_model = metamodel_from_file(
-        join(abspath(dirname(__file__)),
-             'components_model1', 'Components.tx'))
-    my_meta_model.register_scope_providers({
-        "*.*": scoping_providers.FQN(),
-        "Connection.from_port":
-            scoping_providers.RelativeName("from_inst.component.slots"),
-        "Connection.to_port":
-            scoping_providers.RelativeName("to_inst.component.slots"),
-    })
+        join(abspath(dirname(__file__)), "components_model1", "Components.tx")
+    )
+    my_meta_model.register_scope_providers(
+        {
+            "*.*": scoping_providers.FQN(),
+            "Connection.from_port": scoping_providers.RelativeName(
+                "from_inst.component.slots"
+            ),
+            "Connection.to_port": scoping_providers.RelativeName(
+                "to_inst.component.slots"
+            ),
+        }
+    )
 
     #################################
     # MODEL PARSING
     #################################
 
-    with raises(textx.exceptions.TextXSemanticError,
-                match=r'.*wrong_port.*'):
+    with raises(textx.exceptions.TextXSemanticError, match=r".*wrong_port.*"):
         my_meta_model.model_from_file(
-            join(abspath(dirname(__file__)),
-                 "components_model1", "example_wrong_type.components"))
+            join(
+                abspath(dirname(__file__)),
+                "components_model1",
+                "example_wrong_type.components",
+            )
+        )
 
 
 def test_model_with_local_scope_and_bad_model_path():
@@ -353,24 +395,28 @@ def test_model_with_local_scope_and_bad_model_path():
     #################################
 
     my_meta_model = metamodel_from_file(
-        join(abspath(dirname(__file__)),
-             'components_model1', 'Components.tx'))
-    my_meta_model.register_scope_providers({
-        "*.*": scoping_providers.FQN(),
-        "Connection.from_port":
+        join(abspath(dirname(__file__)), "components_model1", "Components.tx")
+    )
+    my_meta_model.register_scope_providers(
+        {
+            "*.*": scoping_providers.FQN(),
+            "Connection.from_port":
             # error (component is not a list)
             scoping_providers.RelativeName("from_inst.component"),
-        "Connection.to_port":
-            scoping_providers.RelativeName("to_inst.component.slots"),
-    })
+            "Connection.to_port": scoping_providers.RelativeName(
+                "to_inst.component.slots"
+            ),
+        }
+    )
 
     #################################
     # MODEL PARSING
     #################################
 
-    with raises(textx.exceptions.TextXError,
-                match=r'.*expected path to list in the model '
-                      + r'\(from_inst.component\).*'):
+    with raises(
+        textx.exceptions.TextXError,
+        match=r".*expected path to list in the model " + r"\(from_inst.component\).*",
+    ):
         my_meta_model.model_from_file(
-            join(abspath(dirname(__file__)),
-                 "components_model1", "example.components"))
+            join(abspath(dirname(__file__)), "components_model1", "example.components")
+        )

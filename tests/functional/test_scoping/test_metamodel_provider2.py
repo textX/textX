@@ -1,4 +1,3 @@
-
 from os.path import abspath, dirname, join
 
 import textx.scoping.providers as scoping_providers
@@ -25,39 +24,40 @@ def test_metamodel_provider_advanced_test():
     this_folder = dirname(abspath(__file__))
 
     def get_meta_model(global_repo, grammar_file_name):
-        mm = metamodel_from_file(join(this_folder, grammar_file_name),
-                                 debug=False)
-        mm.register_scope_providers({
-            "*.*": global_repo,
-            "Ingredient.unit": scoping_providers.ExtRelativeName("type",
-                                                                 "units",
-                                                                 "extends")
-        })
+        mm = metamodel_from_file(join(this_folder, grammar_file_name), debug=False)
+        mm.register_scope_providers(
+            {
+                "*.*": global_repo,
+                "Ingredient.unit": scoping_providers.ExtRelativeName(
+                    "type", "units", "extends"
+                ),
+            }
+        )
         return mm
 
     global_repo = scoping_providers.PlainNameGlobalRepo()
-    global_repo.register_models(
-        join(this_folder, "metamodel_provider2", "*.recipe"))
-    global_repo.register_models(
-        join(this_folder, "metamodel_provider2", "*.ingredient"))
+    global_repo.register_models(join(this_folder, "metamodel_provider2", "*.recipe"))
+    global_repo.register_models(join(this_folder, "metamodel_provider2", "*.ingredient"))
 
     i_mm = get_meta_model(
-        global_repo, join(this_folder, "metamodel_provider2", "Ingredient.tx"))
+        global_repo, join(this_folder, "metamodel_provider2", "Ingredient.tx")
+    )
     r_mm = get_meta_model(
-        global_repo, join(this_folder, "metamodel_provider2", "Recipe.tx"))
+        global_repo, join(this_folder, "metamodel_provider2", "Recipe.tx")
+    )
 
     clear_language_registrations()
     register_language(
-        'recipe-dsl',
-        pattern='*.recipe',
-        description='demo',
-        metamodel=r_mm  # or a factory
+        "recipe-dsl",
+        pattern="*.recipe",
+        description="demo",
+        metamodel=r_mm,  # or a factory
     )
     register_language(
-        'ingredient-dsl',
-        pattern='*.ingredient',
-        description='demo',
-        metamodel=i_mm  # or a factory
+        "ingredient-dsl",
+        pattern="*.ingredient",
+        description="demo",
+        metamodel=i_mm,  # or a factory
     )
 
     #################################

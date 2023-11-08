@@ -4,7 +4,7 @@ import textx.exceptions
 import textx.scoping.providers as scoping_providers
 from textx import get_children, metamodel_from_str
 
-metamodel_str = '''
+metamodel_str = """
 Model:
     packages*=Package
 ;
@@ -24,7 +24,7 @@ Class:
 Attribute:
         'attr' ref=[Class] name=ID ';'
 ;
-'''
+"""
 
 
 def test_plain_name_ref():
@@ -37,14 +37,16 @@ def test_plain_name_ref():
 
     my_metamodel = metamodel_from_str(metamodel_str)
 
-    my_metamodel.register_scope_providers({"*.*": scoping_providers.PlainName(
-        multi_metamodel_support=False)})
+    my_metamodel.register_scope_providers(
+        {"*.*": scoping_providers.PlainName(multi_metamodel_support=False)}
+    )
 
     #################################
     # MODEL PARSING
     #################################
 
-    my_model = my_metamodel.model_from_str('''
+    my_model = my_metamodel.model_from_str(
+        """
     package P1 {
         class Part1 {
         }
@@ -59,35 +61,32 @@ def test_plain_name_ref():
             attr Part2 p2b;
         }
     }
-    ''')
+    """
+    )
 
     #################################
     # TEST MODEL
     #################################
 
-    a = get_children(lambda x: hasattr(x, 'name') and x.name == "rec",
-                     my_model)
+    a = get_children(lambda x: hasattr(x, "name") and x.name == "rec", my_model)
     assert len(a) == 1
     assert a[0].name == "rec"
     assert a[0].ref.__class__.__name__ == "Class"
     assert a[0].ref.name == "C2"
 
-    a = get_children(lambda x: hasattr(x, 'name') and x.name == "p1",
-                     my_model)
+    a = get_children(lambda x: hasattr(x, "name") and x.name == "p1", my_model)
     assert len(a) == 1
     assert a[0].name == "p1"
     assert a[0].ref.__class__.__name__ == "Class"
     assert a[0].ref.name == "Part1"
 
-    a = get_children(lambda x: hasattr(x, 'name') and x.name == "p2a",
-                     my_model)
+    a = get_children(lambda x: hasattr(x, "name") and x.name == "p2a", my_model)
     assert len(a) == 1
     assert a[0].name == "p2a"
     assert a[0].ref.__class__.__name__ == "Class"
     assert a[0].ref.name == "Part2"
 
-    a = get_children(lambda x: hasattr(x, 'name') and x.name == "p2b",
-                     my_model)
+    a = get_children(lambda x: hasattr(x, "name") and x.name == "p2b", my_model)
     assert len(a) == 1
     assert a[0].name == "p2b"
     assert a[0].ref.__class__.__name__ == "Class"
@@ -96,9 +95,9 @@ def test_plain_name_ref():
     ###########################
     # MODEL WITH ERROR (no entry found)
     ############################
-    with raises(textx.exceptions.TextXSemanticError,
-                match=r'.*Unknown object.*Part0.*'):
-        my_metamodel.model_from_str('''
+    with raises(textx.exceptions.TextXSemanticError, match=r".*Unknown object.*Part0.*"):
+        my_metamodel.model_from_str(
+            """
         package P1 {
             class Part1 {
             }
@@ -108,12 +107,14 @@ def test_plain_name_ref():
                 attr Part0 p1;
             }
         }
-        ''')
+        """
+        )
 
     ###########################
     # MODEL WITH NO ERROR (double entries not checked)
     ############################
-    my_metamodel.model_from_str('''
+    my_metamodel.model_from_str(
+        """
     package P1 {
         class Part1 {
         }
@@ -125,7 +126,8 @@ def test_plain_name_ref():
             attr Part1 p1;
         }
     }
-    ''')
+    """
+    )
 
     #################################
     # END
@@ -143,14 +145,16 @@ def test_plain_name_ref_with_muli_metamodel_support():
 
     my_metamodel = metamodel_from_str(metamodel_str)
 
-    my_metamodel.register_scope_providers({"*.*": scoping_providers.PlainName(
-        multi_metamodel_support=True)})
+    my_metamodel.register_scope_providers(
+        {"*.*": scoping_providers.PlainName(multi_metamodel_support=True)}
+    )
 
     #################################
     # MODEL PARSING
     #################################
 
-    my_model = my_metamodel.model_from_str('''
+    my_model = my_metamodel.model_from_str(
+        """
     package P1 {
         class Part1 {
         }
@@ -165,35 +169,32 @@ def test_plain_name_ref_with_muli_metamodel_support():
             attr Part2 p2b;
         }
     }
-    ''')
+    """
+    )
 
     #################################
     # TEST MODEL
     #################################
 
-    a = get_children(lambda x: hasattr(x, 'name') and x.name == "rec",
-                     my_model)
+    a = get_children(lambda x: hasattr(x, "name") and x.name == "rec", my_model)
     assert len(a) == 1
     assert a[0].name == "rec"
     assert a[0].ref.__class__.__name__ == "Class"
     assert a[0].ref.name == "C2"
 
-    a = get_children(lambda x: hasattr(x, 'name') and x.name == "p1",
-                     my_model)
+    a = get_children(lambda x: hasattr(x, "name") and x.name == "p1", my_model)
     assert len(a) == 1
     assert a[0].name == "p1"
     assert a[0].ref.__class__.__name__ == "Class"
     assert a[0].ref.name == "Part1"
 
-    a = get_children(lambda x: hasattr(x, 'name') and x.name == "p2a",
-                     my_model)
+    a = get_children(lambda x: hasattr(x, "name") and x.name == "p2a", my_model)
     assert len(a) == 1
     assert a[0].name == "p2a"
     assert a[0].ref.__class__.__name__ == "Class"
     assert a[0].ref.name == "Part2"
 
-    a = get_children(lambda x: hasattr(x, 'name') and x.name == "p2b",
-                     my_model)
+    a = get_children(lambda x: hasattr(x, "name") and x.name == "p2b", my_model)
     assert len(a) == 1
     assert a[0].name == "p2b"
     assert a[0].ref.__class__.__name__ == "Class"
@@ -202,9 +203,9 @@ def test_plain_name_ref_with_muli_metamodel_support():
     ###########################
     # MODEL WITH ERROR (no entry found)
     ############################
-    with raises(textx.exceptions.TextXSemanticError,
-                match=r'.*Unknown object.*Part0.*'):
-        my_metamodel.model_from_str('''
+    with raises(textx.exceptions.TextXSemanticError, match=r".*Unknown object.*Part0.*"):
+        my_metamodel.model_from_str(
+            """
         package P1 {
             class Part1 {
             }
@@ -214,14 +215,18 @@ def test_plain_name_ref_with_muli_metamodel_support():
                 attr Part0 p1;
             }
         }
-        ''')
+        """
+        )
 
     ###########################
     # MODEL WITH ERROR (double entries)
     ############################
-    with raises(textx.exceptions.TextXSemanticError,
-                match=r'.*None:10:\d+: name Part1 is not unique.*'):
-        my_metamodel.model_from_str('''
+    with raises(
+        textx.exceptions.TextXSemanticError,
+        match=r".*None:10:\d+: name Part1 is not unique.*",
+    ):
+        my_metamodel.model_from_str(
+            """
         package P1 {
             class Part1 {
             }
@@ -233,7 +238,8 @@ def test_plain_name_ref_with_muli_metamodel_support():
                 attr Part1 p1;
             }
         }
-        ''')
+        """
+        )
 
     #################################
     # END
@@ -252,16 +258,17 @@ def test_plain_name_ref_type_error():
 
     my_metamodel = metamodel_from_str(metamodel_str)
 
-    my_metamodel.register_scope_providers({"*.*": scoping_providers.PlainName(
-        multi_metamodel_support=False)})
+    my_metamodel.register_scope_providers(
+        {"*.*": scoping_providers.PlainName(multi_metamodel_support=False)}
+    )
 
     #################################
     # MODEL PARSING AND TEST
     #################################
 
-    with raises(textx.exceptions.TextXSemanticError,
-                match=r'.*p1.*'):
-        my_metamodel.model_from_str('''
+    with raises(textx.exceptions.TextXSemanticError, match=r".*p1.*"):
+        my_metamodel.model_from_str(
+            """
         package P1 {
             class Part1 {
             }
@@ -276,4 +283,5 @@ def test_plain_name_ref_type_error():
                 attr p1 p2b;
             }
         }
-        ''')
+        """
+        )

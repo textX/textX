@@ -43,7 +43,6 @@ def test_issue_34_resolving():
     """
 
     meta_model = metamodel_from_str(grammar)
-    model = meta_model.model_from_str(
-        "attr_123, attr_444 formula attr_123 < 'aa'")
-    assert type(model.form.value.values[0].attribute).__name__ == 'Attribute'
-    assert model.form.value.values[0].attribute.name == 'attr_123'
+    model = meta_model.model_from_str("attr_123, attr_444 formula attr_123 < 'aa'")
+    assert type(model.form.value.values[0].attribute).__name__ == "Attribute"
+    assert model.form.value.values[0].attribute.name == "attr_123"

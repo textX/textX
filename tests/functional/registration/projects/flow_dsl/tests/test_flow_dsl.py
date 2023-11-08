@@ -12,7 +12,7 @@ from textx import (
 current_dir = os.path.dirname(__file__)
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def clear_all():
     clear_language_registrations()
 
@@ -22,10 +22,8 @@ def test_flow_dsl(clear_all):
     Test loading of correct flow model.
     """
 
-    mmF = metamodel_for_language('flow-dsl')
-    model = mmF.model_from_file(os.path.join(current_dir,
-                                             'models',
-                                             'data_flow.eflow'))
+    mmF = metamodel_for_language("flow-dsl")
+    model = mmF.model_from_file(os.path.join(current_dir, "models", "data_flow.eflow"))
     assert model is not None
     assert len(model.algos) == 2
     assert len(model.flows) == 1
@@ -36,12 +34,11 @@ def test_flow_dsl_validation(clear_all):
     Test flow model with semantic error raises error.
     """
 
-    mmF = metamodel_for_language('flow-dsl')
-    with pytest.raises(TextXSemanticError,
-                       match=r'.*algo data types must match.*'):
-        mmF.model_from_file(os.path.join(current_dir,
-                                         'models',
-                                         'data_flow_with_error.eflow'))
+    mmF = metamodel_for_language("flow-dsl")
+    with pytest.raises(TextXSemanticError, match=r".*algo data types must match.*"):
+        mmF.model_from_file(
+            os.path.join(current_dir, "models", "data_flow_with_error.eflow")
+        )
 
 
 def test_flow_dsl_types_validation(clear_all):
@@ -53,12 +50,11 @@ def test_flow_dsl_types_validation(clear_all):
     # print(metamodel_for_language('flow-dsl')._tx_model_repository.all_models.filename_to_model.keys())
     # print("----------------- #={}".format(
     #    len(metamodel_for_language('flow-dsl')._tx_model_repository.all_models.filename_to_model.keys())))
-    mmF = metamodel_for_language('flow-dsl')
-    with pytest.raises(TextXSyntaxError,
-                       match=r'.*lowercase.*'):
-        mmF.model_from_file(os.path.join(current_dir,
-                                         'models',
-                                         'data_flow_including_error.eflow'))
+    mmF = metamodel_for_language("flow-dsl")
+    with pytest.raises(TextXSyntaxError, match=r".*lowercase.*"):
+        mmF.model_from_file(
+            os.path.join(current_dir, "models", "data_flow_including_error.eflow")
+        )
 
     # When reading a second time, the error must be reported again:
 
@@ -66,8 +62,7 @@ def test_flow_dsl_types_validation(clear_all):
     # print(metamodel_for_language('flow-dsl')._tx_model_repository.all_models.filename_to_model.keys())
     # print("----------------- #={}".format(
     #    len(metamodel_for_language('flow-dsl')._tx_model_repository.all_models.filename_to_model.keys())))
-    with pytest.raises(TextXSyntaxError,
-                       match=r'.*lowercase.*'):
-        mmF.model_from_file(os.path.join(current_dir,
-                                         'models',
-                                         'data_flow_including_error.eflow'))
+    with pytest.raises(TextXSyntaxError, match=r".*lowercase.*"):
+        mmF.model_from_file(
+            os.path.join(current_dir, "models", "data_flow_including_error.eflow")
+        )

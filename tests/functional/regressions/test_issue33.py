@@ -3,7 +3,6 @@ from textx.metamodel import metamodel_from_str
 
 
 def test_issue_33_parentheses():
-
     grammar = """
     Method:
         'func('  (params+=Parameter[','])?  ')'
@@ -20,11 +19,11 @@ def test_issue_33_parentheses():
         """
     )
     assert model
-    assert model.params[0].type == 'a'
-    assert model.params[0].name == 'b'
+    assert model.params[0].type == "a"
+    assert model.params[0].name == "b"
 
-    assert model.params[1].type == ''
-    assert model.params[1].name == 'c'
+    assert model.params[1].type == ""
+    assert model.params[1].name == "c"
 
 
 def test_issue_33_alternatives():
@@ -44,11 +43,11 @@ def test_issue_33_alternatives():
         """
     )
     assert model
-    assert model.params[0].type == 'a'
-    assert model.params[0].name == 'b'
+    assert model.params[0].type == "a"
+    assert model.params[0].name == "b"
 
-    assert model.params[1].type == ''
-    assert model.params[1].name == 'c'
+    assert model.params[1].type == ""
+    assert model.params[1].name == "c"
 
 
 def test_issue_33_alternatives_with_arbitrary_named_attr():
@@ -68,8 +67,8 @@ def test_issue_33_alternatives_with_arbitrary_named_attr():
         """
     )
     assert model
-    assert model.params[0].type == 'a'
-    assert model.params[0].my_name == 'b'
+    assert model.params[0].type == "a"
+    assert model.params[0].my_name == "b"
 
-    assert model.params[1].type == ''
-    assert model.params[1].my_name == 'c'
+    assert model.params[1].type == ""
+    assert model.params[1].my_name == "c"

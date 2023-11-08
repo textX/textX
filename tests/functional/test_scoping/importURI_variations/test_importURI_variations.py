@@ -1,4 +1,3 @@
-
 from os.path import abspath, dirname, join
 
 from pytest import raises
@@ -7,7 +6,7 @@ import textx.exceptions
 import textx.scoping.providers as scoping_providers
 from textx import metamodel_from_str
 
-grammar = r'''
+grammar = r"""
 Model:
         imports*=Import
         packages*=Package
@@ -27,7 +26,7 @@ FQN: ID+['.'];
 FQNI: ID+['.']('.*')?;
 Import: 'import' importURI=FQNI ('as' name=ID)?;
 Comment: /\/\/.*$/;
-'''
+"""
 
 
 def test_importURI_variations_import_string_hook():
@@ -41,14 +40,16 @@ def test_importURI_variations_import_string_hook():
         return i.replace(".", "/") + ".model"
 
     my_meta_model.register_scope_providers(
-        {"*.*": scoping_providers.FQNImportURI(importURI_converter=conv)})
+        {"*.*": scoping_providers.FQNImportURI(importURI_converter=conv)}
+    )
 
     #################################
     # MODEL PARSING
     #################################
 
     my_model = my_meta_model.model_from_file(
-        join(abspath(dirname(__file__)), "importStringHook", "b.model"))
+        join(abspath(dirname(__file__)), "importStringHook", "b.model")
+    )
 
     #################################
     # TEST MODEL
@@ -76,15 +77,16 @@ def test_importURI_variations_import_as_ok1():
         return i.replace(".", "/") + ".model"
 
     my_meta_model.register_scope_providers(
-        {"*.*": scoping_providers.FQNImportURI(importURI_converter=conv,
-                                               importAs=True)})
+        {"*.*": scoping_providers.FQNImportURI(importURI_converter=conv, importAs=True)}
+    )
 
     #################################
     # MODEL PARSING
     #################################
 
     my_model = my_meta_model.model_from_file(
-        join(abspath(dirname(__file__)), "importAs", "b_ok1.model"))
+        join(abspath(dirname(__file__)), "importAs", "b_ok1.model")
+    )
 
     #################################
     # TEST MODEL
@@ -112,15 +114,16 @@ def test_importURI_variations_import_as_ok2():
         return i.replace(".", "/") + ".model"
 
     my_meta_model.register_scope_providers(
-        {"*.*": scoping_providers.FQNImportURI(importURI_converter=conv,
-                                               importAs=True)})
+        {"*.*": scoping_providers.FQNImportURI(importURI_converter=conv, importAs=True)}
+    )
 
     #################################
     # MODEL PARSING
     #################################
 
     my_model = my_meta_model.model_from_file(
-        join(abspath(dirname(__file__)), "importAs", "b_ok2.model"))
+        join(abspath(dirname(__file__)), "importAs", "b_ok2.model")
+    )
 
     #################################
     # TEST MODEL
@@ -148,15 +151,16 @@ def test_importURI_variations_import_as_multi_import():
         return i.replace(".", "/") + ".model"
 
     my_meta_model.register_scope_providers(
-        {"*.*": scoping_providers.FQNImportURI(importURI_converter=conv,
-                                               importAs=True)})
+        {"*.*": scoping_providers.FQNImportURI(importURI_converter=conv, importAs=True)}
+    )
 
     #################################
     # MODEL PARSING
     #################################
 
     my_model = my_meta_model.model_from_file(
-        join(abspath(dirname(__file__)), "importAs", "b_multi_import.model"))
+        join(abspath(dirname(__file__)), "importAs", "b_multi_import.model")
+    )
 
     #################################
     # TEST MODEL
@@ -184,17 +188,19 @@ def test_importURI_variations_import_as_error():
         return i.replace(".", "/") + ".model"
 
     my_meta_model.register_scope_providers(
-        {"*.*": scoping_providers.FQNImportURI(importURI_converter=conv,
-                                               importAs=True)})
+        {"*.*": scoping_providers.FQNImportURI(importURI_converter=conv, importAs=True)}
+    )
 
     #################################
     # MODEL PARSING
     #################################
 
-    with raises(textx.exceptions.TextXSemanticError,
-                match=r'.*Unknown object.*packageA1.A.*'):
+    with raises(
+        textx.exceptions.TextXSemanticError, match=r".*Unknown object.*packageA1.A.*"
+    ):
         my_meta_model.model_from_file(
-            join(abspath(dirname(__file__)), "importAs", "b_error.model"))
+            join(abspath(dirname(__file__)), "importAs", "b_error.model")
+        )
 
     #################################
     # END

@@ -26,7 +26,7 @@ def test_auto_init():
 
     mm = metamodel_from_str(grammar)
 
-    model = mm.model_from_str('42')
+    model = mm.model_from_str("42")
 
     assert model.seconds == []
 
@@ -50,7 +50,7 @@ def test_no_auto_init():
 
     mm = metamodel_from_str(grammar, auto_init_attributes=False)
 
-    model = mm.model_from_str('42')
+    model = mm.model_from_str("42")
 
     # Many multiplicity will have python array as value
     assert model.seconds == []

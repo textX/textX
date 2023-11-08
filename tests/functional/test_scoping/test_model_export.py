@@ -1,4 +1,3 @@
-
 import io
 from os.path import abspath, dirname, join, sep
 
@@ -21,52 +20,41 @@ def test_model_export():
     this_folder = dirname(abspath(__file__))
 
     def get_meta_model(provider, grammar_file_name):
-        mm = metamodel_from_file(join(this_folder, grammar_file_name),
-                                 debug=False)
-        mm.register_scope_providers({
-            "*.*": provider,
-            "Call.method": scoping_providers.ExtRelativeName("obj.ref",
-                                                             "methods",
-                                                             "extends")
-        })
+        mm = metamodel_from_file(join(this_folder, grammar_file_name), debug=False)
+        mm.register_scope_providers(
+            {
+                "*.*": provider,
+                "Call.method": scoping_providers.ExtRelativeName(
+                    "obj.ref", "methods", "extends"
+                ),
+            }
+        )
         return mm
 
     import_lookup_provider = scoping_providers.FQNImportURI()
 
     a_mm = get_meta_model(
-        import_lookup_provider, join(this_folder,
-                                     "metamodel_provider3", "A.tx"))
+        import_lookup_provider, join(this_folder, "metamodel_provider3", "A.tx")
+    )
     b_mm = get_meta_model(
-        import_lookup_provider, join(this_folder,
-                                     "metamodel_provider3", "B.tx"))
+        import_lookup_provider, join(this_folder, "metamodel_provider3", "B.tx")
+    )
     c_mm = get_meta_model(
-        import_lookup_provider, join(this_folder,
-                                     "metamodel_provider3", "C.tx"))
+        import_lookup_provider, join(this_folder, "metamodel_provider3", "C.tx")
+    )
 
     clear_language_registrations()
-    register_language(
-        'a-dsl',
-        pattern='*.a',
-        description='Test Lang A',
-        metamodel=a_mm)
-    register_language(
-        'b-dsl',
-        pattern='*.b',
-        description='Test Lang B',
-        metamodel=b_mm)
-    register_language(
-        'c-dsl',
-        pattern='*.c',
-        description='Test Lang C',
-        metamodel=c_mm)
+    register_language("a-dsl", pattern="*.a", description="Test Lang A", metamodel=a_mm)
+    register_language("b-dsl", pattern="*.b", description="Test Lang B", metamodel=b_mm)
+    register_language("c-dsl", pattern="*.c", description="Test Lang C", metamodel=c_mm)
 
     #################################
     # MODEL PARSING
     #################################
 
     m = a_mm.model_from_file(
-        join(this_folder, "metamodel_provider3",
-             "inheritance", "model_a.a"))
+        join(this_folder, "metamodel_provider3", "inheritance", "model_a.a")
+    )
 
     out_file = io.StringIO()
     # export.model_export(

@@ -1,4 +1,3 @@
-
 from os.path import abspath, dirname, join
 
 from pytest import raises
@@ -25,41 +24,48 @@ def test_metamodel_provider_basic_test():
     #################################
 
     mm_components = metamodel_from_file(
-        join(abspath(dirname(__file__)),
-             'metamodel_provider', 'Components.tx'))
-    mm_components.register_scope_providers({
-        "*.*": scoping_providers.FQNImportURI(),
-        "Connection.from_port":
-            scoping_providers.RelativeName("from_inst.component.slots"),
-        "Connection.to_port":
-            scoping_providers.RelativeName("to_inst.component.slots"),
-    })
+        join(abspath(dirname(__file__)), "metamodel_provider", "Components.tx")
+    )
+    mm_components.register_scope_providers(
+        {
+            "*.*": scoping_providers.FQNImportURI(),
+            "Connection.from_port": scoping_providers.RelativeName(
+                "from_inst.component.slots"
+            ),
+            "Connection.to_port": scoping_providers.RelativeName(
+                "to_inst.component.slots"
+            ),
+        }
+    )
 
     mm_users = metamodel_from_file(
-        join(abspath(dirname(__file__)), 'metamodel_provider', 'Users.tx'))
-    mm_users.register_scope_providers({
-        "*.*": scoping_providers.FQNImportURI(),
-    })
+        join(abspath(dirname(__file__)), "metamodel_provider", "Users.tx")
+    )
+    mm_users.register_scope_providers(
+        {
+            "*.*": scoping_providers.FQNImportURI(),
+        }
+    )
 
     clear_language_registrations()
     register_language(
-        'components-dsl',
-        pattern='*.components',
-        description='demo',
-        metamodel=mm_components  # or a factory
+        "components-dsl",
+        pattern="*.components",
+        description="demo",
+        metamodel=mm_components,  # or a factory
     )
     register_language(
-        'users-dsl',
-        pattern='*.users',
-        description='demo',
-        metamodel=mm_users  # or a factory
+        "users-dsl",
+        pattern="*.users",
+        description="demo",
+        metamodel=mm_users,  # or a factory
     )
-    with raises(Exception, match=r'.*already registered.*'):
+    with raises(Exception, match=r".*already registered.*"):
         register_language(
-            'users-dsl',
-            pattern='*.users',
-            description='demo',
-            metamodel=mm_users  # or a factory
+            "users-dsl",
+            pattern="*.users",
+            description="demo",
+            metamodel=mm_users,  # or a factory
         )
 
     #################################
@@ -67,8 +73,8 @@ def test_metamodel_provider_basic_test():
     #################################
 
     my_model = mm_users.model_from_file(
-        join(abspath(dirname(__file__)),
-             "metamodel_provider", "example.users"))
+        join(abspath(dirname(__file__)), "metamodel_provider", "example.users")
+    )
 
     #################################
     # TEST MODEL

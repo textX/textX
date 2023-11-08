@@ -648,9 +648,7 @@ def parse_tree_to_objgraph(
 
             for n in node:
                 if parser.debug:
-                    parser.dprint(
-                        f"Recursing into {type(n).__name__} = '{text(n)}'"
-                    )
+                    parser.dprint(f"Recursing into {type(n).__name__} = '{text(n)}'")
                 process_node(n)
 
             parser._inst_stack.pop()

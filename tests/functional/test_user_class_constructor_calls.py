@@ -42,7 +42,7 @@ def test_parent_reference():
 
     # First is not nested so it should not have a parent
     # attribute
-    assert not hasattr(model, 'parent')
+    assert not hasattr(model, "parent")
 
 
 def test_user_class_constructor_call():
@@ -78,11 +78,11 @@ def test_user_class_pass_to_constructor_only_metamodel_defined_attrs():
     meta-model defined attributes should be passed to the user-class
     constructor.
     """
-    grammar = r'''
+    grammar = r"""
     Model: elements*=Element refs*=Reference;
     Element: 'E' name=ID;
     Reference: 'ref' ref=[Element];
-    '''
+    """
 
     class Element:
         _called = False
@@ -101,14 +101,12 @@ def test_user_class_pass_to_constructor_only_metamodel_defined_attrs():
         return PlainName()(obj, attr, obj_ref)
 
     metamodel = metamodel_from_str(grammar, classes=[Element])
-    metamodel.register_scope_providers({
-        'Reference.ref': my_scope_provider
-    })
+    metamodel.register_scope_providers({"Reference.ref": my_scope_provider})
 
-    model_str = r'''
+    model_str = r"""
     E first E second
     ref second
-    '''
+    """
     model = metamodel.model_from_str(model_str)
 
     assert scope_provider_called[0]

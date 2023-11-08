@@ -5,7 +5,7 @@ import pytest  # noqa
 import sys
 from textx import metamodel_from_str
 
-if sys.version < '3':
+if sys.version < "3":
     text = unicode  # noqa
 else:
     text = str
@@ -38,8 +38,8 @@ def test_regexp_with_groups_deactivated():
     m = metamodel.model_from_str(model_str)
 
     assert '"""' in m.entries[0].data  # """ is not removed
-    assert 'This' in m.entries[0].data  # This and text in model
-    assert 'text!' in m.entries[0].data  # This and text in model
+    assert "This" in m.entries[0].data  # This and text in model
+    assert "text!" in m.entries[0].data  # This and text in model
 
 
 def test_regexp_with_groups_activated():
@@ -58,8 +58,8 @@ def test_regexp_with_groups_activated():
     m = metamodel.model_from_str(model_str)
 
     assert '"""' not in m.entries[0].data  # """ is not removed
-    assert 'This' in m.entries[0].data  # This and text in model
-    assert 'text!' in m.entries[0].data  # This and text in model
+    assert "This" in m.entries[0].data  # This and text in model
+    assert "text!" in m.entries[0].data  # This and text in model
 
 
 def test_regexp_with_groups_activated2():

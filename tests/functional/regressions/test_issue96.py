@@ -22,7 +22,7 @@ def test_issue96_object_processor_on_match_rule_not_called():
     mycommand(0.1 1.1)
     """
     mm = metamodel_from_str(grammar)
-    mm.register_obj_processors({'ExplicitFloat': lambda x: float(x)})
+    mm.register_obj_processors({"ExplicitFloat": lambda x: float(x)})
 
     mymodel = mm.model_from_str(code)
 
@@ -31,7 +31,6 @@ def test_issue96_object_processor_on_match_rule_not_called():
 
 
 def test_issue96_object_processor_on_multiple_alternatives_not_called():
-
     grammar = r"""
     Command:
         name=ID parameters=ParameterList
@@ -55,9 +54,9 @@ def test_issue96_object_processor_on_multiple_alternatives_not_called():
     """
     mm = metamodel_from_str(grammar)
 
-    mm.register_obj_processors({
-        'Parameter': lambda x: x.value,
-        'ExplicitFloat': lambda x: float(x)})
+    mm.register_obj_processors(
+        {"Parameter": lambda x: x.value, "ExplicitFloat": lambda x: float(x)}
+    )
 
     mymodel = mm.model_from_str(code)
 

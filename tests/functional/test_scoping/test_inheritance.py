@@ -1,4 +1,3 @@
-
 import re
 from os.path import abspath, dirname, join
 
@@ -15,27 +14,29 @@ def test_inheritance_processor():
     #################################
 
     my_meta_model = metamodel_from_file(
-        join(abspath(dirname(__file__)),
-             'components_model1', 'Components.tx'))
-    my_meta_model.register_scope_providers({
-        "*.*": scoping_providers.FQN(),
-        "Connection.from_port":
-            scoping_providers.ExtRelativeName("from_inst.component",
-                                              "slots",
-                                              "extends"),
-        "Connection.to_port":
-            scoping_providers.ExtRelativeName("to_inst.component",
-                                              "slots",
-                                              "extends"),
-    })
+        join(abspath(dirname(__file__)), "components_model1", "Components.tx")
+    )
+    my_meta_model.register_scope_providers(
+        {
+            "*.*": scoping_providers.FQN(),
+            "Connection.from_port": scoping_providers.ExtRelativeName(
+                "from_inst.component", "slots", "extends"
+            ),
+            "Connection.to_port": scoping_providers.ExtRelativeName(
+                "to_inst.component", "slots", "extends"
+            ),
+        }
+    )
 
     #################################
     # MODEL PARSING
     #################################
 
     my_model = my_meta_model.model_from_file(
-        join(abspath(dirname(__file__)),
-             "components_model1", "example_inherit3.components"))
+        join(
+            abspath(dirname(__file__)), "components_model1", "example_inherit3.components"
+        )
+    )
 
     #################################
     # TEST MODEL
@@ -57,8 +58,12 @@ def test_inheritance_processor():
         if len(compo.extends) == 0:
             return compo.name
         else:
-            return compo.name + "(" + ",".join(map(lambda x: myformatter(x),
-                                                   compo.extends)) + ")"
+            return (
+                compo.name
+                + "("
+                + ",".join(map(lambda x: myformatter(x), compo.extends))
+                + ")"
+            )
 
     res = "\n\n"
     # possibly in future version, the order need to be normalized...
@@ -66,7 +71,7 @@ def test_inheritance_processor():
         res += myformatter(c) + "\n"
 
     print(res)
-    assert re.sub(r'\s*', "", expected) == re.sub(r'\s*', "", res)
+    assert re.sub(r"\s*", "", expected) == re.sub(r"\s*", "", res)
 
     #################################
     # END
@@ -82,16 +87,18 @@ def test_inheritance_processor_rrel():
     #################################
 
     my_meta_model = metamodel_from_file(
-        join(abspath(dirname(__file__)),
-             'components_model1', 'ComponentsRrel.tx'))
+        join(abspath(dirname(__file__)), "components_model1", "ComponentsRrel.tx")
+    )
 
     #################################
     # MODEL PARSING
     #################################
 
     my_model = my_meta_model.model_from_file(
-        join(abspath(dirname(__file__)),
-             "components_model1", "example_inherit3.components"))
+        join(
+            abspath(dirname(__file__)), "components_model1", "example_inherit3.components"
+        )
+    )
 
     #################################
     # TEST MODEL
@@ -113,8 +120,12 @@ def test_inheritance_processor_rrel():
         if len(compo.extends) == 0:
             return compo.name
         else:
-            return compo.name + "(" + ",".join(map(lambda x: myformatter(x),
-                                                   compo.extends)) + ")"
+            return (
+                compo.name
+                + "("
+                + ",".join(map(lambda x: myformatter(x), compo.extends))
+                + ")"
+            )
 
     res = "\n\n"
     # possibly in future version, the order need to be normalized...
@@ -122,7 +133,7 @@ def test_inheritance_processor_rrel():
         res += myformatter(c) + "\n"
 
     print(res)
-    assert re.sub(r'\s*', "", expected) == re.sub(r'\s*', "", res)
+    assert re.sub(r"\s*", "", expected) == re.sub(r"\s*", "", res)
 
     #################################
     # END

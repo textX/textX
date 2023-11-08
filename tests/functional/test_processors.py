@@ -5,7 +5,7 @@ import pytest  # noqa
 import sys
 from textx import metamodel_from_str, textxerror_wrap
 
-if sys.version < '3':
+if sys.version < "3":
     text = unicode  # noqa
 else:
     text = str
@@ -75,8 +75,8 @@ def test_object_processors():
         assert second.parent.b
 
     obj_processors = {
-        'First': first_obj_processor,
-        'Second': second_obj_processor,
+        "First": first_obj_processor,
+        "Second": second_obj_processor,
     }
 
     metamodel = metamodel_from_str(grammar)
@@ -85,9 +85,9 @@ def test_object_processors():
     model_str = 'first 34 45 7 A 45 65 B true C "dfdf"'
     first = metamodel.model_from_str(model_str)
 
-    assert hasattr(first, '_first_called')
+    assert hasattr(first, "_first_called")
     for s in first.seconds:
-        assert hasattr(s, '_second_called')
+        assert hasattr(s, "_second_called")
     assert call_order == [2, 2, 2, 1]
 
 
@@ -110,8 +110,8 @@ def test_object_processors_user_classes():
         assert second.parent.b is not None
 
     obj_processors = {
-        'First': first_obj_processor,
-        'Second': second_obj_processor,
+        "First": first_obj_processor,
+        "Second": second_obj_processor,
     }
 
     class First:
@@ -132,10 +132,10 @@ def test_object_processors_user_classes():
     model_str = 'first 34 45 7 A 45 65 B true C "dfdf"'
     first = metamodel.model_from_str(model_str)
 
-    assert hasattr(first, '_first_called')
+    assert hasattr(first, "_first_called")
     assert first._a_copy == first.a
     for s in first.seconds:
-        assert hasattr(s, '_second_called')
+        assert hasattr(s, "_second_called")
         assert s._sec_copy == s.sec
 
 
@@ -148,7 +148,7 @@ def test_object_processor_falsy():
         second._second_called = True
 
     obj_processors = {
-        'Second': second_obj_processor,
+        "Second": second_obj_processor,
     }
 
     class Second:
@@ -175,6 +175,7 @@ def test_object_processor_replace_object():
     Test that what is returned from object processor is value used in the
     output model.
     """
+
     def second_obj_processor(second):
         return second.sec / 2
 
@@ -182,8 +183,8 @@ def test_object_processor_replace_object():
         return f"[{mystr}]"
 
     obj_processors = {
-        'Second': second_obj_processor,
-        'STRING': string_obj_processor,
+        "Second": second_obj_processor,
+        "STRING": string_obj_processor,
     }
 
     metamodel = metamodel_from_str(grammar)
@@ -207,16 +208,14 @@ def test_obj_processor_simple_match_rule():
         /\d+\.(\d+)?/
     ;
     """
-    model = '3. end'
+    model = "3. end"
 
     mm = metamodel_from_str(grammar)
     m = mm.model_from_str(model)
     assert type(m.a) is text
 
-    processors = {
-        'MyFloat': lambda x: float(x)
-    }
-    print('filters')
+    processors = {"MyFloat": lambda x: float(x)}
+    print("filters")
     mm = metamodel_from_str(grammar)
     mm.register_obj_processors(processors)
     m = mm.model_from_str(model)
@@ -225,7 +224,6 @@ def test_obj_processor_simple_match_rule():
 
 
 def test_obj_processor_sequence_match_rule():
-
     grammar = """
     First:
         i=MyFixedInt 'end'
@@ -235,15 +233,13 @@ def test_obj_processor_sequence_match_rule():
     ;
     """
 
-    model = '0004 end'
+    model = "0004 end"
 
     mm = metamodel_from_str(grammar)
     m = mm.model_from_str(model)
     assert type(m.i) is text
 
-    processors = {
-        'MyFixedInt': lambda x: int(x)
-    }
+    processors = {"MyFixedInt": lambda x: int(x)}
     mm = metamodel_from_str(grammar)
     mm.register_obj_processors(processors)
     m = mm.model_from_str(model)
@@ -262,12 +258,10 @@ def test_base_type_obj_processor_override():
         assert type(x) is text
         return float(x)
 
-    processors = {
-        'INT': to_float_with_str_check
-    }
+    processors = {"INT": to_float_with_str_check}
     mm = metamodel_from_str(grammar)
     mm.register_obj_processors(processors)
-    m = mm.model_from_str('begin 34 end')
+    m = mm.model_from_str("begin 34 end")
 
     assert type(m.i) is float
 
@@ -280,12 +274,12 @@ def test_custom_base_type_with_builtin_alternatives():
     """  # noqa
 
     mm = metamodel_from_str(grammar)
-    model = mm.model_from_str('3.4 6')
+    model = mm.model_from_str("3.4 6")
     assert type(model.i[0]) is text
     assert type(model.i[1]) is int
 
-    mm.register_obj_processors({'MyFloat': lambda x: float(x)})
-    model = mm.model_from_str('3.4 6')
+    mm.register_obj_processors({"MyFloat": lambda x: float(x)})
+    model = mm.model_from_str("3.4 6")
     assert type(model.i[0]) is float
     assert type(model.i[1]) is int
 
@@ -306,9 +300,10 @@ def test_nested_match_rules():
         return len(x)
 
     mm = metamodel_from_str(grammar)
-    mm.register_obj_processors({'HowMany': howmany_processor,
-                                'MyFloat': lambda x: float(x)})
-    model = mm.model_from_str('3.4 ++ + ++ 6')
+    mm.register_obj_processors(
+        {"HowMany": howmany_processor, "MyFloat": lambda x: float(x)}
+    )
+    model = mm.model_from_str("3.4 ++ + ++ 6")
     assert model.objects[0] == 3.4
     assert model.objects[1] == 5
     assert model.objects[2] == 6
@@ -318,13 +313,18 @@ def test_nested_match_rules():
     # the result returned from match processors lower in hierarchy.
     def myobject_processor(x):
         assert type(x) in [int, float]
-        return f'#{text(x)}'
-    mm.register_obj_processors({'HowMany': howmany_processor,
-                                'MyFloat': lambda x: float(x),
-                                'MyObject': myobject_processor})
-    model = mm.model_from_str('3.4 ++ + ++ 6')
-    assert model.objects[0] == '#3.4'
-    assert model.objects[1] == '#5'
+        return f"#{text(x)}"
+
+    mm.register_obj_processors(
+        {
+            "HowMany": howmany_processor,
+            "MyFloat": lambda x: float(x),
+            "MyObject": myobject_processor,
+        }
+    )
+    model = mm.model_from_str("3.4 ++ + ++ 6")
+    assert model.objects[0] == "#3.4"
+    assert model.objects[1] == "#5"
 
 
 def test_multipart_nested_match_rules():
@@ -344,11 +344,11 @@ def test_multipart_nested_match_rules():
         return float(x)
 
     mm = metamodel_from_str(grammar)
-    mm.register_obj_processors({'MyFloat': myfloat_processor})
-    model = mm.model_from_str(' # 3.4 -- 6 -- ')
+    mm.register_obj_processors({"MyFloat": myfloat_processor})
+    model = mm.model_from_str(" # 3.4 -- 6 -- ")
     assert called[0]
-    assert model.objects[0] == '#3.4'
-    assert model.objects[1] == '--6--'
+    assert model.objects[0] == "#3.4"
+    assert model.objects[1] == "--6--"
 
 
 def test_obj_processor_exception_wrap_for_external_exceptions():
@@ -360,14 +360,16 @@ def test_obj_processor_exception_wrap_for_external_exceptions():
     @textxerror_wrap
     def date_converter(model_date):
         from datetime import datetime
+
         return datetime(day=model_date.d, month=model_date.m, year=model_date.y)
 
     mm = metamodel_from_str(grammar)
-    mm.register_obj_processors({'Date': date_converter})
-    mm.model_from_str('1.12.20')  # ok
+    mm.register_obj_processors({"Date": date_converter})
+    mm.model_from_str("1.12.20")  # ok
     from textx import TextXError
-    with pytest.raises(TextXError, match=r'None:1:1:.*1\.\.12'):
-        mm.model_from_str('1.13.21')  # month>12
+
+    with pytest.raises(TextXError, match=r"None:1:1:.*1\.\.12"):
+        mm.model_from_str("1.13.21")  # month>12
 
 
 def test_obj_processor_exception_wrap_for_common_rules():
@@ -378,15 +380,16 @@ def test_obj_processor_exception_wrap_for_common_rules():
 
     @textxerror_wrap
     def p(a):
-        if a.name == 'E':
+        if a.name == "E":
             raise Exception("test")
 
     mm = metamodel_from_str(grammar)
-    mm.register_obj_processors({'A': p})
+    mm.register_obj_processors({"A": p})
     from textx.exceptions import TextXError
-    mm.model_from_str('X Y Z (X)')
-    with pytest.raises(TextXError, match=r'None:1:3:.*test'):
-        mm.model_from_str('X E Z (X)')
+
+    mm.model_from_str("X Y Z (X)")
+    with pytest.raises(TextXError, match=r"None:1:3:.*test"):
+        mm.model_from_str("X E Z (X)")
 
 
 def test_obj_processor_exception_wrap_for_match_rules():
@@ -397,12 +400,13 @@ def test_obj_processor_exception_wrap_for_match_rules():
 
     @textxerror_wrap
     def p(a):
-        if a == 'E':
+        if a == "E":
             raise Exception("test")
 
     mm = metamodel_from_str(grammar)
-    mm.register_obj_processors({'A': p})
+    mm.register_obj_processors({"A": p})
     from textx.exceptions import TextXError
-    mm.model_from_str('X Y Z')
-    with pytest.raises(TextXError, match=r'None:1:3:.*test'):
-        mm.model_from_str('X E Z')
+
+    mm.model_from_str("X Y Z")
+    with pytest.raises(TextXError, match=r"None:1:3:.*test"):
+        mm.model_from_str("X E Z")

@@ -182,9 +182,7 @@ class DotRenderer:
                 required = attr.mult in [MULT_ONE, MULT_ONEORMORE]
                 mult_list = attr.mult in [MULT_ZEROORMORE, MULT_ONEORMORE]
                 attr_type = (
-                    f"list[{attr.cls.__name__}]"
-                    if mult_list
-                    else attr.cls.__name__
+                    f"list[{attr.cls.__name__}]" if mult_list else attr.cls.__name__
                 )
                 if attr.ref and attr.cls.__name__ != "OBJECT":
                     pass
@@ -250,9 +248,7 @@ set namespaceSeparator .
                 required = attr.mult in [MULT_ONE, MULT_ONEORMORE]
                 mult_list = attr.mult in [MULT_ZEROORMORE, MULT_ONEORMORE]
                 attr_type = (
-                    f"list[{attr.cls.__name__}]"
-                    if mult_list
-                    else attr.cls.__name__
+                    f"list[{attr.cls.__name__}]" if mult_list else attr.cls.__name__
                 )
                 if attr.ref and attr.cls.__name__ != "OBJECT":
                     pass

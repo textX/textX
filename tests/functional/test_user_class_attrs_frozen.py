@@ -2,9 +2,9 @@ import pytest  # noqa
 from textx import metamodel_from_str
 
 
-@pytest.mark.parametrize('frozen', [False, True])
+@pytest.mark.parametrize("frozen", [False, True])
 def test_user_class_attrs(frozen):
-    attr = pytest.importorskip('attr')
+    attr = pytest.importorskip("attr")
     grammar = """
     Document:
         a=A
@@ -33,14 +33,13 @@ def test_user_class_attrs(frozen):
         parent = attr.ib()
         a = attr.ib()
 
-    mm = metamodel_from_str(grammar, classes=[A, B],
-                            auto_init_attributes=False)
+    mm = metamodel_from_str(grammar, classes=[A, B], auto_init_attributes=False)
     model = mm.model_from_str(modelstr)
     assert model.b.a == model.a
 
 
 def test_inheritance_attrs():
-    attr = pytest.importorskip('attr')
+    attr = pytest.importorskip("attr")
 
     grammar = """
     Document:
@@ -74,7 +73,7 @@ def test_inheritance_attrs():
 
     mm = metamodel_from_str(grammar, classes=[Super, Sub])
     model = mm.model_from_str(modelstr)
-    assert model.sub.b == 'something'
+    assert model.sub.b == "something"
 
     # Make sure that the special methods of both classes have been correctly
     # restored

@@ -29,8 +29,8 @@ def test_json_issue():
     ;
     """
     json_mm = metamodel_from_str(grammar)
-    assert json_mm['Object']._tx_type is RULE_COMMON
-    assert json_mm['Member']._tx_type is RULE_COMMON
-    assert json_mm['Array']._tx_type is RULE_COMMON
-    assert json_mm['File']._tx_type is RULE_ABSTRACT
-    assert json_mm['Value']._tx_type is RULE_ABSTRACT
+    assert json_mm["Object"]._tx_type is RULE_COMMON
+    assert json_mm["Member"]._tx_type is RULE_COMMON
+    assert json_mm["Array"]._tx_type is RULE_COMMON
+    assert json_mm["File"]._tx_type is RULE_ABSTRACT
+    assert json_mm["Value"]._tx_type is RULE_ABSTRACT

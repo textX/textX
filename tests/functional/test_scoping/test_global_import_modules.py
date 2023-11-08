@@ -1,4 +1,3 @@
-
 from os.path import abspath, dirname, join
 
 from pytest import raises
@@ -22,23 +21,26 @@ def test_globalimports_basic_test_with_single_model_file():
     #################################
 
     my_meta_model = metamodel_from_file(
-        join(abspath(dirname(__file__)), 'interface_model2',
-             'Interface.tx'))
+        join(abspath(dirname(__file__)), "interface_model2", "Interface.tx")
+    )
     my_meta_model.register_scope_providers(
-        {"*.*": scoping_providers.FQNGlobalRepo(
-            join(abspath(dirname(__file__)), "interface_model2",
-                 "model_a", "*.if"))})
+        {
+            "*.*": scoping_providers.FQNGlobalRepo(
+                join(abspath(dirname(__file__)), "interface_model2", "model_a", "*.if")
+            )
+        }
+    )
 
     #################################
     # MODEL PARSING
     #################################
 
     my_model = my_meta_model.model_from_file(
-        join(abspath(dirname(__file__)), "interface_model2",
-             "model_a", "all_in_one.if"))
+        join(abspath(dirname(__file__)), "interface_model2", "model_a", "all_in_one.if")
+    )
     my_model2 = my_meta_model.model_from_file(
-        join(abspath(dirname(__file__)), "interface_model2",
-             "model_a", "all_in_one.if"))
+        join(abspath(dirname(__file__)), "interface_model2", "model_a", "all_in_one.if")
+    )
 
     #################################
     # TEST MODEL
@@ -71,24 +73,27 @@ def test_globalimports_basic_test_with_single_model_file_and_global_repo():
     #################################
 
     my_meta_model = metamodel_from_file(
-        join(abspath(dirname(__file__)), 'interface_model2',
-             'Interface.tx'),
-        global_repository=True)
+        join(abspath(dirname(__file__)), "interface_model2", "Interface.tx"),
+        global_repository=True,
+    )
     my_meta_model.register_scope_providers(
-        {"*.*": scoping_providers.FQNGlobalRepo(
-            join(abspath(dirname(__file__)), 'interface_model2',
-                 'model_a', '*.if'))})
+        {
+            "*.*": scoping_providers.FQNGlobalRepo(
+                join(abspath(dirname(__file__)), "interface_model2", "model_a", "*.if")
+            )
+        }
+    )
 
     #################################
     # MODEL PARSING
     #################################
 
     my_model = my_meta_model.model_from_file(
-        join(abspath(dirname(__file__)), "interface_model2",
-             "model_a", "all_in_one.if"))
+        join(abspath(dirname(__file__)), "interface_model2", "model_a", "all_in_one.if")
+    )
     my_model2 = my_meta_model.model_from_file(
-        join(abspath(dirname(__file__)), "interface_model2",
-             "model_a", "all_in_one.if"))
+        join(abspath(dirname(__file__)), "interface_model2", "model_a", "all_in_one.if")
+    )
 
     #################################
     # TEST MODEL
@@ -121,20 +126,23 @@ def test_globalimports_basic_test_with_distributed_model():
     #################################
 
     my_meta_model = metamodel_from_file(
-        join(abspath(dirname(__file__)),
-             'interface_model2', 'Interface.tx'))
+        join(abspath(dirname(__file__)), "interface_model2", "Interface.tx")
+    )
     my_meta_model.register_scope_providers(
-        {"*.*": scoping_providers.FQNGlobalRepo(
-            join(abspath(dirname(__file__)),
-                 "interface_model2", "model_b", "*.if"))})
+        {
+            "*.*": scoping_providers.FQNGlobalRepo(
+                join(abspath(dirname(__file__)), "interface_model2", "model_b", "*.if")
+            )
+        }
+    )
 
     #################################
     # MODEL PARSING
     #################################
 
     my_model = my_meta_model.model_from_file(
-        join(abspath(dirname(__file__)),
-             "interface_model2", "model_b", "app.if"))
+        join(abspath(dirname(__file__)), "interface_model2", "model_b", "app.if")
+    )
 
     #################################
     # TEST MODEL
@@ -142,8 +150,8 @@ def test_globalimports_basic_test_with_distributed_model():
 
     # check that "socket" is an interface
     inner_model = my_model._tx_model_repository.all_models[
-        join(abspath(dirname(__file__)),
-             "interface_model2", "model_b", "base.if")]
+        join(abspath(dirname(__file__)), "interface_model2", "model_b", "base.if")
+    ]
     check_unique_named_object_has_class(inner_model, "socket", "Interface")
 
     # check that "s.s1" is a reference to the socket interface
@@ -166,11 +174,11 @@ def test_globalimports_with_project_root_model_parameter():
     #################################
 
     my_meta_model = metamodel_from_file(
-        join(abspath(dirname(__file__)), 'interface_model2',
-             'Interface.tx'))
+        join(abspath(dirname(__file__)), "interface_model2", "Interface.tx")
+    )
     my_meta_model.register_scope_providers(
-        {"*.*": scoping_providers.FQNGlobalRepo(
-            join("model_a", "*.if"))})
+        {"*.*": scoping_providers.FQNGlobalRepo(join("model_a", "*.if"))}
+    )
 
     #################################
     # MODEL PARSING
@@ -178,14 +186,15 @@ def test_globalimports_with_project_root_model_parameter():
 
     with raises(IOError):
         _ = my_meta_model.model_from_file(
-            join(abspath(dirname(__file__)), "interface_model2",
-                 "model_a", "all_in_one.if"))
+            join(
+                abspath(dirname(__file__)), "interface_model2", "model_a", "all_in_one.if"
+            )
+        )
 
     _ = my_meta_model.model_from_file(
-        join(abspath(dirname(__file__)), "interface_model2",
-             "model_a", "all_in_one.if"),
-        project_root=join(
-            abspath(dirname(__file__)), "interface_model2"))
+        join(abspath(dirname(__file__)), "interface_model2", "model_a", "all_in_one.if"),
+        project_root=join(abspath(dirname(__file__)), "interface_model2"),
+    )
 
     #################################
     # END

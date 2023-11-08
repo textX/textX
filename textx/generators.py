@@ -17,9 +17,7 @@ def get_output_filename(input_file, output_path, fileext):
 
     base_dir = output_path if output_path else os.path.dirname(input_file)
     base_name, _ = os.path.splitext(os.path.basename(input_file))
-    output_file = os.path.abspath(
-        os.path.join(base_dir, f"{base_name}.{fileext}")
-    )
+    output_file = os.path.abspath(os.path.join(base_dir, f"{base_name}.{fileext}"))
     return output_file
 
 

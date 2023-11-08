@@ -114,7 +114,7 @@ def test_assignment_modifier_separator_zeroormore():
     model = metamodel.model_from_str("a,b, a")
     # 3 AorBs must be matched
     assert len(model.a) == 3
-    assert model.a[1] == 'b'
+    assert model.a[1] == "b"
 
 
 def test_assignment_modifier_separator_oneormore():
@@ -129,7 +129,7 @@ def test_assignment_modifier_separator_oneormore():
     model = metamodel.model_from_str("a,b, a")
     # 3 AorBs must be matched
     assert len(model.a) == 3
-    assert model.a[1] == 'b'
+    assert model.a[1] == "b"
 
 
 def test_assignment_modifier_separator_optional():
@@ -171,18 +171,22 @@ def test_modifier_eolterm_zeroormore():
     # After 'first' and before newline must
     # be one or more integers
     with pytest.raises(TextXSyntaxError):
-        model = metamodel.model_from_str("""
+        model = metamodel.model_from_str(
+            """
             first
             34 56 88 65
             123456
-        """)
+        """
+        )
 
     # When newline is found matching integers
     # finishes and than a '123456' is matched
-    model = metamodel.model_from_str("""
+    model = metamodel.model_from_str(
+        """
         first 34 56 88 65
         123456
-    """)
+    """
+    )
     assert model
 
 
@@ -197,18 +201,22 @@ def test_modifier_eolterm_oneormore():
     # After 'first' and before newline must
     # be one or more integers
     with pytest.raises(TextXSyntaxError):
-        model = metamodel.model_from_str("""
+        model = metamodel.model_from_str(
+            """
             first
             34 56 88 65
             123456
-        """)
+        """
+        )
 
     # When newline is found matching integers
     # finishes and than a '123456' is matched
-    model = metamodel.model_from_str("""
+    model = metamodel.model_from_str(
+        """
         first 34 56 88 65
         123456
-    """)
+    """
+    )
     assert model
 
 
@@ -226,16 +234,20 @@ def test_multiple_modifiers():
     # After 'first' and before newline must
     # be one or more integers separated with comma
     with pytest.raises(TextXSyntaxError):
-        model = metamodel.model_from_str("""
+        model = metamodel.model_from_str(
+            """
             first
             34 56 88 65
             123456
-        """)
+        """
+        )
 
     # When newline is found matching integers
     # finishes and than a '123456' is matched
-    model = metamodel.model_from_str("""
+    model = metamodel.model_from_str(
+        """
         first 34, 56, 88, 65
         123456
-    """)
+    """
+    )
     assert model

@@ -8,10 +8,11 @@ class MyScope:
     Dependent of the underlying data structure an appropriate
     provider is selected...
     """
+
     def __init__(self, meta):
         self.meta = meta
-        self.pStart = RelativeName('parent.event.parameters')
-        self.pEvent1 = RelativeName('parent.parameters')
+        self.pStart = RelativeName("parent.event.parameters")
+        self.pEvent1 = RelativeName("parent.parameters")
         # also possible: self.pEvent1 = FQN()
 
     def __call__(self, obj, attr, obj_ref):
@@ -47,12 +48,9 @@ def test_combined_scope_provider():
      """
 
     meta = metamodel_from_str(grammar)
-    meta.register_scope_providers({
-        '*.*': FQN(),
-        'Repetition.paramName': MyScope(meta)
-    })
+    meta.register_scope_providers({"*.*": FQN(), "Repetition.paramName": MyScope(meta)})
 
-    code = '''
+    code = """
     event eventA (varA,varB,varC):
         x1=varA,
         x2=varB,
@@ -64,6 +62,6 @@ def test_combined_scope_provider():
         x2=varB,
         x3=varC )
     end
-    '''
+    """
 
     meta.model_from_str(code)

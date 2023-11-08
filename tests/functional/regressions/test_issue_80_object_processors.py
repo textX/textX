@@ -68,8 +68,7 @@ def parse_str(grammar, lola_str):
         "bar": default_processor,
     }
 
-    meta_model = metamodel_from_str(grammar, ignore_case=True,
-                                    auto_init_attributes=False)
+    meta_model = metamodel_from_str(grammar, ignore_case=True, auto_init_attributes=False)
     meta_model.register_obj_processors(obj_processors)
     model = meta_model.model_from_str(lola_str)
     return model
