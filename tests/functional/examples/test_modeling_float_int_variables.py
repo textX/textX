@@ -1,4 +1,3 @@
-from __future__ import unicode_literals
 from textx import metamodel_from_str
 
 
@@ -27,14 +26,14 @@ def test_int_and_floats():
     })
     m = mm.model_from_str(model_text)
 
-    assert 'O_INT' == m.vars[0].value.__class__.__name__
-    assert 'O_INT' == m.vars[1].value.__class__.__name__
-    assert 'O_FLOAT' == m.vars[2].value.__class__.__name__
-    assert 'O_FLOAT' == m.vars[3].value.__class__.__name__
-    assert 'O_FLOAT' == m.vars[4].value.__class__.__name__
+    assert m.vars[0].value.__class__.__name__ == 'O_INT'
+    assert m.vars[1].value.__class__.__name__ == 'O_INT'
+    assert m.vars[2].value.__class__.__name__ == 'O_FLOAT'
+    assert m.vars[3].value.__class__.__name__ == 'O_FLOAT'
+    assert m.vars[4].value.__class__.__name__ == 'O_FLOAT'
 
-    assert 1 == m.vars[0].value.intVal
-    assert -1 == m.vars[1].value.intVal
+    assert m.vars[0].value.intVal == 1
+    assert m.vars[1].value.intVal == -1
     assert abs(1.0 - m.vars[2].value.floatVal) < 1e-5
     assert abs(1.1e-2 - m.vars[3].value.floatVal) < 1e-5
     assert abs(-1.1e+2 - m.vars[4].value.floatVal) < 1e-5

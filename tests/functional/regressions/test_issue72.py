@@ -1,7 +1,6 @@
 """
 Testing model and object processors.
 """
-from __future__ import unicode_literals
 import pytest  # noqa
 import sys
 from textx.metamodel import metamodel_from_str
@@ -12,7 +11,7 @@ else:
     text = str
 
 
-class OuterObject(object):
+class OuterObject:
     counter = 0
 
     def __init__(self, parent=None, col_items=None):
@@ -24,7 +23,7 @@ class OuterObject(object):
         print("PROCESS OuterObject")
 
 
-class InnerObject(object):
+class InnerObject:
     counter = 0
 
     def __init__(self, parent=None, m_id=None):

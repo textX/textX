@@ -1,6 +1,6 @@
-from __future__ import unicode_literals
-from textx import metamodel_from_str
 from pytest import raises
+
+from textx import metamodel_from_str
 from textx.scoping.tools import get_unique_named_object
 
 metamodel_str = r'''
@@ -34,7 +34,7 @@ def test_reference_to_buildin_attribute():
         if attr_ref.obj_name in pyobj:
             return pyobj[attr_ref.obj_name]
         else:
-            raise Exception("{} not found".format(attr_ref.obj_name))
+            raise Exception(f"{attr_ref.obj_name} not found")
 
     # create meta model
     my_metamodel = metamodel_from_str(metamodel_str,

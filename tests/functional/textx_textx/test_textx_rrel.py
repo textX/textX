@@ -1,6 +1,6 @@
-from __future__ import unicode_literals
-from os.path import join, abspath, dirname
-from textx import metamodel_for_language, get_children_of_type
+from os.path import abspath, dirname, join
+
+from textx import get_children_of_type, metamodel_for_language
 
 
 def test_textx_rrel_multi():

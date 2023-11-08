@@ -1,7 +1,7 @@
-from __future__ import unicode_literals
-from textx.metamodel import metamodel_from_str
 from pytest import raises
+
 from textx.exceptions import TextXSemanticError
+from textx.metamodel import metamodel_from_str
 
 grammar = """
 MyModel: 'model' name=ID
@@ -54,7 +54,7 @@ incoming in0 over conn
 """
 
 
-class ConnectionHandler(object):
+class ConnectionHandler:
     def _init_(self):
         print('')
 

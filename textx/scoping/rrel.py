@@ -1,29 +1,28 @@
-from __future__ import unicode_literals
-from arpeggio import PTNodeVisitor, visit_parse_tree
-from arpeggio import Optional, EOF
-from arpeggio import ZeroOrMore as ArpeggioZeroOrMore
+from arpeggio import EOF, Optional, PTNodeVisitor, visit_parse_tree
 from arpeggio import RegExMatch as _
+from arpeggio import ZeroOrMore as ArpeggioZeroOrMore
 
 
 def rrel_id():
-    return _(r'[^\d\W]\w*\b')  # from lang.py
+    return _(r"[^\d\W]\w*\b")  # from lang.py
 
 
 def rrel_parent():
-    return 'parent', '(', rrel_id, ')'
+    return "parent", "(", rrel_id, ")"
 
 
 def rrel_navigation():
     from textx.lang import string_value
-    return [(Optional('~'), rrel_id), (Optional(string_value), '~', rrel_id)]
+
+    return [(Optional("~"), rrel_id), (Optional(string_value), "~", rrel_id)]
 
 
 def rrel_brackets():
-    return '(', rrel_sequence, ')'
+    return "(", rrel_sequence, ")"
 
 
 def rrel_dots():
-    return _(r'\.+')
+    return _(r"\.+")
 
 
 def rrel_path_element():
@@ -31,14 +30,18 @@ def rrel_path_element():
 
 
 def rrel_zero_or_more():
-    return rrel_path_element, '*'
+    return rrel_path_element, "*"
 
 
 def rrel_path():
-    return [(Optional(['^', rrel_dots]),
-            ArpeggioZeroOrMore([rrel_zero_or_more, rrel_path_element], '.'),
-             [rrel_zero_or_more, rrel_path_element]),
-            ['^', rrel_dots]]
+    return [
+        (
+            Optional(["^", rrel_dots]),
+            ArpeggioZeroOrMore([rrel_zero_or_more, rrel_path_element], "."),
+            [rrel_zero_or_more, rrel_path_element],
+        ),
+        ["^", rrel_dots],
+    ]
 
 
 def rrel_sequence():
@@ -46,19 +49,20 @@ def rrel_sequence():
 
 
 def rrel_expression():
-    return Optional(_(r'\+[mp]+:')), rrel_sequence
+    return Optional(_(r"\+[mp]+:")), rrel_sequence
 
 
 def rrel_standalone():
     return rrel_expression, EOF
 
 
-class RRELBase(object):
+class RRELBase:
     def __init__(self):
         pass
 
-    def get_next_matches(self, obj, lookup_list, allowed, matched_path,
-                         first_element=False):
+    def get_next_matches(
+        self, obj, lookup_list, allowed, matched_path, first_element=False
+    ):
         """
         This function yields potential matches encountered along the
         requested RREL.
@@ -86,7 +90,8 @@ class RRELBase(object):
             return  # recursion stopper
 
         obj, lookup_list, matched_path = self.apply(
-            obj, lookup_list, matched_path, first_element)
+            obj, lookup_list, matched_path, first_element
+        )
         if obj is None:
             return
         elif isinstance(obj, list):
@@ -103,7 +108,7 @@ class RRELParent(RRELBase):
         self.type = type
 
     def __repr__(self):
-        return 'parent({})'.format(self.type)
+        return f"parent({self.type})"
 
     def start_locally(self):
         return True
@@ -121,6 +126,7 @@ class RRELParent(RRELBase):
             The parent of the specified type or None.
         """
         from textx import get_metamodel, textx_isinstance
+
         t = get_metamodel(obj)[self.type]
         while hasattr(obj, "parent"):
             obj = obj.parent
@@ -142,7 +148,7 @@ class RRELNavigation(RRELBase):
             assert not self.consume_name
             return "'" + self.fixed_name + "'~" + self.name
         else:
-            return self.name if self.consume_name else '~' + self.name
+            return self.name if self.consume_name else "~" + self.name
 
     def start_locally(self):
         return False
@@ -161,10 +167,12 @@ class RRELNavigation(RRELBase):
             Postponed, None, or a list (if a list has to be processed).
         """
         assert self.rrel_expression is not None
-        from textx.scoping.tools import needs_to_be_resolved
         from textx.scoping import Postponed
+        from textx.scoping.tools import needs_to_be_resolved
+
         if first_element:
             from textx import get_model
+
             obj = get_model(obj)
 
         start = [obj]
@@ -191,21 +199,35 @@ class RRELNavigation(RRELBase):
                     if not isinstance(target, list):
                         target = [target]
                     if self.fixed_name is not None:
-                        lst = list(filter(lambda x: hasattr(
-                            x, "name") and getattr(
-                            x, "name") == self.fixed_name, target))
+                        lst = list(
+                            filter(
+                                lambda x: hasattr(x, "name")
+                                and x.name == self.fixed_name,
+                                target,
+                            )
+                        )
                         if len(lst) > 0:
-                            return lst[0], lookup_list, matched_path + [
-                                lst[0]]  # return obj
+                            return (
+                                lst[0],
+                                lookup_list,
+                                matched_path + [lst[0]],
+                            )  # return obj
                         else:
                             return None, lookup_list, matched_path  # return None
                     else:
-                        lst = list(filter(lambda x: hasattr(
-                            x, "name") and getattr(
-                            x, "name") == lookup_list[0], target))
+                        lst = list(
+                            filter(
+                                lambda x: hasattr(x, "name")
+                                and x.name == lookup_list[0],
+                                target,
+                            )
+                        )
                         if len(lst) > 0:
-                            return lst[0], lookup_list[1:], matched_path + [
-                                lst[0]]  # return obj
+                            return (
+                                lst[0],
+                                lookup_list[1:],
+                                matched_path + [lst[0]],
+                            )  # return obj
                         else:
                             return None, lookup_list, matched_path  # return None
             else:
@@ -213,7 +235,7 @@ class RRELNavigation(RRELBase):
 
         for start_obj in start:
             res, res_lookup_list, res_lookup_path = lookup(start_obj)
-            if (res):
+            if res:
                 return res, res_lookup_list, res_lookup_path
 
         return None, lookup_list, matched_path
@@ -232,14 +254,16 @@ class RRELBrackets(RRELBase):
         return self.seq.start_at_root()
 
     def __repr__(self):
-        return '(' + str(self.seq) + ')'
+        return "(" + str(self.seq) + ")"
 
-    def get_next_matches(self, obj, lookup_list, allowed, matched_path,
-                         first_element=False):
+    def get_next_matches(
+        self, obj, lookup_list, allowed, matched_path, first_element=False
+    ):
         if not allowed(obj, lookup_list, self):  # also adjusts visited objs
             return  # recursion stopper
         for iobj, ilookup_list, imatched_path in self.seq.get_next_matches(
-                obj, lookup_list, allowed, matched_path, first_element):
+            obj, lookup_list, allowed, matched_path, first_element
+        ):
             yield iobj, ilookup_list, imatched_path
 
 
@@ -249,7 +273,7 @@ class RRELDots(RRELBase):
         self.num = num
 
     def __repr__(self):
-        return ('.' * self.num)
+        return "." * self.num
 
     def start_locally(self):
         return True
@@ -282,7 +306,7 @@ class RRELSequence(RRELBase):
         self.paths = paths
 
     def __repr__(self):
-        return ','.join(map(lambda x: str(x), self.paths))
+        return ",".join(map(lambda x: str(x), self.paths))
 
     def start_locally(self):
         res = False
@@ -296,13 +320,15 @@ class RRELSequence(RRELBase):
             res = res or p.start_at_root()
         return res
 
-    def get_next_matches(self, obj, lookup_list, allowed, matched_path,
-                         first_element=False):
+    def get_next_matches(
+        self, obj, lookup_list, allowed, matched_path, first_element=False
+    ):
         if not allowed(obj, lookup_list, self):  # also adjusts visited objs
             return  # recursion stopper
         for ip in self.paths:
             for iobj, ilookup_list, imatched_path in ip.get_next_matches(
-                    obj, lookup_list, allowed, matched_path, first_element):
+                obj, lookup_list, allowed, matched_path, first_element
+            ):
                 yield iobj, ilookup_list, imatched_path
 
 
@@ -310,8 +336,7 @@ class RRELZeroOrMore(RRELBase):
     def __init__(self, path_element):
         super(RRELZeroOrMore, self).__init__()
         if not isinstance(path_element, RRELBrackets):
-            path_element = RRELBrackets(RRELSequence(
-                [RRELPath([path_element])]))
+            path_element = RRELBrackets(RRELSequence([RRELPath([path_element])]))
         self.path_element = path_element
         assert isinstance(self.path_element, RRELBrackets)
 
@@ -322,15 +347,15 @@ class RRELZeroOrMore(RRELBase):
         return self.path_element.start_at_root()
 
     def __repr__(self):
-        return str(self.path_element) + '*'
+        return str(self.path_element) + "*"
 
-    def get_next_matches(self, obj, lookup_list, allowed, matched_path,
-                         first_element=False):
+    def get_next_matches(
+        self, obj, lookup_list, allowed, matched_path, first_element=False
+    ):
         assert isinstance(self.path_element, RRELBrackets)
         from textx.scoping import Postponed
 
-        def get_from_zero_or_more(obj, lookup_list, matched_path,
-                                  first_element=False):
+        def get_from_zero_or_more(obj, lookup_list, matched_path, first_element=False):
             assert self.start_locally() or self.start_at_root()  # or, not xor
             if not allowed(obj, lookup_list, self):  # also adjusts visited objs
                 return  # recursion stopper
@@ -339,25 +364,31 @@ class RRELZeroOrMore(RRELBase):
                     yield obj, lookup_list, matched_path
                 if self.start_at_root():
                     from textx import get_model
+
                     yield get_model(obj), lookup_list, matched_path
             else:
                 yield obj, lookup_list, matched_path
             assert isinstance(self.path_element.seq, RRELSequence)
-            for iobj, ilookup_list, \
-                imatched_path in self.path_element.seq.get_next_matches(
-                    obj, lookup_list, allowed, matched_path,
-                    first_element=first_element):
+            for (
+                iobj,
+                ilookup_list,
+                imatched_path,
+            ) in self.path_element.seq.get_next_matches(
+                obj, lookup_list, allowed, matched_path, first_element=first_element
+            ):
                 if isinstance(iobj, Postponed):
                     yield iobj, ilookup_list, imatched_path  # found postponed
                     return
                 # yield from
                 for iiobj, iilookup_list, iimatched_path in get_from_zero_or_more(
-                        iobj, ilookup_list, imatched_path):
+                    iobj, ilookup_list, imatched_path
+                ):
                     yield iiobj, iilookup_list, iimatched_path
 
         prevent_doubles = set()
         for iobj, ilookup_list, imatched_path in get_from_zero_or_more(
-                obj, lookup_list, matched_path, first_element):
+            obj, lookup_list, matched_path, first_element
+        ):
             if isinstance(iobj, Postponed):
                 yield iobj, ilookup_list, imatched_path
                 return
@@ -371,16 +402,18 @@ class RRELPath(RRELBase):
         super(RRELPath, self).__init__()
         # print("create Path :" + str(path_elements))
         self.path_elements = path_elements
-        if (self.path_elements[0] == '^'):
-            self.path_elements[0] = RRELZeroOrMore(RRELBrackets(
-                RRELSequence([RRELPath([RRELDots(2)])])))
+        if self.path_elements[0] == "^":
+            self.path_elements[0] = RRELZeroOrMore(
+                RRELBrackets(RRELSequence([RRELPath([RRELDots(2)])]))
+            )
 
     def __repr__(self):
         if isinstance(self.path_elements[0], RRELDots):
-            return str(self.path_elements[0]) + '.'.join(
-                map(lambda x: str(x), self.path_elements[1:]))
+            return str(self.path_elements[0]) + ".".join(
+                map(lambda x: str(x), self.path_elements[1:])
+            )
         else:
-            return '.'.join(map(lambda x: str(x), self.path_elements))
+            return ".".join(map(lambda x: str(x), self.path_elements))
 
     def start_locally(self):
         return self.path_elements[0].start_locally()
@@ -388,30 +421,38 @@ class RRELPath(RRELBase):
     def start_at_root(self):
         return self.path_elements[0].start_at_root()
 
-    def get_next_matches(self, obj, lookup_list, allowed, matched_path,
-                         first_element=False):
+    def get_next_matches(
+        self, obj, lookup_list, allowed, matched_path, first_element=False
+    ):
         from textx.scoping import Postponed
 
-        def intern_get_next_matches(obj, lookup_list, allowed, matched_path,
-                                    first_element=False, idx=0):
+        def intern_get_next_matches(
+            obj, lookup_list, allowed, matched_path, first_element=False, idx=0
+        ):
             assert len(self.path_elements) > idx
             e = self.path_elements[idx]
             for iobj, ilookup_list, imatched_path in e.get_next_matches(
-                    obj, lookup_list, allowed, matched_path, first_element):
+                obj, lookup_list, allowed, matched_path, first_element
+            ):
                 if isinstance(iobj, Postponed):
                     yield iobj, ilookup_list, imatched_path
                     return
                 if len(self.path_elements) - 1 == idx:
                     yield iobj, ilookup_list, imatched_path
                 else:
-                    for iiobj, iilookup_list, \
-                        iimatched_path in intern_get_next_matches(
-                            iobj, ilookup_list, allowed, imatched_path,
-                            first_element=False, idx=idx + 1):
+                    for iiobj, iilookup_list, iimatched_path in intern_get_next_matches(
+                        iobj,
+                        ilookup_list,
+                        allowed,
+                        imatched_path,
+                        first_element=False,
+                        idx=idx + 1,
+                    ):
                         yield iiobj, iilookup_list, iimatched_path
 
         for iobj, ilookup_list, imatched_path in intern_get_next_matches(
-                obj, lookup_list, allowed, matched_path, first_element, 0):
+            obj, lookup_list, allowed, matched_path, first_element, 0
+        ):
             yield iobj, ilookup_list, imatched_path
 
 
@@ -419,8 +460,8 @@ class RRELExpression:
     def __init__(self, seq, flags):
         self.seq = seq
         self.flags = flags
-        self.importURI = ('m' in flags)
-        self.use_proxy = ('p' in flags)
+        self.importURI = "m" in flags
+        self.use_proxy = "p" in flags
 
         def prepare_tree(node):
             if isinstance(node, RRELNavigation):
@@ -432,6 +473,7 @@ class RRELExpression:
                             prepare_tree(e)
                     else:
                         prepare_tree(c)
+
         prepare_tree(self.seq)
 
     def __repr__(self):
@@ -442,13 +484,12 @@ class RRELExpression:
 
 
 class RRELVisitor(PTNodeVisitor):
-
     def visit_rrel_parent(self, node, children):
         return RRELParent(children[0])
 
     def visit_rrel_navigation(self, node, children):
         if len(children) == 2:
-            if 'string_value' in children.results:
+            if "string_value" in children.results:
                 return RRELNavigation(children[1], False, children[0])
             else:
                 return RRELNavigation(children[1], False, None)
@@ -486,7 +527,7 @@ class RRELVisitor(PTNodeVisitor):
         return node.value[1:-1]
 
 
-class ReferenceProxy(object):
+class ReferenceProxy:
     """
     This class describes a resolved reference of an RREL
     with 'p'-flag set ('+p:'). It can be used similar to
@@ -503,30 +544,31 @@ class ReferenceProxy(object):
        describing the path of named objects traversed
        during reference resolution.
     """
+
     def __init__(self, path):
         assert len(path) > 0
-        self.__dict__['_tx_path'] = path
+        self.__dict__["_tx_path"] = path
 
     def __setattr__(self, key, value):
-        if key == '_tx_path' or key == '_tx_obj':
+        if key == "_tx_path" or key == "_tx_obj":
             raise Exception("not allowed to set _tx_path or _tx_obj")
-        return setattr(self.__dict__['_tx_path'][-1], key, value)
+        return setattr(self.__dict__["_tx_path"][-1], key, value)
 
     def __getattr__(self, item):
-        if item == '_tx_path':
-            return self.__dict__['_tx_path']
-        elif item == '_tx_obj':
-            return self.__dict__['_tx_path'][-1]
+        if item == "_tx_path":
+            return self.__dict__["_tx_path"]
+        elif item == "_tx_obj":
+            return self.__dict__["_tx_path"][-1]
         else:
-            return getattr(self.__dict__['_tx_path'][-1], item)
+            return getattr(self.__dict__["_tx_path"][-1], item)
 
     def __delattr__(self, item):
-        if item == '_tx_path' or item == '_tx_obj':
+        if item == "_tx_path" or item == "_tx_obj":
             raise Exception("not allowed to del _tx_path or _tx_obj")
-        return delattr(self.__dict__['_tx_path'][-1], item)
+        return delattr(self.__dict__["_tx_path"][-1], item)
 
     def __eq__(self, other):
-        return self.__dict__['_tx_path'][-1] == other
+        return self.__dict__["_tx_path"][-1] == other
 
 
 def parse(rrel_expression):
@@ -540,13 +582,13 @@ def parse(rrel_expression):
         A RREL expression tree.
     """
     from arpeggio import ParserPython
+
     parser = ParserPython(rrel_standalone, reduce_tree=False)
     parse_tree = parser.parse(rrel_expression)
     return visit_parse_tree(parse_tree, RRELVisitor())
 
 
-def find_object_with_path(obj, lookup_list, rrel_tree, obj_cls=None,
-                          split_string="."):
+def find_object_with_path(obj, lookup_list, rrel_tree, obj_cls=None, split_string="."):
     from textx import textx_isinstance
     from textx.scoping import Postponed
 
@@ -569,7 +611,8 @@ def find_object_with_path(obj, lookup_list, rrel_tree, obj_cls=None,
 
     for p in rrel_tree.paths:
         for obj_res, lookup_list_res, matched_path in p.get_next_matches(
-                obj, lookup_list, allowed, [], first_element=True):
+            obj, lookup_list, allowed, [], first_element=True
+        ):
             if isinstance(obj_res, Postponed):
                 return obj_res  # Postponed
             elif len(lookup_list_res) == 0:
@@ -578,8 +621,7 @@ def find_object_with_path(obj, lookup_list, rrel_tree, obj_cls=None,
     return None  # not found
 
 
-def find(obj, lookup_list, rrel_tree, obj_cls=None, split_string=".",
-         use_proxy=False):
+def find(obj, lookup_list, rrel_tree, obj_cls=None, split_string=".", use_proxy=False):
     """
     This function gets all/one element from a model
     object based on an rrel tree (query).
@@ -626,10 +668,11 @@ def create_rrel_scope_provider(rrel_tree_or_string, split_string=None, **kwargs)
     """
     from textx.scoping.providers import ImportURI
 
-    class RREL(object):
+    class RREL:
         """
         RREL scope provider
         """
+
         def __init__(self, rrel_tree, split_string, use_proxy):
             """
             Creates a RREL scope provider
@@ -660,30 +703,49 @@ def create_rrel_scope_provider(rrel_tree_or_string, split_string=None, **kwargs)
 
             if self.split_string is None:
                 from textx import get_metamodel
+
                 rule = get_metamodel(current_obj)[obj_ref.match_rule_name]
-                if hasattr(rule._tx_peg_rule, 'split'):
+                if hasattr(rule._tx_peg_rule, "split"):
                     split = rule._tx_peg_rule.split
                 else:
-                    split = '.'
+                    split = "."
             else:
                 split = self.split_string
 
-            return find(current_obj, obj_name, self.rrel_tree, obj_cls,
-                        split_string=split, use_proxy=self.use_proxy)
+            return find(
+                current_obj,
+                obj_name,
+                self.rrel_tree,
+                obj_cls,
+                split_string=split,
+                use_proxy=self.use_proxy,
+            )
 
     class RRELImportURI(ImportURI):
         """
         scope provider with ImportURI and RREL
         """
 
-        def __init__(self, rrel_tree, split_string, use_proxy,
-                     glob_args=None, search_path=None, importAs=False,
-                     importURI_converter=None, importURI_to_scope_name=None):
-            ImportURI.__init__(self, RREL(rrel_tree, split_string, use_proxy),
-                               glob_args=glob_args,
-                               search_path=search_path, importAs=importAs,
-                               importURI_converter=importURI_converter,
-                               importURI_to_scope_name=importURI_to_scope_name)
+        def __init__(
+            self,
+            rrel_tree,
+            split_string,
+            use_proxy,
+            glob_args=None,
+            search_path=None,
+            importAs=False,
+            importURI_converter=None,
+            importURI_to_scope_name=None,
+        ):
+            ImportURI.__init__(
+                self,
+                RREL(rrel_tree, split_string, use_proxy),
+                glob_args=glob_args,
+                search_path=search_path,
+                importAs=importAs,
+                importURI_converter=importURI_converter,
+                importURI_to_scope_name=importURI_to_scope_name,
+            )
 
         def __call__(self, obj, attr, obj_ref):
             # override `__call__`in order to ignore the `default ImportURI`
@@ -696,8 +758,8 @@ def create_rrel_scope_provider(rrel_tree_or_string, split_string=None, **kwargs)
         rrel_tree_or_string = parse(rrel_tree_or_string)
 
     if rrel_tree_or_string.importURI:
-        return RRELImportURI(rrel_tree_or_string, split_string,
-                             rrel_tree_or_string.use_proxy, *kwargs)
+        return RRELImportURI(
+            rrel_tree_or_string, split_string, rrel_tree_or_string.use_proxy, *kwargs
+        )
     else:
-        return RREL(rrel_tree_or_string, split_string,
-                    rrel_tree_or_string.use_proxy)
+        return RREL(rrel_tree_or_string, split_string, rrel_tree_or_string.use_proxy)

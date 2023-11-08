@@ -6,126 +6,273 @@ there are some differences in both syntax and semantics. To make things clear I
 have named this language textX ;)
 
 """
-from __future__ import unicode_literals
-import re
 import codecs
-from arpeggio import StrMatch, Optional, ZeroOrMore, OneOrMore, Sequence,\
-    OrderedChoice, UnorderedGroup, Not, And, RegExMatch, Match, NoMatch, EOF, \
-    ParsingExpression, ParserPython, visit_parse_tree
-from arpeggio.export import PMDOTExporter
-from arpeggio import RegExMatch as _
-from textx.scoping.rrel import rrel_expression, RRELVisitor
-
-from .exceptions import TextXError, TextXSyntaxError, TextXSemanticError
-from .const import MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE, \
-    MULT_OPTIONAL, RULE_COMMON, RULE_MATCH, RULE_ABSTRACT, mult_lt
-
+import re
 import sys
-if sys.version < '3':
+
+from arpeggio import (
+    EOF,
+    And,
+    Match,
+    NoMatch,
+    Not,
+    OneOrMore,
+    Optional,
+    OrderedChoice,
+    ParserPython,
+    ParsingExpression,
+    RegExMatch,
+    Sequence,
+    StrMatch,
+    UnorderedGroup,
+    ZeroOrMore,
+    visit_parse_tree,
+)
+from arpeggio import RegExMatch as _
+from arpeggio.export import PMDOTExporter
+
+from textx.scoping.rrel import RRELVisitor, rrel_expression
+
+from .const import (
+    MULT_ONE,
+    MULT_ONEORMORE,
+    MULT_OPTIONAL,
+    MULT_ZEROORMORE,
+    RULE_ABSTRACT,
+    RULE_COMMON,
+    RULE_MATCH,
+    mult_lt,
+)
+from .exceptions import TextXError, TextXSemanticError, TextXSyntaxError
+
+if sys.version < "3":
     text = unicode  # noqa
 else:
     text = str
 
 # Interpreting backslash sequences.
 # See https://stackoverflow.com/a/24519338/2024430
-ESCAPE_SEQUENCE_RE = re.compile(r'''
+ESCAPE_SEQUENCE_RE = re.compile(
+    r"""
     ( \\U........      # 8-digit hex escapes
     | \\u....          # 4-digit hex escapes
     | \\x..            # 2-digit hex escapes
     | \\[0-7]{1,3}     # Octal escapes
     | \\N\{[^}]+\}     # Unicode characters by name
     | \\[\\'"abfnrtv]  # Single-character escapes
-    )''', re.UNICODE | re.VERBOSE)
+    )""",
+    re.UNICODE | re.VERBOSE,
+)
+
 
 def decode_escapes(s):
     def decode_match(match):
-        return codecs.decode(match.group(0), 'unicode-escape')
+        return codecs.decode(match.group(0), "unicode-escape")
 
     return ESCAPE_SEQUENCE_RE.sub(decode_match, s)
 
+
 # textX grammar
-def textx_model():          return (ZeroOrMore(import_or_reference_stm),
-                                    ZeroOrMore(textx_rule), EOF)
-def import_or_reference_stm(): return [import_stm, reference_stm]
-def import_stm():           return 'import', grammar_to_import
-def reference_stm():        return ('reference', language_name,
-                                    Optional(language_alias))
-def language_alias():       return 'as', ident
-def language_name():        return _(r'(\w|-)+')
-def grammar_to_import():    return _(r'(\w|\.)+')
+def textx_model():
+    return (ZeroOrMore(import_or_reference_stm), ZeroOrMore(textx_rule), EOF)
+
+
+def import_or_reference_stm():
+    return [import_stm, reference_stm]
+
+
+def import_stm():
+    return "import", grammar_to_import
+
+
+def reference_stm():
+    return ("reference", language_name, Optional(language_alias))
+
+
+def language_alias():
+    return "as", ident
+
+
+def language_name():
+    return _(r"(\w|-)+")
+
+
+def grammar_to_import():
+    return _(r"(\w|\.)+")
+
 
 # Rules
-def textx_rule():           return rule_name, Optional(rule_params), ":", textx_rule_body, ";"
-def rule_params():          return '[', rule_param, ZeroOrMore(',', rule_param), ']'
-def rule_param():           return param_name, Optional('=', string_value)
-def param_name():           return ident
-def textx_rule_body():      return choice
+def textx_rule():
+    return rule_name, Optional(rule_params), ":", textx_rule_body, ";"
 
-def choice():               return sequence, ZeroOrMore("|", sequence)
-def sequence():             return OneOrMore(repeatable_expr)
-def repeatable_expr():      return expression, Optional(repeat_operator), Optional('-')
-def expression():           return [assignment, (Optional(syntactic_predicate),
-                                                 [simple_match, rule_ref,
-                                                  bracketed_choice])]
-def bracketed_choice():     return '(', choice, ')'
-def repeat_operator():      return ['*', '?', '+', '#'], Optional(repeat_modifiers)
-def repeat_modifiers():     return '[', OneOrMore([simple_match,
-                                                   'eolterm']), ']'
-def syntactic_predicate():  return ['!', '&']
-def simple_match():         return [str_match, re_match]
+
+def rule_params():
+    return "[", rule_param, ZeroOrMore(",", rule_param), "]"
+
+
+def rule_param():
+    return param_name, Optional("=", string_value)
+
+
+def param_name():
+    return ident
+
+
+def textx_rule_body():
+    return choice
+
+
+def choice():
+    return sequence, ZeroOrMore("|", sequence)
+
+
+def sequence():
+    return OneOrMore(repeatable_expr)
+
+
+def repeatable_expr():
+    return expression, Optional(repeat_operator), Optional("-")
+
+
+def expression():
+    return [
+        assignment,
+        (Optional(syntactic_predicate), [simple_match, rule_ref, bracketed_choice]),
+    ]
+
+
+def bracketed_choice():
+    return "(", choice, ")"
+
+
+def repeat_operator():
+    return ["*", "?", "+", "#"], Optional(repeat_modifiers)
+
+
+def repeat_modifiers():
+    return "[", OneOrMore([simple_match, "eolterm"]), "]"
+
+
+def syntactic_predicate():
+    return ["!", "&"]
+
+
+def simple_match():
+    return [str_match, re_match]
+
 
 # Assignment
-def assignment():           return attribute, assignment_op, assignment_rhs
-def attribute():            return ident
-def assignment_op():        return ["=", "*=", "+=", "?="]
-def assignment_rhs():       return [simple_match, reference], Optional(repeat_modifiers)
+def assignment():
+    return attribute, assignment_op, assignment_rhs
+
+
+def attribute():
+    return ident
+
+
+def assignment_op():
+    return ["=", "*=", "+=", "?="]
+
+
+def assignment_rhs():
+    return [simple_match, reference], Optional(repeat_modifiers)
+
 
 # References
-def reference():            return [rule_ref, obj_ref]
-def rule_ref():             return ident
+def reference():
+    return [rule_ref, obj_ref]
+
+
+def rule_ref():
+    return ident
+
+
 # TODO: Remove "|" optional sep in version 4.0.
-def obj_ref():              return '[', class_name, Optional([':', '|'], obj_ref_rule, Optional('|', rrel_expression)), ']'
+def obj_ref():
+    return (
+        "[",
+        class_name,
+        Optional([":", "|"], obj_ref_rule, Optional("|", rrel_expression)),
+        "]",
+    )
 
-def rule_name():            return ident
-def obj_ref_rule():         return ident
-def class_name():           return qualified_ident
 
-def str_match():            return string_value
-def re_match():             return _(r"/((?:(?:\\/)|[^/])*)/")
-def ident():                return _(r'\w+')
-def qualified_ident():      return _(r'\w+(\.\w+)?')
-def integer():              return _(r'[-+]?[0-9]+')
-def string_value():         return [_(r"'((\\')|[^'])*'"),
-                                    _(r'"((\\")|[^"])*"')]
+def rule_name():
+    return ident
+
+
+def obj_ref_rule():
+    return ident
+
+
+def class_name():
+    return qualified_ident
+
+
+def str_match():
+    return string_value
+
+
+def re_match():
+    return _(r"/((?:(?:\\/)|[^/])*)/")
+
+
+def ident():
+    return _(r"\w+")
+
+
+def qualified_ident():
+    return _(r"\w+(\.\w+)?")
+
+
+def integer():
+    return _(r"[-+]?[0-9]+")
+
+
+def string_value():
+    return [_(r"'((\\')|[^'])*'"), _(r'"((\\")|[^"])*"')]
+
 
 # Comments
-def comment():              return [comment_line, comment_block]
-def comment_line():         return _(r'//.*?$')
-def comment_block():        return _(r'/\*(.|\n)*?\*/')
+def comment():
+    return [comment_line, comment_block]
 
+
+def comment_line():
+    return _(r"//.*?$")
+
+
+def comment_block():
+    return _(r"/\*(.|\n)*?\*/")
 
 
 # Special rules - primitive types
-ID          = _(r'[^\d\W]\w*\b', rule_name='ID', root=True)
-BOOL        = _(r'(True|true|False|false|0|1)\b', rule_name='BOOL', root=True)
-INT         = _(r'[-+]?[0-9]+', rule_name='INT', root=True)
-FLOAT       = _(r'[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?(?<=[\w\.])(?![\w\.])',
-                'FLOAT', root=True)
-STRICTFLOAT = _(r'[+-]?(((\d+\.(\d*)?|\.\d+)([eE][+-]?\d+)?)|((\d+)([eE][+-]?\d+)))(?<=[\w\.])(?![\w\.])',
-                'STRICTFLOAT', root=True)
-STRING      = _(r'("(\\"|[^"])*")|(\'(\\\'|[^\'])*\')', 'STRING', root=True)
-NUMBER      = OrderedChoice(nodes=[STRICTFLOAT, INT], rule_name='NUMBER', root=True)
-BASETYPE    = OrderedChoice(nodes=[NUMBER, FLOAT, BOOL, ID, STRING],
-                            rule_name='BASETYPE', root=True)
+ID = _(r"[^\d\W]\w*\b", rule_name="ID", root=True)
+BOOL = _(r"(True|true|False|false|0|1)\b", rule_name="BOOL", root=True)
+INT = _(r"[-+]?[0-9]+", rule_name="INT", root=True)
+FLOAT = _(
+    r"[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?(?<=[\w\.])(?![\w\.])", "FLOAT", root=True
+)
+STRICTFLOAT = _(
+    r"[+-]?(((\d+\.(\d*)?|\.\d+)([eE][+-]?\d+)?)|((\d+)([eE][+-]?\d+)))(?<=[\w\.])(?![\w\.])",
+    "STRICTFLOAT",
+    root=True,
+)
+STRING = _(r'("(\\"|[^"])*")|(\'(\\\'|[^\'])*\')', "STRING", root=True)
+NUMBER = OrderedChoice(nodes=[STRICTFLOAT, INT], rule_name="NUMBER", root=True)
+BASETYPE = OrderedChoice(
+    nodes=[NUMBER, FLOAT, BOOL, ID, STRING], rule_name="BASETYPE", root=True
+)
 
 # A dummy rule for generic type. This rule should never be used for parsing.
-OBJECT = _(r'', rule_name='OBJECT', root=True)
+OBJECT = _(r"", rule_name="OBJECT", root=True)
 
-BASE_TYPE_RULES = {rule.rule_name: rule
-                   for rule in [ID, BOOL, INT, FLOAT, STRICTFLOAT,
-                                STRING, NUMBER, BASETYPE]}
+BASE_TYPE_RULES = {
+    rule.rule_name: rule
+    for rule in [ID, BOOL, INT, FLOAT, STRICTFLOAT, STRING, NUMBER, BASETYPE]
+}
 BASE_TYPE_NAMES = list(BASE_TYPE_RULES.keys())
-ALL_TYPE_NAMES = BASE_TYPE_NAMES + ['OBJECT']
+ALL_TYPE_NAMES = BASE_TYPE_NAMES + ["OBJECT"]
 
 PRIMITIVE_PYTHON_TYPES = [int, float, text, bool]
 
@@ -136,18 +283,18 @@ for regex in [ID, BOOL, INT, FLOAT, STRICTFLOAT, STRING]:
 def python_type(textx_type_name):
     """Return Python type from the name of base textx type."""
     return {
-        'ID': text,
-        'BOOL': bool,
-        'INT': int,
-        'FLOAT': float,
-        'STRICTFLOAT': float,
-        'STRING': text,
-        'NUMBER': float,
-        'BASETYPE': text,
+        "ID": text,
+        "BOOL": bool,
+        "INT": int,
+        "FLOAT": float,
+        "STRICTFLOAT": float,
+        "STRING": text,
+        "NUMBER": float,
+        "BASETYPE": text,
     }.get(textx_type_name, textx_type_name)
 
 
-class RuleCrossRef(object):
+class RuleCrossRef:
     """
     Used during meta-model parser construction for cross reference resolving
     of PEG rules, to support forward references.
@@ -163,6 +310,7 @@ class RuleCrossRef(object):
         position(int): A position in the input string of this cross-ref.
         rrel_tree: the RREL tree defined for this reference
     """
+
     def __init__(self, rule_name, cls, position, rrel_tree):
         self.rule_name = rule_name
         self.cls = cls
@@ -171,6 +319,7 @@ class RuleCrossRef(object):
         self.scope_provider = None
         if rrel_tree is not None:
             from textx.scoping.rrel import create_rrel_scope_provider
+
             self.scope_provider = create_rrel_scope_provider(rrel_tree)
 
     def __str__(self):
@@ -180,7 +329,7 @@ class RuleCrossRef(object):
         return self.__str__()
 
 
-class ClassCrossRef(object):
+class ClassCrossRef:
     """
     Used for class reference resolving on the meta-model level.
     References will be resolved after semantic analysis of the meta-model
@@ -190,13 +339,13 @@ class ClassCrossRef(object):
         cls_name(str): A name of the target meta-model class.
         position(int): The position in the input string of this cross-ref.
     """
+
     def __init__(self, cls_name, position=0):
         self.cls_name = cls_name
         self.position = position
 
 
 class TextXVisitor(RRELVisitor):
-
     def __init__(self, grammar_parser, metamodel):
         self.grammar_parser = grammar_parser
         self.metamodel = metamodel
@@ -207,27 +356,30 @@ class TextXVisitor(RRELVisitor):
         flags = 0
         if metamodel.ignore_case:
             flags = re.IGNORECASE
-        self.keyword_regex = re.compile(r'[^\d\W]\w*', flags)
+        self.keyword_regex = re.compile(r"[^\d\W]\w*", flags)
 
         super(TextXVisitor, self).__init__()
 
     def visit_textx_model(self, node, children):
-
-        if 'Comment' in self.metamodel:
-            comments_model = self.metamodel['Comment']._tx_peg_rule
+        if "Comment" in self.metamodel:
+            comments_model = self.metamodel["Comment"]._tx_peg_rule
         else:
             comments_model = None
 
         root_rule = children[0]
         from .model import get_model_parser
-        model_parser = get_model_parser(root_rule, comments_model,
-                                        ignore_case=self.metamodel.ignore_case,
-                                        skipws=self.metamodel.skipws,
-                                        ws=self.metamodel.ws,
-                                        autokwd=self.metamodel.autokwd,
-                                        memoization=self.metamodel.memoization,
-                                        debug=self.metamodel.debug,
-                                        file=self.metamodel.file)
+
+        model_parser = get_model_parser(
+            root_rule,
+            comments_model,
+            ignore_case=self.metamodel.ignore_case,
+            skipws=self.metamodel.skipws,
+            ws=self.metamodel.ws,
+            autokwd=self.metamodel.autokwd,
+            memoization=self.metamodel.memoization,
+            debug=self.metamodel.debug,
+            file=self.metamodel.file,
+        )
 
         model_parser.metamodel = self.metamodel
 
@@ -260,7 +412,7 @@ class TextXVisitor(RRELVisitor):
             resolved_rules.add(rule)
 
             if grammar_parser.debug:
-                grammar_parser.dprint("Resolving rule: {}".format(rule))
+                grammar_parser.dprint(f"Resolving rule: {rule}")
 
             if type(rule) is RuleCrossRef:
                 rule_name = rule.rule_name
@@ -273,20 +425,20 @@ class TextXVisitor(RRELVisitor):
                     if suppress:
                         # Special case. Suppression on rule reference.
                         _tx_class = rule._tx_class
-                        rule = Sequence(nodes=[rule],
-                                        rule_name=rule_name,
-                                        suppress=suppress)
+                        rule = Sequence(
+                            nodes=[rule], rule_name=rule_name, suppress=suppress
+                        )
                         rule._tx_class = _tx_class
                 else:
                     line, col = grammar_parser.pos_to_linecol(rule.position)
                     raise TextXSemanticError(
-                        'Unexisting rule "{}" at position {}.'
-                        .format(rule.rule_name,
-                                (line, col)), line, col,
-                        filename=model_parser.metamodel.file_name)
+                        f'Unexisting rule "{rule.rule_name}" at position {(line, col)}.',
+                        line,
+                        col,
+                        filename=model_parser.metamodel.file_name,
+                    )
 
-            assert isinstance(rule, ParsingExpression),\
-                "{}:{}".format(type(rule), text(rule))
+            assert isinstance(rule, ParsingExpression), f"{type(rule)}:{text(rule)}"
 
             # Recurse into subrules, and resolve rules.
             for idx, child in enumerate(rule.nodes):
@@ -299,8 +451,7 @@ class TextXVisitor(RRELVisitor):
         # Two pass resolving
         for i in range(2):
             if grammar_parser.debug:
-                grammar_parser.dprint("RESOLVING RULE CROSS-REFS - PASS {}"
-                                      .format(i + 1))
+                grammar_parser.dprint(f"RESOLVING RULE CROSS-REFS - PASS {i + 1}")
 
             resolved_rules = set()
             _resolve_rule(model_parser.parser_model)
@@ -355,6 +506,7 @@ class TextXVisitor(RRELVisitor):
                             result = _has_nonmatch_ref(r)
                         if result:
                             return True
+
                 abstract = _has_nonmatch_ref(rule)
 
             if abstract and cls._tx_type != RULE_ABSTRACT:
@@ -369,8 +521,10 @@ class TextXVisitor(RRELVisitor):
                     def _add_reffered_classes(rule, inh_by, start=False):
                         if rule.root and not start:
                             _determine_rule_type(rule._tx_class)
-                            if rule._tx_class._tx_type != RULE_MATCH and\
-                                    rule._tx_class not in inh_by:
+                            if (
+                                rule._tx_class._tx_type != RULE_MATCH
+                                and rule._tx_class not in inh_by
+                            ):
                                 inh_by.append(rule._tx_class)
                                 # stop after first added/found type
                                 return True
@@ -400,11 +554,9 @@ class TextXVisitor(RRELVisitor):
                 _determine_rule_type(cls)
 
     def _resolve_cls_refs(self, grammar_parser, model_parser):
-
         resolved_classes = {}
 
         def _resolve_cls(cls):
-
             if cls in resolved_classes:
                 return resolved_classes[cls]
 
@@ -417,8 +569,11 @@ class TextXVisitor(RRELVisitor):
                 except KeyError:
                     line, col = grammar_parser.pos_to_linecol(cls.position)
                     raise TextXSemanticError(
-                        'Unknown class/rule "{}".'.format(cls.cls_name),
-                        line=line, col=col, filename=metamodel.file_name)
+                        f'Unknown class/rule "{cls.cls_name}".',
+                        line=line,
+                        col=col,
+                        filename=metamodel.file_name,
+                    )
             resolved_classes[to_resolve] = cls
 
             if cls._tx_type == RULE_ABSTRACT:
@@ -428,7 +583,6 @@ class TextXVisitor(RRELVisitor):
                     cls._tx_inh_by[idx] = inh
 
             else:
-
                 # If this is not abstract class than it must be common or
                 # match. Resolve referred classes.
                 for attr in cls._tx_attrs.values():
@@ -436,8 +590,10 @@ class TextXVisitor(RRELVisitor):
 
                     # If target cls is of a base type or match rule
                     # then attr can not be a reference.
-                    if attr.cls.__name__ in BASE_TYPE_NAMES \
-                            or attr.cls._tx_type == RULE_MATCH:
+                    if (
+                        attr.cls.__name__ in BASE_TYPE_NAMES
+                        or attr.cls._tx_type == RULE_MATCH
+                    ):
                         attr.ref = False
                         attr.cont = True
                         attr.is_base_type = True
@@ -448,11 +604,16 @@ class TextXVisitor(RRELVisitor):
                     if grammar_parser.debug:
                         grammar_parser.dprint(
                             "Resolved attribute {}:{}[cls={}, cont={}, "
-                            "ref={}, mult={}, pos={}]"
-                            .format(cls.__name__, attr.name,
-                                    attr.cls.__name__,
-                                    attr.cont, attr.ref, attr.mult,
-                                    attr.position))
+                            "ref={}, mult={}, pos={}]".format(
+                                cls.__name__,
+                                attr.name,
+                                attr.cls.__name__,
+                                attr.cont,
+                                attr.ref,
+                                attr.mult,
+                                attr.position,
+                            )
+                        )
 
             return cls
 
@@ -483,17 +644,18 @@ class TextXVisitor(RRELVisitor):
             rule_name, root_rule = children
             rule_params = {}
 
-        if root_rule.rule_name.startswith('__asgn') or \
-                ((isinstance(root_rule, Match) or
-                  isinstance(root_rule, RuleCrossRef))
-                 and rule_params):
+        if root_rule.rule_name.startswith("__asgn") or (
+            (isinstance(root_rule, Match) or isinstance(root_rule, RuleCrossRef))
+            and rule_params
+        ):
             # If it is assignment node it must be kept because it could be
             # e.g. single assignment in the rule.
             # Also, handle a special case where rule consists only of a single
             # match or single rule reference and there are rule modifiers
             # defined.
-            root_rule = Sequence(nodes=[root_rule], rule_name=rule_name,
-                                 root=True, **rule_params)
+            root_rule = Sequence(
+                nodes=[root_rule], rule_name=rule_name, root=True, **rule_params
+            )
         else:
             if not isinstance(root_rule, RuleCrossRef):
                 # Promote rule node to root node.
@@ -513,7 +675,6 @@ class TextXVisitor(RRELVisitor):
         # Update multiplicities of attributes based on their parent
         # expressions.
         def _update_attr_multiplicities(rule, oc_branch_set, mult=MULT_ONE):
-
             if isinstance(rule, RuleCrossRef):
                 return
 
@@ -528,16 +689,17 @@ class TextXVisitor(RRELVisitor):
                     if mult != MULT_ONEORMORE:
                         mult = MULT_ZEROORMORE
 
-                if rule.rule_name.startswith('__asgn'):
+                if rule.rule_name.startswith("__asgn"):
                     cls_attr = cls._tx_attrs[rule._attr_name]
                     if mult in [MULT_ZEROORMORE, MULT_ONEORMORE]:
-                        if rule.rule_name == '__asgn_optional':
+                        if rule.rule_name == "__asgn_optional":
                             raise TextXSemanticError(
-                                'Can\'t use bool assignment '
-                                'inside repetition in rule "{}" at {}.'
-                                .format(rule_name,
-                                        self.grammar_parser
-                                        .pos_to_linecol(node.position)))
+                                "Can't use bool assignment "
+                                'inside repetition in rule "{}" at {}.'.format(
+                                    rule_name,
+                                    self.grammar_parser.pos_to_linecol(node.position),
+                                )
+                            )
                         if mult_lt(cls_attr.mult, mult):
                             cls_attr.mult = mult
                     # If multiplicity is not "many" still we can have
@@ -563,13 +725,11 @@ class TextXVisitor(RRELVisitor):
         rule_name = str(node)
 
         if self.debug:
-            self.dprint("Creating class: {}".format(rule_name))
+            self.dprint(f"Creating class: {rule_name}")
 
         # If a class is given by the user use it. Else, create new class.
         if self.metamodel.user_classes_provider is not None:
-            cls = self.metamodel.user_classes_provider(
-                rule_name
-            )
+            cls = self.metamodel.user_classes_provider(rule_name)
             if cls is not None:
                 self.metamodel.user_classes[rule_name] = cls
         else:
@@ -577,14 +737,15 @@ class TextXVisitor(RRELVisitor):
 
         if cls is not None:
             if rule_name in self.metamodel._used_rule_names_for_user_classes:
-                raise TextXSemanticError("redefined imported rule"
-                                         + " {}".format(rule_name)
-                                         + " cannot be replaced by a user class")
+                raise TextXSemanticError(
+                    "redefined imported rule"
+                    + f" {rule_name}"
+                    + " cannot be replaced by a user class"
+                )
             self.metamodel._used_rule_names_for_user_classes.add(rule_name)
 
             # Initialize special attributes
-            self.metamodel._init_class(cls, None, node.position,
-                                       external_attributes=True)
+            self.metamodel._init_class(cls, None, node.position, external_attributes=True)
         else:
             # Create class to collect attributes. At this time PEG rule
             # is not known.
@@ -601,17 +762,18 @@ class TextXVisitor(RRELVisitor):
     def visit_rule_params(self, node, children):
         params = {}
         for name, value in children:
-            if name not in ['skipws', 'ws', 'split']:
+            if name not in ["skipws", "ws", "split"]:
                 raise TextXSyntaxError(
-                    'Invalid rule param "{}" at {}.'
-                    .format(name,
-                            self.grammar_parser.pos_to_linecol(node.position)))
+                    'Invalid rule param "{}" at {}.'.format(
+                        name, self.grammar_parser.pos_to_linecol(node.position)
+                    )
+                )
 
-            if name == 'split' and not isinstance(value, str):
+            if name == "split" and not isinstance(value, str):
                 raise TextXError("param split requires a string parameter")
-            if name == 'split' and len(value)==0:
+            if name == "split" and len(value) == 0:
                 raise TextXError("param split requires a non-empty string parameter")
-            if name == 'ws' and '\\' in value:
+            if name == "ws" and "\\" in value:
                 new_value = ""
                 if "\\n" in value:
                     new_value += "\n"
@@ -633,13 +795,12 @@ class TextXVisitor(RRELVisitor):
         else:
             param_name = children[0]
             param_value = True
-            if param_name.startswith('no'):
+            if param_name.startswith("no"):
                 param_name = param_name[2:]
                 param_value = False
 
         if self.debug:
-            self.dprint("TextX rule param: {}, {}".format(param_name,
-                                                          param_value))
+            self.dprint(f"TextX rule param: {param_name}, {param_value}")
 
         return (param_name, param_value)
 
@@ -669,7 +830,7 @@ class TextXVisitor(RRELVisitor):
     def visit_expression(self, node, children):
         if len(children) == 1:
             return children[0]
-        if children[0] == '!':
+        if children[0] == "!":
             return Not(nodes=[children[1]])
         else:
             return And(nodes=[children[1]])
@@ -679,12 +840,12 @@ class TextXVisitor(RRELVisitor):
         for modifier in children:
             if isinstance(modifier, Match):
                 # Separator
-                modifier.rule_name = 'sep'
-                modifiers['sep'] = modifier
+                modifier.rule_name = "sep"
+                modifiers["sep"] = modifier
             elif type(modifier) == tuple:
-                modifiers['multiplicity'] = modifier
+                modifiers["multiplicity"] = modifier
             else:
-                modifiers['eolterm'] = True
+                modifiers["eolterm"] = True
         return (modifiers, node.position)
 
     def visit_repeat_operator(self, node, children):
@@ -701,7 +862,7 @@ class TextXVisitor(RRELVisitor):
                 repeat_op = children[1]
                 suppress = True
             else:
-                if children[1] == '-':
+                if children[1] == "-":
                     suppress = True
                 else:
                     repeat_op = children[1]
@@ -713,11 +874,11 @@ class TextXVisitor(RRELVisitor):
                     repeat_op = repeat_op[0]
                     modifiers = None
 
-                if repeat_op == '?':
+                if repeat_op == "?":
                     rule = Optional(nodes=[expr])
-                elif repeat_op == '*':
+                elif repeat_op == "*":
                     rule = ZeroOrMore(nodes=[expr])
-                elif repeat_op == '+':
+                elif repeat_op == "+":
                     rule = OneOrMore(nodes=[expr])
                 else:
                     rule = UnorderedGroup(nodes=expr.nodes)
@@ -726,18 +887,21 @@ class TextXVisitor(RRELVisitor):
                     modifiers, position = modifiers
                     # Sanity check. Modifiers do not make
                     # sense for ? operator at the moment.
-                    if repeat_op == '?':
-                        line, col = \
-                            self.grammar_parser.pos_to_linecol(position)
+                    if repeat_op == "?":
+                        line, col = self.grammar_parser.pos_to_linecol(position)
                         raise TextXSyntaxError(
-                            'Modifiers are not allowed for "?" operator at {}'
-                            .format(text((line, col))), line, col)
+                            'Modifiers are not allowed for "?" operator at {}'.format(
+                                text((line, col))
+                            ),
+                            line,
+                            col,
+                        )
 
                     # Separator modifier
-                    rule.sep = modifiers.get('sep', None)
+                    rule.sep = modifiers.get("sep", None)
 
                     # End of line termination modifier
-                    if 'eolterm' in modifiers:
+                    if "eolterm" in modifiers:
                         rule.eolterm = True
 
         # Mark rule for suppression
@@ -768,30 +932,31 @@ class TextXVisitor(RRELVisitor):
         target_cls = None
 
         if self.debug:
-            self.dprint("Processing assignment {}{}..."
-                        .format(attr_name, op))
+            self.dprint(f"Processing assignment {attr_name}{op}...")
 
         if self.debug:
-            self.dprint("Creating attribute {}:{}".format(cls.__name__,
-                                                          attr_name))
-            self.dprint("Assignment operation = {}".format(op))
+            self.dprint(f"Creating attribute {cls.__name__}:{attr_name}")
+            self.dprint(f"Assignment operation = {op}")
 
         if attr_name in cls._tx_attrs:
             # If attribute already exists in the metamodel it is
             # multiple assignment to the same attribute.
 
             # Cannot use operator ?= on multiple assignments
-            if op == '?=':
+            if op == "?=":
                 line, col = self.grammar_parser.pos_to_linecol(node.position)
                 raise TextXSemanticError(
                     'Cannot use "?=" operator on multiple'
-                    ' assignments for attribute "{}" at {}'
-                    .format(attr_name, (line, col)), line, col)
+                    f' assignments for attribute "{attr_name}" at {(line, col)}',
+                    line,
+                    col,
+                )
 
             cls_attr = cls._tx_attrs[attr_name]
         else:
-            cls_attr = self.metamodel._new_cls_attr(cls, name=attr_name,
-                                                    position=node.position)
+            cls_attr = self.metamodel._new_cls_attr(
+                cls, name=attr_name, position=node.position
+            )
 
         # Keep track of metaclass references and containments
         if type(rhs_rule) is tuple and rhs_rule[0] == "obj_ref":
@@ -806,23 +971,23 @@ class TextXVisitor(RRELVisitor):
             target_cls = rhs_rule.cls
 
         base_rule_name = rhs_rule.rule_name
-        if op == '+=':
+        if op == "+=":
             assignment_rule = OneOrMore(
-                nodes=[rhs_rule],
-                rule_name='__asgn_oneormore', root=True)
+                nodes=[rhs_rule], rule_name="__asgn_oneormore", root=True
+            )
             cls_attr.mult = MULT_ONEORMORE
-        elif op == '*=':
+        elif op == "*=":
             assignment_rule = ZeroOrMore(
-                nodes=[rhs_rule],
-                rule_name='__asgn_zeroormore', root=True)
+                nodes=[rhs_rule], rule_name="__asgn_zeroormore", root=True
+            )
             if cls_attr.mult is not MULT_ONEORMORE:
                 cls_attr.mult = MULT_ZEROORMORE
-        elif op == '?=':
+        elif op == "?=":
             assignment_rule = Optional(
-                nodes=[rhs_rule],
-                rule_name='__asgn_optional', root=True)
+                nodes=[rhs_rule], rule_name="__asgn_optional", root=True
+            )
             cls_attr.mult = MULT_OPTIONAL
-            base_rule_name = 'BOOL'
+            base_rule_name = "BOOL"
 
             # ?= assignment should have default value of False.
             # so we shall mark it as such.
@@ -830,71 +995,82 @@ class TextXVisitor(RRELVisitor):
 
         else:
             assignment_rule = Sequence(
-                nodes=[rhs_rule],
-                rule_name='__asgn_plain', root=True)
+                nodes=[rhs_rule], rule_name="__asgn_plain", root=True
+            )
 
         # Modifiers
         if modifiers:
             modifiers, position = modifiers
             # Sanity check. Modifiers do not make
             # sense for ?= and = operator at the moment.
-            if op == '?=' or op == '=':
+            if op == "?=" or op == "=":
                 line, col = self.grammar_parser.pos_to_linecol(position)
                 raise TextXSyntaxError(
-                    'Modifiers are not allowed for "{}" operator at {}'
-                    .format(op, text((line, col))), line, col,
-                    filename=self.metamodel.file_name)
+                    'Modifiers are not allowed for "{}" operator at {}'.format(
+                        op, text((line, col))
+                    ),
+                    line,
+                    col,
+                    filename=self.metamodel.file_name,
+                )
 
             # Separator modifier
-            assignment_rule.sep = modifiers.get('sep', None)
+            assignment_rule.sep = modifiers.get("sep", None)
 
             # End of line termination modifier
-            if 'eolterm' in modifiers:
+            if "eolterm" in modifiers:
                 assignment_rule.eolterm = True
 
         if target_cls:
             attr_type = target_cls
         else:
             # Use STRING as default attr class
-            attr_type = base_rule_name if base_rule_name else 'STRING'
+            attr_type = base_rule_name if base_rule_name else "STRING"
         if not cls_attr.cls:
-            cls_attr.cls = ClassCrossRef(cls_name=attr_type,
-                                         position=node.position)
+            cls_attr.cls = ClassCrossRef(cls_name=attr_type, position=node.position)
         else:
             # cls cross ref might already be set in case of multiple assignment
             # to the same attribute. If types are not the same we shall use
             # OBJECT as generic type.
             if cls_attr.cls.cls_name != attr_type:
-                cls_attr.cls.cls_name = 'OBJECT'
+                cls_attr.cls.cls_name = "OBJECT"
 
         if self.debug:
-            self.dprint("Created attribute {}:{}[cls={}, cont={}, "
-                        "ref={}, mult={}, pos={}]"
-                        .format(cls.__name__, attr_name, cls_attr.cls.cls_name,
-                                cls_attr.cont, cls_attr.ref, cls_attr.mult,
-                                cls_attr.position))
+            self.dprint(
+                "Created attribute {}:{}[cls={}, cont={}, "
+                "ref={}, mult={}, pos={}]".format(
+                    cls.__name__,
+                    attr_name,
+                    cls_attr.cls.cls_name,
+                    cls_attr.cont,
+                    cls_attr.ref,
+                    cls_attr.mult,
+                    cls_attr.position,
+                )
+            )
 
         assignment_rule._attr_name = attr_name
-        assignment_rule._exp_str = attr_name    # For nice error reporting
+        assignment_rule._exp_str = attr_name  # For nice error reporting
         return assignment_rule
 
     def visit_str_match(self, node, children):
         try:
             to_match = children[0][1:-1]
-            if '\\' in to_match:
+            if "\\" in to_match:
                 to_match = decode_escapes(to_match)
 
         except IndexError:
-            to_match = ''
+            to_match = ""
 
         # Support for autokwd metamodel param.
         if self.metamodel.autokwd:
             match = self.keyword_regex.match(to_match)
             if match and match.span() == (0, len(to_match)):
                 regex_match = RegExMatch(
-                    r'{}\b'.format(to_match),
+                    rf"{to_match}\b",
                     ignore_case=self.metamodel.ignore_case,
-                    str_repr=to_match)
+                    str_repr=to_match,
+                )
                 regex_match.compile()
                 return regex_match
         return StrMatch(to_match, ignore_case=self.metamodel.ignore_case)
@@ -902,8 +1078,7 @@ class TextXVisitor(RRELVisitor):
     def visit_re_match(self, node, children):
         to_match = node.extra_info.group(1)
         # print("**** visit_re_match, to_match == '{}'".format(to_match))
-        regex = RegExMatch(to_match,
-                           ignore_case=self.metamodel.ignore_case)
+        regex = RegExMatch(to_match, ignore_case=self.metamodel.ignore_case)
         try:
             regex.compile()
         except Exception as e:
@@ -919,15 +1094,17 @@ class TextXVisitor(RRELVisitor):
         if class_name in BASE_TYPE_NAMES:
             line, col = self.grammar_parser.pos_to_linecol(node.position)
             raise TextXSemanticError(
-                'Primitive type instances can not be referenced at {}.'
-                .format((line, col)), line, col)
+                f"Primitive type instances can not be referenced at {(line, col)}.",
+                line,
+                col,
+            )
         if len(children) > 1:
             rule_name = children[2]
             if len(children) > 3:
                 rrel_tree = children[3]
         else:
             # Default rule for matching obj cross-refs
-            rule_name = 'ID'
+            rule_name = "ID"
         return ("obj_ref", RuleCrossRef(rule_name, class_name, node.position, rrel_tree))
 
     def visit_integer(self, node, children):
@@ -969,12 +1146,15 @@ def language_from_str(language_def, metamodel, file_name):
     else:
         # Create parser for TextX grammars using
         # the arpeggio grammar specified in this module
-        parser = ParserPython(textx_model, comment_def=comment,
-                              ignore_case=False,
-                              reduce_tree=False,
-                              memoization=metamodel.memoization,
-                              debug=metamodel.debug,
-                              file=metamodel.file)
+        parser = ParserPython(
+            textx_model,
+            comment_def=comment,
+            ignore_case=False,
+            reduce_tree=False,
+            memoization=metamodel.memoization,
+            debug=metamodel.debug,
+            file=metamodel.file,
+        )
 
         # Cache it for subsequent calls
         textX_parsers[metamodel.debug] = parser
@@ -984,14 +1164,13 @@ def language_from_str(language_def, metamodel, file_name):
         parse_tree = parser.parse(language_def, file_name)
     except NoMatch as e:
         e.eval_attrs()
-        raise TextXSyntaxError(e.message, e.line, e.col,
-                               filename=e.parser.file_name,
-                               context=e.context)
+        raise TextXSyntaxError(
+            e.message, e.line, e.col, filename=e.parser.file_name, context=e.context
+        )
 
     # Construct new parser and meta-model based on the given language
     # description.
-    lang_parser = visit_parse_tree(parse_tree,
-                                   TextXVisitor(parser, metamodel))
+    lang_parser = visit_parse_tree(parse_tree, TextXVisitor(parser, metamodel))
 
     # Meta-model is constructed. Validate its semantics.
     metamodel.validate()
@@ -1004,6 +1183,7 @@ def language_from_str(language_def, metamodel, file_name):
         # Create dot file for debugging purposes
         PMDOTExporter().exportFile(
             lang_parser.parser_model,
-            "{}_parser_model.dot".format(metamodel.rootcls.__name__))
+            f"{metamodel.rootcls.__name__}_parser_model.dot",
+        )
 
     return lang_parser

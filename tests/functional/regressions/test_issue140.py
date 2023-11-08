@@ -1,13 +1,12 @@
-from __future__ import unicode_literals
 import os
 import os.path
-from textx import (metamodel_from_file,
-                   register_language, clear_language_registrations)
-import textx.scoping.providers as scoping_providers
+
 import textx.scoping as scoping
+import textx.scoping.providers as scoping_providers
+from textx import clear_language_registrations, metamodel_from_file, register_language
 
 
-class C1(object):
+class C1:
     def __init__(self, **kwargs):
         for k in kwargs.keys():
             setattr(self, k, kwargs[k])

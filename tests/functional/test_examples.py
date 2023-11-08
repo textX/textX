@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #######################################################################
 # Name: test_examples
 # Purpose: Test that examples run without errors.

@@ -1,7 +1,8 @@
-from __future__ import unicode_literals
-import pytest
 import os
-from textx import metamodel_from_str, metamodel_from_file
+
+import pytest
+
+from textx import metamodel_from_file, metamodel_from_str
 
 grammar = """
 First:
@@ -30,7 +31,7 @@ def test_metaclass_user_class():
     """
     User supplied meta class.
     """
-    class First(object):
+    class First:
         def __init__(self, seconds):
             self.seconds = seconds
 

@@ -1,4 +1,3 @@
-from __future__ import unicode_literals
 import pytest  # noqa
 from textx import metamodel_from_str
 
@@ -10,7 +9,7 @@ grammar = """
 """
 
 
-class UserModel(object):
+class UserModel:
     def __init__(self, a):
         self._a = a
 

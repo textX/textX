@@ -3,12 +3,13 @@ Management of parameters passed to model_from_str or model_from_file.
 """
 
 import sys
-from functools import reduce
 from collections import namedtuple
+from functools import reduce
+
 from textx.exceptions import TextXError
 
-if sys.version < '3':
-    from collections import Mapping
+if sys.version < "3":
+    from collections.abc import Mapping
 else:
     from collections.abc import Mapping
 
@@ -43,9 +44,7 @@ class ModelParams(Mapping):
         return key
 
     def _have_all_parameters_been_used(self):
-        return reduce(
-            lambda r, k: r and (k in self.used_keys),
-            self.store.keys(), True)
+        return reduce(lambda r, k: r and (k in self.used_keys), self.store.keys(), True)
 
     @property
     def all_used(self):
@@ -56,9 +55,7 @@ class ModelParams(Mapping):
 """
 Class describing a model parameter.
 """
-ModelParamDefinition = namedtuple(
-    'ModelKwargDefinition',
-    ['name', 'description'])
+ModelParamDefinition = namedtuple("ModelKwargDefinition", ["name", "description"])
 
 
 class ModelParamDefinitions(Mapping):
@@ -75,6 +72,7 @@ class ModelParamDefinitions(Mapping):
     case the "outer" metamodel is responsible to restrict
     the possible parameters.
     """
+
     def __init__(self):
         self.store = dict()
 
@@ -96,4 +94,4 @@ class ModelParamDefinitions(Mapping):
     def check_params(self, source, **kwargs):
         for k in kwargs.keys():
             if k not in self.store.keys():
-                raise TextXError("unknown parameter {} ({})".format(k, source))
+                raise TextXError(f"unknown parameter {k} ({source})")

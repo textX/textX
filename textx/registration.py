@@ -1,7 +1,6 @@
 """
 Languages and generators registration and discovery API.
 """
-from __future__ import unicode_literals
 import fnmatch
 import sys
 
@@ -14,7 +13,7 @@ else:
 from textx.exceptions import TextXRegistrationError
 
 
-class LanguageDesc(object):
+class LanguageDesc:
     """
     A class used in language registration/discovery.
 
@@ -33,7 +32,7 @@ class LanguageDesc(object):
             registered this language.
     """
 
-    def __init__(self, name, pattern=None, description='', metamodel=None):
+    def __init__(self, name, pattern=None, description="", metamodel=None):
         self.name = name
         self.pattern = pattern
         self.description = description
@@ -42,7 +41,7 @@ class LanguageDesc(object):
         self.project_version = None
 
 
-class GeneratorDesc(object):
+class GeneratorDesc:
     """
     A class used in generators registration/discovery.
 
@@ -62,7 +61,8 @@ class GeneratorDesc(object):
             from `pyproject.toml`. Keeps the Python project name of the project that
             registered this language.
     """
-    def __init__(self, language, target, description='', generator=None):
+
+    def __init__(self, language, target, description="", generator=None):
         self.language = language
         self.target = target
         self.description = description
@@ -83,10 +83,10 @@ def language_descriptions():
     global languages
     if languages is None:
         languages = {}
-        for language in entry_points(group='textx_languages'):
-            register_language_with_project(language.load(),
-                                           language.dist.name,
-                                           language.dist.version)
+        for language in entry_points(group="textx_languages"):
+            register_language_with_project(
+                language.load(), language.dist.name, language.dist.version
+            )
     return languages
 
 
@@ -97,10 +97,10 @@ def generator_descriptions():
     global generators
     if generators is None:
         generators = {}
-        for generator in entry_points(group='textx_generators'):
-            register_generator_with_project(generator.load(),
-                                            generator.dist.name,
-                                            generator.dist.version)
+        for generator in entry_points(group="textx_generators"):
+            register_generator_with_project(
+                generator.load(), generator.dist.name, generator.dist.version
+            )
     return generators
 
 
@@ -115,8 +115,9 @@ def language_description(language_name):
     try:
         return languages[language_name]
     except KeyError:
-        raise TextXRegistrationError('Language "{}" not registered.'
-                                     .format(language_name))
+        raise TextXRegistrationError(
+            f'Language "{language_name}" not registered.'
+        )
 
 
 def generator_description(language_name, target_name, any_permitted=False):
@@ -137,26 +138,29 @@ def generator_description(language_name, target_name, any_permitted=False):
         except KeyError:
             if not any_permitted:
                 raise
-            generators_for_language = generators['any']
+            generators_for_language = generators["any"]
             return generators_for_language[target_name]
     except KeyError:
         raise TextXRegistrationError(
-            'No generators registered for language "{}" and target "{}".'
-            .format(language_name, target_name))
+            'No generators registered for language "{}" and target "{}".'.format(
+                language_name, target_name
+            )
+        )
 
 
-def generator_for_language_target(language_name, target_name,
-                                  any_permitted=False):
+def generator_for_language_target(language_name, target_name, any_permitted=False):
     """
     Return generator callable for the given language name and target name.
     """
-    generator_desc = generator_description(language_name, target_name,
-                                           any_permitted=any_permitted)
+    generator_desc = generator_description(
+        language_name, target_name, any_permitted=any_permitted
+    )
     return generator_desc.generator
 
 
-def register_language(language_desc_or_name, pattern=None, description='',
-                      metamodel=None):
+def register_language(
+    language_desc_or_name, pattern=None, description="", metamodel=None
+):
     """
     Programmatically register a language.
 
@@ -174,19 +178,19 @@ def register_language(language_desc_or_name, pattern=None, description='',
             name=language_desc_or_name,
             pattern=pattern,
             description=description,
-            metamodel=metamodel
+            metamodel=metamodel,
         )
     else:
         language_desc = language_desc_or_name
 
     if language_desc.name.lower() in languages:
         raise TextXRegistrationError(
-            'Language "{}" already registered.'.format(language_desc.name))
+            f'Language "{language_desc.name}" already registered.'
+        )
     languages[language_desc.name.lower()] = language_desc
 
 
-def register_language_with_project(language_desc, project_name,
-                                   project_version):
+def register_language_with_project(language_desc, project_name, project_version):
     """
     Register language with Python project name.
     """
@@ -204,8 +208,9 @@ def clear_language_registrations():
     metamodels = {}
 
 
-def register_generator(generator_desc_or_language, target=None, description='',
-                       generator=None):
+def register_generator(
+    generator_desc_or_language, target=None, description="", generator=None
+):
     """
     Programmatically register a generator.
 
@@ -223,7 +228,7 @@ def register_generator(generator_desc_or_language, target=None, description='',
             language=generator_desc_or_language,
             target=target,
             description=description,
-            generator=generator
+            generator=generator,
         )
     else:
         generator_desc = generator_desc_or_language
@@ -232,12 +237,13 @@ def register_generator(generator_desc_or_language, target=None, description='',
     if generator_desc.target.lower() in lang_gens:
         raise TextXRegistrationError(
             'Generator "{}->{}" already registered.'.format(
-                generator_desc.language, generator_desc.target))
+                generator_desc.language, generator_desc.target
+            )
+        )
     lang_gens[generator_desc.target.lower()] = generator_desc
 
 
-def register_generator_with_project(generator_desc, project_name,
-                                    project_version):
+def register_generator_with_project(generator_desc, project_name, project_version):
     """
     Register generator with Python project name.
     """
@@ -261,18 +267,24 @@ def metamodel_for_language(language_name, **kwargs):
     """
     language_name = language_name.lower()
     if language_name not in metamodels or kwargs:
-        from textx.metamodel import TextXMetaModel, TextXMetaMetaModel
+        from textx.metamodel import TextXMetaMetaModel, TextXMetaModel
+
         language = language_description(language_name)
-        if (isinstance(language.metamodel, TextXMetaModel)
-                or isinstance(language.metamodel, TextXMetaMetaModel)):
+        if isinstance(language.metamodel, TextXMetaModel) or isinstance(
+            language.metamodel, TextXMetaMetaModel
+        ):
             metamodels[language_name] = language.metamodel
         else:
             metamodel = language.metamodel(**kwargs)
-            if not (isinstance(metamodel, TextXMetaModel)
-                    or isinstance(metamodel, TextXMetaMetaModel)):
+            if not (
+                isinstance(metamodel, TextXMetaModel)
+                or isinstance(metamodel, TextXMetaMetaModel)
+            ):
                 raise TextXRegistrationError(
-                    'Meta-model type for language "{}" is "{}".'
-                    .format(language_name, type(metamodel).__name__))
+                    'Meta-model type for language "{}" is "{}".'.format(
+                        language_name, type(metamodel).__name__
+                    )
+                )
             metamodels[language_name] = metamodel
     return metamodels[language_name]
 
@@ -283,8 +295,9 @@ def languages_for_file(file_name_or_pattern):
     """
     file_languages = []
     for language in language_descriptions().values():
-        if file_name_or_pattern == language.pattern \
-                or fnmatch.fnmatch(file_name_or_pattern, language.pattern):
+        if file_name_or_pattern == language.pattern or fnmatch.fnmatch(
+            file_name_or_pattern, language.pattern
+        ):
             file_languages.append(language)
     return file_languages
 
@@ -296,11 +309,13 @@ def language_for_file(file_name_or_pattern):
     """
     languages = languages_for_file(file_name_or_pattern)
     if len(languages) > 1:
-        raise TextXRegistrationError('Multiple languages can parse "{}".'
-                                     .format(file_name_or_pattern))
+        raise TextXRegistrationError(
+            f'Multiple languages can parse "{file_name_or_pattern}".'
+        )
     elif len(languages) == 0:
-        raise TextXRegistrationError('No language registered that can parse'
-                                     ' "{}".'.format(file_name_or_pattern))
+        raise TextXRegistrationError(
+            "No language registered that can parse" f' "{file_name_or_pattern}".'
+        )
 
     return languages[0]
 
@@ -309,8 +324,10 @@ def metamodels_for_file(file_name_or_pattern):
     """
     Return meta-models that can parse the given file .
     """
-    return [metamodel_for_language(language.name)
-            for language in languages_for_file(file_name_or_pattern)]
+    return [
+        metamodel_for_language(language.name)
+        for language in languages_for_file(file_name_or_pattern)
+    ]
 
 
 def metamodel_for_file(file_name_or_pattern, **kwargs):
@@ -318,8 +335,7 @@ def metamodel_for_file(file_name_or_pattern, **kwargs):
     Return a meta-model that can parse the given file or raise
     `TextXRegistrationError` if more than one is registered.
     """
-    return metamodel_for_language(language_for_file(file_name_or_pattern).name,
-                                  **kwargs)
+    return metamodel_for_language(language_for_file(file_name_or_pattern).name, **kwargs)
 
 
 def generator(language, target):
@@ -334,8 +350,10 @@ def generator(language, target):
         return GeneratorDesc(
             language=language,
             target=target,
-            description=gen_f.__doc__ if gen_f.__doc__ is not None else '',
-            generator=gen_f)
+            description=gen_f.__doc__ if gen_f.__doc__ is not None else "",
+            generator=gen_f,
+        )
+
     return _generator
 
 
@@ -351,7 +369,8 @@ def language(name, pattern=None):
         return LanguageDesc(
             name=name,
             pattern=pattern,
-            description=gen_f.__doc__.strip()
-            if gen_f.__doc__ is not None else '',
-            metamodel=gen_f)
+            description=gen_f.__doc__.strip() if gen_f.__doc__ is not None else "",
+            metamodel=gen_f,
+        )
+
     return language

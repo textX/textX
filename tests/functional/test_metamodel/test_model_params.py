@@ -1,15 +1,19 @@
-from __future__ import unicode_literals
+
+import os.path
 
 from click.testing import CliRunner
-import os.path
 from pytest import raises
 
-from textx import metamodel_from_str
+from textx import (
+    generator,
+    language,
+    metamodel_from_str,
+    register_generator,
+    register_language,
+)
 from textx.cli import textx
 from textx.exceptions import TextXError
 from textx.generators import gen_file, get_output_filename
-from textx import language, generator, register_language, register_generator
-
 
 grammar = r"""
 Model: 'MyModel' name=ID;
@@ -127,12 +131,12 @@ def test_model_params_generate_cli():
                            debug=False, **custom_args):
 
         # Dump custom args for testing
-        txt = '\n'.join(["{}={}".format(arg_name, arg_value)
+        txt = '\n'.join([f"{arg_name}={arg_value}"
                          for arg_name, arg_value in custom_args.items()])
 
         # Dump model params processed by model processor for testing
         txt += '\nModel params:'
-        txt += '\n'.join(["{}={}".format(param_name, param_value)
+        txt += '\n'.join([f"{param_name}={param_value}"
                           for param_name, param_value in model.model_params.items()])
 
         output_file = get_output_filename(model._tx_filename, None, 'testtarget')
@@ -158,7 +162,7 @@ def test_model_params_generate_cli():
     assert result.exit_code == 0
 
     output_file = os.path.join(this_folder, 'model_param_generate_test.testtarget')
-    with open(output_file, 'r') as f:
+    with open(output_file) as f:
         content = f.read()
 
     assert 'someparam=somevalue' in content

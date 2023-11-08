@@ -2,12 +2,13 @@
 Test check/validation command.
 """
 import os
-from textx.cli import textx
+
 from click.testing import CliRunner
 from pytest import raises
-from textx.registration import metamodel_for_language
-from textx.exceptions import TextXSyntaxError
 
+from textx.cli import textx
+from textx.exceptions import TextXSyntaxError
+from textx.registration import metamodel_for_language
 
 this_folder = os.path.abspath(os.path.dirname(__file__))
 

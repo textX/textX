@@ -5,15 +5,16 @@
 # License: MIT License
 #######################################################################
 
+import errno
 import glob
 import os
-import errno
-from os.path import join, exists, abspath
+from os.path import abspath, exists, join
 
 
 def metamodel_for_file_or_default_metamodel(filename, the_metamodel):
     from textx import metamodel_for_file
     from textx.exceptions import TextXRegistrationError
+
     try:
         return metamodel_for_file(filename)
     except TextXRegistrationError:
@@ -24,7 +25,8 @@ def metamodel_for_file_or_default_metamodel(filename, the_metamodel):
 # Scope helper classes:
 # -----------------------------------------------------------------------------
 
-class Postponed(object):
+
+class Postponed:
     """
     Return an object of this class to postpone a reference resolution.
     If you get circular dependencies in resolution logic, an error
@@ -32,7 +34,7 @@ class Postponed(object):
     """
 
 
-class ModelRepository(object):
+class ModelRepository:
     """
     This class has the responsibility to hold a set of (model-identifiers,
     model) pairs as dictionary.
@@ -51,7 +53,7 @@ class ModelRepository(object):
         if model._tx_filename:
             filename = abspath(model._tx_filename)
         else:
-            filename = 'builtin_model_{}'.format(self.name_idx)
+            filename = f"builtin_model_{self.name_idx}"
             self.name_idx += 1
         self.filename_to_model[filename] = model
 
@@ -80,7 +82,7 @@ class ModelRepository(object):
         self.filename_to_model[filename] = model
 
 
-class GlobalModelRepository(object):
+class GlobalModelRepository:
     """
     This class has the responsibility to hold two ModelRepository objects:
 
@@ -124,8 +126,15 @@ class GlobalModelRepository(object):
             self.remove_model(m)
 
     def load_models_using_filepattern(
-            self, filename_pattern, model, glob_args, is_main_model=False,
-            encoding='utf-8', add_to_local_models=True, model_params=None):
+        self,
+        filename_pattern,
+        model,
+        glob_args,
+        is_main_model=False,
+        encoding="utf-8",
+        add_to_local_models=True,
+        model_params=None,
+    ):
         """
         Add a new model to all relevant objects.
 
@@ -139,6 +148,7 @@ class GlobalModelRepository(object):
             the list of loaded models
         """
         from textx import get_metamodel
+
         if model is not None:
             self.update_model_in_repo_based_on_filename(model)
             the_metamodel = get_metamodel(model)  # default metamodel
@@ -146,22 +156,34 @@ class GlobalModelRepository(object):
             the_metamodel = None
         filenames = glob.glob(filename_pattern, **glob_args)
         if len(filenames) == 0:
-            raise IOError(
-                errno.ENOENT, os.strerror(errno.ENOENT), filename_pattern)
+            raise OSError(errno.ENOENT, os.strerror(errno.ENOENT), filename_pattern)
         loaded_models = []
         for filename in filenames:
             the_metamodel = metamodel_for_file_or_default_metamodel(
-                filename, the_metamodel)
+                filename, the_metamodel
+            )
             loaded_models.append(
-                self.load_model(the_metamodel, filename, is_main_model,
-                                encoding=encoding,
-                                add_to_local_models=add_to_local_models,
-                                model_params=model_params))
+                self.load_model(
+                    the_metamodel,
+                    filename,
+                    is_main_model,
+                    encoding=encoding,
+                    add_to_local_models=add_to_local_models,
+                    model_params=model_params,
+                )
+            )
         return loaded_models
 
     def load_model_using_search_path(
-            self, filename, model, search_path, is_main_model=False,
-            encoding='utf8', add_to_local_models=True, model_params=None):
+        self,
+        filename,
+        model,
+        search_path,
+        is_main_model=False,
+        encoding="utf8",
+        add_to_local_models=True,
+        model_params=None,
+    ):
         """
         Add a new model to all relevant objects
 
@@ -175,6 +197,7 @@ class GlobalModelRepository(object):
             the loaded model
         """
         from textx import get_metamodel
+
         if model:
             self.update_model_in_repo_based_on_filename(model)
         for the_path in search_path:
@@ -186,20 +209,28 @@ class GlobalModelRepository(object):
                 else:
                     the_metamodel = None
                 the_metamodel = metamodel_for_file_or_default_metamodel(
-                    filename, the_metamodel)
-                return self.load_model(the_metamodel,
-                                       full_filename,
-                                       is_main_model,
-                                       encoding=encoding,
-                                       add_to_local_models=add_to_local_models,
-                                       model_params=model_params)
+                    filename, the_metamodel
+                )
+                return self.load_model(
+                    the_metamodel,
+                    full_filename,
+                    is_main_model,
+                    encoding=encoding,
+                    add_to_local_models=add_to_local_models,
+                    model_params=model_params,
+                )
 
-        raise IOError(
-            errno.ENOENT, os.strerror(errno.ENOENT), filename)
+        raise OSError(errno.ENOENT, os.strerror(errno.ENOENT), filename)
 
     def load_model(
-            self, the_metamodel, filename, is_main_model, encoding='utf-8',
-            add_to_local_models=True, model_params=None):
+        self,
+        the_metamodel,
+        filename,
+        is_main_model,
+        encoding="utf-8",
+        add_to_local_models=True,
+        model_params=None,
+    ):
         """
         Load a single model
 
@@ -210,8 +241,7 @@ class GlobalModelRepository(object):
         Returns:
             the loaded/cached model
         """
-        assert model_params is not None, \
-            "model_params needs to be specified"
+        assert model_params is not None, "model_params needs to be specified"
 
         filename = abspath(filename)
         if not self.local_models.has_model(filename):
@@ -223,10 +253,14 @@ class GlobalModelRepository(object):
                 # all models loaded here get their references resolved from the
                 # root model
                 new_model = the_metamodel.internal_model_from_file(
-                    filename, pre_ref_resolution_callback=lambda
-                    other_model: self.pre_ref_resolution_callback(other_model),
-                    is_main_model=is_main_model, encoding=encoding,
-                    model_params=model_params)
+                    filename,
+                    pre_ref_resolution_callback=lambda other_model: self.pre_ref_resolution_callback(
+                        other_model
+                    ),
+                    is_main_model=is_main_model,
+                    encoding=encoding,
+                    model_params=model_params,
+                )
                 self.all_models[filename] = new_model
             # print("ADDING {}".format(filename))
             if add_to_local_models:
@@ -260,13 +294,13 @@ class GlobalModelRepository(object):
                     # print("UPDATED/CACHED {}".format(fn))
                     return fn
             i = 0
-            while self.all_models.has_model("anonymous{}".format(i)):
+            while self.all_models.has_model(f"anonymous{i}"):
                 i += 1
-            myfilename = "anonymous{}".format(i)
+            myfilename = f"anonymous{i}"
             self.all_models[myfilename] = model
         else:
             myfilename = abspath(model._tx_filename)
-            if (not self.all_models.has_model(myfilename)):
+            if not self.all_models.has_model(myfilename):
                 self.all_models[myfilename] = model
         # print("UPDATED/ADDED/CACHED {}".format(myfilename))
         return myfilename
@@ -283,14 +317,13 @@ class GlobalModelRepository(object):
         """
         filename = other_model._tx_filename
         # print("PRE-CALLBACK -> {}".format(filename))
-        assert (filename)
+        assert filename
         filename = abspath(filename)
-        other_model._tx_model_repository = \
-            GlobalModelRepository(self.all_models)
+        other_model._tx_model_repository = GlobalModelRepository(self.all_models)
         self.all_models[filename] = other_model
 
 
-class ModelLoader(object):
+class ModelLoader:
     """
     This class is an interface to mark a scope provider as an additional model
     loader.
@@ -330,7 +363,7 @@ def get_included_models(model):
     Returns:
         a list of all models
     """
-    if (hasattr(model, "_tx_model_repository")):
+    if hasattr(model, "_tx_model_repository"):
         models = list(model._tx_model_repository.all_models)
         if model not in models:
             models.append(model)
@@ -353,15 +386,14 @@ def is_file_included(filename, model):
         (Note: if no _tx_model_repository is present,
         the function always returns False)
     """
-    if (hasattr(model, "_tx_model_repository")):
+    if hasattr(model, "_tx_model_repository"):
         all_entries = model._tx_model_repository.all_models
         return all_entries.has_model(filename)
     else:
         return False
 
 
-def remove_models_from_repositories(models,
-                                    models_to_be_removed):
+def remove_models_from_repositories(models, models_to_be_removed):
     """
     Remove models from all relevant repositories (_tx_model_repository
     of models and related metamodel(s), if applicable).
@@ -377,7 +409,6 @@ def remove_models_from_repositories(models,
     assert isinstance(models, list)
     for model in models:
         if hasattr(model._tx_metamodel, "_tx_model_repository"):
-            model._tx_metamodel. \
-                _tx_model_repository.remove_models(models_to_be_removed)
+            model._tx_metamodel._tx_model_repository.remove_models(models_to_be_removed)
         if hasattr(model, "_tx_model_repository"):
             model._tx_model_repository.remove_models(models_to_be_removed)

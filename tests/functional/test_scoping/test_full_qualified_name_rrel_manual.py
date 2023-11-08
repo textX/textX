@@ -1,11 +1,9 @@
-from __future__ import unicode_literals
 from os.path import dirname, join
 
 from pytest import raises
 
 import textx.exceptions
-from textx import get_children
-from textx import metamodel_from_str
+from textx import get_children, metamodel_from_str
 
 metamodel_str = '''
 Model:

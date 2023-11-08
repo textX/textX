@@ -1,4 +1,3 @@
-from __future__ import unicode_literals
 
 
 def test_textx_issue155():

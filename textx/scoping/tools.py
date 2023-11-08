@@ -4,8 +4,9 @@
 # Author: Pierre Bayerl
 # License: MIT License
 #######################################################################
-from textx import get_children, get_model
 import re
+
+from textx import get_children, get_model
 
 
 def needs_to_be_resolved(parent_obj, attr_name):
@@ -26,8 +27,9 @@ def needs_to_be_resolved(parent_obj, attr_name):
 
     """
     if hasattr(get_model(parent_obj), "_tx_reference_resolver"):
-        return get_model(parent_obj)._tx_reference_resolver. \
-            has_unresolved_crossrefs(parent_obj, attr_name)
+        return get_model(parent_obj)._tx_reference_resolver.has_unresolved_crossrefs(
+            parent_obj, attr_name
+        )
     else:
         return False
 
@@ -52,11 +54,12 @@ def get_list_of_concatenated_objects(def_obj, path_to_extension):
         entry is returned).
     """
     from textx.scoping import Postponed
+
     def_objs = []
     assert def_obj is not None
 
     def rec_walk(obj_or_list):
-        if (obj_or_list is not None):
+        if obj_or_list is not None:
             if not isinstance(obj_or_list, list):
                 obj_or_list = [obj_or_list]
             for o in obj_or_list:
@@ -82,8 +85,7 @@ def get_parser(model_obj):
 
 
 def get_recursive_parent_with_typename(obj, desired_parent_typename):
-    while type(obj).__name__ != desired_parent_typename and hasattr(obj,
-                                                                    "parent"):
+    while type(obj).__name__ != desired_parent_typename and hasattr(obj, "parent"):
         obj = obj.parent
     if type(obj).__name__ != desired_parent_typename:
         return None
@@ -109,8 +111,7 @@ def get_named_obj_in_list(obj_list, name):
         return None
 
 
-def resolve_model_path(obj, dot_separated_name,
-                       follow_named_element_in_lists=False):
+def resolve_model_path(obj, dot_separated_name, follow_named_element_in_lists=False):
     """
     Get a model object based on a model-path starting from some
     model object. It can be used in the same way you would
@@ -141,8 +142,9 @@ def resolve_model_path(obj, dot_separated_name,
         refs are found on the path / or obj is not found
     """
     from textx.scoping import Postponed
+
     names = dot_separated_name.split(".")
-    match = re.match(r'parent\((\w+)\)', names[0])
+    match = re.match(r"parent\((\w+)\)", names[0])
 
     if obj is None or type(obj) is Postponed:
         return obj
@@ -151,19 +153,18 @@ def resolve_model_path(obj, dot_separated_name,
             next_obj = get_named_obj_in_list(obj, names[0])
         else:
             from textx.exceptions import TextXError
-            raise TextXError(
-                "unexpected: got list in path for get_referenced_object")
+
+            raise TextXError("unexpected: got list in path for get_referenced_object")
     elif match:
         next_obj = obj
         desired_parent_typename = match.group(1)
-        next_obj = get_recursive_parent_with_typename(
-            next_obj,
-            desired_parent_typename)
+        next_obj = get_recursive_parent_with_typename(next_obj, desired_parent_typename)
         if type(next_obj) is Postponed:
             return next_obj
         elif next_obj is not None:
-            return resolve_model_path(next_obj, ".".join(names[1:]),
-                                      follow_named_element_in_lists)
+            return resolve_model_path(
+                next_obj, ".".join(names[1:]), follow_named_element_in_lists
+            )
         else:
             return None
     else:
@@ -173,8 +174,9 @@ def resolve_model_path(obj, dot_separated_name,
         elif next_obj is None:
             return None
     if len(names) > 1:
-        return resolve_model_path(next_obj, ".".join(
-            names[1:]), follow_named_element_in_lists)
+        return resolve_model_path(
+            next_obj, ".".join(names[1:]), follow_named_element_in_lists
+        )
     return next_obj
 
 
@@ -190,7 +192,7 @@ def get_unique_named_object_in_all_models(root, name):
     Returns:
         the object (if not unique, raises an error)
     """
-    if hasattr(root, '_tx_model_repository'):
+    if hasattr(root, "_tx_model_repository"):
         src = list(root._tx_model_repository.local_models)
         if root not in src:
             src.append(root)
@@ -200,8 +202,7 @@ def get_unique_named_object_in_all_models(root, name):
     a = []
     for m in src:
         # print("analyzing {}".format(m._tx_filename))
-        a = a + get_children(
-            lambda x: hasattr(x, 'name') and x.name == name, m)
+        a = a + get_children(lambda x: hasattr(x, "name") and x.name == name, m)
 
     assert len(a) == 1
     return a[0]
@@ -218,7 +219,7 @@ def get_unique_named_object(root, name):
     Returns:
         the object (if not unique, raises an error)
     """
-    a = get_children(lambda x: hasattr(x, 'name') and x.name == name, root)
+    a = get_children(lambda x: hasattr(x, "name") and x.name == name, root)
     assert len(a) == 1
     return a[0]
 

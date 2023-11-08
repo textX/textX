@@ -1,14 +1,12 @@
-from __future__ import unicode_literals
 
-from os.path import dirname, abspath, join
+from os.path import abspath, dirname, join
 
 from pytest import raises
 
 import textx.exceptions
 import textx.scoping as scoping
 import textx.scoping.providers as scoping_providers
-from textx import get_children_of_type
-from textx import metamodel_from_file
+from textx import get_children_of_type, metamodel_from_file
 from textx.scoping.tools import get_unique_named_object
 
 

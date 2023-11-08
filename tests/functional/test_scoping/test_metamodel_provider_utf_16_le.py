@@ -1,11 +1,9 @@
-from __future__ import unicode_literals
 
-from os.path import dirname, abspath, join
+from os.path import abspath, dirname, join
 
 import textx.scoping.providers as scoping_providers
+from textx import clear_language_registrations, metamodel_from_file, register_language
 from textx.scoping.tools import get_unique_named_object_in_all_models
-from textx import (metamodel_from_file, register_language,
-                   clear_language_registrations)
 
 
 def test_metamodel_provider_utf_16_le_basic_test():

@@ -1,26 +1,26 @@
-from __future__ import unicode_literals
-from textx import metamodel_from_str
-from pytest import raises
-import textx.exceptions
 import attr
+from pytest import raises
+
+import textx.exceptions
+from textx import metamodel_from_str
 
 
 @attr.s(frozen=True)
-class Instance(object):
+class Instance:
     parent = attr.ib()
     name = attr.ib()
     type = attr.ib()
 
 
 @attr.s(frozen=True)
-class Reference(object):
+class Reference:
     parent = attr.ib()
     instance = attr.ib()
     refs = attr.ib()
 
 
 @attr.s(frozen=True)
-class RefItem(object):
+class RefItem:
     parent = attr.ib()
     valref = attr.ib()
 
@@ -80,9 +80,9 @@ def test_referencing_attributes():
     for classes in [[], [Instance, Reference, RefItem]]:
 
         def ref_scope(refItem, myattr, attr_ref):
-            from textx.scoping.tools import get_named_obj_in_list
-            from textx.scoping import Postponed
             from textx import textx_isinstance
+            from textx.scoping import Postponed
+            from textx.scoping.tools import get_named_obj_in_list
 
             reference = refItem.parent
 
@@ -295,7 +295,7 @@ def test_referencing_attributes_with_rrel_and_full_path_access():
     assert m.references[0].ref.name == 'x'
     assert m.references[0].ref._tx_obj is m.structs[0].vals[0]
     assert m.references[0].ref == m.structs[0].vals[0]
-    assert not m.references[0].ref is m.structs[0].vals[0]
+    assert m.references[0].ref is not m.structs[0].vals[0]
     assert textx.textx_isinstance(m.references[0].ref, mm['Val'])
     assert not textx.textx_isinstance(m.references[0].ref, mm['Struct'])
 
@@ -315,11 +315,11 @@ def test_referencing_attributes_with_rrel_and_full_path_access():
     assert objpath[3].name == 'a'
     assert objpath[4].name == 'x'
 
-    setattr(m.references[0].ref, "extra", "ok to add extra field")
+    m.references[0].ref.extra = "ok to add extra field"
     with raises(Exception, match=r'.*not allowed.*'):
-        setattr(m.references[0].ref, "_tx_obj", "not ok")
+        m.references[0].ref._tx_obj = "not ok"
     with raises(Exception, match=r'.*not allowed.*'):
-        setattr(m.references[0].ref, "_tx_path", "not ok")
+        m.references[0].ref._tx_path = "not ok"
 
     del m.references[0].ref.extra
     with raises(Exception, match=r'.*not allowed.*'):

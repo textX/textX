@@ -1,6 +1,6 @@
-from __future__ import unicode_literals
-import textx
 from pytest import raises
+
+import textx
 
 
 def test_issue97_buildin_NUMBER_as_INT_or_FLOAT():

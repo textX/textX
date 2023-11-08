@@ -1,5 +1,6 @@
 import os
-from textx import metamodel_from_file, TextXSyntaxError, language, get_model, get_location
+
+from textx import TextXSyntaxError, get_location, get_model, language, metamodel_from_file
 
 
 @language('types-dsl', '*.etype')

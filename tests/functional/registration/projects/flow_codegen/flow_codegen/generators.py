@@ -1,5 +1,7 @@
-import click
 import os
+
+import click
+
 from textx import GeneratorDesc
 
 
@@ -11,14 +13,13 @@ def codegen_flow_pu(metamodel, model, output_path, overwrite, debug=False,
 
     txt = "@startuml\n"
     for a in model.algos:
-        txt += "component {}\n".format(a.name)
+        txt += f"component {a.name}\n"
     for f in model.flows:
-        txt += '{} "{}" #--# {}\n'.format(f.algo1.name, f.algo1.outp.name,
-                                          f.algo2.name)
+        txt += f'{f.algo1.name} "{f.algo1.outp.name}" #--# {f.algo2.name}\n'
     txt += "@enduml\n"
 
     # Dump custom args for testing
-    txt += '\n'.join(["{}={}".format(arg_name, arg_value)
+    txt += '\n'.join([f"{arg_name}={arg_value}"
                       for arg_name, arg_value in custom_args.items()])
 
     input_file = model._tx_filename
@@ -27,11 +28,11 @@ def codegen_flow_pu(metamodel, model, output_path, overwrite, debug=False,
     output_file = os.path.abspath(
         os.path.join(base_dir, "{}.{}".format(base_name, 'pu')))
     if overwrite or not os.path.exists(output_file):
-        click.echo('-> {}'.format(output_file))
+        click.echo(f'-> {output_file}')
         with open(output_file, "w") as f:
             f.write(txt)
     else:
-        click.echo('-- Skipping: {}'.format(output_file))
+        click.echo(f'-- Skipping: {output_file}')
 
 
 flow_pu = GeneratorDesc(

@@ -1,7 +1,6 @@
 """
 Model query and navigation API.
 """
-from __future__ import unicode_literals
 import pytest  # noqa
 from textx import metamodel_from_str, get_children, get_children_of_type, \
     get_parent_of_type, get_model
@@ -76,7 +75,7 @@ def test_get_children_of_type():
     # Test search in the part of the model
     thirds = get_children_of_type('Third', model.a[1])
     assert len(thirds) == 1
-    assert 'two' == list(thirds)[0].x
+    assert list(thirds)[0].x == 'two'
 
     # Do not traverse seconds
     thirds = get_children_of_type(

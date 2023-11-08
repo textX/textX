@@ -1,4 +1,3 @@
-from __future__ import unicode_literals
 import pytest  # noqa
 from textx import metamodel_from_str
 
@@ -25,12 +24,12 @@ def test_user_class_attrs(frozen):
     """
 
     @attr.s()
-    class A(object):
+    class A:
         parent = attr.ib()
         name = attr.ib()
 
     @attr.s(frozen=frozen)
-    class B(object):
+    class B:
         parent = attr.ib()
         a = attr.ib()
 
@@ -62,7 +61,7 @@ def test_inheritance_attrs():
     """
 
     @attr.s()
-    class Super(object):
+    class Super:
         parent = attr.ib()
         a = attr.ib()
 

@@ -1,6 +1,6 @@
-from __future__ import unicode_literals
 import pytest
-from textx import metamodel_from_str, TextXSyntaxError
+
+from textx import TextXSyntaxError, metamodel_from_str
 
 
 def test_issue188_skipws_1():

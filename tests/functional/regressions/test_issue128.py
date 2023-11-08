@@ -4,10 +4,9 @@ matches and a rule reference.
 See https://github.com/textX/textX/pull/128
 
 """
-from __future__ import unicode_literals
 import sys
-from textx import metamodel_from_str
-from textx import textx_isinstance
+
+from textx import metamodel_from_str, textx_isinstance
 
 if sys.version < '3':
     text = unicode  # noqa
@@ -46,8 +45,8 @@ def test_abstract_alternative_string_match():
         return textx_isinstance(x, calc_mm[rule])
 
     def assertIs(x, rule):
-        assert _is(x, rule), 'Unexpected object "{}" to rule "{}"'\
-            .format(x, rule)
+        assert _is(x, rule), f'Unexpected object "{x}" to rule "{rule}"'\
+            
 
     def evaluate(x):
 
@@ -101,8 +100,8 @@ def test_abstract_alternative_string_match():
             return evaluate(x.expression)
 
         else:
-            assert False, 'Unexpected object "{}" of type "{}"'\
-                .format(x, type(x))
+            assert False, f'Unexpected object "{x}" of type "{type(x)}"'\
+                
 
     result = evaluate(model)
 

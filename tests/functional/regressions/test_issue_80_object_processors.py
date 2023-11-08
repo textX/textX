@@ -1,4 +1,3 @@
-from __future__ import unicode_literals
 from textx.metamodel import metamodel_from_str
 
 call_counter = 0
@@ -20,7 +19,7 @@ bar:
 ;
 """
 
-grammar2 = u"""
+grammar2 = """
 foo:
     'foo' m_formula = Formula
 ;
@@ -38,7 +37,7 @@ bar:
 ;
 """
 
-grammar3 = u"""
+grammar3 = """
 foo:
     'foo' m_formula = Formula
 ;

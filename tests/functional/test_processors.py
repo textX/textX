@@ -1,7 +1,6 @@
 """
 Testing model and object processors.
 """
-from __future__ import unicode_literals
 import pytest  # noqa
 import sys
 from textx import metamodel_from_str, textxerror_wrap
@@ -115,14 +114,14 @@ def test_object_processors_user_classes():
         'Second': second_obj_processor,
     }
 
-    class First(object):
+    class First:
         def __init__(self, seconds, a, b, c):
             self.seconds = seconds
             self.a = a
             self.b = b
             self.c = c
 
-    class Second(object):
+    class Second:
         def __init__(self, sec, parent):
             self.sec = sec
             self.parent = parent
@@ -152,7 +151,7 @@ def test_object_processor_falsy():
         'Second': second_obj_processor,
     }
 
-    class Second(object):
+    class Second:
         def __init__(self, parent, sec):
             self.parent = parent
             self.sec = sec
@@ -180,7 +179,7 @@ def test_object_processor_replace_object():
         return second.sec / 2
 
     def string_obj_processor(mystr):
-        return "[{}]".format(mystr)
+        return f"[{mystr}]"
 
     obj_processors = {
         'Second': second_obj_processor,
@@ -319,7 +318,7 @@ def test_nested_match_rules():
     # the result returned from match processors lower in hierarchy.
     def myobject_processor(x):
         assert type(x) in [int, float]
-        return '#{}'.format(text(x))
+        return f'#{text(x)}'
     mm.register_obj_processors({'HowMany': howmany_processor,
                                 'MyFloat': lambda x: float(x),
                                 'MyObject': myobject_processor})

@@ -1,7 +1,6 @@
 """
 Testing model and regexp with groups.
 """
-from __future__ import unicode_literals
 import pytest  # noqa
 import sys
 from textx import metamodel_from_str
@@ -73,4 +72,4 @@ def test_regexp_with_groups_activated2():
     metamodel = metamodel_from_str(grammar2, use_regexp_group=True)
     m = metamodel.model_from_str(model_str)
 
-    assert '"""This is a multiline"""-ExtraInfo-' == m.data
+    assert m.data == '"""This is a multiline"""-ExtraInfo-'

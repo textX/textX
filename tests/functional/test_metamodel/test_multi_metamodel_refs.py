@@ -1,4 +1,3 @@
-from __future__ import unicode_literals
 import pytest  # noqa
 import os
 import os.path
@@ -35,7 +34,7 @@ def register_languages():
     global_repo = scoping.GlobalModelRepository()
     global_repo_provider = scoping_providers.PlainNameGlobalRepo()
 
-    class A(object):
+    class A:
         def __init__(self, **kwargs):
             super(A, self).__init__()
             for k, v in kwargs.items():
@@ -191,8 +190,8 @@ class LibTypes:
         elif repo_selector == "global repo":
             global_repo = True
         else:
-            raise Exception("unexpected parameter 'repo_selector={}'"
-                            .format(repo_selector))
+            raise Exception(f"unexpected parameter 'repo_selector={repo_selector}'"
+                            )
 
         def get_metamodel():
             mm = metamodel_from_str(
@@ -238,8 +237,8 @@ class LibData:
             # get the global repo from the inherited meta model:
             global_repo = LibTypes.get_metamodel()._tx_model_repository
         else:
-            raise Exception("unexpected parameter 'repo_selector={}'"
-                            .format(repo_selector))
+            raise Exception(f"unexpected parameter 'repo_selector={repo_selector}'"
+                            )
 
         def get_metamodel():
             mm = metamodel_from_str(
@@ -284,8 +283,8 @@ class LibFlow:
             # get the global repo from the inherited meta model:
             global_repo = LibData.get_metamodel()._tx_model_repository
         else:
-            raise Exception("unexpected parameter 'repo_selector={}'"
-                            .format(repo_selector))
+            raise Exception(f"unexpected parameter 'repo_selector={repo_selector}'"
+                            )
 
         def get_metamodel():
 
@@ -339,7 +338,7 @@ def test_multi_metamodel_types_data_flow1():
     # althought, types.type is included 2x, it is only present 1x
     # (scope providers share a common repo within on model and all
     #  loaded models in that model)
-    assert 3 == len(model1._tx_model_repository.all_models)
+    assert len(model1._tx_model_repository.all_models) == 3
 
     # load the type model also used by model1
     model2 = LibData.get_metamodel().model_from_file(
@@ -377,7 +376,7 @@ def test_multi_metamodel_types_data_flow2():
                      'data_flow.flow')
     )
     # althought, types.type is included 2x, it is only present 1x
-    assert 3 == len(model1._tx_model_repository.all_models)
+    assert len(model1._tx_model_repository.all_models) == 3
 
     # load the type model also used by model1
     model2 = LibData.get_metamodel().model_from_file(

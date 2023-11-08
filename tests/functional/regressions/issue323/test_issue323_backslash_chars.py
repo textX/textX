@@ -1,5 +1,6 @@
-from os.path import dirname, abspath, join
-from textx import metamodel_from_str, metamodel_from_file
+from os.path import abspath, dirname, join
+
+from textx import metamodel_from_file, metamodel_from_str
 
 grammars = [
     # String match with backslash chars

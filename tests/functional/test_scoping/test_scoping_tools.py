@@ -1,35 +1,41 @@
-from __future__ import unicode_literals
-from os.path import dirname, abspath, join
+from os.path import abspath, dirname, join
+
+import attr
+from pytest import raises
 
 import textx.scoping.providers as scoping_providers
-from textx import metamodel_from_file, metamodel_from_str
-from textx.scoping.tools import resolve_model_path, \
-    get_list_of_concatenated_objects
-from textx.scoping.tools import get_unique_named_object
-from textx import textx_isinstance
-from textx import get_children_of_type, get_model
-from pytest import raises
-import attr
+from textx import (
+    get_children_of_type,
+    get_model,
+    metamodel_from_file,
+    metamodel_from_str,
+    textx_isinstance,
+)
+from textx.scoping.tools import (
+    get_list_of_concatenated_objects,
+    get_unique_named_object,
+    resolve_model_path,
+)
 
 
 def test_textx_tools_with_frozen_classes1():
 
     @attr.s(frozen=True)
-    class Model(object):
+    class Model:
         # _tx_filename = attr.ib()
         # _tx_parser = attr.ib()
         use = attr.ib()
         data = attr.ib()
 
     @attr.s(frozen=True)
-    class Content(object):
+    class Content:
         parent = attr.ib()
         elementsA = attr.ib()
         elementsB = attr.ib()
         ref = attr.ib()
 
     @attr.s(frozen=True)
-    class Element(object):
+    class Element:
         parent = attr.ib()
         name = attr.ib()
 
@@ -72,12 +78,10 @@ def test_textx_tools_with_frozen_classes1():
             ref_scope_was_used[0] = True
             if get_model(refItem).use == 'A':
                 return resolve_model_path(
-                    refItem, "parent(Model).data.elementsA.{}".format(
-                        attr_ref.obj_name), True)
+                    refItem, f"parent(Model).data.elementsA.{attr_ref.obj_name}", True)
             else:
                 return resolve_model_path(
-                    refItem, "parent(Model).data.elementsB.{}".format(
-                        attr_ref.obj_name), True)
+                    refItem, f"parent(Model).data.elementsB.{attr_ref.obj_name}", True)
 
         mm = metamodel_from_str(grammar, classes=classes)
         mm.register_scope_providers({
@@ -107,20 +111,20 @@ def test_textx_tools_with_frozen_classes1():
 
 def test_textx_tools_with_frozen_classes2():
 
-    class Model(object):
+    class Model:
         def __init__(self, **kwargs):
             for k, v in kwargs.items():
                 setattr(self, k, v)
 
     @attr.s(frozen=True)
-    class Content(object):
+    class Content:
         parent = attr.ib()
         elementsA = attr.ib()
         elementsB = attr.ib()
         ref = attr.ib()
 
     @attr.s(frozen=True)
-    class Element(object):
+    class Element:
         parent = attr.ib()
         name = attr.ib()
 
@@ -163,12 +167,10 @@ def test_textx_tools_with_frozen_classes2():
             ref_scope_was_used[0] = True
             if get_model(refItem).use == 'A':
                 return resolve_model_path(
-                    refItem, "parent(Model).data.elementsA.{}".format(
-                        attr_ref.obj_name), True)
+                    refItem, f"parent(Model).data.elementsA.{attr_ref.obj_name}", True)
             else:
                 return resolve_model_path(
-                    refItem, "parent(Model).data.elementsB.{}".format(
-                        attr_ref.obj_name), True)
+                    refItem, f"parent(Model).data.elementsB.{attr_ref.obj_name}", True)
 
         mm = metamodel_from_str(grammar, classes=classes)
         mm.register_scope_providers({

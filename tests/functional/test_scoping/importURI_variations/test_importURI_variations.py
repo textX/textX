@@ -1,10 +1,11 @@
-from __future__ import unicode_literals
 
-from textx import metamodel_from_str
-from os.path import dirname, abspath, join
+from os.path import abspath, dirname, join
+
 from pytest import raises
+
 import textx.exceptions
 import textx.scoping.providers as scoping_providers
+from textx import metamodel_from_str
 
 grammar = r'''
 Model:

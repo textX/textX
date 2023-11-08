@@ -1,5 +1,6 @@
 import os
-from textx import metamodel_from_file, language
+
+from textx import language, metamodel_from_file
 
 
 @language('data-dsl', '*.edata')

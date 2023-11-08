@@ -1,6 +1,6 @@
-from __future__ import unicode_literals
-from os.path import join, abspath, dirname
-from textx import metamodel_for_language, get_children_of_type
+from os.path import abspath, dirname, join
+
+from textx import get_children_of_type, metamodel_for_language
 
 
 def test_textx_textx():
@@ -13,7 +13,7 @@ def test_textx_textx():
         join(abspath(dirname(__file__)), 'pyflies.tx'))
 
     def get_rule_by_name(name):
-        return next((x for x in grammar_model.rules if x.name == name))
+        return next(x for x in grammar_model.rules if x.name == name)
 
     # Check rules with params
     rule_with_params = get_rule_by_name('TestType')

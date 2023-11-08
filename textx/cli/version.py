@@ -1,8 +1,10 @@
 try:
     import click
 except ImportError:
-    raise Exception('textX must be installed with CLI dependencies to use '
-                    'textx command.\npip install textX[cli]')
+    raise Exception(
+        "textX must be installed with CLI dependencies to use "
+        "textx command.\npip install textX[cli]"
+    )
 
 
 def version(textx):
@@ -12,4 +14,5 @@ def version(textx):
         Print version info.
         """
         import textx
-        click.echo('textX {}'.format(textx.__version__))
+
+        click.echo(f"textX {textx.__version__}")

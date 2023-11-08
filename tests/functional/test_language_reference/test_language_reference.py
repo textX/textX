@@ -1,11 +1,10 @@
 """
 Testing `reference` grammar keyword.
 """
-from __future__ import unicode_literals
 import os
-from textx import (metamodel_from_str, language, metamodel_for_language,
-                   register_language)
+
 import textx.scoping.providers as scoping_providers
+from textx import language, metamodel_for_language, metamodel_from_str, register_language
 
 
 def test_language_reference_keyword():

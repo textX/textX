@@ -1,4 +1,3 @@
-from __future__ import unicode_literals
 import pytest  # noqa
 from textx import metamodel_from_str
 
@@ -18,7 +17,7 @@ def test_user_class_with_slots():
     """
     User supplied meta class.
     """
-    class Point(object):
+    class Point:
         "User class."
         __slots__ = ['parent', 'x', 'y']
 

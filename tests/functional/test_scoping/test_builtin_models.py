@@ -1,8 +1,6 @@
-from __future__ import unicode_literals
 
-from textx.scoping import ModelRepository
 from textx import metamodel_from_str, register_language
-
+from textx.scoping import ModelRepository
 
 types_mm = metamodel_from_str(r'''
 Model: types+=BaseType;

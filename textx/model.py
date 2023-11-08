@@ -2,27 +2,34 @@
 Model construction from parse trees and the model API.
 """
 
-import sys
 import codecs
+import sys
 import traceback
 from collections import OrderedDict
-from arpeggio import Parser, Sequence, NoMatch, EOF, Terminal
-from textx.exceptions import TextXError, TextXSyntaxError, TextXSemanticError
-from textx.const import MULT_OPTIONAL, MULT_ONE, MULT_ONEORMORE, \
-    MULT_ZEROORMORE, RULE_ABSTRACT, RULE_MATCH, MULT_ASSIGN_ERROR, \
-    UNKNOWN_OBJ_ERROR
+
+from arpeggio import EOF, NoMatch, Parser, Sequence, Terminal
+
+from textx.const import (
+    MULT_ASSIGN_ERROR,
+    MULT_ONE,
+    MULT_ONEORMORE,
+    MULT_OPTIONAL,
+    MULT_ZEROORMORE,
+    RULE_ABSTRACT,
+    RULE_MATCH,
+    UNKNOWN_OBJ_ERROR,
+)
+from textx.exceptions import TextXError, TextXSemanticError, TextXSyntaxError
 from textx.lang import PRIMITIVE_PYTHON_TYPES
-from textx.scoping import Postponed, remove_models_from_repositories, \
-    get_included_models
+from textx.scoping import Postponed, get_included_models, remove_models_from_repositories
 from textx.scoping.providers import PlainName as DefaultScopeProvider
 
-if sys.version < '3':
+if sys.version < "3":
     text = unicode  # noqa
 else:
     text = str
 
-__all__ = ['get_children_of_type', 'get_parent_of_type', 'get_model',
-           'get_metamodel']
+__all__ = ["get_children_of_type", "get_parent_of_type", "get_model", "get_metamodel"]
 
 
 def textx_isinstance(obj, obj_cls):
@@ -45,7 +52,7 @@ def textx_isinstance(obj, obj_cls):
             return True
     if hasattr(obj_cls, "_tx_inh_by"):
         for cls in obj_cls._tx_inh_by:
-            if (textx_isinstance(obj, cls)):
+            if textx_isinstance(obj, cls):
                 return True
     return False
 
@@ -55,7 +62,7 @@ def get_model(obj):
     Finds model root element for the given object.
     """
     p = obj
-    while hasattr(p, 'parent'):
+    while hasattr(p, "parent"):
         p = p.parent
     return p
 
@@ -81,7 +88,7 @@ def get_parent_of_type(typ, obj):
     if type(typ) is not text:
         typ = typ.__name__
 
-    while hasattr(obj, 'parent'):
+    while hasattr(obj, "parent"):
         obj = obj.parent
         if obj.__class__.__name__ == typ:
             return obj
@@ -106,7 +113,6 @@ def get_children(selector, root, children_first=False, should_follow=lambda obj:
     collected_ids = set()
 
     def follow(elem):
-
         if id(elem) in collected_ids:
             # Use id to avoid relying on __eq__ of user class
             return
@@ -115,11 +121,11 @@ def get_children(selector, root, children_first=False, should_follow=lambda obj:
         cls = elem.__class__
 
         if not children_first:
-            if hasattr(cls, '_tx_attrs') and selector(elem):
+            if hasattr(cls, "_tx_attrs") and selector(elem):
                 collected.append(elem)
                 collected_ids.add(id(elem))
 
-        if hasattr(cls, '_tx_attrs'):
+        if hasattr(cls, "_tx_attrs"):
             for attr_name, attr in cls._tx_attrs.items():
                 # Follow only attributes with containment semantics
                 if attr.cont:
@@ -135,7 +141,7 @@ def get_children(selector, root, children_first=False, should_follow=lambda obj:
                                     follow(new_elem)
 
         if children_first:
-            if hasattr(cls, '_tx_attrs') and selector(elem):
+            if hasattr(cls, "_tx_attrs") and selector(elem):
                 collected.append(elem)
                 collected_ids.add(id(elem))
 
@@ -163,9 +169,12 @@ def get_children_of_type(typ, root, children_first=False, should_follow=lambda o
     if type(typ) is not text:
         typ = typ.__name__
 
-    return get_children(lambda x: x.__class__.__name__ == typ, root,
-                        children_first=children_first,
-                        should_follow=should_follow)
+    return get_children(
+        lambda x: x.__class__.__name__ == typ,
+        root,
+        children_first=children_first,
+        should_follow=should_follow,
+    )
 
 
 def get_location(model_obj):
@@ -179,9 +188,9 @@ def get_location(model_obj):
         This function may be used to fill exceptions
     """
     from textx.model import get_model
+
     the_model = get_model(model_obj)
-    line, col = the_model._tx_parser.pos_to_linecol(
-        model_obj._tx_position)
+    line, col = the_model._tx_parser.pos_to_linecol(model_obj._tx_position)
     return {"line": line, "col": col, "filename": the_model._tx_filename}
 
 
@@ -206,6 +215,7 @@ def textxerror_wrap(obj_processor):
     Returns:
         the decorated object processor
     """
+
     def wrapper(obj):
         try:
             return obj_processor(obj)
@@ -213,14 +223,15 @@ def textxerror_wrap(obj_processor):
             if isinstance(e, TextXError):
                 raise
             else:
-                if hasattr(obj, '_tx_position') and hasattr(obj, '_tx_filename'):
+                if hasattr(obj, "_tx_position") and hasattr(obj, "_tx_filename"):
                     raise TextXError(str(e), **get_location(obj)) from e
                 else:
                     raise TextXError(str(e)) from e
+
     return wrapper
 
 
-class ObjCrossRef(object):
+class ObjCrossRef:
     """
     Used for object cross reference resolving.
 
@@ -235,8 +246,7 @@ class ObjCrossRef(object):
             locally defined scope providers.
     """
 
-    def __init__(self, obj_name, cls, position, scope_provider,
-                 match_rule_name):
+    def __init__(self, obj_name, cls, position, scope_provider, match_rule_name):
         self.obj_name = obj_name
         self.cls = cls
         self.position = position
@@ -244,7 +254,7 @@ class ObjCrossRef(object):
         self.match_rule_name = match_rule_name
 
 
-class RefRulePosition(object):
+class RefRulePosition:
     """
     Used for "go to definition" support in textx-languageserver
 
@@ -257,8 +267,9 @@ class RefRulePosition(object):
         def_pos_end(int): Ending position of referenced object
     """
 
-    def __init__(self, name, ref_pos_start, ref_pos_end,
-                 def_file_name, def_pos_start, def_pos_end):
+    def __init__(
+        self, name, ref_pos_start, ref_pos_end, def_file_name, def_pos_start, def_pos_end
+    ):
         self.name = name
         self.ref_pos_start = ref_pos_start
         self.ref_pos_end = ref_pos_end
@@ -285,7 +296,8 @@ def get_model_parser(top_rule, comments_model, **kwargs):
             # By default first rule is starting rule
             # and must be followed by the EOF
             self.parser_model = Sequence(
-                nodes=[top_rule, EOF()], rule_name='Model', root=True)
+                nodes=[top_rule, EOF()], rule_name="Model", root=True
+            )
             self.comments_model = comments_model
 
             # Stack for metaclass instances
@@ -309,6 +321,7 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                 A clone of this parser
             """
             import copy
+
             the_clone = copy.copy(self)  # shallow copy
 
             # create new objects for parse-dependent data
@@ -328,34 +341,51 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                 return self.parser_model.parse(self)
             except NoMatch as e:
                 e.eval_attrs()
-                raise TextXSyntaxError(message=e.message,
-                                       line=e.line,
-                                       col=e.col,
-                                       filename=e.parser.file_name,
-                                       context=e.context,
-                                       expected_rules=e.rules)
+                raise TextXSyntaxError(
+                    message=e.message,
+                    line=e.line,
+                    col=e.col,
+                    filename=e.parser.file_name,
+                    context=e.context,
+                    expected_rules=e.rules,
+                )
 
-        def get_model_from_file(self, file_name, encoding, debug,
-                                pre_ref_resolution_callback=None,
-                                is_main_model=True):
+        def get_model_from_file(
+            self,
+            file_name,
+            encoding,
+            debug,
+            pre_ref_resolution_callback=None,
+            is_main_model=True,
+        ):
             """
             Creates model from the parse tree from the previous parse call.
             If file_name is given file will be parsed before model
             construction.
             """
-            with codecs.open(file_name, 'r', encoding) as f:
+            with codecs.open(file_name, "r", encoding) as f:
                 model_str = f.read()
 
             model = self.get_model_from_str(
-                model_str, file_name=file_name, debug=debug,
+                model_str,
+                file_name=file_name,
+                debug=debug,
                 pre_ref_resolution_callback=pre_ref_resolution_callback,
-                is_main_model=is_main_model, encoding=encoding)
+                is_main_model=is_main_model,
+                encoding=encoding,
+            )
 
             return model
 
-        def get_model_from_str(self, model_str, file_name=None, debug=None,
-                               pre_ref_resolution_callback=None,
-                               is_main_model=True, encoding='utf-8'):
+        def get_model_from_str(
+            self,
+            model_str,
+            file_name=None,
+            debug=None,
+            pre_ref_resolution_callback=None,
+            is_main_model=True,
+            encoding="utf-8",
+        ):
             """
             Parses given string and creates model object graph.
             """
@@ -378,9 +408,13 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                 # Transform parse tree to model. Skip root node which
                 # represents the whole file ending in EOF.
                 model = parse_tree_to_objgraph(
-                    self, self.parse_tree[0], file_name=file_name,
+                    self,
+                    self.parse_tree[0],
+                    file_name=file_name,
                     pre_ref_resolution_callback=pre_ref_resolution_callback,
-                    is_main_model=is_main_model, encoding=encoding)
+                    is_main_model=is_main_model,
+                    encoding=encoding,
+                )
 
             except:  # noqa
                 # Restore of user classes replaced attr methods
@@ -388,7 +422,6 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                 raise
 
             finally:
-
                 if debug is not None:
                     self.debug = old_debug_state
 
@@ -399,7 +432,7 @@ def get_model_parser(top_rule, comments_model, **kwargs):
 
             # Custom attr dunder methods used for user classes during loading
             def _getattribute(obj, name):
-                if name == '__dict__':
+                if name == "__dict__":
                     try:
                         return user_class._tx_obj_attrs[id(obj)]
                     except KeyError:
@@ -430,14 +463,11 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                     except (AttributeError, TypeError):
                         return super(user_class, obj).__delattr__(name)
 
-            for a_name in ('setattr', 'delattr',
-                           'getattribute'):
-                real_name = '__{}__'.format(a_name)
-                cached_name = '_tx_real_{}'.format(a_name)
-                setattr(user_class, cached_name,
-                        user_class.__dict__.get(real_name, None))
-                setattr(user_class, real_name,
-                        locals()['_{}'.format(a_name)])
+            for a_name in ("setattr", "delattr", "getattribute"):
+                real_name = f"__{a_name}__"
+                cached_name = f"_tx_real_{a_name}"
+                setattr(user_class, cached_name, user_class.__dict__.get(real_name, None))
+                setattr(user_class, real_name, locals()[f"_{a_name}"])
             user_class._tx_instrumented = 1
 
         def _replace_user_attr_methods(self):
@@ -446,7 +476,7 @@ def get_model_parser(top_rule, comments_model, **kwargs):
             to support postponing of user obj initialization.
             """
             for user_class in self.metamodel.user_classes.values():
-                if '_tx_instrumented' not in user_class.__dict__:
+                if "_tx_instrumented" not in user_class.__dict__:
                     self._replace_user_attr_methods_for_class(user_class)
                 else:
                     user_class._tx_instrumented += 1
@@ -457,17 +487,16 @@ def get_model_parser(top_rule, comments_model, **kwargs):
             classes.
             """
             for user_class in self.metamodel.user_classes.values():
-                if hasattr(user_class, '_tx_instrumented'):
+                if hasattr(user_class, "_tx_instrumented"):
                     user_class._tx_instrumented -= 1
                     if user_class._tx_instrumented == 0:
-                        delattr(user_class, '_tx_instrumented')
-                        for a_name in ('getattr', 'setattr', 'delattr',
-                                       'getattribute'):
-                            cached_name = '_tx_real_{}'.format(a_name)
-                            real_name = '__{}__'.format(a_name)
+                        delattr(user_class, "_tx_instrumented")
+                        for a_name in ("getattr", "setattr", "delattr", "getattribute"):
+                            cached_name = f"_tx_real_{a_name}"
+                            real_name = f"__{a_name}__"
                             if hasattr(user_class, cached_name):
                                 cached_meth = getattr(user_class, cached_name)
-                                if hasattr(cached_meth, 'im_func'):
+                                if hasattr(cached_meth, "im_func"):
                                     # Python 2: func is converted to
                                     # instancemethod
                                     cached_meth = cached_meth.im_func
@@ -480,9 +509,14 @@ def get_model_parser(top_rule, comments_model, **kwargs):
     return TextXModelParser(**kwargs)
 
 
-def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
-                           pre_ref_resolution_callback=None,
-                           is_main_model=True, encoding='utf-8'):
+def parse_tree_to_objgraph(
+    parser,
+    parse_tree,
+    file_name=None,
+    pre_ref_resolution_callback=None,
+    is_main_model=True,
+    encoding="utf-8",
+):
     """
     Transforms parse_tree to object graph representing model in a
     new language.
@@ -500,9 +534,9 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
         """
         line, col = parser.pos_to_linecol(nt.position)
         if isinstance(nt, Terminal):
-            return metamodel.process(nt.value, nt.rule_name,
-                                     filename=parser.file_name,
-                                     line=line, col=col)
+            return metamodel.process(
+                nt.value, nt.rule_name, filename=parser.file_name, line=line, col=col
+            )
         else:
             # If RHS of assignment is NonTerminal it is a product of
             # complex match rule. Convert nodes to text and do the join.
@@ -510,36 +544,47 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                 result = "".join([text(process_match(n)) for n in nt])
             else:
                 result = process_match(nt[0])
-            return metamodel.process(result, nt.rule_name,
-                                     filename=parser.file_name,
-                                     line=line, col=col)
+            return metamodel.process(
+                result, nt.rule_name, filename=parser.file_name, line=line, col=col
+            )
 
     def process_node(node):
         line, col = parser.pos_to_linecol(node.position)
         if isinstance(node, Terminal):
             from arpeggio import RegExMatch
-            if metamodel.use_regexp_group and \
-                    isinstance(node.rule, RegExMatch):
+
+            if metamodel.use_regexp_group and isinstance(node.rule, RegExMatch):
                 if node.rule.regex.groups == 1:
                     value = node.extra_info.group(1)
-                    return metamodel.process(value, node.rule_name,
-                                             filename=parser.file_name,
-                                             line=line, col=col)
+                    return metamodel.process(
+                        value,
+                        node.rule_name,
+                        filename=parser.file_name,
+                        line=line,
+                        col=col,
+                    )
                 else:
-                    return metamodel.process(node.value, node.rule_name,
-                                             filename=parser.file_name,
-                                             line=line, col=col)
+                    return metamodel.process(
+                        node.value,
+                        node.rule_name,
+                        filename=parser.file_name,
+                        line=line,
+                        col=col,
+                    )
             else:
-                return metamodel.process(node.value, node.rule_name,
-                                         filename=parser.file_name,
-                                         line=line, col=col)
+                return metamodel.process(
+                    node.value,
+                    node.rule_name,
+                    filename=parser.file_name,
+                    line=line,
+                    col=col,
+                )
 
-        assert node.rule.root, \
-            "Not a root node: {}".format(node.rule.rule_name)
+        assert node.rule.root, f"Not a root node: {node.rule.rule_name}"
         # If this node is created by some root rule
         # create metaclass instance.
         inst = None
-        if not node.rule_name.startswith('__asgn'):
+        if not node.rule_name.startswith("__asgn"):
             # If not assignment
             # Get class
             mclass = node.rule._tx_class
@@ -551,12 +596,16 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                 if len(node) > 1:
                     try:
                         return process_node(
-                            next(n for n in node
-                                 if type(n) is not Terminal
-                                 and n.rule._tx_class is not RULE_MATCH))  # noqa
+                            next(
+                                n
+                                for n in node
+                                if type(n) is not Terminal
+                                and n.rule._tx_class is not RULE_MATCH
+                            )
+                        )  # noqa
                     except StopIteration:
                         # All nodes are match rules, do concatenation
-                        return ''.join(text(n) for n in node)
+                        return "".join(text(n) for n in node)
                 else:
                     return process_node(node[0])
             elif mclass._tx_type == RULE_MATCH:
@@ -565,7 +614,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                 return process_match(node)
 
             if parser.debug:
-                parser.dprint("CREATING INSTANCE {}".format(node.rule_name))
+                parser.dprint(f"CREATING INSTANCE {node.rule_name}")
 
             # If user class is given
             # use it instead of generic one
@@ -599,8 +648,9 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
 
             for n in node:
                 if parser.debug:
-                    parser.dprint("Recursing into {} = '{}'"
-                                  .format(type(n).__name__, text(n)))
+                    parser.dprint(
+                        f"Recursing into {type(n).__name__} = '{text(n)}'"
+                    )
                 process_node(n)
 
             parser._inst_stack.pop()
@@ -610,49 +660,51 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
 
             # If this object is nested add 'parent' reference
             if parser._inst_stack:
-                setattr(obj_attrs, 'parent', parser._inst_stack[-1][0])
+                obj_attrs.parent = parser._inst_stack[-1][0]
 
             # Special case for 'name' attrib. It is used for cross-referencing
-            if hasattr(inst, 'name') and inst.name:
+            if hasattr(inst, "name") and inst.name:
                 # Objects of each class are in its own namespace
-                if not id(inst.__class__) in parser._instances:
+                if id(inst.__class__) not in parser._instances:
                     parser._instances[id(inst.__class__)] = {}
                 try:
                     parser._instances[id(inst.__class__)][inst.name] = inst
                 except TypeError as e:
-                    if 'unhashable type' in e.args[0]:
+                    if "unhashable type" in e.args[0]:
                         raise TextXSemanticError(
-                            'Object name can\'t be of unhashable type.'
-                            ' Please see the note in this docs'
-                            ' section http://textx.github.io/textX/stable/grammar/#references')  # noqa
+                            "Object name can't be of unhashable type."
+                            " Please see the note in this docs"
+                            " section http://textx.github.io/textX/stable/grammar/#references"
+                        )  # noqa
                     raise
 
             if parser.debug:
-                parser.dprint("LEAVING INSTANCE {}".format(node.rule_name))
+                parser.dprint(f"LEAVING INSTANCE {node.rule_name}")
 
         else:
             # Handle assignments
             attr_name = node.rule._attr_name
-            op = node.rule_name.split('_')[-1]
+            op = node.rule_name.split("_")[-1]
             model_obj, obj_attr = parser._inst_stack[-1]
             cls = type(model_obj)
             metaattr = cls._tx_attrs[attr_name]
 
             if parser.debug:
-                parser.dprint('Handling assignment: {} {}...'
-                              .format(op, attr_name))
+                parser.dprint(f"Handling assignment: {op} {attr_name}...")
 
-            if op == 'optional':
+            if op == "optional":
                 setattr(obj_attr, attr_name, True)
 
-            elif op == 'plain':
+            elif op == "plain":
                 attr_value = getattr(obj_attr, attr_name)
                 if attr_value and type(attr_value) is not list:
                     fmt = "Multiple assignments to attribute {} at {}"
                     raise TextXSemanticError(
                         message=fmt.format(
-                            attr_name, parser.pos_to_linecol(node.position)),
-                        err_type=MULT_ASSIGN_ERROR)
+                            attr_name, parser.pos_to_linecol(node.position)
+                        ),
+                        err_type=MULT_ASSIGN_ERROR,
+                    )
 
                 # Convert tree bellow assignment to proper value
                 value = process_node(node[0])
@@ -661,10 +713,13 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                     # If this is non-containing reference create ObjCrossRef
                     p = metaattr.scope_provider
                     rn = metaattr.match_rule_name
-                    value = ObjCrossRef(obj_name=value, cls=metaattr.cls,
-                                        position=node[0].position,
-                                        scope_provider=p,
-                                        match_rule_name=rn)
+                    value = ObjCrossRef(
+                        obj_name=value,
+                        cls=metaattr.cls,
+                        position=node[0].position,
+                        scope_provider=p,
+                        match_rule_name=rn,
+                    )
                     parser._crossrefs.append((model_obj, metaattr, value))
                     return model_obj
 
@@ -673,10 +728,10 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                 else:
                     setattr(obj_attr, attr_name, value)
 
-            elif op in ['list', 'oneormore', 'zeroormore']:
+            elif op in ["list", "oneormore", "zeroormore"]:
                 for n in node:
                     # If the node is separator skip
-                    if n.rule_name != 'sep':
+                    if n.rule_name != "sep":
                         # Convert node to proper type
                         # Rule links will be resolved later
                         value = process_node(n)
@@ -687,18 +742,21 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
 
                             p = metaattr.scope_provider
                             rn = metaattr.match_rule_name
-                            value = ObjCrossRef(obj_name=value,
-                                                cls=metaattr.cls,
-                                                position=n.position,
-                                                scope_provider=p,
-                                                match_rule_name=rn)
+                            value = ObjCrossRef(
+                                obj_name=value,
+                                cls=metaattr.cls,
+                                position=n.position,
+                                scope_provider=p,
+                                match_rule_name=rn,
+                            )
 
-                            parser._crossrefs.append((obj_attr, metaattr,
-                                                      value))
+                            parser._crossrefs.append((obj_attr, metaattr, value))
                             continue
 
-                        if not hasattr(obj_attr, attr_name) or \
-                                getattr(obj_attr, attr_name) is None:
+                        if (
+                            not hasattr(obj_attr, attr_name)
+                            or getattr(obj_attr, attr_name) is None
+                        ):
                             setattr(obj_attr, attr_name, [])
                         getattr(obj_attr, attr_name).append(value)
             else:
@@ -712,19 +770,17 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
 
         return inst
 
-    def call_obj_processors(metamodel, model_obj,
-                            metaclass_of_grammar_rule=None):
+    def call_obj_processors(metamodel, model_obj, metaclass_of_grammar_rule=None):
         """
         Depth-first model object processing.
         """
         try:
             if metaclass_of_grammar_rule is None:
-                metaclass_of_grammar_rule = \
-                    metamodel[model_obj.__class__.__name__]
+                metaclass_of_grammar_rule = metamodel[model_obj.__class__.__name__]
         except KeyError:
             raise TextXSemanticError(
-                'Unknown meta-class "{}".'
-                .format(model.obj.__class__.__name__))
+                f'Unknown meta-class "{model.obj.__class__.__name__}".'
+            )
 
         if metaclass_of_grammar_rule._tx_type is RULE_MATCH:
             # Object processors for match rules are already called
@@ -740,7 +796,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
         # enter recursive visit of attributes only, if the class of the
         # object being processed is a meta class of the current meta model
         if model_obj.__class__.__name__ in metamodel:
-            if hasattr(model_obj, '_tx_fqn'):
+            if hasattr(model_obj, "_tx_fqn"):
                 current_metaclass_of_obj = metamodel[model_obj._tx_fqn]
             else:
                 # fallback (not used - unsure if this case is required...):
@@ -755,32 +811,32 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                         if metaattr.mult in many:
                             for idx, obj in enumerate(attr):
                                 if obj is not None:
-                                    result = call_obj_processors(metamodel,
-                                                                 obj,
-                                                                 metaattr.cls)
+                                    result = call_obj_processors(
+                                        metamodel, obj, metaattr.cls
+                                    )
                                     if result is not None:
                                         attr[idx] = result
                         else:
-                            result = call_obj_processors(metamodel,
-                                                         attr, metaattr.cls)
+                            result = call_obj_processors(metamodel, attr, metaattr.cls)
                             if result is not None:
                                 setattr(model_obj, metaattr.name, result)
 
-            if current_metaclass_of_obj._tx_fqn !=\
-                    metaclass_of_grammar_rule._tx_fqn:
+            if current_metaclass_of_obj._tx_fqn != metaclass_of_grammar_rule._tx_fqn:
                 # This can happen if grammar rule is abstract or if model is
                 # modified (e.g. expression reduction)
                 if metamodel.has_obj_processor(current_metaclass_of_obj.__name__):
                     return_value_current = metamodel.process(
-                        model_obj, current_metaclass_of_obj.__name__,
-                        **get_location(model_obj))
+                        model_obj,
+                        current_metaclass_of_obj.__name__,
+                        **get_location(model_obj),
+                    )
 
         # call obj_proc of rule found in grammar
         if metamodel.has_obj_processor(metaclass_of_grammar_rule.__name__):
             loc = get_location(model_obj)
-            return_value_grammar = metamodel.process(model_obj,
-                                                     metaclass_of_grammar_rule.__name__,
-                                                     **loc)
+            return_value_grammar = metamodel.process(
+                model_obj, metaclass_of_grammar_rule.__name__, **loc
+            )
 
         # both obj_processors are called, if two different processors
         # are defined for the object metaclass and the grammar metaclass
@@ -829,14 +885,15 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
         if pre_ref_resolution_callback:
             pre_ref_resolution_callback(model)
 
-        if hasattr(model, '_tx_metamodel'):
-            assert hasattr(model, '_tx_model_params')
+        if hasattr(model, "_tx_metamodel"):
+            assert hasattr(model, "_tx_model_params")
 
         # Load all imported models (e.g. using importURI)
         # based on the maker `ModelLoader` found in the
         # defined scope providers:
         for scope_provider in metamodel.scope_providers.values():
             from textx.scoping import ModelLoader
+
             if isinstance(scope_provider, ModelLoader):
                 scope_provider.load_models(model, encoding=encoding)
 
@@ -847,21 +904,24 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
             crossref = crossref[2]
             if crossref.scope_provider is not None:
                 from textx.scoping import ModelLoader
+
                 scope_provider = crossref.scope_provider
                 if isinstance(scope_provider, ModelLoader):
                     scope_provider.load_models(model, encoding=encoding)
 
         if not is_immutable_obj:
             model._tx_reference_resolver = ReferenceResolver(
-                parser, model, pos_crossref_list)
+                parser, model, pos_crossref_list
+            )
             model._tx_parser = parser
 
         if is_main_model:
             models = get_included_models(model)
             try:
                 # filter out all models w/o resolver:
-                models = list(filter(
-                    lambda x: hasattr(x, "_tx_reference_resolver"), models))
+                models = list(
+                    filter(lambda x: hasattr(x, "_tx_reference_resolver"), models)
+                )
 
                 resolved_count = 1
                 unresolved_count = 1
@@ -870,22 +930,23 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                     unresolved_count = 0
                     # print("***RESOLVING {} models".format(len(models)))
                     for m in models:
-                        resolved_count_for_this_model, delayed_crossrefs = \
-                            m._tx_reference_resolver.resolve_one_step()
+                        (
+                            resolved_count_for_this_model,
+                            delayed_crossrefs,
+                        ) = m._tx_reference_resolver.resolve_one_step()
                         resolved_count += resolved_count_for_this_model
                         unresolved_count += len(delayed_crossrefs)
                     # print("DEBUG: delayed #:{} unresolved #:{}".
                     #      format(unresolved_count,unresolved_count))
-                if (unresolved_count > 0):
+                if unresolved_count > 0:
                     error_text = "Unresolvable cross references:"
 
                     for m in models:
-                        for _, _, delayed \
-                                in m._tx_reference_resolver.delayed_crossrefs:
+                        for _, _, delayed in m._tx_reference_resolver.delayed_crossrefs:
                             line, col = parser.pos_to_linecol(delayed.position)
                             error_text += ' "{}" of class "{}" at {}'.format(
-                                delayed.obj_name, delayed.cls.__name__, (
-                                    line, col))
+                                delayed.obj_name, delayed.cls.__name__, (line, col)
+                            )
                     raise TextXSemanticError(error_text, line=line, col=col)
 
                 for m in models:
@@ -897,8 +958,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
 
                 # final check that everything went ok
                 for m in models:
-                    assert 0 == len(get_children_of_type(
-                        Postponed.__class__, m))
+                    assert len(get_children_of_type(Postponed.__class__, m)) == 0
 
                     # We have model loaded and all link resolved
                     # So we shall do a depth-first call of object
@@ -914,8 +974,7 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
                 remove_models_from_repositories(models, models)
                 raise
 
-        if metamodel.textx_tools_support \
-                and type(model) not in PRIMITIVE_PYTHON_TYPES:
+        if metamodel.textx_tools_support and type(model) not in PRIMITIVE_PYTHON_TYPES:
             # Cross-references for go-to definition language server support
             # Already sorted based on ref_pos_start attr
             # (required for binary search)
@@ -923,9 +982,9 @@ def parse_tree_to_objgraph(parser, parse_tree, file_name=None,
 
             # Dict for storing rules where key is position of rule instance in
             # text. Sorted based on nested rules.
-            model._pos_rule_dict = OrderedDict(sorted(pos_rule_dict.items(),
-                                                      key=lambda x: x[0],
-                                                      reverse=True))
+            model._pos_rule_dict = OrderedDict(
+                sorted(pos_rule_dict.items(), key=lambda x: x[0], reverse=True)
+            )
     # exception occurred during model creation
     except:  # noqa
         _remove_all_affected_models_in_construction(model)
@@ -954,7 +1013,7 @@ def _end_model_construction(model):
     # At this point we should restore original user attr methods as
     # attribute collection is over and we should switch back to
     # "normal" behavior
-    if hasattr(model, '_tx_parser'):  # not for, e.g., str
+    if hasattr(model, "_tx_parser"):  # not for, e.g., str
         the_parser = model._tx_parser
         the_parser._restore_user_attr_methods()
 
@@ -978,9 +1037,11 @@ def _end_model_construction(model):
 
                 # We shall only pass to __init__ attributes that are
                 # defined by the meta-model, and `parent` if applicable
-                attrs = {k: v for k, v in attrs.items()
-                         if k in obj.__class__._tx_attrs
-                         or k == 'parent'}
+                attrs = {
+                    k: v
+                    for k, v in attrs.items()
+                    if k in obj.__class__._tx_attrs or k == "parent"
+                }
 
                 # Call constructor for custom initialization
                 obj.__init__(**attrs)
@@ -988,8 +1049,7 @@ def _end_model_construction(model):
             except TypeError as e:
                 # Add class name information in case of wrong
                 # constructor parameters
-                e.args += ("for class %s" %
-                           obj.__class__.__name__,)
+                e.args += ("for class %s" % obj.__class__.__name__,)
                 the_parser.dprint(traceback.print_exc())
                 raise e
 
@@ -1004,11 +1064,10 @@ def _remove_all_affected_models_in_construction(model):
     See: _start_model_construction
     """
     all_affected_models = get_included_models(model)
-    models_to_be_removed = list(filter(
-        lambda x: hasattr(x, "_tx_reference_resolver"),
-        all_affected_models))
-    remove_models_from_repositories(all_affected_models,
-                                    models_to_be_removed)
+    models_to_be_removed = list(
+        filter(lambda x: hasattr(x, "_tx_reference_resolver"), all_affected_models)
+    )
+    remove_models_from_repositories(all_affected_models, models_to_be_removed)
 
 
 class ReferenceResolver:
@@ -1033,8 +1092,7 @@ class ReferenceResolver:
             True (has unresolved crossrefs) or False (else)
         """
         if get_model(obj) != self.model:
-            return get_model(obj). \
-                _tx_reference_resolver.has_unresolved_crossrefs(obj)
+            return get_model(obj)._tx_reference_resolver.has_unresolved_crossrefs(obj)
         else:
             for crossref_obj, attr, crossref in self.parser._crossrefs:
                 if crossref_obj is obj:
@@ -1060,57 +1118,65 @@ class ReferenceResolver:
         # -------------------------
         default_scope = DefaultScopeProvider()
         for obj, attr, crossref in current_crossrefs:
-            if (get_model(obj) == self.model):
+            if get_model(obj) == self.model:
                 attr_value = getattr(obj, attr.name)
-                attr_refs = [obj.__class__.__name__ + "." + attr.name,
-                             "*." + attr.name, obj.__class__.__name__ + ".*",
-                             "*.*"]
+                attr_refs = [
+                    obj.__class__.__name__ + "." + attr.name,
+                    "*." + attr.name,
+                    obj.__class__.__name__ + ".*",
+                    "*.*",
+                ]
                 if crossref.scope_provider is not None:
                     resolved = crossref.scope_provider(obj, attr, crossref)
                 else:
                     for attr_ref in attr_refs:
                         if attr_ref in metamodel.scope_providers:
                             if self.parser.debug:
-                                self.parser.dprint(" FOUND {}".format(attr_ref))
+                                self.parser.dprint(f" FOUND {attr_ref}")
                             resolved = metamodel.scope_providers[attr_ref](
-                                obj, attr, crossref)
+                                obj, attr, crossref
+                            )
                             break
                     else:
                         resolved = default_scope(obj, attr, crossref)
 
                 # Collect cross-references for textx-tools
-                if resolved is not None and not type(resolved) is Postponed:
+                if resolved is not None and type(resolved) is not Postponed:
                     if metamodel.textx_tools_support:
                         self.pos_crossref_list.append(
                             RefRulePosition(
                                 name=crossref.obj_name,
                                 ref_pos_start=crossref.position,
-                                ref_pos_end=crossref.position + len(
-                                    resolved.name),
+                                ref_pos_end=crossref.position + len(resolved.name),
                                 def_file_name=get_model(resolved)._tx_filename,
                                 def_pos_start=resolved._tx_position,
-                                def_pos_end=resolved._tx_position_end))
+                                def_pos_end=resolved._tx_position_end,
+                            )
+                        )
 
                 if resolved is None:
                     # As a fall-back search builtins if given
                     if metamodel.builtins:
                         if crossref.obj_name in metamodel.builtins:
                             from textx import textx_isinstance
+
                             if textx_isinstance(
-                                    metamodel.builtins[crossref.obj_name],
-                                    crossref.cls
+                                metamodel.builtins[crossref.obj_name], crossref.cls
                             ):
-                                resolved = metamodel.builtins[
-                                    crossref.obj_name]
+                                resolved = metamodel.builtins[crossref.obj_name]
 
                 if resolved is None:
                     line, col = self.parser.pos_to_linecol(crossref.position)
                     raise TextXSemanticError(
                         message='Unknown object "{}" of class "{}"'.format(
-                            crossref.obj_name, crossref.cls.__name__),
-                        line=line, col=col, err_type=UNKNOWN_OBJ_ERROR,
+                            crossref.obj_name, crossref.cls.__name__
+                        ),
+                        line=line,
+                        col=col,
+                        err_type=UNKNOWN_OBJ_ERROR,
                         expected_obj_cls=crossref.cls,
-                        filename=self.model._tx_filename)
+                        filename=self.model._tx_filename,
+                    )
 
                 if type(resolved) is Postponed:
                     self.delayed_crossrefs.append((obj, attr, crossref))

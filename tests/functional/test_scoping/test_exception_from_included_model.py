@@ -1,12 +1,15 @@
-from __future__ import unicode_literals
 
-from os.path import dirname, abspath, join
+from os.path import abspath, dirname, join
 
 from pytest import raises
 
 import textx.scoping.providers as scoping_providers
-from textx import (metamodel_from_file, register_language,
-                   clear_language_registrations, get_location)
+from textx import (
+    clear_language_registrations,
+    get_location,
+    metamodel_from_file,
+    register_language,
+)
 
 
 def test_exception_from_included_model():

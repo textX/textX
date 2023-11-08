@@ -1,10 +1,13 @@
-from __future__ import unicode_literals
 import os
-import pytest
-from textx import (TextXSemanticError, TextXSyntaxError,
-                   metamodel_for_language,
-                   clear_language_registrations)
 
+import pytest
+
+from textx import (
+    TextXSemanticError,
+    TextXSyntaxError,
+    clear_language_registrations,
+    metamodel_for_language,
+)
 
 current_dir = os.path.dirname(__file__)
 

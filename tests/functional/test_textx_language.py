@@ -1,10 +1,10 @@
-from __future__ import unicode_literals
 import sys
+
 import pytest
 
-from textx import metamodel_from_str, TextXSyntaxError
+from textx import TextXSyntaxError, metamodel_from_str
+from textx.const import RULE_ABSTRACT, RULE_COMMON, RULE_MATCH
 from textx.lang import ALL_TYPE_NAMES
-from textx.const import RULE_MATCH, RULE_ABSTRACT, RULE_COMMON
 
 if sys.version < '3':
     text = unicode  # noqa

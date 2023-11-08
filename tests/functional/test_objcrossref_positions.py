@@ -1,7 +1,7 @@
-from __future__ import unicode_literals
-from os.path import join, abspath, dirname
-from textx import metamodel_from_str
+from os.path import abspath, dirname, join
+
 import textx.scoping.providers as scoping_providers
+from textx import metamodel_from_str
 
 grammar = r"""
 Model:
@@ -36,7 +36,7 @@ package packageB {
 model_a_file_name = join(abspath(dirname(__file__)),
                          "test_objcrossref_positions.model")
 
-with open(model_a_file_name, 'r') as model_a_file:
+with open(model_a_file_name) as model_a_file:
     model_a_str = model_a_file.read()
 
 

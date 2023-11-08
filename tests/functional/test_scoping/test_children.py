@@ -1,11 +1,9 @@
-from __future__ import unicode_literals
 
 import re
 from operator import eq
 
 import textx.scoping.providers as scoping_providers
-from textx import get_children, get_children_of_type
-from textx import metamodel_from_str
+from textx import get_children, get_children_of_type, metamodel_from_str
 
 metamodel_str = '''
 Model:

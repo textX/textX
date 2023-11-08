@@ -1,6 +1,6 @@
-from __future__ import unicode_literals
 
-from os.path import dirname, abspath, join
+from os.path import abspath, dirname, join
+
 import textx.scoping.providers as scoping_providers
 from textx import metamodel_from_file
 from textx.scoping import is_file_included

@@ -1,8 +1,9 @@
 """
 Test discovering of registered languages and generators.
 """
-from textx.cli import textx
 from click.testing import CliRunner
+
+from textx.cli import textx
 
 
 def test_list_languages_cli():

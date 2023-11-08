@@ -1,5 +1,6 @@
 import os
-from textx import metamodel_from_file, language, TextXSemanticError, get_location
+
+from textx import TextXSemanticError, get_location, language, metamodel_from_file
 
 
 @language('flow-dsl', '*.eflow')

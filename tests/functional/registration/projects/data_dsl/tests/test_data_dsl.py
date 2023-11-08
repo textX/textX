@@ -1,6 +1,6 @@
-from __future__ import unicode_literals
-from textx import metamodel_for_language, clear_language_registrations
 import os
+
+from textx import clear_language_registrations, metamodel_for_language
 
 
 def test_data_dsl():

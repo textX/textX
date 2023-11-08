@@ -1,4 +1,3 @@
-from __future__ import unicode_literals
 import pytest  # noqa
 import os
 from textx import metamodel_from_str

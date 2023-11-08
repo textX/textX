@@ -1,11 +1,10 @@
-from __future__ import unicode_literals
-from textx.scoping.rrel import rrel_standalone, parse
-from arpeggio import ParserPython, NoMatch
-from textx import metamodel_from_str, textx_isinstance
-from textx.scoping.rrel import find, find_object_with_path
-from textx.scoping import ModelRepository
+from arpeggio import NoMatch, ParserPython
 from pytest import raises
+
+from textx import metamodel_from_str, textx_isinstance
 from textx.exceptions import TextXSemanticError
+from textx.scoping import ModelRepository
+from textx.scoping.rrel import find, find_object_with_path, parse, rrel_standalone
 
 
 def test_rrel_basic_parser1():
@@ -368,6 +367,7 @@ def test_split_str():
 def test_split_str_multifile():
     # same as test above, but with "+mp:" flag
     from os.path import dirname, join
+
     from textx import metamodel_from_file
     this_folder = dirname(__file__)
     mm = metamodel_from_file(join(this_folder, 'rrel', 'Grammar.tx'))
@@ -488,6 +488,7 @@ def test_rrel_with_fixed_string_in_navigation_with_scalars():
 def test_lookup_multifile():
     # same as test above, but with "+mp:" flag
     from os.path import dirname, join
+
     from textx import metamodel_from_file
     this_folder = dirname(__file__)
     mm = metamodel_from_file(join(this_folder, 'rrel_multifile', 'Grammar.tx'))
@@ -516,6 +517,7 @@ def test_lookup_multifile():
 
 def test_lookup_multifile_missing_flag_m():
     from os.path import dirname, join
+
     from textx import metamodel_from_file
     this_folder = dirname(__file__)
 

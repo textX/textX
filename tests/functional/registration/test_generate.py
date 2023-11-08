@@ -2,9 +2,11 @@
 Tests for `generate` command.
 """
 import os
+
 import pytest
-from textx.cli import textx
 from click.testing import CliRunner
+
+from textx.cli import textx
 
 this_folder = os.path.abspath(os.path.dirname(__file__))
 
@@ -89,7 +91,7 @@ def test_passing_custom_arguments_to_generator(model_file):
                                'projects', 'flow_dsl', 'tests',
                                'models', 'data_flow.pu')
     assert os.path.exists(target_file)
-    with open(target_file, 'r') as f:
+    with open(target_file) as f:
         content = f.read()
     assert 'custom1=42' in content
     assert 'custom2=some string' in content

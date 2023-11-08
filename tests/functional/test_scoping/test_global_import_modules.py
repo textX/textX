@@ -1,13 +1,14 @@
-from __future__ import unicode_literals
 
-from os.path import dirname, abspath, join
+from os.path import abspath, dirname, join
+
+from pytest import raises
 
 import textx.scoping.providers as scoping_providers
 from textx import metamodel_from_file
-from textx.scoping.tools import get_unique_named_object, \
-    check_unique_named_object_has_class
-
-from pytest import raises
+from textx.scoping.tools import (
+    check_unique_named_object_has_class,
+    get_unique_named_object,
+)
 
 
 def test_globalimports_basic_test_with_single_model_file():

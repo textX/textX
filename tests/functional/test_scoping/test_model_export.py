@@ -1,12 +1,10 @@
-from __future__ import unicode_literals
 
 import io
-from os.path import dirname, abspath, join, sep
+from os.path import abspath, dirname, join, sep
 
 import textx.export as export
 import textx.scoping.providers as scoping_providers
-from textx import (metamodel_from_file, register_language,
-                   clear_language_registrations)
+from textx import clear_language_registrations, metamodel_from_file, register_language
 
 
 def test_model_export():
@@ -79,5 +77,5 @@ def test_model_export():
     print(text)
     assert "a2_very_long_name" in text
     assert "b2_very_long_name" in text
-    assert "inheritance{}model_b.b".format(sep) in text
-    assert "inheritance{}model_b.b".format(sep) in text
+    assert f"inheritance{sep}model_b.b" in text
+    assert f"inheritance{sep}model_b.b" in text

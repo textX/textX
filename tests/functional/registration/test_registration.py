@@ -1,12 +1,23 @@
-from __future__ import unicode_literals
 import pytest
-from textx import (metamodel_from_str,
-                   clear_language_registrations, clear_generator_registrations,
-                   register_language, language, register_generator, generator,
-                   language_description, generator_description,
-                   language_for_file, languages_for_file,
-                   metamodel_for_language, metamodel_for_file,
-                   LanguageDesc, GeneratorDesc, TextXRegistrationError)
+
+from textx import (
+    GeneratorDesc,
+    LanguageDesc,
+    TextXRegistrationError,
+    clear_generator_registrations,
+    clear_language_registrations,
+    generator,
+    generator_description,
+    language,
+    language_description,
+    language_for_file,
+    languages_for_file,
+    metamodel_for_file,
+    metamodel_for_language,
+    metamodel_from_str,
+    register_generator,
+    register_language,
+)
 from textx.metamodel import TextXMetaModel
 
 

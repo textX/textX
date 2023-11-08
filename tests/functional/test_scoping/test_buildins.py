@@ -1,4 +1,3 @@
-from __future__ import unicode_literals
 from pytest import raises
 
 import textx.exceptions
@@ -22,7 +21,7 @@ Thing:
 '''
 
 
-class Thing(object):
+class Thing:
     def __init__(self, **kwargs):
         for k in kwargs.keys():
             setattr(self, k, kwargs[k])

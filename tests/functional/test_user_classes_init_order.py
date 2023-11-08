@@ -1,4 +1,3 @@
-from __future__ import unicode_literals
 import pytest  # noqa
 from textx import metamodel_from_str
 
@@ -20,14 +19,14 @@ def test_user_class_init_order():
 
     init_order = []
 
-    class First(object):
+    class First:
         "User class."
         def __init__(self, seconds):
             "Constructor must be without parameters."
             self.seconds = seconds
             init_order.append(self)
 
-    class Second(object):
+    class Second:
         "User class"
         def __init__(self, parent, sec):
             self.parent = parent

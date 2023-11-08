@@ -1,30 +1,36 @@
-from __future__ import unicode_literals
+
 try:
     import click
 except ImportError:
-    raise Exception('textX must be installed with CLI dependencies to use '
-                    'textx command.\npip install textX[cli]')
+    raise Exception(
+        "textX must be installed with CLI dependencies to use "
+        "textx command.\npip install textX[cli]"
+    )
 import os
-from textx import (metamodel_from_file,
-                   metamodel_for_language,
-                   metamodel_for_file,
-                   TextXError, TextXRegistrationError)
+
+from textx import (
+    TextXError,
+    TextXRegistrationError,
+    metamodel_for_file,
+    metamodel_for_language,
+    metamodel_from_file,
+)
 
 
 def check(textx):
-
     @textx.command()
-    @click.argument('model_files', type=click.Path(), required=True, nargs=-1)
-    @click.option('--language',
-                  help='A name of the language model conforms to.')
-    @click.option('--grammar',
-                  help='A file name of the grammar used as a meta-model.')
-    @click.option('--ignore-case/', '-i/', default=False, is_flag=True,
-                  help='Case-insensitive model parsing. '
-                  'Used only if "grammar" is provided.')
+    @click.argument("model_files", type=click.Path(), required=True, nargs=-1)
+    @click.option("--language", help="A name of the language model conforms to.")
+    @click.option("--grammar", help="A file name of the grammar used as a meta-model.")
+    @click.option(
+        "--ignore-case/",
+        "-i/",
+        default=False,
+        is_flag=True,
+        help="Case-insensitive model parsing. " 'Used only if "grammar" is provided.',
+    )
     @click.pass_context
-    def check(ctx, model_files, language=None, grammar=None,
-              ignore_case=False):
+    def check(ctx, model_files, language=None, grammar=None, ignore_case=False):
         """
         Check/validate model given its file path. If grammar is given use it to
         construct the meta-model. If language is given use it to retrieve the
@@ -54,13 +60,14 @@ def check(textx):
 
         """  # noqa
 
-        debug = ctx.obj['debug']
+        debug = ctx.obj["debug"]
 
         try:
             per_file_metamodel = False
             if grammar:
-                metamodel = metamodel_from_file(grammar, debug=debug,
-                                                ignore_case=ignore_case)
+                metamodel = metamodel_from_file(
+                    grammar, debug=debug, ignore_case=ignore_case
+                )
             elif language:
                 metamodel = metamodel_for_language(language)
             else:
@@ -71,7 +78,7 @@ def check(textx):
                     metamodel = metamodel_for_file(model_file)
 
                 metamodel.model_from_file(model_file, debug=debug)
-                click.echo("{}: OK.".format(os.path.abspath(model_file)))
+                click.echo(f"{os.path.abspath(model_file)}: OK.")
 
         except TextXRegistrationError as e:
             raise click.ClickException(e.message)

@@ -1,4 +1,3 @@
-from __future__ import unicode_literals
 import pytest  # noqa
 from textx import metamodel_from_str, metamodel_from_file
 from os.path import join, dirname, abspath
@@ -26,7 +25,7 @@ def test_user_class():
     User supplied meta class.
     """
 
-    class First(object):
+    class First:
         "User class."
         def __init__(self, seconds, a, b, c):
             "Constructor must be without parameters."
@@ -42,7 +41,7 @@ def test_user_class():
                 # Make sure seconds have already been instantiated
                 assert hasattr(second, 'sec') and isinstance(second.sec, int)
 
-    class Second(object):
+    class Second:
         "User class"
         def __init__(self, parent, sec):
             self.parent = parent
@@ -73,19 +72,19 @@ def test_user_class():
     assert model.some_attr == 1
 
 
-class Thing(object):
+class Thing:
     def __init__(self, **kwargs):
         for k in kwargs.keys():
             setattr(self, k, kwargs[k])
 
 
-class AThing(object):
+class AThing:
     def __init__(self, **kwargs):
         for k in kwargs.keys():
             setattr(self, k, kwargs[k])
 
 
-class BThing(object):
+class BThing:
     def __init__(self, **kwargs):
         for k in kwargs.keys():
             setattr(self, k, kwargs[k])

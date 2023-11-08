@@ -1,7 +1,6 @@
 """
 Testing user class constructor call and parent reference.
 """
-from __future__ import unicode_literals
 import pytest  # noqa
 from textx import metamodel_from_str
 from textx.scoping.providers import PlainName
@@ -52,7 +51,7 @@ def test_user_class_constructor_call():
     that parent reference is given in the parameters.
     """
 
-    class Second(object):
+    class Second:
         _called = False
 
         def __init__(self, parent, sec):
@@ -85,7 +84,7 @@ def test_user_class_pass_to_constructor_only_metamodel_defined_attrs():
     Reference: 'ref' ref=[Element];
     '''
 
-    class Element(object):
+    class Element:
         _called = False
 
         def __init__(self, parent, name):

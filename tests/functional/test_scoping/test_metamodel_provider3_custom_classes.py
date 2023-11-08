@@ -1,16 +1,19 @@
-from __future__ import unicode_literals
 
-from os.path import dirname, abspath, join
+from os.path import abspath, dirname, join
+
+import attr
 
 import textx.scoping.providers as scoping_providers
-from textx import get_children_of_type
-from textx import (metamodel_from_file, register_language,
-                   clear_language_registrations)
-import attr
+from textx import (
+    clear_language_registrations,
+    get_children_of_type,
+    metamodel_from_file,
+    register_language,
+)
 
 
 @attr.s(frozen=True)
-class Cls(object):
+class Cls:
     parent = attr.ib()
     name = attr.ib()
     extends = attr.ib()
@@ -18,7 +21,7 @@ class Cls(object):
 
 
 @attr.s(frozen=True)
-class Obj(object):
+class Obj:
     parent = attr.ib()
     name = attr.ib()
     ref = attr.ib()
@@ -374,8 +377,8 @@ def test_metamodel_provider_advanced_test3_inheritance2():
 
     # check that all models have different parsers
     parsers = list(map(lambda x: x._tx_parser, model_repo))
-    assert 4 == len(parsers)  # 4 files -> 4 parsers
-    assert 4 == len(set(parsers))  # 4 different parsers
+    assert len(parsers) == 4  # 4 files -> 4 parsers
+    assert len(set(parsers)) == 4  # 4 different parsers
 
     #################################
     # END
@@ -464,8 +467,8 @@ def test_metamodel_provider_advanced_test3_diamond():
 
     # check that all models have different parsers
     parsers = list(map(lambda x: x._tx_parser, model_repo))
-    assert 4 == len(parsers)  # 4 files -> 4 parsers
-    assert 4 == len(set(parsers))  # 4 different parsers
+    assert len(parsers) == 4  # 4 files -> 4 parsers
+    assert len(set(parsers)) == 4  # 4 different parsers
 
     #################################
     # END

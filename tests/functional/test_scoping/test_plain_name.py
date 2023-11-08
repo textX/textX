@@ -1,10 +1,8 @@
-from __future__ import unicode_literals
 from pytest import raises
 
 import textx.exceptions
 import textx.scoping.providers as scoping_providers
-from textx import get_children
-from textx import metamodel_from_str
+from textx import get_children, metamodel_from_str
 
 metamodel_str = '''
 Model:

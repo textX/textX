@@ -1,4 +1,3 @@
-from __future__ import unicode_literals
 import pytest  # noqa
 from textx import metamodel_from_str
 
@@ -13,7 +12,7 @@ A 1 B 2 C 3
 '''
 
 
-class A(object):
+class A:
     """
     A defines a class with a custom setattr method
     (it stores the __setattr__ in its __dict__).

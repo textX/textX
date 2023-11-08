@@ -3,7 +3,8 @@ Tests for issue: https://github.com/textX/textX/issues/358
 Usage of ordered choice in unordered groups.
 """
 import pytest
-from textx import metamodel_from_str, TextXSyntaxError
+
+from textx import TextXSyntaxError, metamodel_from_str
 
 
 @pytest.mark.parametrize("grammar", [

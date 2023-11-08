@@ -1,6 +1,6 @@
-from __future__ import unicode_literals
+from os.path import dirname, join
+
 import textx
-from os.path import join, dirname
 import textx.scoping.providers as scoping_providers
 
 
@@ -34,5 +34,5 @@ def test_issue108_obj_proc_multifile():
     current_dir = dirname(__file__)
     mm.model_from_file(join(current_dir, 'issue108', 'a.dsl'))
 
-    assert 2 == len(lst_models)
-    assert 2 == len(lst_class_names)
+    assert len(lst_models) == 2
+    assert len(lst_class_names) == 2

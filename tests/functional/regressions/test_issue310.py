@@ -1,6 +1,4 @@
-from __future__ import unicode_literals
 from textx import metamodel_from_str
-
 
 grammar = '''
 Calc: expression=Expression;
@@ -13,7 +11,7 @@ Operand: op=NUMBER | op=ID | ('(' op=Expression ')');
 '''
 
 
-class Calc(object):
+class Calc:
     def __init__(self, expression):
         # A simple reduction to trigger the #310 problem
         # Here, we reduce the expression as it is only a multiplication

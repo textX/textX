@@ -1,9 +1,8 @@
-from __future__ import unicode_literals
 from textx import metamodel_from_str, textx_isinstance
 from textx.scoping.providers import FQN, RelativeName
 
 
-class MyScope(object):
+class MyScope:
     """
     Demo of a combined scope provider:
     Dependent of the underlying data structure an appropriate

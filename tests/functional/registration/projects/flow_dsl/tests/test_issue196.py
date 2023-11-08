@@ -1,8 +1,9 @@
-from textx import metamodel_for_language
-from textx.exceptions import TextXError
 import os.path
+
 import pytest
 
+from textx import metamodel_for_language
+from textx.exceptions import TextXError
 
 current_dir = os.path.dirname(__file__)
 

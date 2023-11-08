@@ -1,6 +1,6 @@
-from __future__ import unicode_literals
-from textx import metamodel_from_str
 from pytest import raises
+
+from textx import metamodel_from_str
 from textx.scoping.tools import get_unique_named_object
 
 metamodel_str = r'''
@@ -24,7 +24,7 @@ class PythonScopeProvider:
             if attr_ref.obj_name in self.dict_with_objects:
                 return self.dict_with_objects[attr_ref.obj_name]
             else:
-                raise Exception("{} not found".format(attr_ref.obj_name))
+                raise Exception(f"{attr_ref.obj_name} not found")
         else:
             if not obj.pyobj:
                 from textx.scoping import Postponed
@@ -32,7 +32,7 @@ class PythonScopeProvider:
             if hasattr(obj.pyobj, attr_ref.obj_name):
                 return getattr(obj.pyobj, attr_ref.obj_name)
             else:
-                raise Exception("{} not found".format(attr_ref.obj_name))
+                raise Exception(f"{attr_ref.obj_name} not found")
 
 
 def test_reference_to_python_attribute():

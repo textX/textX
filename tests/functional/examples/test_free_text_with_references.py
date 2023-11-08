@@ -1,7 +1,6 @@
 """
 Testing model and regexp with groups.
 """
-from __future__ import unicode_literals
 import pytest  # noqa
 import sys
 from textx import metamodel_from_str
@@ -37,7 +36,7 @@ LastFreeText:
 '''
 
 
-class Entry(object):
+class Entry:
     def __init__(self, **kwargs):
         for k in kwargs.keys():
             setattr(self, k, kwargs[k])
@@ -47,7 +46,7 @@ class Entry(object):
         text = ""
         for d in self.data:
             text += d.text
-            text += "@[{}]".format(d.ref.name)
+            text += f"@[{d.ref.name}]"
         text += self.datalast.text
         return text.replace(r"\@", "@")
 
@@ -66,19 +65,19 @@ def test_free_text_with_references():
                                    use_regexp_group=True)
     m = metamodel.model_from_str(model_str)
 
-    assert 1 == len(m.entries[0].data)
-    assert 1 == len(m.entries[1].data)
-    assert 5 == len(m.entries[2].data)
-    assert 1 == len(m.entries[3].data)
-    assert 2 == len(m.entries[4].data)
-    assert 0 == len(m.entries[5].data)
-    assert 0 == len(m.entries[6].data)
+    assert len(m.entries[0].data) == 1
+    assert len(m.entries[1].data) == 1
+    assert len(m.entries[2].data) == 5
+    assert len(m.entries[3].data) == 1
+    assert len(m.entries[4].data) == 2
+    assert len(m.entries[5].data) == 0
+    assert len(m.entries[6].data) == 0
 
-    assert 'Hi' == m.entries[0].data[0].ref.name
+    assert m.entries[0].data[0].ref.name == 'Hi'
     assert m.entries[1] == m.entries[0].data[0].ref
 
-    assert 'a way to say hello@mail (see @[Hi])' == str(m.entries[0])
-    assert 'german way to say hello (see ""@[Hello]"")' == str(m.entries[3])
-    assert 'another french "@@[Hello]", see @[Salut]' == str(m.entries[4])
-    assert 'Just text' == str(m.entries[5])
-    assert '' == str(m.entries[6])
+    assert str(m.entries[0]) == 'a way to say hello@mail (see @[Hi])'
+    assert str(m.entries[3]) == 'german way to say hello (see ""@[Hello]"")'
+    assert str(m.entries[4]) == 'another french "@@[Hello]", see @[Salut]'
+    assert str(m.entries[5]) == 'Just text'
+    assert str(m.entries[6]) == ''

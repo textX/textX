@@ -1,9 +1,10 @@
 """
 Test `version` command.
 """
-from packaging.version import parse
-from textx.cli import textx
 from click.testing import CliRunner
+from packaging.version import parse
+
+from textx.cli import textx
 
 
 def test_version_command():

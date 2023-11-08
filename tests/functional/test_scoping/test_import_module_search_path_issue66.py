@@ -1,9 +1,10 @@
-from __future__ import unicode_literals
 
-from os.path import dirname, abspath, join
+from os.path import abspath, dirname, join
+
+from pytest import raises
+
 import textx.scoping.providers as scoping_providers
 from textx import metamodel_from_file
-from pytest import raises
 
 
 def test_model_with_imports_and_search_path_bad_case1():
@@ -213,7 +214,7 @@ def test_model_with_imports_relative_to_current_model():
     # the model could be loaded --> the local path works (one file exists
     # only locally).
 
-    assert 2 == len(m.imports)
+    assert len(m.imports) == 2
     dirs = list(map(lambda i: dirname(i._tx_loaded_models[0]._tx_filename),
                     m.imports))
     assert dirs[0] == dirs[1]

@@ -1,10 +1,13 @@
-from __future__ import unicode_literals
 
-from os.path import dirname, abspath, join
+from os.path import abspath, dirname, join
 
 import textx.scoping.providers as scoping_providers
-from textx import metamodel_from_file, get_children_of_type
-from textx import register_language, clear_language_registrations
+from textx import (
+    clear_language_registrations,
+    get_children_of_type,
+    metamodel_from_file,
+    register_language,
+)
 
 
 def test_metamodel_provider_advanced_test():

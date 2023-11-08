@@ -1,8 +1,9 @@
-from __future__ import unicode_literals
-from textx import metamodel_from_str
-from textx.export import metamodel_export_tofile, DotRenderer
 import io
+
 import html5lib
+
+from textx import metamodel_from_str
+from textx.export import DotRenderer, metamodel_export_tofile
 
 
 def test_issue275():

@@ -1,9 +1,9 @@
-from __future__ import unicode_literals
 
-from textx import metamodel_from_str, get_model, get_metamodel
 from pytest import raises
-from textx.exceptions import TextXSemanticError
+
 import textx.scoping.providers as providers
+from textx import get_metamodel, get_model, metamodel_from_str
+from textx.exceptions import TextXSemanticError
 from textx.scoping import Postponed
 
 """
@@ -52,7 +52,7 @@ def person_definer_scope(knows, attr, attr_ref):
         return person
 
 
-class Postponer(object):
+class Postponer:
     """
     scope provider which forwards to a base scope provider
     and transforms a None to a Postponed.

@@ -1,4 +1,3 @@
-from __future__ import unicode_literals
 import textx
 
 
@@ -12,9 +11,9 @@ obj B
  obj C
          obj D
     ''')
-    assert (1, 1) == textx.get_model(m.objs[0])._tx_parser.pos_to_linecol(
-        m.objs[0]._tx_position)
+    assert textx.get_model(m.objs[0])._tx_parser.pos_to_linecol(
+        m.objs[0]._tx_position) == (1, 1)
 
-    assert (2, 1) == m._tx_parser.pos_to_linecol(m.objs[1]._tx_position)
-    assert (3, 2) == m._tx_parser.pos_to_linecol(m.objs[2]._tx_position)
-    assert (4, 10) == m._tx_parser.pos_to_linecol(m.objs[3]._tx_position)
+    assert m._tx_parser.pos_to_linecol(m.objs[1]._tx_position) == (2, 1)
+    assert m._tx_parser.pos_to_linecol(m.objs[2]._tx_position) == (3, 2)
+    assert m._tx_parser.pos_to_linecol(m.objs[3]._tx_position) == (4, 10)

@@ -5,9 +5,10 @@
 # License: MIT License
 #######################################################################
 
-from os.path import dirname, abspath, join, isabs
-from textx.exceptions import TextXSemanticError
+from os.path import abspath, dirname, isabs, join
+
 import textx.scoping as scoping
+from textx.exceptions import TextXSemanticError
 from textx.scoping import Postponed
 
 """
@@ -19,7 +20,7 @@ See docs/scoping.md
 """
 
 
-class PlainName(object):
+class PlainName:
     """
     plain name scope provider
     """
@@ -47,7 +48,7 @@ class PlainName(object):
         Returns:
             the resolved reference or None
         """
-        from textx.const import RULE_COMMON, RULE_ABSTRACT
+        from textx.const import RULE_ABSTRACT, RULE_COMMON
         from textx.model import ObjCrossRef
         from textx.scoping.tools import get_parser
 
@@ -57,8 +58,9 @@ class PlainName(object):
         assert type(obj_ref) is ObjCrossRef, type(obj_ref)
 
         if get_parser(obj).debug:
-            get_parser(obj).dprint("Resolving obj crossref: {}:{}"
-                                   .format(obj_ref.cls, obj_ref.obj_name))
+            get_parser(obj).dprint(
+                f"Resolving obj crossref: {obj_ref.cls}:{obj_ref.obj_name}"
+            )
 
         def _inner_resolve_link_rule_ref(cls, obj_name):
             """
@@ -66,8 +68,7 @@ class PlainName(object):
             """
             if cls._tx_type is RULE_ABSTRACT:
                 for inherited in cls._tx_inh_by:
-                    result = _inner_resolve_link_rule_ref(inherited,
-                                                          obj_name)
+                    result = _inner_resolve_link_rule_ref(inherited, obj_name)
                     if result:
                         return result
             elif cls._tx_type == RULE_COMMON:
@@ -86,28 +87,32 @@ class PlainName(object):
                     return objs.get(obj_name)
 
         if self.multi_metamodel_support:
-            from textx import get_model, get_children
-            from textx import textx_isinstance
+            from textx import get_children, get_model, textx_isinstance
+
             result_lst = get_children(
-                lambda x:
-                hasattr(x, "name") and x.name == obj_ref.obj_name
-                and textx_isinstance(x, obj_ref.cls), get_model(obj))
+                lambda x: hasattr(x, "name")
+                and x.name == obj_ref.obj_name
+                and textx_isinstance(x, obj_ref.cls),
+                get_model(obj),
+            )
             if len(result_lst) == 1:
                 result = result_lst[0]
             elif len(result_lst) > 1:
                 line, col = get_parser(obj).pos_to_linecol(obj_ref.position)
                 raise TextXSemanticError(
-                    "name {} is not unique.".format(obj_ref.obj_name),
-                    line=line, col=col, filename=get_model(obj)._tx_filename)
+                    f"name {obj_ref.obj_name} is not unique.",
+                    line=line,
+                    col=col,
+                    filename=get_model(obj)._tx_filename,
+                )
             else:
                 result = None
         else:
-            result = _inner_resolve_link_rule_ref(obj_ref.cls,
-                                                  obj_ref.obj_name)
+            result = _inner_resolve_link_rule_ref(obj_ref.cls, obj_ref.obj_name)
         return result  # error handled outside
 
 
-class FQN(object):
+class FQN:
     """
     fully qualified name scope provider
     """
@@ -160,34 +165,35 @@ class FQN(object):
             """
 
             def find_obj(parent, name):
-                if parent is not current_obj and \
-                        self.scope_redirection_logic is not None:
+                if parent is not current_obj and self.scope_redirection_logic is not None:
                     from textx.scoping import Postponed
+
                     res = self.scope_redirection_logic(parent)
-                    assert res is not None, \
-                        "scope_redirection_logic must not return None"
+                    assert res is not None, "scope_redirection_logic must not return None"
                     if type(res) is Postponed:
                         return res
                     for m in res:
                         return_value = find_obj(m, name)
                         if return_value is not None:
                             return return_value
-                for attr in [a for a in parent.__dict__ if
-                             not a.startswith('__') and not
-                             a.startswith('_tx_') and not
-                             callable(getattr(parent, a))]:
+                for attr in [
+                    a
+                    for a in parent.__dict__
+                    if not a.startswith("__")
+                    and not a.startswith("_tx_")
+                    and not callable(getattr(parent, a))
+                ]:
                     obj = getattr(parent, attr)
                     if isinstance(obj, (list, tuple)):
                         for innerobj in obj:
-                            if hasattr(innerobj, "name") \
-                                    and innerobj.name == name:
+                            if hasattr(innerobj, "name") and innerobj.name == name:
                                 return innerobj
                     else:
                         if hasattr(obj, "name") and obj.name == name:
                             return obj
                 return None
 
-            for n in fqn_name.split('.'):
+            for n in fqn_name.split("."):
                 obj = find_obj(p, n)
                 if obj is not None:
                     if type(obj) is Postponed:
@@ -197,6 +203,7 @@ class FQN(object):
                     return None
 
             from textx import textx_isinstance
+
             if textx_isinstance(obj, cls):
                 return p
             else:
@@ -227,6 +234,7 @@ class FQN(object):
                 # else continue to next parent or return None
 
         from textx.model import ObjCrossRef
+
         assert type(obj_ref) is ObjCrossRef, type(obj_ref)
         obj_cls, obj_name = obj_ref.cls, obj_ref.obj_name
         return _find_referenced_obj(current_obj, obj_name, obj_cls)
@@ -250,9 +258,15 @@ class ImportURI(scoping.ModelLoader):
     yield a filename or a filename pattern.
     """
 
-    def __init__(self, scope_provider, glob_args=None, search_path=None,
-                 importAs=False, importURI_converter=None,
-                 importURI_to_scope_name=None):
+    def __init__(
+        self,
+        scope_provider,
+        glob_args=None,
+        search_path=None,
+        importAs=False,
+        importURI_converter=None,
+        importURI_to_scope_name=None,
+    ):
         """
         Creates a new ImportURI Provider.
         Args:
@@ -276,11 +290,11 @@ class ImportURI(scoping.ModelLoader):
 
         """
         from textx.scoping import ModelLoader
+
         ModelLoader.__init__(self)
         self.scope_provider = scope_provider
         if (glob_args is not None) and (search_path is not None):
-            raise Exception("you cannot use globbing together with a "
-                            "search path")
+            raise Exception("you cannot use globbing together with a " "search path")
         self.glob_args = {}
         self.search_path = search_path
         self.importAs = importAs
@@ -297,9 +311,11 @@ class ImportURI(scoping.ModelLoader):
 
     def _load_referenced_models(self, model, encoding):
         from textx.model import get_children
+
         visited = []
         for obj in get_children(
-                lambda x: hasattr(x, "importURI") and x not in visited, model):
+            lambda x: hasattr(x, "importURI") and x not in visited, model
+        ):
             add_to_local_models = True
             if self.importURI_to_scope_name is not None:
                 obj.name = self.importURI_to_scope_name(obj)
@@ -311,39 +327,47 @@ class ImportURI(scoping.ModelLoader):
             visited.append(obj)
             if self.search_path is not None:
                 # search_path based i/o:
-                my_search_path = \
-                    [dirname(model._tx_filename)] + self.search_path
-                loaded_model = \
-                    model._tx_model_repository.load_model_using_search_path(
-                        self.importURI_converter(obj.importURI), model=model,
-                        search_path=my_search_path, encoding=encoding,
-                        add_to_local_models=add_to_local_models,
-                        model_params=model._tx_model_params)
+                my_search_path = [dirname(model._tx_filename)] + self.search_path
+                loaded_model = model._tx_model_repository.load_model_using_search_path(
+                    self.importURI_converter(obj.importURI),
+                    model=model,
+                    search_path=my_search_path,
+                    encoding=encoding,
+                    add_to_local_models=add_to_local_models,
+                    model_params=model._tx_model_params,
+                )
                 obj._tx_loaded_models = [loaded_model]
 
             else:
                 # globing based i/o:
                 basedir = dirname(model._tx_filename)
                 filename_pattern = abspath(
-                    join(basedir, self.importURI_converter(obj.importURI)))
+                    join(basedir, self.importURI_converter(obj.importURI))
+                )
 
-                obj._tx_loaded_models = \
+                obj._tx_loaded_models = (
                     model._tx_model_repository.load_models_using_filepattern(
-                        filename_pattern, model=model,
-                        glob_args=self.glob_args, encoding=encoding,
+                        filename_pattern,
+                        model=model,
+                        glob_args=self.glob_args,
+                        encoding=encoding,
                         add_to_local_models=add_to_local_models,
-                        model_params=model._tx_model_params)
+                        model_params=model._tx_model_params,
+                    )
+                )
 
-    def load_models(self, model, encoding='utf-8'):
+    def load_models(self, model, encoding="utf-8"):
         from textx.model import get_metamodel
         from textx.scoping import GlobalModelRepository
+
         # do we already have loaded models (analysis)? No -> check/load them
         if hasattr(model, "_tx_model_repository"):
             pass
         else:
             if hasattr(get_metamodel(model), "_tx_model_repository"):
-                model_repository = GlobalModelRepository(get_metamodel(
-                    model)._tx_model_repository.all_models)
+                model_repository = GlobalModelRepository(
+                    get_metamodel(model)._tx_model_repository.all_models
+                )
             else:
                 model_repository = GlobalModelRepository()
             model._tx_model_repository = model_repository
@@ -351,6 +375,7 @@ class ImportURI(scoping.ModelLoader):
 
     def __call__(self, obj, attr, obj_ref):
         from textx.model import ObjCrossRef, get_model
+
         assert type(obj_ref) is ObjCrossRef, type(obj_ref)
         # cls, obj_name = obj_ref.cls, obj_ref.obj_name
 
@@ -405,22 +430,34 @@ class FQNImportURI(ImportURI):
     See also: "test_importURI_variations.py".
     """
 
-    def __init__(self, glob_args=None, search_path=None, importAs=False,
-                 importURI_converter=None, importURI_to_scope_name=None,
-                 scope_redirection_logic=None):
+    def __init__(
+        self,
+        glob_args=None,
+        search_path=None,
+        importAs=False,
+        importURI_converter=None,
+        importURI_to_scope_name=None,
+        scope_redirection_logic=None,
+    ):
         if importAs:
+
             def my_scope_redirection_logic_def(obj):
                 return follow_loaded_models_scope_redirection_logic(
-                    obj, scope_redirection_logic)
+                    obj, scope_redirection_logic
+                )
+
             my_scope_redirection_logic = my_scope_redirection_logic_def
         else:
             my_scope_redirection_logic = scope_redirection_logic
-        ImportURI.__init__(self, FQN(
-            scope_redirection_logic=my_scope_redirection_logic),
+        ImportURI.__init__(
+            self,
+            FQN(scope_redirection_logic=my_scope_redirection_logic),
             glob_args=glob_args,
-            search_path=search_path, importAs=importAs,
+            search_path=search_path,
+            importAs=importAs,
             importURI_converter=importURI_converter,
-            importURI_to_scope_name=importURI_to_scope_name)
+            importURI_to_scope_name=importURI_to_scope_name,
+        )
 
 
 class PlainNameImportURI(ImportURI):
@@ -428,11 +465,14 @@ class PlainNameImportURI(ImportURI):
     scope provider with ImportURI and PlainName names
     """
 
-    def __init__(self, glob_args=None, search_path=None,
-                 importURI_converter=None):
-        ImportURI.__init__(self, PlainName(), glob_args=glob_args,
-                           search_path=search_path,
-                           importURI_converter=importURI_converter)
+    def __init__(self, glob_args=None, search_path=None, importURI_converter=None):
+        ImportURI.__init__(
+            self,
+            PlainName(),
+            glob_args=glob_args,
+            search_path=search_path,
+            importURI_converter=importURI_converter,
+        )
 
 
 class GlobalRepo(ImportURI):
@@ -472,13 +512,17 @@ class GlobalRepo(ImportURI):
 
     def _load_referenced_models(self, model, encoding):
         for filename_pattern in self.filename_pattern_list:
-            if not isabs(filename_pattern) and \
-                    'project_root' in model._tx_model_params:
+            if not isabs(filename_pattern) and "project_root" in model._tx_model_params:
                 filename_pattern = join(
-                    model._tx_model_params['project_root'], filename_pattern)
+                    model._tx_model_params["project_root"], filename_pattern
+                )
             model._tx_model_repository.load_models_using_filepattern(
-                filename_pattern, model=model, glob_args=self.glob_args,
-                encoding=encoding, model_params=model._tx_model_params)
+                filename_pattern,
+                model=model,
+                glob_args=self.glob_args,
+                encoding=encoding,
+                model_params=model._tx_model_params,
+            )
         for m in self.models_to_be_added_directly:
             model._tx_model_repository._add_model(m)
 
@@ -491,8 +535,9 @@ class GlobalRepo(ImportURI):
         """
         self.models_to_be_added_directly.append(model)
 
-    def load_models_in_model_repo(self, global_model_repo=None,
-                                  encoding='utf-8', **kwargs):
+    def load_models_in_model_repo(
+        self, global_model_repo=None, encoding="utf-8", **kwargs
+    ):
         """
         load all registered models (called explicitly from
         the user and not as an automatic activity).
@@ -520,9 +565,12 @@ class GlobalRepo(ImportURI):
             global_model_repo = textx.scoping.GlobalModelRepository()
         for filename_pattern in self.filename_pattern_list:
             global_model_repo.load_models_using_filepattern(
-                filename_pattern, model=None, glob_args=self.glob_args,
-                is_main_model=True, encoding=encoding,
-                model_params=ModelParams(kwargs)
+                filename_pattern,
+                model=None,
+                glob_args=self.glob_args,
+                is_main_model=True,
+                encoding=encoding,
+                model_params=ModelParams(kwargs),
             )
         return global_model_repo
 
@@ -533,8 +581,7 @@ class FQNGlobalRepo(GlobalRepo):
     """
 
     def __init__(self, filename_pattern=None, glob_args=None):
-        GlobalRepo.__init__(self, FQN(), filename_pattern,
-                            glob_args=glob_args)
+        GlobalRepo.__init__(self, FQN(), filename_pattern, glob_args=glob_args)
 
 
 class PlainNameGlobalRepo(GlobalRepo):
@@ -543,11 +590,10 @@ class PlainNameGlobalRepo(GlobalRepo):
     """
 
     def __init__(self, filename_pattern=None, glob_args=None):
-        GlobalRepo.__init__(
-            self, PlainName(), filename_pattern, glob_args=glob_args)
+        GlobalRepo.__init__(self, PlainName(), filename_pattern, glob_args=glob_args)
 
 
-class RelativeName(object):
+class RelativeName:
     """
     allows to implement a class-method-instance-like scoping:
      - define a class with methods
@@ -581,8 +627,9 @@ class RelativeName(object):
         Returns:
             the list of objects representing the proposed references
         """
-        from textx.scoping.tools import resolve_model_path
         from textx import textx_isinstance
+        from textx.scoping.tools import resolve_model_path
+
         obj_list = resolve_model_path(obj, self.path_to_container_object)
         if type(obj_list) is Postponed:
             self.postponed_counter += 1
@@ -592,12 +639,14 @@ class RelativeName(object):
         # the RelativeName object).
         if not isinstance(obj_list, list):
             from textx.exceptions import TextXError
+
             raise TextXError(
-                "expected path to list in the model ({})".format(
-                    self.path_to_container_object))
+                f"expected path to list in the model ({self.path_to_container_object})"
+            )
         obj_list = filter(
-            lambda x: textx_isinstance(x, attr.cls)
-            and x.name.find(name_part) >= 0, obj_list)
+            lambda x: textx_isinstance(x, attr.cls) and x.name.find(name_part) >= 0,
+            obj_list,
+        )
 
         return list(obj_list)
 
@@ -612,7 +661,7 @@ class RelativeName(object):
             return None
 
 
-class ExtRelativeName(object):
+class ExtRelativeName:
     """
     Similar as RelativeName.
     Here you specify separately
@@ -621,8 +670,7 @@ class ExtRelativeName(object):
     - how to find inherited/chained classes (starting from a class).
     """
 
-    def __init__(self, path_to_definition_object, path_to_target,
-                 path_to_extension):
+    def __init__(self, path_to_definition_object, path_to_target, path_to_extension):
         self.path_to_definition_object = path_to_definition_object
         self.path_to_target = path_to_target
         self.path_to_extension = path_to_extension
@@ -639,15 +687,18 @@ class ExtRelativeName(object):
         Returns:
             the list of objects representing the proposed references
         """
-        from textx.scoping.tools import resolve_model_path
         from textx import textx_isinstance
+
         # find all all "connected" objects
         # (e.g. find all classes: the most derived
         # class, its base, the base of its base, etc.)
-        from textx.scoping.tools import get_list_of_concatenated_objects
+        from textx.scoping.tools import (
+            get_list_of_concatenated_objects,
+            resolve_model_path,
+        )
+
         def_obj = resolve_model_path(obj, self.path_to_definition_object)
-        def_objs = get_list_of_concatenated_objects(
-            def_obj, self.path_to_extension)
+        def_objs = get_list_of_concatenated_objects(def_obj, self.path_to_extension)
         # for all containing classes, collect all
         # objects to be looked up (e.g. methods)
         obj_list = []
@@ -661,12 +712,17 @@ class ExtRelativeName(object):
             # expected to point to  alist
             if not isinstance(tmp_list, list):
                 from textx.exceptions import TextXError
+
                 raise TextXError(
-                    "expected path to list in the model ({})".format(
-                        self.path_to_target))
-            tmp_list = list(filter(
-                lambda x: textx_isinstance(x, attr.cls)
-                and x.name.find(name_part) >= 0, tmp_list))
+                    f"expected path to list in the model ({self.path_to_target})"
+                )
+            tmp_list = list(
+                filter(
+                    lambda x: textx_isinstance(x, attr.cls)
+                    and x.name.find(name_part) >= 0,
+                    tmp_list,
+                )
+            )
             obj_list = obj_list + tmp_list
 
         return list(obj_list)

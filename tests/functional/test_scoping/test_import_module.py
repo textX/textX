@@ -1,15 +1,15 @@
-from __future__ import unicode_literals
 
-from os.path import dirname, abspath, join
+from os.path import abspath, dirname, join
 
 from pytest import raises
 
 import textx.exceptions
 import textx.scoping.providers as scoping_providers
-from textx import get_children, get_children_of_type
-from textx import metamodel_from_file
-from textx.scoping.tools import check_unique_named_object_has_class, \
-    get_unique_named_object
+from textx import get_children, get_children_of_type, metamodel_from_file
+from textx.scoping.tools import (
+    check_unique_named_object_has_class,
+    get_unique_named_object,
+)
 
 
 def test_model_without_imports():
@@ -205,7 +205,7 @@ def test_model_with_circular_imports():
     imports = get_children_of_type("Import", my_model)
     assert len(imports) > 0
     for i in imports:
-        assert 1 == len(i._tx_loaded_models)  # one file / load import
+        assert len(i._tx_loaded_models) == 1  # one file / load import
         assert i.importURI in i._tx_loaded_models[0]._tx_filename
 
     check_unique_named_object_has_class(my_model, "A", "Interface")
@@ -267,7 +267,7 @@ def test_model_with_multi_import():
     #################################
 
     imports = get_children_of_type("Import", my_model)
-    assert 1 == len(imports)
+    assert len(imports) == 1
     i = imports[0]
-    assert 4 == len(i._tx_loaded_models)  # 4 files
-    assert 4 == len(set(i._tx_loaded_models))  # 4 different files
+    assert len(i._tx_loaded_models) == 4  # 4 files
+    assert len(set(i._tx_loaded_models)) == 4  # 4 different files
