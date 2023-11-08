@@ -5,9 +5,10 @@ except ImportError as e:
         "textX must be installed with CLI dependencies to use "
         "textx command.\npip install textX[cli]"
     ) from e
+
 import sys
 
-if sys.version_info < (3, 8):
+if sys.version_info < (3, 10):
     from importlib_metadata import entry_points
 else:
     from importlib.metadata import entry_points
@@ -29,7 +30,7 @@ def register_textx_subcommands():
     level click `textx` command and register additional commands(s) on it.
     """
     global textx
-    for subcommand in entry_points(group="textx_commands"):
+    for subcommand in entry_points(group='textx_commands'):
         subcommand.load()(textx)
 
 

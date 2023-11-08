@@ -4,11 +4,10 @@ Languages and generators registration and discovery API.
 import fnmatch
 import sys
 
-if sys.version_info < (3, 8):
+if sys.version_info < (3, 10):
     from importlib_metadata import entry_points
 else:
     from importlib.metadata import entry_points
-
 
 from textx.exceptions import TextXRegistrationError
 
@@ -83,7 +82,7 @@ def language_descriptions():
     global languages
     if languages is None:
         languages = {}
-        for language in entry_points(group="textx_languages"):
+        for language in entry_points(group='textx_languages'):
             register_language_with_project(
                 language.load(), language.dist.name, language.dist.version
             )
@@ -97,7 +96,7 @@ def generator_descriptions():
     global generators
     if generators is None:
         generators = {}
-        for generator in entry_points(group="textx_generators"):
+        for generator in entry_points(group='textx_generators'):
             register_generator_with_project(
                 generator.load(), generator.dist.name, generator.dist.version
             )
