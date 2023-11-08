@@ -48,7 +48,8 @@ def dot_match_str(cls, other_match_rules=None):
                     s._tx_class._tx_type is not RULE_MATCH
                     or (s._tx_class in other_match_rules and s._tx_class is not cls)
                 )
-            )):
+            )
+        ):
             # print("==> NAME " + s.rule_name)
             return s.rule_name
 

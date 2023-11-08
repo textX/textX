@@ -325,7 +325,8 @@ class RRELSequence(RRELBase):
             return  # recursion stopper
         for ip in self.paths:
             yield from ip.get_next_matches(
-                obj, lookup_list, allowed, matched_path, first_element)
+                obj, lookup_list, allowed, matched_path, first_element
+            )
 
 
 class RRELZeroOrMore(RRELBase):
@@ -606,8 +607,9 @@ def find_object_with_path(obj, lookup_list, rrel_tree, obj_cls=None, split_strin
         ):
             if isinstance(obj_res, Postponed):
                 return obj_res  # Postponed
-            elif len(lookup_list_res) == 0 \
-                    and (obj_cls is None or textx_isinstance(obj_res, obj_cls)):
+            elif len(lookup_list_res) == 0 and (
+                obj_cls is None or textx_isinstance(obj_res, obj_cls)
+            ):
                 return obj_res, matched_path  # found match
     return None  # not found
 

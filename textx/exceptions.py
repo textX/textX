@@ -35,9 +35,7 @@ class TextXSemanticError(TextXError):
         filename=None,
         context=None,
     ):
-        super().__init__(
-            message, line, col, err_type, filename, context
-        )
+        super().__init__(message, line, col, err_type, filename, context)
         # Expected object of class
         self.expected_obj_cls = expected_obj_cls
 
@@ -53,9 +51,7 @@ class TextXSyntaxError(TextXError):
         filename=None,
         context=None,
     ):
-        super().__init__(
-            message, line, col, err_type, filename, context
-        )
+        super().__init__(message, line, col, err_type, filename, context)
         # Possible rules on this position
         self.expected_rules = expected_rules
 

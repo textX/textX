@@ -42,8 +42,11 @@ def textx_isinstance(obj, obj_cls):
         return True
     if isinstance(obj, obj_cls):
         return True
-    if hasattr(obj_cls, "_tx_fqn") and hasattr(obj, "_tx_fqn") \
-       and obj_cls._tx_fqn == obj._tx_fqn:
+    if (
+        hasattr(obj_cls, "_tx_fqn")
+        and hasattr(obj, "_tx_fqn")
+        and obj_cls._tx_fqn == obj._tx_fqn
+    ):
         return True
     if hasattr(obj_cls, "_tx_inh_by"):
         for cls in obj_cls._tx_inh_by:
@@ -812,8 +815,10 @@ def parse_tree_to_objgraph(
                             if result is not None:
                                 setattr(model_obj, metaattr.name, result)
 
-            if current_metaclass_of_obj._tx_fqn != metaclass_of_grammar_rule._tx_fqn \
-                    and metamodel.has_obj_processor(current_metaclass_of_obj.__name__):
+            if (
+                current_metaclass_of_obj._tx_fqn != metaclass_of_grammar_rule._tx_fqn
+                and metamodel.has_obj_processor(current_metaclass_of_obj.__name__)
+            ):
                 # This can happen if grammar rule is abstract or if model is
                 # modified (e.g. expression reduction)
                 return_value_current = metamodel.process(
@@ -1129,8 +1134,11 @@ class ReferenceResolver:
                         resolved = default_scope(obj, attr, crossref)
 
                 # Collect cross-references for textx-tools
-                if resolved is not None and type(resolved) is not Postponed \
-                        and metamodel.textx_tools_support:
+                if (
+                    resolved is not None
+                    and type(resolved) is not Postponed
+                    and metamodel.textx_tools_support
+                ):
                     self.pos_crossref_list.append(
                         RefRulePosition(
                             name=crossref.obj_name,
@@ -1143,12 +1151,16 @@ class ReferenceResolver:
                     )
 
                 # As a fall-back search builtins if given
-                if resolved is None and metamodel.builtins \
-                        and crossref.obj_name in metamodel.builtins:
+                if (
+                    resolved is None
+                    and metamodel.builtins
+                    and crossref.obj_name in metamodel.builtins
+                ):
                     from textx import textx_isinstance
 
-                    if textx_isinstance(metamodel.builtins[crossref.obj_name],
-                                        crossref.cls):
+                    if textx_isinstance(
+                        metamodel.builtins[crossref.obj_name], crossref.cls
+                    ):
                         resolved = metamodel.builtins[crossref.obj_name]
 
                 if resolved is None:

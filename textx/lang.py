@@ -635,8 +635,9 @@ class TextXVisitor(RRELVisitor):
             rule_name, root_rule = children
             rule_params = {}
 
-        if root_rule.rule_name.startswith("__asgn") \
-           or (isinstance(root_rule, (Match, RuleCrossRef)) and rule_params):
+        if root_rule.rule_name.startswith("__asgn") or (
+            isinstance(root_rule, (Match, RuleCrossRef)) and rule_params
+        ):
             # If it is assignment node it must be kept because it could be
             # e.g. single assignment in the rule.
             # Also, handle a special case where rule consists only of a single
@@ -878,7 +879,7 @@ class TextXVisitor(RRELVisitor):
                     if repeat_op == "?":
                         line, col = self.grammar_parser.pos_to_linecol(position)
                         raise TextXSyntaxError(
-                            'Modifiers are not allowed '
+                            "Modifiers are not allowed "
                             f'for "?" operator at {(line, col)}',
                             line,
                             col,

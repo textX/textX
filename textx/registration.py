@@ -82,7 +82,7 @@ def language_descriptions():
     global languages
     if languages is None:
         languages = {}
-        for language in entry_points(group='textx_languages'):
+        for language in entry_points(group="textx_languages"):
             register_language_with_project(
                 language.load(), language.dist.name, language.dist.version
             )
@@ -96,7 +96,7 @@ def generator_descriptions():
     global generators
     if generators is None:
         generators = {}
-        for generator in entry_points(group='textx_generators'):
+        for generator in entry_points(group="textx_generators"):
             register_generator_with_project(
                 generator.load(), generator.dist.name, generator.dist.version
             )
@@ -139,8 +139,9 @@ def generator_description(language_name, target_name, any_permitted=False):
             return generators_for_language[target_name]
     except KeyError as e:
         raise TextXRegistrationError(
-            'No generators registered for language '
-            f'"{language_name}" and target "{target_name}".') from e
+            "No generators registered for language "
+            f'"{language_name}" and target "{target_name}".'
+        ) from e
 
 
 def generator_for_language_target(language_name, target_name, any_permitted=False):
@@ -271,8 +272,9 @@ def metamodel_for_language(language_name, **kwargs):
             metamodel = language.metamodel(**kwargs)
             if not (isinstance(metamodel, (TextXMetaModel, TextXMetaMetaModel))):
                 raise TextXRegistrationError(
-                    'Meta-model type for language '
-                    f'"{language_name}" is "{metamodel.__class__.__name__}".')
+                    "Meta-model type for language "
+                    f'"{language_name}" is "{metamodel.__class__.__name__}".'
+                )
             metamodels[language_name] = metamodel
     return metamodels[language_name]
 

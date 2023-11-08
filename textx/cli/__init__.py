@@ -30,7 +30,7 @@ def register_textx_subcommands():
     level click `textx` command and register additional commands(s) on it.
     """
     global textx
-    for subcommand in entry_points(group='textx_commands'):
+    for subcommand in entry_points(group="textx_commands"):
         subcommand.load()(textx)
 
 
