@@ -67,7 +67,7 @@ dev = [
 
 test = [
     "click >=7.0, <8.0",
-    "flake8",
+    "ruff",
     "attrs",
     "jinja2",
     "coverage",
@@ -93,3 +93,24 @@ textx_plantuml = "textx.generators:metamodel_generate_plantuml"
 
 [project.entry-points.textx_languages]
 textx = "textx.metamodel:textx"
+
+[tool.ruff]
+line-length = 90
+indent-width = 4
+
+[tool.ruff.lint]
+# https://docs.astral.sh/ruff/linter/#rule-selection
+select = [
+    # pycodestyle
+    "E",
+    # Pyflakes
+    "F",
+    # pyupgrade
+    "UP",
+    # flake8-bugbear
+    "B",
+    # flake8-simplify
+    "SIM",
+    # isort
+    "I",
+]
