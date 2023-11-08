@@ -19,7 +19,7 @@ class A:
     """
 
     def __init__(self, **kwargs):
-        super(A, self).__init__()
+        super().__init__()
         for k, v in kwargs.items():
             self.__dict__[k] = v
 
@@ -34,7 +34,7 @@ class B(A):
     """
 
     def __init__(self, **kwargs):
-        super(B, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
 
 class C(B):
@@ -45,7 +45,7 @@ class C(B):
     """
 
     def __init__(self, **kwargs):
-        super(C, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
     def __setattr__(self, name, value):
         pass

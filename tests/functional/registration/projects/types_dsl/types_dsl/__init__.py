@@ -20,9 +20,8 @@ def types_dsl():
             "type_name_check", default="on"
         )
         assert type_name_check in ["on", "off"]
-        if type_name_check == "on":
-            if t.name[0].isupper():
-                raise TextXSyntaxError("types must be lowercase", **get_location(t))
+        if type_name_check == "on" and t.name[0].isupper():
+            raise TextXSyntaxError("types must be lowercase", **get_location(t))
 
     types_mm.register_obj_processors({"Type": check_type})
 

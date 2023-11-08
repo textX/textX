@@ -2,6 +2,7 @@
 Tests for textX registered generators/visualizations
 """
 import os
+from contextlib import suppress
 
 import pytest
 from click.testing import CliRunner
@@ -13,14 +14,10 @@ this_folder = os.path.abspath(os.path.dirname(__file__))
 
 @pytest.fixture
 def metamodel_file():
-    try:
+    with suppress(OSError):
         os.remove(os.path.join(this_folder, "hello.pu"))
-    except OSError:
-        pass
-    try:
+    with suppress(OSError):
         os.remove(os.path.join(this_folder, "hello.dot"))
-    except OSError:
-        pass
     return os.path.join(this_folder, "hello.tx")
 
 

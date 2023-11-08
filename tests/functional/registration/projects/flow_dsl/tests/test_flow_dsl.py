@@ -46,10 +46,6 @@ def test_flow_dsl_types_validation(clear_all):
     Test flow model including error raises error.
     """
 
-    # print("-----------------------------------1---")
-    # print(metamodel_for_language('flow-dsl')._tx_model_repository.all_models.filename_to_model.keys())
-    # print("----------------- #={}".format(
-    #    len(metamodel_for_language('flow-dsl')._tx_model_repository.all_models.filename_to_model.keys())))
     mmF = metamodel_for_language("flow-dsl")
     with pytest.raises(TextXSyntaxError, match=r".*lowercase.*"):
         mmF.model_from_file(
@@ -58,10 +54,6 @@ def test_flow_dsl_types_validation(clear_all):
 
     # When reading a second time, the error must be reported again:
 
-    # print("-----------------------------------2---")
-    # print(metamodel_for_language('flow-dsl')._tx_model_repository.all_models.filename_to_model.keys())
-    # print("----------------- #={}".format(
-    #    len(metamodel_for_language('flow-dsl')._tx_model_repository.all_models.filename_to_model.keys())))
     with pytest.raises(TextXSyntaxError, match=r".*lowercase.*"):
         mmF.model_from_file(
             os.path.join(current_dir, "models", "data_flow_including_error.eflow")

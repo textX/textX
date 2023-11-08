@@ -39,21 +39,18 @@ def dot_match_str(cls, other_match_rules=None):
 
     def r(s):
         # print("==>" + str(s) + " " + s.rule_name)
-        if s.root:
-            # breakpoint()
-            if (
-                s in visited
-                or s.rule_name in ALL_TYPE_NAMES
-                or (
-                    hasattr(s, "_tx_class")
-                    and (
-                        s._tx_class._tx_type is not RULE_MATCH
-                        or (s._tx_class in other_match_rules and s._tx_class is not cls)
-                    )
+        if s.root and (
+            s in visited
+            or s.rule_name in ALL_TYPE_NAMES
+            or (
+                hasattr(s, "_tx_class")
+                and (
+                    s._tx_class._tx_type is not RULE_MATCH
+                    or (s._tx_class in other_match_rules and s._tx_class is not cls)
                 )
-            ):
-                # print("==> NAME " + s.rule_name)
-                return s.rule_name
+            )):
+            # print("==> NAME " + s.rule_name)
+            return s.rule_name
 
         visited.add(s)
         if isinstance(s, Match):
@@ -118,7 +115,7 @@ def html_escape(s):
 
 
 def dot_repr(o):
-    if type(o) is str:
+    if isinstance(o, str):
         escaped = dot_escape(str(o))
         if len(escaped) > 20:
             return f"'{escaped[:20]}...'"
@@ -252,10 +249,7 @@ set namespaceSeparator .
         if attr.ref and attr.cls.__name__ != "OBJECT":
             # If attribute is a reference
             # mult = attr.mult if not attr.mult == MULT_ONE else ""
-            if attr.cont:
-                arr = "*-->"
-            else:
-                arr = "o-->"
+            arr = "*-->" if attr.cont else "o-->"
             name = attr.name
             if attr.mult != "1":
                 name += " " + attr.mult
@@ -370,7 +364,7 @@ def model_export_to_file(f, model=None, repo=None):
                                     _export(list_obj)
                 else:
                     # Plain attributes
-                    if type(attr_value) is str and attr_name != "name":
+                    if isinstance(attr_value, str) and attr_name != "name":
                         attr_value = dot_repr(attr_value)
 
                     if type(attr_value) in PRIMITIVE_PYTHON_TYPES:

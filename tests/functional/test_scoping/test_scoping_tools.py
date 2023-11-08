@@ -70,11 +70,12 @@ def test_textx_tools_with_frozen_classes1():
     for classes in [[], [Model, Content, Element]]:
         print("Test Loop, classes==", classes)
 
-        ref_scope_was_used = [False]
+        ref_scope_was_used = False
 
         def ref_scope(refItem, myattr, attr_ref):
             # python3: nonlocal ref_scope_was_used
-            ref_scope_was_used[0] = True
+            nonlocal ref_scope_was_used
+            ref_scope_was_used = True
             if get_model(refItem).use == "A":
                 return resolve_model_path(
                     refItem, f"parent(Model).data.elementsA.{attr_ref.obj_name}", True
@@ -86,9 +87,9 @@ def test_textx_tools_with_frozen_classes1():
 
         mm = metamodel_from_str(grammar, classes=classes)
         mm.register_scope_providers({"Content.ref": ref_scope})
-        ref_scope_was_used[0] = False
+        ref_scope_was_used = False
         m = mm.model_from_str(text_ok1)
-        assert ref_scope_was_used[0]
+        assert ref_scope_was_used
         if len(classes) == 0:
             # Assert that model object has its own filename and metamodel
             assert "_tx_filename" in m.__dict__
@@ -98,14 +99,14 @@ def test_textx_tools_with_frozen_classes1():
             assert "_tx_filename" not in m.__dict__
             assert "_tx_metamodel" not in m.__dict__
 
-        ref_scope_was_used[0] = False
+        ref_scope_was_used = False
         mm.model_from_str(text_ok2)
-        assert ref_scope_was_used[0]
+        assert ref_scope_was_used
 
-        ref_scope_was_used[0] = False
+        ref_scope_was_used = False
         with raises(Exception, match=r'.*Unknown object "b".*'):
             mm.model_from_str(text_not_ok)
-        assert ref_scope_was_used[0]
+        assert ref_scope_was_used
 
 
 def test_textx_tools_with_frozen_classes2():
@@ -158,11 +159,12 @@ def test_textx_tools_with_frozen_classes2():
     for classes in [[], [Model, Content, Element]]:
         print("Test Loop, classes==", classes)
 
-        ref_scope_was_used = [False]
+        ref_scope_was_used = False
 
         def ref_scope(refItem, myattr, attr_ref):
             # python3: nonlocal ref_scope_was_used
-            ref_scope_was_used[0] = True
+            nonlocal ref_scope_was_used
+            ref_scope_was_used = True
             if get_model(refItem).use == "A":
                 return resolve_model_path(
                     refItem, f"parent(Model).data.elementsA.{attr_ref.obj_name}", True
@@ -174,21 +176,21 @@ def test_textx_tools_with_frozen_classes2():
 
         mm = metamodel_from_str(grammar, classes=classes)
         mm.register_scope_providers({"Content.ref": ref_scope})
-        ref_scope_was_used[0] = False
+        ref_scope_was_used = False
         m = mm.model_from_str(text_ok1)
-        assert ref_scope_was_used[0]
+        assert ref_scope_was_used
 
         assert hasattr(m, "_tx_filename")
         assert hasattr(m, "_tx_metamodel")
 
-        ref_scope_was_used[0] = False
+        ref_scope_was_used = False
         mm.model_from_str(text_ok2)
-        assert ref_scope_was_used[0]
+        assert ref_scope_was_used
 
-        ref_scope_was_used[0] = False
+        ref_scope_was_used = False
         with raises(Exception, match=r'.*Unknown object "b".*'):
             mm.model_from_str(text_not_ok)
-        assert ref_scope_was_used[0]
+        assert ref_scope_was_used
 
 
 def test_textx_isinstance():

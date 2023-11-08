@@ -2,11 +2,11 @@ import os
 
 try:
     import click
-except ImportError:
+except ImportError as e:
     raise Exception(
         "textX must be installed with CLI dependencies to use "
         "textx command.\npip install textX[cli]"
-    )
+    ) from e
 from textx import (
     TextXError,
     TextXRegistrationError,
@@ -149,7 +149,7 @@ def generate(textx):
                 generator(metamodel, model, output_path, overwrite, debug, **custom_args)
 
         except TextXRegistrationError as e:
-            raise click.ClickException(e.message)
+            raise click.ClickException(e.message) from e
 
         except TextXError as e:
-            raise click.ClickException(str(e))
+            raise click.ClickException(str(e)) from e

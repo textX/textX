@@ -206,7 +206,7 @@ def test_obj_processor_simple_match_rule():
 
     mm = metamodel_from_str(grammar)
     m = mm.model_from_str(model)
-    assert type(m.a) is str
+    assert isinstance(m.a, str)
 
     processors = {"MyFloat": lambda x: float(x)}
     print("filters")
@@ -214,7 +214,7 @@ def test_obj_processor_simple_match_rule():
     mm.register_obj_processors(processors)
     m = mm.model_from_str(model)
 
-    assert type(m.a) is float
+    assert isinstance(m.a, float)
 
 
 def test_obj_processor_sequence_match_rule():
@@ -231,14 +231,14 @@ def test_obj_processor_sequence_match_rule():
 
     mm = metamodel_from_str(grammar)
     m = mm.model_from_str(model)
-    assert type(m.i) is str
+    assert isinstance(m.i, str)
 
     processors = {"MyFixedInt": lambda x: int(x)}
     mm = metamodel_from_str(grammar)
     mm.register_obj_processors(processors)
     m = mm.model_from_str(model)
 
-    assert type(m.i) is int
+    assert isinstance(m.i, int)
 
 
 def test_base_type_obj_processor_override():
@@ -249,7 +249,7 @@ def test_base_type_obj_processor_override():
     """
 
     def to_float_with_str_check(x):
-        assert type(x) is str
+        assert isinstance(x, str)
         return float(x)
 
     processors = {"INT": to_float_with_str_check}
@@ -257,7 +257,7 @@ def test_base_type_obj_processor_override():
     mm.register_obj_processors(processors)
     m = mm.model_from_str("begin 34 end")
 
-    assert type(m.i) is float
+    assert isinstance(m.i, float)
 
 
 def test_custom_base_type_with_builtin_alternatives():
@@ -269,13 +269,13 @@ def test_custom_base_type_with_builtin_alternatives():
 
     mm = metamodel_from_str(grammar)
     model = mm.model_from_str("3.4 6")
-    assert type(model.i[0]) is str
-    assert type(model.i[1]) is int
+    assert isinstance(model.i[0], str)
+    assert isinstance(model.i[1], int)
 
     mm.register_obj_processors({"MyFloat": lambda x: float(x)})
     model = mm.model_from_str("3.4 6")
-    assert type(model.i[0]) is float
-    assert type(model.i[1]) is int
+    assert isinstance(model.i[0], float)
+    assert isinstance(model.i[1], int)
 
 
 def test_nested_match_rules():
@@ -301,12 +301,12 @@ def test_nested_match_rules():
     assert model.objects[0] == 3.4
     assert model.objects[1] == 5
     assert model.objects[2] == 6
-    assert type(model.objects[2]) is int
+    assert isinstance(model.objects[2], int)
 
     # Now we will add another processor for `MyObject` to test if we can change
     # the result returned from match processors lower in hierarchy.
     def myobject_processor(x):
-        assert type(x) in [int, float]
+        assert isinstance(x, (int, float))
         return f"#{x}"
 
     mm.register_obj_processors(

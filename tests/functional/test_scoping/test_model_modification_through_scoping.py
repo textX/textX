@@ -59,7 +59,9 @@ class Postponer:
     resolutions does not change any more.
     """
 
-    def __init__(self, base=providers.PlainName()):
+    def __init__(self, base=None):
+        if base is None:
+            base = providers.PlainName()
         self.base = base
 
     def __call__(self, *args, **kwargs):

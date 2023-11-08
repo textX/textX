@@ -204,10 +204,7 @@ class GlobalModelRepository:
             full_filename = join(the_path, filename)
             # print(full_filename)
             if exists(full_filename):
-                if model is not None:
-                    the_metamodel = get_metamodel(model)
-                else:
-                    the_metamodel = None
+                the_metamodel = get_metamodel(model) if model is not None else None
                 the_metamodel = metamodel_for_file_or_default_metamodel(
                     filename, the_metamodel
                 )
@@ -254,7 +251,8 @@ class GlobalModelRepository:
                 # root model
                 new_model = the_metamodel.internal_model_from_file(
                     filename,
-                    pre_ref_resolution_callback=lambda other_model: self.pre_ref_resolution_callback(
+                    pre_ref_resolution_callback=\
+                    lambda other_model: self.pre_ref_resolution_callback(
                         other_model
                     ),
                     is_main_model=is_main_model,

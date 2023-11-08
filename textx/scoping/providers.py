@@ -71,7 +71,7 @@ class PlainName:
                     result = _inner_resolve_link_rule_ref(inherited, obj_name)
                     if result:
                         return result
-            elif cls._tx_type == RULE_COMMON:
+            elif cls._tx_type == RULE_COMMON and id(cls) in get_parser(obj)._instances:
                 # TODO make this code exchangable
                 # allow to know the current attribute (model location for
                 # namespace) and to navigate through the whole model...
@@ -82,9 +82,8 @@ class PlainName:
                 # - needs: .current reference (in the model)
                 #          .the model (?)
                 # - provides: the resolved object or None
-                if id(cls) in get_parser(obj)._instances:
-                    objs = get_parser(obj)._instances[id(cls)]
-                    return objs.get(obj_name)
+                objs = get_parser(obj)._instances[id(cls)]
+                return objs.get(obj_name)
 
         if self.multi_metamodel_support:
             from textx import get_children, get_model, textx_isinstance
@@ -320,9 +319,8 @@ class ImportURI(scoping.ModelLoader):
             if self.importURI_to_scope_name is not None:
                 obj.name = self.importURI_to_scope_name(obj)
                 # print("setting name to {}".format(obj.name))
-            if hasattr(obj, "name"):
-                if obj.name is not None and obj.name != "":
-                    add_to_local_models = not self.importAs
+            if hasattr(obj, "name")and obj.name is not None and obj.name != "":
+                add_to_local_models = not self.importAs
 
             visited.append(obj)
             if self.search_path is not None:

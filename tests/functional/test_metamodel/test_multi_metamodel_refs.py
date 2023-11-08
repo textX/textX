@@ -39,7 +39,7 @@ def register_languages():
 
     class A:
         def __init__(self, **kwargs):
-            super(A, self).__init__()
+            super().__init__()
             for k, v in kwargs.items():
                 self.__dict__[k] = v
 

@@ -431,17 +431,17 @@ def test_float_int_number():
 
     model = meta.model_from_str("3.4 5 .3")
     assert model.a == 3.4
-    assert type(model.a) is float
+    assert isinstance(model.a, float)
     assert model.b == 5
     assert model.c == 0.3
 
     model = meta.model_from_str("3 5 2.0")
     assert model.a == 3
-    assert type(model.a) is int
+    assert isinstance(model.a, int)
 
     assert model.b == 5
     assert model.c == 2
-    assert type(model.c) is float
+    assert isinstance(model.c, float)
 
 
 def test_float_variations():
@@ -456,10 +456,10 @@ def test_float_variations():
 
     model = meta.model_from_str("3.5, .4, 5.0, 6., 7i")
     assert len(model.a) == 4
-    assert type(model.a[0]) is float
-    assert type(model.a[1]) is float
-    assert type(model.a[2]) is float
-    assert type(model.a[3]) is float
+    assert isinstance(model.a[0], float)
+    assert isinstance(model.a[1], float)
+    assert isinstance(model.a[2], float)
+    assert isinstance(model.a[3], float)
     assert model.some_id == "7i"
 
     # Check scientific notation
@@ -558,7 +558,7 @@ def test_assignment_multiple_simple():
     assert not meta["Model"]._tx_attrs["a"].ref
     assert model
     assert model.a
-    assert type(model.a) is list
+    assert isinstance(model.a, list)
     assert len(model.a) == 3
     assert model.a == [34, 23, 45]
 
@@ -857,20 +857,20 @@ def test_default_attribute_values():
     """
     )
     assert type(model).__name__ == "First"
-    assert type(model.seconds) is list
-    assert type(model.a) is int
+    assert isinstance(model.seconds, list)
+    assert isinstance(model.a, int)
     assert model.a == 0
-    assert type(model.b) is bool
+    assert isinstance(model.b, bool)
     assert model.b is False
-    assert type(model.c) is str
+    assert isinstance(model.c, str)
     assert model.c == ""
-    assert type(model.d) is float
+    assert isinstance(model.d, float)
     assert model.d == 0.0
-    assert type(model.e) is list
+    assert isinstance(model.e, list)
     assert model.e == []
-    assert type(model.f) is list
+    assert isinstance(model.f, list)
     assert model.f == []
-    assert type(model.g) is bool
+    assert isinstance(model.g, bool)
     assert model.g is False
 
 

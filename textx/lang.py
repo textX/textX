@@ -349,7 +349,7 @@ class TextXVisitor(RRELVisitor):
             flags = re.IGNORECASE
         self.keyword_regex = re.compile(r"[^\d\W]\w*", flags)
 
-        super(TextXVisitor, self).__init__()
+        super().__init__()
 
     def visit_textx_model(self, node, children):
         if "Comment" in self.metamodel:
@@ -405,12 +405,12 @@ class TextXVisitor(RRELVisitor):
             if grammar_parser.debug:
                 grammar_parser.dprint(f"Resolving rule: {rule}")
 
-            if type(rule) is RuleCrossRef:
+            if isinstance(rule, RuleCrossRef):
                 rule_name = rule.rule_name
                 suppress = rule.suppress
                 if rule_name in model_parser.metamodel:
                     rule = model_parser.metamodel[rule_name]._tx_peg_rule
-                    if type(rule) is RuleCrossRef:
+                    if isinstance(rule, RuleCrossRef):
                         rule = _resolve_rule(rule)
                         model_parser.metamodel[rule_name]._tx_peg_rule = rule
                     if suppress:
@@ -520,7 +520,7 @@ class TextXVisitor(RRELVisitor):
                                 # stop after first added/found type
                                 return True
                         else:
-                            is_ordered_choice = type(rule) is OrderedChoice
+                            is_ordered_choice = isinstance(rule, OrderedChoice)
                             inh_added = False
                             for r in rule.nodes:
                                 inh_added |= _add_reffered_classes(r, inh_by)
@@ -557,14 +557,14 @@ class TextXVisitor(RRELVisitor):
             if isinstance(cls, ClassCrossRef):
                 try:
                     cls = metamodel[cls.cls_name]
-                except KeyError:
+                except KeyError as e:
                     line, col = grammar_parser.pos_to_linecol(cls.position)
                     raise TextXSemanticError(
                         f'Unknown class/rule "{cls.cls_name}".',
                         line=line,
                         col=col,
                         filename=metamodel.file_name,
-                    )
+                    ) from e
             resolved_classes[to_resolve] = cls
 
             if cls._tx_type == RULE_ABSTRACT:
@@ -635,10 +635,8 @@ class TextXVisitor(RRELVisitor):
             rule_name, root_rule = children
             rule_params = {}
 
-        if root_rule.rule_name.startswith("__asgn") or (
-            (isinstance(root_rule, Match) or isinstance(root_rule, RuleCrossRef))
-            and rule_params
-        ):
+        if root_rule.rule_name.startswith("__asgn") \
+           or (isinstance(root_rule, (Match, RuleCrossRef)) and rule_params):
             # If it is assignment node it must be kept because it could be
             # e.g. single assignment in the rule.
             # Also, handle a special case where rule consists only of a single
@@ -676,9 +674,8 @@ class TextXVisitor(RRELVisitor):
             else:
                 if isinstance(rule, OneOrMore):
                     mult = MULT_ONEORMORE
-                elif isinstance(rule, ZeroOrMore):
-                    if mult != MULT_ONEORMORE:
-                        mult = MULT_ZEROORMORE
+                elif isinstance(rule, ZeroOrMore) and mult != MULT_ONEORMORE:
+                    mult = MULT_ZEROORMORE
 
                 if rule.rule_name.startswith("__asgn"):
                     cls_attr = cls._tx_attrs[rule._attr_name]
@@ -833,7 +830,7 @@ class TextXVisitor(RRELVisitor):
                 # Separator
                 modifier.rule_name = "sep"
                 modifiers["sep"] = modifier
-            elif type(modifier) == tuple:
+            elif isinstance(modifier, tuple):
                 modifiers["multiplicity"] = modifier
             else:
                 modifiers["eolterm"] = True
@@ -881,7 +878,8 @@ class TextXVisitor(RRELVisitor):
                     if repeat_op == "?":
                         line, col = self.grammar_parser.pos_to_linecol(position)
                         raise TextXSyntaxError(
-                            f'Modifiers are not allowed for "?" operator at {(line, col)}',
+                            'Modifiers are not allowed '
+                            f'for "?" operator at {(line, col)}',
                             line,
                             col,
                         )
@@ -948,7 +946,7 @@ class TextXVisitor(RRELVisitor):
             )
 
         # Keep track of metaclass references and containments
-        if type(rhs_rule) is tuple and rhs_rule[0] == "obj_ref":
+        if isinstance(rhs_rule, tuple) and rhs_rule[0] == "obj_ref":
             cls_attr.cont = False
             cls_attr.ref = True
             # Override rhs by its PEG rule for further processing
@@ -1070,7 +1068,7 @@ class TextXVisitor(RRELVisitor):
             regex.compile()
         except Exception as e:
             line, col = self.grammar_parser.pos_to_linecol(node[1].position)
-            raise TextXSyntaxError(str(e), line, col)
+            raise TextXSyntaxError(str(e), line, col) from e
         return regex
 
     def visit_obj_ref(self, node, children):
@@ -1121,7 +1119,7 @@ def language_from_str(language_def, metamodel, file_name):
         Parser for the new language.
     """
 
-    if type(language_def) is not str:
+    if not isinstance(language_def, str):
         raise TextXError("textX accepts only strings.")
 
     if metamodel.debug:
@@ -1153,7 +1151,7 @@ def language_from_str(language_def, metamodel, file_name):
         e.eval_attrs()
         raise TextXSyntaxError(
             e.message, e.line, e.col, filename=e.parser.file_name, context=e.context
-        )
+        ) from e
 
     # Construct new parser and meta-model based on the given language
     # description.

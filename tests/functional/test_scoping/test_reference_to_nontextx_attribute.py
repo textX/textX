@@ -34,9 +34,8 @@ def test_reference_to_nontextx_attribute():
         if not hasattr(obj.pyobj, "data"):
             import json
 
-            obj.pyobj.data = json.load(
-                open(join(abspath(dirname(__file__)), obj.pyobj.filename))
-            )
+            with open(join(abspath(dirname(__file__)), obj.pyobj.filename)) as f:
+                obj.pyobj.data = json.load(f)
         if attr_ref.obj_name in obj.pyobj.data:
             return obj.pyobj.data[attr_ref.obj_name]
         else:

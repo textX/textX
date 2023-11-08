@@ -1,10 +1,10 @@
 try:
     import click
-except ImportError:
+except ImportError as e:
     raise Exception(
         "textX must be installed with CLI dependencies to use "
         "textx command.\npip install textX[cli]"
-    )
+    ) from e
 
 from textx.registration import generator_descriptions, language_descriptions
 

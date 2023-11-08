@@ -7,8 +7,8 @@ def test_issue205_skipws_propagation():
     """
     Test a problem found in Arpeggio not maintaining `skipws/noskipws` applied
     to ordered choice root rule.
-    Reported at SO: https://stackoverflow.com/questions/57944531/how-do-you-correctly-mix-textx-skipws-non-skipws  # noqa
-    """
+    Reported at SO: https://stackoverflow.com/questions/57944531/how-do-you-correctly-mix-textx-skipws-non-skipws
+    """  # noqa: E501
 
     mm = metamodel_from_str(
         r"""

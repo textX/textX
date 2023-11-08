@@ -2,7 +2,7 @@ class TextXError(Exception):
     def __init__(
         self, message, line=None, col=None, err_type=None, filename=None, context=None
     ):
-        super(TextXError, self).__init__(message.encode("utf-8"))
+        super().__init__(message.encode("utf-8"))
         self.line = line
         self.col = col
         self.err_type = err_type
@@ -21,7 +21,7 @@ class TextXError(Exception):
                 f" => '{self.context}'" if self.context else "",
             )
         else:
-            return super(TextXError, self).__str__()
+            return super().__str__()
 
 
 class TextXSemanticError(TextXError):
@@ -35,7 +35,7 @@ class TextXSemanticError(TextXError):
         filename=None,
         context=None,
     ):
-        super(TextXSemanticError, self).__init__(
+        super().__init__(
             message, line, col, err_type, filename, context
         )
         # Expected object of class
@@ -53,7 +53,7 @@ class TextXSyntaxError(TextXError):
         filename=None,
         context=None,
     ):
-        super(TextXSyntaxError, self).__init__(
+        super().__init__(
             message, line, col, err_type, filename, context
         )
         # Possible rules on this position
@@ -62,4 +62,4 @@ class TextXSyntaxError(TextXError):
 
 class TextXRegistrationError(TextXError):
     def __init__(self, message):
-        super(TextXRegistrationError, self).__init__(message)
+        super().__init__(message)

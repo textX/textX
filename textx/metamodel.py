@@ -208,7 +208,7 @@ class TextXMetaModel(DebugPrinter):
             else:
                 self._tx_model_repository = GlobalModelRepository()
 
-        super(TextXMetaModel, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.model_param_defs = ModelParamDefinitions()
         self.model_param_defs.add("project_root", "the project root path")
@@ -357,14 +357,14 @@ class TextXMetaModel(DebugPrinter):
         current_namespace = self._namespace_stack[-1]
         if "." in current_namespace:
             root_namespace = current_namespace.rsplit(".", 1)[0]
-            import_name = "%s.%s" % (root_namespace, import_name)
+            import_name = f"{root_namespace}.{import_name}"
 
         import_file_name = "%s.tx" % os.path.join(self.root_path, *import_name.split("."))
 
         if import_name not in self.namespaces:
             self._enter_namespace(import_name)
             if self.debug:
-                self.dprint("*** IMPORTING FILE: %s" % import_file_name)
+                self.dprint(f"*** IMPORTING FILE: {import_file_name}")
             metamodel_from_file(import_file_name, metamodel=self)
             self._leave_namespace()
 
@@ -680,7 +680,7 @@ class TextXMetaModel(DebugPrinter):
         """
         self.model_param_defs.check_params("from_str", **kwargs)
 
-        if type(model_str) is not str:
+        if not isinstance(model_str, str):
             raise TextXError("textX accepts only strings.")
 
         if file_name is None:
@@ -806,7 +806,7 @@ class TextXMetaModel(DebugPrinter):
 
     @property
     def _tx_model_param_definitions(self):
-        warnings.warn(
+        warnings.warn(  # noqa: B028
             "_tx_model_param_definitions is deprecated in favor of model_param_defs."
         )
         return self.model_param_defs

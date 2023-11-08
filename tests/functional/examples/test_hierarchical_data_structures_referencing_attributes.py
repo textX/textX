@@ -97,10 +97,9 @@ def test_referencing_attributes():
             if base is None or base.type is None:
                 return Postponed()
             x = get_named_obj_in_list(base.type.vals, attr_ref.obj_name)
-            if index == len(reference.refs) - 1:
-                if not textx_isinstance(x, myattr.cls):
-                    print(x)
-                    return None
+            if index == len(reference.refs) - 1 and not textx_isinstance(x, myattr.cls):
+                print(x)
+                return None
 
             return x
 
@@ -182,7 +181,7 @@ def test_referencing_attributes_with_rrel_all_in_one():
         """
     )
     m = mm.model_from_str(model_text)
-    m.references[-1].ref == m.structs[0].vals[0]  # a.x
+    assert m.references[-1].ref == m.structs[0].vals[0]  # a.x
 
     assert m.references[0].ref.name == "x"
     assert m.references[0].ref == m.structs[0].vals[0]

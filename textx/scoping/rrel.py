@@ -104,7 +104,7 @@ class RRELBase:
 
 class RRELParent(RRELBase):
     def __init__(self, type):
-        super(RRELParent, self).__init__()
+        super().__init__()
         self.type = type
 
     def __repr__(self):
@@ -137,7 +137,7 @@ class RRELParent(RRELBase):
 
 class RRELNavigation(RRELBase):
     def __init__(self, name, consume_name, fixed_name):
-        super(RRELNavigation, self).__init__()
+        super().__init__()
         self.name = name
         self.consume_name = consume_name
         self.fixed_name = fixed_name
@@ -176,14 +176,14 @@ class RRELNavigation(RRELBase):
             obj = get_model(obj)
 
         start = [obj]
-        if not hasattr(obj, "parent"):  # am I a root model node?
-            if self.rrel_expression.importURI:
-                if hasattr(obj, "_tx_model_repository"):
-                    for m in obj._tx_model_repository.local_models:
-                        start.append(m)
-                if obj._tx_metamodel.builtin_models:
-                    for m in obj._tx_metamodel.builtin_models:
-                        start.append(m)
+        # am I a root model node?
+        if not hasattr(obj, "parent") and self.rrel_expression.importURI:
+            if hasattr(obj, "_tx_model_repository"):
+                for m in obj._tx_model_repository.local_models:
+                    start.append(m)
+            if obj._tx_metamodel.builtin_models:
+                for m in obj._tx_metamodel.builtin_models:
+                    start.append(m)
 
         if len(lookup_list) == 0 and self.consume_name:
             return None, lookup_list, matched_path
@@ -242,7 +242,7 @@ class RRELNavigation(RRELBase):
 
 class RRELBrackets(RRELBase):
     def __init__(self, oc):
-        super(RRELBrackets, self).__init__()
+        super().__init__()
         assert isinstance(oc, RRELSequence)
         self.seq = oc
 
@@ -260,15 +260,14 @@ class RRELBrackets(RRELBase):
     ):
         if not allowed(obj, lookup_list, self):  # also adjusts visited objs
             return  # recursion stopper
-        for iobj, ilookup_list, imatched_path in self.seq.get_next_matches(
+        yield from self.seq.get_next_matches(
             obj, lookup_list, allowed, matched_path, first_element
-        ):
-            yield iobj, ilookup_list, imatched_path
+        )
 
 
 class RRELDots(RRELBase):
     def __init__(self, num):
-        super(RRELDots, self).__init__()
+        super().__init__()
         self.num = num
 
     def __repr__(self):
@@ -301,7 +300,7 @@ class RRELDots(RRELBase):
 
 class RRELSequence(RRELBase):
     def __init__(self, paths):
-        super(RRELSequence, self).__init__()
+        super().__init__()
         self.paths = paths
 
     def __repr__(self):
@@ -325,15 +324,13 @@ class RRELSequence(RRELBase):
         if not allowed(obj, lookup_list, self):  # also adjusts visited objs
             return  # recursion stopper
         for ip in self.paths:
-            for iobj, ilookup_list, imatched_path in ip.get_next_matches(
-                obj, lookup_list, allowed, matched_path, first_element
-            ):
-                yield iobj, ilookup_list, imatched_path
+            yield from ip.get_next_matches(
+                obj, lookup_list, allowed, matched_path, first_element)
 
 
 class RRELZeroOrMore(RRELBase):
     def __init__(self, path_element):
-        super(RRELZeroOrMore, self).__init__()
+        super().__init__()
         if not isinstance(path_element, RRELBrackets):
             path_element = RRELBrackets(RRELSequence([RRELPath([path_element])]))
         self.path_element = path_element
@@ -379,10 +376,7 @@ class RRELZeroOrMore(RRELBase):
                     yield iobj, ilookup_list, imatched_path  # found postponed
                     return
                 # yield from
-                for iiobj, iilookup_list, iimatched_path in get_from_zero_or_more(
-                    iobj, ilookup_list, imatched_path
-                ):
-                    yield iiobj, iilookup_list, iimatched_path
+                yield from get_from_zero_or_more(iobj, ilookup_list, imatched_path)
 
         prevent_doubles = set()
         for iobj, ilookup_list, imatched_path in get_from_zero_or_more(
@@ -398,7 +392,7 @@ class RRELZeroOrMore(RRELBase):
 
 class RRELPath(RRELBase):
     def __init__(self, path_elements):
-        super(RRELPath, self).__init__()
+        super().__init__()
         # print("create Path :" + str(path_elements))
         self.path_elements = path_elements
         if self.path_elements[0] == "^":
@@ -439,20 +433,18 @@ class RRELPath(RRELBase):
                 if len(self.path_elements) - 1 == idx:
                     yield iobj, ilookup_list, imatched_path
                 else:
-                    for iiobj, iilookup_list, iimatched_path in intern_get_next_matches(
+                    yield from intern_get_next_matches(
                         iobj,
                         ilookup_list,
                         allowed,
                         imatched_path,
                         first_element=False,
                         idx=idx + 1,
-                    ):
-                        yield iiobj, iilookup_list, iimatched_path
+                    )
 
-        for iobj, ilookup_list, imatched_path in intern_get_next_matches(
+        yield from intern_get_next_matches(
             obj, lookup_list, allowed, matched_path, first_element, 0
-        ):
-            yield iobj, ilookup_list, imatched_path
+        )
 
 
 class RRELExpression:
@@ -614,9 +606,9 @@ def find_object_with_path(obj, lookup_list, rrel_tree, obj_cls=None, split_strin
         ):
             if isinstance(obj_res, Postponed):
                 return obj_res  # Postponed
-            elif len(lookup_list_res) == 0:
-                if obj_cls is None or textx_isinstance(obj_res, obj_cls):
-                    return obj_res, matched_path  # found match
+            elif len(lookup_list_res) == 0 \
+                    and (obj_cls is None or textx_isinstance(obj_res, obj_cls)):
+                return obj_res, matched_path  # found match
     return None  # not found
 
 

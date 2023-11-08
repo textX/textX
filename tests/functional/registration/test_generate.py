@@ -2,6 +2,7 @@
 Tests for `generate` command.
 """
 import os
+from contextlib import suppress
 
 import pytest
 from click.testing import CliRunner
@@ -13,14 +14,12 @@ this_folder = os.path.abspath(os.path.dirname(__file__))
 
 @pytest.fixture
 def model_file():
-    try:
+    with suppress(OSError):
         os.remove(
             os.path.join(
                 this_folder, "projects", "flow_dsl", "tests", "models", "data_flow.pu"
             )
         )
-    except OSError:
-        pass
 
     return os.path.join(
         this_folder, "projects", "flow_dsl", "tests", "models", "data_flow.eflow"

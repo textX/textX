@@ -114,8 +114,8 @@ def language_description(language_name):
         language_descriptions()
     try:
         return languages[language_name]
-    except KeyError:
-        raise TextXRegistrationError(f'Language "{language_name}" not registered.')
+    except KeyError as e:
+        raise TextXRegistrationError(f'Language "{language_name}" not registered.') from e
 
 
 def generator_description(language_name, target_name, any_permitted=False):
@@ -138,12 +138,10 @@ def generator_description(language_name, target_name, any_permitted=False):
                 raise
             generators_for_language = generators["any"]
             return generators_for_language[target_name]
-    except KeyError:
+    except KeyError as e:
         raise TextXRegistrationError(
-            'No generators registered for language "{}" and target "{}".'.format(
-                language_name, target_name
-            )
-        )
+            'No generators registered for language '
+            f'"{language_name}" and target "{target_name}".') from e
 
 
 def generator_for_language_target(language_name, target_name, any_permitted=False):
@@ -268,21 +266,14 @@ def metamodel_for_language(language_name, **kwargs):
         from textx.metamodel import TextXMetaMetaModel, TextXMetaModel
 
         language = language_description(language_name)
-        if isinstance(language.metamodel, TextXMetaModel) or isinstance(
-            language.metamodel, TextXMetaMetaModel
-        ):
+        if isinstance(language.metamodel, (TextXMetaModel, TextXMetaMetaModel)):
             metamodels[language_name] = language.metamodel
         else:
             metamodel = language.metamodel(**kwargs)
-            if not (
-                isinstance(metamodel, TextXMetaModel)
-                or isinstance(metamodel, TextXMetaMetaModel)
-            ):
+            if not (isinstance(metamodel, (TextXMetaModel, TextXMetaMetaModel))):
                 raise TextXRegistrationError(
-                    'Meta-model type for language "{}" is "{}".'.format(
-                        language_name, type(metamodel).__name__
-                    )
-                )
+                    'Meta-model type for language '
+                    f'"{language_name}" is "{metamodel.__class__.__name__}".')
             metamodels[language_name] = metamodel
     return metamodels[language_name]
 

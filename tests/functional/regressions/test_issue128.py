@@ -89,7 +89,7 @@ def test_abstract_alternative_string_match():
             return evaluate(x.expression)
 
         else:
-            assert False, f'Unexpected object "{x}" of type "{type(x)}"'
+            raise AssertionError(f'Unexpected object "{x}" of type "{type(x)}"')
 
     result = evaluate(model)
 

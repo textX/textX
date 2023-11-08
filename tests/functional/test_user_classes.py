@@ -57,17 +57,17 @@ def test_user_class():
     model = mm.model_from_str(modelstr)
     # Test that generic First class is created
     assert type(model).__name__ == "First"
-    assert type(model) is not First
+    assert not isinstance(model, First)
 
     mm = metamodel_from_str(grammar, classes=[First, Second])
     model = mm.model_from_str(modelstr)
     # Test that user class is instantiated
     assert type(model).__name__ == "First"
-    assert type(model) is First
+    assert isinstance(model, First)
     # Check default attributes
-    assert type(model.a) is list
+    assert isinstance(model.a, list)
     assert model.a == []
-    assert type(model.b) is bool
+    assert isinstance(model.b, bool)
     assert model.b is False
 
     # Check additional attributes
@@ -76,19 +76,19 @@ def test_user_class():
 
 class Thing:
     def __init__(self, **kwargs):
-        for k in kwargs.keys():
+        for k in kwargs:
             setattr(self, k, kwargs[k])
 
 
 class AThing:
     def __init__(self, **kwargs):
-        for k in kwargs.keys():
+        for k in kwargs:
             setattr(self, k, kwargs[k])
 
 
 class BThing:
     def __init__(self, **kwargs):
-        for k in kwargs.keys():
+        for k in kwargs:
             setattr(self, k, kwargs[k])
 
 

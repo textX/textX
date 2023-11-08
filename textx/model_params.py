@@ -92,6 +92,6 @@ class ModelParamDefinitions(Mapping):
         self.store[name] = ModelParamDefinition(name, description)
 
     def check_params(self, source, **kwargs):
-        for k in kwargs.keys():
-            if k not in self.store.keys():
+        for k in kwargs:
+            if k not in self.store:
                 raise TextXError(f"unknown parameter {k} ({source})")

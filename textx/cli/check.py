@@ -1,10 +1,10 @@
 try:
     import click
-except ImportError:
+except ImportError as e:
     raise Exception(
         "textX must be installed with CLI dependencies to use "
         "textx command.\npip install textX[cli]"
-    )
+    ) from e
 import os
 
 from textx import (
@@ -80,7 +80,7 @@ def check(textx):
                 click.echo(f"{os.path.abspath(model_file)}: OK.")
 
         except TextXRegistrationError as e:
-            raise click.ClickException(e.message)
+            raise click.ClickException(e.message) from e
 
         except TextXError as e:
-            raise click.ClickException(str(e))
+            raise click.ClickException(str(e)) from e

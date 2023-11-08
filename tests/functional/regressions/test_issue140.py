@@ -8,7 +8,7 @@ from textx import clear_language_registrations, metamodel_from_file, register_la
 
 class C1:
     def __init__(self, **kwargs):
-        for k in kwargs.keys():
+        for k in kwargs:
             setattr(self, k, kwargs[k])
 
 

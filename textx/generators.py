@@ -39,11 +39,11 @@ def gen_file(
     """
     try:
         import click
-    except ImportError:
+    except ImportError as e:
         raise Exception(
             "textX must be installed with CLI dependencies to use "
             "textx command.\npip install textX[cli]"
-        )
+        ) from e
     if overwrite or not os.path.exists(output_file):
         click.echo(f"-> {output_file}")
         gen_callback()

@@ -148,7 +148,7 @@ def resolve_model_path(obj, dot_separated_name, follow_named_element_in_lists=Fa
 
     if obj is None or type(obj) is Postponed:
         return obj
-    elif type(obj) is list:
+    elif isinstance(obj, list):
         if follow_named_element_in_lists:
             next_obj = get_named_obj_in_list(obj, names[0])
         else:
