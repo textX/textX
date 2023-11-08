@@ -94,6 +94,7 @@ Ready to contribute? Here's how to set up `textX` for local development.
         $ python -m venv venv
         $ source venv/bin/activate
         $ ./install-dev.sh 
+        $ ./install-test.sh 
         
     Previous stuff is needed only the first time. To continue working on textX
     later you just do:
@@ -110,8 +111,7 @@ Ready to contribute? Here's how to set up `textX` for local development.
     
     To verify that everything is setup properly run tests:
     
-        $ flake8
-        $ pytest tests/functional/
+        $ ./runtests.sh
 
 4. Create a branch for local development::
 
@@ -119,10 +119,10 @@ Ready to contribute? Here's how to set up `textX` for local development.
 
    Now you can make your changes locally.
 
-5. When you're done making changes, check that your changes pass flake8, the
+5. When you're done making changes, check that your changes pass linter, the
    tests, and have a look at the coverage:
    
-        $ flake8
+        $ ruff check textx tests/functional
         $ pytest tests/functional/
         $ coverage run --source textx -m pytest tests/functional
         $ coverage report
@@ -151,7 +151,7 @@ Before you submit a pull request, check that it meets these guidelines:
 
 1. The pull request should include tests.
 2. If the pull request adds/changes functionality, the docs should be updated. 
-3. The pull request should work for Python 3.6+. Check
+3. The pull request should work for Python 3.8+. Check
    https://github.com/textX/textX/actions and make sure that the tests pass for
    all supported Python versions.
 
