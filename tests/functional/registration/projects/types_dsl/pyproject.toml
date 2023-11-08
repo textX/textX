@@ -1,0 +1,10 @@
+[project]
+name = "types_dsl"
+version = "1.0.0"
+
+dependencies = [
+    "textX"
+]
+
+[project.entry-points.textx_languages]
+types_dsl = "types_dsl:types_dsl"

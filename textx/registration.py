@@ -3,7 +3,13 @@ Languages and generators registration and discovery API.
 """
 from __future__ import unicode_literals
 import fnmatch
-import pkg_resources
+import sys
+
+if sys.version_info < (3, 8):
+    from importlib_metadata import entry_points
+else:
+    from importlib.metadata import entry_points
+
 
 from textx.exceptions import TextXRegistrationError
 
@@ -20,10 +26,10 @@ class LanguageDesc(object):
             or the metamodel itself (if a single specific instance is
             desired)
         project_name (str): Read-only attribute available on registrations from
-            `setup.py`. Keeps the Python project name of the project that
+            `pyproject.toml`. Keeps the Python project name of the project that
             registered this language.
         project_version (str): Read-only attribute available on registrations
-            from `setup.py`. Keeps the Python project name of the project that
+            from `pyproject.toml`. Keeps the Python project name of the project that
             registered this language.
     """
 
@@ -50,10 +56,10 @@ class GeneratorDesc(object):
                               def generator(metamodel, model, output_path,
                                             overwrite, debug, **custom_args)
         project_name (str): Read-only attribute available on registrations from
-            `setup.py`. Keeps the Python project name of the project that
+            `pyproject.toml`. Keeps the Python project name of the project that
             registered this generator.
         project_version (str): Read-only attribute available on registrations
-            from `setup.py`. Keeps the Python project name of the project that
+            from `pyproject.toml`. Keeps the Python project name of the project that
             registered this language.
     """
     def __init__(self, language, target, description='', generator=None):
@@ -77,10 +83,9 @@ def language_descriptions():
     global languages
     if languages is None:
         languages = {}
-        for language in pkg_resources.WorkingSet().iter_entry_points(
-                group='textx_languages'):
+        for language in entry_points(group='textx_languages'):
             register_language_with_project(language.load(),
-                                           language.dist.project_name,
+                                           language.dist.name,
                                            language.dist.version)
     return languages
 
@@ -92,10 +97,9 @@ def generator_descriptions():
     global generators
     if generators is None:
         generators = {}
-        for generator in pkg_resources.WorkingSet().iter_entry_points(
-                group='textx_generators'):
+        for generator in entry_points(group='textx_generators'):
             register_generator_with_project(generator.load(),
-                                            generator.dist.project_name,
+                                            generator.dist.name,
                                             generator.dist.version)
     return generators
 

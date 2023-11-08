@@ -1,0 +1,11 @@
+[project]
+name = "data_dsl"
+version = "1.0.0"
+
+dependencies = [
+    "textX",
+    "types_dsl"
+]
+
+[project.entry-points.textx_languages]
+data_dsl = "data_dsl:data_dsl"

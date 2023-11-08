@@ -1,7 +1,7 @@
 """
 Test `version` command.
 """
-from pkg_resources import parse_version
+from packaging.version import parse
 from textx.cli import textx
 from click.testing import CliRunner
 
@@ -12,5 +12,5 @@ def test_version_command():
     assert result.exit_code == 0
     assert result.output.startswith('textX')
     version_text = result.output.split()[-1]
-    version = parse_version(version_text)
+    version = parse(version_text)
     assert version.__class__.__name__ == 'Version'

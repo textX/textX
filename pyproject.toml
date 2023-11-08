@@ -1,0 +1,94 @@
+[project]
+name = "textX"
+version = "3.2.0.dev0"
+description = "Meta-language for DSL implementation inspired by Xtext"
+authors = [
+    {name = "Igor R. Dejanović", email = "igor.dejanovic@gmail.com"},
+    {name = "Pierre Bayerl", email = "noemail@nowhere.com"},
+]
+maintainers = [
+    {name = "Igor R. Dejanović", email = "igor.dejanovic@gmail.com"},
+    {name = "Pierre Bayerl", email = "noemail@nowhere.com"},
+]
+readme = "README.md"
+license = {text = "MIT"}
+keywords = ["parser", "meta-language", "meta-model", "language", "DSL"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: Science/Research",
+    "Topic :: Software Development :: Interpreters",
+    "Topic :: Software Development :: Compilers",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+
+requires-python = ">=3.6, <3.12"
+dependencies = [
+    "Arpeggio >= 2.0.0"
+]
+
+[project.urls]
+Homepage = "https://textx.github.io/textX/"
+Repository = "https://github.com/textX/textX/"
+Changelog = "https://github.com/textX/textX/blob/master/CHANGELOG.md"
+
+[build-system]
+build-backend = "flit_core.buildapi"
+requires = ["flit_core >=3.8.0,<4"]
+
+[tool.flit.sdist]
+include = ["textx/", "docs/", "examples/"]
+exclude = [".*", "build", "dist"]
+
+
+[project.optional-dependencies]
+cli = [
+    "click >=7.0, <8.0"
+]
+
+dev = [
+    "textX-dev",
+    "click >=7.0, <8.0",
+    "setuptools-scm",
+    "mkdocs",
+    "mike",
+]
+
+test = [
+    "click >=7.0, <8.0",
+    "flake8",
+    "attrs",
+    "jinja2",
+    "coverage",
+    "coveralls",
+    "pytest",
+    "html5lib",
+]
+
+[project.scripts]
+textx = "textx.cli:textx"
+
+[project.entry-points.textx_commands]
+version = "textx.cli.version:version"
+list_languages = "textx.cli.discover:list_languages"
+list_generators = "textx.cli.discover:list_generators"
+generate = "textx.cli.generate:generate"
+check = "textx.cli.check:check"
+
+[project.entry-points.textx_generators]
+textx_dot = "textx.generators:metamodel_generate_dot"
+any_dot = "textx.generators:model_generate_dot"
+textx_plantuml = "textx.generators:metamodel_generate_plantuml"
+
+[project.entry-points.textx_languages]
+textx = "textx.metamodel:textx"

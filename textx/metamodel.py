@@ -788,7 +788,7 @@ class TextXMetaMetaModel(object):
         return self.metamodel.model_from_file(file_name, debug=debug, **kwargs)
 
 
-# Register built-in textX language. See setup.py entry_points
+# Register built-in textX language. See pyproject.toml entry-points
 textx = LanguageDesc(name='textX',
                      pattern='*.tx',
                      description='A meta-language for language definition',

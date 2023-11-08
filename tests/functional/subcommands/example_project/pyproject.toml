@@ -1,0 +1,11 @@
+[project]
+name = "textX-subcommand-test"
+version = "1.0.0"
+
+dependencies = [
+    "textX"
+]
+
+[project.entry-points.textx_commands]
+testcommand = "textx_subcommand_test.cli:testcommand"
+testgroup = "textx_subcommand_test.cli:create_testgroup"

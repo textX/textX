@@ -19,4 +19,9 @@ from textx.registration import (LanguageDesc, GeneratorDesc,
                                 generator_for_language_target,
                                 generator, language)
 
-__version__ = "3.2.0.dev"
+try:
+    from importlib.metadata import version
+except ModuleNotFoundError:
+    from importlib_metadata import version
+
+__version__ = version("textx")

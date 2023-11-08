@@ -1,0 +1,10 @@
+[project]
+name = "flow_dsl"
+version = "1.0.0"
+
+dependencies = [
+    "textX"
+]
+
+[project.entry-points.textx_languages]
+flow_dsl = "flow_dsl:flow_dsl"

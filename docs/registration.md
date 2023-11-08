@@ -4,11 +4,12 @@ textX has an API for registration and discovery of languages and code
 generators. This enable developing languages and generators for others to use by
 simply installing from PyPI using `pip`.
 
-textX utilizes `pkg_resources` module found in `setuptools` and its concept of
-*extension point* to declaratively specify the registration of language or
-generator. Each Python project/package may in its `setup.py` declare this
-extensions. Once a Python package which declare the extension is installed in
-the environment, the extension can be dynamically found.
+textX utilizes a concept of [extension
+point](https://packaging.python.org/en/latest/specifications/entry-points/) to
+declaratively specify the registration of language or generator. Each Python
+project/package may in its `pyproject.toml` declare this extensions. Once a
+Python package which declare the extension is installed in the environment, the
+extension can be dynamically found.
 
 To make it easier to find languages and generators on PyPI we recommend the
 following naming scheme for the Python packages that provide a single language
@@ -60,25 +61,12 @@ entity_lang = LanguageDesc('entity',
 ```
 
 The next step is to make this language discoverable by textX. To do this we have
-to register our `entity_lang` object in the `setup.py` entry point named
+to register our `entity_lang` object in the `pyproject.toml` entry point named
 `textx_languages`.
 
-```python
-setup(
-    ...
-    entry_points={
-        'textx_languages': [
-            'entity = entity.metamodel:entity_lang',
-        ],
-    },
-```
-
-Alternatively, you can use `setup.cfg` which is a preferred way:
-
-```conf
-[options.entry_points]
-textx_languages =
-    entity = entity.metamodel:entity_lang
+```toml
+[project.entry-points.textx_languages]
+entity = "entity.metamodel:entity_lang"
 ```
 
 In this example `entity.metamodel` is the Python module where `entity_lang` is defined.
@@ -106,7 +94,7 @@ def entity_lang():
     # E.g. call to metamodel_from_file
 ```
 
-The `setup.py` entry point would be the same.
+The `pyproject.toml` entry point registration would be the same.
 
 
 !!! warning
@@ -200,24 +188,19 @@ entity_java_generator = GeneratorDesc(
 ```
 
 The next step is to make this generator discoverable by textX. To do this we
-have to register our `entity_java_generator` object in the `setup.py` entry
-point named `textx_generators`.
+have to register our `entity_java_generator` object in the `pyproject.toml`
+entry point named `textx_generators`.
 
-```python
-setup(
-    ...
-    entry_points={
-        'textx_generators' : [
-            'entity_java = entity.generators:entity_java_generator,
-        ],
-    },
+```toml
+[project.entry-points.textx_generators]
+entity_java = "entity.generators:entity_java_generator"
 ```
 
 !!! tip
     
     You can also register generator programmatically using [registration API].
     But if you want your generator to be available to `textx` command you should
-    use `setup.py`.
+    use `pyproject.toml`.
     
     
 
@@ -243,7 +226,7 @@ def entity_java_generator(metamodel, model, output_path, overwrite, debug, **cus
     # Some code that perform generation
 ```
 
-The `setup.py` would remain the same.
+The `pyproject.toml` would remain the same.
 
 
 Here is an example of the generator of `dot` files from any textX model. This is
@@ -412,7 +395,8 @@ All classes and functions documented here are directly importable from `textx` m
   instance of `LanguageDesc` as the first parameter or providing separate
   parameters
 - `clear_language_registrations()` - deletes all languages registered
-  programmatically. Note: languages registered through `setup.py` won't be removed
+  programmatically. Note: languages registered through `pyproject.toml` won't be
+  removed
 - `metamodel_for_language(language_name, **kwargs)` - returns a meta-model for
   the given language name. `kwargs` are additional keyword arguments passed to
   meta-model factory callable, similarly to `metamodel_from_str/file`.
@@ -468,8 +452,8 @@ All classes and functions documented here are directly importable from `textx` m
   instance of `GeneratorDesc` as the first parameter or providing separate
   parameters
 - `clear_generator_registrations` - deletes all generators registered
-  programmatically. Note: generators registered through `setup.py` won't be
-  removed
+  programmatically. Note: generators registered through `pyproject.toml` won't
+  be removed
 - `generator` - a decorator used for [generator
   registration](#registering-a-new-generator)
 

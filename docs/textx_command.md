@@ -29,7 +29,8 @@ textX registers several sub-commands:
     textX itself and the commands provided by third-party Python packages.
 
     Please, see [Extending textx command](#extending-textx-command) section
-    bellow on how to define your own sub-commands investigate `setup.py` of textX project. 
+    bellow on how to define your own sub-commands investigate `pyproject.toml` 
+    of the textX project. 
     
     Some of development commands/tools are registered by
     [textX-dev](https://github.com/textX/textX-dev) project which is an optional dev
@@ -98,9 +99,10 @@ Options:
 ## Extending textx command
 
 `textx` command can be extended from other installed Python packages using
-[pkg_resources](https://setuptools.readthedocs.io/en/latest/pkg_resources.html)
-extension points. Using command extension one can add new commands and command
-groups to the `textx` command.
+[entry
+points](https://packaging.python.org/en/latest/specifications/entry-points/).
+Using command extension one can add new commands and command groups to the
+`textx` command.
 
 `textx` uses [click](https://github.com/pallets/click/) library for CLI commands
 processing. That makes really easy to create new commands and command groups.
@@ -127,28 +129,14 @@ def testcommand(textx):
       click.echo("Hello sub-command test!")
 ```
 
-Register new command in your project's `setup.py` file under the entry point
-`textx_commands` (we are assuming that `testcommand` function is in package
-`cli`).
+Register new command in your project's `pyproject.toml` file under the entry
+point `textx_commands` (we are assuming that `testcommand` function is in
+package `cli`).
 
-```python
-setup(
-    name='MyProject',
-    packages=["cli"],
-    entry_points={
-        'textx_commands': [
-            'testcommand = cli:testcommand'
-        ],
-    }
-)
+```toml
+[project.entry-points.textx_commands]
+testcommand = "cli:testcommand"
 ```
-
-!!! tip
-
-    If you prefer a more declarative approach you can use `setup.cfg` instead of
-    `setup.py` to configure your project and register textx commands. For an
-    idea see how [textX project registers its commands](https://github.com/textX/textX/blob/master/setup.cfg).
-
 
 If you install now your project in the same Python environment where `textX` is
 installed you will see that `textx` command now has your command registered.
@@ -210,20 +198,11 @@ In this example we created a new group called `testgroup`. We use that group in
 the rest of the code to decorate new commands belonging to the group.
 
 As usual, we have to register our function in the extension point
-`textx_commands`:
+`textx_commands` inside `pyproject.toml`:
 
-```python
-setup(
-    name='MyProject',
-    packages=["cli"],
-    entry_points={
-        ...
-        'textx_commands': [
-            'testgroup = cli:create_testgroup'
-        ]
-    }
-    }
-)
+```toml
+[project.entry-points.textx_commands]
+testgroup = "cli:create_testgroup"
 ```
 
 If `MyProject` is installed in the environment where `textX` is installed you'll

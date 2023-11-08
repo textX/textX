@@ -1,0 +1,11 @@
+[project]
+name = "flow_codegen"
+version = "1.0.0"
+
+dependencies = [
+    "textX",
+    "click"
+]
+
+[project.entry-points.textx_generators]
+flow_dsl_plantuml = "flow_codegen.generators:flow_pu"

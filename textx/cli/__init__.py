@@ -3,7 +3,12 @@ try:
 except ImportError:
     raise Exception('textX must be installed with CLI dependencies to use '
                     'textx command.\npip install textX[cli]')
-import pkg_resources
+import sys
+
+if sys.version_info < (3, 8):
+    from importlib_metadata import entry_points
+else:
+    from importlib.metadata import entry_points
 
 
 @click.group()
@@ -23,7 +28,7 @@ def register_textx_subcommands():
     level click `textx` command and register additional commands(s) on it.
     """
     global textx
-    for subcommand in pkg_resources.iter_entry_points(group='textx_commands'):
+    for subcommand in entry_points(group='textx_commands'):
         subcommand.load()(textx)
 
 
