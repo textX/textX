@@ -3,7 +3,8 @@ An example how to generate java code from textX model using jinja2
 template engine (http://jinja.pocoo.org/docs/dev/)
 """
 from os import mkdir
-from os.path import exists, dirname, join
+from os.path import dirname, exists, join
+
 import jinja2
 from entity_test import get_entity_mm
 

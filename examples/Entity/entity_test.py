@@ -1,14 +1,13 @@
-from __future__ import unicode_literals
 import os
 from os.path import dirname, join
+
 from textx import metamodel_from_file
 from textx.export import metamodel_export, model_export
-
 
 this_folder = dirname(__file__)
 
 
-class SimpleType(object):
+class SimpleType:
     """
     We are registering user SimpleType class to support
     simple types (integer, string) in our entity models

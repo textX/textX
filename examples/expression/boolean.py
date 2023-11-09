@@ -1,4 +1,5 @@
-from os.path import join, dirname
+from os.path import dirname, join
+
 from textx import metamodel_from_str
 from textx.export import metamodel_export, model_export
 
@@ -15,7 +16,7 @@ Operand: op=BOOL | op=ID | ( '(' op=Or ')' );
 namespace = {}
 
 
-class Bool(object):
+class Bool:
     def __init__(self, **kwargs):
         self.assignments = kwargs.pop('assignments')
         self.expression = kwargs.pop('expression')
@@ -28,7 +29,7 @@ class Bool(object):
         return self.expression.value
 
 
-class ExpressionElement(object):
+class ExpressionElement:
     def __init__(self, **kwargs):
 
         # textX will pass in parent attribute used for parent-child
@@ -38,7 +39,7 @@ class ExpressionElement(object):
         # We have 'op' attribute in all grammar rules
         self.op = kwargs['op']
 
-        super(ExpressionElement, self).__init__()
+        super().__init__()
 
 
 class Or(ExpressionElement):
@@ -62,7 +63,7 @@ class And(ExpressionElement):
 class Not(ExpressionElement):
     def __init__(self, **kwargs):
         self._not = kwargs.pop('_not')
-        super(Not, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
     @property
     def value(self):
@@ -74,13 +75,13 @@ class Operand(ExpressionElement):
     @property
     def value(self):
         op = self.op
-        if type(op) is bool:
+        if isinstance(op, bool):
             return op
         elif op in namespace:
             return namespace[op]
         else:
-            raise Exception('Unknown variable "{}" at position {}'
-                            .format(op, self._tx_position))
+            raise Exception(f'Unknown variable "{op}" at position {self._tx_position}'
+                            )
 
 
 def main(debug=False):

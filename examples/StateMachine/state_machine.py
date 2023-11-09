@@ -1,9 +1,10 @@
 import sys
 from os.path import dirname, join
+
 from textx import metamodel_from_file
 
 
-class StateMachine(object):
+class StateMachine:
     """
     StateMachine model interpreter.
     """
@@ -65,7 +66,7 @@ class StateMachine(object):
 if __name__ == '__main__':
     this_folder = dirname(__file__)
     if len(sys.argv) != 2:
-        print("Usage: python {} <model>".format(sys.argv[0]))
+        print(f"Usage: python {sys.argv[0]} <model>")
     else:
         meta_model = metamodel_from_file(join(this_folder, 'state_machine.tx'))
         model = meta_model.model_from_file(sys.argv[1])

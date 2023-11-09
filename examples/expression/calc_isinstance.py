@@ -4,9 +4,9 @@ This is a variant of calc example using textx_isinstance() to inspect object
 types.
 """
 
-from os.path import join, dirname
-from textx import metamodel_from_str
-from textx import textx_isinstance
+from os.path import dirname, join
+
+from textx import metamodel_from_str, textx_isinstance
 from textx.export import metamodel_export, model_export
 
 grammar = '''
@@ -52,8 +52,8 @@ def main(debug=False):
         return textx_isinstance(x, calc_mm[rule])
 
     def assertIs(x, rule):
-        assert _is(x, rule), 'Unexpected object "{}" to rule "{}"'\
-            .format(x, rule)
+        assert _is(x, rule), f'Unexpected object "{x}" to rule "{rule}"'\
+            
 
     def evaluate(x):
 
@@ -107,8 +107,8 @@ def main(debug=False):
             return evaluate(x.expression)
 
         else:
-            assert False, 'Unexpected object "{}" of type "{}"'\
-                .format(x, type(x))
+            raise AssertionError(f'Unexpected object "{x}" of type "{type(x)}"')
+                
 
     result = evaluate(model)
 

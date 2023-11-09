@@ -1,6 +1,6 @@
 def main(debug=False):
 
-    from textx import metamodel_from_str, get_children_of_type
+    from textx import get_children_of_type, metamodel_from_str
 
     grammar = """
     Model: commands*=DrawCommand;
@@ -16,14 +16,14 @@ def main(debug=False):
 
     # We will provide our class for Point.
     # Classes for other rules will be dynamically generated.
-    class Point(object):
+    class Point:
         def __init__(self, parent, x, y):
             self.parent = parent
             self.x = x
             self.y = y
 
         def __str__(self):
-            return "{},{}".format(self.x, self.y)
+            return f"{self.x},{self.y}"
 
         def __add__(self, other):
             return Point(self.parent, self.x + other.x, self.y + other.y)
@@ -77,7 +77,7 @@ def main(debug=False):
     # Collect all points starting from the root of the model
     points = get_children_of_type("Point", model)
     for point in points:
-        print('Point: {}'.format(point))
+        print(f'Point: {point}')
 
     # Output:
     # Point: 5,10

@@ -1,9 +1,10 @@
-from textx import metamodel_from_file
-from textx.export import metamodel_export, PlantUmlRenderer
 import fnmatch
 import os
 import sys
-from os.path import sep, join, dirname, exists
+from os.path import dirname, exists, join, sep
+
+from textx import metamodel_from_file
+from textx.export import PlantUmlRenderer, metamodel_export
 
 
 def main(path=None, debug=False, reportfilename=None):
@@ -14,14 +15,14 @@ def main(path=None, debug=False, reportfilename=None):
 
     print("render_all_grammars.py - example program")
     matches = []
-    for root, dirnames, filenames in os.walk(path):
+    for root, _dirnames, filenames in os.walk(path):
         if 'textx_textx' in root:
             # skip semantically invalid grammars
             continue
         for filename in fnmatch.filter(filenames, '*.tx'):
             matches.append((root, filename))
 
-    with open(reportfilename, "wt") as md:
+    with open(reportfilename, "w") as md:
         md.write("# All grammars (*.tx)\n")
         for m in matches:
             inname = join(m[0], m[1])
@@ -44,13 +45,13 @@ def main(path=None, debug=False, reportfilename=None):
             metamodel_export(mm, dest_dot)
             metamodel_export(mm, dest_pu, renderer=PlantUmlRenderer())
 
-            md.write("## {}\n".format(m[1]))
-            md.write(" * source: {}/{}\n".format(m[0], m[1]))
-            md.write(" * basename: {}\n".format(outfname_base))
+            md.write(f"## {m[1]}\n")
+            md.write(f" * source: {m[0]}/{m[1]}\n")
+            md.write(f" * basename: {outfname_base}\n")
             md.write('\n')
-            with open(inname, "rt") as gr:
-                for l in gr:
-                    md.write("\t\t" + l)
+            with open(inname) as gr:
+                for i in gr:
+                    md.write("\t\t" + i)
             md.write('\n')
             rel_dest_dot_png = os.path.relpath(
                 dest_dot_png, dirname(reportfilename))
@@ -66,7 +67,7 @@ def main(path=None, debug=False, reportfilename=None):
     print("how to process and display the output:")
     print("  dot -O -Tpng dot/*.dot")
     print("  plantuml pu/*.pu")
-    print("open the generated {}".format(reportfilename))
+    print(f"open the generated {reportfilename}")
 
 
 if __name__ == "__main__":

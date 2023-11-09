@@ -1,4 +1,5 @@
 from os.path import dirname, join
+
 from textx import metamodel_from_file
 
 
@@ -7,8 +8,8 @@ def callgraph_nomemoization():
 
     # Small file
     this_folder = dirname(__file__)
-    model = mm.model_from_file(join(this_folder,
-                                    'test_inputs', 'LightSwitch.rpy'))
+    mm.model_from_file(join(this_folder,
+                            'test_inputs', 'LightSwitch.rpy'))
 
 
 if __name__ == '__main__':

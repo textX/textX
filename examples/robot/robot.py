@@ -1,4 +1,5 @@
-from os.path import join, dirname
+from os.path import dirname, join
+
 from textx import metamodel_from_file
 from textx.export import metamodel_export, model_export
 
@@ -14,7 +15,7 @@ def move_command_processor(move_cmd):
         move_cmd.steps = 1
 
 
-class Robot(object):
+class Robot:
 
     def __init__(self):
         # Initial position is (0,0)

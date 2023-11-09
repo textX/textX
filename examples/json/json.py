@@ -1,4 +1,5 @@
-from os.path import join, dirname
+from os.path import dirname, join
+
 from textx import metamodel_from_file
 from textx.export import metamodel_export, model_export
 

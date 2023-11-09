@@ -1,5 +1,7 @@
 from os.path import dirname, join
+
 from memory_profiler import profile
+
 from textx import metamodel_from_file
 
 
@@ -9,12 +11,12 @@ def memoization():
 
     # Small file
     this_folder = dirname(__file__)
-    model = mm.model_from_file(join(this_folder,
-                                    'test_inputs', 'LightSwitch.rpy'))
+    mm.model_from_file(join(this_folder,
+                            'test_inputs', 'LightSwitch.rpy'))
 
     # Large file
-    model2 = mm.model_from_file(join(this_folder,
-                                     'test_inputs', 'LightSwitchDouble.rpy'))
+    mm.model_from_file(join(this_folder,
+                            'test_inputs', 'LightSwitchDouble.rpy'))
 
 
 if __name__ == '__main__':
