@@ -19,8 +19,21 @@ please take a look at related PRs and issues and see if the change affects you.
 
 - Removed word boundary from INT rule regex. Thanks @NevenaAl for reporting the
   issue and providing the test ([401]).
+  
+### Changed
+- **(BIC)** Removed Python support for 3.6 and 3.7. The minimal supported version is 3.8.
+- Migrated to pyproject.toml for project configuration.
+- Migrated to importlib for language/generator registration/discovery as
+  setuptools pkg_resources is deprecated and unsupported from Python 3.12. See
+  #411.
+- Use [ruff] instead of flake8 for linting. ruff can also be used for code
+  formating.
+- Relaxed dependency for click to accept 8.x. See #414.
+- Use [flit] for package building and publishing.
 
  [#401]: https://github.com/textX/textX/pull/401
+ [ruff]: https://github.com/astral-sh/ruff
+ [flit]: https://flit.pypa.io/
 
 
 ## [3.1.1] (released: 2023-02-10)
