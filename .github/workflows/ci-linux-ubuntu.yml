@@ -32,9 +32,11 @@ jobs:
     - name: Run unit tests
       run: |
         ./runtests.sh
-    - name: Coveralls
+    - name: Upload coverage data to coveralls.io
       env:
         COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        COVERALLS_FLAG_NAME: ${{ matrix.python-version }}
+        COVERALLS_PARALLEL: true
       run: |
-        coveralls
+        coveralls --service=github
