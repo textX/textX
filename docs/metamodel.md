@@ -53,7 +53,7 @@ represent.
     ;
     '''
 
-    class Entity(object):
+    class Entity:
       def __init__(self, parent, name, attributes):
         self.parent = parent
         self.name = name
@@ -222,7 +222,7 @@ Let's provide `integer` and `string` Entities to our `Entity` meta-model in
 order to simplify the model creation so that the users can use the names of
 these two entities as the `Attribute` types.
 
-    class Entity(object):
+    class Entity:
         def __init__(self, parent, name, attributes):
             self.parent = parent
             self.name = name

@@ -279,7 +279,7 @@ command.
 Lets imagine that we have a robot that understands our language. In your
 `robot.py` file add:
 
-    class Robot(object):
+    class Robot:
 
         def __init__(self):
             # Initial position is (0,0)

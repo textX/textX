@@ -47,7 +47,7 @@ Point: x=INT ',' y=INT;
 
 # We will provide our class for Point.
 # Classes for other rules will be dynamically generated.
-class Point(object):
+class Point:
     def __init__(self, parent, x, y):
         self.parent = parent
         self.x = x

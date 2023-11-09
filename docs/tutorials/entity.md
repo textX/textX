@@ -178,7 +178,7 @@ supplied ones. So, we can create our class `SimpleType` and register that class
 during meta-model instantiation together with two of its instances (`integer` and
 `string`).
 
-    class SimpleType(object):
+    class SimpleType:
       def __init__(self, parent, name):  # remember to include parent param.
         self.parent = parent
         self.name = name
@@ -278,7 +278,7 @@ the entities from our model and generate a Java file for each entity:
     this_folder = dirname(__file__)
 
 
-    class SimpleType(object):
+    class SimpleType:
         def __init__(self, parent, name):
             self.parent = parent
             self.name = name
