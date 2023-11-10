@@ -2,13 +2,11 @@
 Management of parameters passed to model_from_str or model_from_file.
 """
 
-import sys
 from collections import namedtuple
+from collections.abc import Mapping
 from functools import reduce
 
 from textx.exceptions import TextXError
-
-from collections.abc import Mapping
 
 
 class ModelParams(Mapping):
