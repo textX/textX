@@ -1,11 +1,16 @@
 [project]
-name = "data_dsl"
+name = "data-dsl"
+description = "Data DSL"
 version = "1.0.0"
 
 dependencies = [
     "textX",
     "types_dsl"
 ]
+
+[build-system]
+build-backend = "flit_core.buildapi"
+requires = ["flit_core >=3.8.0,<4"]
 
 [project.entry-points.textx_languages]
 data_dsl = "data_dsl:data_dsl"
