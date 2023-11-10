@@ -8,10 +8,7 @@ from functools import reduce
 
 from textx.exceptions import TextXError
 
-if sys.version < "3":
-    from collections.abc import Mapping
-else:
-    from collections.abc import Mapping
+from collections.abc import Mapping
 
 
 class ModelParams(Mapping):
