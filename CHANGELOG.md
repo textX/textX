@@ -38,10 +38,10 @@ please take a look at related PRs and issues and see if the change affects you.
   reporting the issue. See ([416]).
 - Use [flit] for package building and publishing.
 
-[#401]: https://github.com/textX/textX/pull/401
-[#416]: https://github.com/textX/textX/pull/416
-[#411]: https://github.com/textX/textX/issues/411
-[#414]: https://github.com/textX/textX/issues/414
+[401]: https://github.com/textX/textX/pull/401
+[416]: https://github.com/textX/textX/pull/416
+[411]: https://github.com/textX/textX/issues/411
+[414]: https://github.com/textX/textX/issues/414
 [ruff]: https://github.com/astral-sh/ruff
 [flit]: https://flit.pypa.io/
 
