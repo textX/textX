@@ -12,8 +12,10 @@ Backward incompatible changes are marked with **(BIC)**. These changes are the
 reason for the major version increase so when upgrading between major versions
 please take a look at related PRs and issues and see if the change affects you.
 
-
 ## [Unreleased]
+
+
+## [4.0.0] (released: 2023-11-10)
 
 ### Fixed
 
@@ -21,20 +23,23 @@ please take a look at related PRs and issues and see if the change affects you.
   issue and providing the test ([401]).
   
 ### Changed
-- **(BIC)** Removed Python support for 3.6 and 3.7. The minimal supported version is 3.8.
-- Migrated to pyproject.toml for project configuration.
+- **(BIC)** Removed Python support for 3.6 and 3.7. The minimal supported
+  version is 3.8.
+- Migrated to pyproject.toml for project configuration. See ([416]).
 - Migrated to importlib for language/generator registration/discovery as
   setuptools pkg_resources is deprecated and unsupported from Python 3.12. See
-  [411]. Thanks @EmilyBourne and @nchammas for reporting.
+  [411]. Thanks @EmilyBourne and @nchammas for reporting. See ([416]).
 - **(BIC)** Added dependency to `importlib-metadata` backward compatibility
-  package for Python versions < 3.10. If Python is >=3.10 this library is not used.
+  package for Python versions < 3.10. If Python is >=3.10 this library is not
+  used. See ([416]).
 - Use [ruff] instead of flake8 for linting. ruff can also be used for code
-  formating.
+  formating. See ([416]).
 - Relaxed dependency for click to accept 8.x. See [414]. Thanks @RootMeanSqr for
-  reporting the issue.
+  reporting the issue. See ([416]).
 - Use [flit] for package building and publishing.
 
 [#401]: https://github.com/textX/textX/pull/401
+[#416]: https://github.com/textX/textX/pull/416
 [#411]: https://github.com/textX/textX/issues/411
 [#414]: https://github.com/textX/textX/issues/414
 [ruff]: https://github.com/astral-sh/ruff
@@ -699,7 +704,8 @@ please take a look at related PRs and issues and see if the change affects you.
 [#92]: https://github.com/textX/textX/pull/92
 [#40]: https://github.com/textX/textX/issues/40
 
-[Unreleased]: https://github.com/textX/textX/compare/3.1.1...HEAD
+[Unreleased]: https://github.com/textX/textX/compare/4.0.0...HEAD
+[4.0.0]: https://github.com/textX/textX/compare/3.1.1...4.0.0
 [3.1.1]: https://github.com/textX/textX/compare/3.1.0...3.1.1
 [3.1.0]: https://github.com/textX/textX/compare/3.0.0...3.1.0
 [3.0.0]: https://github.com/textX/textX/compare/2.3.0...3.0.0
