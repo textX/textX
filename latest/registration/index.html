@@ -8,7 +8,7 @@
     <title>Registration/Discovery - textX</title>
     <link rel="stylesheet" href="../css/theme.css" />
     <link rel="stylesheet" href="../css/theme_extra.css" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
         <link href="../style.css" rel="stylesheet" />
         <link href="../css/version-select.css" rel="stylesheet" />
     
@@ -19,19 +19,18 @@
         var mkdocs_page_url = null;
       </script>
     
-    <script src="../js/jquery-3.6.0.min.js" defer></script>
     <!--[if lt IE 9]>
       <script src="../js/html5shiv.min.js"></script>
     <![endif]-->
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
-      <script>hljs.initHighlightingOnLoad();</script> 
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
       <script async src="https://www.googletagmanager.com/gtag/js?id=UA-68681917-1"></script>
       <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
 
-        gtag('config', 'UA-68681917-1');
+        gtag('config', "UA-68681917-1");
       </script>
 </head>
 
@@ -182,10 +181,10 @@
       <div class="wy-nav-content">
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href=".." class="icon icon-home" aria-label="Docs"></a> &raquo;</li>
-          <li>User Guide &raquo;</li>
-          <li>Basics &raquo;</li>
-      <li>Registration/Discovery</li>
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">User Guide</li>
+          <li class="breadcrumb-item">Basics</li>
+      <li class="breadcrumb-item active">Registration/Discovery</li>
     <li class="wy-breadcrumbs-aside">
           <a href="https://github.com/textX/textX/edit/master/docs/registration.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
@@ -199,11 +198,12 @@
 <p>textX has an API for registration and discovery of languages and code
 generators. This enable developing languages and generators for others to use by
 simply installing from PyPI using <code>pip</code>.</p>
-<p>textX utilizes <code>pkg_resources</code> module found in <code>setuptools</code> and its concept of
-<em>extension point</em> to declaratively specify the registration of language or
-generator. Each Python project/package may in its <code>setup.py</code> declare this
-extensions. Once a Python package which declare the extension is installed in
-the environment, the extension can be dynamically found.</p>
+<p>textX utilizes a concept of <a href="https://packaging.python.org/en/latest/specifications/entry-points/">extension
+point</a> to
+declaratively specify the registration of language or generator. Each Python
+project/package may in its <code>pyproject.toml</code> declare this extensions. Once a
+Python package which declare the extension is installed in the environment, the
+extension can be dynamically found.</p>
 <p>To make it easier to find languages and generators on PyPI we recommend the
 following naming scheme for the Python packages that provide a single language
 or generator:</p>
@@ -243,20 +243,10 @@ entity_lang = LanguageDesc('entity',
                            metamodel=entity_metamodel)
 </code></pre>
 <p>The next step is to make this language discoverable by textX. To do this we have
-to register our <code>entity_lang</code> object in the <code>setup.py</code> entry point named
+to register our <code>entity_lang</code> object in the <code>pyproject.toml</code> entry point named
 <code>textx_languages</code>.</p>
-<pre><code class="language-python">setup(
-    ...
-    entry_points={
-        'textx_languages': [
-            'entity = entity.metamodel:entity_lang',
-        ],
-    },
-</code></pre>
-<p>Alternatively, you can use <code>setup.cfg</code> which is a preferred way:</p>
-<pre><code class="language-conf">[options.entry_points]
-textx_languages =
-    entity = entity.metamodel:entity_lang
+<pre><code class="language-toml">[project.entry-points.textx_languages]
+entity = &quot;entity.metamodel:entity_lang&quot;
 </code></pre>
 <p>In this example <code>entity.metamodel</code> is the Python module where <code>entity_lang</code> is defined.</p>
 <p>When you install this project textX will discover your language and offer it
@@ -277,7 +267,7 @@ def entity_lang():
     # Some code that constructs and return the language meta-model
     # E.g. call to metamodel_from_file
 </code></pre>
-<p>The <code>setup.py</code> entry point would be the same.</p>
+<p>The <code>pyproject.toml</code> entry point registration would be the same.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Language name is its unique identifier. There <em>must not</em> exist two languages
@@ -346,21 +336,16 @@ entity_java_generator = GeneratorDesc(
     generator=entity_java_generator)
 </code></pre>
 <p>The next step is to make this generator discoverable by textX. To do this we
-have to register our <code>entity_java_generator</code> object in the <code>setup.py</code> entry
-point named <code>textx_generators</code>.</p>
-<pre><code class="language-python">setup(
-    ...
-    entry_points={
-        'textx_generators' : [
-            'entity_java = entity.generators:entity_java_generator,
-        ],
-    },
+have to register our <code>entity_java_generator</code> object in the <code>pyproject.toml</code>
+entry point named <code>textx_generators</code>.</p>
+<pre><code class="language-toml">[project.entry-points.textx_generators]
+entity_java = &quot;entity.generators:entity_java_generator&quot;
 </code></pre>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>You can also register generator programmatically using <a href="#registration-api">registration API</a>.
 But if you want your generator to be available to <code>textx</code> command you should
-use <code>setup.py</code>.</p>
+use <code>pyproject.toml</code>.</p>
 </div>
 <p>In this example <code>entity.generators</code> is the Python module where <code>entity_java_generator</code> is defined.</p>
 <p>When you install this project textX will discover your generator and offer it
@@ -378,7 +363,7 @@ def entity_java_generator(metamodel, model, output_path, overwrite, debug, **cus
     &quot;Entity-relationship to Java language generator&quot;
     # Some code that perform generation
 </code></pre>
-<p>The <code>setup.py</code> would remain the same.</p>
+<p>The <code>pyproject.toml</code> would remain the same.</p>
 <p>Here is an example of the generator of <code>dot</code> files from any textX model. This is
 an actual code from textX.</p>
 <pre><code class="language-python">@generator('any', 'dot')
@@ -519,7 +504,8 @@ processors</a>.</p>
   instance of <code>LanguageDesc</code> as the first parameter or providing separate
   parameters</li>
 <li><code>clear_language_registrations()</code> - deletes all languages registered
-  programmatically. Note: languages registered through <code>setup.py</code> won't be removed</li>
+  programmatically. Note: languages registered through <code>pyproject.toml</code> won't be
+  removed</li>
 <li><code>metamodel_for_language(language_name, **kwargs)</code> - returns a meta-model for
   the given language name. <code>kwargs</code> are additional keyword arguments passed to
   meta-model factory callable, similarly to <code>metamodel_from_str/file</code>.</li>
@@ -576,8 +562,8 @@ be created and cached for further use.</p>
   instance of <code>GeneratorDesc</code> as the first parameter or providing separate
   parameters</li>
 <li><code>clear_generator_registrations</code> - deletes all generators registered
-  programmatically. Note: generators registered through <code>setup.py</code> won't be
-  removed</li>
+  programmatically. Note: generators registered through <code>pyproject.toml</code> won't
+  be removed</li>
 <li><code>generator</code> - a decorator used for <a href="#registering-a-new-generator">generator
   registration</a></li>
 </ul>
@@ -621,15 +607,16 @@ be created and cached for further use.</p>
     
   </span>
 </div>
-    <script>var base_url = '..';</script>
-    <script src="../js/theme_extra.js" defer></script>
-    <script src="../js/theme.js" defer></script>
-      <script src="../search/main.js" defer></script>
-      <script src="../js/version-select.js" defer></script>
-    <script defer>
-        window.onload = function () {
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+      <script src="../js/version-select.js"></script>
+    <script>
+        jQuery(function () {
             SphinxRtdTheme.Navigation.enable(true);
-        };
+        });
     </script>
 
 </body>

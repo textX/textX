@@ -8,7 +8,7 @@
     <title>textx command - textX</title>
     <link rel="stylesheet" href="../css/theme.css" />
     <link rel="stylesheet" href="../css/theme_extra.css" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
         <link href="../style.css" rel="stylesheet" />
         <link href="../css/version-select.css" rel="stylesheet" />
     
@@ -19,19 +19,18 @@
         var mkdocs_page_url = null;
       </script>
     
-    <script src="../js/jquery-3.6.0.min.js" defer></script>
     <!--[if lt IE 9]>
       <script src="../js/html5shiv.min.js"></script>
     <![endif]-->
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
-      <script>hljs.initHighlightingOnLoad();</script> 
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
       <script async src="https://www.googletagmanager.com/gtag/js?id=UA-68681917-1"></script>
       <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
 
-        gtag('config', 'UA-68681917-1');
+        gtag('config', "UA-68681917-1");
       </script>
 </head>
 
@@ -160,10 +159,10 @@
       <div class="wy-nav-content">
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href=".." class="icon icon-home" aria-label="Docs"></a> &raquo;</li>
-          <li>User Guide &raquo;</li>
-          <li>Basics &raquo;</li>
-      <li>textx command</li>
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">User Guide</li>
+          <li class="breadcrumb-item">Basics</li>
+      <li class="breadcrumb-item active">textx command</li>
     <li class="wy-breadcrumbs-aside">
           <a href="https://github.com/textX/textX/edit/master/docs/textx_command.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
@@ -197,7 +196,8 @@ sub-commands.</p>
 mechanism and there is no distinction between the core commands provided by the
 textX itself and the commands provided by third-party Python packages.</p>
 <p>Please, see <a href="#extending-textx-command">Extending textx command</a> section
-bellow on how to define your own sub-commands investigate <code>setup.py</code> of textX project. </p>
+bellow on how to define your own sub-commands investigate <code>pyproject.toml</code> 
+of the textX project. </p>
 <p>Some of development commands/tools are registered by
 <a href="https://github.com/textX/textX-dev">textX-dev</a> project which is an optional dev
 dependency of textX. In order to have all these commands available you can
@@ -253,9 +253,10 @@ Options:
 </code></pre>
 <h2 id="extending-textx-command">Extending textx command<a class="headerlink" href="#extending-textx-command" title="Permanent link">&para;</a></h2>
 <p><code>textx</code> command can be extended from other installed Python packages using
-<a href="https://setuptools.readthedocs.io/en/latest/pkg_resources.html">pkg_resources</a>
-extension points. Using command extension one can add new commands and command
-groups to the <code>textx</code> command.</p>
+<a href="https://packaging.python.org/en/latest/specifications/entry-points/">entry
+points</a>.
+Using command extension one can add new commands and command groups to the
+<code>textx</code> command.</p>
 <p><code>textx</code> uses <a href="https://github.com/pallets/click/">click</a> library for CLI commands
 processing. That makes really easy to create new commands and command groups.</p>
 <p>To create a new command you need to provide a Python function accepting a
@@ -276,25 +277,12 @@ def testcommand(textx):
       &quot;&quot;&quot;
       click.echo(&quot;Hello sub-command test!&quot;)
 </code></pre>
-<p>Register new command in your project's <code>setup.py</code> file under the entry point
-<code>textx_commands</code> (we are assuming that <code>testcommand</code> function is in package
-<code>cli</code>).</p>
-<pre><code class="language-python">setup(
-    name='MyProject',
-    packages=[&quot;cli&quot;],
-    entry_points={
-        'textx_commands': [
-            'testcommand = cli:testcommand'
-        ],
-    }
-)
+<p>Register new command in your project's <code>pyproject.toml</code> file under the entry
+point <code>textx_commands</code> (we are assuming that <code>testcommand</code> function is in
+package <code>cli</code>).</p>
+<pre><code class="language-toml">[project.entry-points.textx_commands]
+testcommand = &quot;cli:testcommand&quot;
 </code></pre>
-<div class="admonition tip">
-<p class="admonition-title">Tip</p>
-<p>If you prefer a more declarative approach you can use <code>setup.cfg</code> instead of
-<code>setup.py</code> to configure your project and register textx commands. For an
-idea see how <a href="https://github.com/textX/textX/blob/master/setup.cfg">textX project registers its commands</a>.</p>
-</div>
 <p>If you install now your project in the same Python environment where <code>textX</code> is
 installed you will see that <code>textx</code> command now has your command registered.</p>
 <pre><code class="language-sh">$ textx
@@ -347,18 +335,9 @@ def create_testgroup(textx):
 <p>In this example we created a new group called <code>testgroup</code>. We use that group in
 the rest of the code to decorate new commands belonging to the group.</p>
 <p>As usual, we have to register our function in the extension point
-<code>textx_commands</code>:</p>
-<pre><code class="language-python">setup(
-    name='MyProject',
-    packages=[&quot;cli&quot;],
-    entry_points={
-        ...
-        'textx_commands': [
-            'testgroup = cli:create_testgroup'
-        ]
-    }
-    }
-)
+<code>textx_commands</code> inside <code>pyproject.toml</code>:</p>
+<pre><code class="language-toml">[project.entry-points.textx_commands]
+testgroup = &quot;cli:create_testgroup&quot;
 </code></pre>
 <p>If <code>MyProject</code> is installed in the environment where <code>textX</code> is installed you'll
 see that your command group is now accessible by the <code>textx</code> command:</p>
@@ -438,15 +417,16 @@ documentation</a>.</p>
     
   </span>
 </div>
-    <script>var base_url = '..';</script>
-    <script src="../js/theme_extra.js" defer></script>
-    <script src="../js/theme.js" defer></script>
-      <script src="../search/main.js" defer></script>
-      <script src="../js/version-select.js" defer></script>
-    <script defer>
-        window.onload = function () {
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+      <script src="../js/version-select.js"></script>
+    <script>
+        jQuery(function () {
             SphinxRtdTheme.Navigation.enable(true);
-        };
+        });
     </script>
 
 </body>

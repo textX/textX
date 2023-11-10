@@ -8,7 +8,7 @@
     <title>textX</title>
     <link rel="stylesheet" href="css/theme.css" />
     <link rel="stylesheet" href="css/theme_extra.css" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
         <link href="style.css" rel="stylesheet" />
         <link href="css/version-select.css" rel="stylesheet" />
     
@@ -19,19 +19,18 @@
         var mkdocs_page_url = null;
       </script>
     
-    <script src="js/jquery-3.6.0.min.js" defer></script>
     <!--[if lt IE 9]>
       <script src="js/html5shiv.min.js"></script>
     <![endif]-->
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
-      <script>hljs.initHighlightingOnLoad();</script> 
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
       <script async src="https://www.googletagmanager.com/gtag/js?id=UA-68681917-1"></script>
       <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
 
-        gtag('config', 'UA-68681917-1');
+        gtag('config', "UA-68681917-1");
       </script>
 </head>
 
@@ -156,8 +155,8 @@
       <div class="wy-nav-content">
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href="." class="icon icon-home" aria-label="Docs"></a> &raquo;</li>
-      <li>Home</li>
+    <li><a href="." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Home</li>
     <li class="wy-breadcrumbs-aside">
           <a href="https://github.com/textX/textX/edit/master/docs/index.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
@@ -184,7 +183,7 @@ language workbench for building DSLs with full tooling support (editors,
 debuggers etc.) on the Eclipse platform.  If you like Java and
 <a href="http://www.eclipse.org/">Eclipse</a> check it out. It is a great tool.</p>
 <p>A video tutorial for textX installation and implementation of a simple data
-modeling language is bellow.</p>
+modeling language is below.</p>
 <iframe width="560" height="315" src="https://www.youtube.com/embed/CN2IVtInapo" frameborder="0" allowfullscreen></iframe>
 
 <p>For a not-so-basic video tutorial check out <a href="tutorials/state_machine/">State Machine video
@@ -456,21 +455,22 @@ Knowledge-Based Systems, 115, 1-4.</p>
     
   </span>
 </div>
-    <script>var base_url = '.';</script>
-    <script src="js/theme_extra.js" defer></script>
-    <script src="js/theme.js" defer></script>
-      <script src="search/main.js" defer></script>
-      <script src="js/version-select.js" defer></script>
-    <script defer>
-        window.onload = function () {
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = ".";</script>
+    <script src="js/theme_extra.js"></script>
+    <script src="js/theme.js"></script>
+      <script src="search/main.js"></script>
+      <script src="js/version-select.js"></script>
+    <script>
+        jQuery(function () {
             SphinxRtdTheme.Navigation.enable(true);
-        };
+        });
     </script>
 
 </body>
 </html>
 
 <!--
-MkDocs version : 1.4.3
-Build Date UTC : 2023-07-29 12:33:11.486527+00:00
+MkDocs version : 1.5.3
+Build Date UTC : 2023-11-10 10:39:07.047348+00:00
 -->

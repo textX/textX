@@ -8,7 +8,7 @@
     <title>Meta-model - textX</title>
     <link rel="stylesheet" href="../css/theme.css" />
     <link rel="stylesheet" href="../css/theme_extra.css" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
         <link href="../style.css" rel="stylesheet" />
         <link href="../css/version-select.css" rel="stylesheet" />
     
@@ -19,19 +19,18 @@
         var mkdocs_page_url = null;
       </script>
     
-    <script src="../js/jquery-3.6.0.min.js" defer></script>
     <!--[if lt IE 9]>
       <script src="../js/html5shiv.min.js"></script>
     <![endif]-->
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
-      <script>hljs.initHighlightingOnLoad();</script> 
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
       <script async src="https://www.googletagmanager.com/gtag/js?id=UA-68681917-1"></script>
       <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
 
-        gtag('config', 'UA-68681917-1');
+        gtag('config', "UA-68681917-1");
       </script>
 </head>
 
@@ -176,10 +175,10 @@
       <div class="wy-nav-content">
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href=".." class="icon icon-home" aria-label="Docs"></a> &raquo;</li>
-          <li>User Guide &raquo;</li>
-          <li>Basics &raquo;</li>
-      <li>Meta-model</li>
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">User Guide</li>
+          <li class="breadcrumb-item">Basics</li>
+      <li class="breadcrumb-item active">Meta-model</li>
     <li class="wy-breadcrumbs-aside">
           <a href="https://github.com/textX/textX/edit/master/docs/metamodel.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
@@ -206,13 +205,6 @@ to <a href="../model/">model</a>.</p>
 </code></pre>
 <p>When parsing a model file or string a new parser is cloned for each model.
 This parser can be accessed via the model attribute <code>_tx_parser</code>.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>textX accepts unicode strings only so <code>metamodel_from_str</code> parameter should be
-<code>str</code> for Python 3.x or <code>unicode</code> for Python 2.x. That is true for all API
-parameters where string is accepted. The easiest way for Python 2.x is to use
-<code>from __future__ import unicode_literals</code> at the top of the file.</p>
-</div>
 <h2 id="custom-classes">Custom classes<a class="headerlink" href="#custom-classes" title="Permanent link">&para;</a></h2>
 <p>For each grammar rule a Python class with the same name is created dynamically.
 These classes are instantiated during the parsing of the input string/file to
@@ -242,7 +234,7 @@ Attribute:
 ;
 '''
 
-class Entity(object):
+class Entity:
   def __init__(self, parent, name, attributes):
     self.parent = parent
     self.name = name
@@ -389,7 +381,7 @@ are primitive types (e.g. <code>integer</code>, <code>string</code>, <code>bool<
 <p>Let's provide <code>integer</code> and <code>string</code> Entities to our <code>Entity</code> meta-model in
 order to simplify the model creation so that the users can use the names of
 these two entities as the <code>Attribute</code> types.</p>
-<pre><code>class Entity(object):
+<pre><code>class Entity:
     def __init__(self, parent, name, attributes):
         self.parent = parent
         self.name = name
@@ -537,15 +529,16 @@ while loading) and
     
   </span>
 </div>
-    <script>var base_url = '..';</script>
-    <script src="../js/theme_extra.js" defer></script>
-    <script src="../js/theme.js" defer></script>
-      <script src="../search/main.js" defer></script>
-      <script src="../js/version-select.js" defer></script>
-    <script defer>
-        window.onload = function () {
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+      <script src="../js/version-select.js"></script>
+    <script>
+        jQuery(function () {
             SphinxRtdTheme.Navigation.enable(true);
-        };
+        });
     </script>
 
 </body>

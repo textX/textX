@@ -8,7 +8,7 @@
     <title>Model - textX</title>
     <link rel="stylesheet" href="../css/theme.css" />
     <link rel="stylesheet" href="../css/theme_extra.css" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
         <link href="../style.css" rel="stylesheet" />
         <link href="../css/version-select.css" rel="stylesheet" />
     
@@ -19,19 +19,18 @@
         var mkdocs_page_url = null;
       </script>
     
-    <script src="../js/jquery-3.6.0.min.js" defer></script>
     <!--[if lt IE 9]>
       <script src="../js/html5shiv.min.js"></script>
     <![endif]-->
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
-      <script>hljs.initHighlightingOnLoad();</script> 
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
       <script async src="https://www.googletagmanager.com/gtag/js?id=UA-68681917-1"></script>
       <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
 
-        gtag('config', 'UA-68681917-1');
+        gtag('config', "UA-68681917-1");
       </script>
 </head>
 
@@ -192,10 +191,10 @@
       <div class="wy-nav-content">
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href=".." class="icon icon-home" aria-label="Docs"></a> &raquo;</li>
-          <li>User Guide &raquo;</li>
-          <li>Basics &raquo;</li>
-      <li>Model</li>
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">User Guide</li>
+          <li class="breadcrumb-item">Basics</li>
+      <li class="breadcrumb-item active">Model</li>
     <li class="wy-breadcrumbs-aside">
           <a href="https://github.com/textX/textX/edit/master/docs/model.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
@@ -228,13 +227,6 @@ my_model = my_mm.model_from_file('some_model.ext')
 <p class="admonition-title">Note</p>
 <p>The <code>model_from_file</code> method takes an optional argument <code>encoding</code>
 to control the input encoding of the model file to be loaded.</p>
-</div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>textX accepts unicode strings only so <code>metamodel_from_str</code> and <code>model_from_str</code>
-parameter should be <code>str</code> for Python 3.x or <code>unicode</code> for Python 2.x. That is
-true for all API parameters where string is accepted. The easiest way for Python
-2.x is to use <code>from __future__ import unicode_literals</code> at the top of the file.</p>
 </div>
 <p>Let's take the Entity language used in <a href="../metamodel/#custom-classes">Custom
 Classes</a> section.</p>
@@ -414,15 +406,16 @@ controlled by the metamodel designer.</p>
     
   </span>
 </div>
-    <script>var base_url = '..';</script>
-    <script src="../js/theme_extra.js" defer></script>
-    <script src="../js/theme.js" defer></script>
-      <script src="../search/main.js" defer></script>
-      <script src="../js/version-select.js" defer></script>
-    <script defer>
-        window.onload = function () {
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+      <script src="../js/version-select.js"></script>
+    <script>
+        jQuery(function () {
             SphinxRtdTheme.Navigation.enable(true);
-        };
+        });
     </script>
 
 </body>

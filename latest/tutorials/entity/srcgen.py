@@ -6,7 +6,7 @@ from textx import metamodel_from_file
 this_folder = dirname(__file__)
 
 
-class SimpleType(object):
+class SimpleType:
     def __init__(self, parent, name):
         self.parent = parent
         self.name = name
