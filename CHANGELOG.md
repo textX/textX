@@ -25,15 +25,20 @@ please take a look at related PRs and issues and see if the change affects you.
 - Migrated to pyproject.toml for project configuration.
 - Migrated to importlib for language/generator registration/discovery as
   setuptools pkg_resources is deprecated and unsupported from Python 3.12. See
-  #411.
+  [411]. Thanks @EmilyBourne and @nchammas for reporting.
+- **(BIC)** Added dependency to `importlib-metadata` backward compatibility
+  package for Python versions < 3.10. If Python is >=3.10 this library is not used.
 - Use [ruff] instead of flake8 for linting. ruff can also be used for code
   formating.
-- Relaxed dependency for click to accept 8.x. See #414.
+- Relaxed dependency for click to accept 8.x. See [414]. Thanks @RootMeanSqr for
+  reporting the issue.
 - Use [flit] for package building and publishing.
 
- [#401]: https://github.com/textX/textX/pull/401
- [ruff]: https://github.com/astral-sh/ruff
- [flit]: https://flit.pypa.io/
+[#401]: https://github.com/textX/textX/pull/401
+[#411]: https://github.com/textX/textX/issues/411
+[#414]: https://github.com/textX/textX/issues/414
+[ruff]: https://github.com/astral-sh/ruff
+[flit]: https://flit.pypa.io/
 
 
 ## [3.1.1] (released: 2023-02-10)
