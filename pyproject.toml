@@ -60,6 +60,7 @@ cli = [
 dev = [
     "textX-dev",
     "click >=7.0, <9.0",
+    "ruff",
     "flit",
     "mkdocs",
     "mike",
