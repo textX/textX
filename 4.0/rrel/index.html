@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Igor Dejanović" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Reference resolving expression language (RREL) - textX</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../style.css" rel="stylesheet" />
+        <link href="../css/version-select.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Reference resolving expression language (RREL)";
+        var mkdocs_page_input_path = "rrel.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-68681917-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', "UA-68681917-1");
+      </script>
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> textX
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="#">Basics</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../tutorials/hello_world/">Hello world</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../grammar/">Grammar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../metamodel/">Meta-model</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../model/">Model</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../parser_config/">Parser configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../textx_command/">textx command</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../registration/">Registration/Discovery</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../visualization/">Visualization</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../scaffolding/">Project scaffolding</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../howto/">Howtos</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Scoping and multi-file</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../scoping/">Scoping</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="./">Reference resolving expression language (RREL)</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#rrel-operators">RREL operators</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#rrel-evaluation">RREL evaluation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#rrel-reference-name-deduction">RREL reference name deduction</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#rrel-and-multi-files-model">RREL and multi files model</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#accessing-the-rrel-path-of-a-resolved-reference">Accessing the RREL 'path' of a resolved reference</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#using-rrel-from-python-code">Using RREL from Python code</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#rrel-processing-internal">RREL processing (internal)</a>
+    </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../multimetamodel/">Multi meta-model</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="#">Errors</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../error_handling/">Error handling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../debugging/">Debugging</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="#">Generators</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../jinja/">Jinja generators</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/hello_world/">Hello World</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/robot/">Robot</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/entity/">Entity</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/state_machine/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/toylanguage/">Toy language compiler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/self-dsl/">self-dsl</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/turtle/">Turtle graphics</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="" href="https://github.com/textX/textX/blob/master/CONTRIBUTING.md">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../process/">Release process</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../about/comparison/">Comparison</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://github.com/textX/textX/blob/master/LICENSE.txt">License</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">What's new</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../whatsnew/release_1_5/">Release 1.5</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">textX</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">User Guide</li>
+          <li class="breadcrumb-item">Scoping and multi-file</li>
+      <li class="breadcrumb-item active">Reference resolving expression language (RREL)</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/textX/textX/edit/master/docs/rrel.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="reference-resolving-expression-language-rrel">Reference resolving expression language (RREL)<a class="headerlink" href="#reference-resolving-expression-language-rrel" title="Permanent link">&para;</a></h1>
+<p>RREL allows to specify scope provider (lookup) specification in the
+grammar itself (<a href="tests/functional/test_scoping/components_model1/ComponentsRrel.tx">grammar example</a> and 
+an example <a href="https://github.com/textX/textX/blob/master/tests/functional/examples/test_hierarchical_data_structures_referencing_attributes.py">test</a>).</p>
+<p>The idea is to support all current builtin scoping providers (e.g., <code>FQN</code>,
+<code>RelativeName</code> etc.; see <a href="../scoping/">scoping</a>) while the user would have to
+resort to Python only to support some very specific cases or referring to models
+not handled by textX.</p>
+<p>A RREL expression is written as a third part of the textX <a href="../grammar/#references">link rule
+reference</a>.</p>
+<p>For example:</p>
+<pre><code>Attribute: 'attr' ref=[Class:FQN|^packages*.classes] name=ID ';';
+</code></pre>
+<p>This grammar rule has a <code>ref</code> attribute which is a reference to the <code>Class</code>
+rule. This is a link rule reference as it is enclosed inside of square brackets.
+It consists of three parts where first two parts are separated by <code>:</code> while the
+second and the third are separated by <code>|</code>. The first part defines the target
+object type or its grammar rule. The second part defines what will parser match
+at the place of the reference. It would be a fully qualified name of the target
+object (thus <code>FQN</code>). The third part of the reference is RREL expression
+(<code>^packages*.classes</code>). Second and third part of the reference are optional. If
+second part is not given <code>ID</code> is assumed. If RREL expression is not given the
+default resolver, which search the reference in the global scope, will be used.</p>
+<p>Each reference in the model, by default, forms a dot separated name, which is
+matched by the second part of the link rule reference in the grammar, where a
+plain ID is just a special case. For example, a reference could be
+<code>package1.component4</code> or just <code>component4</code>. We could further generalize this by
+saying that a reference is a sequence of names where a plain ID is just a
+sequence of length 1. It doesn't have to be dot separated. A user could provide
+a custom match rule (like <code>FQN</code> in the above example) and a match processor to
+convert the matched string to a sequence of names. There is also the possibility
+to define the separator sequence (by default a dot), as demonstrated in
+sub-section <a href="#rrel-reference-name-deduction">"RREL reference name deduction"</a>
+bellow. </p>
+<p>For reference resolving as an input we have:</p>
+<ul>
+<li>A dot separated name matched by the parser, where ID is a special case</li>
+<li>A RREL expression</li>
+</ul>
+<p>We evaluate RREL expression using the name in the process and we yield referenced
+object or an error.</p>
+<h2 id="rrel-operators">RREL operators<a class="headerlink" href="#rrel-operators" title="Permanent link">&para;</a></h2>
+<p>Reference resolving expression language (RREL) consists of several operators
+(see <a href="tests/functional/test_scoping/test_rrel.py">test</a>):</p>
+<ul>
+<li><code>.</code> Dot navigation. Search for the attribute in the current AST context. Can
+  be used for navigation up the parent chain, e.g. <code>.</code> is this object, <code>..</code> is
+  parent, <code>...</code> is a parent of a parent. If the expression starts with a <code>.</code>
+  than we have a relative path starting from the current AST context. Otherwise
+  we have an absolute path starting from the root of the model unless <code>^</code> is
+  used (see below). For example, <code>.a.b</code> means search for <code>a</code> attribute at the
+  current level (<code>.</code>) and than search for <code>b</code> attribute. Expression <code>a.b</code> would
+  search starting from the root of the model.</li>
+<li><code>parent(TYPE)</code> - navigate up the parent chain until the exact type is found.</li>
+<li><code>~</code> This is a marker applied to a path element to inform resolver that the
+  current collection should not be searched by the current name part but that
+  all elements should be processed. For example, to search for a method in the
+  inheritance hierarchy one would write <code>~extends*.methods</code> which (due to <code>*</code>,
+  see below) first searches <code>methods</code> collection of the current context object,
+  if not found, all elements of the current <code>extends</code> collection are iterated in
+  the order of defintion without consuming name part, and then name would be
+  searched in the <code>methods</code> collection of each object from the <code>extends</code>
+  collection. If not found <code>*</code> would expand <code>extends</code> to <code>extends.extends</code> if
+  possible and the search would continue.</li>
+<li>
+<p><code>'name-value'~</code> The <code>~</code> operator takes an additional optional string to
+  indicate that the part of the name is not consumed, but is expected to be the
+  value indicated by the passed string: <code>'myname'~myattribute</code> means <em>follow
+  attribute <code>myattribute</code>, if it is named <code>'myname'</code></em>. </p>
+<p>The following example sketches parts of a meta-model, where the lookup rules
+indicate a fallback to some <code>types_collection</code> entry with the name
+<code>'builtin'</code> (of course such an object must be present to successfully
+resolve such references, e.g., by adding a builtin model with that
+information (see <a href="https://github.com/textX/textX/blob/master/tests/functional/test_scoping/test_rrel.py">tests/test_scoping/test_rrel.py,
+test_rrel_with_fixed_string_in_navigation</a>):</p>
+<pre><code>  Using: 'using' name=ID "=" type=[Type:ID|+m:
+        ~active_types.types,                // "regular lookup"
+        'builtin'~types_collection.types    // "default lookup" - name "builtin" 
+                                            // hard coded in grammar
+    ];
+</code></pre>
+</li>
+<li>
+<p><code>*</code> - Repeat/expand. Used in expansion step to expand sub-expression by 0+
+  times. First expansion tried will be 0, then once, then twice etc. For
+  example, <code>~extends*.methods</code> would search in <code>methods</code> collection in the
+  current context object for the current name part. If not found expansion of
+  <code>*</code> would took place and we would search in <code>~extends.methods</code> by iterating
+  over <code>extends</code> collection without consuming part name (due to <code>~</code>) and
+  searching by ref. name part inside <code>methods</code> collection of each iterated
+  object. The process would continue (i.e. <code>~extends.~extends.methods</code> ...)
+  until no more expansion is possible as we reach the end of inheritance chain.</p>
+</li>
+<li><code>^</code> - Bottom-up search. This operator specifies that the given path should be
+  expanded bottom-up, up the parent chain. The search should start at the
+  current AST context and go up the parent chain for the number of components in
+  the current expanded path. Then the match should be tried. See the components
+  example above using <code>^</code> in <code>extends</code>. For example, <code>^a.b.c</code> would start from
+  the current AST level and go to the parent of the parent, search there for
+  <code>a</code>, then would search for <code>b</code> in the context of the previous AST search
+  result, and finally would search for attribute <code>c</code>. <code>^</code> is a marker applied to
+  path search subexpression, i.e. it doesn't apply to the whole sequence (see
+  below).</li>
+<li><code>,</code> - Defines a sequence, i.e. a sequence of RREL expressions which should
+  tried in order.</li>
+</ul>
+<p>Priorities from highest to lowest: <code>*</code>, <code>.</code>, <code>,</code>.</p>
+<p><code>~</code> and <code>^</code> are regarded as markers, not operators.</p>
+<h2 id="rrel-evaluation">RREL evaluation<a class="headerlink" href="#rrel-evaluation" title="Permanent link">&para;</a></h2>
+<p>Evaluation goes like this:</p>
+<ol>
+<li>Expand the expression. Expand <code>*</code> starting from 0 times.</li>
+<li>Match/navigate the expression (consume part names in the process)</li>
+<li>Repeat</li>
+</ol>
+<p>The process stops when either:</p>
+<ul>
+<li>all possibilities are exhausted and we haven't find anything -&gt; error.</li>
+<li>in <code>*</code> we came to a situation where we consume all part names before we
+  finished with the RREL expression -&gt; error.</li>
+<li>We have consumed all path name elements, finished with RREL expression and
+  found the object. If the type is not the same as the type given in the grammar
+  reference we report an error, else we found our object.</li>
+</ul>
+<h2 id="rrel-reference-name-deduction">RREL reference name deduction<a class="headerlink" href="#rrel-reference-name-deduction" title="Permanent link">&para;</a></h2>
+<p>The name of a referenced object is transformed into a list of non-empty
+name parts, which is processed by a RREL expression to navigate through the
+model. Possible names are defined in the grammar, e.g. <code>FQN</code> in the
+following example (used in rule <code>Attribute</code> to reference a model class:</p>
+<pre><code>Model:     packages*=Package;
+Package:   'package' name=ID '{' classes*=Class '}';
+Class:     'class' name=ID '{' attributes*=Attribute '}';
+Attribute: 'attr' ref=[Class:FQN|^packages*.classes] name=ID ';';
+Comment:   /#.*/;
+FQN:       ID('.'ID)*;
+</code></pre>
+<p>The name of a reference (<code>Attribute.ref</code>) could then be,
+e.g., <code>P1.Part1</code> (the package <code>P1</code> and the class <code>Part1</code>),
+separated by a dot. The <strong>dot is the default separator</strong>
+(if no other separator is specified).</p>
+<pre><code>package P1 {
+    class Part1 {
+    }
+}
+package P2 {
+    class Part2 {
+        attr C2 rec;
+    }
+    class C2 {
+        attr P1.Part1 p1;
+        attr Part2 p2a;
+        attr P2.Part2 p2b;
+    }
+}
+</code></pre>
+<p>The match rule used to specify possible reference names (e.g., <code>FQN</code>)
+can <strong>specify a separator used to split the reference name into individual
+name parts</strong>. Use the rule parameter <code>split</code>, which must be a non-empty
+string (e.g. <code>split='/'</code>; note that the match rule itself should produce
+names, for which the given separator makes sense):</p>
+<pre><code>Model:          packages*=Package;
+Package:        'package' name=ID '{' classes*=Class '}';
+Class:          'class' name=ID '{' attributes*=Attribute '}';
+Attribute:      'attr' ref=[Class:FQN|^packages*.classes] name=ID ';';
+Comment:        /#.*/;
+FQN[split='/']: ID('/'ID)*;  // separator split='/'
+</code></pre>
+<p>Then the RREL scope provider (using the match rule with the extra
+rule parameter <code>split</code>) automatically uses the given split
+character to process the name.</p>
+<h2 id="rrel-and-multi-files-model">RREL and multi files model<a class="headerlink" href="#rrel-and-multi-files-model" title="Permanent link">&para;</a></h2>
+<p>Use the prefix <code>+m:</code> for an RREL expression to activate a multi file model
+scope provider. Then, in case of no match, other loaded models are searched.
+When using this extra prefix the importURI feature is activated
+(see <a href="../scoping/">scoping</a> and
+<a href="https://github.com/textX/textX/blob/master/tests/functional/registration/projects/data_dsl/data_dsl/Data.tx">grammar example</a>).</p>
+<h2 id="accessing-the-rrel-path-of-a-resolved-reference">Accessing the RREL 'path' of a resolved reference<a class="headerlink" href="#accessing-the-rrel-path-of-a-resolved-reference" title="Permanent link">&para;</a></h2>
+<p>Use the prefix <code>+p:</code> for an RREL expression to access the complete
+path of named elements for a resolved reference. For that, the
+resolved reference is represented by a proxy which is transparent
+to the user is terms of attribute access and <code>textx_instanceof</code>
+semantics.</p>
+<p>The proxy (<code>textx.scoping.rrel.ReferenceProxy</code>) provides two extra
+fields: <code>_tx_obj</code> and <code>_tx_path</code>. <code>_tx_obj</code> represent the
+ referenced object itself and <code>_tx_path</code> is a list with
+ all named elements traversed during scope resolution. The last
+ entry of the list is <code>_tx_obj</code>. </p>
+<p>The following model shows how to employ the <code>+p:</code> flag and
+is used in the unittest referenced for the following use case:</p>
+<pre><code>Model:
+    structs+=Struct
+    instances+=Instance
+    references+=Reference;
+Struct:
+    'struct' name=ID '{' vals+=Val '}';
+Val:
+    'val' name=ID (':' type=[Struct])?;
+Instance:
+    'instance' name=ID (':' type=[Struct])?;
+Reference:
+    'reference' ref=[Val:FQN|+p:instances.~type.vals.(~type.vals)*];
+FQN: ID ('.' ID)*;
+</code></pre>
+<p>The <strong>use case</strong> for that feature is that you sometimes need
+to access all model elements specified in a model reference. Consider
+a reference to a hierarchically modelled data element  like in this
+<a href="https://github.com/textX/textX/blob/master/tests/functional/examples/test_hierarchical_data_structures_referencing_attributes.py">unittest example</a>,
+e.g. <code>reference d.c.b.a.x</code>:</p>
+<pre><code>struct A {
+    val x
+}
+struct B {
+    val a: A
+}
+struct C {
+    val b: B
+    val a: A
+}
+struct D {
+    val c: C
+    val b1: B
+}
+instance d: D
+reference d.c.b.a.x
+reference d.b1.a.x
+</code></pre>
+<p>In this example you need all referenced intermediate model elements to
+accurately identify the modelled data for, e.g., code generation because
+<code>reference d.c.b.a.x</code> is not distinguishable from
+<code>reference d.b1.a.x</code> without the path
+(both point to the field <code>x</code> in <code>A</code>).</p>
+<h2 id="using-rrel-from-python-code">Using RREL from Python code<a class="headerlink" href="#using-rrel-from-python-code" title="Permanent link">&para;</a></h2>
+<p>RREL expression could be used during registration in place of scoping provider.
+For example:</p>
+<pre><code class="language-Python">my_meta_model.register_scope_providers({
+        &quot;*.*&quot;: scoping_providers.FQN(),
+        &quot;Connection.from_port&quot;: &quot;from_inst.component.slots&quot;  # RREL
+        &quot;Connection.to_port&quot;: &quot;from_inst.component.slots&quot;      # RREL
+    })
+</code></pre>
+<h2 id="rrel-processing-internal">RREL processing (internal)<a class="headerlink" href="#rrel-processing-internal" title="Permanent link">&para;</a></h2>
+<p>RREL expression are parsed when the grammar is loaded and transformed to AST
+consisting of RREL operator nodes (each node could be an instance of <code>RREL</code>
+prefixed class, e.g <code>RRELSequence</code>). The expressions ASTs are stateless and thus
+it is an important possibility to define the same expression for multiple
+attributes by using wildcard as the same expression tree would be used for the
+evaluation.</p>
+<p>In the process of evaluation the root of the expression tree is given the
+sequence of part names and the current context which represent the parent object
+of the reference in the model AST. The evaluation is then carried out by
+recursive calls of the RREL AST nodes. Each node gets the AST context consisting
+of a collection of objects from the model and a current unconsumed part names
+collection, which are the result of the previous operation or, in the case of
+the root expression AST node, an initial input. Each operator object should
+return the next AST context and the unconsumed part of the name. At the end of
+the successful search AST context should be a single object and the names parts
+should be empty.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../scoping/" class="btn btn-neutral float-left" title="Scoping"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../multimetamodel/" class="btn btn-neutral float-right" title="Multi meta-model">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>Copyright &copy; <a href="http://www.igordejanovic.net/">Igor Dejanović</a>.</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/textX/textX" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../scoping/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../multimetamodel/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+      <script src="../js/version-select.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
