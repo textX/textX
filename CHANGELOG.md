@@ -15,6 +15,15 @@ please take a look at related PRs and issues and see if the change affects you.
 ## [Unreleased]
 
 
+## [4.0.1] (released: 2023-11-12)
+
+### Fixed
+
+- Use flit-core for test projects. See [418]. Thanks @mgorny for reporting.
+
+[418]: https://github.com/textX/textX/issues/418
+
+
 ## [4.0.0] (released: 2023-11-10)
 
 ### Fixed
@@ -704,7 +713,8 @@ please take a look at related PRs and issues and see if the change affects you.
 [#92]: https://github.com/textX/textX/pull/92
 [#40]: https://github.com/textX/textX/issues/40
 
-[Unreleased]: https://github.com/textX/textX/compare/4.0.0...HEAD
+[Unreleased]: https://github.com/textX/textX/compare/4.0.1...HEAD
+[4.0.1]: https://github.com/textX/textX/compare/4.0.0...4.0.1
 [4.0.0]: https://github.com/textX/textX/compare/3.1.1...4.0.0
 [3.1.1]: https://github.com/textX/textX/compare/3.1.0...3.1.1
 [3.1.0]: https://github.com/textX/textX/compare/3.0.0...3.1.0
