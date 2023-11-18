@@ -7,8 +7,9 @@ For a syntax error `TextXSyntaxError` is raised. For a semantic error
 `TextXSemanticError` is raised. Both exceptions inherit from `TextXError`. These
 exceptions are located in `textx.exceptions` module.
 
-All exceptions have `message` attribute with the error message, and `line` and
-`col` attributes which represent line and column where the error was found.
+All exceptions have `message` attribute with the error message, and `line`,
+`col` and `nchar` attributes which represent line, column and substring length
+where the error was found.
 
 
 !!! note
