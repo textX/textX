@@ -67,10 +67,14 @@ def test_exception_from_included_model():
     with raises(
         textx.exceptions.TextXSemanticError,
         match=r".*model_d\.b:5:3:.*d1 triggers artifical error",
-    ):
+    ) as excinfo:
         a_mm.model_from_file(
             join(this_folder, "metamodel_provider3", "inheritance2", "model_a.a")
         )
+
+    assert excinfo.value.line == 5
+    assert excinfo.value.col == 3
+    assert excinfo.value.nchar == 9
 
     #################################
     # END
