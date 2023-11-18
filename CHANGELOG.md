@@ -14,6 +14,13 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ## [Unreleased]
 
+- Added `nchar` attribute to `TextXError` class, which represents the substring
+  length for the model object where the error was found. Also, this value is now
+  returned by `get_location()`, so no changes are required in user code.
+  See [420]. Thanks @davidchall.
+
+[420]: https://github.com/textX/textX/issues/420
+
 
 ## [4.0.1] (released: 2023-11-12)
 
