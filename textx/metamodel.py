@@ -547,7 +547,7 @@ class TextXMetaModel(DebugPrinter):
     def has_obj_processor(self, _type):
         return _type in self._obj_processors
 
-    def process(self, value, _type, filename, col, line):
+    def process(self, value, _type, filename, col, line, nchar=None):
         """
         Process a value with the given type
         Convert instances of textx types and match rules to python types.
@@ -558,6 +558,7 @@ class TextXMetaModel(DebugPrinter):
             filename: filename for current object
             col: col for current object
             line: line for current object
+            nchar: character count for current object (default: None)
         Returns:
             None or a value used by TextX to replace the object during
             model creation.

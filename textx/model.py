@@ -179,7 +179,7 @@ def get_location(model_obj):
         model_obj: the model object of interest
 
     Returns:
-        the line, col and filename of the model element.
+        the line, col, nchar and filename of the model element.
         The filename may be None.
         This function may be used to fill exceptions
     """
@@ -187,7 +187,8 @@ def get_location(model_obj):
 
     the_model = get_model(model_obj)
     line, col = the_model._tx_parser.pos_to_linecol(model_obj._tx_position)
-    return {"line": line, "col": col, "filename": the_model._tx_filename}
+    nchar = model_obj._tx_position_end - model_obj._tx_position
+    return {"line": line, "col": col, "nchar": nchar, "filename": the_model._tx_filename}
 
 
 def textxerror_wrap(obj_processor):
