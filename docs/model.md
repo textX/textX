@@ -129,8 +129,9 @@ references shall not be followed.
 ### `get_location(obj)`
 
 Returns the location of the textX model object in the form of a dict with
-`line/col/filename` keys. Filename can be `None` if the model is loaded from a
-string. Return value is convenient for use in TextX exceptions (e.g. `raise
+`line/col/nchar/filename` keys. `nchar` is a substring length of the `obj` in
+the input string. Filename can be `None` if the model is loaded from a string.
+Return value is convenient for use in TextX exceptions (e.g. `raise
 TextXSemanticError('Some message', **get_location(model_obj))`)
 
 ### `textx_isinstance(obj, cls)`

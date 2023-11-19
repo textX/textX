@@ -16,8 +16,8 @@ where the error was found.
 
     You can also raise `TextXSemanticError` during semantic checks (e.g. in [object
     processors](metamodel.md#processors). These error classes accepts the message
-    and location information (`line`, `col`, `filename`) which can be produced from
-    any textX model object using `get_location`:
+    and location information (`line`, `col`, `nchar`, `filename`) which can be
+    produced from any textX model object using `get_location`:
 
         from textx import get_location, TextXSemanticError
         ...
