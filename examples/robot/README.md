@@ -4,7 +4,7 @@ The idea for this language came from [LISA robot
 tutorial](http://labraj.feri.um.si/lisa/tutorial-robot.html).
 
 For a full explanation see [the
-tutorial](http://textx.github.io/textX/tutorials/robot/).
+tutorial](https://textx.github.io/textX/stable/tutorials/robot/).
 
 To run the example do the following:
 

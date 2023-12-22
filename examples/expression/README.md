@@ -29,9 +29,9 @@ An example input is:
     a and b or not false
 
 Evaluation is done using [custom
-classes](http://textx.github.io/textX/metamodel/#custom-classes). Provided
-classes have `value` property which will evaluate the result using appropriate
-operations and values of referenced subexpressions.
+classes](https://textx.github.io/textX/stable/metamodel/#custom-classes).
+Provided classes have `value` property which will evaluate the result using
+appropriate operations and values of referenced subexpressions.
 
 In this examples, grammar is embedded inside Python string so `textx` command
 cannot be used. Instead, meta-model and model are exported to dot if the
