@@ -117,6 +117,15 @@ class MetaAttr:
         self.position = position
 
 
+class TextXMetaClass(type):
+    """
+    A meta-class for all textX generated classes.
+    """
+    def __repr__(cls):
+        return f"<textx:{cls._tx_fqn} class at {id(cls)}>"
+
+
+
 class TextXMetaModel(DebugPrinter):
     """
     Meta-model contains all information about language abstract syntax.
@@ -373,6 +382,7 @@ class TextXMetaModel(DebugPrinter):
         # in the order of import
         self._imported_namespaces[current_namespace].append(self.namespaces[import_name])
 
+
     def _new_class(
         self,
         name,
@@ -394,10 +404,6 @@ class TextXMetaModel(DebugPrinter):
             rule_type: The type of the rule this meta-class is for. One of
                 RULE_COMMON, RULE_ABSTRACT or RULE_MATCH.
         """
-
-        class TextXMetaClass(type):
-            def __repr__(cls):
-                return f"<textx:{cls._tx_fqn} class at {id(cls)}>"
 
         class TextXClass(metaclass=TextXMetaClass):
             """
@@ -438,6 +444,7 @@ class TextXMetaModel(DebugPrinter):
         self._init_class(cls, peg_rule, position, position_end, inherits, root, rule_type)
 
         return cls
+
 
     def _init_class(
         self,
