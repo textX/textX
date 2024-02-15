@@ -2,8 +2,19 @@
 Export of textX based models and metamodels to dot file.
 """
 import codecs
+from dataclasses import dataclass
+from typing import List, Union
+from typing import Optional as Opt
 
-from arpeggio import Match, OneOrMore, Optional, OrderedChoice, Sequence, ZeroOrMore
+from arpeggio import (
+    Match,
+    OneOrMore,
+    Optional,
+    OrderedChoice,
+    ParsingExpression,
+    Sequence,
+    ZeroOrMore,
+)
 
 from textx.const import (
     MULT_ONE,
@@ -14,6 +25,7 @@ from textx.const import (
     RULE_MATCH,
 )
 from textx.lang import ALL_TYPE_NAMES, BASE_TYPE_NAMES, PRIMITIVE_PYTHON_TYPES
+from textx.metamodel import MetaAttr, TextXMetaClass
 
 HEADER = """
     digraph textX {
@@ -76,8 +88,8 @@ def dot_match_str(cls, other_match_rules=None):
 
     mstr = ""
     # print("---------- "+str(cls))
-    if not (cls._tx_type is RULE_ABSTRACT and cls.__name__ != cls._tx_peg_rule.rule_name):
-        e = cls._tx_peg_rule
+    if not (cls.typ is RULE_ABSTRACT and cls.name != cls.peg_rule.rule_name):
+        e = cls.peg_rule
         visited = set()
         if other_match_rules is None:
             other_match_rules = set()
@@ -126,10 +138,37 @@ def dot_repr(o):
         return str(o)
 
 
-class DotRenderer:
+@dataclass
+class Attr:
+    name: str
+    cls: 'Cls'
+    mult: str
+    cont: bool
+    ref: bool
+    bool_assignment: bool
+    position: int
+
+
+@dataclass
+class Cls:
+    name: str
+    fqn: str
+    typ: str
+    attrs: List[Union[MetaAttr, Attr]]
+    inh_by: List['Cls']
+    inh_from: Opt['Cls']
+    peg_rule: ParsingExpression
+
+    def __hash__(self):
+        return hash(self.fqn)
+
+
+class Renderer:
     def __init__(self):
         self.match_rules = set()
 
+
+class DotRenderer(Renderer):
     def get_header(self):
         return HEADER
 
@@ -137,11 +176,11 @@ class DotRenderer:
         trailer = ""
         if self.match_rules:
             trailer = "<table>\n"
-            for cls in sorted(self.match_rules, key=lambda x: x._tx_fqn):
+            for cls in sorted(self.match_rules, key=lambda x: x.fqn):
                 trailer += "\t<tr>\n"
                 attrs = dot_match_str(cls, self.match_rules)
                 trailer += "\t\t<td><b>{}</b></td><td>{}</td>\n".format(
-                    cls.__name__, html_escape(attrs)
+                    cls.name, html_escape(attrs)
                 )
                 trailer += "\t</tr>\n"
             trailer += "</table>"
@@ -156,20 +195,20 @@ class DotRenderer:
         return trailer + "\n}\n"
 
     def render_class(self, cls):
-        name = cls.__name__
+        name = cls.name
         attrs = ""
-        if cls._tx_type is RULE_MATCH:
-            if cls.__name__ not in BASE_TYPE_NAMES:
+        if cls.typ is RULE_MATCH:
+            if cls.name not in BASE_TYPE_NAMES:
                 self.match_rules.add(cls)
             return ""
-        elif cls._tx_type is not RULE_ABSTRACT:
-            for attr in cls._tx_attrs.values():
+        elif cls.typ is not RULE_ABSTRACT:
+            for attr in cls.attrs:
                 required = attr.mult in [MULT_ONE, MULT_ONEORMORE]
                 mult_list = attr.mult in [MULT_ZEROORMORE, MULT_ONEORMORE]
                 attr_type = (
-                    f"list[{attr.cls.__name__}]" if mult_list else attr.cls.__name__
+                    f"list[{attr.cls.name}]" if mult_list else attr.cls.name
                 )
-                if attr.ref and attr.cls.__name__ != "OBJECT":
+                if attr.ref and attr.cls.name != "OBJECT":
                     pass
                 else:
                     # If it is plain type
@@ -178,12 +217,12 @@ class DotRenderer:
                         attr_type if required else rf"optional\<{attr_type}\>",
                     )
         return '{}[ label="{{{}|{}}}"]\n\n'.format(
-            id(cls), f"*{name}" if cls._tx_type is RULE_ABSTRACT else name, attrs
+            id(cls), f"*{name}" if cls.typ is RULE_ABSTRACT else name, attrs
         )
 
     def render_attr_link(self, cls, attr):
         arrowtail = "arrowtail=diamond, dir=both, " if attr.cont else ""
-        if attr.ref and attr.cls.__name__ != "OBJECT":
+        if attr.ref and attr.cls.name != "OBJECT":
             # If attribute is a reference
             mult = attr.mult if attr.mult != MULT_ONE else ""
             return '{} -> {}[{}headlabel="{} {}"]\n'.format(
@@ -194,10 +233,7 @@ class DotRenderer:
         return f"{id(base)} -> {id(special)} [dir=back]\n"
 
 
-class PlantUmlRenderer:
-    def __init__(self):
-        self.match_rules = set()
-
+class PlantUmlRenderer(Renderer):
     def get_header(self):
         return """@startuml
 set namespaceSeparator .
@@ -212,7 +248,7 @@ set namespaceSeparator .
             for cls in self.match_rules:
                 # print("-*-> " + cls.__name__)
                 trailer += "  | {} | {} |\n".format(
-                    cls.__name__,
+                    cls.name,
                     dot_escape(dot_match_str(cls, self.match_rules)),  # reuse
                 )
             trailer += "end legend\n\n"
@@ -222,20 +258,20 @@ set namespaceSeparator .
     def render_class(self, cls):
         attrs = ""
         stereotype = ""
-        if cls._tx_type is RULE_MATCH:
-            if cls.__name__ not in BASE_TYPE_NAMES:
+        if cls.typ is RULE_MATCH:
+            if cls.name not in BASE_TYPE_NAMES:
                 self.match_rules.add(cls)
             return ""
-        elif cls._tx_type is not RULE_COMMON:
-            stereotype += cls._tx_type
+        elif cls.typ is not RULE_COMMON:
+            stereotype += cls.typ
         else:
-            for attr in cls._tx_attrs.values():
+            for attr in cls.attrs:
                 required = attr.mult in [MULT_ONE, MULT_ONEORMORE]
                 mult_list = attr.mult in [MULT_ZEROORMORE, MULT_ONEORMORE]
                 attr_type = (
-                    f"list[{attr.cls.__name__}]" if mult_list else attr.cls.__name__
+                    f"list[{attr.cls.name}]" if mult_list else attr.cls.name
                 )
-                if attr.ref and attr.cls.__name__ != "OBJECT":
+                if attr.ref and attr.cls.name != "OBJECT":
                     pass
                 else:
                     if required:
@@ -244,20 +280,20 @@ set namespaceSeparator .
                         attrs += f"  {attr.name} : optional<{attr_type}>\n"
         if len(stereotype) > 0:
             stereotype = "<<" + stereotype + ">>"
-        return f"\n\nclass {cls._tx_fqn} {stereotype} {{\n{attrs}}}\n"
+        return f"\n\nclass {cls.fqn} {stereotype} {{\n{attrs}}}\n"
 
     def render_attr_link(self, cls, attr):
-        if attr.ref and attr.cls.__name__ != "OBJECT":
+        if attr.ref and attr.cls.name != "OBJECT":
             # If attribute is a reference
             # mult = attr.mult if not attr.mult == MULT_ONE else ""
             arr = "*-->" if attr.cont else "o-->"
             name = attr.name
             if attr.mult != "1":
                 name += " " + attr.mult
-            return f"{cls._tx_fqn} {arr} {attr.cls._tx_fqn}: {name}\n"
+            return f"{cls.fqn} {arr} {attr.cls.fqn}: {name}\n"
 
     def render_inherited_by(self, base, special):
-        return f"{base._tx_fqn} <|-- {special._tx_fqn}\n"
+        return f"{base.fqn} <|-- {special.fqn}\n"
 
 
 def metamodel_export(metamodel, file_name, renderer=None):
@@ -269,22 +305,78 @@ def metamodel_export_tofile(metamodel, f, renderer=None):
     if renderer is None:
         renderer = DotRenderer()
     f.write(renderer.get_header())
-    classes = [c for c in metamodel if c._tx_fqn not in ALL_TYPE_NAMES]
+    classes = get_unified_classes(metamodel)
+    classes = [c for c in classes if c.fqn not in ALL_TYPE_NAMES]
     for cls in classes:
-        f.write(renderer.render_class(cls))
+        if cls.name not in ALL_TYPE_NAMES:
+            f.write(renderer.render_class(cls))
     f.write("\n\n")
     for cls in classes:
-        if cls._tx_type is not RULE_COMMON:
-            pass
-        else:
-            for attr in cls._tx_attrs.values():
-                if attr.ref and attr.cls.__name__ != "OBJECT":
-                    f.write(renderer.render_attr_link(cls, attr))
-                if attr.cls not in classes:
-                    f.write(renderer.render_class(attr.cls))
-        for inherited_by in cls._tx_inh_by:
+        for attr in cls.attrs:
+            if attr.ref and attr.cls.name != "OBJECT":
+                f.write(renderer.render_attr_link(cls, attr))
+            if attr.cls not in classes:
+                f.write(renderer.render_class(attr.cls))
+        for inherited_by in cls.inh_by:
             f.write(renderer.render_inherited_by(cls, inherited_by))
     f.write(f"{renderer.get_trailer()}")
+
+
+def get_unified_classes(classes: List[TextXMetaClass]) -> List[Cls]:
+    """
+    Create list of Cls which is used for attribute/links unification
+    respecting the inheritance hierarchy chain.
+    See https://github.com/textX/textX/issues/423
+    """
+    new_classes = dict()
+    for cls in classes:
+        c = Cls(cls.__name__, cls._tx_fqn, cls._tx_type,
+                cls._tx_attrs.values(), cls._tx_inh_by, None,
+                cls._tx_peg_rule)
+        new_classes[cls._tx_fqn] = c
+
+    # resolve attributes
+    for new_cls in new_classes.values():
+        # HACK: `if` in this comprehension is is a temporary fix for
+        #       test_import.py tests. Apparently, relative.fourth.Second is not
+        #       part of the meta-model but it should be.
+        new_cls.attrs = [Attr(attr.name, new_classes[attr.cls._tx_fqn],
+                            attr.mult, attr.cont, attr.ref,
+                            attr.bool_assignment, attr.position)
+                         for attr in new_cls.attrs
+                         if attr.cls._tx_fqn in new_classes]
+
+    # resolve inheritance
+    for new_cls in new_classes.values():
+        new_cls.inh_by = [new_classes[inh._tx_fqn] for inh in new_cls.inh_by]
+        if new_cls.inh_from:
+            new_cls.inh_from = new_classes[new_cls.inh_from._tx_fqn]
+
+    # Raise attributes
+    change = True
+    while change:
+        change = False
+        for new_cls in new_classes.values():
+            # If there are same attributes in all inherited classes
+            # raise them to current class
+            if new_cls.inh_by:
+                first = new_cls.inh_by[0]
+                for attr in first.attrs:
+                    for other in new_cls.inh_by[1:]:
+                        if attr not in other.attrs:
+                            break
+                    else:
+                        # Attribute found in all inherited classes
+                        # Move it up
+                        if attr.name not in [attr.name
+                                             for attr in new_cls.attrs]:
+                            new_cls.attrs.append(attr)
+                        for inh in new_cls.inh_by:
+                            inh.attrs.remove(attr)
+                        change = True
+
+    return new_classes.values()
+
 
 
 def model_export(model, file_name, repo=None):
@@ -312,9 +404,9 @@ def model_export_to_file(f, model=None, repo=None):
         Nothing
     """
     if not model and not repo:
-        raise Exception("specity either a model or a repo")
+        raise Exception("specify either a model or a repo")
     if model and repo:
-        raise Exception("specity either a model or a repo")
+        raise Exception("specify either a model or a repo")
 
     processed_set = set()
     f.write(HEADER)

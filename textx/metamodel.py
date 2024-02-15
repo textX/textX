@@ -116,6 +116,14 @@ class MetaAttr:
         self.bool_assignment = bool_assignment
         self.position = position
 
+    def __eq__(self, other):
+        return self.name == other.name \
+            and self.cls == other.cls \
+            and self.mult == other.mult \
+            and self.cont == other.cont \
+            and self.ref == other.ref \
+            and self.bool_assignment == other.bool_assignment
+
 
 class TextXMetaClass(type):
     """
