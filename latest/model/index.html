@@ -309,8 +309,9 @@ references shall not be followed.</p>
 references shall not be followed.</p>
 <h3 id="get_locationobj"><code>get_location(obj)</code><a class="headerlink" href="#get_locationobj" title="Permanent link">&para;</a></h3>
 <p>Returns the location of the textX model object in the form of a dict with
-<code>line/col/filename</code> keys. Filename can be <code>None</code> if the model is loaded from a
-string. Return value is convenient for use in TextX exceptions (e.g. <code>raise
+<code>line/col/nchar/filename</code> keys. <code>nchar</code> is a substring length of the <code>obj</code> in
+the input string. Filename can be <code>None</code> if the model is loaded from a string.
+Return value is convenient for use in TextX exceptions (e.g. <code>raise
 TextXSemanticError('Some message', **get_location(model_obj))</code>)</p>
 <h3 id="textx_isinstanceobj-cls"><code>textx_isinstance(obj, cls)</code><a class="headerlink" href="#textx_isinstanceobj-cls" title="Permanent link">&para;</a></h3>
 <p>Return <code>True</code> if <code>obj</code> is instance of <code>cls</code> taking into account textX rule/class

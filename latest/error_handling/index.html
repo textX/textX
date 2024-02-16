@@ -174,14 +174,15 @@ meta-model or model parsing/construction.</p>
 <p>For a syntax error <code>TextXSyntaxError</code> is raised. For a semantic error
 <code>TextXSemanticError</code> is raised. Both exceptions inherit from <code>TextXError</code>. These
 exceptions are located in <code>textx.exceptions</code> module.</p>
-<p>All exceptions have <code>message</code> attribute with the error message, and <code>line</code> and
-<code>col</code> attributes which represent line and column where the error was found.</p>
+<p>All exceptions have <code>message</code> attribute with the error message, and <code>line</code>,
+<code>col</code> and <code>nchar</code> attributes which represent line, column and substring length
+where the error was found.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>You can also raise <code>TextXSemanticError</code> during semantic checks (e.g. in <a href="../metamodel/#processors">object
 processors</a>. These error classes accepts the message
-and location information (<code>line</code>, <code>col</code>, <code>filename</code>) which can be produced from
-any textX model object using <code>get_location</code>:</p>
+and location information (<code>line</code>, <code>col</code>, <code>nchar</code>, <code>filename</code>) which can be
+produced from any textX model object using <code>get_location</code>:</p>
 <pre><code>from textx import get_location, TextXSemanticError
 ...
 def my_processor(entity):
