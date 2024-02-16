@@ -86,14 +86,18 @@ def model_generate_dot(metamodel, model, output_path, overwrite, debug):
 
 
 @generator("textX", "PlantUML")
-def metamodel_generate_plantuml(metamodel, model, output_path, overwrite, debug):
+def metamodel_generate_plantuml(metamodel, model, output_path, overwrite,
+                                debug, **custom_args):
     "Generating PlantUML visualizations from textX grammars"
 
     output_file = get_output_filename(model.file_name, output_path, "pu")
+    linetype = custom_args.get('linetype', None)
+
     gen_file(
         model.file_name,
         output_file,
-        partial(metamodel_export, model, output_file, renderer=PlantUmlRenderer()),
+        partial(metamodel_export, model, output_file,
+                renderer=PlantUmlRenderer(linetype)),
         overwrite,
         success_message='To convert to png run "plantuml {}"'.format(
             os.path.basename(output_file)

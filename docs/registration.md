@@ -168,7 +168,7 @@ where:
   should we produce more output
 - `**custom_args` - additional generator-specific arguments. When the generator
   is called from the CLI this parameter will hold all other switches that are
-  not recognize
+  not recognized
   
   
 For example:

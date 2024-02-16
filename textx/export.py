@@ -234,10 +234,16 @@ class DotRenderer(Renderer):
 
 
 class PlantUmlRenderer(Renderer):
+    def __init__(self, linetype=None):
+        self.linetype = linetype
+        super().__init__()
+
     def get_header(self):
         return """@startuml
 set namespaceSeparator .
-"""
+{}
+""".format(f"skinparam linetype {self.linetype}"
+           if self.linetype else "")
 
     def get_trailer(self):
         trailer = ""

@@ -19,6 +19,9 @@ please take a look at related PRs and issues and see if the change affects you.
   for the model object where the error was found. Also, this value is now
   returned by `get_location()`, so no changes are required in user code. See
   [420]. Thanks @davidchall.
+- `linetype` parameter to PlantUML generator which controls line style. See the
+  tip in [the visualization
+  docs](https://textx.github.io/textX/latest/visualization/).
 
 ### Changed
 - Meta-model diagram export now raises attributes/references to abstract

@@ -69,7 +69,7 @@ Here is an example on how to produce the same visualization described in section
 example](https://github.com/textX/textX/tree/master/examples/robot)).
 
 ```nohighlight
-$ textx generate robot.tx --target dot 
+$ textx generate robot.tx --target dot
 Generating dot target from models:
 /home/igor/repos/textX/textX/examples/robot/robot.tx
 -> /home/igor/repos/textX/textX/examples/robot/robot.dot
@@ -118,10 +118,21 @@ The produced `robot.png` image will look like this:
 ![Robot meta-model in PlantUML](./images/robot.png)
 
 
+!!! tip
+
+    PlantUML generator accepts additional parameter `linetype` which controls
+    the style of lines in the diagram. Possible values are `ortho` and
+    `polyline`. For example:
+
+    ```
+    $ textx generate robot.tx --target plantuml --linetype ortho
+    ```
+
+
 Similarly you can generate output from any model. For example:
 
 ```nohighlight
-$ textx generate program.rbt --grammar robot.tx --target dot 
+$ textx generate program.rbt --grammar robot.tx --target dot
 Generating dot target from models:
 /home/igor/repos/textX/textX/examples/robot/program.rbt
 -> /home/igor/repos/textX/textX/examples/robot/program.dot
