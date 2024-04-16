@@ -1,0 +1,36 @@
+[book]
+authors = ["Igor Dejanović and contributors"]
+language = "en"
+multilingual = false
+src = "src"
+title = "textX"
+
+[output]
+
+# [output.pdf]
+
+# [output.pdf-outline]
+
+[output.html]
+git-repository-url = "https://github.com/textX/textX/"
+additional-css = ["./mdbook-admonish.css", "theme/pagetoc.css"] #, "style.css"]
+additional-js = ["theme/pagetoc.js"] # , "sidebar.js"]
+mathjax-support = true
+
+[preprocessor]
+
+[preprocessor.theme]
+turn-off = true         # Comment this line and run `mdbook build` when theme is changed
+pagetoc        = true
+pagetoc-width            = "13%"
+content-max-width        = "85%"
+pagetoc-fontsize         = "14.5px"
+sidebar-width            = "300px"
+
+
+[preprocessor.admonish]
+command = "mdbook-admonish"
+assets_version = "3.0.0" # do not edit: managed by `mdbook-admonish install`
+
+[preprocessor.bib]
+bibliography = "references.bib"
