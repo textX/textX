@@ -63,9 +63,8 @@ def metamodel_generate_dot(metamodel, model, output_path, overwrite, debug):
         output_file,
         partial(metamodel_export, model, output_file),
         overwrite,
-        success_message='To convert to png run "dot -Tpng -O {}"'.format(
-            os.path.basename(output_file)
-        ),
+        success_message=f'To convert to png run '
+                        f'"dot -Tpng -O {os.path.basename(output_file)}"',
     )
 
 
@@ -79,9 +78,8 @@ def model_generate_dot(metamodel, model, output_path, overwrite, debug):
         output_file,
         partial(model_export, model, output_file),
         overwrite,
-        success_message='To convert to png run "dot -Tpng -O {}"'.format(
-            os.path.basename(output_file)
-        ),
+        success_message=f'To convert to png run '
+                        f'"dot -Tpng -O {os.path.basename(output_file)}"',
     )
 
 
@@ -99,7 +97,6 @@ def metamodel_generate_plantuml(metamodel, model, output_path, overwrite,
         partial(metamodel_export, model, output_file,
                 renderer=PlantUmlRenderer(linetype)),
         overwrite,
-        success_message='To convert to png run "plantuml {}"'.format(
-            os.path.basename(output_file)
-        ),
+        success_message=f'To convert to png run '
+                        f'"plantuml {os.path.basename(output_file)}"',
     )

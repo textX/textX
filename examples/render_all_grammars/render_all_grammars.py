@@ -57,10 +57,10 @@ def main(path=None, debug=False, reportfilename=None):
                 dest_dot_png, dirname(reportfilename))
             rel_dest_pu_png = os.path.relpath(
                 dest_pu_png, dirname(reportfilename))
-            md.write('<img width="49%" src="{}" alt="{}">\n'.format(
-                rel_dest_pu_png, rel_dest_pu_png))
-            md.write('<img width="49%" src="{}" alt="{}">\n'.format(
-                rel_dest_dot_png, rel_dest_dot_png))
+            md.write(f'<img width="49%" src="{rel_dest_pu_png}" '
+                     f'alt="{rel_dest_pu_png}">\n')
+            md.write(f'<img width="49%" src="{rel_dest_dot_png}" '
+                     f'alt="{rel_dest_dot_png}">\n')
             md.write('\n\n')
 
     print("-------------------------")

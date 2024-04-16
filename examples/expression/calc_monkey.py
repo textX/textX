@@ -58,8 +58,8 @@ def operand_value(self):
         if self.op_id in namespace:
             return namespace[self.op_id]
         else:
-            raise Exception('Unknown variable "{}" at position {}'
-                            .format(self.op_id, self._tx_position))
+            raise Exception(f'Unknown variable "{self.op_id}" '
+                            f'at position {self._tx_position}')
     else:
         return self.op_expr.value
 

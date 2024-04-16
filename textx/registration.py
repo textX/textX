@@ -232,9 +232,8 @@ def register_generator(
     lang_gens = generators.setdefault(generator_desc.language.lower(), {})
     if generator_desc.target.lower() in lang_gens:
         raise TextXRegistrationError(
-            'Generator "{}->{}" already registered.'.format(
-                generator_desc.language, generator_desc.target
-            )
+            f'Generator "{generator_desc.language}->'
+            f'{generator_desc.target}" already registered.'
         )
     lang_gens[generator_desc.target.lower()] = generator_desc
 

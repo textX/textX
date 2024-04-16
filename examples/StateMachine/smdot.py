@@ -38,9 +38,8 @@ def sm_to_dot(model):
 
         # Render transitions
         for transition in state.transitions:
-            dot_str += '{} -> {} [label="{}"]\n'\
-                .format(id(state), id(transition.to_state),
-                        transition.event.name)
+            dot_str += f'{id(state)} -> {id(transition.to_state)}' \
+                       f' [label="{transition.event.name}"]\n'
 
     # If there are reset events declared render them.
     if model.resetEvents:

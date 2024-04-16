@@ -594,16 +594,9 @@ class TextXVisitor(RRELVisitor):
 
                     if grammar_parser.debug:
                         grammar_parser.dprint(
-                            "Resolved attribute {}:{}[cls={}, cont={}, "
-                            "ref={}, mult={}, pos={}]".format(
-                                cls.__name__,
-                                attr.name,
-                                attr.cls.__name__,
-                                attr.cont,
-                                attr.ref,
-                                attr.mult,
-                                attr.position,
-                            )
+                            f"Resolved attribute {cls.__name__}:{attr.name}"
+                            f"[cls={attr.cls.__name__}, cont={attr.cont}, "
+                            f"ref={attr.ref}, mult={attr.mult}, pos={attr.position}]"
                         )
 
             return cls
@@ -684,10 +677,8 @@ class TextXVisitor(RRELVisitor):
                         if rule.rule_name == "__asgn_optional":
                             raise TextXSemanticError(
                                 "Can't use bool assignment "
-                                'inside repetition in rule "{}" at {}.'.format(
-                                    rule_name,
-                                    self.grammar_parser.pos_to_linecol(node.position),
-                                )
+                                f'inside repetition in rule "{rule_name}" '
+                                f'at {self.grammar_parser.pos_to_linecol(node.position)}.'
                             )
                         if mult_lt(cls_attr.mult, mult):
                             cls_attr.mult = mult
@@ -753,9 +744,8 @@ class TextXVisitor(RRELVisitor):
         for name, value in children:
             if name not in ["skipws", "ws", "split"]:
                 raise TextXSyntaxError(
-                    'Invalid rule param "{}" at {}.'.format(
-                        name, self.grammar_parser.pos_to_linecol(node.position)
-                    )
+                    f'Invalid rule param "{name}" '
+                    f'at {self.grammar_parser.pos_to_linecol(node.position)}.'
                 )
 
             if name == "split" and not isinstance(value, str):
@@ -1023,16 +1013,9 @@ class TextXVisitor(RRELVisitor):
 
         if self.debug:
             self.dprint(
-                "Created attribute {}:{}[cls={}, cont={}, "
-                "ref={}, mult={}, pos={}]".format(
-                    cls.__name__,
-                    attr_name,
-                    cls_attr.cls.cls_name,
-                    cls_attr.cont,
-                    cls_attr.ref,
-                    cls_attr.mult,
-                    cls_attr.position,
-                )
+                f"Created attribute {cls.__name__}:{attr_name}"
+                f"[cls={cls_attr.cls.cls_name}, cont={cls_attr.cont}, "
+                f"ref={cls_attr.ref}, mult={cls_attr.mult}, pos={cls_attr.position}]"
             )
 
         assignment_rule._attr_name = attr_name

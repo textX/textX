@@ -179,9 +179,8 @@ class DotRenderer(Renderer):
             for cls in sorted(self.match_rules, key=lambda x: x.fqn):
                 trailer += "\t<tr>\n"
                 attrs = dot_match_str(cls, self.match_rules)
-                trailer += "\t\t<td><b>{}</b></td><td>{}</td>\n".format(
-                    cls.name, html_escape(attrs)
-                )
+                trailer += f"\t\t<td><b>{cls.name}</b></td>" \
+                           f"<td>{html_escape(attrs)}</td>\n"
                 trailer += "\t</tr>\n"
             trailer += "</table>"
         return trailer
@@ -189,9 +188,8 @@ class DotRenderer(Renderer):
     def get_trailer(self):
         trailer = ""
         if self.match_rules:
-            trailer = "match_rules [ shape=plaintext, label=< {} >]\n\n".format(
-                self.get_match_rules_table()
-            )
+            trailer = f"match_rules [ shape=plaintext, " \
+                      f"label=< {self.get_match_rules_table()} >]\n\n"
         return trailer + "\n}\n"
 
     def render_class(self, cls):
@@ -225,9 +223,8 @@ class DotRenderer(Renderer):
         if attr.ref and attr.cls.name != "OBJECT":
             # If attribute is a reference
             mult = attr.mult if attr.mult != MULT_ONE else ""
-            return '{} -> {}[{}headlabel="{} {}"]\n'.format(
-                id(cls), id(attr.cls), arrowtail, attr.name, mult
-            )
+            return f'{id(cls)} -> ' \
+                f'{id(attr.cls)}[{arrowtail}headlabel="{attr.name} {mult}"]\n'
 
     def render_inherited_by(self, base, special):
         return f"{id(base)} -> {id(special)} [dir=back]\n"
@@ -253,7 +250,7 @@ set namespaceSeparator .
             trailer += "  |= Name  |= Rule details |\n"
             for cls in self.match_rules:
                 # print("-*-> " + cls.__name__)
-                trailer += "  | {} | {} |\n".format(
+                trailer += "  | {} | {} |\n".format(  # noqa
                     cls.name,
                     dot_escape(dot_match_str(cls, self.match_rules)),  # reuse
                 )
@@ -445,20 +442,13 @@ def model_export_to_file(f, model=None, repo=None):
                             if list_obj is not None:
                                 if type(list_obj) in PRIMITIVE_PYTHON_TYPES:
                                     f.write(
-                                        '{} -> "{}:{}" [label="{}:{}" {}]\n'.format(
-                                            id(obj),
-                                            list_obj,
-                                            type(list_obj).__name__,
-                                            attr_name,
-                                            idx,
-                                            endmark,
-                                        )
+                                        f'{id(obj)} -> "{list_obj}:{type(list_obj).__name__}"'  # noqa
+                                        f' [label="{attr_name}:{idx}" {endmark}]\n'
                                     )
                                 else:
                                     f.write(
-                                        '{} -> {} [label="{}:{}" {}]\n'.format(
-                                            id(obj), id(list_obj), attr_name, idx, endmark
-                                        )
+                                        f'{id(obj)} -> {id(list_obj)} '
+                                        f'[label="{attr_name}:{idx}" {endmark}]\n'
                                     )
                                     _export(list_obj)
                 else:
@@ -470,16 +460,14 @@ def model_export_to_file(f, model=None, repo=None):
                         if attr_name == "name":
                             name = attr_value
                         else:
-                            attrs += "{}{}:{}={}\\l".format(
-                                required, attr_name, type(attr_value).__name__, attr_value
-                            )
+                            attrs += f"{required}{attr_name}:" \
+                                     f"{type(attr_value).__name__}={attr_value}\\l"
                     else:
                         # Object references
                         if attr_value is not None:
                             f.write(
-                                '{} -> {} [label="{}" {}]\n'.format(
-                                    id(obj), id(attr_value), attr_name, endmark
-                                )
+                                f'{id(obj)} -> {id(attr_value)} '
+                                f'[label="{attr_name}" {endmark}]\n'
                             )
                             _export(attr_value)
 

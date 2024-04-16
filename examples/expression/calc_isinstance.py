@@ -94,8 +94,8 @@ def main(debug=False):
                     if x.op_id in namespace:
                         return namespace[x.op_id]
                     else:
-                        raise Exception('Unknown variable "{}" at position {}'
-                                        .format(x.op_id, x._tx_position))
+                        raise Exception(f'Unknown variable "{x.op_id}" '
+                                        f'at position {x._tx_position}')
             else:
                 assertIs(x, 'CompoundOperand')
                 return evaluate(x.expression)

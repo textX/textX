@@ -941,9 +941,8 @@ def parse_tree_to_objgraph(
                     for m in models:
                         for _, _, delayed in m._tx_reference_resolver.delayed_crossrefs:
                             line, col = parser.pos_to_linecol(delayed.position)
-                            error_text += ' "{}" of class "{}" at {}'.format(
-                                delayed.obj_name, delayed.cls.__name__, (line, col)
-                            )
+                            error_text += f' "{delayed.obj_name}" of class ' \
+                                          f'"{delayed.cls.__name__}" at {(line, col)}'
                     raise TextXSemanticError(error_text, line=line, col=col)
 
                 for m in models:
@@ -1167,9 +1166,8 @@ class ReferenceResolver:
                 if resolved is None:
                     line, col = self.parser.pos_to_linecol(crossref.position)
                     raise TextXSemanticError(
-                        message='Unknown object "{}" of class "{}"'.format(
-                            crossref.obj_name, crossref.cls.__name__
-                        ),
+                        message=f'Unknown object "{crossref.obj_name}" of class '
+                                f'"{crossref.cls.__name__}"',
                         line=line,
                         col=col,
                         err_type=UNKNOWN_OBJ_ERROR,
