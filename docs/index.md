@@ -163,8 +163,9 @@ See textX `Tutorials` to get you started:
 
 For specific information read various `User Guide` sections.
 
-Also, you can
-check out [examples](https://github.com/textX/textX/tree/master/examples/).
+You can also try textX in [our
+playground](https://textx.github.io/textx-playground/). There is a dropdown with
+several examples to get you started.
 
 A full example project that shows how multi-meta-modeling feature can be used is
 also available in [a separate git

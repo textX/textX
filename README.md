@@ -140,6 +140,10 @@ DSL](https://img.youtube.com/vi/HI14jk0JIR0/0.jpg)](https://www.youtube.com/watc
 The full documentation with tutorials is available at
 http://textx.github.io/textX/stable/
 
+You can also try textX in [our
+playground](https://textx.github.io/textx-playground/). There is a dropdown with
+several examples to get you started.
+
 
 # Support in IDE/editors
 
