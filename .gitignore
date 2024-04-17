@@ -56,7 +56,6 @@ docs/_build/
 *.dot
 site
 .directory
-*.png
 examples/Entity/srcgen/
 tags
 textX.mm
