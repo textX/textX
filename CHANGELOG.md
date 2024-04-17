@@ -26,6 +26,8 @@ please take a look at related PRs and issues and see if the change affects you.
 ### Changed
 - Meta-model diagram export now raises attributes/references to abstract
   meta-classes along the inheritance chain. See [423].
+- Documentation migrated to [mdbook](https://rust-lang.github.io/mdBook/) and
+  GitHub Actions.
 
 [423]: https://github.com/textX/textX/issues/423
 [420]: https://github.com/textX/textX/issues/420
