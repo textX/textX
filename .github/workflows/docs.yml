@@ -3,7 +3,7 @@ name: Deploy textX docs to Pages
 on:
   # Runs on pushes targeting the default branch
   push:
-    branches: [$default-branch]
+    branches: [master]
     paths:
       - 'docs/**'
       - '.github/workflows/docs.yml'
