@@ -2,8 +2,6 @@ name: tests
 
 on:
   push:
-    branches-ignore:
-      - 'gh-pages'
     paths:
       - 'textx/**'
       - 'tests/**'
