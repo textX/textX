@@ -3,8 +3,7 @@ name: Deploy textX docs to Pages
 on:
   # Runs on pushes targeting the default branch
   push:
-    #branches: [$default-branch]
-    branches: [mdbook-docs]
+    branches: [$default-branch]
     paths:
       - 'docs/**'
       - '.github/workflows/docs.yml'
