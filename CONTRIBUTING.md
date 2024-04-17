@@ -43,26 +43,38 @@ docs, in docstrings, or even on the web in blog posts, articles, and such.
 
 #### How to Test the Documentation Locally
 
-textX is currently using `mkdocs`, a documentation generator, to generate the
-docs into html files.
+textX is currently using `mdbook` documentation generator, which generate HTML
+from markdown files in the `docs/src` folder.
 
-To test the docs locally, you need to follow the first 3 instructions at the
-[Get Started!](#get-started) section
+The always up-to-date docs are available at https://textx.github.io/textX/index.html
 
-1. Fork the repo (one-time effort)
-2. Clone your fork locally (one-time effort)
-3. Create a virtualenv for the fork and install the relevant libraries (one-time
-   effort)
+The easiest way to build and test docs locally is to use our mdbook-textx docker
+image:
 
-Once you complete the above 3 instructions, you can now:
+1. Install [docker](https://docs.docker.com/engine/install/).
+2. Go to `docs` folder and run:
 
-4. Activate the virtualenv
-5. Run `mkdocs serve` at the root folder
+    ```sh
+    ./serve.sh
+    ```
 
-`mkdocs` will run a webserver that serves the documentation at 127.0.0.1:8000
+This starts docker container which will watch to changes in the markdown docs
+files and serve generated content on http://localhost:3000
 
-To make changes to the configurations, you can look at `mkdocs.yml`. For more
-information on how to use mkdocs, visit this [site](https://www.mkdocs.org).
+To add a new page you must add the page to the TOC at `docs/src/SUMMARY.md`.
+
+To learn more on mdbook you can visit [the project
+documentation](https://rust-lang.github.io/mdBook/).
+
+`mdbook` is based on a concept of `preprocessors` which are just binaries whose
+name starts with `mdbook-` and which are called to preprocess md files.
+
+Currently we are using the following preprocessors:
+
+1. [mdbook-admonish](https://github.com/tommilligan/mdbook-admonish)
+2. [mdbook-linkcheck](https://github.com/Michael-F-Bryan/mdbook-linkcheck)
+3. [mdbook-theme](https://github.com/zjp-CN/mdbook-theme)
+4. [mdbook-bib](https://github.com/francisco-perez-sorrosal/mdbook-bib)
 
 
 ### Submit Feedback
