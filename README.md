@@ -2,7 +2,7 @@
 
 [![PyPI Version](https://img.shields.io/pypi/v/textX.svg)](https://pypi.python.org/pypi/textX)
 ![](https://img.shields.io/pypi/l/textX.svg)
-[![Build status](https://github.com/textx/textx/actions/workflows/ci-linux-ubuntu.yml/badge.svg)](https://github.com/textx/textx/actions)
+[![Build status](https://github.com/textx/textx/actions/workflows/tests.yml/badge.svg)](https://github.com/textx/textx/actions)
 [![Code test coverage](https://coveralls.io/repos/github/textX/textX/badge.svg?branch=master)](https://coveralls.io/github/textX/textX?branch=master)
 [![Documentation Status](https://img.shields.io/badge/docs-latest-green.svg)](http://textx.github.io/textX/latest/)
 
