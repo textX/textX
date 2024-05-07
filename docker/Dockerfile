@@ -46,6 +46,6 @@ RUN apt-get update && \
     apt-get install -y git && \
     rm -rf /var/lib/apt/lists/*
 COPY --from=build /root/.cargo/* /bin/
-VOLUME /docs
-WORKDIR /docs
+VOLUME /p
+WORKDIR /p
 EXPOSE 3000

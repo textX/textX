@@ -52,10 +52,10 @@ The easiest way to build and test docs locally is to use our mdbook-textx docker
 image:
 
 1. Install [docker](https://docs.docker.com/engine/install/).
-2. Go to `docs` folder and run:
+2. From the project's root folder run:
 
     ```sh
-    ./serve.sh
+    ./serve-docs.sh
     ```
 
 This starts docker container which will watch to changes in the markdown docs
