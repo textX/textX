@@ -35,12 +35,12 @@ jobs:
         uses: actions/configure-pages@v5
       - name: Build with mdBook
         run: |
-          cd p/docs
+          cd ./docs
           mdbook build
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./p/docs/book
+          path: ./docs/book
 
   # Deployment job
   deploy:
