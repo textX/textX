@@ -21,7 +21,7 @@ please take a look at related PRs and issues and see if the change affects you.
   [420]. Thanks @davidchall.
 - `linetype` parameter to PlantUML generator which controls line style. See the
   tip in [the visualization
-  docs](https://textx.github.io/textX/latest/visualization/).
+  docs](https://textx.github.io/textX/visualization.html).
 
 ### Fixed
 - Rendering of multiplicities of association in PlantUML generator.
@@ -779,6 +779,6 @@ please take a look at related PRs and issues and see if the change affects you.
 [MkDocs]: https://www.mkdocs.org/
 [PlantUML]: http://plantuml.com/
 [semver]: https://semver.org/spec/v2.0.0.html
-[textXDocs]: http://textx.github.io/textX/latest/
-[Registration and discovery]: http://textx.github.io/textX/latest/registration/
-[reference other registered meta-models]: http://textx.github.io/textX/latest/multimetamodel/#use-case-meta-model-referencing-another-meta-model
+[textXDocs]: http://textx.github.io/textX/
+[Registration and discovery]: http://textx.github.io/textX/registration.html
+[reference other registered meta-models]: http://textx.github.io/textX/multimetamodel.html#use-case-meta-model-referencing-another-meta-model

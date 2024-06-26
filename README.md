@@ -4,7 +4,7 @@
 ![](https://img.shields.io/pypi/l/textX.svg)
 [![Build status](https://github.com/textx/textx/actions/workflows/tests.yml/badge.svg)](https://github.com/textx/textx/actions)
 [![Code test coverage](https://coveralls.io/repos/github/textX/textX/badge.svg?branch=master)](https://coveralls.io/github/textX/textX?branch=master)
-[![Documentation Status](https://img.shields.io/badge/docs-latest-green.svg)](http://textx.github.io/textX/latest/)
+[![Documentation Status](https://img.shields.io/badge/docs-latest-green.svg)](https://textx.github.io/textX/)
 
 
 textX is a meta-language for building Domain-Specific Languages (DSLs) in
@@ -19,7 +19,7 @@ meta-model (a.k.a. abstract syntax) for the language. See the docs for the
 details.
 
 textX follows the syntax and semantics of Xtext but [differs in some
-places](http://textx.github.io/textX/latest/about/comparison/) and is
+places](http://textx.github.io/textX/about/comparison.html) and is
 implemented 100% in Python using [Arpeggio] PEG parser - no grammar ambiguities,
 unlimited lookahead, interpreter style of work.
 
