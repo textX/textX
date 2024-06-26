@@ -23,6 +23,9 @@ please take a look at related PRs and issues and see if the change affects you.
   tip in [the visualization
   docs](https://textx.github.io/textX/latest/visualization/).
 
+### Fixed
+- Rendering of multiplicities of association in PlantUML generator.
+
 ### Changed
 - Meta-model diagram export now raises attributes/references to abstract
   meta-classes along the inheritance chain. See [423].

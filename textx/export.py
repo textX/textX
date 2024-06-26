@@ -289,11 +289,10 @@ set namespaceSeparator .
         if attr.ref and attr.cls.name != "OBJECT":
             # If attribute is a reference
             # mult = attr.mult if not attr.mult == MULT_ONE else ""
-            arr = "*-->" if attr.cont else "o-->"
+            arr = "*-->" if attr.cont else "-->"
             name = attr.name
-            if attr.mult != "1":
-                name += " " + attr.mult
-            return f"{cls.fqn} {arr} {attr.cls.fqn}: {name}\n"
+            mult = f'"{attr.mult}"' if attr.mult != "1" else ""
+            return f'{cls.fqn} {arr} {mult} {attr.cls.fqn}: {name}\n'
 
     def render_inherited_by(self, base, special):
         return f"{base.fqn} <|-- {special.fqn}\n"
