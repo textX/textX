@@ -1043,7 +1043,7 @@ def _end_model_construction(model):
             except TypeError as e:
                 # Add class name information in case of wrong
                 # constructor parameters
-                e.args += ("for class %s" % obj.__class__.__name__,)
+                e.args += (f"for class {obj.__class__.__name__}",)
                 the_parser.dprint(traceback.print_exc())
                 raise e
 

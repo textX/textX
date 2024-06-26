@@ -376,7 +376,8 @@ class TextXMetaModel(DebugPrinter):
             root_namespace = current_namespace.rsplit(".", 1)[0]
             import_name = f"{root_namespace}.{import_name}"
 
-        import_file_name = "%s.tx" % os.path.join(self.root_path, *import_name.split("."))
+        import_file_name = "{}.tx".format(
+            os.path.join(self.root_path, *import_name.split(".")))
 
         if import_name not in self.namespaces:
             self._enter_namespace(import_name)
