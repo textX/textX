@@ -94,7 +94,7 @@ Meta-model now looks like this:
 
 While the example (Person model) looks like this:
 
-![Person model 1](entity/person1.ent.dot.png)
+![Person model 1](entity/person1.dot.png)
 
 What you see on the model diagram are actual Python objects.
 It looks good, but it would be even better if a reference to `Address` from
@@ -182,7 +182,7 @@ Meta-model now looks like this:
 
 While the example (Person model) looks like this:
 
-![Person model 2](entity/person.ent.dot.png)
+![Person model 2](entity/person.dot.png)
 
 But, we can make this language even better. We can define some built-in simple
 types so that the user does not need to specify them for every model. This has
