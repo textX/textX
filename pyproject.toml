@@ -29,9 +29,10 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
 ]
 
-requires-python = ">=3.8, <3.13"
+requires-python = ">=3.8, <3.14"
 dependencies = [
     "Arpeggio >= 2.0.0",
     "importlib-metadata; python_version < '3.10'",  # For entry_points backward compatibility

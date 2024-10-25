@@ -150,7 +150,7 @@ To install development (`master` branch) version:
 
 ## Python versions
 
-textX works with Python 3.6+. Other versions might work but are not tested.
+textX works with Python 3.8+. Other versions might work but are not tested.
 
 ## Getting started
 
