@@ -31,9 +31,13 @@ please take a look at related PRs and issues and see if the change affects you.
   meta-classes along the inheritance chain. See [423].
 - Documentation migrated to [mdbook](https://rust-lang.github.io/mdBook/) and
   GitHub Actions.
+- The Python version limit "<3.13" has been removed from the pyproject.toml
+  file. The library should run on all Python versions starting from 3.8. See
+  [428].
 
 [423]: https://github.com/textX/textX/issues/423
 [420]: https://github.com/textX/textX/issues/420
+[428]: https://github.com/textX/textX/issues/428
 
 
 ## [4.0.1] (released: 2023-11-12)
