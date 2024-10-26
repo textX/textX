@@ -6,6 +6,7 @@ on:
       - 'textx/**'
       - 'tests/**'
       - 'examples/**'
+      - 'pyproject.toml'
       - '.github/workflows/tests.yml'
   pull_request:
 
