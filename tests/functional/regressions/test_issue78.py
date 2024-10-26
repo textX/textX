@@ -29,7 +29,7 @@ def test_issue78_obj_processors_base_attr_proc():
     2 S2b t2b
     """
     )
-    assert ["t2a", "t2b"] == test_list
+    assert test_list == ["t2a", "t2b"]
 
 
 def test_issue78_obj_processors_order_of_eval():
@@ -58,7 +58,7 @@ def test_issue78_obj_processors_order_of_eval():
     2 S2
     """
     )
-    assert ["Special_S1", "Base_S1", "Base_S2"] == test_list
+    assert test_list == ["Special_S1", "Base_S1", "Base_S2"]
 
 
 def test_issue78_obj_processors_replacement1_base():
@@ -87,8 +87,8 @@ def test_issue78_obj_processors_replacement1_base():
     2 S2
     """
     )
-    assert ["Special_S1"] == test_list
-    assert ["Base_S1", "Base_S2"] == m.base
+    assert test_list == ["Special_S1"]
+    assert m.base == ["Base_S1", "Base_S2"]
 
 
 def test_issue78_obj_processors_replacement2_specialized():
@@ -117,7 +117,7 @@ def test_issue78_obj_processors_replacement2_specialized():
     2 S2
     """
     )
-    assert ["Base_S1", "Base_S2"] == test_list
+    assert test_list == ["Base_S1", "Base_S2"]
     assert m.base[0] == "Special_S1"
     assert m.base[0].__class__.__name__ != "Special1"  # it is a str now...
     assert m.base[1].__class__.__name__ == "Special2"  # this one is unchanged
@@ -148,7 +148,7 @@ def test_issue78_obj_processors_replacement_domination_of_specialized():
     2 S2
     """
     )
-    assert ["Special_S1", "Base_S2"] == m.base
+    assert m.base == ["Special_S1", "Base_S2"]
 
 
 def test_issue78_quickcheck_no_obj_processors_called_for_references():
@@ -181,7 +181,7 @@ def test_issue78_quickcheck_no_obj_processors_called_for_references():
     A a1 A a2 A a3
     """
     )
-    assert ["a1", "a2", "a3"] == test_list
+    assert test_list == ["a1", "a2", "a3"]
 
     # only references to A: --> obj proc not called
     global_repo_provider.add_model(m1)
@@ -190,4 +190,4 @@ def test_issue78_quickcheck_no_obj_processors_called_for_references():
     B b1 -> a1 B b2 -> a2 B b3 -> a3
     """
     )
-    assert ["a1", "a2", "a3"] == test_list  # unchanged...
+    assert test_list == ["a1", "a2", "a3"]  # unchanged...

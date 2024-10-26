@@ -34,7 +34,7 @@ class ExpressionElement:
 
         # textX will pass in parent attribute used for parent-child
         # relationships. We can use it if we want to.
-        self.parent = kwargs.get('parent', None)
+        self.parent = kwargs.get('parent')
 
         # We have 'op' attribute in all grammar rules
         self.op = kwargs['op']

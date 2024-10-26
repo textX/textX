@@ -89,7 +89,7 @@ def metamodel_generate_plantuml(metamodel, model, output_path, overwrite,
     "Generating PlantUML visualizations from textX grammars"
 
     output_file = get_output_filename(model.file_name, output_path, "pu")
-    linetype = custom_args.get('linetype', None)
+    linetype = custom_args.get('linetype')
 
     gen_file(
         model.file_name,

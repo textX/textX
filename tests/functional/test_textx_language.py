@@ -201,7 +201,7 @@ def test_match_rule():
 
     model = meta.model_from_str("two")
     assert model
-    assert model.__class__ == str
+    assert model.__class__ is str
     assert model == "two"
 
 
@@ -219,7 +219,7 @@ def test_match_rule_multiple():
 
     model = meta.model_from_str(" one two")
     assert model
-    assert model.__class__ == str
+    assert model.__class__ is str
     assert model == "onetwo"
 
 
@@ -236,7 +236,7 @@ def test_match_rule_complex():
 
     model = meta.model_from_str("one 45 one 78 foo foo foo")
     assert model
-    assert model.__class__ == str
+    assert model.__class__ is str
     assert model == "one45one78foofoofoo"
 
 
@@ -306,7 +306,7 @@ def test_regex_match_rule():
 
     model = meta.model_from_str("bar7")
     assert model
-    assert model.__class__ == str
+    assert model.__class__ is str
     assert model == "bar7"
 
 
@@ -323,7 +323,7 @@ def test_basetype_match_rule_is_match():
 
     model = meta.model_from_str("34")
     assert model
-    assert model.__class__ == int
+    assert model.__class__ is int
     assert model == 34
 
 
@@ -342,7 +342,7 @@ def test_simple_match_basetype_is_match_rule():
 
     model = meta.model_from_str("34")
     assert model
-    assert model.__class__ == int
+    assert model.__class__ is int
     assert model == 34
 
 
