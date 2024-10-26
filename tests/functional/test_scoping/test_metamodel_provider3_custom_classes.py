@@ -1,6 +1,5 @@
+from dataclasses import dataclass
 from os.path import abspath, dirname, join
-
-import attr
 
 import textx.scoping.providers as scoping_providers
 from textx import (
@@ -11,19 +10,19 @@ from textx import (
 )
 
 
-@attr.s(frozen=True)
+@dataclass(frozen=True)
 class Cls:
-    parent = attr.ib()
-    name = attr.ib()
-    extends = attr.ib()
-    methods = attr.ib()
+    parent: object
+    name: object
+    extends: object
+    methods: object
 
 
-@attr.s(frozen=True)
+@dataclass(frozen=True)
 class Obj:
-    parent = attr.ib()
-    name = attr.ib()
-    ref = attr.ib()
+    parent: object
+    name: object
+    ref: object
 
 
 def test_metamodel_provider_advanced_test3_global():

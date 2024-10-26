@@ -1,10 +1,12 @@
+from dataclasses import dataclass
+
 import pytest  # noqa
+
 from textx import metamodel_from_str
 
 
 @pytest.mark.parametrize("frozen", [False, True])
 def test_user_class_attrs(frozen):
-    attr = pytest.importorskip("attr")
     grammar = """
     Document:
         a=A
@@ -23,15 +25,15 @@ def test_user_class_attrs(frozen):
     B a=something
     """
 
-    @attr.s()
+    @dataclass
     class A:
-        parent = attr.ib()
-        name = attr.ib()
+        parent: object
+        name: object
 
-    @attr.s(frozen=frozen)
+    @dataclass(frozen=frozen)
     class B:
-        parent = attr.ib()
-        a = attr.ib()
+        parent: object
+        a: object
 
     mm = metamodel_from_str(grammar, classes=[A, B], auto_init_attributes=False)
     model = mm.model_from_str(modelstr)
@@ -39,8 +41,6 @@ def test_user_class_attrs(frozen):
 
 
 def test_inheritance_attrs():
-    attr = pytest.importorskip("attr")
-
     grammar = """
     Document:
         super=Super
@@ -59,14 +59,14 @@ def test_inheritance_attrs():
     Sub 2 something
     """
 
-    @attr.s()
+    @dataclass
     class Super:
-        parent = attr.ib()
-        a = attr.ib()
+        parent: object
+        a: object
 
-    @attr.s()
+    @dataclass
     class Sub(Super):
-        b = attr.ib()
+        b: object
 
     super_getattribute = Super.__getattribute__
     sub_getattribute = Sub.__getattribute__

@@ -1,6 +1,6 @@
+from dataclasses import dataclass
 from os.path import abspath, dirname, join
 
-import attr
 from pytest import raises
 
 import textx.scoping.providers as scoping_providers
@@ -19,24 +19,24 @@ from textx.scoping.tools import (
 
 
 def test_textx_tools_with_frozen_classes1():
-    @attr.s(frozen=True)
+    @dataclass(frozen=True)
     class Model:
-        # _tx_filename = attr.ib()
-        # _tx_parser = attr.ib()
-        use = attr.ib()
-        data = attr.ib()
+        # _tx_filename: object
+        # _tx_parser: object
+        use: object
+        data: object
 
-    @attr.s(frozen=True)
+    @dataclass(frozen=True)
     class Content:
-        parent = attr.ib()
-        elementsA = attr.ib()
-        elementsB = attr.ib()
-        ref = attr.ib()
+        parent: object
+        elementsA: object
+        elementsB: object
+        ref: object
 
-    @attr.s(frozen=True)
+    @dataclass(frozen=True)
     class Element:
-        parent = attr.ib()
-        name = attr.ib()
+        parent: object
+        name: object
 
     grammar = r"""
     Model:
@@ -115,17 +115,17 @@ def test_textx_tools_with_frozen_classes2():
             for k, v in kwargs.items():
                 setattr(self, k, v)
 
-    @attr.s(frozen=True)
+    @dataclass(frozen=True)
     class Content:
-        parent = attr.ib()
-        elementsA = attr.ib()
-        elementsB = attr.ib()
-        ref = attr.ib()
+        parent: object
+        elementsA: object
+        elementsB: object
+        ref: object
 
-    @attr.s(frozen=True)
+    @dataclass(frozen=True)
     class Element:
-        parent = attr.ib()
-        name = attr.ib()
+        parent: object
+        name: object
 
     grammar = r"""
     Model:

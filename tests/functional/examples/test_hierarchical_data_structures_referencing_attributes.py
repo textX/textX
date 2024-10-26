@@ -1,28 +1,29 @@
-import attr
+from dataclasses import dataclass
+
 from pytest import raises
 
 import textx.exceptions
 from textx import metamodel_from_str
 
 
-@attr.s(frozen=True)
+@dataclass(frozen=True)
 class Instance:
-    parent = attr.ib()
-    name = attr.ib()
-    type = attr.ib()
+    parent: object
+    name: object
+    type: object
 
 
-@attr.s(frozen=True)
+@dataclass(frozen=True)
 class Reference:
-    parent = attr.ib()
-    instance = attr.ib()
-    refs = attr.ib()
+    parent: object
+    instance: object
+    refs: object
 
 
-@attr.s(frozen=True)
+@dataclass(frozen=True)
 class RefItem:
-    parent = attr.ib()
-    valref = attr.ib()
+    parent: object
+    valref: object
 
 
 model_text = """

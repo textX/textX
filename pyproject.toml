@@ -69,7 +69,6 @@ dev = [
 test = [
     "click >=7.0, <9.0",
     "ruff",
-    "attrs",
     "jinja2",
     "coverage",
     "coveralls",
