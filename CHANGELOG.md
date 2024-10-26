@@ -14,6 +14,9 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ## [Unreleased]
 
+
+## [4.1.0] (released: 2024-10-26)
+
 ### Added
 - `nchar` attribute to `TextXError` class, which represents the substring length
   for the model object where the error was found. Also, this value is now
@@ -738,7 +741,8 @@ please take a look at related PRs and issues and see if the change affects you.
 [#92]: https://github.com/textX/textX/pull/92
 [#40]: https://github.com/textX/textX/issues/40
 
-[Unreleased]: https://github.com/textX/textX/compare/4.0.1...HEAD
+[Unreleased]: https://github.com/textX/textX/compare/4.1.0...HEAD
+[4.1.0]: https://github.com/textX/textX/compare/4.0.1...4.1.0
 [4.0.1]: https://github.com/textX/textX/compare/4.0.0...4.0.1
 [4.0.0]: https://github.com/textX/textX/compare/3.1.1...4.0.0
 [3.1.1]: https://github.com/textX/textX/compare/3.1.0...3.1.1
