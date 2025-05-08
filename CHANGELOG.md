@@ -14,6 +14,9 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ## [Unreleased]
 
+
+## [4.2.0] (released: 2025-05-08)
+
 ### Changed
 - Moved from click.echo to logging.
 
