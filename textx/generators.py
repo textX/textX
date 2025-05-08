@@ -1,8 +1,11 @@
+import logging
 import os
 from functools import partial
 
 from textx.export import PlantUmlRenderer, metamodel_export, model_export
 from textx.registration import generator
+
+logger = logging.getLogger(__name__)
 
 
 def get_output_filename(input_file, output_path, fileext):
@@ -37,20 +40,12 @@ def gen_file(
         success_message (str): A message displayed to user after generation is
             complete.
     """
-    try:
-        import click
-    except ImportError as e:
-        raise Exception(
-            "textX must be installed with CLI dependencies to use "
-            "textx command.\npip install textX[cli]"
-        ) from e
     if overwrite or not os.path.exists(output_file):
-        click.echo(f"-> {output_file}")
+        logger.info("-> %s", output_file)
         gen_callback()
-        click.echo("    " + success_message)
+        logger.info("     %s", success_message)
     else:
-        click.echo(click.style("-- NOT overwriting: ", fg="red", bold=True), nl=False)
-        click.echo(output_file)
+        logger.warning("-- NOT overwriting: %s", output_file)
 
 
 @generator("textX", "dot")

@@ -4,8 +4,7 @@ description = "Flow code generator"
 version = "1.0.0"
 
 dependencies = [
-    "textX",
-    "click"
+    "textX"
 ]
 
 [build-system]

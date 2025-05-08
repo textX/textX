@@ -1,10 +1,6 @@
-try:
-    import click
-except ImportError as e:
-    raise Exception(
-        "textX must be installed with CLI dependencies to use "
-        "textx command.\npip install textX[cli]"
-    ) from e
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def version(textx):
@@ -15,4 +11,4 @@ def version(textx):
         """
         import textx
 
-        click.echo(f"textX {textx.__version__}")
+        logger.info("textX %s", textx.__version__)

@@ -1,6 +1,8 @@
 from os import mkdir
-from os.path import exists, dirname, join
+from os.path import dirname, exists, join
+
 import jinja2
+
 from textx import metamodel_from_file
 
 this_folder = dirname(__file__)
@@ -68,7 +70,7 @@ def main(debug=False):
     for entity in person_model.entities:
         # For each entity generate java file
         with open(join(srcgen_folder,
-                       "%s.java" % entity.name.capitalize()), 'w') as f:
+                       f"{entity.name.capitalize()}.java"), 'w') as f:
             f.write(template.render(entity=entity))
 
 

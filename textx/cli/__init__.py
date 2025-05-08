@@ -1,3 +1,5 @@
+import logging
+
 try:
     import click
 except ImportError as e:
@@ -12,6 +14,12 @@ if sys.version_info < (3, 10):
     from importlib_metadata import entry_points
 else:
     from importlib.metadata import entry_points
+
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(message)s"
+)
 
 
 @click.group()

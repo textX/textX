@@ -26,17 +26,17 @@ def model_file():
     )
 
 
-def test_generator_registered():
+def test_generator_registered(caplog):
     """
     That that generator from flow to PlantUML is registered
     """
     runner = CliRunner()
     result = runner.invoke(textx, ["list-generators"])
     assert result.exit_code == 0
-    assert "flow-dsl -> PlantUML" in result.output
+    assert "flow-dsl -> PlantUML" in caplog.text
 
 
-def test_generating_flow_model(model_file):
+def test_generating_flow_model(caplog, model_file):
     """
     Test that generator can be called.
     """
@@ -45,9 +45,9 @@ def test_generating_flow_model(model_file):
         textx, ["generate", "--target", "PlantUML", "--overwrite", model_file]
     )
     assert result.exit_code == 0
-    assert "Generating PlantUML target from models" in result.output
-    assert "->" in result.output
-    assert "models/data_flow.pu" in result.output
+    assert "Generating PlantUML target from models" in caplog.text
+    assert "->" in caplog.text
+    assert "models/data_flow.pu" in caplog.text
     assert os.path.exists(
         os.path.join(
             this_folder, "projects", "flow_dsl", "tests", "models", "data_flow.pu"
@@ -55,7 +55,7 @@ def test_generating_flow_model(model_file):
     )
 
 
-def test_generate_by_providing_explicit_language_name(model_file):
+def test_generate_by_providing_explicit_language_name(caplog, model_file):
     """
     Test running generator by providing an explicit language name.
     """
@@ -73,9 +73,9 @@ def test_generate_by_providing_explicit_language_name(model_file):
         ],
     )
     assert result.exit_code == 0
-    assert "Generating PlantUML target from models" in result.output
-    assert "->" in result.output
-    assert "models/data_flow.pu" in result.output
+    assert "Generating PlantUML target from models" in caplog.text
+    assert "->" in caplog.text
+    assert "models/data_flow.pu" in caplog.text
     assert os.path.exists(
         os.path.join(
             this_folder, "projects", "flow_dsl", "tests", "models", "data_flow.pu"
@@ -83,7 +83,7 @@ def test_generate_by_providing_explicit_language_name(model_file):
     )
 
 
-def test_passing_custom_arguments_to_generator(model_file):
+def test_passing_custom_arguments_to_generator(caplog, model_file):
     """
     Test passing custom arguments from command line to the generator.
     """
@@ -105,9 +105,9 @@ def test_passing_custom_arguments_to_generator(model_file):
         ],
     )
     assert result.exit_code == 0
-    assert "Generating PlantUML target from models" in result.output
-    assert "->" in result.output
-    assert "models/data_flow.pu" in result.output
+    assert "Generating PlantUML target from models" in caplog.text
+    assert "->" in caplog.text
+    assert "models/data_flow.pu" in caplog.text
     target_file = os.path.join(
         this_folder, "projects", "flow_dsl", "tests", "models", "data_flow.pu"
     )
@@ -118,14 +118,14 @@ def test_passing_custom_arguments_to_generator(model_file):
     assert "custom2=some string" in content
 
 
-def test_generate_for_invalid_file_raises_error():
+def test_generate_for_invalid_file_raises_error(caplog):
     """
     Test running generator by providing an explicit language name.
     """
     runner = CliRunner()
-    result = runner.invoke(
+    runner.invoke(
         textx,
         ["generate", "--target", "PlantUML", "--overwrite", "unexistingmodel.invalid"],
     )
 
-    assert "No language registered that can parse" in result.output
+    assert "No language registered that can parse" in caplog.text

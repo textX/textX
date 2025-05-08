@@ -1,4 +1,6 @@
+import logging
 import os
+import sys
 
 try:
     import click
@@ -16,6 +18,8 @@ from textx import (
     metamodel_for_language,
     metamodel_from_file,
 )
+
+logger = logging.getLogger(__name__)
 
 
 def generate(textx):
@@ -95,7 +99,7 @@ def generate(textx):
         """
 
         debug = ctx.obj["debug"]
-        click.echo(f"Generating {target} target from models:")
+        logger.info("Generating %s target from models:", target)
 
         try:
             per_file_metamodel = False
@@ -127,7 +131,7 @@ def generate(textx):
 
             # Call generator for each model file
             for model_file in model_files_without_args:
-                click.echo(os.path.abspath(model_file))
+                logger.info(os.path.abspath(model_file))
 
                 if per_file_metamodel:
                     language = language_for_file(model_file).name
@@ -149,7 +153,9 @@ def generate(textx):
                 generator(metamodel, model, output_path, overwrite, debug, **custom_args)
 
         except TextXRegistrationError as e:
-            raise click.ClickException(e.message) from e
+            logger.error("ERROR: %s", e.message)
+            sys.exit(1)
 
         except TextXError as e:
-            raise click.ClickException(str(e)) from e
+            logger.error("ERROR: %s", e.message)
+            sys.exit(1)

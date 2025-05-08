@@ -39,7 +39,7 @@ def test_object_processor_with_optional_parameter_off():
     mm.model_from_file(model_file, type_name_check="off")
 
 
-def test_check_metamodel():
+def test_check_metamodel(caplog):
     """
     Meta-model is also a model.
     """
@@ -50,20 +50,20 @@ def test_check_metamodel():
     runner = CliRunner()
     result = runner.invoke(textx, ["check", metamodel_file])
     assert result.exit_code == 0
-    assert "Flow.tx: OK." in result.output
+    assert "Flow.tx: OK." in caplog.text
 
 
-def test_check_valid_model():
+def test_check_valid_model(caplog):
     model_file = os.path.join(
         this_folder, "projects", "flow_dsl", "tests", "models", "data_flow.eflow"
     )
     runner = CliRunner()
     result = runner.invoke(textx, ["check", model_file])
     assert result.exit_code == 0
-    assert "data_flow.eflow: OK." in result.output
+    assert "data_flow.eflow: OK." in caplog.text
 
 
-def test_check_valid_model_with_explicit_language_name():
+def test_check_valid_model_with_explicit_language_name(caplog):
     """
     Test checking of model where language name is given explicitly.
     """
@@ -73,10 +73,10 @@ def test_check_valid_model_with_explicit_language_name():
     runner = CliRunner()
     result = runner.invoke(textx, ["check", "--language", "flow-dsl", model_file])
     assert result.exit_code == 0
-    assert "data_flow.eflow: OK." in result.output
+    assert "data_flow.eflow: OK." in caplog.text
 
 
-def test_check_valid_model_with_metamodel_from_file():
+def test_check_valid_model_with_metamodel_from_file(caplog):
     """
     Test checking of model where meta-model is provided from the grammar file.
     """
@@ -89,10 +89,10 @@ def test_check_valid_model_with_metamodel_from_file():
     runner = CliRunner()
     result = runner.invoke(textx, ["check", "--grammar", metamodel_file, model_file])
     assert result.exit_code == 0
-    assert "types.etype: OK." in result.output
+    assert "types.etype: OK." in caplog.text
 
 
-def test_check_invalid_model():
+def test_check_invalid_model(caplog):
     model_file = os.path.join(
         this_folder,
         "projects",
@@ -104,16 +104,16 @@ def test_check_invalid_model():
     runner = CliRunner()
     result = runner.invoke(textx, ["check", model_file])
     assert result.exit_code != 0
-    assert "Error:" in result.output
-    assert "types must be lowercase" in result.output
+    assert "ERROR:" in caplog.text
+    assert "types must be lowercase" in caplog.text
 
 
-def test_check_invalid_language():
+def test_check_invalid_language(caplog):
     """
     Test calling check command with a file that is not registered.
     """
 
     runner = CliRunner()
-    result = runner.invoke(textx, ["check", "some_unexisting_file"])
+    runner.invoke(textx, ["check", "some_unexisting_file"])
 
-    assert "No language registered that can parse" in result.output
+    assert "No language registered that can parse" in caplog.text

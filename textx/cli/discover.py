@@ -1,12 +1,8 @@
-try:
-    import click
-except ImportError as e:
-    raise Exception(
-        "textX must be installed with CLI dependencies to use "
-        "textx command.\npip install textX[cli]"
-    ) from e
+import logging
 
 from textx.registration import generator_descriptions, language_descriptions
+
+logger = logging.getLogger(__name__)
 
 
 def list_languages(textx):
@@ -16,7 +12,7 @@ def list_languages(textx):
         List all registered languages
         """
         for language in language_descriptions().values():
-            click.echo(
+            logger.info(
                 "{:<30}{:<40}{}".format(
                     f"{language.name} ({language.pattern})",
                     f"{language.project_name}[{language.project_version}]",
@@ -33,7 +29,7 @@ def list_generators(textx):
         """
         for language in generator_descriptions().values():
             for generator in language.values():
-                click.echo(
+                logger.info(
                     "{:<30}{:<30}{}".format(
                         f"{generator.language} -> {generator.target}",
                         f"{generator.project_name}[{generator.project_version}]",

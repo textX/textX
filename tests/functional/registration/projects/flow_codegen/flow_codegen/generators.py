@@ -1,8 +1,9 @@
+import logging
 import os
 
-import click
-
 from textx import GeneratorDesc
+
+logger = logging.getLogger(__name__)
 
 
 def codegen_flow_pu(metamodel, model, output_path, overwrite, debug=False, **custom_args):
@@ -27,11 +28,11 @@ def codegen_flow_pu(metamodel, model, output_path, overwrite, debug=False, **cus
     base_name, _ = os.path.splitext(os.path.basename(input_file))
     output_file = os.path.abspath(os.path.join(base_dir, "{}.{}".format(base_name, "pu")))
     if overwrite or not os.path.exists(output_file):
-        click.echo(f"-> {output_file}")
+        logger.info("-> %s", output_file)
         with open(output_file, "w") as f:
             f.write(txt)
     else:
-        click.echo(f"-- Skipping: {output_file}")
+        logger.info("-- Skipping: %s", output_file)
 
 
 flow_pu = GeneratorDesc(

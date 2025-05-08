@@ -1,3 +1,6 @@
+import logging
+import sys
+
 try:
     import click
 except ImportError as e:
@@ -14,6 +17,8 @@ from textx import (
     metamodel_for_language,
     metamodel_from_file,
 )
+
+logger = logging.getLogger(__name__)
 
 
 def check(textx):
@@ -77,10 +82,12 @@ def check(textx):
                     metamodel = metamodel_for_file(model_file)
 
                 metamodel.model_from_file(model_file, debug=debug)
-                click.echo(f"{os.path.abspath(model_file)}: OK.")
+                logger.info("%s: OK.", os.path.abspath(model_file))
 
         except TextXRegistrationError as e:
-            raise click.ClickException(e.message) from e
+            logging.error("ERROR: %s", e.message)
+            sys.exit(1)
 
         except TextXError as e:
-            raise click.ClickException(str(e)) from e
+            logging.error("ERROR: %s", e.message)
+            sys.exit(1)
