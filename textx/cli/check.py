@@ -85,9 +85,9 @@ def check(textx):
                 logger.info("%s: OK.", os.path.abspath(model_file))
 
         except TextXRegistrationError as e:
-            logging.error("ERROR: %s", e.message)
+            logging.error("ERROR: %s", str(e))
             sys.exit(1)
 
         except TextXError as e:
-            logging.error("ERROR: %s", e.message)
+            logging.error("ERROR: %s", str(e))
             sys.exit(1)

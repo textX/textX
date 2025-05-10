@@ -153,9 +153,9 @@ def generate(textx):
                 generator(metamodel, model, output_path, overwrite, debug, **custom_args)
 
         except TextXRegistrationError as e:
-            logger.error("ERROR: %s", e.message)
+            logger.error("ERROR: %s", str(e))
             sys.exit(1)
 
         except TextXError as e:
-            logger.error("ERROR: %s", e.message)
+            logger.error("ERROR: %s", str(e))
             sys.exit(1)
