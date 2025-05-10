@@ -9,7 +9,7 @@ class TextXError(Exception):
         filename=None,
         context=None
     ):
-        super().__init__(message.encode("utf-8"))
+        super().__init__(message)
         self.line = line
         self.col = col
         self.nchar = nchar
