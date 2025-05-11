@@ -15,6 +15,15 @@ please take a look at related PRs and issues and see if the change affects you.
 ## [Unreleased]
 
 
+## [4.2.2] (released: 2025-05-11)
+
+### Fixed
+- tests for subcommands. Click 8.2.0 now returns exit code 2 when command is not
+  correct. See [433]. Thanks @mgorny for the report.
+
+[433]: https://github.com/textX/textX/issues/433
+
+
 ## [4.2.1] (released: 2025-05-09)
 
 ### Fixed
