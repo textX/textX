@@ -14,6 +14,9 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ## [Unreleased]
 
+### Fixed
+- fix: wrong reference/capture in `call_obj_processors` closure leading to
+  memory leak due to keeping reference to the Model object.
 
 ## [4.2.2] (released: 2025-05-11)
 

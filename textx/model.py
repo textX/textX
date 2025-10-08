@@ -774,7 +774,7 @@ def parse_tree_to_objgraph(
                 metaclass_of_grammar_rule = metamodel[model_obj.__class__.__name__]
         except KeyError as e:
             raise TextXSemanticError(
-                f'Unknown meta-class "{model.obj.__class__.__name__}".'
+                f'Unknown meta-class "{model_obj.__class__.__name__}".'
             ) from e
 
         if metaclass_of_grammar_rule._tx_type is RULE_MATCH:
