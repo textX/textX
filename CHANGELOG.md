@@ -14,9 +14,13 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ## [Unreleased]
 
+
+## [4.2.3] (released: 2025-10-09)
+
 ### Fixed
 - fix: wrong reference/capture in `call_obj_processors` closure leading to
   memory leak due to keeping reference to the Model object.
+
 
 ## [4.2.2] (released: 2025-05-11)
 
@@ -766,7 +770,9 @@ please take a look at related PRs and issues and see if the change affects you.
 [#92]: https://github.com/textX/textX/pull/92
 [#40]: https://github.com/textX/textX/issues/40
 
-[Unreleased]: https://github.com/textX/textX/compare/4.2.1...HEAD
+[Unreleased]: https://github.com/textX/textX/compare/4.2.3...HEAD
+[4.2.3]: https://github.com/textX/textX/compare/4.2.2...4.2.3
+[4.2.2]: https://github.com/textX/textX/compare/4.2.1...4.2.2
 [4.2.1]: https://github.com/textX/textX/compare/4.2.0...4.2.1
 [4.2.0]: https://github.com/textX/textX/compare/4.1.0...4.2.0
 [4.1.0]: https://github.com/textX/textX/compare/4.0.1...4.1.0
