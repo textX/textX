@@ -64,7 +64,11 @@ For the background see [here](https://github.com/textX/textX/issues/176).
       - Check release at https://pypi.org/project/textX/#history
 
   9. In case of errors repeat steps 3-10.
-  10. Create git tag in the form of `<version>` (e.g. `4.1.0`). Push the tag.
+  10. Create git tag (e.g. `4.1.0`). Push the tag.
+      ```
+      git tag -s 4.1.0 -m 'Release 4.1.0'
+      git push --tags origin 4.1.0
+      ```
   11. Merge release branch in to `master`.
   12. Change the version in `pyproject.toml` to next minor version with `.dev0`
       addition (e.g. `4.2.0.dev0`).
