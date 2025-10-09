@@ -37,4 +37,9 @@ from textx.registration import (
     language,
 )
 
-__version__ = "4.2.2"
+try:
+    from importlib.metadata import version
+except ModuleNotFoundError:
+    from importlib_metadata import version
+
+__version__ = version("textx")
