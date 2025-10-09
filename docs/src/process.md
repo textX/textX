@@ -21,9 +21,9 @@ For the background see [here](https://github.com/textX/textX/issues/176).
   `next-release` branch is the latest and greatest version with **all** finished
   features applied.
 - When the time for minor release come we follow [textX release
-  checklist](./#textx-release-checklist) defined bellow.
+  checklist](#textx-release-checklist) defined bellow.
 - When the time for major release come we merge `next-release` branch to
-  `master` and follow [textX release checklist](./#textx-release-checklist)
+  `master` and follow [textX release checklist](#textx-release-checklist)
   defined bellow.
 
 
@@ -32,47 +32,49 @@ For the background see [here](https://github.com/textX/textX/issues/176).
  
 # textX release checklist
 
-  1. If minor/major version increase, create maintenance/support branch from the
-     current master. The name is `support/v<previous major.minor.x>` (e.g.
-     `support/v2.0.x`).
-  2. Create a temporary branch for preparing the next release called
-     `release-preparation` and switch to that branch.
-  3. Update version in the `textX/__init__.py`.
-  4. Update CHANGELOG (create new section for the release, update github links,
-     give credits to contributors).
-  5. Push release branch and create PR. Wait for tests to pass. Wait for the
+  1. Create a branch for the next release called `release/<version>` and switch
+     to that branch.
+  2. Update version in the `pyproject.toml`.
+  3. Update CHANGELOG (create new section for the release, update github links,
+     give credits to contributors). Do not forget link to changes at the bottom.
+  4. Push release branch and create PR. Wait for tests to pass. Wait for the
      review process to complete.
-  6. Delete all previous distributions in the `dist` folder.
-  7. Create whl/tar.gz packages
+  5. Delete all previous distributions in the `dist` folder.
+      ```
+      rm dist/*
+      ```
+  6. Create `whl/tar.gz` packages.
 
       ```
-      python setup.py bdist_wheel sdist
+      flit build
       ```
 
-  8. Release to PyPI testing
+  7. Release to PyPI testing.
 
       ```
-      python setup.py publishtest
+      flit publish --repository testpypi
       ```
+      - Check release at https://test.pypi.org/project/textX/#history
 
-  9. Release to PyPI
+  8. Release to PyPI.
 
       ```
-      python setup.py publish
+      flit publish
       ```
+      - Check release at https://pypi.org/project/textX/#history
 
-  10. In case of errors repeat steps 3-10.
-  11. Create git tag in the form of `v<version>` (e.g. `v2.1.0`). Push the tag.
-  12. Merge PR and delete PR branch (`release-preparation`).
-  13. Change the version in `textX/__init__.py` to next minor version with
-      `.dev0` addition (e.g. `v2.2.0.dev0`).
-  14. Merge `master` to `next-version` to keep it up-to-date.
+  9. In case of errors repeat steps 3-10.
+  10. Create git tag in the form of `<version>` (e.g. `4.1.0`). Push the tag.
+  11. Merge release branch in to `master`.
+  12. Change the version in `pyproject.toml` to next minor version with `.dev0`
+      addition (e.g. `4.2.0.dev0`).
+  13. Merge `master` to `next-release` to keep it up-to-date.
 
 ```admonish
-For supporting previous versions only bugfix releases will be made. The process
-is similar. The difference for support release would be that release process
-would be based of the `support` branch instead of the `master` branch as is done
-for regular releases. Thus, for support release, we would skip step 1, in step 5
-we would create PR against the support branch, and we won't do steps 13-15.
+For supporting previous versions only bugfix releases will be made as necessary.
+The process is similar. The difference would be that PR would be issued against
+the `release` branch instead of the `master` branch as is done for regular
+releases.
 ```
+
 
