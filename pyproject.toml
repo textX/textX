@@ -1,6 +1,6 @@
 [project]
 name = "textX"
-version = "4.2.3"
+version = "4.3.0.dev0"
 description = "Meta-language for DSL implementation inspired by Xtext"
 authors = [
     {name = "Igor R. Dejanović", email = "igor.dejanovic@gmail.com"},
