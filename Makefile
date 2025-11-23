@@ -1,4 +1,4 @@
-.PHONY: help clean clean-test clean-pyc clean-build lint test release coverage check release-test dev test-env docs
+.PHONY: help clean clean-test clean-pyc clean-build lint test coverage types check release-test release dev test-env docs
 .DEFAULT_GOAL := help
 define BROWSER_PYSCRIPT
 import os, webbrowser, sys
@@ -58,7 +58,10 @@ coverage: ## check code coverage quickly with the default Python
 	uv run coverage html
 	$(BROWSER) htmlcov/index.html
 
-check: lint coverage  ## Run all checks
+types:  ## Run static type checks
+	uv run mypy textx
+
+check: lint types coverage  ## Run all checks
 
 release-test: dist ## release package to PyPI test server
 	uv run flit publish --repository test

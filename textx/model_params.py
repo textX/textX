@@ -50,7 +50,7 @@ class ModelParams(Mapping):
 """
 Class describing a model parameter.
 """
-ModelParamDefinition = namedtuple("ModelKwargDefinition", ["name", "description"])
+ModelParamDefinition = namedtuple("ModelParamDefinition", ["name", "description"])
 
 
 class ModelParamDefinitions(Mapping):

@@ -2,7 +2,7 @@
 Export of textX based models and metamodels to dot file.
 """
 from dataclasses import dataclass
-from typing import List, Union
+from typing import Dict, Iterable, List, Union
 from typing import Optional as Opt
 
 from arpeggio import (
@@ -323,16 +323,16 @@ def metamodel_export_tofile(metamodel, f, renderer=None):
     f.write(f"{renderer.get_trailer()}")
 
 
-def get_unified_classes(classes: List[TextXMetaClass]) -> List[Cls]:
+def get_unified_classes(classes: List[TextXMetaClass]) -> Iterable[Cls]:
     """
     Create list of Cls which is used for attribute/links unification
     respecting the inheritance hierarchy chain.
     See https://github.com/textX/textX/issues/423
     """
-    new_classes = dict()
+    new_classes: Dict[str, Cls] = dict()
     for cls in classes:
         c = Cls(cls.__name__, cls._tx_fqn, cls._tx_type,
-                cls._tx_attrs.values(), cls._tx_inh_by, None,
+                list(cls._tx_attrs.values()), cls._tx_inh_by, None,
                 cls._tx_peg_rule)
         new_classes[cls._tx_fqn] = c
 
@@ -345,12 +345,15 @@ def get_unified_classes(classes: List[TextXMetaClass]) -> List[Cls]:
                             attr.mult, attr.cont, attr.ref,
                             attr.bool_assignment, attr.position)
                          for attr in new_cls.attrs
-                         if attr.cls._tx_fqn in new_classes]
+                         if hasattr(attr.cls, '_tx_fqn')
+                            and attr.cls._tx_fqn in new_classes]
 
     # resolve inheritance
     for new_cls in new_classes.values():
-        new_cls.inh_by = [new_classes[inh._tx_fqn] for inh in new_cls.inh_by]
+        new_cls.inh_by = [new_classes[inh._tx_fqn] for inh in new_cls.inh_by
+                          if hasattr(inh, '_tx_fqn')]
         if new_cls.inh_from:
+            assert hasattr(new_cls.inh_from, '_tx_fqn')
             new_cls.inh_from = new_classes[new_cls.inh_from._tx_fqn]
 
     # Raise attributes
