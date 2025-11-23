@@ -1,7 +1,6 @@
 """
 Export of textX based models and metamodels to dot file.
 """
-import codecs
 from dataclasses import dataclass
 from typing import List, Union
 from typing import Optional as Opt
@@ -299,7 +298,7 @@ set namespaceSeparator .
 
 
 def metamodel_export(metamodel, file_name, renderer=None):
-    with codecs.open(file_name, "w", encoding="utf-8") as f:
+    with open(file_name, "w", encoding="utf-8") as f:
         metamodel_export_tofile(metamodel, f, renderer)
 
 
@@ -391,7 +390,7 @@ def model_export(model, file_name, repo=None):
     Returns:
         Nothing
     """
-    with codecs.open(file_name, "w", encoding="utf-8") as f:
+    with open(file_name, "w", encoding="utf-8") as f:
         model_export_to_file(f, model, repo)
 
 

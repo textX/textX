@@ -1,7 +1,6 @@
 """
 Export state machine models to dot.
 """
-import codecs
 import sys
 from os.path import dirname, join
 
@@ -58,6 +57,5 @@ if __name__ == '__main__':
         model_name = sys.argv[1]
         meta = metamodel_from_file(join(this_folder, 'state_machine.tx'))
         model = meta.model_from_file(model_name)
-        with codecs.open(f"{model_name}.dot", 'w',
-                         encoding='utf-8') as f:
+        with open(f"{model_name}.dot", 'w', encoding='utf-8') as f:
             f.write(sm_to_dot(model))

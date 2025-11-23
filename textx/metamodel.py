@@ -1,7 +1,6 @@
 """
 Meta-model construction.
 """
-import codecs
 import os
 import warnings
 from collections import OrderedDict
@@ -73,7 +72,7 @@ def metamodel_from_file(file_name, **kwargs):
         file_name(str): The name of the file with textX language description.
         other params: See metamodel_from_str.
     """
-    with codecs.open(file_name, "r", "utf-8") as f:
+    with open(file_name, encoding="utf-8") as f:
         lang_desc = f.read()
 
     metamodel = metamodel_from_str(lang_desc=lang_desc, file_name=file_name, **kwargs)
@@ -782,7 +781,7 @@ class TextXMetaModel(DebugPrinter):
         if not model:
             # Read model from file
             if not model_str:
-                with codecs.open(file_name, "r", encoding) as f:
+                with open(file_name, encoding=encoding) as f:
                     model_str = f.read()
             # model not present (from global repo) -> load it
             model = self._parser_blueprint.clone().get_model_from_str(
