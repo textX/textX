@@ -19,28 +19,34 @@ jobs:
         python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install test dependencies
-      run: |
-        ./install-test.sh
-    - name: Install dev version of Arpeggio
-      run: |
-        cd ..
-        git clone --depth=1 --branch=master https://github.com/textX/Arpeggio
-        pip install -e Arpeggio --upgrade
-        cd textX
-    - name: Run unit tests
-      run: |
-        ./runtests.sh
-    - name: Upload coverage data to coveralls.io
-      env:
-        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        COVERALLS_FLAG_NAME: ${{ matrix.python-version }}
-        COVERALLS_PARALLEL: true
-      run: |
-        coveralls --service=github
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Setup test environment
+        run: |
+          make test-env
+
+      - name: Install dev version of Arpeggio
+        run: |
+          git clone --depth=1 --branch=master https://github.com/textX/Arpeggio
+          uv add ./Arpeggio --editable
+
+      - name: Run tests
+        run: |
+          make check
+
+      - name: Upload coverage data to coveralls.io
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COVERALLS_FLAG_NAME: ${{ matrix.python-version }}
+          COVERALLS_PARALLEL: true
+        run: |
+          uv run coveralls --service=github

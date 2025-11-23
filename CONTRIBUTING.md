@@ -55,7 +55,7 @@ image:
 2. From the project's root folder run:
 
     ```sh
-    ./serve-docs.sh
+    make docs
     ```
 
 This starts docker container which will watch to changes in the markdown docs
@@ -99,31 +99,16 @@ Ready to contribute? Here's how to set up `textX` for local development.
 
         $ git clone git@github.com:your_name_here/textX.git
 
-3. Install your local copy into a virtualenv. This is how you set up your fork
-   for local development:
+3. Install [GNU Make](https://www.gnu.org/software/make/) and [uv
+   package](https://docs.astral.sh/uv/) manager and setup development
+   environment:
 
         $ cd textX/
-        $ python -m venv venv
-        $ source venv/bin/activate
-        $ ./install-dev.sh
-        $ ./install-test.sh
+        $ make dev
 
-    Previous stuff is needed only the first time. To continue working on textX
-    later you just do:
+    To verify that everything is setup properly run check:
 
-        $ cd textX/
-        $ source venv/bin/activate
-
-    Note that on Windows sourcing syntax is a bit different. Check the docs for
-    virtualenv.
-
-    An excellent overview of available tools for Python environments management
-    can be found
-    [here](https://stackoverflow.com/questions/41573587/what-is-the-difference-between-venv-pyvenv-pyenv-virtualenv-virtualenvwrappe)
-
-    To verify that everything is setup properly run tests:
-
-        $ ./runtests.sh
+        $ make check
 
 4. Create a branch for local development::
 
@@ -139,23 +124,13 @@ Ready to contribute? Here's how to set up `textX` for local development.
    Please do not reformat the code that you have not changed. If you notice that
    ruff has reformatted parts of the code that are not part of your change use
    git to revert those parts.
+   
+   Please provide tests as a part of your change, if appropriate.
 
-5. When you're done making changes, check that your changes pass linter, the
-   tests, and have a look at the coverage:
+5. When you're done making changes, check that your changes pass linter, tests
+   and coverage:
 
-        $ ruff check textx/ tests/ examples/
-        $ pytest tests/functional/
-        $ coverage run --source textx -m pytest tests/functional
-        $ coverage report
-
-   You can run all this at once with provided script `runtests.sh`
-
-        $ ./runtests.sh
-
-   In case you have doubts, have also a look at the html rendered version of
-   the coverage results:
-
-        $ coverage html
+        $ make check
 
 6. Commit your changes and push your branch to GitHub:
 
@@ -182,13 +157,13 @@ Before you submit a pull request, check that it meets these guidelines:
 To run a subset of tests:
 
 ```
-$ pytest tests/functional/mytest.py
+$ uv run pytest tests/functional/mytest.py
 ```
 
 or a single test:
 
 ```
-$ pytest tests/functional/mytest.py::some_test
+$ uv run pytest tests/functional/mytest.py::some_test
 ```
 
 ## Credit

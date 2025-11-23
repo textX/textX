@@ -36,7 +36,7 @@ classifiers = [
 requires-python = ">=3.8"
 dependencies = [
     "Arpeggio >= 2.0.0",
-    "importlib-metadata; python_version < '3.10'",  # For entry_points backward compatibility
+    "importlib-metadata; python_version < '3.10'", # For entry_points backward compatibility
 ]
 
 [project.urls]
@@ -59,9 +59,11 @@ cli = [
     "click >=7.0, <9.0"
 ]
 
+[dependency-groups]
 dev = [
     "textX-dev",
     "click >=7.0, <9.0",
+    "pudb",
     "ruff",
     "flit",
 ]
@@ -74,6 +76,12 @@ test = [
     "coveralls",
     "pytest",
     "html5lib",
+
+    "data-dsl",
+    "flow-codegen",
+    "flow-dsl",
+    "textx-subcommand-test",
+    "types-dsl",
 ]
 
 [project.scripts]
@@ -114,3 +122,19 @@ select = [
     # isort
     "I",
 ]
+
+[tool.uv.workspace]
+members = [
+    "tests/functional/subcommands/example_project",
+    "tests/functional/registration/projects/flow_dsl",
+    "tests/functional/registration/projects/types_dsl",
+    "tests/functional/registration/projects/flow_codegen",
+    "tests/functional/registration/projects/data_dsl",
+]
+
+[tool.uv.sources]
+textx-subcommand-test = { workspace = true, editable = true }
+flow-dsl = { workspace = true, editable = true }
+types-dsl = { workspace = true, editable = true }
+flow-codegen = { workspace = true, editable = true }
+data-dsl = { workspace = true, editable = true }

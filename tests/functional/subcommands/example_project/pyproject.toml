@@ -7,6 +7,9 @@ dependencies = [
     "textX"
 ]
 
+[tool.uv.sources]
+textx = { workspace = true }
+
 [build-system]
 build-backend = "flit_core.buildapi"
 requires = ["flit_core >=3.8.0,<4"]
