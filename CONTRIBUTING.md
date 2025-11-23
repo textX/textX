@@ -110,6 +110,8 @@ Ready to contribute? Here's how to set up `textX` for local development.
 
         $ make check
 
+    Run `make help` for options.
+
 4. Create a branch for local development::
 
         $ git checkout -b name-of-your-bugfix-or-feature-branch
@@ -124,7 +126,7 @@ Ready to contribute? Here's how to set up `textX` for local development.
    Please do not reformat the code that you have not changed. If you notice that
    ruff has reformatted parts of the code that are not part of your change use
    git to revert those parts.
-   
+
    Please provide tests as a part of your change, if appropriate.
 
 5. When you're done making changes, check that your changes pass linter, tests

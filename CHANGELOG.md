@@ -14,6 +14,13 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ## [Unreleased]
 
+### Changed
+- Reworked project setup. Moved to [GNU
+  Make](https://www.gnu.org/software/make/) and
+  [uv](https://docs.astral.sh/uv/). See
+  [d9757a4](https://github.com/textX/textX/commit/d9757a4) and the CONTRIBUTING
+  guide. Run `make help` for options.
+
 
 ## [4.2.3] (released: 2025-10-09)
 
