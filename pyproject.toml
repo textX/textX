@@ -54,6 +54,9 @@ name = "textx"
 [tool.flit.sdist]
 exclude = ["**/.*"]
 
+[tool.uv]
+default-groups = ["dev"]
+
 [project.optional-dependencies]
 cli = [
     "click >=7.0, <9.0"
@@ -62,10 +65,9 @@ cli = [
 [dependency-groups]
 dev = [
     "textX-dev",
-    "click >=7.0, <9.0",
-    "pudb",
-    "ruff",
     "flit",
+    {include-group = "test"},
+    {include-group = "dbg"},
 ]
 
 test = [
@@ -83,6 +85,11 @@ test = [
     "flow-dsl",
     "textx-subcommand-test",
     "types-dsl",
+]
+
+dbg = [
+    "pudb",
+    "ipython",
 ]
 
 [project.scripts]

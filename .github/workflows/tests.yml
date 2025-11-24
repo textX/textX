@@ -29,10 +29,6 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Setup test environment
-        run: |
-          make test-env
-
       - name: Install dev version of Arpeggio
         run: |
           git clone --depth=1 --branch=master https://github.com/textX/Arpeggio

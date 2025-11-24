@@ -47,19 +47,19 @@ clean-test:  ## remove test and coverage artifacts
 	rm -fr htmlcov/
 
 lint:  ## check style with ruff
-	uv run ruff check textx/ tests/functional examples/
+	uv run --no-default-groups --group test ruff check textx/ tests/functional examples/
 
-test: test-env  ## run tests quickly with the default Python
-	uv run pytest tests/functional
+test:  ## run tests quickly with the default Python
+	uv run --no-default-groups --group test pytest tests/functional
 
 coverage: ## check code coverage quickly with the default Python
-	uv run coverage run --source textx -m pytest tests/functional
-	uv run coverage report --fail-under 90
-	uv run coverage html
+	uv run --no-default-groups --group test coverage run --source textx -m pytest tests/functional
+	uv run --no-default-groups --group test coverage report --fail-under 90
+	uv run --no-default-groups --group test coverage html
 	$(BROWSER) htmlcov/index.html
 
 types:  ## Run static type checks
-	uv run mypy textx
+	uv run --no-default-groups --group test mypy textx
 
 check: lint types coverage  ## Run all checks
 
@@ -78,9 +78,6 @@ install: clean ## install the package to the active Python's site-packages
 
 dev: clean  ## Setup development environment
 	uv sync --group test --group dev
-
-test-env:  ## Setup test environment
-	uv sync --no-default-groups --group test
 
 docs:  ## Serve docs locally
 	echo "Run 'docker stop textx-docs' from another terminal to gracefully terminate." 
