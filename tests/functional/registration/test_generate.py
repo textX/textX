@@ -45,7 +45,7 @@ def test_generating_flow_model(caplog, model_file):
         textx, ["generate", "--target", "PlantUML", "--overwrite", model_file]
     )
     assert result.exit_code == 0
-    assert "Generating PlantUML target from models" in caplog.text
+    assert "Generating PlantUML target" in caplog.text
     assert "->" in caplog.text
     assert "models/data_flow.pu" in caplog.text
     assert os.path.exists(
@@ -73,7 +73,7 @@ def test_generate_by_providing_explicit_language_name(caplog, model_file):
         ],
     )
     assert result.exit_code == 0
-    assert "Generating PlantUML target from models" in caplog.text
+    assert "Generating PlantUML target" in caplog.text
     assert "->" in caplog.text
     assert "models/data_flow.pu" in caplog.text
     assert os.path.exists(
@@ -105,7 +105,7 @@ def test_passing_custom_arguments_to_generator(caplog, model_file):
         ],
     )
     assert result.exit_code == 0
-    assert "Generating PlantUML target from models" in caplog.text
+    assert "Generating PlantUML target" in caplog.text
     assert "->" in caplog.text
     assert "models/data_flow.pu" in caplog.text
     target_file = os.path.join(

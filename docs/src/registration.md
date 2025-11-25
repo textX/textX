@@ -168,8 +168,9 @@ where:
 - `debug` - a bool flag which tells us if we are running in debug mode and
   should we produce more output
 - `**custom_args` - additional generator-specific arguments. When the generator
-  is called from the CLI this parameter will hold all other switches that are
-  not recognized
+  is called from the CLI this parameter will hold all other non-defaul switches.
+  These switches will be validated against the list of `GeneratorParam` as
+  supplied by the last optional parameter of `GeneratorDesc`.
   
   
 For example:
@@ -204,9 +205,8 @@ if you want your generator to be available to `textx` command you should use
 ```
     
     
-    
-
-In this example `entity.generators` is the Python module where `entity_java_generator` is defined.
+In this example `entity.generators` is the Python module where
+`entity_java_generator` is defined.
 
 When you install this project textX will discover your generator and offer it
 through [registration API](#registration-api) (see bellow).
@@ -254,11 +254,43 @@ def model_generate_dot(metamodel, model, output_path, overwrite, debug):
         click.echo('-- Skipping: {}'.format(output_file))
 ```
 
+If a generator has additional parameters they are described as follows:
+
+```python
+from textx.registration import GeneratorParam
+
+@generator("textX", "vscode", [
+    GeneratorParam("project_name", "The name of the project used in vsix"),
+    GeneratorParam("published", "The published of the vsix", False),
+    GeneratorParam("version", "Version of the vsix", False),
+    GeneratorParam("repository", "Git repository of the extension", False),
+    GeneratorParam("description", "The description of the extension", False),
+    GeneratorParam("skip_keywords", "Should keyword processing be done", False),
+])
+def vscode_gen(
+    _metamodel,
+    _model,
+    output_path,
+    overwrite,
+    _debug,
+    project_name,
+    publisher="textX",
+    version="0.1.0",
+    repository="https://github.com/textX/textX-LS",
+    description="textX DSL",
+    skip_keywords=False
+):
+```
+
+The `GeneratorParam` attributes include `name`, `description`, and the optional
+`mandatory` flag, which defaults to `True`. These descriptions are used to
+validate switches of the `textx generate` sub-command.
+
 
 ### Listing generators
 
 textX provides a core command `list-generators` that lists all registered
-generators in the current environment. 
+generators in the current environment.
 
 ```
 $ textx list-generators

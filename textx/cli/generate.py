@@ -2,6 +2,8 @@ import logging
 import os
 import sys
 
+from textx.registration import generator_description
+
 try:
     import click
 except ImportError as e:
@@ -12,7 +14,6 @@ except ImportError as e:
 from textx import (
     TextXError,
     TextXRegistrationError,
-    generator_for_language_target,
     language_for_file,
     metamodel_for_file,
     metamodel_for_language,
@@ -24,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 def generate(textx):
     @textx.command(context_settings=dict(ignore_unknown_options=True))
-    @click.argument("model_files", type=click.Path(), required=True, nargs=-1)
+    @click.argument("arguments", type=click.Path(), required=True, nargs=-1)
     @click.option(
         "--output-path",
         "-o",
@@ -56,7 +57,7 @@ def generate(textx):
     @click.pass_context
     def generate(
         ctx,
-        model_files,
+        arguments,
         output_path,
         language,
         target,
@@ -99,10 +100,10 @@ def generate(textx):
         """
 
         debug = ctx.obj["debug"]
-        logger.info("Generating %s target from models:", target)
+        logger.info("Generating %s target.", target)
 
         try:
-            per_file_metamodel = False
+            no_explicit_language = False
             if grammar:
                 metamodel = metamodel_from_file(
                     grammar, debug=debug, ignore_case=ignore_case
@@ -111,46 +112,95 @@ def generate(textx):
             elif language:
                 metamodel = metamodel_for_language(language)
             else:
-                per_file_metamodel = True
+                no_explicit_language = True
 
             # Find all custom arguments
-            model_files = list(model_files)
+            arguments = list(arguments)
             model_files_without_args = []
+            # Custom language and generator arguments
+            # These arguments can be defined on the metamodel level
             custom_args = {}
-            while model_files:
-                m = model_files.pop(0)
+            while arguments:
+                m = arguments.pop(0)
                 if m.startswith("--"):
                     arg_name = m[2:]
-                    if not model_files or model_files[0].startswith("--"):
+                    if not arguments or arguments[0].startswith("--"):
                         # Boolean argument
                         custom_args[arg_name] = True
                     else:
-                        custom_args[arg_name] = model_files.pop(0).strip("\"'")
+                        custom_args[arg_name.replace("-", "_")] = arguments.pop(0).strip(
+                            "\"'"
+                        )
                 else:
+                    # If the argument is not switch treat it as the model file path.
                     model_files_without_args.append(m)
 
-            # Call generator for each model file
-            for model_file in model_files_without_args:
-                logger.info(os.path.abspath(model_file))
+            def generate(language, target, any_permitted, metamodel, model, custom_args):
+                # Check custom args
+                given_args = set(custom_args.keys())
+                generator = generator_description(language, target, any_permitted)
 
-                if per_file_metamodel:
-                    language = language_for_file(model_file).name
-                    metamodel = metamodel_for_file(model_file)
+                generator_args = generator.custom_args
+                if generator_args is not None:
+                    for arg in generator_args:
+                        if arg.mandatory and arg.name not in given_args:
+                            raise TextXError(f"Parameter '{arg.name}' must be provided.")
+                if given_args and generator_args:
+                    generator_arg_names = set(a.name for a in generator_args)
+                    for arg in given_args:
+                        if arg not in generator_arg_names:
+                            raise TextXError(
+                                f"Parameter '{arg}' is not defined for this generator."
+                            )
 
-                # Get custom args that match defined model parameters and pass
-                # them in to be available to model processors.
-                model_params = {
-                    k: v
-                    for k, v in custom_args.items()
-                    if k in metamodel.model_param_defs
-                }
-
-                model = metamodel.model_from_file(model_file, **model_params)
-                generator = generator_for_language_target(
-                    language, target, any_permitted=per_file_metamodel
+                assert generator.generator is not None
+                generator.generator(
+                    metamodel, model, output_path, overwrite, debug, **custom_args
                 )
 
-                generator(metamodel, model, output_path, overwrite, debug, **custom_args)
+            if model_files_without_args:
+                # Call generator for each model file
+                for model_file in model_files_without_args:
+                    logger.info(os.path.abspath(model_file))
+
+                    if no_explicit_language:
+                        language = language_for_file(model_file).name
+                        metamodel = metamodel_for_file(model_file)
+
+                    # Get custom args that match defined model parameters and pass
+                    # them in to be available to model processors.
+                    model_params = {
+                        k: v
+                        for k, v in custom_args.items()
+                        if k in metamodel.model_param_defs
+                    }
+
+                    model = metamodel.model_from_file(model_file, **model_params)
+                    generate(
+                        language,
+                        target,
+                        no_explicit_language,
+                        metamodel,
+                        model,
+                        custom_args,
+                    )
+
+            else:
+                # If no model is given then the only input to the generator are
+                # custom args
+                if not custom_args:
+                    raise TextXRegistrationError(
+                        "No model nor custom arguments are given."
+                    )
+
+                # Here we run generator without the model as the generator can
+                # be run for the metamodel only with custom args.
+                if no_explicit_language:
+                    language = "textx"
+                metamodel = metamodel_for_language(language)
+                generate(
+                    language, target, no_explicit_language, metamodel, None, custom_args
+                )
 
         except TextXRegistrationError as e:
             logger.error("ERROR: %s", str(e))

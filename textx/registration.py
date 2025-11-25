@@ -3,6 +3,8 @@ Languages and generators registration and discovery API.
 """
 import fnmatch
 import sys
+from dataclasses import dataclass
+from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Union
 
 if sys.version_info < (3, 10):
     from importlib_metadata import entry_points
@@ -10,6 +12,9 @@ else:
     from importlib.metadata import entry_points
 
 from textx.exceptions import TextXRegistrationError
+
+if TYPE_CHECKING:
+    from textx.metamodel import TextXMetaMetaModel, TextXMetaModel
 
 
 class LanguageDesc:
@@ -31,13 +36,29 @@ class LanguageDesc:
             registered this language.
     """
 
-    def __init__(self, name, pattern=None, description="", metamodel=None):
+    def __init__(
+        self,
+        name: str,
+        pattern: Optional[str] = None,
+        description="",
+        metamodel=Callable[..., Any],
+    ):
         self.name = name
         self.pattern = pattern
         self.description = description
         self.metamodel = metamodel
         self.project_name = None
         self.project_version = None
+
+
+@dataclass
+class GeneratorParam:
+    """
+    Generator custom parameter definition.
+    """
+    name: str
+    description: str
+    mandatory: bool = True
 
 
 class GeneratorDesc:
@@ -59,20 +80,29 @@ class GeneratorDesc:
         project_version (str): Read-only attribute available on registrations
             from `pyproject.toml`. Keeps the Python project name of the project that
             registered this language.
+        custom_args (dict): Custom parameters used by the generator.
     """
 
-    def __init__(self, language, target, description="", generator=None):
+    def __init__(
+        self,
+        language: str,
+        target: str,
+        description="",
+        generator: Optional[Callable[..., None]] = None,
+        custom_args: Optional[List[GeneratorParam]] = None,
+    ):
         self.language = language
         self.target = target
         self.description = description
         self.generator = generator
+        self.custom_args = custom_args
         self.project_name = None
         self.project_version = None
 
 
-metamodels = {}
-languages = None
-generators = None
+metamodels: Dict[str, Union['TextXMetaModel', 'TextXMetaMetaModel']] = {}
+languages: Optional[Dict[str, LanguageDesc]] = None
+generators: Optional[Dict[str, Dict[str, GeneratorDesc]]] = None
 
 
 def language_descriptions():
@@ -103,7 +133,7 @@ def generator_descriptions():
     return generators
 
 
-def language_description(language_name):
+def language_description(language_name: str) -> LanguageDesc:
     """
     Return `LanguageDesc` for the given language name.
     """
@@ -111,13 +141,15 @@ def language_description(language_name):
     language_name = language_name.lower()
     if languages is None:
         language_descriptions()
-    try:
+    if languages is None or language_name not in languages:
+        raise TextXRegistrationError(f'Language "{language_name}" not registered.')
+    else:
         return languages[language_name]
-    except KeyError as e:
-        raise TextXRegistrationError(f'Language "{language_name}" not registered.') from e
 
 
-def generator_description(language_name, target_name, any_permitted=False):
+def generator_description(
+    language_name: str, target_name: str, any_permitted=False
+) -> GeneratorDesc:
     """
     Return `GeneratorDesc` instance for the given target and language name.
     If `any_permitted` is `True` return generator for language `any` if
@@ -128,7 +160,9 @@ def generator_description(language_name, target_name, any_permitted=False):
     target_name = target_name.lower()
     if generators is None:
         generator_descriptions()
+
     try:
+        assert generators is not None
         try:
             generators_for_language = generators[language_name]
             return generators_for_language[target_name]
@@ -137,7 +171,7 @@ def generator_description(language_name, target_name, any_permitted=False):
                 raise
             generators_for_language = generators["any"]
             return generators_for_language[target_name]
-    except KeyError as e:
+    except (KeyError, AssertionError) as e:
         raise TextXRegistrationError(
             "No generators registered for language "
             f'"{language_name}" and target "{target_name}".'
@@ -327,7 +361,9 @@ def metamodel_for_file(file_name_or_pattern, **kwargs):
     return metamodel_for_language(language_for_file(file_name_or_pattern).name, **kwargs)
 
 
-def generator(language, target):
+def generator(
+    language: str, target: str, custom_args: Optional[List[GeneratorParam]] = None
+):
     """
     Decorator factory used to create `GeneratorDesc` instances suitable for
     entry point registration.
@@ -341,12 +377,13 @@ def generator(language, target):
             target=target,
             description=gen_f.__doc__ if gen_f.__doc__ is not None else "",
             generator=gen_f,
+            custom_args=custom_args,
         )
 
     return _generator
 
 
-def language(name, pattern=None):
+def language(name: str, pattern: Optional[str] = None):
     """
     Decorator factory used to create `LanguageDesc` instances suitable for
     entry point registration.

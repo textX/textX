@@ -14,6 +14,9 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ## [Unreleased]
 
+### Added
+- Custom generator parameters description with validation.
+
 ### Changed
 - Reworked project setup. Moved to [GNU
   Make](https://www.gnu.org/software/make/) and
