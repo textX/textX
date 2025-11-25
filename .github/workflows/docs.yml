@@ -25,18 +25,25 @@ jobs:
   # Build job
   build:
     runs-on: ubuntu-latest
-    container:
-      image: igordejanovic/mdbook-textx
-      options: --user root
     steps:
-      - uses: actions/checkout@v4
-      - name: Setup Pages
-        id: pages
-        uses: actions/configure-pages@v5
-      - name: Build with mdBook
+      - uses: actions/checkout@v6
+
+      - uses: cachix/install-nix-action@v31
+        with:
+          nix_path: nixpkgs=channel:nixos-24.11
+
+      - uses: actions/cache@v4
+        with:
+          path: /nix/store
+          key: nix-${{ runner.os }}-${{ hashFiles('docs/flake.nix') }}
+          restore-keys: |
+            nix-${{ runner.os }}-
+
+      - name: Build with mdBook via Nix
         run: |
           cd ./docs
-          mdbook build
+          nix develop --command mdbook build
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

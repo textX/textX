@@ -1,0 +1,97 @@
+{
+  "nodes": {
+    "flake-utils": {
+      "inputs": {
+        "systems": "systems"
+      },
+      "locked": {
+        "lastModified": 1731533236,
+        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
+    "mdbook-bib": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1693683505,
+        "narHash": "sha256-IEKAFEkBF/jtb4bGxo5PiwtOCi1TJu27d2lvC/W6XwE=",
+        "owner": "francisco-perez-sorrosal",
+        "repo": "mdbook-bib",
+        "rev": "601ca95d83f7cff481f7cd336d19ab38effe3b35",
+        "type": "github"
+      },
+      "original": {
+        "owner": "francisco-perez-sorrosal",
+        "ref": "v0.0.6",
+        "repo": "mdbook-bib",
+        "type": "github"
+      }
+    },
+    "mdbook-theme": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1728525956,
+        "narHash": "sha256-2lfi2Wyldh5zE5GR9OqBhrPS+f10FhUJMIXsURJYK2E=",
+        "owner": "zjp-CN",
+        "repo": "mdbook-theme",
+        "rev": "880fd6ae7e1df548b0754023b721150625d5877d",
+        "type": "github"
+      },
+      "original": {
+        "owner": "zjp-CN",
+        "ref": "v0.1.5",
+        "repo": "mdbook-theme",
+        "type": "github"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1731603435,
+        "narHash": "sha256-CqCX4JG7UiHvkrBTpYC3wcEurvbtTADLbo3Ns2CEoL8=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "8b27c1239e5c421a2bbc2c65d52e4a6fbf2ff296",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "24.11",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "flake-utils": "flake-utils",
+        "mdbook-bib": "mdbook-bib",
+        "mdbook-theme": "mdbook-theme",
+        "nixpkgs": "nixpkgs"
+      }
+    },
+    "systems": {
+      "locked": {
+        "lastModified": 1681028828,
+        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default",
+        "type": "github"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}
