@@ -36,7 +36,9 @@ jobs:
 
       - uses: actions/cache@v4
         with:
-          path: /nix/store
+          path: |
+            ~/.cache/nix
+            /nix/var/nix/profiles/per-user/$USER
           key: nix-${{ runner.os }}-${{ hashFiles('docs/flake.nix') }}
           restore-keys: |
             nix-${{ runner.os }}-
