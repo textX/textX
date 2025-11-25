@@ -73,7 +73,7 @@ dev = [
 test = [
     "click >=7.0, <9.0",
     "ruff",
-    "mypy>=1.14.1",
+    "mypy",
     "jinja2",
     "coverage",
     "coveralls",

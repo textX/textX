@@ -1,13 +1,8 @@
 .PHONY: help clean clean-test clean-pyc clean-build lint test coverage types check release-test release dev test-env docs
 .DEFAULT_GOAL := help
 define BROWSER_PYSCRIPT
-import os, webbrowser, sys
-try:
-	from urllib import pathname2url
-except:
-	from urllib.request import pathname2url
-
-webbrowser.open("file://" + pathname2url(os.path.abspath(sys.argv[1])))
+import webbrowser, sys
+webbrowser.open(sys.argv[1])
 endef
 export BROWSER_PYSCRIPT
 
@@ -77,7 +72,7 @@ install: clean ## install the package to the active Python's site-packages
 	uv pip install .
 
 dev: clean  ## Setup development environment
-	uv sync --group test --group dev
+	uv sync
 
 docs:  ## Serve docs locally
 	echo "Run 'docker stop textx-docs' from another terminal to gracefully terminate." 
