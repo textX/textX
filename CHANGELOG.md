@@ -14,6 +14,9 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ## [Unreleased]
 
+
+## [4.3.0] (released: 2025-11-25)
+
 ### Added
 - Custom generator parameters description with validation.
 
@@ -781,7 +784,8 @@ please take a look at related PRs and issues and see if the change affects you.
 [#92]: https://github.com/textX/textX/pull/92
 [#40]: https://github.com/textX/textX/issues/40
 
-[Unreleased]: https://github.com/textX/textX/compare/4.2.3...HEAD
+[Unreleased]: https://github.com/textX/textX/compare/4.3.0...HEAD
+[4.3.0]: https://github.com/textX/textX/compare/4.2.3...4.3.0
 [4.2.3]: https://github.com/textX/textX/compare/4.2.2...4.2.3
 [4.2.2]: https://github.com/textX/textX/compare/4.2.1...4.2.2
 [4.2.1]: https://github.com/textX/textX/compare/4.2.0...4.2.1
