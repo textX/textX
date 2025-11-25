@@ -18,6 +18,7 @@ please take a look at related PRs and issues and see if the change affects you.
 - Custom generator parameters description with validation.
 
 ### Changed
+- Docs moved to Nix flake setup.
 - Reworked project setup. Moved to [GNU
   Make](https://www.gnu.org/software/make/) and
   [uv](https://docs.astral.sh/uv/). See
