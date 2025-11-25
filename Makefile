@@ -66,6 +66,8 @@ release: dist  ## release package to PyPI
 
 dist: clean ## builds source and wheel package
 	uv run flit build
+	gpg --armor --detach-sign dist/*.whl
+	gpg --armor --detach-sign dist/*.tar.gz
 	ls -l dist
 
 install: clean ## install the package to the active Python's site-packages
