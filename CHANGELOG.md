@@ -14,6 +14,9 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ## [Unreleased]
 
+### Changed
+- Migrated to [just](https://github.com/casey/just) for project management.
+- Autoformating code with [ruff](https://docs.astral.sh/ruff/).
 
 ## [4.3.0] (released: 2025-11-25)
 
