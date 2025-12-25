@@ -1,6 +1,7 @@
 """
 Testing model and object processors.
 """
+
 import pytest  # noqa
 from textx.metamodel import metamodel_from_str
 

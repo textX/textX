@@ -4,6 +4,7 @@ matches and a rule reference.
 See https://github.com/textX/textX/pull/128
 
 """
+
 from textx import metamodel_from_str, textx_isinstance
 
 # Global variable namespace

@@ -58,8 +58,8 @@ def metamodel_generate_dot(metamodel, model, output_path, overwrite, debug):
         output_file,
         partial(metamodel_export, model, output_file),
         overwrite,
-        success_message=f'To convert to png run '
-                        f'"dot -Tpng -O {os.path.basename(output_file)}"',
+        success_message=f"To convert to png run "
+        f'"dot -Tpng -O {os.path.basename(output_file)}"',
     )
 
 
@@ -73,25 +73,27 @@ def model_generate_dot(metamodel, model, output_path, overwrite, debug):
         output_file,
         partial(model_export, model, output_file),
         overwrite,
-        success_message=f'To convert to png run '
-                        f'"dot -Tpng -O {os.path.basename(output_file)}"',
+        success_message=f"To convert to png run "
+        f'"dot -Tpng -O {os.path.basename(output_file)}"',
     )
 
 
 @generator("textX", "PlantUML")
-def metamodel_generate_plantuml(metamodel, model, output_path, overwrite,
-                                debug, **custom_args):
+def metamodel_generate_plantuml(
+    metamodel, model, output_path, overwrite, debug, **custom_args
+):
     "Generating PlantUML visualizations from textX grammars"
 
     output_file = get_output_filename(model.file_name, output_path, "pu")
-    linetype = custom_args.get('linetype')
+    linetype = custom_args.get("linetype")
 
     gen_file(
         model.file_name,
         output_file,
-        partial(metamodel_export, model, output_file,
-                renderer=PlantUmlRenderer(linetype)),
+        partial(
+            metamodel_export, model, output_file, renderer=PlantUmlRenderer(linetype)
+        ),
         overwrite,
-        success_message=f'To convert to png run '
-                        f'"plantuml {os.path.basename(output_file)}"',
+        success_message=f"To convert to png run "
+        f'"plantuml {os.path.basename(output_file)}"',
     )

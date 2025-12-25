@@ -1,6 +1,7 @@
 """
 Tests for `generate` command.
 """
+
 import os
 from contextlib import suppress
 

@@ -2,6 +2,7 @@
 Problem with TextXMetaMetamodel model params definition.
 https://github.com/textX/textX/issues/360
 """
+
 from textx.metamodel import TextXMetaMetaModel
 
 

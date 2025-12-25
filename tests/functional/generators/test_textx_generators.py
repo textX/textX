@@ -1,6 +1,7 @@
 """
 Tests for textX registered generators/visualizations
 """
+
 import os
 from contextlib import suppress
 

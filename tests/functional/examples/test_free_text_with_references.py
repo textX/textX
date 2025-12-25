@@ -1,6 +1,7 @@
 """
 Testing model and regexp with groups.
 """
+
 import pytest  # noqa
 from textx import metamodel_from_str
 

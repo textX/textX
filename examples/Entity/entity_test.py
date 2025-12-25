@@ -14,6 +14,7 @@ class SimpleType:
     Thus, user doesn't need to provide integer and string
     types in the model but can reference them in attribute types nevertheless.
     """
+
     def __init__(self, parent, name):
         self.parent = parent
         self.name = name
@@ -30,32 +31,33 @@ def get_entity_mm(debug=False):
     # Each model will have this simple types during reference resolving but
     # these will not be a part of `types` list of EntityModel.
     type_builtins = {
-        'integer': SimpleType(None, 'integer'),
-        'string': SimpleType(None, 'string')
+        "integer": SimpleType(None, "integer"),
+        "string": SimpleType(None, "string"),
     }
-    entity_mm = metamodel_from_file(join(this_folder, 'entity.tx'),
-                                    classes=[SimpleType],
-                                    builtins=type_builtins,
-                                    debug=debug)
+    entity_mm = metamodel_from_file(
+        join(this_folder, "entity.tx"),
+        classes=[SimpleType],
+        builtins=type_builtins,
+        debug=debug,
+    )
 
     return entity_mm
 
 
 def main(debug=False):
-
     entity_mm = get_entity_mm(debug)
 
     # Export to .dot file for visualization
-    dot_folder = join(this_folder, 'dotexport')
+    dot_folder = join(this_folder, "dotexport")
     if not os.path.exists(dot_folder):
         os.mkdir(dot_folder)
-    metamodel_export(entity_mm, join(dot_folder, 'entity_meta.dot'))
+    metamodel_export(entity_mm, join(dot_folder, "entity_meta.dot"))
 
     # Build Person model from person.ent file
-    person_model = entity_mm.model_from_file(join(this_folder, 'person.ent'))
+    person_model = entity_mm.model_from_file(join(this_folder, "person.ent"))
 
     # Export to .dot file for visualization
-    model_export(person_model, join(dot_folder, 'person.dot'))
+    model_export(person_model, join(dot_folder, "person.dot"))
 
 
 if __name__ == "__main__":

@@ -1,6 +1,7 @@
 """
 Export of textX based models and metamodels to dot file.
 """
+
 from dataclasses import dataclass
 from typing import Dict, Iterable, List, Union
 from typing import Optional as Opt
@@ -140,7 +141,7 @@ def dot_repr(o):
 @dataclass
 class Attr:
     name: str
-    cls: 'Cls'
+    cls: "Cls"
     mult: str
     cont: bool
     ref: bool
@@ -154,8 +155,8 @@ class Cls:
     fqn: str
     typ: str
     attrs: List[Union[MetaAttr, Attr]]
-    inh_by: List['Cls']
-    inh_from: Opt['Cls']
+    inh_by: List["Cls"]
+    inh_from: Opt["Cls"]
     peg_rule: ParsingExpression
 
     def __hash__(self):
@@ -178,8 +179,9 @@ class DotRenderer(Renderer):
             for cls in sorted(self.match_rules, key=lambda x: x.fqn):
                 trailer += "\t<tr>\n"
                 attrs = dot_match_str(cls, self.match_rules)
-                trailer += f"\t\t<td><b>{cls.name}</b></td>" \
-                           f"<td>{html_escape(attrs)}</td>\n"
+                trailer += (
+                    f"\t\t<td><b>{cls.name}</b></td><td>{html_escape(attrs)}</td>\n"
+                )
                 trailer += "\t</tr>\n"
             trailer += "</table>"
         return trailer
@@ -187,8 +189,10 @@ class DotRenderer(Renderer):
     def get_trailer(self):
         trailer = ""
         if self.match_rules:
-            trailer = f"match_rules [ shape=plaintext, " \
-                      f"label=< {self.get_match_rules_table()} >]\n\n"
+            trailer = (
+                f"match_rules [ shape=plaintext, "
+                f"label=< {self.get_match_rules_table()} >]\n\n"
+            )
         return trailer + "\n}\n"
 
     def render_class(self, cls):
@@ -202,9 +206,7 @@ class DotRenderer(Renderer):
             for attr in cls.attrs:
                 required = attr.mult in [MULT_ONE, MULT_ONEORMORE]
                 mult_list = attr.mult in [MULT_ZEROORMORE, MULT_ONEORMORE]
-                attr_type = (
-                    f"list[{attr.cls.name}]" if mult_list else attr.cls.name
-                )
+                attr_type = f"list[{attr.cls.name}]" if mult_list else attr.cls.name
                 if attr.ref and attr.cls.name != "OBJECT":
                     pass
                 else:
@@ -222,8 +224,10 @@ class DotRenderer(Renderer):
         if attr.ref and attr.cls.name != "OBJECT":
             # If attribute is a reference
             mult = attr.mult if attr.mult != MULT_ONE else ""
-            return f'{id(cls)} -> ' \
+            return (
+                f"{id(cls)} -> "
                 f'{id(attr.cls)}[{arrowtail}headlabel="{attr.name} {mult}"]\n'
+            )
 
     def render_inherited_by(self, base, special):
         return f"{id(base)} -> {id(special)} [dir=back]\n"
@@ -238,8 +242,7 @@ class PlantUmlRenderer(Renderer):
         return """@startuml
 set namespaceSeparator .
 {}
-""".format(f"skinparam linetype {self.linetype}"
-           if self.linetype else "")
+""".format(f"skinparam linetype {self.linetype}" if self.linetype else "")
 
     def get_trailer(self):
         trailer = ""
@@ -270,9 +273,7 @@ set namespaceSeparator .
             for attr in cls.attrs:
                 required = attr.mult in [MULT_ONE, MULT_ONEORMORE]
                 mult_list = attr.mult in [MULT_ZEROORMORE, MULT_ONEORMORE]
-                attr_type = (
-                    f"list[{attr.cls.name}]" if mult_list else attr.cls.name
-                )
+                attr_type = f"list[{attr.cls.name}]" if mult_list else attr.cls.name
                 if attr.ref and attr.cls.name != "OBJECT":
                     pass
                 else:
@@ -291,7 +292,7 @@ set namespaceSeparator .
             arr = "*-->" if attr.cont else "-->"
             name = attr.name
             mult = f'"{attr.mult}"' if attr.mult != "1" else ""
-            return f'{cls.fqn} {arr} {mult} {attr.cls.fqn}: {name}\n'
+            return f"{cls.fqn} {arr} {mult} {attr.cls.fqn}: {name}\n"
 
     def render_inherited_by(self, base, special):
         return f"{base.fqn} <|-- {special.fqn}\n"
@@ -331,9 +332,15 @@ def get_unified_classes(classes: List[TextXMetaClass]) -> Iterable[Cls]:
     """
     new_classes: Dict[str, Cls] = dict()
     for cls in classes:
-        c = Cls(cls.__name__, cls._tx_fqn, cls._tx_type,
-                list(cls._tx_attrs.values()), cls._tx_inh_by, None,
-                cls._tx_peg_rule)
+        c = Cls(
+            cls.__name__,
+            cls._tx_fqn,
+            cls._tx_type,
+            list(cls._tx_attrs.values()),
+            cls._tx_inh_by,
+            None,
+            cls._tx_peg_rule,
+        )
         new_classes[cls._tx_fqn] = c
 
     # resolve attributes
@@ -341,19 +348,27 @@ def get_unified_classes(classes: List[TextXMetaClass]) -> Iterable[Cls]:
         # HACK: `if` in this comprehension is is a temporary fix for
         #       test_import.py tests. Apparently, relative.fourth.Second is not
         #       part of the meta-model but it should be.
-        new_cls.attrs = [Attr(attr.name, new_classes[attr.cls._tx_fqn],
-                            attr.mult, attr.cont, attr.ref,
-                            attr.bool_assignment, attr.position)
-                         for attr in new_cls.attrs
-                         if hasattr(attr.cls, '_tx_fqn')
-                            and attr.cls._tx_fqn in new_classes]
+        new_cls.attrs = [
+            Attr(
+                attr.name,
+                new_classes[attr.cls._tx_fqn],
+                attr.mult,
+                attr.cont,
+                attr.ref,
+                attr.bool_assignment,
+                attr.position,
+            )
+            for attr in new_cls.attrs
+            if hasattr(attr.cls, "_tx_fqn") and attr.cls._tx_fqn in new_classes
+        ]
 
     # resolve inheritance
     for new_cls in new_classes.values():
-        new_cls.inh_by = [new_classes[inh._tx_fqn] for inh in new_cls.inh_by
-                          if hasattr(inh, '_tx_fqn')]
+        new_cls.inh_by = [
+            new_classes[inh._tx_fqn] for inh in new_cls.inh_by if hasattr(inh, "_tx_fqn")
+        ]
         if new_cls.inh_from:
-            assert hasattr(new_cls.inh_from, '_tx_fqn')
+            assert hasattr(new_cls.inh_from, "_tx_fqn")
             new_cls.inh_from = new_classes[new_cls.inh_from._tx_fqn]
 
     # Raise attributes
@@ -372,15 +387,13 @@ def get_unified_classes(classes: List[TextXMetaClass]) -> Iterable[Cls]:
                     else:
                         # Attribute found in all inherited classes
                         # Move it up
-                        if attr.name not in [attr.name
-                                             for attr in new_cls.attrs]:
+                        if attr.name not in [attr.name for attr in new_cls.attrs]:
                             new_cls.attrs.append(attr)
                         for inh in new_cls.inh_by:
                             inh.attrs.remove(attr)
                         change = True
 
     return new_classes.values()
-
 
 
 def model_export(model, file_name, repo=None):
@@ -448,7 +461,7 @@ def model_export_to_file(f, model=None, repo=None):
                                     )
                                 else:
                                     f.write(
-                                        f'{id(obj)} -> {id(list_obj)} '
+                                        f"{id(obj)} -> {id(list_obj)} "
                                         f'[label="{attr_name}:{idx}" {endmark}]\n'
                                     )
                                     _export(list_obj)
@@ -461,13 +474,15 @@ def model_export_to_file(f, model=None, repo=None):
                         if attr_name == "name":
                             name = attr_value
                         else:
-                            attrs += f"{required}{attr_name}:" \
-                                     f"{type(attr_value).__name__}={attr_value}\\l"
+                            attrs += (
+                                f"{required}{attr_name}:"
+                                f"{type(attr_value).__name__}={attr_value}\\l"
+                            )
                     else:
                         # Object references
                         if attr_value is not None:
                             f.write(
-                                f'{id(obj)} -> {id(attr_value)} '
+                                f"{id(obj)} -> {id(attr_value)} "
                                 f'[label="{attr_name}" {endmark}]\n'
                             )
                             _export(attr_value)

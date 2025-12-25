@@ -1,6 +1,7 @@
 """
 Testing `reference` grammar keyword.
 """
+
 import os
 
 import textx.scoping.providers as scoping_providers

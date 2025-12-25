@@ -16,7 +16,6 @@ def move_command_processor(move_cmd):
 
 
 class Robot:
-
     def __init__(self):
         # Initial position is (0,0)
         self.x = 0
@@ -26,10 +25,8 @@ class Robot:
         return f"Robot position is {self.x}, {self.y}."
 
     def interpret(self, model):
-
         # model is an instance of Program
         for c in model.commands:
-
             if c.__class__.__name__ == "InitialCommand":
                 print(f"Setting position to: {c.x}, {c.y}")
                 self.x = c.x
@@ -37,12 +34,9 @@ class Robot:
             else:
                 print(f"Going {c.direction} for {c.steps} step(s).")
 
-                move = {
-                    "up": (0, 1),
-                    "down": (0, -1),
-                    "left": (-1, 0),
-                    "right": (1, 0)
-                }[c.direction]
+                move = {"up": (0, 1), "down": (0, -1), "left": (-1, 0), "right": (1, 0)}[
+                    c.direction
+                ]
 
                 # Calculate new robot position
                 self.x += c.steps * move[0]
@@ -52,17 +46,16 @@ class Robot:
 
 
 def main(debug=False):
-
     this_folder = dirname(__file__)
 
-    robot_mm = metamodel_from_file(join(this_folder, 'robot.tx'), debug=False)
-    metamodel_export(robot_mm, join(this_folder, 'robot_meta.dot'))
+    robot_mm = metamodel_from_file(join(this_folder, "robot.tx"), debug=False)
+    metamodel_export(robot_mm, join(this_folder, "robot_meta.dot"))
 
     # Register object processor for MoveCommand
-    robot_mm.register_obj_processors({'MoveCommand': move_command_processor})
+    robot_mm.register_obj_processors({"MoveCommand": move_command_processor})
 
-    robot_model = robot_mm.model_from_file(join(this_folder, 'program.rbt'))
-    model_export(robot_model, join(this_folder, 'program.dot'))
+    robot_model = robot_mm.model_from_file(join(this_folder, "program.rbt"))
+    model_export(robot_model, join(this_folder, "program.dot"))
 
     robot = Robot()
     robot.interpret(robot_model)

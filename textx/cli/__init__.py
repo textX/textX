@@ -16,10 +16,7 @@ else:
     from importlib.metadata import entry_points
 
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(message)s")
 
 
 @click.group()

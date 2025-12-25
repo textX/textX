@@ -1,6 +1,7 @@
 """
 Meta-model construction.
 """
+
 import os
 import warnings
 from collections import OrderedDict
@@ -117,12 +118,14 @@ class MetaAttr:
         self.position = position
 
     def __eq__(self, other):
-        return self.name == other.name \
-            and self.cls == other.cls \
-            and self.mult == other.mult \
-            and self.cont == other.cont \
-            and self.ref == other.ref \
+        return (
+            self.name == other.name
+            and self.cls == other.cls
+            and self.mult == other.mult
+            and self.cont == other.cont
+            and self.ref == other.ref
             and self.bool_assignment == other.bool_assignment
+        )
 
 
 class TextXMetaClass(type):
@@ -392,7 +395,7 @@ class TextXMetaModel(DebugPrinter):
 
         # Import can't be used if meta-model is loaded from string
         assert self.root_path is not None, (
-            '"import" statement can not be used if meta-model is ' "loaded from string."
+            '"import" statement can not be used if meta-model is loaded from string.'
         )
 
         # Find the absolute file name of the import based on the relative
@@ -403,7 +406,8 @@ class TextXMetaModel(DebugPrinter):
             import_name = f"{root_namespace}.{import_name}"
 
         import_file_name = "{}.tx".format(
-            os.path.join(self.root_path, *import_name.split(".")))
+            os.path.join(self.root_path, *import_name.split("."))
+        )
 
         if import_name not in self.namespaces:
             self._enter_namespace(import_name)
@@ -416,7 +420,6 @@ class TextXMetaModel(DebugPrinter):
         # so that resolving of current grammar searches imported grammars
         # in the order of import
         self._imported_namespaces[current_namespace].append(self.namespaces[import_name])
-
 
     def _new_class(
         self,
@@ -463,7 +466,6 @@ class TextXMetaModel(DebugPrinter):
         self._init_class(cls, peg_rule, position, position_end, inherits, root, rule_type)
 
         return cls
-
 
     def _init_class(
         self,

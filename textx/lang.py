@@ -6,6 +6,7 @@ there are some differences in both syntax and semantics. To make things clear I
 have named this language textX ;)
 
 """
+
 import codecs
 import re
 from typing import Dict
@@ -680,7 +681,7 @@ class TextXVisitor(RRELVisitor):
                             raise TextXSemanticError(
                                 "Can't use bool assignment "
                                 f'inside repetition in rule "{rule_name}" '
-                                f'at {self.grammar_parser.pos_to_linecol(node.position)}.'
+                                f"at {self.grammar_parser.pos_to_linecol(node.position)}."
                             )
                         if mult_lt(cls_attr.mult, mult):
                             cls_attr.mult = mult
@@ -747,7 +748,7 @@ class TextXVisitor(RRELVisitor):
             if name not in ["skipws", "ws", "split"]:
                 raise TextXSyntaxError(
                     f'Invalid rule param "{name}" '
-                    f'at {self.grammar_parser.pos_to_linecol(node.position)}.'
+                    f"at {self.grammar_parser.pos_to_linecol(node.position)}."
                 )
 
             if name == "split" and not isinstance(value, str):

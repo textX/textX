@@ -1,6 +1,7 @@
 """
 Test discovering of registered languages and generators.
 """
+
 from click.testing import CliRunner
 
 from textx.cli import textx

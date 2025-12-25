@@ -1,5 +1,4 @@
 def main(debug=False):
-
     from textx import get_children_of_type, metamodel_from_str
 
     grammar = """
@@ -53,18 +52,18 @@ def main(debug=False):
     # Let's interpret the model
     position = Point(None, 0, 0)
     for command in model.commands:
-        if cname(command) == 'MoveTo':
-            print('Moving to position', command.position)
+        if cname(command) == "MoveTo":
+            print("Moving to position", command.position)
             position = command.position
-        elif cname(command) == 'MoveBy':
+        elif cname(command) == "MoveBy":
             position = position + command.vector
-            print('Moving by', command.vector, 'to a new position', position)
-        elif cname(command) == 'Circle':
-            print('Drawing circle at', position, 'with radius', command.radius)
+            print("Moving by", command.vector, "to a new position", position)
+        elif cname(command) == "Circle":
+            print("Drawing circle at", position, "with radius", command.radius)
         else:
-            print('Drawing line from', position, 'to', command.point)
+            print("Drawing line from", position, "to", command.point)
             position = command.point
-    print('End position is', position)
+    print("End position is", position)
 
     # Output:
     # Moving to position 5,10
@@ -77,7 +76,7 @@ def main(debug=False):
     # Collect all points starting from the root of the model
     points = get_children_of_type("Point", model)
     for point in points:
-        print(f'Point: {point}')
+        print(f"Point: {point}")
 
     # Output:
     # Point: 5,10
@@ -87,5 +86,5 @@ def main(debug=False):
     # Point: 10,10
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

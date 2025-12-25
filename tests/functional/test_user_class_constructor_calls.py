@@ -1,6 +1,7 @@
 """
 Testing user class constructor call and parent reference.
 """
+
 import pytest  # noqa
 from textx import metamodel_from_str
 from textx.scoping.providers import PlainName

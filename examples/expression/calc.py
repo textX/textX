@@ -3,7 +3,7 @@ from os.path import dirname, join
 from textx import metamodel_from_str
 from textx.export import metamodel_export, model_export
 
-grammar = '''
+grammar = """
 Calc: assignments*=Assignment expression=Expression;
 Assignment: variable=ID '=' expression=Expression ';';
 Expression: op=Term (op=PlusOrMinus op=Term)* ;
@@ -12,7 +12,7 @@ Term: op=Factor (op=MulOrDiv op=Factor)*;
 MulOrDiv: '*' | '/' ;
 Factor: (sign=PlusOrMinus)?  op=Operand;
 Operand: op=NUMBER | op=ID | ('(' op=Expression ')');
-'''
+"""
 
 # Global variable namespace
 namespace = {}
@@ -20,8 +20,8 @@ namespace = {}
 
 class Calc:
     def __init__(self, **kwargs):
-        self.assignments = kwargs.pop('assignments')
-        self.expression = kwargs.pop('expression')
+        self.assignments = kwargs.pop("assignments")
+        self.expression = kwargs.pop("expression")
 
     @property
     def value(self):
@@ -33,26 +33,25 @@ class Calc:
 
 class ExpressionElement:
     def __init__(self, **kwargs):
-
         # textX will pass in parent attribute used for parent-child
         # relationships. We can use it if we want to.
-        self.parent = kwargs.get('parent')
+        self.parent = kwargs.get("parent")
 
         # We have 'op' attribute in all grammar rules
-        self.op = kwargs['op']
+        self.op = kwargs["op"]
 
         super().__init__()
 
 
 class Factor(ExpressionElement):
     def __init__(self, **kwargs):
-        self.sign = kwargs.pop('sign', '+')
+        self.sign = kwargs.pop("sign", "+")
         super().__init__(**kwargs)
 
     @property
     def value(self):
         value = self.op.value
-        return -value if self.sign == '-' else value
+        return -value if self.sign == "-" else value
 
 
 class Term(ExpressionElement):
@@ -60,7 +59,7 @@ class Term(ExpressionElement):
     def value(self):
         ret = self.op[0].value
         for operation, operand in zip(self.op[1::2], self.op[2::2]):
-            if operation == '*':
+            if operation == "*":
                 ret *= operand.value
             else:
                 ret /= operand.value
@@ -72,7 +71,7 @@ class Expression(ExpressionElement):
     def value(self):
         ret = self.op[0].value
         for operation, operand in zip(self.op[1::2], self.op[2::2]):
-            if operation == '+':
+            if operation == "+":
                 ret += operand.value
             else:
                 ret -= operand.value
@@ -90,31 +89,28 @@ class Operand(ExpressionElement):
         elif op in namespace:
             return namespace[op]
         else:
-            raise Exception(f'Unknown variable "{op}" at position {self._tx_position}'
-                            )
+            raise Exception(f'Unknown variable "{op}" at position {self._tx_position}')
 
 
 def main(debug=False):
-
-    calc_mm = metamodel_from_str(grammar,
-                                 classes=[Calc, Expression, Term, Factor,
-                                          Operand],
-                                 debug=debug)
+    calc_mm = metamodel_from_str(
+        grammar, classes=[Calc, Expression, Term, Factor, Operand], debug=debug
+    )
 
     this_folder = dirname(__file__)
     if debug:
-        metamodel_export(calc_mm, join(this_folder, 'calc_metamodel.dot'))
+        metamodel_export(calc_mm, join(this_folder, "calc_metamodel.dot"))
 
-    input_expr = '''
+    input_expr = """
         a = 10;
         b = 2 * a + 17;
         -(4-1)*a+(2+4.67)+b*5.89/(.2+7)
-    '''
+    """
 
     model = calc_mm.model_from_str(input_expr)
 
     if debug:
-        model_export(model, join(this_folder, 'calc_model.dot'))
+        model_export(model, join(this_folder, "calc_model.dot"))
 
     # Getting value property from the Calc instance will start evaluation.
     result = model.value
@@ -123,5 +119,5 @@ def main(debug=False):
     print("Result is", result)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

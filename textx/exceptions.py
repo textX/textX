@@ -7,7 +7,7 @@ class TextXError(Exception):
         nchar=None,
         err_type=None,
         filename=None,
-        context=None
+        context=None,
     ):
         super().__init__(message)
         self.line = line

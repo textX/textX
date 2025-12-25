@@ -1,6 +1,7 @@
 """
 Languages and generators registration and discovery API.
 """
+
 import fnmatch
 import sys
 from dataclasses import dataclass
@@ -56,6 +57,7 @@ class GeneratorParam:
     """
     Generator custom parameter definition.
     """
+
     name: str
     description: str
     mandatory: bool = True
@@ -100,7 +102,7 @@ class GeneratorDesc:
         self.project_version = None
 
 
-metamodels: Dict[str, Union['TextXMetaModel', 'TextXMetaMetaModel']] = {}
+metamodels: Dict[str, Union["TextXMetaModel", "TextXMetaMetaModel"]] = {}
 languages: Optional[Dict[str, LanguageDesc]] = None
 generators: Optional[Dict[str, Dict[str, GeneratorDesc]]] = None
 
@@ -337,7 +339,7 @@ def language_for_file(file_name_or_pattern):
         )
     elif len(languages) == 0:
         raise TextXRegistrationError(
-            "No language registered that can parse" f' "{file_name_or_pattern}".'
+            f'No language registered that can parse "{file_name_or_pattern}".'
         )
 
     return languages[0]

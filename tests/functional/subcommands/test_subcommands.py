@@ -13,7 +13,6 @@ def test_subcommand_group():
     """
     Test that a command group is registered.
     """
-    result = subprocess.run(["textx", "testgroup"],
-                            capture_output=True, check=False)
+    result = subprocess.run(["textx", "testgroup"], capture_output=True, check=False)
     assert b"groupcommand1" in (result.stdout + result.stderr)
     assert b"groupcommand2" in (result.stdout + result.stderr)

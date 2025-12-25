@@ -8,6 +8,7 @@ class StateMachine:
     """
     StateMachine model interpreter.
     """
+
     def __init__(self, model):
         self.model = model
 
@@ -41,8 +42,8 @@ class StateMachine:
         print("Current state: ", self.current_state.name)
         print("Choose event:")
         for idx, event in enumerate(self.model.events):
-            print(idx + 1, '-', event.name, event.code)
-        print('q - quit')
+            print(idx + 1, "-", event.name, event.code)
+        print("q - quit")
 
     def interpret(self):
         """
@@ -52,23 +53,23 @@ class StateMachine:
         while True:
             try:
                 event = input()
-                if event == 'q':
+                if event == "q":
                     return
                 event = int(event)
                 event = self.model.events[event - 1]
             except Exception:
-                print('Invalid input')
+                print("Invalid input")
 
             self.event(event)
             self.print_menu()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     this_folder = dirname(__file__)
     if len(sys.argv) != 2:
         print(f"Usage: python {sys.argv[0]} <model>")
     else:
-        meta_model = metamodel_from_file(join(this_folder, 'state_machine.tx'))
+        meta_model = metamodel_from_file(join(this_folder, "state_machine.tx"))
         model = meta_model.model_from_file(sys.argv[1])
         state_machine = StateMachine(model)
         state_machine.interpret()

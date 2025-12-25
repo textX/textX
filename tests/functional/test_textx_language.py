@@ -372,7 +372,7 @@ def test_all_basetypes():
     assert meta["BOOL"]._tx_type is RULE_MATCH
 
     model = meta.model_from_str(
-        '3.4 5 true 0 "some string" ' "'some other string' some_id"
+        "3.4 5 true 0 \"some string\" 'some other string' some_id"
     )
     assert model.a == 3.4
     assert model.b == 5

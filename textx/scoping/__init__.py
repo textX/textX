@@ -251,8 +251,7 @@ class GlobalModelRepository:
                 # root model
                 new_model = the_metamodel.internal_model_from_file(
                     filename,
-                    pre_ref_resolution_callback=
-                        lambda other_model: self.pre_ref_resolution_callback(
+                    pre_ref_resolution_callback=lambda other_model: self.pre_ref_resolution_callback(
                         other_model
                     ),
                     is_main_model=is_main_model,

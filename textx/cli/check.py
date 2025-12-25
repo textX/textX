@@ -31,7 +31,7 @@ def check(textx):
         "-i/",
         default=False,
         is_flag=True,
-        help="Case-insensitive model parsing. " 'Used only if "grammar" is provided.',
+        help='Case-insensitive model parsing. Used only if "grammar" is provided.',
     )
     @click.pass_context
     def check(ctx, model_files, language=None, grammar=None, ignore_case=False):

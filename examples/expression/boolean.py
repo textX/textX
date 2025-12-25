@@ -3,14 +3,14 @@ from os.path import dirname, join
 from textx import metamodel_from_str
 from textx.export import metamodel_export, model_export
 
-grammar = '''
+grammar = """
 Bool: assignments*=Assignment expression=Or;
 Assignment: variable=ID '=' expression=Or';';
 Or: op=And ('or' op=And)*;
 And: op=Not ('and' op=Not)*;
 Not: _not?='not' op=Operand;
 Operand: op=BOOL | op=ID | ( '(' op=Or ')' );
-'''
+"""
 
 # Global variable namespace
 namespace = {}
@@ -18,8 +18,8 @@ namespace = {}
 
 class Bool:
     def __init__(self, **kwargs):
-        self.assignments = kwargs.pop('assignments')
-        self.expression = kwargs.pop('expression')
+        self.assignments = kwargs.pop("assignments")
+        self.expression = kwargs.pop("expression")
 
     @property
     def value(self):
@@ -31,13 +31,12 @@ class Bool:
 
 class ExpressionElement:
     def __init__(self, **kwargs):
-
         # textX will pass in parent attribute used for parent-child
         # relationships. We can use it if we want to.
-        self.parent = kwargs.get('parent')
+        self.parent = kwargs.get("parent")
 
         # We have 'op' attribute in all grammar rules
-        self.op = kwargs['op']
+        self.op = kwargs["op"]
 
         super().__init__()
 
@@ -62,7 +61,7 @@ class And(ExpressionElement):
 
 class Not(ExpressionElement):
     def __init__(self, **kwargs):
-        self._not = kwargs.pop('_not')
+        self._not = kwargs.pop("_not")
         super().__init__(**kwargs)
 
     @property
@@ -80,31 +79,28 @@ class Operand(ExpressionElement):
         elif op in namespace:
             return namespace[op]
         else:
-            raise Exception(f'Unknown variable "{op}" at position {self._tx_position}'
-                            )
+            raise Exception(f'Unknown variable "{op}" at position {self._tx_position}')
 
 
 def main(debug=False):
-
-    bool_mm = metamodel_from_str(grammar,
-                                 classes=[Bool, Or, And, Not, Operand],
-                                 ignore_case=True,
-                                 debug=debug)
+    bool_mm = metamodel_from_str(
+        grammar, classes=[Bool, Or, And, Not, Operand], ignore_case=True, debug=debug
+    )
 
     this_folder = dirname(__file__)
     if debug:
-        metamodel_export(bool_mm, join(this_folder, 'bool_metamodel.dot'))
+        metamodel_export(bool_mm, join(this_folder, "bool_metamodel.dot"))
 
-    input_expr = '''
+    input_expr = """
         a = true;
         b = not a and true;
         a and false or not b
-    '''
+    """
 
     model = bool_mm.model_from_str(input_expr)
 
     if debug:
-        model_export(model, join(this_folder, 'bool_model.dot'))
+        model_export(model, join(this_folder, "bool_model.dot"))
 
     # Getting value property from the Bool instance will start evaluation.
     result = model.value
@@ -113,5 +109,5 @@ def main(debug=False):
     print("Result is", result)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
