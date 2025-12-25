@@ -64,7 +64,7 @@ format *paths=".":
 
 [private]
 check-format:
-    uv run ruff format --check
+    uv run ruff format --check --exclude Arpeggio
 
 # release package to PyPI test server
 release-test: dist
