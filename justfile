@@ -52,7 +52,7 @@ types:
 	uv run --no-default-groups --group test mypy textx
 
 # run all checks
-check: check-format lint types test coverage
+check: check-format lint types coverage
 
 [private]
 check-ci: check-format lint types test
