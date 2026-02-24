@@ -18,6 +18,13 @@ please take a look at related PRs and issues and see if the change affects you.
 - Migrated to [just](https://github.com/casey/just) for project management.
 - Autoformating code with [ruff](https://docs.astral.sh/ruff/).
 
+### Fixed
+- Empty grammars now raise `TextXSyntaxError` instead of `IndexError`. See
+  [436]. Thanks @redianthus for reporting.
+
+[436]: https://github.com/textX/textX/issues/436
+
+
 ## [4.3.0] (released: 2025-11-25)
 
 ### Added
@@ -104,7 +111,7 @@ please take a look at related PRs and issues and see if the change affects you.
 
 - Removed word boundary from INT rule regex. Thanks @NevenaAl for reporting the
   issue and providing the test ([401]).
-  
+
 ### Changed
 - **(BIC)** Removed Python support for 3.6 and 3.7. The minimal supported
   version is 3.8.

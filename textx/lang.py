@@ -71,7 +71,7 @@ def decode_escapes(s):
 
 # textX grammar
 def textx_model():
-    return (ZeroOrMore(import_or_reference_stm), ZeroOrMore(textx_rule), EOF)
+    return (ZeroOrMore(import_or_reference_stm), OneOrMore(textx_rule), EOF)
 
 
 def import_or_reference_stm():
