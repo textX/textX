@@ -48,18 +48,19 @@ from markdown files in the `docs/src` folder.
 
 The always up-to-date docs are available at https://textx.github.io/textX/index.html
 
-The easiest way to build and test docs locally is to use our mdbook-textx docker
-image:
+The easiest way to build and test docs locally is to do these steps:
 
-1. Install [docker](https://docs.docker.com/engine/install/).
+1. Install [nix package manager](https://nixos.org/download/) with [flakes
+   enabled](https://nixos.wiki/wiki/flakes).
 2. From the project's root folder run:
 
     ```sh
-    make docs
+    just docs
     ```
 
-This starts docker container which will watch to changes in the markdown docs
-files and serve generated content on http://localhost:3000
+This will use a nix flake (defined in `docs/flake.nix`) to set up `mdbook` and
+its preprocessors, serve the generated content on http://localhost:3000, and
+automatically reload on changes.
 
 To add a new page you must add the page to the TOC at `docs/src/SUMMARY.md`.
 
@@ -99,18 +100,17 @@ Ready to contribute? Here's how to set up `textX` for local development.
 
         $ git clone git@github.com:your_name_here/textX.git
 
-3. Install [GNU Make](https://www.gnu.org/software/make/) and [uv
-   package](https://docs.astral.sh/uv/) manager and setup development
-   environment:
+3. Install [just](https://github.com/casey/just) and [uv](https://docs.astral.sh/uv/)
+   and setup the development environment:
 
         $ cd textX/
-        $ make dev
+        $ just dev
 
     To verify that everything is setup properly run check:
 
-        $ make check
+        $ just check
 
-    Run `make help` for options.
+    Run `just` for options.
 
 4. Create a branch for local development::
 
@@ -132,7 +132,7 @@ Ready to contribute? Here's how to set up `textX` for local development.
 5. When you're done making changes, check that your changes pass linter, tests
    and coverage:
 
-        $ make check
+        $ just check
 
 6. Commit your changes and push your branch to GitHub:
 
