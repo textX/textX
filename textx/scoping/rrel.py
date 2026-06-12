@@ -201,8 +201,9 @@ class RRELNavigation(RRELBase):
                     if self.fixed_name is not None:
                         lst = list(
                             filter(
-                                lambda x: hasattr(x, "name")
-                                and x.name == self.fixed_name,
+                                lambda x: (
+                                    hasattr(x, "name") and x.name == self.fixed_name
+                                ),
                                 target,
                             )
                         )

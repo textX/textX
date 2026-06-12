@@ -89,9 +89,11 @@ class PlainName:
             from textx import get_children, get_model, textx_isinstance
 
             result_lst = get_children(
-                lambda x: hasattr(x, "name")
-                and x.name == obj_ref.obj_name
-                and textx_isinstance(x, obj_ref.cls),
+                lambda x: (
+                    hasattr(x, "name")
+                    and x.name == obj_ref.obj_name
+                    and textx_isinstance(x, obj_ref.cls)
+                ),
                 get_model(obj),
             )
             if len(result_lst) == 1:
@@ -716,8 +718,9 @@ class ExtRelativeName:
                 )
             tmp_list = list(
                 filter(
-                    lambda x: textx_isinstance(x, attr.cls)
-                    and x.name.find(name_part) >= 0,
+                    lambda x: (
+                        textx_isinstance(x, attr.cls) and x.name.find(name_part) >= 0
+                    ),
                     tmp_list,
                 )
             )
