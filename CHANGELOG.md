@@ -14,6 +14,9 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ## [Unreleased]
 
+
+## [4.4.0] (released: 2026-07-08)
+
 ### Changed
 - Migrated to [just](https://github.com/casey/just) for project management.
 - Autoformating code with [ruff](https://docs.astral.sh/ruff/).
@@ -796,7 +799,8 @@ please take a look at related PRs and issues and see if the change affects you.
 [#92]: https://github.com/textX/textX/pull/92
 [#40]: https://github.com/textX/textX/issues/40
 
-[Unreleased]: https://github.com/textX/textX/compare/4.3.0...HEAD
+[Unreleased]: https://github.com/textX/textX/compare/4.4.0...HEAD
+[4.4.0]: https://github.com/textX/textX/compare/4.3.0...4.4.0
 [4.3.0]: https://github.com/textX/textX/compare/4.2.3...4.3.0
 [4.2.3]: https://github.com/textX/textX/compare/4.2.2...4.2.3
 [4.2.2]: https://github.com/textX/textX/compare/4.2.1...4.2.2
