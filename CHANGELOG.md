@@ -17,11 +17,13 @@ please take a look at related PRs and issues and see if the change affects you.
 ### Changed
 - Migrated to [just](https://github.com/casey/just) for project management.
 - Autoformating code with [ruff](https://docs.astral.sh/ruff/).
+- loosen flit_core version constraint to allow v4. See [442]. Thanks @stiermid.
 
 ### Fixed
 - Empty grammars now raise `TextXSyntaxError` instead of `IndexError`. See
   [436]. Thanks @redianthus for reporting.
 
+[442]: https://github.com/textX/textX/pull/442
 [436]: https://github.com/textX/textX/issues/436
 
 
