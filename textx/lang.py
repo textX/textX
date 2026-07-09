@@ -665,9 +665,16 @@ class TextXVisitor(RRELVisitor):
                 return
 
             if isinstance(rule, OrderedChoice):
+                # Collect all attribute names assigned in any branch
+                # and propagate them to parent scope so that if the same
+                # attribute appears in another assignment in the parent
+                # sequence, multiplicity is correctly set to 1..*.
+                all_branch_attrs = set()
                 for on in rule.nodes:
-                    oc_branch_set = set()
-                    _update_attr_multiplicities(on, oc_branch_set, mult)
+                    branch_set = set()
+                    _update_attr_multiplicities(on, branch_set, mult)
+                    all_branch_attrs.update(branch_set)
+                oc_branch_set.update(all_branch_attrs)
             else:
                 if isinstance(rule, OneOrMore):
                     mult = MULT_ONEORMORE
