@@ -420,9 +420,10 @@ def model_export_to_file(f, model=None, repo=None):
     Returns:
         Nothing
     """
-    if not model and not repo:
+    # Falsy match-rule models (e.g. "") are valid; only None means omitted.
+    if model is None and repo is None:
         raise Exception("specify either a model or a repo")
-    if model and repo:
+    if model is not None and repo is not None:
         raise Exception("specify either a model or a repo")
 
     processed_set = set()
