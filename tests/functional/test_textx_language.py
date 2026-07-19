@@ -481,7 +481,9 @@ def test_string_escaping():
     "Double quotes string", "Double quotes with 'single quotes embedded'",
     "Double quotes with \" escaped quotes",
     'Single quotes string', 'Single quotes with "double quotes embedded"',
-    'Single quotes with \' escaped single quotes'
+    'Single quotes with \' escaped single quotes',
+    "Double quotes with literal backslash \' quote",
+    'Single quotes with literal backslash \" quote'
     """
     )
 
@@ -491,6 +493,9 @@ def test_string_escaping():
     assert model.a[3] == r"Single quotes string"
     assert model.a[4] == r'Single quotes with "double quotes embedded"'
     assert model.a[5] == r"Single quotes with ' escaped single quotes"
+    # A backslash before the non-delimiting quote is literal, not an escape.
+    assert model.a[6] == r"Double quotes with literal backslash \' quote"
+    assert model.a[7] == r"Single quotes with literal backslash \" quote"
 
 
 def test_rule_call_forward_backward_reference():

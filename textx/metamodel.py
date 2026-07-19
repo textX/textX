@@ -294,7 +294,14 @@ class TextXMetaModel(DebugPrinter):
             "INT": lambda x: int(x),
             "FLOAT": lambda x: float(x),
             "STRICTFLOAT": lambda x: float(x),
-            "STRING": lambda x: x[1:-1].replace(r"\"", r'"').replace(r"\'", "'"),
+            # Only the delimiting quote can be escaped inside a string (see the
+            # STRING regex): a backslash before the other quote is literal, so
+            # unescape just the delimiter to avoid deleting it.
+            "STRING": lambda x: (
+                x[1:-1].replace(r"\"", '"')
+                if x[0] == '"'
+                else x[1:-1].replace(r"\'", "'")
+            ),
         }
 
         # Registered object processors (use _default_obj_processors)
