@@ -43,3 +43,38 @@ except ModuleNotFoundError:
     from importlib_metadata import version  # type: ignore
 
 __version__ = version("textx")
+
+__all__ = [
+    "metamodel_from_file",
+    "metamodel_from_str",
+    "get_children_of_type",
+    "get_parent_of_type",
+    "get_model",
+    "get_metamodel",
+    "get_children",
+    "get_location",
+    "textx_isinstance",
+    "textxerror_wrap",
+    "TextXError",
+    "TextXSyntaxError",
+    "TextXSemanticError",
+    "TextXRegistrationError",
+    "LanguageDesc",
+    "GeneratorDesc",
+    "register_language",
+    "register_generator",
+    "language_descriptions",
+    "language_description",
+    "generator_descriptions",
+    "generator_description",
+    "clear_language_registrations",
+    "clear_generator_registrations",
+    "languages_for_file",
+    "language_for_file",
+    "metamodel_for_language",
+    "metamodel_for_file",
+    "metamodels_for_file",
+    "generator_for_language_target",
+    "generator",
+    "language",
+]
