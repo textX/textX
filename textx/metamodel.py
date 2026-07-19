@@ -2,11 +2,13 @@
 Meta-model construction.
 """
 
+from __future__ import annotations
+
 import os
 import warnings
 from collections import OrderedDict
 from os.path import abspath, dirname, join
-from typing import Any, Dict, List
+from typing import Any
 
 from arpeggio import DebugPrinter, ParsingExpression
 
@@ -40,7 +42,11 @@ from .registration import LanguageDesc, metamodel_for_language
 __all__ = ["metamodel_from_str", "metamodel_from_file"]
 
 
-def metamodel_from_str(lang_desc, metamodel=None, **kwargs):
+def metamodel_from_str(
+    lang_desc: str,
+    metamodel: TextXMetaModel | None = None,
+    **kwargs: Any,
+) -> TextXMetaModel:
     """
     Creates a new metamodel from the textX description given as a string.
 
@@ -66,7 +72,9 @@ def metamodel_from_str(lang_desc, metamodel=None, **kwargs):
     return metamodel
 
 
-def metamodel_from_file(file_name, **kwargs):
+def metamodel_from_file(
+    file_name: str | os.PathLike[str], **kwargs: Any
+) -> TextXMetaModel:
     """
     Creates new metamodel from the given file.
 
@@ -152,11 +160,11 @@ class TextXMetaClass(type):
     """
 
     _tx_fqn: str
-    _tx_attrs: Dict[str, MetaAttr]
-    _tx_inh_by: List[Any]
+    _tx_attrs: dict[str, MetaAttr]
+    _tx_inh_by: list[Any]
     _tx_position: int
     _tx_type: str
-    _tx_metamodel: "TextXMetaModel"
+    _tx_metamodel: TextXMetaModel
     _tx_peg_rule: ParsingExpression
 
     def __repr__(cls):
