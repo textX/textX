@@ -14,6 +14,8 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ## [Unreleased]
 
+### Changed
+- Added type hints to the public API
 
 ## [4.4.0] (released: 2026-07-08)
 
