@@ -2,9 +2,13 @@
 Model construction from parse trees and the model API.
 """
 
+from __future__ import annotations
+
 import traceback
 from collections import OrderedDict
+from collections.abc import Callable
 from contextlib import suppress
+from typing import TYPE_CHECKING, Any, TypeVar
 
 from arpeggio import EOF, NoMatch, Parser, Sequence, Terminal
 
@@ -23,10 +27,16 @@ from textx.lang import PRIMITIVE_PYTHON_TYPES
 from textx.scoping import Postponed, get_included_models, remove_models_from_repositories
 from textx.scoping.providers import PlainName as DefaultScopeProvider
 
+if TYPE_CHECKING:
+    from textx.metamodel import TextXMetaModel
+
 __all__ = ["get_children_of_type", "get_parent_of_type", "get_model", "get_metamodel"]
 
 
-def textx_isinstance(obj, obj_cls):
+T = TypeVar("T")
+
+
+def textx_isinstance(obj: Any, obj_cls: type[Any]) -> bool:
     """
     This function determines, if a textx object is an instance of a
      textx class.
@@ -54,7 +64,7 @@ def textx_isinstance(obj, obj_cls):
     return False
 
 
-def get_model(obj):
+def get_model(obj: T) -> Any:
     """
     Finds model root element for the given object.
     """
@@ -64,14 +74,14 @@ def get_model(obj):
     return p
 
 
-def get_metamodel(obj):
+def get_metamodel(obj: Any) -> TextXMetaModel:
     """
     Returns metamodel of the given object's model.
     """
     return get_model(obj)._tx_metamodel
 
 
-def get_parent_of_type(typ, obj):
+def get_parent_of_type(typ: str | type[T], obj: Any) -> T | None:
     """
     Finds first object up the parent chain of the given type.
     If no parent of the given type exists None is returned.
@@ -89,9 +99,15 @@ def get_parent_of_type(typ, obj):
         obj = obj.parent
         if obj.__class__.__name__ == typ:
             return obj
+    return None
 
 
-def get_children(selector, root, children_first=False, should_follow=lambda obj: True):
+def get_children(
+    selector: Callable[[Any], bool],
+    root: Any,
+    children_first: bool = False,
+    should_follow: Callable[[Any], bool] = lambda obj: True,
+) -> list[Any]:
     """
     Returns a list of all model elements that satisfies the given predicate
     starting from the `root` element. The search process will follow containment
@@ -144,7 +160,12 @@ def get_children(selector, root, children_first=False, should_follow=lambda obj:
     return collected
 
 
-def get_children_of_type(typ, root, children_first=False, should_follow=lambda obj: True):
+def get_children_of_type(
+    typ: str | type[T],
+    root: Any,
+    children_first: bool = False,
+    should_follow: Callable[[Any], bool] = lambda obj: True,
+) -> list[T]:
     """
     Returns a list of all model elements of type 'typ' starting from model
     element 'root'. The search process will follow containment links only.
@@ -172,7 +193,7 @@ def get_children_of_type(typ, root, children_first=False, should_follow=lambda o
     )
 
 
-def get_location(model_obj):
+def get_location(model_obj: Any) -> dict[str, Any]:
     """
     Args:
         model_obj: the model object of interest
@@ -190,7 +211,7 @@ def get_location(model_obj):
     return {"line": line, "col": col, "nchar": nchar, "filename": the_model._tx_filename}
 
 
-def textxerror_wrap(obj_processor):
+def textxerror_wrap(obj_processor: Callable[[T], Any]) -> Callable[[T], Any]:
     """
     This is a decorator to wrap your object processors
     if you desire to automatically convert any exception

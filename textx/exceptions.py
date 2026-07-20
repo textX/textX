@@ -1,14 +1,20 @@
+from __future__ import annotations
+
+from collections.abc import Iterable
+from typing import Any
+
+
 class TextXError(Exception):
     def __init__(
         self,
-        message,
-        line=None,
-        col=None,
-        nchar=None,
-        err_type=None,
-        filename=None,
-        context=None,
-    ):
+        message: str,
+        line: int | None = None,
+        col: int | None = None,
+        nchar: int | None = None,
+        err_type: str | None = None,
+        filename: str | None = None,
+        context: str | None = None,
+    ) -> None:
         super().__init__(message)
         self.line = line
         self.col = col
@@ -18,7 +24,7 @@ class TextXError(Exception):
         self.message = message
         self.context = context
 
-    def __str__(self):
+    def __str__(self) -> str:
         if self.line or self.col or self.filename:
             # gcc style error format
             return "{}:{}:{}: {}{}".format(
@@ -35,15 +41,15 @@ class TextXError(Exception):
 class TextXSemanticError(TextXError):
     def __init__(
         self,
-        message,
-        line=None,
-        col=None,
-        nchar=None,
-        err_type=None,
-        expected_obj_cls=None,
-        filename=None,
-        context=None,
-    ):
+        message: str,
+        line: int | None = None,
+        col: int | None = None,
+        nchar: int | None = None,
+        err_type: str | None = None,
+        expected_obj_cls: type[Any] | None = None,
+        filename: str | None = None,
+        context: str | None = None,
+    ) -> None:
         super().__init__(message, line, col, nchar, err_type, filename, context)
         # Expected object of class
         self.expected_obj_cls = expected_obj_cls
@@ -52,20 +58,20 @@ class TextXSemanticError(TextXError):
 class TextXSyntaxError(TextXError):
     def __init__(
         self,
-        message,
-        line=None,
-        col=None,
-        nchar=None,
-        err_type=None,
-        expected_rules=None,
-        filename=None,
-        context=None,
-    ):
+        message: str,
+        line: int | None = None,
+        col: int | None = None,
+        nchar: int | None = None,
+        err_type: str | None = None,
+        expected_rules: Iterable[str] | None = None,
+        filename: str | None = None,
+        context: str | None = None,
+    ) -> None:
         super().__init__(message, line, col, nchar, err_type, filename, context)
         # Possible rules on this position
         self.expected_rules = expected_rules
 
 
 class TextXRegistrationError(TextXError):
-    def __init__(self, message):
+    def __init__(self, message: str) -> None:
         super().__init__(message)

@@ -2,10 +2,14 @@
 Languages and generators registration and discovery API.
 """
 
+from __future__ import annotations
+
 import fnmatch
 import sys
+
+# from collections.abc import Callable
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Union
+from typing import TYPE_CHECKING, Any, Callable
 
 if sys.version_info < (3, 10):
     from importlib_metadata import entry_points
@@ -40,16 +44,16 @@ class LanguageDesc:
     def __init__(
         self,
         name: str,
-        pattern: Optional[str] = None,
-        description="",
-        metamodel=Callable[..., Any],
-    ):
+        pattern: str | None = None,
+        description: str = "",
+        metamodel: Any = Callable[..., Any],
+    ) -> None:
         self.name = name
         self.pattern = pattern
         self.description = description
         self.metamodel = metamodel
-        self.project_name = None
-        self.project_version = None
+        self.project_name: str | None = None
+        self.project_version: str | None = None
 
 
 @dataclass
@@ -89,25 +93,25 @@ class GeneratorDesc:
         self,
         language: str,
         target: str,
-        description="",
-        generator: Optional[Callable[..., None]] = None,
-        custom_args: Optional[List[GeneratorParam]] = None,
-    ):
+        description: str = "",
+        generator: Callable[..., None] | None = None,
+        custom_args: list[GeneratorParam] | None = None,
+    ) -> None:
         self.language = language
         self.target = target
         self.description = description
         self.generator = generator
         self.custom_args = custom_args
-        self.project_name = None
-        self.project_version = None
+        self.project_name: str | None = None
+        self.project_version: str | None = None
 
 
-metamodels: Dict[str, Union["TextXMetaModel", "TextXMetaMetaModel"]] = {}
-languages: Optional[Dict[str, LanguageDesc]] = None
-generators: Optional[Dict[str, Dict[str, GeneratorDesc]]] = None
+metamodels: dict[str, TextXMetaModel | TextXMetaMetaModel] = {}
+languages: dict[str, LanguageDesc] | None = None
+generators: dict[str, dict[str, GeneratorDesc]] | None = None
 
 
-def language_descriptions():
+def language_descriptions() -> dict[str, LanguageDesc]:
     """
     Return a dict of `LanguageDesc` instances keyed by language name.
     """
@@ -115,13 +119,15 @@ def language_descriptions():
     if languages is None:
         languages = {}
         for language in entry_points(group="textx_languages"):
+            if TYPE_CHECKING:
+                assert language.dist is not None
             register_language_with_project(
                 language.load(), language.dist.name, language.dist.version
             )
     return languages
 
 
-def generator_descriptions():
+def generator_descriptions() -> dict[str, dict[str, GeneratorDesc]]:
     """
     Return a dict of `GeneratorDesc` instances keyed by language name.
     """
@@ -129,6 +135,8 @@ def generator_descriptions():
     if generators is None:
         generators = {}
         for generator in entry_points(group="textx_generators"):
+            if TYPE_CHECKING:
+                assert generator.dist is not None
             register_generator_with_project(
                 generator.load(), generator.dist.name, generator.dist.version
             )
@@ -150,7 +158,7 @@ def language_description(language_name: str) -> LanguageDesc:
 
 
 def generator_description(
-    language_name: str, target_name: str, any_permitted=False
+    language_name: str, target_name: str, any_permitted: bool = False
 ) -> GeneratorDesc:
     """
     Return `GeneratorDesc` instance for the given target and language name.
@@ -162,7 +170,6 @@ def generator_description(
     target_name = target_name.lower()
     if generators is None:
         generator_descriptions()
-
     try:
         assert generators is not None
         try:
@@ -180,7 +187,9 @@ def generator_description(
         ) from e
 
 
-def generator_for_language_target(language_name, target_name, any_permitted=False):
+def generator_for_language_target(
+    language_name: str, target_name: str, any_permitted: bool = False
+) -> Callable[..., None] | None:
     """
     Return generator callable for the given language name and target name.
     """
@@ -191,8 +200,11 @@ def generator_for_language_target(language_name, target_name, any_permitted=Fals
 
 
 def register_language(
-    language_desc_or_name, pattern=None, description="", metamodel=None
-):
+    language_desc_or_name: LanguageDesc | str,
+    pattern: str | None = None,
+    description: str = "",
+    metamodel: Callable[..., Any] | None = None,
+) -> None:
     """
     Programmatically register a language.
 
@@ -204,6 +216,8 @@ def register_language(
     global languages
     if languages is None:
         language_descriptions()
+    if TYPE_CHECKING:
+        assert languages is not None
 
     if not isinstance(language_desc_or_name, LanguageDesc):
         language_desc = LanguageDesc(
@@ -222,7 +236,9 @@ def register_language(
     languages[language_desc.name.lower()] = language_desc
 
 
-def register_language_with_project(language_desc, project_name, project_version):
+def register_language_with_project(
+    language_desc: LanguageDesc, project_name: str, project_version: str
+) -> None:
     """
     Register language with Python project name.
     """
@@ -231,7 +247,7 @@ def register_language_with_project(language_desc, project_name, project_version)
     register_language(language_desc)
 
 
-def clear_language_registrations():
+def clear_language_registrations() -> None:
     """
     Clear all registered languages.
     """
@@ -241,8 +257,11 @@ def clear_language_registrations():
 
 
 def register_generator(
-    generator_desc_or_language, target=None, description="", generator=None
-):
+    generator_desc_or_language: GeneratorDesc | str,
+    target: str | None = None,
+    description: str = "",
+    generator: Callable[..., None] | None = None,
+) -> None:
     """
     Programmatically register a generator.
 
@@ -254,8 +273,12 @@ def register_generator(
     global generators
     if generators is None:
         generator_descriptions()
+    if TYPE_CHECKING:
+        assert generators is not None
 
     if not isinstance(generator_desc_or_language, GeneratorDesc):
+        if TYPE_CHECKING:
+            assert target is not None
         generator_desc = GeneratorDesc(
             language=generator_desc_or_language,
             target=target,
@@ -274,7 +297,9 @@ def register_generator(
     lang_gens[generator_desc.target.lower()] = generator_desc
 
 
-def register_generator_with_project(generator_desc, project_name, project_version):
+def register_generator_with_project(
+    generator_desc: GeneratorDesc, project_name: str, project_version: str
+) -> None:
     """
     Register generator with Python project name.
     """
@@ -283,7 +308,7 @@ def register_generator_with_project(generator_desc, project_name, project_versio
     register_generator(generator_desc)
 
 
-def clear_generator_registrations():
+def clear_generator_registrations() -> None:
     """
     Clear all registered generators.
     """
@@ -291,7 +316,9 @@ def clear_generator_registrations():
     generators = None
 
 
-def metamodel_for_language(language_name, **kwargs):
+def metamodel_for_language(
+    language_name: str, **kwargs: Any
+) -> TextXMetaModel | TextXMetaMetaModel:
     """
     Load and return the meta-model for the given language.
     Cache it for further use.
@@ -314,12 +341,14 @@ def metamodel_for_language(language_name, **kwargs):
     return metamodels[language_name]
 
 
-def languages_for_file(file_name_or_pattern):
+def languages_for_file(file_name_or_pattern: str) -> list[LanguageDesc]:
     """
     Return a list of `LanguageDesc` registered for the given file pattern.
     """
     file_languages = []
     for language in language_descriptions().values():
+        if TYPE_CHECKING:
+            assert language.pattern is not None
         if file_name_or_pattern == language.pattern or fnmatch.fnmatch(
             file_name_or_pattern, language.pattern
         ):
@@ -327,7 +356,7 @@ def languages_for_file(file_name_or_pattern):
     return file_languages
 
 
-def language_for_file(file_name_or_pattern):
+def language_for_file(file_name_or_pattern: str) -> LanguageDesc:
     """
     Return an instance of `LanguageDesc` that can parse the given file or raise
     `TextXRegistrationError` if more than one is registered.
@@ -345,7 +374,9 @@ def language_for_file(file_name_or_pattern):
     return languages[0]
 
 
-def metamodels_for_file(file_name_or_pattern):
+def metamodels_for_file(
+    file_name_or_pattern: str,
+) -> list[TextXMetaModel | TextXMetaMetaModel]:
     """
     Return meta-models that can parse the given file .
     """
@@ -355,7 +386,9 @@ def metamodels_for_file(file_name_or_pattern):
     ]
 
 
-def metamodel_for_file(file_name_or_pattern, **kwargs):
+def metamodel_for_file(
+    file_name_or_pattern: str, **kwargs: Any
+) -> TextXMetaModel | TextXMetaMetaModel:
     """
     Return a meta-model that can parse the given file or raise
     `TextXRegistrationError` if more than one is registered.
@@ -364,8 +397,8 @@ def metamodel_for_file(file_name_or_pattern, **kwargs):
 
 
 def generator(
-    language: str, target: str, custom_args: Optional[List[GeneratorParam]] = None
-):
+    language: str, target: str, custom_args: list[GeneratorParam] | None = None
+) -> Callable[[Callable[..., Any]], GeneratorDesc]:
     """
     Decorator factory used to create `GeneratorDesc` instances suitable for
     entry point registration.
@@ -373,7 +406,7 @@ def generator(
     The target function docstring is used for the description.
     """
 
-    def _generator(gen_f):
+    def _generator(gen_f: Callable[..., Any]) -> GeneratorDesc:
         return GeneratorDesc(
             language=language,
             target=target,
@@ -385,7 +418,9 @@ def generator(
     return _generator
 
 
-def language(name: str, pattern: Optional[str] = None):
+def language(
+    name: str, pattern: str | None = None
+) -> Callable[[Callable[..., Any]], LanguageDesc]:
     """
     Decorator factory used to create `LanguageDesc` instances suitable for
     entry point registration.
@@ -393,7 +428,7 @@ def language(name: str, pattern: Optional[str] = None):
     The target function docstring is used for the description.
     """
 
-    def language(gen_f):
+    def language(gen_f: Callable[..., Any]) -> LanguageDesc:
         return LanguageDesc(
             name=name,
             pattern=pattern,

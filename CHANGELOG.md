@@ -14,6 +14,9 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ## [Unreleased]
 
+### Changed
+- Added type hints to the public API
+
 ### Fixed
 - Only unescape the delimiting quote in a STRING. See [445]. Thanks @chuenchen309.
 
