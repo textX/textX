@@ -15,12 +15,13 @@ please take a look at related PRs and issues and see if the change affects you.
 ## [Unreleased]
 
 ### Changed
-- Added type hints to the public API
+- Added type hints to the public API. See [446]. Thanks @aleksa-dejanovic.
 
 ### Fixed
 - Only unescape the delimiting quote in a STRING. See [445]. Thanks @chuenchen309.
 
 [445]: https://github.com/textX/textX/pull/445
+[446]: https://github.com/textX/textX/pull/446
 
 
 ## [4.4.0] (released: 2026-07-08)
