@@ -7,6 +7,7 @@ from __future__ import annotations
 import os
 import warnings
 from collections import OrderedDict
+from collections.abc import Callable, Iterator
 from os.path import abspath, dirname, join
 from typing import Any
 
@@ -109,14 +110,14 @@ class MetaAttr:
 
     def __init__(
         self,
-        name,
-        cls=None,
-        mult=MULT_ONE,
-        cont=True,
-        ref=False,
-        bool_assignment=False,
-        position=0,
-    ):
+        name: str,
+        cls: type[Any] | None = None,
+        mult: str = MULT_ONE,
+        cont: bool = True,
+        ref: bool = False,
+        bool_assignment: bool = False,
+        position: int = 0,
+    ) -> None:
         self.name = name
         self.cls = cls
         self.mult = mult
@@ -125,7 +126,9 @@ class MetaAttr:
         self.bool_assignment = bool_assignment
         self.position = position
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, MetaAttr):
+            return NotImplemented
         return (
             self.name == other.name
             and self.cls == other.cls
@@ -238,20 +241,20 @@ class TextXMetaModel(DebugPrinter):
 
     def __init__(
         self,
-        file_name=None,
-        classes=None,
-        builtins=None,
-        builtin_models=None,
-        auto_init_attributes=True,
-        ignore_case=False,
-        skipws=True,
-        ws=None,
-        autokwd=False,
-        memoization=False,
-        textx_tools_support=False,
-        use_regexp_group=False,
-        **kwargs,
-    ):
+        file_name: str | None = None,
+        classes: list[type[Any]] | Callable[[str], type[Any] | None] | None = None,
+        builtins: dict[str, Any] | None = None,
+        builtin_models: Any = None,
+        auto_init_attributes: bool = True,
+        ignore_case: bool = False,
+        skipws: bool = True,
+        ws: str | None = None,
+        autokwd: bool = False,
+        memoization: bool = False,
+        textx_tools_support: bool = False,
+        use_regexp_group: bool = False,
+        **kwargs: Any,
+    ) -> None:
         # evaluate optional parameter "global_repository"
         global_repository = kwargs.pop("global_repository", False)
         if global_repository:
@@ -267,16 +270,16 @@ class TextXMetaModel(DebugPrinter):
         self.model_param_defs = ModelParamDefinitions()
         self.model_param_defs.add("project_root", "the project root path")
 
-        self.file_name = file_name
-        self.rootcls = None
+        self.file_name: str | None = file_name
+        self.rootcls: type[Any] | None = None
 
-        self.builtins = builtins
+        self.builtins: dict[str, Any] | None = builtins
         self.builtin_models = builtin_models
 
         # Convert classes to dict for easier lookup
-        self.user_classes = {}
-        self.user_classes_provider = None
-        self._used_rule_names_for_user_classes = set()
+        self.user_classes: dict[str, type[Any]] = {}
+        self.user_classes_provider: Callable[[str], type[Any] | None] | None = None
+        self._used_rule_names_for_user_classes: set[str] = set()
         if classes:
             if callable(classes):
                 self.user_classes_provider = classes
@@ -294,10 +297,10 @@ class TextXMetaModel(DebugPrinter):
         self.use_regexp_group = use_regexp_group
 
         # Registered model processors
-        self._model_processors = []
+        self._model_processors: list[Callable[[Any, TextXMetaModel], None]] = []
 
         # Match rule and base type conversion callables
-        self._default_obj_processors = {
+        self._default_obj_processors: dict[str, Callable[[Any], Any]] = {
             "BOOL": lambda x: x == "1" or x.lower() == "true",
             "INT": lambda x: int(x),
             "FLOAT": lambda x: float(x),
@@ -316,17 +319,17 @@ class TextXMetaModel(DebugPrinter):
         self.register_obj_processors({})
 
         # Registered scope provider
-        self.scope_providers = {}
+        self.scope_providers: dict[str, Any] = {}
 
         # Namespaces
-        self.namespaces = {}
-        self._namespace_stack = []
+        self.namespaces: dict[str | None, Any] = {}
+        self._namespace_stack: list[str | None] = []
 
         # Imported namespaces
-        self._imported_namespaces = {}
+        self._imported_namespaces: dict[str | None, Any] = {}
 
         # Referenced languages
-        self.referenced_languages = {}
+        self.referenced_languages: dict[str, str] = {}
 
         # Create new namespace for BASETYPE classes
         self._enter_namespace("__base__")
@@ -366,13 +369,13 @@ class TextXMetaModel(DebugPrinter):
         # constructed from string.
         self._enter_namespace(self._namespace_for_file_name(file_name))
 
-    def register_scope_providers(self, sp):
+    def register_scope_providers(self, sp: dict[str, Any]) -> None:
         self.scope_providers = sp
         for k, v in self.scope_providers.items():
             if isinstance(v, str):
                 self.scope_providers[k] = create_rrel_scope_provider(v)
 
-    def _namespace_for_file_name(self, file_name):
+    def _namespace_for_file_name(self, file_name: str | None) -> str | None:
         if file_name is None or self.root_path is None:
             return None
         file_name = os.path.abspath(file_name)
@@ -380,7 +383,7 @@ class TextXMetaModel(DebugPrinter):
         q = p.splitext(p.relpath(file_name, start=self.root_path))[0]
         return ".".join(p.split(q)[1:])
 
-    def _enter_namespace(self, namespace_name):
+    def _enter_namespace(self, namespace_name: str | None) -> None:
         """
         A namespace is usually an absolute file name of the grammar.
         A special namespace '__base__' is used for BASETYPE namespace.
@@ -394,13 +397,13 @@ class TextXMetaModel(DebugPrinter):
 
         self._namespace_stack.append(namespace_name)
 
-    def _leave_namespace(self):
+    def _leave_namespace(self) -> None:
         """
         Leaves current namespace (i.e. grammar file).
         """
         self._namespace_stack.pop()
 
-    def _new_import(self, import_name):
+    def _new_import(self, import_name: str) -> None:
         """
         Starts a new import.
         Args:
@@ -416,7 +419,7 @@ class TextXMetaModel(DebugPrinter):
         # Find the absolute file name of the import based on the relative
         # import_name and current namespace
         current_namespace = self._namespace_stack[-1]
-        if "." in current_namespace:
+        if current_namespace is not None and "." in current_namespace:
             root_namespace = current_namespace.rsplit(".", 1)[0]
             import_name = f"{root_namespace}.{import_name}"
 
@@ -438,14 +441,14 @@ class TextXMetaModel(DebugPrinter):
 
     def _new_class(
         self,
-        name,
-        peg_rule,
-        position,
-        position_end=None,
-        inherits=None,
-        root=False,
-        rule_type=RULE_MATCH,
-    ):
+        name: str,
+        peg_rule: ParsingExpression | None,
+        position: int,
+        position_end: int | None = None,
+        inherits: list[type[Any]] | None = None,
+        root: bool = False,
+        rule_type: str = RULE_MATCH,
+    ) -> type[Any]:
         """
         Creates a new class with the given name in the current namespace.
         Args:
@@ -484,15 +487,15 @@ class TextXMetaModel(DebugPrinter):
 
     def _init_class(
         self,
-        cls,
-        peg_rule,
-        position,
-        position_end=None,
-        inherits=None,
-        root=False,
-        rule_type=RULE_MATCH,
-        external_attributes=False,
-    ):
+        cls: type[Any],
+        peg_rule: ParsingExpression | None,
+        position: int,
+        position_end: int | None = None,
+        inherits: list[type[Any]] | None = None,
+        root: bool = False,
+        rule_type: str = RULE_MATCH,
+        external_attributes: bool = False,
+    ) -> None:
         """
         Setup meta-class special attributes, namespaces etc. This is called
         both for textX created classes as well as user classes.
@@ -530,18 +533,18 @@ class TextXMetaModel(DebugPrinter):
         if external_attributes:
             cls._tx_obj_attrs = {}
 
-    def _cls_fqn(self, cls) -> str:
+    def _cls_fqn(self, cls: type[Any]) -> str:
         """
         Returns fully qualified name for the class based on current namespace
         and the class name.
         """
         ns = self._namespace_stack[-1]
-        if ns in ["__base__", None]:
+        if ns is None or ns == "__base__":
             return cls.__name__
         else:
             return ns + "." + cls.__name__
 
-    def _init_obj_attrs(self, obj):
+    def _init_obj_attrs(self, obj: Any) -> None:
         """
         Initialize obj attributes.
         Args:
@@ -573,24 +576,32 @@ class TextXMetaModel(DebugPrinter):
 
     def _new_cls_attr(
         self,
-        clazz,
-        name,
-        cls=None,
-        mult=MULT_ONE,
-        cont=True,
-        ref=False,
-        bool_assignment=False,
-        position=0,
-    ):
+        clazz: type[Any],
+        name: str,
+        cls: type[Any] | None = None,
+        mult: str = MULT_ONE,
+        cont: bool = True,
+        ref: bool = False,
+        bool_assignment: bool = False,
+        position: int = 0,
+    ) -> MetaAttr:
         """Creates new meta attribute of this class."""
         attr = MetaAttr(name, cls, mult, cont, ref, bool_assignment, position)
         clazz._tx_attrs[name] = attr
         return attr
 
-    def has_obj_processor(self, _type):
+    def has_obj_processor(self, _type: str) -> bool:
         return _type in self._obj_processors
 
-    def process(self, value, _type, filename, col, line, nchar=None):
+    def process(
+        self,
+        value: Any,
+        _type: str,
+        filename: str | None,
+        col: int,
+        line: int,
+        nchar: int | None = None,
+    ) -> Any:
         """
         Process a value with the given type
         Convert instances of textx types and match rules to python types.
@@ -622,7 +633,7 @@ class TextXMetaModel(DebugPrinter):
             else:
                 raise
 
-    def validate(self):
+    def validate(self) -> None:
         """
         Validates metamodel. Called after construction to check for some
         textX rules.
@@ -630,7 +641,7 @@ class TextXMetaModel(DebugPrinter):
         # TODO: Implement complex textX validations.
         pass
 
-    def validate_user_classes(self):
+    def validate_user_classes(self) -> None:
         """
         Validates user classes of the meta model.
         Called after construction of the main metamodel (not
@@ -645,7 +656,7 @@ class TextXMetaModel(DebugPrinter):
                     f"{user_class.__name__} class is not used in the grammar"
                 )
 
-    def __getitem__(self, name):
+    def __getitem__(self, name: str) -> Any:
         """
         Search for and return class and peg_rule with the given name.
         Returns:
@@ -656,7 +667,7 @@ class TextXMetaModel(DebugPrinter):
             namespace, name = name.rsplit(".", 1)
             if namespace in self.referenced_languages:
                 language = self.referenced_languages[namespace]
-                referenced_metamodel = metamodel_for_language(language)
+                referenced_metamodel: Any = metamodel_for_language(language)
                 return referenced_metamodel[name]
             else:
                 return self.namespaces[namespace][name]
@@ -667,12 +678,12 @@ class TextXMetaModel(DebugPrinter):
                 return self._current_namespace[name]
 
             for namespace in self._imported_namespaces[self._namespace_stack[-1]]:
-                if name in namespace:
-                    return namespace[name]
+                if name in namespace:  # type: ignore[operator]
+                    return namespace[name]  # type: ignore[index]
 
             raise KeyError(f"{name} metaclass does not exists in the meta-model ")
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[type[Any]]:
         """
         Iterate over all classes in the current namespace and imported
         namespaces.
@@ -688,7 +699,7 @@ class TextXMetaModel(DebugPrinter):
                 # yield class
                 yield namespace[name]
 
-    def __contains__(self, name):
+    def __contains__(self, name: str) -> bool:
         """
         Check if given name is contained in the current namespace.
         The name can be fully qualified.
@@ -705,13 +716,13 @@ class TextXMetaModel(DebugPrinter):
 
     def model_from_str(
         self,
-        model_str,
-        file_name=None,
-        debug=None,
-        pre_ref_resolution_callback=None,
-        encoding="utf-8",
-        **kwargs,
-    ):
+        model_str: str,
+        file_name: str | None = None,
+        debug: bool | None = None,
+        pre_ref_resolution_callback: Callable[[Any], None] | None = None,
+        encoding: str = "utf-8",
+        **kwargs: Any,
+    ) -> Any:
         """
         Instantiates model from the given string.
         :param pre_ref_resolution_callback: called before references are
@@ -753,7 +764,13 @@ class TextXMetaModel(DebugPrinter):
 
         return model
 
-    def model_from_file(self, file_name, encoding="utf-8", debug=None, **kwargs):
+    def model_from_file(
+        self,
+        file_name: str,
+        encoding: str = "utf-8",
+        debug: bool | None = None,
+        **kwargs: Any,
+    ) -> Any:
         self.model_param_defs.check_params(file_name, **kwargs)
 
         return self.internal_model_from_file(
@@ -762,14 +779,14 @@ class TextXMetaModel(DebugPrinter):
 
     def internal_model_from_file(
         self,
-        file_name,
-        encoding="utf-8",
-        debug=None,
-        pre_ref_resolution_callback=None,
-        is_main_model=True,
-        model_str=None,
-        model_params=None,
-    ):
+        file_name: str,
+        encoding: str = "utf-8",
+        debug: bool | None = None,
+        pre_ref_resolution_callback: Callable[[Any], None] | None = None,
+        is_main_model: bool = True,
+        model_str: str | None = None,
+        model_params: ModelParams | None = None,
+    ) -> Any:
         """
         Instantiates model from the given file.
         :param pre_ref_resolution_callback: called before references are
@@ -826,7 +843,9 @@ class TextXMetaModel(DebugPrinter):
 
         return model
 
-    def register_model_processor(self, model_processor):
+    def register_model_processor(
+        self, model_processor: Callable[[Any, TextXMetaModel], None]
+    ) -> None:
         """
         Model processor is callable that will be called after
         each successful model parse.
@@ -834,7 +853,9 @@ class TextXMetaModel(DebugPrinter):
         """
         self._model_processors.append(model_processor)
 
-    def register_obj_processors(self, obj_processors):
+    def register_obj_processors(
+        self, obj_processors: dict[str, Callable[[Any], Any]]
+    ) -> None:
         """
         Object processors are callables that will be called after
         each successful model object construction.
@@ -849,7 +870,7 @@ class TextXMetaModel(DebugPrinter):
         self._obj_processors.update(obj_processors)
 
     @property
-    def _tx_model_param_definitions(self):
+    def _tx_model_param_definitions(self) -> ModelParamDefinitions:
         warnings.warn(  # noqa: B028
             "_tx_model_param_definitions is deprecated in favor of model_param_defs."
         )
@@ -862,38 +883,54 @@ class TextXMetaMetaModel:
     textX meta-language.  Used to treat all languages in a consistent way.
     """
 
-    def __init__(self):
-        self._metamodel = None
+    def __init__(self) -> None:
+        self._metamodel: TextXMetaModel | None = None
         self.model_param_defs = ModelParamDefinitions()
 
     @property
-    def metamodel(self):
+    def metamodel(self) -> TextXMetaModel:
         if self._metamodel is None:
             self._metamodel = metamodel_from_file(
                 join(abspath(dirname(__file__)), "textx.tx")
             )
         return self._metamodel
 
-    def model_from_str(self, model_str, debug=None, **kwargs):
+    def model_from_str(
+        self, model_str: str, debug: bool | None = None, **kwargs: Any
+    ) -> TextXMetaModel:
         """
         Instantiates meta-model (a.k.a. textX model) from the given string.
         """
         return metamodel_from_str(model_str, debug=debug, **kwargs)
 
-    def model_from_file(self, file_name, encoding="utf-8", debug=None, **kwargs):
+    def model_from_file(
+        self,
+        file_name: str,
+        encoding: str = "utf-8",
+        debug: bool | None = None,
+        **kwargs: Any,
+    ) -> TextXMetaModel:
         """
         Instantiates meta-model (a.k.a. textX model) from the given file.
         """
         return metamodel_from_file(file_name, debug=debug, **kwargs)
 
-    def grammar_model_from_str(self, model_str, debug=None, **kwargs):
+    def grammar_model_from_str(
+        self, model_str: str, debug: bool | None = None, **kwargs: Any
+    ) -> Any:
         """
         Instantiates textX grammar model from the given string.  Used to
         programmatically inspect textX grammar.
         """
         return self.metamodel.model_from_str(model_str, debug=debug, **kwargs)
 
-    def grammar_model_from_file(self, file_name, encoding="utf-8", debug=None, **kwargs):
+    def grammar_model_from_file(
+        self,
+        file_name: str,
+        encoding: str = "utf-8",
+        debug: bool | None = None,
+        **kwargs: Any,
+    ) -> Any:
         """
         Instantiates textX grammar model from the given file.  Used to
         programmatically inspect textX grammar.

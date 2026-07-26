@@ -7,9 +7,10 @@ have named this language textX ;)
 
 """
 
+from __future__ import annotations
+
 import codecs
 import re
-from typing import Dict
 
 from arpeggio import (
     EOF,
@@ -1086,7 +1087,7 @@ class TextXVisitor(RRELVisitor):
 
 
 # parser object cache. To speed up parser initialization (e.g. during imports)
-textX_parsers: Dict[bool, Parser] = {}
+textX_parsers: dict[bool, Parser] = {}
 
 
 def language_from_str(language_def, metamodel, file_name):

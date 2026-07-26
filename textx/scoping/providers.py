@@ -5,7 +5,11 @@
 # License: MIT License
 #######################################################################
 
+from __future__ import annotations
+
+from collections.abc import Callable
 from os.path import abspath, dirname, isabs, join
+from typing import Any
 
 import textx.scoping as scoping
 from textx.exceptions import TextXSemanticError
@@ -25,7 +29,7 @@ class PlainName:
     plain name scope provider
     """
 
-    def __init__(self, multi_metamodel_support=True):
+    def __init__(self, multi_metamodel_support: bool = True) -> None:
         """
         the default scope provider constructor
 
@@ -33,10 +37,9 @@ class PlainName:
             multi_metamodel_support: enable a AST based search, instead
             of using the parser._instances
         """
-        self.multi_metamodel_support = multi_metamodel_support
-        pass
+        self.multi_metamodel_support: bool = multi_metamodel_support
 
-    def __call__(self, obj, attr, obj_ref):
+    def __call__(self, obj: Any, attr: Any, obj_ref: Any) -> Any:
         """
         the default scope provider
 
@@ -53,7 +56,7 @@ class PlainName:
         from textx.scoping.tools import get_parser
 
         if obj_ref is None:
-            return None  # an error! (see model.py: resolve_refs (TODO check)
+            return None
 
         assert type(obj_ref) is ObjCrossRef, type(obj_ref)
 
@@ -62,7 +65,7 @@ class PlainName:
                 f"Resolving obj crossref: {obj_ref.cls}:{obj_ref.obj_name}"
             )
 
-        def _inner_resolve_link_rule_ref(cls, obj_name):
+        def _inner_resolve_link_rule_ref(cls: Any, obj_name: str) -> Any:
             """
             Depth-first resolving of link rule reference.
             """
@@ -84,6 +87,7 @@ class PlainName:
                 # - provides: the resolved object or None
                 objs = get_parser(obj)._instances[id(cls)]
                 return objs.get(obj_name)
+            return None
 
         if self.multi_metamodel_support:
             from textx import get_children, get_model, textx_isinstance
@@ -110,7 +114,7 @@ class PlainName:
                 result = None
         else:
             result = _inner_resolve_link_rule_ref(obj_ref.cls, obj_ref.obj_name)
-        return result  # error handled outside
+        return result
 
 
 class FQN:
@@ -118,7 +122,10 @@ class FQN:
     fully qualified name scope provider
     """
 
-    def __init__(self, scope_redirection_logic=None):
+    def __init__(
+        self,
+        scope_redirection_logic: Callable[[Any], Any] | None = None,
+    ) -> None:
         """
         Args:
             scope_redirection_logic: this callable gets a
@@ -133,9 +140,11 @@ class FQN:
             object containing the reference to be resolved
             (in order to prevent getting circular dependencies).
         """
-        self.scope_redirection_logic = scope_redirection_logic
+        self.scope_redirection_logic: Callable[[Any], Any] | None = (
+            scope_redirection_logic
+        )
 
-    def __call__(self, current_obj, attr, obj_ref):
+    def __call__(self, current_obj: Any, attr: Any, obj_ref: Any) -> Any:
         """
         find a fully qualified name.
         Use this callable as scope_provider in a meta-model:
@@ -151,7 +160,7 @@ class FQN:
         Returns: None or the referenced object
         """
 
-        def _find_obj_fqn(p, fqn_name, cls):
+        def _find_obj_fqn(p: Any, fqn_name: str, cls: Any) -> Any:
             """
             Helper function:
             find a named object based on a qualified name ("."-separated
@@ -165,7 +174,7 @@ class FQN:
                 the object or None
             """
 
-            def find_obj(parent, name):
+            def find_obj(parent: Any, name: str) -> Any:
                 if parent is not current_obj and self.scope_redirection_logic is not None:
                     from textx.scoping import Postponed
 
@@ -177,40 +186,40 @@ class FQN:
                         return_value = find_obj(m, name)
                         if return_value is not None:
                             return return_value
-                for attr in [
+                for aname in [
                     a
                     for a in parent.__dict__
                     if not a.startswith("__")
                     and not a.startswith("_tx_")
                     and not callable(getattr(parent, a))
                 ]:
-                    obj = getattr(parent, attr)
-                    if isinstance(obj, (list, tuple)):
-                        for innerobj in obj:
+                    obj_val = getattr(parent, aname)
+                    if isinstance(obj_val, (list, tuple)):
+                        for innerobj in obj_val:
                             if hasattr(innerobj, "name") and innerobj.name == name:
                                 return innerobj
                     else:
-                        if hasattr(obj, "name") and obj.name == name:
-                            return obj
+                        if hasattr(obj_val, "name") and obj_val.name == name:
+                            return obj_val
                 return None
 
             for n in fqn_name.split("."):
-                obj = find_obj(p, n)
-                if obj is not None:
-                    if type(obj) is Postponed:
-                        return obj
-                    p = obj
+                obj_found = find_obj(p, n)
+                if obj_found is not None:
+                    if type(obj_found) is Postponed:
+                        return obj_found
+                    p = obj_found
                 else:
                     return None
 
             from textx import textx_isinstance
 
-            if textx_isinstance(obj, cls):
+            if textx_isinstance(obj_found, cls):
                 return p
             else:
                 return None
 
-        def _find_referenced_obj(p, name, cls):
+        def _find_referenced_obj(p: Any, name: str, cls: Any) -> Any:
             """
             Helper function:
             Search the fully qualified name starting at relative container p.
@@ -232,7 +241,7 @@ class FQN:
                 ret = _find_obj_fqn(p, name, cls)
                 if ret:
                     return ret
-                # else continue to next parent or return None
+            return None
 
         from textx.model import ObjCrossRef
 
@@ -261,13 +270,13 @@ class ImportURI(scoping.ModelLoader):
 
     def __init__(
         self,
-        scope_provider,
-        glob_args=None,
-        search_path=None,
-        importAs=False,
-        importURI_converter=None,
-        importURI_to_scope_name=None,
-    ):
+        scope_provider: Any,
+        glob_args: dict[str, Any] | None = None,
+        search_path: list[str] | None = None,
+        importAs: bool = False,
+        importURI_converter: Callable[[str], str] | None = None,
+        importURI_to_scope_name: Callable[[Any], str] | None = None,
+    ) -> None:
         """
         Creates a new ImportURI Provider.
         Args:
@@ -293,34 +302,35 @@ class ImportURI(scoping.ModelLoader):
         from textx.scoping import ModelLoader
 
         ModelLoader.__init__(self)
-        self.scope_provider = scope_provider
+        self.scope_provider: Any = scope_provider
         if (glob_args is not None) and (search_path is not None):
             raise Exception("you cannot use globbing together with a search path")
-        self.glob_args = {}
-        self.search_path = search_path
-        self.importAs = importAs
+        self.glob_args: dict[str, Any] = {}
+        self.search_path: list[str] | None = search_path
+        self.importAs: bool = importAs
         if importURI_converter is not None:
-            self.importURI_converter = importURI_converter
+            self.importURI_converter: Callable[[str], str] = importURI_converter
         else:
             self.importURI_converter = lambda x: x
-        self.importURI_to_scope_name = importURI_to_scope_name
+        self.importURI_to_scope_name: Callable[[Any], str] | None = (
+            importURI_to_scope_name
+        )
         if glob_args:
             self.set_glob_args(glob_args)
 
-    def set_glob_args(self, glob_args):
+    def set_glob_args(self, glob_args: dict[str, Any]) -> None:
         self.glob_args = glob_args
 
-    def _load_referenced_models(self, model, encoding):
+    def _load_referenced_models(self, model: Any, encoding: str) -> None:
         from textx.model import get_children
 
-        visited = []
+        visited: list[Any] = []
         for obj in get_children(
             lambda x: hasattr(x, "importURI") and x not in visited, model
         ):
             add_to_local_models = True
             if self.importURI_to_scope_name is not None:
                 obj.name = self.importURI_to_scope_name(obj)
-                # print("setting name to {}".format(obj.name))
             if hasattr(obj, "name") and obj.name is not None and obj.name != "":
                 add_to_local_models = not self.importAs
 
@@ -356,7 +366,7 @@ class ImportURI(scoping.ModelLoader):
                     )
                 )
 
-    def load_models(self, model, encoding="utf-8"):
+    def load_models(self, model: Any, encoding: str = "utf-8") -> None:
         from textx.model import get_metamodel
         from textx.scoping import GlobalModelRepository
 
@@ -373,7 +383,7 @@ class ImportURI(scoping.ModelLoader):
             model._tx_model_repository = model_repository
         self._load_referenced_models(model, encoding=encoding)
 
-    def __call__(self, obj, attr, obj_ref):
+    def __call__(self, obj: Any, attr: Any, obj_ref: Any) -> Any:
         from textx.model import ObjCrossRef, get_model
 
         assert type(obj_ref) is ObjCrossRef, type(obj_ref)
@@ -406,10 +416,12 @@ class ImportURI(scoping.ModelLoader):
         return None
 
 
-def follow_loaded_models_scope_redirection_logic(obj, scope_redirection_logic):
-    lst = []
+def follow_loaded_models_scope_redirection_logic(
+    obj: Any, scope_redirection_logic: Callable[[Any], Any] | None
+) -> list[Any] | Postponed:
+    lst: list[Any] = []
     if scope_redirection_logic is not None:
-        lst = scope_redirection_logic(obj)
+        lst = scope_redirection_logic(obj)  # type: ignore[assignment]
         assert lst is not None, "scope_redirection_logic must not return None"
         if type(lst) is Postponed:
             return lst
@@ -432,21 +444,23 @@ class FQNImportURI(ImportURI):
 
     def __init__(
         self,
-        glob_args=None,
-        search_path=None,
-        importAs=False,
-        importURI_converter=None,
-        importURI_to_scope_name=None,
-        scope_redirection_logic=None,
-    ):
+        glob_args: dict[str, Any] | None = None,
+        search_path: list[str] | None = None,
+        importAs: bool = False,
+        importURI_converter: Callable[[str], str] | None = None,
+        importURI_to_scope_name: Callable[[Any], str] | None = None,
+        scope_redirection_logic: Callable[[Any], Any] | None = None,
+    ) -> None:
         if importAs:
 
-            def my_scope_redirection_logic_def(obj):
+            def my_scope_redirection_logic_def(obj: Any) -> Any:
                 return follow_loaded_models_scope_redirection_logic(
                     obj, scope_redirection_logic
                 )
 
-            my_scope_redirection_logic = my_scope_redirection_logic_def
+            my_scope_redirection_logic: Callable[[Any], Any] | None = (
+                my_scope_redirection_logic_def
+            )
         else:
             my_scope_redirection_logic = scope_redirection_logic
         ImportURI.__init__(
@@ -465,7 +479,12 @@ class PlainNameImportURI(ImportURI):
     scope provider with ImportURI and PlainName names
     """
 
-    def __init__(self, glob_args=None, search_path=None, importURI_converter=None):
+    def __init__(
+        self,
+        glob_args: dict[str, Any] | None = None,
+        search_path: list[str] | None = None,
+        importURI_converter: Callable[[str], str] | None = None,
+    ) -> None:
         ImportURI.__init__(
             self,
             PlainName(),
@@ -491,14 +510,19 @@ class GlobalRepo(ImportURI):
     absolute file position are looked up.
     """
 
-    def __init__(self, scope_provider, filename_pattern=None, glob_args=None):
+    def __init__(
+        self,
+        scope_provider: Any,
+        filename_pattern: str | None = None,
+        glob_args: dict[str, Any] | None = None,
+    ) -> None:
         ImportURI.__init__(self, scope_provider, glob_args=glob_args)
-        self.filename_pattern_list = []
-        self.models_to_be_added_directly = []
+        self.filename_pattern_list: list[str] = []
+        self.models_to_be_added_directly: list[Any] = []
         if filename_pattern:
             self.register_models(filename_pattern)
 
-    def register_models(self, filename_pattern):
+    def register_models(self, filename_pattern: str) -> None:
         """
         register models into provider object - visible for all
 
@@ -510,7 +534,7 @@ class GlobalRepo(ImportURI):
         """
         self.filename_pattern_list.append(filename_pattern)
 
-    def _load_referenced_models(self, model, encoding):
+    def _load_referenced_models(self, model: Any, encoding: str) -> None:
         for filename_pattern in self.filename_pattern_list:
             if not isabs(filename_pattern) and "project_root" in model._tx_model_params:
                 filename_pattern = join(
@@ -526,7 +550,7 @@ class GlobalRepo(ImportURI):
         for m in self.models_to_be_added_directly:
             model._tx_model_repository._add_model(m)
 
-    def add_model(self, model):
+    def add_model(self, model: Any) -> None:
         """
         Adds a model directly. Useful when combining models
         parsed from a string (instead of a file).
@@ -536,8 +560,11 @@ class GlobalRepo(ImportURI):
         self.models_to_be_added_directly.append(model)
 
     def load_models_in_model_repo(
-        self, global_model_repo=None, encoding="utf-8", **kwargs
-    ):
+        self,
+        global_model_repo: scoping.GlobalModelRepository | None = None,
+        encoding: str = "utf-8",
+        **kwargs: Any,
+    ) -> scoping.GlobalModelRepository:
         """
         load all registered models (called explicitly from
         the user and not as an automatic activity).
@@ -580,7 +607,11 @@ class FQNGlobalRepo(GlobalRepo):
     scope provider with FQN and global repo
     """
 
-    def __init__(self, filename_pattern=None, glob_args=None):
+    def __init__(
+        self,
+        filename_pattern: str | None = None,
+        glob_args: dict[str, Any] | None = None,
+    ) -> None:
         GlobalRepo.__init__(self, FQN(), filename_pattern, glob_args=glob_args)
 
 
@@ -589,7 +620,11 @@ class PlainNameGlobalRepo(GlobalRepo):
     scope provider with PlainName names and global repo
     """
 
-    def __init__(self, filename_pattern=None, glob_args=None):
+    def __init__(
+        self,
+        filename_pattern: str | None = None,
+        glob_args: dict[str, Any] | None = None,
+    ) -> None:
         GlobalRepo.__init__(self, PlainName(), filename_pattern, glob_args=glob_args)
 
 
@@ -603,7 +638,7 @@ class RelativeName:
     components/slots...
     """
 
-    def __init__(self, path_to_container_object):
+    def __init__(self, path_to_container_object: str) -> None:
         """
         Here, you specify the path from the instance to the methods:
         The path is given in a dot-separated way: "classref.methods". Then a
@@ -613,10 +648,12 @@ class RelativeName:
             path_to_container_object: This identifies (starting from the
             instance) how to find the methods.
         """
-        self.path_to_container_object = path_to_container_object
-        self.postponed_counter = 0
+        self.path_to_container_object: str = path_to_container_object
+        self.postponed_counter: int = 0
 
-    def get_reference_propositions(self, obj, attr, name_part):
+    def get_reference_propositions(
+        self, obj: Any, attr: Any, name_part: str
+    ) -> list[Any] | Postponed:
         """
         retrieve a list of reference propositions.
         Args:
@@ -634,27 +671,26 @@ class RelativeName:
         if type(obj_list) is Postponed:
             self.postponed_counter += 1
             return obj_list
-        # the referenced element must be a list
-        # (else it is a design error in the path passed to
-        # the RelativeName object).
         if not isinstance(obj_list, list):
             from textx.exceptions import TextXError
 
             raise TextXError(
                 f"expected path to list in the model ({self.path_to_container_object})"
             )
-        obj_list = filter(
-            lambda x: textx_isinstance(x, attr.cls) and x.name.find(name_part) >= 0,
-            obj_list,
+        obj_list = list(  # type: ignore[assignment, union-attr]
+            filter(
+                lambda x: textx_isinstance(x, attr.cls) and x.name.find(name_part) >= 0,
+                obj_list,
+            )
         )
 
-        return list(obj_list)
+        return obj_list
 
-    def __call__(self, obj, attr, obj_ref):
+    def __call__(self, obj: Any, attr: Any, obj_ref: Any) -> Any:
         lst = self.get_reference_propositions(obj, attr, obj_ref.obj_name)
         if type(lst) is Postponed:
             return lst
-        lst = [x for x in lst if x.name == obj_ref.obj_name]
+        lst = [x for x in lst if x.name == obj_ref.obj_name]  # type: ignore[union-attr]
         if len(lst) > 0:
             return lst[0]
         else:
@@ -670,13 +706,20 @@ class ExtRelativeName:
     - how to find inherited/chained classes (starting from a class).
     """
 
-    def __init__(self, path_to_definition_object, path_to_target, path_to_extension):
-        self.path_to_definition_object = path_to_definition_object
-        self.path_to_target = path_to_target
-        self.path_to_extension = path_to_extension
-        self.postponed_counter = 0
+    def __init__(
+        self,
+        path_to_definition_object: str,
+        path_to_target: str,
+        path_to_extension: str,
+    ) -> None:
+        self.path_to_definition_object: str = path_to_definition_object
+        self.path_to_target: str = path_to_target
+        self.path_to_extension: str = path_to_extension
+        self.postponed_counter: int = 0
 
-    def get_reference_propositions(self, obj, attr, name_part):
+    def get_reference_propositions(
+        self, obj: Any, attr: Any, name_part: str
+    ) -> list[Any] | Postponed:
         """
         retrieve a list of reference propositions.
         Args:
@@ -688,10 +731,6 @@ class ExtRelativeName:
             the list of objects representing the proposed references
         """
         from textx import textx_isinstance
-
-        # find all all "connected" objects
-        # (e.g. find all classes: the most derived
-        # class, its base, the base of its base, etc.)
         from textx.scoping.tools import (
             get_list_of_concatenated_objects,
             resolve_model_path,
@@ -699,24 +738,21 @@ class ExtRelativeName:
 
         def_obj = resolve_model_path(obj, self.path_to_definition_object)
         def_objs = get_list_of_concatenated_objects(def_obj, self.path_to_extension)
-        # for all containing classes, collect all
-        # objects to be looked up (e.g. methods)
-        obj_list = []
-        for def_obj in def_objs:
-            if type(def_obj) is Postponed:
+        obj_list: list[Any] = []
+        for def_obj_item in def_objs:
+            if type(def_obj_item) is Postponed:
                 self.postponed_counter += 1
-                return def_obj
+                return def_obj_item
 
-            tmp_list = resolve_model_path(def_obj, self.path_to_target)
+            tmp_list = resolve_model_path(def_obj_item, self.path_to_target)
             assert tmp_list is not None
-            # expected to point to  alist
             if not isinstance(tmp_list, list):
                 from textx.exceptions import TextXError
 
                 raise TextXError(
                     f"expected path to list in the model ({self.path_to_target})"
                 )
-            tmp_list = list(
+            tmp_list = list(  # type: ignore[union-attr]
                 filter(
                     lambda x: (
                         textx_isinstance(x, attr.cls) and x.name.find(name_part) >= 0
@@ -726,13 +762,13 @@ class ExtRelativeName:
             )
             obj_list = obj_list + tmp_list
 
-        return list(obj_list)
+        return obj_list
 
-    def __call__(self, obj, attr, obj_ref):
+    def __call__(self, obj: Any, attr: Any, obj_ref: Any) -> Any:
         lst = self.get_reference_propositions(obj, attr, obj_ref.obj_name)
         if type(lst) is Postponed:
             return lst
-        lst = [x for x in lst if x.name == obj_ref.obj_name]
+        lst = [x for x in lst if x.name == obj_ref.obj_name]  # type: ignore[union-attr]
         if len(lst) > 0:
             return lst[0]
         else:

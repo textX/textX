@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 # Multiplicities
 MULT_ONE = "1"
 MULT_OPTIONAL = "0..1"
@@ -8,7 +10,7 @@ MULT_ONEORMORE = "1..*"
 priority = [MULT_OPTIONAL, MULT_ONE, MULT_ZEROORMORE, MULT_ONEORMORE]
 
 
-def mult_lt(left, right):
+def mult_lt(left: str, right: str) -> bool:
     """
     Return True if left multiplicity is 'less than' right.
     """

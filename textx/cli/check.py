@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 import logging
+import os
 import sys
 
 try:
@@ -8,7 +11,6 @@ except ImportError as e:
         "textX must be installed with CLI dependencies to use "
         "textx command.\npip install textX[cli]"
     ) from e
-import os
 
 from textx import (
     TextXError,
@@ -17,11 +19,12 @@ from textx import (
     metamodel_for_language,
     metamodel_from_file,
 )
+from textx.metamodel import TextXMetaMetaModel, TextXMetaModel
 
 logger = logging.getLogger(__name__)
 
 
-def check(textx):
+def check(textx: click.Group) -> None:
     @textx.command()
     @click.argument("model_files", type=click.Path(), required=True, nargs=-1)
     @click.option("--language", help="A name of the language model conforms to.")
@@ -34,7 +37,13 @@ def check(textx):
         help='Case-insensitive model parsing. Used only if "grammar" is provided.',
     )
     @click.pass_context
-    def check(ctx, model_files, language=None, grammar=None, ignore_case=False):
+    def check(
+        ctx: click.Context,
+        model_files: tuple[str, ...],
+        language: str | None = None,
+        grammar: str | None = None,
+        ignore_case: bool = False,
+    ) -> None:
         """
         Check/validate model given its file path. If grammar is given use it to
         construct the meta-model. If language is given use it to retrieve the
@@ -64,10 +73,11 @@ def check(textx):
 
         """  # noqa
 
-        debug = ctx.obj["debug"]
+        debug: bool = ctx.obj["debug"]
 
         try:
-            per_file_metamodel = False
+            per_file_metamodel: bool = False
+            metamodel: TextXMetaModel | TextXMetaMetaModel
             if grammar:
                 metamodel = metamodel_from_file(
                     grammar, debug=debug, ignore_case=ignore_case

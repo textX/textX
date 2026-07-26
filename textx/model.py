@@ -10,7 +10,7 @@ from collections.abc import Callable
 from contextlib import suppress
 from typing import TYPE_CHECKING, Any, TypeVar
 
-from arpeggio import EOF, NoMatch, Parser, Sequence, Terminal
+from arpeggio import EOF, NoMatch, Parser, ParsingExpression, Sequence, Terminal
 
 from textx.const import (
     MULT_ASSIGN_ERROR,
@@ -263,7 +263,14 @@ class ObjCrossRef:
             locally defined scope providers.
     """
 
-    def __init__(self, obj_name, cls, position, scope_provider, match_rule_name):
+    def __init__(
+        self,
+        obj_name: str,
+        cls: type[Any],
+        position: int,
+        scope_provider: Any,
+        match_rule_name: str,
+    ) -> None:
         self.obj_name = obj_name
         self.cls = cls
         self.position = position
@@ -285,8 +292,14 @@ class RefRulePosition:
     """
 
     def __init__(
-        self, name, ref_pos_start, ref_pos_end, def_file_name, def_pos_start, def_pos_end
-    ):
+        self,
+        name: str,
+        ref_pos_start: int,
+        ref_pos_end: int,
+        def_file_name: str,
+        def_pos_start: int,
+        def_pos_end: int,
+    ) -> None:
         self.name = name
         self.ref_pos_start = ref_pos_start
         self.ref_pos_end = ref_pos_end
@@ -295,7 +308,11 @@ class RefRulePosition:
         self.def_pos_end = def_pos_end
 
 
-def get_model_parser(top_rule, comments_model, **kwargs):
+def get_model_parser(
+    top_rule: ParsingExpression,
+    comments_model: ParsingExpression | None,
+    **kwargs: Any,
+) -> Any:
     """
     Creates model parser for the given language.
     """
@@ -307,28 +324,28 @@ def get_model_parser(top_rule, comments_model, **kwargs):
         graph representing model on the given language.
         """
 
-        def __init__(self, *args, **kwargs):
+        def __init__(self, *args: Any, **kwargs: Any) -> None:
             super().__init__(*args, **kwargs)
 
             # By default first rule is starting rule
             # and must be followed by the EOF
-            self.parser_model = Sequence(
+            self.parser_model: ParsingExpression = Sequence(
                 nodes=[top_rule, EOF()], rule_name="Model", root=True
             )
-            self.comments_model = comments_model
+            self.comments_model: ParsingExpression | None = comments_model
 
             # Stack for metaclass instances
-            self._inst_stack = []
+            self._inst_stack: list[tuple[Any, Any]] = []
 
             # Dict for cross-ref resolving
             # { id(class): { obj.name: obj}}
-            self._instances = {}
+            self._instances: dict[int, dict[str, Any]] = {}
 
             # List to keep track of all cross-ref that need to be resolved
             # Contained elements are tuples: (instance, metaattr, cross-ref)
-            self._crossrefs = []
+            self._crossrefs: list[tuple[Any, Any, Any]] = []
 
-        def clone(self):
+        def clone(self) -> Any:
             """
             Responsibility: create a clone in order to parse a separate file.
             It must be possible that more than one clone exist in parallel,
@@ -353,7 +370,7 @@ def get_model_parser(top_rule, comments_model, **kwargs):
 
             return the_clone
 
-        def _parse(self):
+        def _parse(self) -> Any:
             try:
                 return self.parser_model.parse(self)
             except NoMatch as e:
@@ -369,12 +386,12 @@ def get_model_parser(top_rule, comments_model, **kwargs):
 
         def get_model_from_file(
             self,
-            file_name,
-            encoding,
-            debug,
-            pre_ref_resolution_callback=None,
-            is_main_model=True,
-        ):
+            file_name: str,
+            encoding: str,
+            debug: bool | None,
+            pre_ref_resolution_callback: Callable[[Any], None] | None = None,
+            is_main_model: bool = True,
+        ) -> Any:
             """
             Creates model from the parse tree from the previous parse call.
             If file_name is given file will be parsed before model
@@ -396,17 +413,17 @@ def get_model_parser(top_rule, comments_model, **kwargs):
 
         def get_model_from_str(
             self,
-            model_str,
-            file_name=None,
-            debug=None,
-            pre_ref_resolution_callback=None,
-            is_main_model=True,
-            encoding="utf-8",
-        ):
+            model_str: str,
+            file_name: str | None = None,
+            debug: bool | None = None,
+            pre_ref_resolution_callback: Callable[[Any], None] | None = None,
+            is_main_model: bool = True,
+            encoding: str = "utf-8",
+        ) -> Any:
             """
             Parses given string and creates model object graph.
             """
-            old_debug_state = self.debug
+            old_debug_state: Any = self.debug  # type: ignore[has-type]
 
             try:
                 if debug is not None:
@@ -418,7 +435,7 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                 self.parse(model_str, file_name=file_name)
 
                 # Used to keep track of user class instances
-                self._user_class_inst = []
+                self._user_class_inst: list[Any] = []
 
                 self._replace_user_attr_methods()
 
@@ -444,7 +461,7 @@ def get_model_parser(top_rule, comments_model, **kwargs):
 
             return model
 
-        def _replace_user_attr_methods_for_class(self, user_class):
+        def _replace_user_attr_methods_for_class(self, user_class: type[Any]) -> None:
             assert hasattr(user_class, "_tx_obj_attrs")
 
             # Custom attr dunder methods used for user classes during loading
@@ -487,7 +504,7 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                 setattr(user_class, real_name, locals()[f"_{a_name}"])
             user_class._tx_instrumented = 1
 
-        def _replace_user_attr_methods(self):
+        def _replace_user_attr_methods(self) -> None:
             """
             Replace get/set/del(attr) methods on user classes
             to support postponing of user obj initialization.
@@ -498,7 +515,7 @@ def get_model_parser(top_rule, comments_model, **kwargs):
                 else:
                     user_class._tx_instrumented += 1
 
-        def _restore_user_attr_methods(self):
+        def _restore_user_attr_methods(self) -> None:
             """
             Restore original get/set/del(attr) methods on user
             classes.
@@ -527,13 +544,13 @@ def get_model_parser(top_rule, comments_model, **kwargs):
 
 
 def parse_tree_to_objgraph(
-    parser,
-    parse_tree,
-    file_name=None,
-    pre_ref_resolution_callback=None,
-    is_main_model=True,
-    encoding="utf-8",
-):
+    parser: Any,
+    parse_tree: Any,
+    file_name: str | None = None,
+    pre_ref_resolution_callback: Callable[[Any], None] | None = None,
+    is_main_model: bool = True,
+    encoding: str = "utf-8",
+) -> Any:
     """
     Transforms parse_tree to object graph representing model in a
     new language.
@@ -543,7 +560,7 @@ def parse_tree_to_objgraph(
 
     if metamodel.textx_tools_support:
         pos_rule_dict = {}
-    pos_crossref_list = []
+    pos_crossref_list: list[Any] = []
 
     def process_match(nt):
         """
@@ -912,7 +929,7 @@ def parse_tree_to_objgraph(
             from textx.scoping import ModelLoader
 
             if isinstance(scope_provider, ModelLoader):
-                scope_provider.load_models(model, encoding=encoding)
+                scope_provider.load_models(model, encoding=encoding)  # type: ignore[call-arg]
 
         # Load all imported models based on the maker
         # `ModelLoader` directly attached to model references
@@ -924,7 +941,7 @@ def parse_tree_to_objgraph(
 
                 scope_provider = crossref.scope_provider
                 if isinstance(scope_provider, ModelLoader):
-                    scope_provider.load_models(model, encoding=encoding)
+                    scope_provider.load_models(model, encoding=encoding)  # type: ignore[call-arg]
 
         if not is_immutable_obj:
             model._tx_reference_resolver = ReferenceResolver(
@@ -976,7 +993,7 @@ def parse_tree_to_objgraph(
 
                 # final check that everything went ok
                 for m in models:
-                    assert len(get_children_of_type(Postponed.__class__, m)) == 0
+                    assert len(get_children_of_type(Postponed.__class__, m)) == 0  # type: ignore[arg-type]
 
                     # We have model loaded and all link resolved
                     # So we shall do a depth-first call of object
@@ -1011,7 +1028,7 @@ def parse_tree_to_objgraph(
     return model
 
 
-def _start_model_construction(model):
+def _start_model_construction(model: Any) -> None:
     """
     Start model construction (internal design: use
     the attribute _tx_reference_resolver to mark a
@@ -1022,7 +1039,7 @@ def _start_model_construction(model):
     model._tx_reference_resolver = None
 
 
-def _end_model_construction(model):
+def _end_model_construction(model: Any) -> None:
     """
     End model construction (see _start_model_construction).
     """
@@ -1066,11 +1083,11 @@ def _end_model_construction(model):
                 # Add class name information in case of wrong
                 # constructor parameters
                 e.args += (f"for class {obj.__class__.__name__}",)
-                the_parser.dprint(traceback.print_exc())
+                the_parser.dprint(traceback.print_exc())  # type: ignore[func-returns-value]
                 raise e
 
 
-def _remove_all_affected_models_in_construction(model):
+def _remove_all_affected_models_in_construction(model: Any) -> None:
     """
     Remove all models related to model being constructed
     from any model repository.
@@ -1092,13 +1109,13 @@ class ReferenceResolver:
     When all models are parsed, start resolving all references in a loop.
     """
 
-    def __init__(self, parser, model, pos_crossref_list):
-        self.parser = parser
-        self.model = model
-        self.pos_crossref_list = pos_crossref_list  # tool support
-        self.delayed_crossrefs = []
+    def __init__(self, parser: Any, model: Any, pos_crossref_list: list[Any]) -> None:
+        self.parser: Any = parser
+        self.model: Any = model
+        self.pos_crossref_list: list[Any] = pos_crossref_list  # tool support
+        self.delayed_crossrefs: list[Any] = []
 
-    def has_unresolved_crossrefs(self, obj, attr_name=None):
+    def has_unresolved_crossrefs(self, obj: Any, attr_name: str | None = None) -> bool:
         """
         Args:
             obj: has this object unresolved crossrefs in its fields
@@ -1115,7 +1132,7 @@ class ReferenceResolver:
                     return True
             return False
 
-    def resolve_one_step(self):
+    def resolve_one_step(self) -> tuple[int, list[tuple[Any, Any, Any]]]:
         """
         Resolves model references.
         """

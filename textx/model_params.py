@@ -2,14 +2,21 @@
 Management of parameters passed to model_from_str or model_from_file.
 """
 
+from __future__ import annotations
+
 from collections import namedtuple
-from collections.abc import Mapping
+from collections.abc import Iterator
 from functools import reduce
+from typing import Any, Hashable, Mapping, TypeVar
 
 from textx.exceptions import TextXError
 
+_KT = TypeVar("_KT", bound=Hashable)
 
-class ModelParams(Mapping):
+ModelParamDefinition = namedtuple("ModelParamDefinition", ["name", "description"])
+
+
+class ModelParams(Mapping[_KT, Any]):
     """A read only dictionary that protocols
     accessing the values.
 
@@ -21,39 +28,33 @@ class ModelParams(Mapping):
     https://docs.python.org/3/library/collections.abc.html
     """
 
-    def __init__(self, *args, **kwargs):
-        self.store = dict(*args, **kwargs)
-        self.used_keys = set()
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        self.store: dict[_KT, Any] = dict(*args, **kwargs)
+        self.used_keys: set[_KT] = set()
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: _KT) -> Any:
         self.used_keys.add(key)
         return self.store[self.__keytransform__(key)]
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[_KT]:
         return iter(self.store)
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.store)
 
-    def __keytransform__(self, key):
+    def __keytransform__(self, key: _KT) -> _KT:
         return key
 
-    def _have_all_parameters_been_used(self):
+    def _have_all_parameters_been_used(self) -> bool:
         return reduce(lambda r, k: r and (k in self.used_keys), self.store.keys(), True)
 
     @property
-    def all_used(self):
+    def all_used(self) -> bool:
         "returns if all parameters have been used by the meta model"
         return not (set(self.store.keys()) - set(self.used_keys))
 
 
-"""
-Class describing a model parameter.
-"""
-ModelParamDefinition = namedtuple("ModelParamDefinition", ["name", "description"])
-
-
-class ModelParamDefinitions(Mapping):
+class ModelParamDefinitions(Mapping[str, ModelParamDefinition]):
     """
     A class to hold possible model parameters
     together with a definition.
@@ -68,25 +69,25 @@ class ModelParamDefinitions(Mapping):
     the possible parameters.
     """
 
-    def __init__(self):
-        self.store = dict()
+    def __init__(self) -> None:
+        self.store: dict[str, ModelParamDefinition] = dict()
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: str) -> ModelParamDefinition:
         return self.store[self.__keytransform__(key)]
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[str]:
         return iter(self.store)
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.store)
 
-    def __keytransform__(self, key):
+    def __keytransform__(self, key: str) -> str:
         return key
 
-    def add(self, name, description):
+    def add(self, name: str, description: str) -> None:
         self.store[name] = ModelParamDefinition(name, description)
 
-    def check_params(self, source, **kwargs):
+    def check_params(self, source: str, **kwargs: Any) -> None:
         for k in kwargs:
             if k not in self.store:
                 raise TextXError(f"unknown parameter {k} ({source})")

@@ -5,19 +5,30 @@
 # License: MIT License
 #######################################################################
 
+from __future__ import annotations
+
 import errno
 import glob
 import os
+from collections.abc import Iterator
 from os.path import abspath, exists, join
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from textx.metamodel import TextXMetaMetaModel, TextXMetaModel
 
 
-def metamodel_for_file_or_default_metamodel(filename, the_metamodel):
+def metamodel_for_file_or_default_metamodel(
+    filename: str,
+    the_metamodel: TextXMetaModel | TextXMetaMetaModel | None,
+) -> TextXMetaModel | TextXMetaMetaModel:
     from textx import metamodel_for_file
     from textx.exceptions import TextXRegistrationError
 
     try:
         return metamodel_for_file(filename)
     except TextXRegistrationError:
+        assert the_metamodel is not None
         return the_metamodel
 
 
@@ -42,14 +53,14 @@ class ModelRepository:
     filename of the model.
     """
 
-    def __init__(self):
-        self.name_idx = 1
-        self.filename_to_model = {}
+    def __init__(self) -> None:
+        self.name_idx: int = 1
+        self.filename_to_model: dict[str, Any] = {}
 
-    def has_model(self, filename):
+    def has_model(self, filename: str) -> bool:
         return abspath(filename) in self.filename_to_model
 
-    def add_model(self, model):
+    def add_model(self, model: Any) -> None:
         if model._tx_filename:
             filename = abspath(model._tx_filename)
         else:
@@ -57,28 +68,27 @@ class ModelRepository:
             self.name_idx += 1
         self.filename_to_model[filename] = model
 
-    def remove_model(self, model):
+    def remove_model(self, model: Any) -> None:
         filename = None
         for f, m in self.filename_to_model.items():
             if m == model:
                 filename = f
         if filename:
-            # print("*** delete {}".format(filename))
             del self.filename_to_model[filename]
 
-    def __contains__(self, filename):
+    def __contains__(self, filename: str) -> bool:
         return self.has_model(filename)
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[Any]:
         return iter(self.filename_to_model.values())
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.filename_to_model)
 
-    def __getitem__(self, filename):
+    def __getitem__(self, filename: str) -> Any:
         return self.filename_to_model[filename]
 
-    def __setitem__(self, filename, model):
+    def __setitem__(self, filename: str, model: Any) -> None:
         self.filename_to_model[filename] = model
 
 
@@ -104,37 +114,37 @@ class GlobalModelRepository:
 
     """
 
-    def __init__(self, all_models=None):
+    def __init__(self, all_models: ModelRepository | None = None) -> None:
         """
         Create a new repo for a model.
 
         Args:
             all_models: models to be added to this new repository.
         """
-        self.local_models = ModelRepository()  # used for current model
+        self.local_models: ModelRepository = ModelRepository()
         if all_models is not None:
-            self.all_models = all_models  # used to reuse already loaded models
+            self.all_models: ModelRepository = all_models
         else:
             self.all_models = ModelRepository()
 
-    def remove_model(self, model):
+    def remove_model(self, model: Any) -> None:
         self.all_models.remove_model(model)
         self.local_models.remove_model(model)
 
-    def remove_models(self, models):
+    def remove_models(self, models: list[Any]) -> None:
         for m in models:
             self.remove_model(m)
 
     def load_models_using_filepattern(
         self,
-        filename_pattern,
-        model,
-        glob_args,
-        is_main_model=False,
-        encoding="utf-8",
-        add_to_local_models=True,
-        model_params=None,
-    ):
+        filename_pattern: str,
+        model: Any,
+        glob_args: dict[str, Any],
+        is_main_model: bool = False,
+        encoding: str = "utf-8",
+        add_to_local_models: bool = True,
+        model_params: Any = None,
+    ) -> list[Any]:
         """
         Add a new model to all relevant objects.
 
@@ -151,13 +161,13 @@ class GlobalModelRepository:
 
         if model is not None:
             self.update_model_in_repo_based_on_filename(model)
-            the_metamodel = get_metamodel(model)  # default metamodel
+            the_metamodel: Any = get_metamodel(model)
         else:
             the_metamodel = None
         filenames = glob.glob(filename_pattern, **glob_args)
         if len(filenames) == 0:
             raise OSError(errno.ENOENT, os.strerror(errno.ENOENT), filename_pattern)
-        loaded_models = []
+        loaded_models: list[Any] = []
         for filename in filenames:
             the_metamodel = metamodel_for_file_or_default_metamodel(
                 filename, the_metamodel
@@ -176,14 +186,14 @@ class GlobalModelRepository:
 
     def load_model_using_search_path(
         self,
-        filename,
-        model,
-        search_path,
-        is_main_model=False,
-        encoding="utf8",
-        add_to_local_models=True,
-        model_params=None,
-    ):
+        filename: str,
+        model: Any,
+        search_path: list[str],
+        is_main_model: bool = False,
+        encoding: str = "utf8",
+        add_to_local_models: bool = True,
+        model_params: Any = None,
+    ) -> Any:
         """
         Add a new model to all relevant objects
 
@@ -202,9 +212,10 @@ class GlobalModelRepository:
             self.update_model_in_repo_based_on_filename(model)
         for the_path in search_path:
             full_filename = join(the_path, filename)
-            # print(full_filename)
             if exists(full_filename):
-                the_metamodel = get_metamodel(model) if model is not None else None
+                the_metamodel: TextXMetaModel | TextXMetaMetaModel | None = (
+                    get_metamodel(model) if model is not None else None
+                )
                 the_metamodel = metamodel_for_file_or_default_metamodel(
                     filename, the_metamodel
                 )
@@ -221,13 +232,13 @@ class GlobalModelRepository:
 
     def load_model(
         self,
-        the_metamodel,
-        filename,
-        is_main_model,
-        encoding="utf-8",
-        add_to_local_models=True,
-        model_params=None,
-    ):
+        the_metamodel: Any,
+        filename: str,
+        is_main_model: bool,
+        encoding: str = "utf-8",
+        add_to_local_models: bool = True,
+        model_params: Any = None,
+    ) -> Any:
         """
         Load a single model
 
@@ -243,40 +254,33 @@ class GlobalModelRepository:
         filename = abspath(filename)
         if not self.local_models.has_model(filename):
             if self.all_models.has_model(filename):
-                # print("CACHED {}".format(filename))
                 new_model = self.all_models[filename]
             else:
-                # print("LOADING {}".format(filename))
                 # all models loaded here get their references resolved from the
                 # root model
                 new_model = the_metamodel.internal_model_from_file(
                     filename,
                     pre_ref_resolution_callback=lambda other_model: (
-                        self.pre_ref_resolution_callback(  # noqa: E501
-                            other_model
-                        )
+                        self.pre_ref_resolution_callback(other_model)
                     ),
                     is_main_model=is_main_model,
                     encoding=encoding,
                     model_params=model_params,
                 )
                 self.all_models[filename] = new_model
-            # print("ADDING {}".format(filename))
             if add_to_local_models:
                 self.local_models[filename] = new_model
         else:
-            # print("LOCALLY CACHED {}".format(filename))
             pass
 
         assert filename in self.all_models  # to be sure...
         return self.all_models[filename]
 
-    def _add_model(self, model):
+    def _add_model(self, model: Any) -> None:
         filename = self.update_model_in_repo_based_on_filename(model)
-        # print("ADDED {}".format(filename))
         self.local_models[filename] = model
 
-    def update_model_in_repo_based_on_filename(self, model):
+    def update_model_in_repo_based_on_filename(self, model: Any) -> str:
         """
         Adds a model to the repo (not initially visible)
 
@@ -290,7 +294,6 @@ class GlobalModelRepository:
         if model._tx_filename is None:
             for fn in self.all_models.filename_to_model:
                 if self.all_models.filename_to_model[fn] == model:
-                    # print("UPDATED/CACHED {}".format(fn))
                     return fn
             i = 0
             while self.all_models.has_model(f"anonymous{i}"):
@@ -301,10 +304,9 @@ class GlobalModelRepository:
             myfilename = abspath(model._tx_filename)
             if not self.all_models.has_model(myfilename):
                 self.all_models[myfilename] = model
-        # print("UPDATED/ADDED/CACHED {}".format(myfilename))
         return myfilename
 
-    def pre_ref_resolution_callback(self, other_model):
+    def pre_ref_resolution_callback(self, other_model: Any) -> None:
         """
         internal: used to store a model after parsing into the repository
 
@@ -315,7 +317,6 @@ class GlobalModelRepository:
             nothing
         """
         filename = other_model._tx_filename
-        # print("PRE-CALLBACK -> {}".format(filename))
         assert filename
         filename = abspath(filename)
         other_model._tx_model_repository = GlobalModelRepository(self.all_models)
@@ -328,14 +329,14 @@ class ModelLoader:
     loader.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
-    def load_models(self, model):
+    def load_models(self, model: Any, encoding: str = "utf-8") -> None:
         pass
 
 
-def get_all_models_including_attached_models(model):
+def get_all_models_including_attached_models(model: Any) -> list[Any]:
     """
     get a list of all models stored within a model
     (including the owning model).
@@ -351,7 +352,7 @@ def get_all_models_including_attached_models(model):
     return get_included_models(model)
 
 
-def get_included_models(model):
+def get_included_models(model: Any) -> list[Any]:
     """
     get a list of all models stored within a model
     (including the owning model).
@@ -371,7 +372,7 @@ def get_included_models(model):
     return models
 
 
-def is_file_included(filename, model):
+def is_file_included(filename: str, model: Any) -> bool:
     """
     Determines if a file is included by a model. Also checks
     for indirect inclusions (files included by included files).
@@ -392,7 +393,9 @@ def is_file_included(filename, model):
         return False
 
 
-def remove_models_from_repositories(models, models_to_be_removed):
+def remove_models_from_repositories(
+    models: list[Any], models_to_be_removed: list[Any]
+) -> None:
     """
     Remove models from all relevant repositories (_tx_model_repository
     of models and related metamodel(s), if applicable).

@@ -1,11 +1,17 @@
+from __future__ import annotations
+
 import logging
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import click
 
 logger = logging.getLogger(__name__)
 
 
-def version(textx):
+def version(textx: click.Group) -> None:
     @textx.command()
-    def version():
+    def version() -> None:
         """
         Print version info.
         """

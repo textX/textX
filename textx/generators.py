@@ -1,14 +1,21 @@
+from __future__ import annotations
+
 import logging
 import os
+from collections.abc import Callable
 from functools import partial
+from typing import TYPE_CHECKING, Any
 
 from textx.export import PlantUmlRenderer, metamodel_export, model_export
 from textx.registration import generator
 
+if TYPE_CHECKING:
+    from textx.metamodel import TextXMetaModel
+
 logger = logging.getLogger(__name__)
 
 
-def get_output_filename(input_file, output_path, fileext):
+def get_output_filename(input_file: str, output_path: str | None, fileext: str) -> str:
     """
     Helper function used to create output file based on output path, input_file
     base name and extension.
@@ -25,8 +32,12 @@ def get_output_filename(input_file, output_path, fileext):
 
 
 def gen_file(
-    input_file, output_file, gen_callback, overwrite=False, success_message="Done."
-):
+    input_file: str,
+    output_file: str,
+    gen_callback: Callable[[], Any],
+    overwrite: bool = False,
+    success_message: str = "Done.",
+) -> None:
     """
     A helper function to implement common logic for generating of a single
     file. Handling of output name creation, skipping existing files, handling
@@ -49,7 +60,14 @@ def gen_file(
 
 
 @generator("textX", "dot")
-def metamodel_generate_dot(metamodel, model, output_path, overwrite, debug):
+def metamodel_generate_dot(
+    metamodel: TextXMetaModel,
+    model: Any,
+    output_path: str,
+    overwrite: bool,
+    debug: bool,
+    **custom_args: Any,
+) -> None:
     "Generating dot visualizations from textX grammars"
 
     output_file = get_output_filename(model.file_name, output_path, "dot")
@@ -64,7 +82,14 @@ def metamodel_generate_dot(metamodel, model, output_path, overwrite, debug):
 
 
 @generator("any", "dot")
-def model_generate_dot(metamodel, model, output_path, overwrite, debug):
+def model_generate_dot(
+    metamodel: TextXMetaModel,
+    model: Any,
+    output_path: str,
+    overwrite: bool,
+    debug: bool,
+    **custom_args: Any,
+) -> None:
     "Generating dot visualizations from arbitrary models"
 
     output_file = get_output_filename(model._tx_filename, output_path, "dot")
@@ -80,8 +105,13 @@ def model_generate_dot(metamodel, model, output_path, overwrite, debug):
 
 @generator("textX", "PlantUML")
 def metamodel_generate_plantuml(
-    metamodel, model, output_path, overwrite, debug, **custom_args
-):
+    metamodel: TextXMetaModel,
+    model: Any,
+    output_path: str,
+    overwrite: bool,
+    debug: bool,
+    **custom_args: Any,
+) -> None:
     "Generating PlantUML visualizations from textX grammars"
 
     output_file = get_output_filename(model.file_name, output_path, "pu")

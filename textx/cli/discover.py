@@ -1,13 +1,19 @@
+from __future__ import annotations
+
 import logging
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import click
 
 from textx.registration import generator_descriptions, language_descriptions
 
 logger = logging.getLogger(__name__)
 
 
-def list_languages(textx):
+def list_languages(textx: click.Group) -> None:
     @textx.command()
-    def list_languages():
+    def list_languages() -> None:
         """
         List all registered languages
         """
@@ -21,9 +27,9 @@ def list_languages(textx):
             )
 
 
-def list_generators(textx):
+def list_generators(textx: click.Group) -> None:
     @textx.command()
-    def list_generators():
+    def list_generators() -> None:
         """
         List all registered generators
         """

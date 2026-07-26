@@ -4,12 +4,16 @@
 # Author: Pierre Bayerl
 # License: MIT License
 #######################################################################
+
+from __future__ import annotations
+
 import re
+from typing import Any
 
 from textx import get_children, get_model
 
 
-def needs_to_be_resolved(parent_obj, attr_name):
+def needs_to_be_resolved(parent_obj: Any, attr_name: str) -> bool:
     """
     This function determines, if a reference (CrossReference) needs to be
     resolved or not (while creating the model, while resolving references).
@@ -34,7 +38,7 @@ def needs_to_be_resolved(parent_obj, attr_name):
         return False
 
 
-def get_list_of_concatenated_objects(def_obj, path_to_extension):
+def get_list_of_concatenated_objects(def_obj: Any, path_to_extension: str) -> list[Any]:
     """
     get a list of the objects consisting of
     - obj
@@ -55,16 +59,17 @@ def get_list_of_concatenated_objects(def_obj, path_to_extension):
     """
     from textx.scoping import Postponed
 
-    def_objs = []
+    def_objs: list[Any] = []
     assert def_obj is not None
 
-    def rec_walk(obj_or_list):
+    def rec_walk(obj_or_list: Any) -> None:
         if obj_or_list is not None:
-            if not isinstance(obj_or_list, list):
-                obj_or_list = [obj_or_list]
-            for o in obj_or_list:
+            objs: list[Any] = (
+                obj_or_list if isinstance(obj_or_list, list) else [obj_or_list]
+            )
+            for o in objs:
                 def_objs.append(o)
-            for o in obj_or_list:
+            for o in objs:
                 if type(o) is not Postponed:
                     rec_walk(resolve_model_path(o, path_to_extension))
 
@@ -72,7 +77,7 @@ def get_list_of_concatenated_objects(def_obj, path_to_extension):
     return def_objs
 
 
-def get_parser(model_obj):
+def get_parser(model_obj: Any) -> Any:
     """
     Args:
         model_obj: the model object of interest
@@ -84,7 +89,7 @@ def get_parser(model_obj):
     return the_model._tx_parser
 
 
-def get_recursive_parent_with_typename(obj, desired_parent_typename):
+def get_recursive_parent_with_typename(obj: Any, desired_parent_typename: str) -> Any:
     while type(obj).__name__ != desired_parent_typename and hasattr(obj, "parent"):
         obj = obj.parent
     if type(obj).__name__ != desired_parent_typename:
@@ -93,7 +98,7 @@ def get_recursive_parent_with_typename(obj, desired_parent_typename):
         return obj
 
 
-def get_named_obj_in_list(obj_list, name):
+def get_named_obj_in_list(obj_list: list[Any], name: str) -> Any:
     """
     get a named object from a list (of named objects)
 
@@ -111,7 +116,11 @@ def get_named_obj_in_list(obj_list, name):
         return None
 
 
-def resolve_model_path(obj, dot_separated_name, follow_named_element_in_lists=False):
+def resolve_model_path(
+    obj: Any,
+    dot_separated_name: str,
+    follow_named_element_in_lists: bool = False,
+) -> Any:
     """
     Get a model object based on a model-path starting from some
     model object. It can be used in the same way you would
@@ -145,6 +154,7 @@ def resolve_model_path(obj, dot_separated_name, follow_named_element_in_lists=Fa
 
     names = dot_separated_name.split(".")
     match = re.match(r"parent\((\w+)\)", names[0])
+    next_obj: Any
 
     if obj is None or type(obj) is Postponed:
         return obj
@@ -180,7 +190,7 @@ def resolve_model_path(obj, dot_separated_name, follow_named_element_in_lists=Fa
     return next_obj
 
 
-def get_unique_named_object_in_all_models(root, name):
+def get_unique_named_object_in_all_models(root: Any, name: str) -> Any:
     """
     retrieves a unique named object (no fully qualified name)
 
@@ -199,16 +209,15 @@ def get_unique_named_object_in_all_models(root, name):
     else:
         src = [root]
 
-    a = []
+    a: list[Any] = []
     for m in src:
-        # print("analyzing {}".format(m._tx_filename))
         a = a + get_children(lambda x: hasattr(x, "name") and x.name == name, m)
 
     assert len(a) == 1
     return a[0]
 
 
-def get_unique_named_object(root, name):
+def get_unique_named_object(root: Any, name: str) -> Any:
     """
     retrieves a unique named object (no fully qualified name)
 
@@ -224,7 +233,7 @@ def get_unique_named_object(root, name):
     return a[0]
 
 
-def check_unique_named_object_has_class(root, name, class_name):
+def check_unique_named_object_has_class(root: Any, name: str, class_name: str) -> None:
     """
     checks the type (type name) of an unique named object (no fully qualified
     name)

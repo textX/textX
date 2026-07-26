@@ -1,4 +1,5 @@
 import logging
+import sys
 
 try:
     import click
@@ -7,8 +8,6 @@ except ImportError as e:
         "textX must be installed with CLI dependencies to use "
         "textx command.\npip install textX[cli]"
     ) from e
-
-import sys
 
 if sys.version_info < (3, 10):
     from importlib_metadata import entry_points
@@ -22,11 +21,11 @@ logging.basicConfig(level=logging.INFO, format="%(message)s")
 @click.group()
 @click.option("--debug", default=False, is_flag=True, help="Debug/trace output.")
 @click.pass_context
-def textx(ctx, debug):
+def textx(ctx: click.Context, debug: bool) -> None:
     ctx.obj = {"debug": debug}
 
 
-def register_textx_subcommands():
+def register_textx_subcommands() -> None:
     """
     Find and use all textx sub-commands registered through the extension point.
 

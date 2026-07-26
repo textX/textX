@@ -2,9 +2,11 @@
 Export of textX based models and metamodels to dot file.
 """
 
+from __future__ import annotations
+
+from collections.abc import Iterable
 from dataclasses import dataclass
-from typing import Dict, Iterable, List, Union
-from typing import Optional as Opt
+from typing import Any
 
 from arpeggio import (
     Match,
@@ -43,7 +45,7 @@ HEADER = """
 """
 
 
-def dot_match_str(cls, other_match_rules=None):
+def dot_match_str(cls: Any, other_match_rules: Any = None) -> str:
     """
     For a given match rule meta-class returns a nice string representation for
     the body.
@@ -107,7 +109,7 @@ def dot_match_str(cls, other_match_rules=None):
     return mstr
 
 
-def dot_escape(s):
+def dot_escape(s: str) -> str:
     return (
         s.replace("\n", r"\n")
         .replace("\\", "\\\\")
@@ -121,13 +123,13 @@ def dot_escape(s):
     )
 
 
-def html_escape(s):
+def html_escape(s: str) -> str:
     from html import escape
 
     return escape(s)
 
 
-def dot_repr(o):
+def dot_repr(o: object) -> str:
     if isinstance(o, str):
         escaped = dot_escape(str(o))
         if len(escaped) > 20:
@@ -141,7 +143,7 @@ def dot_repr(o):
 @dataclass
 class Attr:
     name: str
-    cls: "Cls"
+    cls: Cls
     mult: str
     cont: bool
     ref: bool
@@ -154,9 +156,9 @@ class Cls:
     name: str
     fqn: str
     typ: str
-    attrs: List[Union[MetaAttr, Attr]]
-    inh_by: List["Cls"]
-    inh_from: Opt["Cls"]
+    attrs: list[MetaAttr | Attr]
+    inh_by: list[Cls]
+    inh_from: Cls | None
     peg_rule: ParsingExpression
 
     def __hash__(self):
@@ -164,15 +166,30 @@ class Cls:
 
 
 class Renderer:
-    def __init__(self):
-        self.match_rules = set()
+    def __init__(self) -> None:
+        self.match_rules: set[Any] = set()
+
+    def get_header(self) -> str:
+        raise NotImplementedError
+
+    def get_trailer(self) -> str:
+        raise NotImplementedError
+
+    def render_class(self, cls: Any) -> str:
+        raise NotImplementedError
+
+    def render_attr_link(self, cls: Any, attr: Any) -> str | None:
+        raise NotImplementedError
+
+    def render_inherited_by(self, base: Any, special: Any) -> str:
+        raise NotImplementedError
 
 
 class DotRenderer(Renderer):
-    def get_header(self):
+    def get_header(self) -> str:
         return HEADER
 
-    def get_match_rules_table(self):
+    def get_match_rules_table(self) -> str:
         trailer = ""
         if self.match_rules:
             trailer = "<table>\n"
@@ -186,7 +203,7 @@ class DotRenderer(Renderer):
             trailer += "</table>"
         return trailer
 
-    def get_trailer(self):
+    def get_trailer(self) -> str:
         trailer = ""
         if self.match_rules:
             trailer = (
@@ -195,7 +212,7 @@ class DotRenderer(Renderer):
             )
         return trailer + "\n}\n"
 
-    def render_class(self, cls):
+    def render_class(self, cls: Any) -> str:
         name = cls.name
         attrs = ""
         if cls.typ is RULE_MATCH:
@@ -298,12 +315,16 @@ set namespaceSeparator .
         return f"{base.fqn} <|-- {special.fqn}\n"
 
 
-def metamodel_export(metamodel, file_name, renderer=None):
+def metamodel_export(
+    metamodel: Any, file_name: str, renderer: Renderer | None = None
+) -> None:
     with open(file_name, "w", encoding="utf-8") as f:
         metamodel_export_tofile(metamodel, f, renderer)
 
 
-def metamodel_export_tofile(metamodel, f, renderer=None):
+def metamodel_export_tofile(
+    metamodel: Any, f: Any, renderer: Renderer | None = None
+) -> None:
     if renderer is None:
         renderer = DotRenderer()
     f.write(renderer.get_header())
@@ -315,7 +336,7 @@ def metamodel_export_tofile(metamodel, f, renderer=None):
     f.write("\n\n")
     for cls in classes:
         for attr in cls.attrs:
-            if attr.ref and attr.cls.name != "OBJECT":
+            if attr.ref and attr.cls.name != "OBJECT":  # type: ignore[union-attr]
                 f.write(renderer.render_attr_link(cls, attr))
             if attr.cls not in classes:
                 f.write(renderer.render_class(attr.cls))
@@ -324,13 +345,13 @@ def metamodel_export_tofile(metamodel, f, renderer=None):
     f.write(f"{renderer.get_trailer()}")
 
 
-def get_unified_classes(classes: List[TextXMetaClass]) -> Iterable[Cls]:
+def get_unified_classes(classes: list[TextXMetaClass]) -> Iterable[Cls]:
     """
     Create list of Cls which is used for attribute/links unification
     respecting the inheritance hierarchy chain.
     See https://github.com/textX/textX/issues/423
     """
-    new_classes: Dict[str, Cls] = dict()
+    new_classes: dict[str, Cls] = dict()
     for cls in classes:
         c = Cls(
             cls.__name__,
@@ -351,7 +372,7 @@ def get_unified_classes(classes: List[TextXMetaClass]) -> Iterable[Cls]:
         new_cls.attrs = [
             Attr(
                 attr.name,
-                new_classes[attr.cls._tx_fqn],
+                new_classes[attr.cls._tx_fqn],  # type: ignore[union-attr]
                 attr.mult,
                 attr.cont,
                 attr.ref,
@@ -359,7 +380,7 @@ def get_unified_classes(classes: List[TextXMetaClass]) -> Iterable[Cls]:
                 attr.position,
             )
             for attr in new_cls.attrs
-            if hasattr(attr.cls, "_tx_fqn") and attr.cls._tx_fqn in new_classes
+            if hasattr(attr.cls, "_tx_fqn") and attr.cls._tx_fqn in new_classes  # type: ignore[union-attr]
         ]
 
     # resolve inheritance
@@ -396,7 +417,7 @@ def get_unified_classes(classes: List[TextXMetaClass]) -> Iterable[Cls]:
     return new_classes.values()
 
 
-def model_export(model, file_name, repo=None):
+def model_export(model: Any, file_name: str, repo: Any = None) -> None:
     """
     Args:
         model: the model to be exported (may be None if repo is not None)
@@ -410,7 +431,7 @@ def model_export(model, file_name, repo=None):
         model_export_to_file(f, model, repo)
 
 
-def model_export_to_file(f, model=None, repo=None):
+def model_export_to_file(f: Any, model: Any = None, repo: Any = None) -> None:
     """
     Args:
         f: the file object to be used as output.
