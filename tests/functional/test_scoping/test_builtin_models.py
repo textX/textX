@@ -20,7 +20,7 @@ Property: name=ID ':' type=[t.BaseType:ID|+m:types];
 
 
 def test_builtin_models_are_searched_by_rrel():
-    register_language("builtin_types", "*.type", metamodel=types_mm)
+    register_language("builtin_types", pattern="*.type", metamodel=types_mm)
 
     builtin_models = ModelRepository()
     builtin_models.add_model(types_mm.model_from_str("type int type bool"))

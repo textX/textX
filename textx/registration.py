@@ -44,14 +44,14 @@ class LanguageDesc:
     def __init__(
         self,
         name: str,
+        metamodel: Callable[..., Any],
         pattern: str | None = None,
         description: str = "",
-        metamodel: Any = Callable[..., Any],
     ) -> None:
         self.name = name
+        self.metamodel = metamodel
         self.pattern = pattern
         self.description = description
-        self.metamodel = metamodel
         self.project_name: str | None = None
         self.project_version: str | None = None
 
@@ -93,14 +93,14 @@ class GeneratorDesc:
         self,
         language: str,
         target: str,
+        generator: Callable[..., None],
         description: str = "",
-        generator: Callable[..., None] | None = None,
         custom_args: list[GeneratorParam] | None = None,
     ) -> None:
         self.language = language
         self.target = target
-        self.description = description
         self.generator = generator
+        self.description = description
         self.custom_args = custom_args
         self.project_name: str | None = None
         self.project_version: str | None = None
@@ -201,9 +201,9 @@ def generator_for_language_target(
 
 def register_language(
     language_desc_or_name: LanguageDesc | str,
+    metamodel: Callable[..., Any] | None = None,
     pattern: str | None = None,
     description: str = "",
-    metamodel: Callable[..., Any] | None = None,
 ) -> None:
     """
     Programmatically register a language.
@@ -220,6 +220,10 @@ def register_language(
         assert languages is not None
 
     if not isinstance(language_desc_or_name, LanguageDesc):
+        if metamodel is None:
+            raise TextXRegistrationError(
+                f'Language "{language_desc_or_name}": meta-model cannot be None.'
+            )
         language_desc = LanguageDesc(
             name=language_desc_or_name,
             pattern=pattern,
@@ -279,11 +283,17 @@ def register_generator(
     if not isinstance(generator_desc_or_language, GeneratorDesc):
         if TYPE_CHECKING:
             assert target is not None
+
+        if generator is None:
+            raise TextXRegistrationError(
+                f'Generator "{generator_desc_or_language}->'
+                f'{target}" function cannot be None.'
+            )
         generator_desc = GeneratorDesc(
             language=generator_desc_or_language,
+            generator=generator,
             target=target,
             description=description,
-            generator=generator,
         )
     else:
         generator_desc = generator_desc_or_language

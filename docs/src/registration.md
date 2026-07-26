@@ -425,8 +425,8 @@ All classes and functions documented here are directly importable from `textx` m
 - `language_description(language_name)` - return an instance of `LanguageDesc`
   given the language name
 - `language_descriptions()` - return a dict of `language name` -> `LanguageDesc` instances
-- `register_language(language_desc_or_name, pattern=None, description='',
-  metamodel=None)` - programmatically register language by either providing an
+- `register_language(language_desc_or_name, metamodel=None, pattern=None,
+  description='')` - programmatically register language by either providing an
   instance of `LanguageDesc` as the first parameter or providing separate
   parameters
 - `clear_language_registrations()` - deletes all languages registered
@@ -466,11 +466,13 @@ created and cached for further use.
 
     Attributes:
 
-    - `name` - a unique language name
-    - `pattern` - a file name pattern used to recognized files containing the language model
-    - `description` - a short one-line description of the language
-    - `metamodel` - callable that is called to get the meta-model or the instance
-      of the meta-model
+    - `language` - the source language name/ID (use `"any"` for
+      language-independent generators)
+    - `target` - a short name of the target stack/technology
+    - `description` - a short one-line description of the generator
+    - `generator` - a callable of the form:
+      `def generator(metamodel, model, output_path, overwrite, debug,
+      **custom_args)`
 
 - `generator_description(language_name, target_name, any_permitted=False)` -
   return an instance of `GeneratorDesc` with the given language and target. If

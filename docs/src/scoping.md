@@ -241,7 +241,8 @@ BaseType: 'type' name=ID;
 
 # We register `types` language to be available by `reference` 
 # statement in the main meta-model
-register_language('types', '*.type', 'Simple types language', types_mm)
+register_language('types', pattern='*.type',
+                  description='Simple types language', metamodel=types_mm)
 
 # Now in the main meta-model we use `references` to access the
 # type language. We also use RREL for `Property.type` (+m:types) to
