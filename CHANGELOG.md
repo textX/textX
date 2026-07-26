@@ -15,6 +15,15 @@ please take a look at related PRs and issues and see if the change affects you.
 ## [Unreleased]
 
 ### Changed
+- **(BIC)** Reworked registration API: `LanguageDesc` and `GeneratorDesc` now
+  require their core parameter as a positional argument. `LanguageDesc(name,
+  metamodel, ...)` — `metamodel` is now the second positional arg (was last).
+  `GeneratorDesc(language, target, generator, ...)` — `generator` is now the
+  third positional arg (was after `description`). `register_language` and
+  `register_generator` functions enforce that `metamodel`/`generator` cannot
+  be `None` when using string-based registration. All positional calls must be
+  migrated to keyword arguments.
+- Added type hints to the whole codebase.
 - Added type hints to the public API. See [446]. Thanks @aleksa-dejanovic.
 
 ### Fixed
