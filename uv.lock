@@ -39,38 +39,7 @@ wheels = [
 [[package]]
 name = "arpeggio"
 version = "3.0.0.dev0"
-source = { editable = "../Arpeggio" }
-
-[package.metadata]
-
-[package.metadata.requires-dev]
-dbg = [
-    { name = "ipython" },
-    { name = "pudb" },
-]
-dev = [
-    { name = "coverage" },
-    { name = "coveralls" },
-    { name = "flit" },
-    { name = "ipython" },
-    { name = "mike" },
-    { name = "mkdocs" },
-    { name = "mypy" },
-    { name = "pudb" },
-    { name = "pytest" },
-    { name = "ruff" },
-]
-docs = [
-    { name = "mike" },
-    { name = "mkdocs" },
-]
-test = [
-    { name = "coverage" },
-    { name = "coveralls" },
-    { name = "mypy" },
-    { name = "pytest" },
-    { name = "ruff" },
-]
+source = { git = "https://github.com/textX/Arpeggio.git?branch=master#0a5f5067e57ca23103592bc3d8605df08384c851" }
 
 [[package]]
 name = "ast-serialize"
@@ -1608,7 +1577,7 @@ test = [
 
 [package.metadata]
 requires-dist = [
-    { name = "arpeggio", editable = "../Arpeggio" },
+    { name = "arpeggio", git = "https://github.com/textX/Arpeggio.git?branch=master" },
     { name = "click", marker = "extra == 'cli'", specifier = ">=7.0,<9.0" },
     { name = "importlib-metadata", marker = "python_full_version < '3.10'" },
 ]

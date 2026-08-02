@@ -146,4 +146,4 @@ flow-dsl = { workspace = true, editable = true }
 types-dsl = { workspace = true, editable = true }
 flow-codegen = { workspace = true, editable = true }
 data-dsl = { workspace = true, editable = true }
-arpeggio = { path = "../Arpeggio", editable = true }
+arpeggio = { git = "https://github.com/textX/Arpeggio.git", branch = "master" }
