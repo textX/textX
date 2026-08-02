@@ -15,6 +15,7 @@ import re
 from arpeggio import (
     EOF,
     And,
+    GrammarError,
     Match,
     NoMatch,
     Not,
@@ -29,6 +30,7 @@ from arpeggio import (
     StrMatch,
     UnorderedGroup,
     ZeroOrMore,
+    validate_parser_model,
     visit_parse_tree,
 )
 from arpeggio import RegExMatch as _
@@ -390,7 +392,43 @@ class TextXVisitor(RRELVisitor):
         self._determine_rule_types(model_parser.metamodel)
         self._resolve_cls_refs(self.grammar_parser, model_parser)
 
+        self._validate_parser_model(model_parser)
+
         return model_parser
+
+    def _validate_parser_model(self, model_parser):
+        """
+        Validate the constructed parser model for non-consuming
+        repetitions (potential infinite loops).
+
+        Arpeggio detects such grammars during parser construction, but
+        textX builds its parser model directly (not through Arpeggio
+        grammar constructors), so the validation must be invoked
+        explicitly, after all rule cross references are resolved.
+        """
+        try:
+            validate_parser_model(model_parser.parser_model)
+            # Validate rules of all meta-classes to cover rules not
+            # reachable from the root rule (including the Comment rule).
+            for cls in model_parser.metamodel:
+                validate_parser_model(cls._tx_peg_rule)
+        except GrammarError as e:
+            node = e.expression
+            user_data = getattr(node, "user_data", {})
+            position = user_data.get("position")
+            rule_name = user_data.get("rule_name") or node.rule_name
+            if position is not None:
+                line, col = self.grammar_parser.pos_to_linecol(position)
+            else:
+                line = col = None
+            raise TextXSemanticError(
+                f'Non-consuming match inside repetition in rule "{rule_name}". '
+                "Body expression may succeed without consuming input, "
+                "which would cause an infinite loop.",
+                line,
+                col,
+                filename=self.metamodel.file_name,
+            ) from e
 
     def _resolve_rule_refs(self, grammar_parser, model_parser):
         """Resolves parser ParsingExpression crossrefs."""
@@ -866,6 +904,11 @@ class TextXVisitor(RRELVisitor):
                 else:
                     rule = UnorderedGroup(nodes=expr.nodes)
 
+                # Attach grammar source position info for later use in
+                # error reporting (e.g. Arpeggio parser model validation).
+                rule.user_data["position"] = node.position
+                rule.user_data["rule_name"] = self._current_cls.__name__
+
                 if modifiers:
                     modifiers, position = modifiers
                     # Sanity check. Modifiers do not make
@@ -979,6 +1022,12 @@ class TextXVisitor(RRELVisitor):
             assignment_rule = Sequence(
                 nodes=[rhs_rule], rule_name="__asgn_plain", root=True
             )
+
+        # Attach grammar source position info for later use in error
+        # reporting (e.g. Arpeggio parser model validation).
+        assignment_rule.user_data["position"] = node.position
+        assignment_rule.user_data["rule_name"] = cls.__name__
+        assignment_rule.user_data["attr_name"] = attr_name
 
         # Modifiers
         if modifiers:

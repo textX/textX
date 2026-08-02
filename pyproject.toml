@@ -33,9 +33,9 @@ classifiers = [
     "Programming Language :: Python :: 3.14",
 ]
 
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 dependencies = [
-    "Arpeggio >= 2.0.0",
+    "Arpeggio >= 3.0.0",
     "importlib-metadata; python_version < '3.10'", # For entry_points backward compatibility
 ]
 
@@ -146,3 +146,4 @@ flow-dsl = { workspace = true, editable = true }
 types-dsl = { workspace = true, editable = true }
 flow-codegen = { workspace = true, editable = true }
 data-dsl = { workspace = true, editable = true }
+arpeggio = { path = "../Arpeggio", editable = true }

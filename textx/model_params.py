@@ -5,9 +5,9 @@ Management of parameters passed to model_from_str or model_from_file.
 from __future__ import annotations
 
 from collections import namedtuple
-from collections.abc import Iterator
+from collections.abc import Hashable, Iterator, Mapping
 from functools import reduce
-from typing import Any, Hashable, Mapping, TypeVar
+from typing import Any, TypeVar
 
 from textx.exceptions import TextXError
 

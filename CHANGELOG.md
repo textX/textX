@@ -23,6 +23,14 @@ please take a look at related PRs and issues and see if the change affects you.
   `register_generator` functions enforce that `metamodel`/`generator` cannot
   be `None` when using string-based registration. All positional calls must be
   migrated to keyword arguments.
+- **(BIC)** Requires Arpeggio >= 3.0.0. Arpeggio 3.0 removed the "soft
+  failure" mechanism in repetitions ([arpeggio#96], commit `faaeaeb0`), so
+  non-consuming matches nested inside repetitions (`ZeroOrMore`, `OneOrMore`)
+  would previously loop forever. textX now detects such grammars at
+  meta-model construction time and raises `TextXSemanticError` pointing to
+  the offending repetition in the grammar, instead of hanging the parser in
+  an infinite loop. Grammars that relied on the old behavior must be fixed so
+  that repetition bodies always consume input. See [arpeggio#101].
 - Added type hints to the whole codebase.
 - Added type hints to the public API. See [446]. Thanks @aleksa-dejanovic.
 
@@ -31,6 +39,8 @@ please take a look at related PRs and issues and see if the change affects you.
 
 [445]: https://github.com/textX/textX/pull/445
 [446]: https://github.com/textX/textX/pull/446
+[arpeggio#96]: https://github.com/textX/Arpeggio/issues/96
+[arpeggio#101]: https://github.com/textX/Arpeggio/issues/101
 
 
 ## [4.4.0] (released: 2026-07-08)

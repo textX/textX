@@ -1,6 +1,6 @@
 import pytest
 
-from textx import TextXSyntaxError, metamodel_from_str
+from textx import TextXSemanticError, TextXSyntaxError, metamodel_from_str
 from textx.const import RULE_ABSTRACT, RULE_COMMON, RULE_MATCH
 from textx.lang import ALL_TYPE_NAMES
 
@@ -966,3 +966,74 @@ def test_syntactic_predicate_and():
     assert model.elements[1].__class__.__name__ == "A"
     assert model.elements[2].__class__.__name__ == "AbeforeB"
     assert model.elements[3].__class__.__name__ == "B"
+
+
+def test_non_consuming_repetition_detection():
+    """
+    A repetition whose body can match the empty string must be rejected
+    at metamodel construction with the position in the grammar.
+
+    Regression: such grammars used to pass construction and hang the
+    parser at model parsing time (infinite loop). Arpeggio's parser
+    model validation now detects them and textX reports the location
+    in the grammar.
+    """
+    grammar = """
+    Model: (A)*;
+    A: 'x'?;
+    """
+    with pytest.raises(TextXSemanticError) as e:
+        metamodel_from_str(grammar)
+
+    assert "Non-consuming match inside repetition" in e.value.message
+    assert 'rule "Model"' in e.value.message
+    # The repetition is on the Model rule, line 2.
+    assert e.value.line == 2
+
+
+def test_non_consuming_repetition_detection_through_rule_ref():
+    """
+    Same as above but the nullability comes through a rule reference
+    (DAG-shaped parser model).
+    """
+    grammar = """
+    Model: (A)*;
+    A: B B;
+    B: 'x'?;
+    """
+    with pytest.raises(TextXSemanticError) as e:
+        metamodel_from_str(grammar)
+
+    assert "Non-consuming match inside repetition" in e.value.message
+    assert 'rule "Model"' in e.value.message
+    assert e.value.line == 2
+
+
+def test_non_consuming_repetition_detection_assignment():
+    """
+    Non-consuming match inside *= assignment must be reported with the
+    position of the assignment and the real rule name.
+    """
+    grammar = """
+    Model: attrs*=A;
+    A: 'x'?;
+    """
+    with pytest.raises(TextXSemanticError) as e:
+        metamodel_from_str(grammar)
+
+    assert "Non-consuming match inside repetition" in e.value.message
+    assert 'rule "Model"' in e.value.message
+    assert e.value.line == 2
+
+
+def test_consuming_repetition_not_reported():
+    """
+    A repetition whose body always consumes input is valid.
+    """
+    grammar = """
+    Model: (A)*;
+    A: 'x' 'y'?;
+    """
+    meta = metamodel_from_str(grammar)
+    model = meta.model_from_str("x x y x")
+    assert model is not None

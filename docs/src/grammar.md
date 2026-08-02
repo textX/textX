@@ -333,6 +333,45 @@ Unordered group may also have [repetition modifiers](#repetition-modifiers)
 defined.
 ```
 
+### Non-consuming repetitions
+
+Repetitions (`*`, `+`, `*=`, `+=`) whose body can match the empty string are
+invalid. Such a repetition would succeed without consuming any input, leaving
+the parser in the same state, and would repeat forever — hanging the parser.
+
+Examples of non-consuming repetitions:
+
+    # Optional directly inside a repetition
+    Model: ('a'?)*;
+
+    # Regex that can match the empty string
+    Model: name*=/\w*/;
+
+    # Lookahead inside a repetition
+    Model: (!'a')*;
+
+    # A reference to a nullable rule
+    B: 'b'?;
+    Model: (B)*;
+
+textX detects these grammars at **meta-model construction time** and raises a
+`TextXSemanticError` pointing to the position of the offending repetition in
+the grammar (see [Error handling](error_handling.md)):
+
+    Model: (A)*;
+    A: 'x'?;
+    ...
+
+    textx.exceptions.TextXSemanticError:
+    <file>:2:8: Non-consuming match inside repetition in rule "Model". Body
+    expression may succeed without consuming input, which would cause an
+    infinite loop.
+
+To fix such a grammar make sure the repetition body consumes input whenever it
+succeeds, e.g. by adding a mandatory consuming element:
+
+    Model: ('a' 'b'?)*;
+
 
 ### Assignments
 
