@@ -124,7 +124,7 @@ BuiltinRuleRef:
 ;
 
 ObjRef: // TODO: Remove '|' separator in 4.0
-    '[' name=ClassName ((':' | '|') obj_ref_rule=ID ('|' rrel=RRELExpression))? ']'
+    '[' name=ClassName ((':' | '|') obj_ref_rule=ID ('|' rrel=RRELExpression)?)? ']'
 ;
 
 ClassName:
