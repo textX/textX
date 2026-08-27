@@ -36,9 +36,11 @@ please take a look at related PRs and issues and see if the change affects you.
 
 ### Fixed
 - Only unescape the delimiting quote in a STRING. See [445]. Thanks @chuenchen309.
+- RREL expression made optional in ObjRef rule in textx.tx. See [447]. Thanks @Hareisha.
 
 [445]: https://github.com/textX/textX/pull/445
 [446]: https://github.com/textX/textX/pull/446
+[447]: https://github.com/textX/textX/pull/447
 [arpeggio#96]: https://github.com/textX/Arpeggio/issues/96
 [arpeggio#101]: https://github.com/textX/Arpeggio/issues/101
 
