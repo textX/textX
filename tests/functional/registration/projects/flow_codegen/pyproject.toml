@@ -12,7 +12,7 @@ textx = { workspace = true }
 
 [build-system]
 build-backend = "flit_core.buildapi"
-requires = ["flit_core >=3.8.0,<4"]
+requires = ["flit_core >=3.8.0,<5"]
 
 [project.entry-points.textx_generators]
 flow_dsl_plantuml = "flow_codegen.generators:flow_pu"
